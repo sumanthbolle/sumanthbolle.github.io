@@ -768,13 +768,232 @@
   <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
 
   <script>
+    // ============================================
+    // 🎯 CONFIGURATION - EDIT YOUR CONTENT HERE
+    // ============================================
+    const CONFIG = {
+      // Personal Info
+      profile: {
+        name: "Sumanth Bolle",
+        title: "Full Stack ServiceNow Engineer",
+        tagline1: "AI-Native Solutions.",
+        tagline2: "Agentic Workflows.",
+        description: "Building the future of enterprise automation with Generative AI, LLMs, and intelligent agentic workflows on ServiceNow.",
+        location: "Singapore",
+        email: "sumanthbolle312@gmail.com",
+        phone: "+65 82675542",
+        linkedin: "https://www.linkedin.com/in/sumanthbolle/",
+        github: "https://github.com/sumanthbolle",
+        initials: "SB"
+      },
+      
+      // Stats Section
+      stats: [
+        { number: "5+", label: "Years Experience" },
+        { number: "10+", label: "Certifications" },
+        { number: "60%", label: "Manual Work Reduced" },
+        { number: "40%", label: "Faster Completion" }
+      ],
+      
+      // About Cards
+      about: [
+        { icon: "⚡", title: "AI-Native Development", desc: "Expert in integrating Generative AI, LLMs, and AI Agents to automate complex processes, reduce manual effort, and enhance customer support across enterprise platforms.", large: true },
+        { icon: "🔧", title: "ServiceNow Mastery", desc: "Strong expertise across ITSM, ITOM (Event Management, Discovery, CMDB), SecOps, GRC, and custom application development." },
+        { icon: "🚀", title: "Enterprise Scale", desc: "Proven success delivering enterprise-scale, secure, and scalable platform solutions for global organizations including Walt Disney." }
+      ],
+      
+      // Experience
+      experience: [
+        { date: "Oct 2025 – Present", role: "Senior Software Engineer", company: "Temus (Contract)", desc: "Designing agentic workflows for PSU clients, integrating web search, secure LLM hosting, and automated data masking." },
+        { date: "Feb 2024 – Oct 2025", role: "Senior Software Engineer", company: "ServiceNow", desc: "Configured AI Control Tower for AI Governance. Developed AI-powered Risk Workspace with GenAI summarization. Implemented CSDM 4.0 alignment." },
+        { date: "Feb 2023 – Feb 2024", role: "Senior Software Developer", company: "SoftwareONE India", desc: "Platform development for ITSM, CSM. Integrated SailPoint IdentityNow. Customized AngularJS widgets, reducing task completion time by ~40%." },
+        { date: "Nov 2020 – Jan 2023", role: "Senior Engineer", company: "LTIMindtree (Walt Disney)", desc: "ITSM & ITOM development for Walt Disney worldwide. Deep expertise in Event Management, Discovery, and CMDB maintenance." }
+      ],
+      
+      // Skills
+      skills: [
+        { icon: "⚡", title: "ServiceNow", tags: ["ITSM", "ITOM", "SecOps", "GRC", "CMDB"] },
+        { icon: "🤖", title: "AI & ML", tags: ["GenAI", "LLMs", "TensorFlow", "NLP"] },
+        { icon: "💻", title: "Development", tags: ["JavaScript", "Python", "React", "REST APIs"] },
+        { icon: "☁️", title: "Cloud", tags: ["GCP", "AWS", "Azure"] },
+        { icon: "🗄️", title: "Data", tags: ["SQL", "JSON", "XML", "SOAP"] },
+        { icon: "🛠️", title: "Tools", tags: ["GlideRecord", "UI Builder", "ATF", "ITIL"] }
+      ],
+      
+      // Certifications
+      certifications: [
+        { icon: "🏆", name: "Architecture Excellence", issuer: "ServiceNow • Jul 2025" },
+        { icon: "🎯", name: "Application Developer", issuer: "ServiceNow • Nov 2023" },
+        { icon: "📋", name: "Implementation Specialist ITSM", issuer: "ServiceNow • Apr 2024" },
+        { icon: "🔐", name: "Implementation Specialist TPRM", issuer: "ServiceNow • Apr 2024" },
+        { icon: "☁️", name: "Associate Cloud Engineer", issuer: "Google Cloud • Oct 2022" },
+        { icon: "🧠", name: "Azure AI Certification", issuer: "Microsoft • Jun 2021" },
+        { icon: "🎓", name: "ML Nanodegree", issuer: "AWS/Udacity • Aug 2021" }
+      ],
+      
+      // Transform Cards (Problem -> Solution)
+      transformations: [
+        { 
+          problemIcon: "🔥", problemTitle: "Manual Incident Resolution", 
+          problemDesc: "IT teams spend 60%+ time on repetitive tasks. Average resolution: 4+ hours.", 
+          problemStat: "1,636 attacks/week globally",
+          solutionIcon: "✨", solutionTitle: "AI-Powered Agentic Workflows",
+          solutionDesc: "Built intelligent agents that auto-categorize, route, and resolve incidents. Integrated GenAI for contextual summarization.",
+          solutionStat: "60% faster resolution"
+        },
+        { 
+          problemIcon: "🌐", problemTitle: "CMDB Data Chaos", 
+          problemDesc: "Inaccurate asset data. Unknown dependencies. Failed changes cause outages.",
+          problemStat: "$5.4B lost in 2024 outage",
+          solutionIcon: "✨", solutionTitle: "CSDM 4.0 + Discovery Automation",
+          solutionDesc: "Implemented automated CMDB compliance workflows. Built service dependency mapping for AI workloads.",
+          solutionStat: "40% manual mapping reduced"
+        },
+        { 
+          problemIcon: "🔐", problemTitle: "Security & Compliance Gaps", 
+          problemDesc: "30% YoY increase in cyberattacks. Manual risk assessments. Audit failures.",
+          problemStat: "71% orgs adopting AI governance",
+          solutionIcon: "✨", solutionTitle: "AI Control Tower + GRC Automation",
+          solutionDesc: "Configured AI Governance Workspace. Built Predictive Intelligence for auto-categorization.",
+          solutionStat: "Real-time risk visibility"
+        },
+        { 
+          problemIcon: "📊", problemTitle: "Siloed Enterprise Services", 
+          problemDesc: "HR, Finance, IT work in silos. No unified service experience.",
+          problemStat: "ESM market → $25.83B by 2029",
+          solutionIcon: "✨", solutionTitle: "Enterprise Service Management",
+          solutionDesc: "Built multi-page UI Builder workspaces with role-based dashboards.",
+          solutionStat: "Single pane of glass"
+        }
+      ],
+      
+      // Integration Nodes
+      integrations: [
+        { icon: "🔐", name: "SailPoint", type: "Identity" },
+        { icon: "☁️", name: "Azure AD", type: "Cloud IAM" },
+        { icon: "💬", name: "Slack", type: "Collaboration" },
+        { icon: "🌩️", name: "AWS", type: "Cloud Platform" },
+        { icon: "📋", name: "Jira", type: "DevOps" },
+        { icon: "⚡", name: "Power Automate", type: "Workflow" },
+        { icon: "📊", name: "Splunk", type: "SIEM" },
+        { icon: "🏢", name: "SAP", type: "ERP" },
+        { icon: "👥", name: "Workday", type: "HR" },
+        { icon: "🔷", name: "GCP", type: "Cloud" },
+        { icon: "🗄️", name: "CMDB", type: "Discovery" },
+        { icon: "🤖", name: "LLM/GenAI", type: "AI Engine" }
+      ],
+      
+      // API Endpoints for simulation
+      apiEndpoints: [
+        { method: "POST", endpoint: "/api/now/table/incident", status: "201" },
+        { method: "GET", endpoint: "/api/now/cmdb/instance/cmdb_ci_server", status: "200" },
+        { method: "PUT", endpoint: "/api/now/table/change_request/CHG001", status: "200" },
+        { method: "POST", endpoint: "/api/sn_ind_tmt_spoke/sailpoint/sync", status: "201" },
+        { method: "GET", endpoint: "/api/now/table/sys_user?active=true", status: "200" },
+        { method: "POST", endpoint: "/api/now/v1/ai/summarize", status: "200" },
+        { method: "GET", endpoint: "/api/aws/ec2/instances", status: "200" },
+        { method: "POST", endpoint: "/api/slack/chat.postMessage", status: "200" }
+      ],
+      
+      // Animation Settings
+      animations: {
+        heroReplayInterval: 30000,  // 30 seconds
+        cardFlipInterval: 3000,     // 3 seconds
+        apiLogInterval: 1500        // 1.5 seconds
+      }
+    };
+    
+    // ============================================
+    // 🔧 DYNAMIC CONTENT RENDERER
+    // ============================================
+    
+    // Render Stats
+    function renderStats() {
+      const container = document.querySelector('.stats-row');
+      if (!container) return;
+      container.innerHTML = CONFIG.stats.map((stat, i) => `
+        <div class="stat-item" data-delay="${i * 100}">
+          <div class="stat-num">${stat.number}</div>
+          <div class="stat-label">${stat.label}</div>
+        </div>
+      `).join('');
+    }
+    
+    // Render Experience
+    function renderExperience() {
+      const container = document.querySelector('.exp-list');
+      if (!container) return;
+      container.innerHTML = CONFIG.experience.map((exp, i) => `
+        <div class="exp-item" data-delay="${i * 100}">
+          <div class="exp-date">${exp.date}</div>
+          <div class="exp-content">
+            <h3>${exp.role}</h3>
+            <p class="exp-company">${exp.company}</p>
+            <p class="exp-desc">${exp.desc}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Render Skills
+    function renderSkills() {
+      const container = document.querySelector('.skills-grid');
+      if (!container) return;
+      container.innerHTML = CONFIG.skills.map((skill, i) => `
+        <div class="skill-tile" data-delay="${i * 100}">
+          <div class="skill-emoji">${skill.icon}</div>
+          <h4>${skill.title}</h4>
+          <div class="skill-tags">
+            ${skill.tags.map(tag => `<span class="skill-tag">${tag}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Render Certifications
+    function renderCertifications() {
+      const container = document.querySelector('.cert-scroll');
+      if (!container) return;
+      container.innerHTML = CONFIG.certifications.map(cert => `
+        <div class="cert-card">
+          <div class="cert-icon">${cert.icon}</div>
+          <h4>${cert.name}</h4>
+          <p class="cert-issuer">${cert.issuer}</p>
+        </div>
+      `).join('');
+    }
+    
+    // Render Contact Info
+    function renderContact() {
+      const nameEl = document.querySelector('.contact-name');
+      const roleEl = document.querySelector('.contact-role');
+      if (nameEl) nameEl.textContent = CONFIG.profile.name;
+      if (roleEl) roleEl.textContent = `${CONFIG.profile.title} • ${CONFIG.profile.location}`;
+    }
+    
+    // Initialize all dynamic content
+    function initDynamicContent() {
+      renderStats();
+      renderExperience();
+      renderSkills();
+      renderCertifications();
+      renderContact();
+    }
+    
+    // Run on page load
+    initDynamicContent();
+    
+    // ============================================
+    // 🎬 ANIMATIONS (Keep existing code below)
+    // ============================================
+    
     const title = document.getElementById('heroTitle');
     const heroEye = document.querySelector('.hero-eye');
     const heroDesc = document.querySelector('.hero-desc');
     const heroLinks = document.querySelector('.hero-links');
     const line1 = document.querySelector('.hero-sub .line:nth-child(1) .line-inner');
     const line2 = document.querySelector('.hero-sub .line:nth-child(2) .line-inner');
-    const originalText = 'Sumanth Bolle';
+    const originalText = CONFIG.profile.name;
     
     function animateHero() {
       // Animate title with reveal/mask effect
@@ -818,7 +1037,7 @@
     animateHero();
     
     // Replay every 30 seconds
-    setInterval(animateHero, 30000);
+    setInterval(animateHero, CONFIG.animations.heroReplayInterval);
     
     // Intersection Observer for scroll animations
     const observer = new IntersectionObserver((entries) => {
@@ -845,7 +1064,7 @@
     // Start auto-flip after 2 seconds, then every 3 seconds
     setTimeout(() => {
       flipNextCard();
-      setInterval(flipNextCard, 3000);
+      setInterval(flipNextCard, CONFIG.animations.cardFlipInterval);
     }, 2000);
     
     // Flow diagram animation
@@ -880,20 +1099,7 @@
     // Integration Hub - Live API Log Simulation
     const apiLog = document.getElementById('apiLog');
     const apiCount = document.getElementById('apiCount');
-    const endpoints = [
-      {method:'POST',endpoint:'/api/now/table/incident',status:'201'},
-      {method:'GET',endpoint:'/api/now/cmdb/instance/cmdb_ci_server',status:'200'},
-      {method:'PUT',endpoint:'/api/now/table/change_request/CHG001',status:'200'},
-      {method:'POST',endpoint:'/api/sn_ind_tmt_spoke/sailpoint/sync',status:'201'},
-      {method:'GET',endpoint:'/api/now/table/sys_user?active=true',status:'200'},
-      {method:'POST',endpoint:'/api/now/v1/ai/summarize',status:'200'},
-      {method:'GET',endpoint:'/api/aws/ec2/instances',status:'200'},
-      {method:'POST',endpoint:'/api/slack/chat.postMessage',status:'200'},
-      {method:'PUT',endpoint:'/api/now/table/problem/PRB00123',status:'200'},
-      {method:'GET',endpoint:'/api/azure/ad/users',status:'200'},
-      {method:'POST',endpoint:'/api/now/table/sc_request',status:'201'},
-      {method:'GET',endpoint:'/api/splunk/search/jobs',status:'200'}
-    ];
+    const endpoints = CONFIG.apiEndpoints;
     
     let callCount = 0;
     function addLogEntry() {
@@ -925,7 +1131,7 @@
     }
     
     // Add log entries periodically
-    setInterval(addLogEntry, 1500);
+    setInterval(addLogEntry, CONFIG.animations.apiLogInterval);
     
     // Animate integration types on scroll
     document.querySelectorAll('.int-type').forEach(el => observer.observe(el));
