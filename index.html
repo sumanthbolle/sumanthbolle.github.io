@@ -19,13 +19,23 @@
     
     .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 80px;background:var(--black);position:relative;overflow:hidden}
     .hero::before{content:'';position:absolute;width:100%;height:100%;background:radial-gradient(ellipse 80% 50% at 50% 50%,rgba(29,78,216,0.15) 0%,transparent 70%)}
-    .hero-eye{font-size:17px;color:var(--gray);margin-bottom:12px;position:relative;z-index:1}
-    .hero-title{font-size:clamp(56px,12vw,96px);font-weight:600;letter-spacing:-.025em;color:var(--white);position:relative;z-index:1}
+    .hero-eye{font-size:17px;color:var(--gray);margin-bottom:12px;position:relative;z-index:1;opacity:0;animation:fadeInUp 0.8s ease 0.2s forwards}
+    
+    /* TYPEWRITER EFFECT */
+    .hero-title{font-size:clamp(56px,12vw,96px);font-weight:600;letter-spacing:-.025em;color:var(--white);position:relative;z-index:1;overflow:hidden}
+    .hero-title .typewriter{display:inline-block;overflow:hidden;white-space:nowrap;border-right:3px solid var(--white);width:0;animation:typing 1.5s steps(14) 0.5s forwards,blink 0.7s step-end infinite}
+    @keyframes typing{from{width:0}to{width:100%}}
+    @keyframes blink{50%{border-color:transparent}}
+    
     .hero-sub{font-size:clamp(28px,5vw,56px);font-weight:600;position:relative;z-index:1;margin-top:8px}
-    .flash-text-1{background:linear-gradient(90deg,#fb7185,#f472b6,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .flash-text-2{background:linear-gradient(90deg,#60a5fa,#34d399,#a3e635);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero-desc{font-size:21px;color:var(--gray);margin-top:24px;max-width:600px;line-height:1.4;position:relative;z-index:1}
-    .hero-links{display:flex;gap:24px;margin-top:32px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1}
+    .flash-text-1,.flash-text-2{display:inline-block;opacity:0;transform:translateY(30px)}
+    .flash-text-1{background:linear-gradient(90deg,#fb7185,#f472b6,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeInUp 0.8s ease 1.8s forwards}
+    .flash-text-2{background:linear-gradient(90deg,#60a5fa,#34d399,#a3e635);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeInUp 0.8s ease 2.2s forwards}
+    
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    
+    .hero-desc{font-size:21px;color:var(--gray);margin-top:24px;max-width:600px;line-height:1.4;position:relative;z-index:1;opacity:0;animation:fadeInUp 0.8s ease 2.6s forwards}
+    .hero-links{display:flex;gap:24px;margin-top:32px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1;opacity:0;animation:fadeInUp 0.8s ease 3s forwards}
     .hero-link{font-size:21px;color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:6px}
     .hero-link:hover{text-decoration:underline}
     
@@ -35,9 +45,39 @@
     .section-c{max-width:980px;margin:0 auto;padding:0 22px}
     .section-h{text-align:center;margin-bottom:64px}
     .section-eye{font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-    .section-title{font-size:clamp(32px,6vw,56px);font-weight:600;letter-spacing:-.025em}
+    
+    /* SLIDE IN FROM LEFT */
+    .section-title{font-size:clamp(32px,6vw,56px);font-weight:600;letter-spacing:-.025em;opacity:0;transform:translateX(-60px);transition:all 0.8s cubic-bezier(0.25,0.46,0.45,0.94)}
+    .section-title.animate{opacity:1;transform:translateX(0)}
     .section-dark .section-title{color:var(--white)}
-    .section-sub{font-size:21px;color:var(--gray);margin-top:16px}
+    
+    /* LETTER BY LETTER REVEAL */
+    .section-title.letter-reveal span{display:inline-block;opacity:0;transform:translateY(40px) rotateX(-90deg);transition:all 0.5s ease}
+    .section-title.letter-reveal.animate span{opacity:1;transform:translateY(0) rotateX(0)}
+    
+    /* BOUNCE IN */
+    .section-sub{font-size:21px;color:var(--gray);margin-top:16px;opacity:0;transform:scale(0.8);transition:all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55) 0.3s}
+    .section-sub.animate{opacity:1;transform:scale(1)}
+    
+    /* GLITCH EFFECT */
+    .glitch{position:relative}
+    .glitch::before,.glitch::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;height:100%;opacity:0}
+    .glitch.animate::before{animation:glitch1 2.5s infinite linear alternate-reverse;clip-path:polygon(0 0,100% 0,100% 35%,0 35%);opacity:0.8}
+    .glitch.animate::after{animation:glitch2 2.5s infinite linear alternate-reverse;clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%);opacity:0.8}
+    @keyframes glitch1{0%,100%{transform:translateX(0)}20%{transform:translateX(-3px)}40%{transform:translateX(3px)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}
+    @keyframes glitch2{0%,100%{transform:translateX(0)}20%{transform:translateX(3px)}40%{transform:translateX(-3px)}60%{transform:translateX(2px)}80%{transform:translateX(-2px)}}
+    
+    /* WAVE EFFECT */
+    .wave-title span{display:inline-block;animation:wave 2s ease-in-out infinite;animation-play-state:paused}
+    .wave-title.animate span{animation-play-state:running}
+    @keyframes wave{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    
+    /* FLIP IN */
+    .flip-title span{display:inline-block;opacity:0;transform:rotateX(90deg);transition:all 0.6s ease}
+    .flip-title.animate span{opacity:1;transform:rotateX(0)}
+    
+    .section-eye{opacity:0;transform:translateY(20px);transition:all 0.6s ease}
+    .section-eye.animate{opacity:1;transform:translateY(0)}
     
     .icon{width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:16px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,0.15)}
     .icon svg{width:28px;height:28px;stroke-width:1.5;stroke:currentColor;fill:none}
@@ -57,19 +97,22 @@
     .icon-link{background:linear-gradient(135deg,#e599f7,#be4bdb);color:#fff}
     
     .about-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-    .about-card{background:var(--bg);border-radius:18px;padding:48px 40px;transition:transform .4s}
+    .about-card{background:var(--bg);border-radius:18px;padding:48px 40px;transition:transform .4s;opacity:0;transform:translateY(40px);transition:all 0.6s ease}
+    .about-card.animate{opacity:1;transform:translateY(0)}
     .about-card:hover{transform:scale(1.02)}
     .about-card.large{grid-column:span 2}
     .about-card h3{font-size:24px;font-weight:600;margin-bottom:12px}
     .about-card p{font-size:17px;color:var(--gray);line-height:1.5}
     
     .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px}
-    .stat-item{text-align:center;padding:32px 20px;background:rgba(255,255,255,.05);border-radius:18px;border:1px solid rgba(255,255,255,.1)}
+    .stat-item{text-align:center;padding:32px 20px;background:rgba(255,255,255,.05);border-radius:18px;border:1px solid rgba(255,255,255,.1);opacity:0;transform:scale(0.8);transition:all 0.5s ease}
+    .stat-item.animate{opacity:1;transform:scale(1)}
     .stat-num{font-size:56px;font-weight:600;color:var(--white)}
     .stat-label{font-size:14px;color:var(--gray);margin-top:8px}
     
     .exp-list{max-width:800px;margin:0 auto}
-    .exp-item{display:grid;grid-template-columns:180px 1fr;gap:48px;padding:40px 0;border-bottom:1px solid rgba(0,0,0,.1)}
+    .exp-item{display:grid;grid-template-columns:180px 1fr;gap:48px;padding:40px 0;border-bottom:1px solid rgba(0,0,0,.1);opacity:0;transform:translateX(-30px);transition:all 0.6s ease}
+    .exp-item.animate{opacity:1;transform:translateX(0)}
     .exp-item:last-child{border-bottom:none}
     .exp-date{font-size:17px;color:var(--gray)}
     .exp-content h3{font-size:28px;font-weight:600;margin-bottom:4px}
@@ -77,7 +120,8 @@
     .exp-desc{font-size:17px;color:var(--gray);line-height:1.5}
     
     .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-    .skill-tile{background:var(--white);border-radius:18px;padding:40px 32px;text-align:center;transition:all .4s;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    .skill-tile{background:var(--white);border-radius:18px;padding:40px 32px;text-align:center;transition:all .4s;box-shadow:0 2px 8px rgba(0,0,0,.04);opacity:0;transform:translateY(30px);transition:all 0.5s ease}
+    .skill-tile.animate{opacity:1;transform:translateY(0)}
     .skill-tile:hover{transform:translateY(-8px);box-shadow:0 12px 40px rgba(0,0,0,.12)}
     .skill-tile .icon{margin:0 auto 16px}
     .skill-tile h4{font-size:21px;font-weight:600;margin-bottom:12px}
@@ -86,15 +130,14 @@
     
     .cert-scroll{display:flex;gap:16px;overflow-x:auto;padding:20px 22px;scrollbar-width:none}
     .cert-scroll::-webkit-scrollbar{display:none}
-    .cert-card{flex:0 0 280px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:32px 28px}
+    .cert-card{flex:0 0 280px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:32px 28px;opacity:0;transform:translateY(20px);transition:all 0.5s ease}
+    .cert-card.animate{opacity:1;transform:translateY(0)}
     .cert-card:hover{background:rgba(255,255,255,.12)}
     .cert-card .icon{margin-bottom:20px}
     .cert-card h4{font-size:17px;font-weight:600;margin-bottom:8px;color:var(--white)}
     .cert-issuer{font-size:14px;color:var(--gray)}
     
-    /* Integration Section - Full Design */
     .integration-section{background:linear-gradient(180deg,#1a1a2e 0%,#0f0f1a 50%,#0a0a12 100%);padding:100px 0;overflow:hidden}
-    
     .sn-loop-container{position:relative;width:100%;padding:60px 0;display:flex;flex-direction:column;align-items:center}
     .unite-header{text-align:center;margin-bottom:40px}
     .unite-text{font-size:14px;font-weight:600;letter-spacing:0.2em;color:var(--gray);text-transform:uppercase;margin-bottom:16px}
@@ -105,7 +148,6 @@
     .unite-word.active::after{transform:scaleX(1)}
     .unite-divider{color:rgba(255,255,255,0.2);font-size:28px}
     
-    /* Infinity Loop SVG */
     .sn-loop-wrapper{position:relative;width:100%;max-width:900px;height:400px;margin:0 auto}
     .sn-loop-svg{width:100%;height:100%}
     .loop-path{fill:none;stroke:url(#loopGradient);stroke-width:3;stroke-linecap:round;opacity:0.3}
@@ -113,7 +155,6 @@
     .loop-glow{fill:none;stroke:url(#loopGradient);stroke-width:8;stroke-linecap:round;filter:blur(8px);opacity:0.4;stroke-dasharray:1500;stroke-dashoffset:1500;animation:drawLoop 4s ease-in-out infinite}
     @keyframes drawLoop{0%{stroke-dashoffset:1500}50%{stroke-dashoffset:0}100%{stroke-dashoffset:-1500}}
     
-    /* Loop Nodes */
     .loop-node{position:absolute;display:flex;flex-direction:column;align-items:center;gap:12px;transition:transform 0.4s}
     .loop-node:hover{transform:scale(1.05)}
     .node-circle{width:100px;height:100px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
@@ -124,7 +165,6 @@
     .node-label{font-size:14px;font-weight:600;color:#fff;letter-spacing:0.05em}
     .node-sublabel{font-size:11px;color:var(--gray);max-width:140px;text-align:center;line-height:1.4}
     
-    /* Central Hub in Loop */
     .sn-central-hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10}
     .sn-hub-outer{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;animation:hubRotate 20s linear infinite}
     .sn-hub-inner{width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,#1a1a2e,#0f0f1a);border:2px solid rgba(129,215,66,0.3);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 60px rgba(129,215,66,0.2),inset 0 0 30px rgba(129,215,66,0.1)}
@@ -132,18 +172,14 @@
     .sn-hub-text{font-size:9px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px}
     @keyframes hubRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     
-    /* Integration Showcase with Orbital Hub */
     .integration-showcase{display:grid;grid-template-columns:1fr 360px;gap:40px;align-items:center;margin-top:80px}
     .hub-container{position:relative;width:100%;height:420px;display:flex;align-items:center;justify-content:center}
-    
-    /* Orbit Rings */
     .orbit-ring{position:absolute;border:1px solid rgba(129,215,66,0.15);border-radius:50%;animation:rotateRing 20s linear infinite}
     .ring-1{width:160px;height:160px;animation-duration:25s;border-color:rgba(129,215,66,0.25)}
     .ring-2{width:270px;height:270px;animation-duration:40s;animation-direction:reverse;border-color:rgba(102,126,234,0.2)}
     .ring-3{width:380px;height:380px;animation-duration:55s;border-color:rgba(247,183,51,0.15)}
     @keyframes rotateRing{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     
-    /* Central Hub */
     .central-hub{position:absolute;width:90px;height:90px;display:flex;align-items:center;justify-content:center;z-index:10}
     .hub-glow{position:absolute;width:130px;height:130px;background:radial-gradient(circle,rgba(129,215,66,0.4) 0%,transparent 70%);animation:hubPulse 3s ease-in-out infinite}
     .hub-core{width:80px;height:80px;background:linear-gradient(135deg,#81d742 0%,#5fa82e 50%,#4a8f24 100%);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 50px rgba(129,215,66,0.5),0 10px 40px rgba(0,0,0,0.4);z-index:2;position:relative;overflow:hidden}
@@ -152,7 +188,6 @@
     .hub-text{font-size:7px;color:rgba(255,255,255,0.95);margin-top:2px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase}
     @keyframes hubPulse{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.3);opacity:0.8}}
     
-    /* Orbiting Nodes */
     .orbit{position:absolute;width:100%;height:100%}
     .orbit-1{animation:orbitSpin 25s linear infinite}
     .orbit-2{animation:orbitSpin 40s linear infinite reverse}
@@ -176,7 +211,6 @@
     .node-pulse{position:absolute;width:100%;height:100%;border-radius:14px;border:2px solid rgba(129,215,66,0.6);opacity:0;animation:nodePulse 2.5s ease-out infinite}
     @keyframes nodePulse{0%{transform:scale(1);opacity:0.6}100%{transform:scale(1.5);opacity:0}}
     
-    /* Node Positions */
     .node-1{top:50%;left:50%;margin-left:-24px;margin-top:-104px}
     .node-2{top:50%;left:50%;margin-left:56px;margin-top:-56px}
     .node-3{top:50%;left:50%;margin-left:-104px;margin-top:-56px}
@@ -190,7 +224,6 @@
     .node-11{top:50%;left:50%;margin-left:-208px;margin-top:55px}
     .node-12{top:50%;left:50%;margin-left:-123px;margin-top:-175px}
     
-    /* Data Flow Particles */
     .data-flows{position:absolute;width:100%;height:100%;pointer-events:none}
     .data-particle{position:absolute;width:6px;height:6px;background:#81d742;border-radius:50%;box-shadow:0 0 12px #81d742,0 0 24px #81d742;opacity:0}
     .p1{animation:flowIn1 4s ease-in-out infinite}
@@ -210,7 +243,6 @@
     @keyframes flowOut3{0%{top:50%;left:50%;opacity:0}50%{opacity:1}100%{top:20%;left:20%;opacity:0}}
     @keyframes flowOut4{0%{top:50%;left:50%;opacity:0}50%{opacity:1}100%{top:80%;left:20%;opacity:0}}
     
-    /* Integration Panel */
     .integration-panel{background:linear-gradient(135deg,rgba(20,20,35,0.9),rgba(15,15,25,0.95));border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:24px;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,0.4)}
     .panel-header{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;margin-bottom:20px;color:#fff}
     .live-dot{width:10px;height:10px;background:#34d399;border-radius:50%;box-shadow:0 0 10px #34d399;animation:livePulse 1.5s ease-in-out infinite}
@@ -234,9 +266,9 @@
     .int-stat-num{display:block;font-size:28px;font-weight:700;color:#fff;background:linear-gradient(135deg,#fff,#64d2ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     .int-stat-label{font-size:9px;color:var(--gray);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px}
     
-    /* Integration Types */
     .integration-types{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:60px}
-    .int-type{background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 20px;text-align:center;transition:all 0.4s;position:relative;overflow:hidden}
+    .int-type{background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 20px;text-align:center;transition:all 0.4s;position:relative;overflow:hidden;opacity:0;transform:translateY(30px);transition:all 0.5s ease}
+    .int-type.animate{opacity:1;transform:translateY(0)}
     .int-type::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,102,204,0.1),transparent);opacity:0;transition:opacity 0.4s}
     .int-type:hover{border-color:rgba(0,102,204,0.5);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.3)}
     .int-type:hover::before{opacity:1}
@@ -244,7 +276,6 @@
     .int-type h4{font-size:15px;font-weight:600;margin-bottom:8px;color:#fff}
     .int-type p{font-size:12px;color:var(--gray);line-height:1.4}
     
-    /* Projects Section */
     .projects-section{background:#000;padding:120px 0}
     .project-item{padding:80px 22px;max-width:1200px;margin:0 auto}
     .project-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
@@ -284,7 +315,12 @@
     .profile-image-container{position:relative;width:180px;height:180px;margin:0 auto 32px}
     .contact-profile{width:180px;height:180px;border-radius:50%;box-shadow:0 20px 60px rgba(0,0,0,.15);border:4px solid var(--white);object-fit:cover;display:block}
     .contact-profile-fallback{display:none;width:180px;height:180px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);box-shadow:0 20px 60px rgba(0,0,0,.15);border:4px solid var(--white);color:#fff;font-size:64px;font-weight:700;align-items:center;justify-content:center}
+    
+    /* CONTACT NAME WAVE */
     .contact-name{font-size:48px;font-weight:600;margin-bottom:8px}
+    .contact-name span{display:inline-block;animation:contactWave 2s ease-in-out infinite}
+    @keyframes contactWave{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    
     .contact-role{font-size:21px;color:var(--gray);margin-bottom:32px}
     .contact-buttons{display:flex;gap:16px;justify-content:center;margin-bottom:40px}
     .btn{padding:12px 24px;border-radius:980px;font-size:17px;text-decoration:none;transition:all .3s}
@@ -331,7 +367,7 @@
 
   <section class="hero">
     <p class="hero-eye">Full Stack ServiceNow Engineer</p>
-    <h1 class="hero-title">Sumanth Bolle</h1>
+    <h1 class="hero-title"><span class="typewriter">Sumanth Bolle</span></h1>
     <div class="hero-sub">
       <span class="flash-text-1">AI-Native Solutions.</span><br>
       <span class="flash-text-2">Agentic Workflows.</span>
@@ -346,9 +382,9 @@
   <section class="section section-gray" id="about">
     <div class="section-c">
       <div class="section-h">
-        <p class="section-eye">About</p>
-        <h2 class="section-title">Expertise that delivers.</h2>
-        <p class="section-sub">Over 5 years of experience building enterprise-scale solutions.</p>
+        <p class="section-eye" data-animate>About</p>
+        <h2 class="section-title letter-reveal" data-animate data-letter>Expertise that delivers.</h2>
+        <p class="section-sub" data-animate>Over 5 years of experience building enterprise-scale solutions.</p>
       </div>
       <div class="about-grid" id="aboutGrid"></div>
     </div>
@@ -363,8 +399,8 @@
   <section class="section" id="experience">
     <div class="section-c">
       <div class="section-h">
-        <p class="section-eye">Experience</p>
-        <h2 class="section-title">A career of innovation.</h2>
+        <p class="section-eye" data-animate>Experience</p>
+        <h2 class="section-title flip-title" data-animate data-flip>A career of innovation.</h2>
       </div>
       <div class="exp-list" id="expList"></div>
     </div>
@@ -373,8 +409,8 @@
   <section class="section section-gray" id="skills">
     <div class="section-c">
       <div class="section-h">
-        <p class="section-eye">Skills</p>
-        <h2 class="section-title">Technologies I master.</h2>
+        <p class="section-eye" data-animate>Skills</p>
+        <h2 class="section-title wave-title" data-animate data-wave>Technologies I master.</h2>
       </div>
       <div class="skills-grid" id="skillsGrid"></div>
     </div>
@@ -382,8 +418,8 @@
 
   <section class="section section-dark" id="certs">
     <div class="section-h" style="padding:0 22px">
-      <p class="section-eye">Certifications</p>
-      <h2 class="section-title">Recognized expertise.</h2>
+      <p class="section-eye" data-animate>Certifications</p>
+      <h2 class="section-title" data-animate>Recognized expertise.</h2>
     </div>
     <div class="cert-scroll" id="certScroll"></div>
   </section>
@@ -391,12 +427,11 @@
   <section class="integration-section" id="integrations">
     <div class="section-c">
       <div class="section-h">
-        <p class="section-eye">Integration Architecture</p>
-        <h2 class="section-title" style="color:#fff">ServiceNow as Central Hub</h2>
-        <p class="section-sub">Connecting enterprise systems with intelligent workflows</p>
+        <p class="section-eye" data-animate>Integration Architecture</p>
+        <h2 class="section-title glitch" data-text="ServiceNow as Central Hub" data-animate style="color:#fff">ServiceNow as Central Hub</h2>
+        <p class="section-sub" data-animate>Connecting enterprise systems with intelligent workflows</p>
       </div>
       
-      <!-- ServiceNow UNITE Loop Animation -->
       <div class="sn-loop-container">
         <div class="unite-header">
           <p class="unite-text">Unite</p>
@@ -409,7 +444,6 @@
           </div>
         </div>
         
-        <!-- Infinity Loop SVG -->
         <div class="sn-loop-wrapper">
           <svg class="sn-loop-svg" viewBox="0 0 900 300" preserveAspectRatio="xMidYMid meet">
             <defs>
@@ -425,32 +459,24 @@
             <path class="loop-path-animated" d="M100,150 C100,50 250,50 350,150 C450,250 550,250 650,150 C750,50 800,50 800,150 C800,250 650,250 550,150 C450,50 350,50 250,150 C150,250 100,250 100,150"/>
           </svg>
           
-          <!-- Loop Nodes -->
           <div class="loop-node node-ai" style="left:50px;top:50%;transform:translateY(-50%)">
-            <div class="node-circle">
-              <svg viewBox="0 0 24 24"><path d="M12 4.5a2.5 2.5 0 00-4.96-.46 2.5 2.5 0 00-1.98 3 2.5 2.5 0 00-1.32 4.24 3 3 0 00.34 5.58 2.5 2.5 0 002.96 3.08A2.5 2.5 0 0012 19.5M12 4.5a2.5 2.5 0 014.96-.46 2.5 2.5 0 011.98 3 2.5 2.5 0 011.32 4.24 3 3 0 01-.34 5.58 2.5 2.5 0 01-2.96 3.08A2.5 2.5 0 0112 19.5"/><path d="M12 4.5V19.5"/></svg>
-            </div>
+            <div class="node-circle"><svg viewBox="0 0 24 24"><path d="M12 4.5a2.5 2.5 0 00-4.96-.46 2.5 2.5 0 00-1.98 3 2.5 2.5 0 00-1.32 4.24 3 3 0 00.34 5.58 2.5 2.5 0 002.96 3.08A2.5 2.5 0 0012 19.5M12 4.5a2.5 2.5 0 014.96-.46 2.5 2.5 0 011.98 3 2.5 2.5 0 011.32 4.24 3 3 0 01-.34 5.58 2.5 2.5 0 01-2.96 3.08A2.5 2.5 0 0112 19.5"/><path d="M12 4.5V19.5"/></svg></div>
             <span class="node-label">AI</span>
             <span class="node-sublabel">GenAI, LLMs, AI Agents, Control Tower</span>
           </div>
           
           <div class="loop-node node-data" style="left:50%;top:20px;transform:translateX(-50%)">
-            <div class="node-circle">
-              <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-            </div>
+            <div class="node-circle"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
             <span class="node-label">DATA</span>
             <span class="node-sublabel">CMDB, Discovery, Data Fabric</span>
           </div>
           
           <div class="loop-node node-workflows" style="right:50px;top:50%;transform:translateY(-50%)">
-            <div class="node-circle">
-              <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            </div>
+            <div class="node-circle"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
             <span class="node-label">WORKFLOWS</span>
             <span class="node-sublabel">Flow Designer, Integration Hub</span>
           </div>
           
-          <!-- Central Hub -->
           <div class="sn-central-hub">
             <div class="sn-hub-outer">
               <div class="sn-hub-inner">
@@ -462,7 +488,6 @@
         </div>
       </div>
       
-      <!-- Integration Orbital Hub -->
       <div class="integration-showcase">
         <div class="hub-container">
           <div class="orbit-ring ring-1"></div>
@@ -477,14 +502,12 @@
             </div>
           </div>
           
-          <!-- Orbit 1 Nodes -->
           <div class="orbit orbit-1">
             <div class="node node-1"><div class="node-inner ni-identity"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><div class="node-pulse"></div></div>
             <div class="node node-2"><div class="node-inner ni-cloud"><svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg></div><div class="node-pulse"></div></div>
             <div class="node node-3"><div class="node-inner ni-collab"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div><div class="node-pulse"></div></div>
           </div>
           
-          <!-- Orbit 2 Nodes -->
           <div class="orbit orbit-2">
             <div class="node node-4"><div class="node-inner ni-cloud"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg></div><div class="node-pulse"></div></div>
             <div class="node node-5"><div class="node-inner ni-devops"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div><div class="node-pulse"></div></div>
@@ -492,7 +515,6 @@
             <div class="node node-7"><div class="node-inner ni-analytics"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="node-pulse"></div></div>
           </div>
           
-          <!-- Orbit 3 Nodes -->
           <div class="orbit orbit-3">
             <div class="node node-8"><div class="node-inner ni-erp"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div><div class="node-pulse"></div></div>
             <div class="node node-9"><div class="node-inner ni-hr"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div class="node-pulse"></div></div>
@@ -501,7 +523,6 @@
             <div class="node node-12"><div class="node-inner ni-ai"><svg viewBox="0 0 24 24"><path d="M12 4.5a2.5 2.5 0 00-4.96-.46 2.5 2.5 0 00-1.98 3 2.5 2.5 0 00-1.32 4.24 3 3 0 00.34 5.58 2.5 2.5 0 002.96 3.08A2.5 2.5 0 0012 19.5M12 4.5a2.5 2.5 0 014.96-.46 2.5 2.5 0 011.98 3 2.5 2.5 0 011.32 4.24 3 3 0 01-.34 5.58 2.5 2.5 0 01-2.96 3.08A2.5 2.5 0 0112 19.5"/><path d="M12 4.5V19.5"/></svg></div><div class="node-pulse"></div></div>
           </div>
           
-          <!-- Data Flow Particles -->
           <div class="data-flows">
             <div class="data-particle p1"></div>
             <div class="data-particle p2"></div>
@@ -532,24 +553,20 @@
   <section class="projects-section" id="projects">
     <div class="section-c">
       <div class="section-h">
-        <p class="section-eye">Personal Projects</p>
-        <h2 class="section-title" style="color:#fff">Built to solve real problems.</h2>
-        <p class="section-sub">Computer Vision • NLP • Full Stack</p>
+        <p class="section-eye" data-animate>Personal Projects</p>
+        <h2 class="section-title" data-animate style="color:#fff">Built to solve real problems.</h2>
+        <p class="section-sub" data-animate>Computer Vision • NLP • Full Stack</p>
       </div>
     </div>
     <div id="projectsList"></div>
   </section>
 
   <section class="contact-section" id="contact">
-    <!-- REPLACE THE IMAGE: Change the src URL below to your profile photo -->
-    <!-- Option 1: Use a URL like "https://your-image-url.com/photo.jpg" -->
-    <!-- Option 2: Use a local file like "images/profile.jpg" -->
-    <!-- Option 3: Use base64 encoded image -->
     <div class="profile-image-container">
       <img id="profileImage" class="contact-profile" src="https://sumanthbolle.github.io/profile.jpeg" alt="Sumanth Bolle" onerror="this.style.display='none';document.getElementById('profileFallback').style.display='flex';">
       <div id="profileFallback" class="contact-profile-fallback">SB</div>
     </div>
-    <h2 class="contact-name">Sumanth Bolle</h2>
+    <h2 class="contact-name" id="contactName">Sumanth Bolle</h2>
     <p class="contact-role">Full Stack ServiceNow Engineer • Singapore</p>
     <div class="contact-buttons">
       <a href="https://www.linkedin.com/in/sumanthbolle/" class="btn btn-p">Connect on LinkedIn</a>
@@ -588,12 +605,7 @@
         {icon:'gear',cls:'icon-gear',title:'ServiceNow Mastery',desc:'Strong expertise across ITSM, ITOM, SecOps, GRC, and custom application development.'},
         {icon:'rocket',cls:'icon-rocket',title:'Enterprise Scale',desc:'Delivering enterprise-scale solutions for global organizations including Walt Disney.'}
       ],
-      stats: [
-        {num:'5+',label:'Years Experience'},
-        {num:'10+',label:'Certifications'},
-        {num:'60%',label:'Manual Work Reduced'},
-        {num:'40%',label:'Faster Completion'}
-      ],
+      stats: [{num:'5+',label:'Years Experience'},{num:'10+',label:'Certifications'},{num:'60%',label:'Manual Work Reduced'},{num:'40%',label:'Faster Completion'}],
       experience: [
         {date:'Oct 2025 – Present',role:'Senior Software Engineer',company:'Temus',desc:'Designing agentic workflows for PSU clients, integrating web search, secure LLM hosting, and automated data masking.'},
         {date:'Feb 2024 – Oct 2025',role:'Senior Software Engineer',company:'ServiceNow',desc:'Configured AI Control Tower for AI Governance. Developed AI-powered Risk Workspace with GenAI summarization.'},
@@ -628,24 +640,16 @@
         {num:'03',cat:'Deep Learning',title:'Live Facial Emotion Recognition',desc:'Understanding human emotions through real-time computer vision analysis.',problem:'Manual feedback collection is subjective and difficult to capture accurately.',solution:'Developed live emotion detection with facial landmarks and deep learning, achieving 95% accuracy.',tech:['TensorFlow','OpenCV','Keras','Matplotlib'],stats:[{val:'95%',lbl:'Accuracy'},{val:'Live',lbl:'Processing'},{val:'7',lbl:'Emotions'}]},
         {num:'04',cat:'Full Stack',title:'Real-Time News Aggregator',desc:'Intelligently curated news from multiple sources in one interface.',problem:'Users visit multiple news sources leading to information overload.',solution:'Built scalable React.js app aggregating news from multiple APIs with real-time updates.',tech:['React.js','AXIOS','REST API','JavaScript'],stats:[{val:'Live',lbl:'Updates'},{val:'10+',lbl:'Sources'},{val:'Fast',lbl:'Loading'}]}
       ],
-      apis: [
-        {method:'POST',endpoint:'/api/now/table/incident',status:'201'},
-        {method:'GET',endpoint:'/api/now/cmdb/instance/server',status:'200'},
-        {method:'PUT',endpoint:'/api/now/table/change_request',status:'200'},
-        {method:'POST',endpoint:'/api/sailpoint/sync',status:'201'},
-        {method:'GET',endpoint:'/api/now/table/sys_user',status:'200'}
-      ]
+      apis: [{method:'POST',endpoint:'/api/now/table/incident',status:'201'},{method:'GET',endpoint:'/api/now/cmdb/instance/server',status:'200'},{method:'PUT',endpoint:'/api/now/table/change_request',status:'200'},{method:'POST',endpoint:'/api/sailpoint/sync',status:'201'},{method:'GET',endpoint:'/api/now/table/sys_user',status:'200'}]
     };
 
-    function icon(name, cls) {
-      return '<div class="icon ' + cls + '">' + (ICONS[name] || '') + '</div>';
-    }
+    function icon(name, cls) { return '<div class="icon ' + cls + '">' + (ICONS[name] || '') + '</div>'; }
 
     // Render About
     var aboutHTML = '';
     for (var i = 0; i < DATA.about.length; i++) {
       var a = DATA.about[i];
-      aboutHTML += '<div class="about-card' + (a.large ? ' large' : '') + '">' + icon(a.icon, a.cls) + '<h3>' + a.title + '</h3><p>' + a.desc + '</p></div>';
+      aboutHTML += '<div class="about-card' + (a.large ? ' large' : '') + '" data-animate-card style="transition-delay:' + (i * 0.15) + 's">' + icon(a.icon, a.cls) + '<h3>' + a.title + '</h3><p>' + a.desc + '</p></div>';
     }
     document.getElementById('aboutGrid').innerHTML = aboutHTML;
 
@@ -653,7 +657,7 @@
     var statsHTML = '';
     for (var i = 0; i < DATA.stats.length; i++) {
       var s = DATA.stats[i];
-      statsHTML += '<div class="stat-item"><div class="stat-num">' + s.num + '</div><div class="stat-label">' + s.label + '</div></div>';
+      statsHTML += '<div class="stat-item" data-animate-card style="transition-delay:' + (i * 0.1) + 's"><div class="stat-num">' + s.num + '</div><div class="stat-label">' + s.label + '</div></div>';
     }
     document.getElementById('statsRow').innerHTML = statsHTML;
 
@@ -661,7 +665,7 @@
     var expHTML = '';
     for (var i = 0; i < DATA.experience.length; i++) {
       var e = DATA.experience[i];
-      expHTML += '<div class="exp-item"><div class="exp-date">' + e.date + '</div><div class="exp-content"><h3>' + e.role + '</h3><p class="exp-company">' + e.company + '</p><p class="exp-desc">' + e.desc + '</p></div></div>';
+      expHTML += '<div class="exp-item" data-animate-card style="transition-delay:' + (i * 0.15) + 's"><div class="exp-date">' + e.date + '</div><div class="exp-content"><h3>' + e.role + '</h3><p class="exp-company">' + e.company + '</p><p class="exp-desc">' + e.desc + '</p></div></div>';
     }
     document.getElementById('expList').innerHTML = expHTML;
 
@@ -670,10 +674,8 @@
     for (var i = 0; i < DATA.skills.length; i++) {
       var s = DATA.skills[i];
       var tagsHTML = '';
-      for (var j = 0; j < s.tags.length; j++) {
-        tagsHTML += '<span class="skill-tag">' + s.tags[j] + '</span>';
-      }
-      skillsHTML += '<div class="skill-tile">' + icon(s.icon, s.cls) + '<h4>' + s.title + '</h4><div class="skill-tags">' + tagsHTML + '</div></div>';
+      for (var j = 0; j < s.tags.length; j++) { tagsHTML += '<span class="skill-tag">' + s.tags[j] + '</span>'; }
+      skillsHTML += '<div class="skill-tile" data-animate-card style="transition-delay:' + (i * 0.1) + 's">' + icon(s.icon, s.cls) + '<h4>' + s.title + '</h4><div class="skill-tags">' + tagsHTML + '</div></div>';
     }
     document.getElementById('skillsGrid').innerHTML = skillsHTML;
 
@@ -681,7 +683,7 @@
     var certHTML = '';
     for (var i = 0; i < DATA.certs.length; i++) {
       var c = DATA.certs[i];
-      certHTML += '<div class="cert-card">' + icon(c.icon, c.cls) + '<h4>' + c.name + '</h4><p class="cert-issuer">' + c.issuer + '</p></div>';
+      certHTML += '<div class="cert-card" data-animate-card style="transition-delay:' + (i * 0.1) + 's">' + icon(c.icon, c.cls) + '<h4>' + c.name + '</h4><p class="cert-issuer">' + c.issuer + '</p></div>';
     }
     document.getElementById('certScroll').innerHTML = certHTML;
 
@@ -689,7 +691,7 @@
     var intHTML = '';
     for (var i = 0; i < DATA.integrationTypes.length; i++) {
       var t = DATA.integrationTypes[i];
-      intHTML += '<div class="int-type">' + icon(t.icon, t.cls) + '<h4>' + t.title + '</h4><p>' + t.desc + '</p></div>';
+      intHTML += '<div class="int-type" data-animate-card style="transition-delay:' + (i * 0.1) + 's">' + icon(t.icon, t.cls) + '<h4>' + t.title + '</h4><p>' + t.desc + '</p></div>';
     }
     document.getElementById('intTypes').innerHTML = intHTML;
 
@@ -697,22 +699,15 @@
     var projHTML = '';
     for (var i = 0; i < DATA.projects.length; i++) {
       var p = DATA.projects[i];
-      var techHTML = '';
-      for (var j = 0; j < p.tech.length; j++) {
-        techHTML += '<span class="tech-tag">' + p.tech[j] + '</span>';
-      }
-      var statsHTML = '';
-      for (var j = 0; j < p.stats.length; j++) {
-        statsHTML += '<div class="project-stat-card"><div class="project-stat-value">' + p.stats[j].val + '</div><div class="project-stat-label">' + p.stats[j].lbl + '</div></div>';
-      }
+      var techHTML = '', statsHTML = '';
+      for (var j = 0; j < p.tech.length; j++) { techHTML += '<span class="tech-tag">' + p.tech[j] + '</span>'; }
+      for (var j = 0; j < p.stats.length; j++) { statsHTML += '<div class="project-stat-card"><div class="project-stat-value">' + p.stats[j].val + '</div><div class="project-stat-label">' + p.stats[j].lbl + '</div></div>'; }
       projHTML += '<div class="project-item"><div class="project-grid"><div class="project-visual"><div class="project-screen"><canvas id="canvas' + i + '" width="600" height="300"></canvas></div><div class="project-stats-row">' + statsHTML + '</div></div><div class="project-content"><div class="project-num">' + p.num + '</div><span class="project-category">' + p.cat + '</span><h3 class="project-title">' + p.title + '</h3><p class="project-desc">' + p.desc + '</p><div class="project-features"><div class="feature-item"><div class="feature-icon problem">!</div><div class="feature-text"><h4>The Problem</h4><p>' + p.problem + '</p></div></div><div class="feature-item"><div class="feature-icon solution">✓</div><div class="feature-text"><h4>The Solution</h4><p>' + p.solution + '</p></div></div></div><div class="project-tech">' + techHTML + '</div></div></div></div>';
-      if (i < DATA.projects.length - 1) {
-        projHTML += '<div class="project-divider"></div>';
-      }
+      if (i < DATA.projects.length - 1) { projHTML += '<div class="project-divider"></div>'; }
     }
     document.getElementById('projectsList').innerHTML = projHTML;
 
-    // API Log
+    // API Log Animation
     var apiLog = document.getElementById('apiLog');
     function addLog() {
       var api = DATA.apis[Math.floor(Math.random() * DATA.apis.length)];
@@ -724,302 +719,184 @@
       if (apiLog.children.length > 8) apiLog.removeChild(apiLog.lastChild);
       document.getElementById('apiCount').textContent = Math.floor(Math.random() * 80 + 120);
     }
-    addLog();
-    setInterval(addLog, 2000);
+    addLog(); setInterval(addLog, 2000);
 
     // Unite Animation
-    var uniteWords = ['uniteAI', 'uniteData', 'uniteWorkflows'];
-    var uniteIndex = 0;
+    var uniteWords = ['uniteAI', 'uniteData', 'uniteWorkflows'], uniteIndex = 0;
     setInterval(function() {
-      for (var i = 0; i < uniteWords.length; i++) {
-        document.getElementById(uniteWords[i]).className = 'unite-word';
-      }
+      for (var i = 0; i < uniteWords.length; i++) { document.getElementById(uniteWords[i]).className = 'unite-word'; }
       document.getElementById(uniteWords[uniteIndex]).className = 'unite-word active';
       uniteIndex = (uniteIndex + 1) % uniteWords.length;
     }, 2000);
 
-    // Project Canvas Animations
+    // Intersection Observer for scroll animations
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('animate'); }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('[data-animate]').forEach(function(el) { observer.observe(el); });
+    document.querySelectorAll('[data-animate-card]').forEach(function(el) { observer.observe(el); });
+
+    // Letter reveal animation
+    document.querySelectorAll('[data-letter]').forEach(function(el) {
+      var text = el.textContent;
+      el.innerHTML = text.split('').map(function(char, i) {
+        return char === ' ' ? ' ' : '<span style="transition-delay:' + (i * 0.04) + 's">' + char + '</span>';
+      }).join('');
+    });
+
+    // Flip title animation
+    document.querySelectorAll('[data-flip]').forEach(function(el) {
+      var text = el.textContent;
+      el.innerHTML = text.split('').map(function(char, i) {
+        return char === ' ' ? ' ' : '<span style="transition-delay:' + (i * 0.03) + 's">' + char + '</span>';
+      }).join('');
+    });
+
+    // Wave title animation
+    document.querySelectorAll('[data-wave]').forEach(function(el) {
+      var text = el.textContent;
+      el.innerHTML = text.split('').map(function(char, i) {
+        return char === ' ' ? ' ' : '<span style="animation-delay:' + (i * 0.08) + 's">' + char + '</span>';
+      }).join('');
+    });
+
+    // Contact name wave animation
+    var contactName = document.getElementById('contactName');
+    if (contactName) {
+      var nameText = contactName.textContent;
+      contactName.innerHTML = nameText.split('').map(function(char, i) {
+        return char === ' ' ? ' ' : '<span style="animation-delay:' + (i * 0.1) + 's">' + char + '</span>';
+      }).join('');
+    }
+
+    // Canvas animations
     function animateCanvas0() {
-      var canvas = document.getElementById('canvas0');
-      if (!canvas) return;
-      var ctx = canvas.getContext('2d');
-      var w = canvas.width, h = canvas.height, f = 0;
-      
+      var canvas = document.getElementById('canvas0'); if (!canvas) return;
+      var ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height, f = 0;
       function draw() {
-        ctx.fillStyle = '#111';
-        ctx.fillRect(0, 0, w, h);
-        
-        // Road
-        ctx.fillStyle = '#222';
-        ctx.fillRect(0, h * 0.6, w, h * 0.4);
-        ctx.strokeStyle = '#ffd43b';
-        ctx.lineWidth = 4;
-        ctx.setLineDash([30, 20]);
-        ctx.beginPath();
-        ctx.moveTo(0, h * 0.75);
-        ctx.lineTo(w, h * 0.75);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        
-        // Rider 1 with helmet
+        ctx.fillStyle = '#111'; ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#222'; ctx.fillRect(0, h * 0.6, w, h * 0.4);
+        ctx.strokeStyle = '#ffd43b'; ctx.lineWidth = 4; ctx.setLineDash([30, 20]);
+        ctx.beginPath(); ctx.moveTo(0, h * 0.75); ctx.lineTo(w, h * 0.75); ctx.stroke(); ctx.setLineDash([]);
         var x1 = 100 + Math.sin(f * 0.02) * 20;
-        ctx.fillStyle = '#444';
-        ctx.fillRect(x1, h * 0.4, 80, 40);
-        ctx.fillStyle = '#22c55e';
-        ctx.beginPath();
-        ctx.arc(x1 + 40, h * 0.32, 20, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#22c55e';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(x1 - 10, h * 0.2, 100, 90);
-        ctx.fillStyle = '#22c55e';
-        ctx.font = 'bold 14px sans-serif';
-        ctx.fillText('HELMET ✓', x1, h * 0.15);
-        
-        // Rider 2 no helmet
+        ctx.fillStyle = '#444'; ctx.fillRect(x1, h * 0.4, 80, 40);
+        ctx.fillStyle = '#22c55e'; ctx.beginPath(); ctx.arc(x1 + 40, h * 0.32, 20, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 3; ctx.strokeRect(x1 - 10, h * 0.2, 100, 90);
+        ctx.fillStyle = '#22c55e'; ctx.font = 'bold 14px sans-serif'; ctx.fillText('HELMET ✓', x1, h * 0.15);
         var x2 = 350 + Math.cos(f * 0.015) * 15;
-        ctx.fillStyle = '#444';
-        ctx.fillRect(x2, h * 0.42, 75, 38);
-        ctx.fillStyle = '#fbbf24';
-        ctx.beginPath();
-        ctx.arc(x2 + 38, h * 0.35, 16, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(x2 - 10, h * 0.22, 95, 85);
-        ctx.fillStyle = '#ef4444';
-        ctx.font = 'bold 14px sans-serif';
-        ctx.fillText('NO HELMET ✗', x2 - 5, h * 0.17);
-        
-        // License plate
-        ctx.fillStyle = '#ffd43b';
-        ctx.fillRect(x2 + 10, h * 0.82, 60, 25);
-        ctx.fillStyle = '#000';
-        ctx.font = 'bold 12px monospace';
-        ctx.fillText('SG 4521', x2 + 15, h * 0.87);
-        
-        // Scan line
+        ctx.fillStyle = '#444'; ctx.fillRect(x2, h * 0.42, 75, 38);
+        ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.arc(x2 + 38, h * 0.35, 16, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3; ctx.strokeRect(x2 - 10, h * 0.22, 95, 85);
+        ctx.fillStyle = '#ef4444'; ctx.font = 'bold 14px sans-serif'; ctx.fillText('NO HELMET ✗', x2 - 5, h * 0.17);
+        ctx.fillStyle = '#ffd43b'; ctx.fillRect(x2 + 10, h * 0.82, 60, 25);
+        ctx.fillStyle = '#000'; ctx.font = 'bold 12px monospace'; ctx.fillText('SG 4521', x2 + 15, h * 0.87);
         var scanY = (f * 4) % h;
-        ctx.strokeStyle = 'rgba(34, 197, 94, 0.5)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, scanY);
-        ctx.lineTo(w, scanY);
-        ctx.stroke();
-        
-        f++;
-        requestAnimationFrame(draw);
+        ctx.strokeStyle = 'rgba(34, 197, 94, 0.5)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, scanY); ctx.lineTo(w, scanY); ctx.stroke();
+        f++; requestAnimationFrame(draw);
       }
       draw();
     }
 
     function animateCanvas1() {
-      var canvas = document.getElementById('canvas1');
-      if (!canvas) return;
-      var ctx = canvas.getContext('2d');
-      var w = canvas.width, h = canvas.height, f = 0;
+      var canvas = document.getElementById('canvas1'); if (!canvas) return;
+      var ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height, f = 0;
       var msgs = [{u:1,t:'Who is HOD of CS?'},{u:0,t:'Dr. Ramesh Kumar'},{u:1,t:'Lab timings?'},{u:0,t:'Mon-Fri, 9AM-5PM'}];
-      
       function draw() {
-        ctx.fillStyle = '#111';
-        ctx.fillRect(0, 0, w, h);
-        
-        // Header
-        ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(0, 0, w, 60);
-        ctx.fillStyle = '#667eea';
-        ctx.beginPath();
-        ctx.arc(40, 30, 20, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 14px sans-serif';
-        ctx.fillText('AI', 32, 35);
-        ctx.font = 'bold 18px sans-serif';
-        ctx.fillText('Campus Assistant', 70, 28);
-        ctx.fillStyle = '#22c55e';
-        ctx.font = '14px sans-serif';
-        ctx.fillText('● Online', 70, 48);
-        
-        // Messages
-        var visible = Math.min(Math.floor(f / 50) + 1, msgs.length);
-        var y = 80;
+        ctx.fillStyle = '#111'; ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, w, 60);
+        ctx.fillStyle = '#667eea'; ctx.beginPath(); ctx.arc(40, 30, 20, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 14px sans-serif'; ctx.fillText('AI', 32, 35);
+        ctx.font = 'bold 18px sans-serif'; ctx.fillText('Campus Assistant', 70, 28);
+        ctx.fillStyle = '#22c55e'; ctx.font = '14px sans-serif'; ctx.fillText('● Online', 70, 48);
+        var visible = Math.min(Math.floor(f / 50) + 1, msgs.length), y = 80;
         for (var i = 0; i < visible; i++) {
-          var m = msgs[i];
-          var bx = m.u ? w - 180 : 20;
+          var m = msgs[i], bx = m.u ? w - 180 : 20;
           ctx.fillStyle = m.u ? '#667eea' : '#2a2a3e';
-          ctx.beginPath();
-          ctx.moveTo(bx + 10, y);
-          ctx.lineTo(bx + 160, y);
-          ctx.quadraticCurveTo(bx + 170, y, bx + 170, y + 10);
-          ctx.lineTo(bx + 170, y + 35);
-          ctx.quadraticCurveTo(bx + 170, y + 45, bx + 160, y + 45);
-          ctx.lineTo(bx + 10, y + 45);
-          ctx.quadraticCurveTo(bx, y + 45, bx, y + 35);
-          ctx.lineTo(bx, y + 10);
-          ctx.quadraticCurveTo(bx, y, bx + 10, y);
-          ctx.fill();
-          ctx.fillStyle = '#fff';
-          ctx.font = '14px sans-serif';
-          ctx.fillText(m.t, bx + 15, y + 28);
+          ctx.beginPath(); ctx.roundRect(bx, y, 170, 45, 10); ctx.fill();
+          ctx.fillStyle = '#fff'; ctx.font = '14px sans-serif'; ctx.fillText(m.t, bx + 15, y + 28);
           y += 55;
         }
-        
-        // Voice wave
-        ctx.strokeStyle = '#667eea';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
+        ctx.strokeStyle = '#667eea'; ctx.lineWidth = 2; ctx.beginPath();
         for (var x = 50; x < w - 50; x += 5) {
           var vy = h - 40 + Math.sin(x * 0.05 + f * 0.1) * 15;
-          if (x === 50) ctx.moveTo(x, vy);
-          else ctx.lineTo(x, vy);
+          if (x === 50) ctx.moveTo(x, vy); else ctx.lineTo(x, vy);
         }
         ctx.stroke();
-        
-        f++;
-        requestAnimationFrame(draw);
+        f++; requestAnimationFrame(draw);
       }
       draw();
     }
 
     function animateCanvas2() {
-      var canvas = document.getElementById('canvas2');
-      if (!canvas) return;
-      var ctx = canvas.getContext('2d');
-      var w = canvas.width, h = canvas.height, f = 0;
-      var emojis = ['😊', '😐', '😢', '😠', '😮'];
-      var labels = ['Happy', 'Neutral', 'Sad', 'Angry', 'Surprised'];
+      var canvas = document.getElementById('canvas2'); if (!canvas) return;
+      var ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height, f = 0;
+      var emojis = ['😊', '😐', '😢', '😠', '😮'], labels = ['Happy', 'Neutral', 'Sad', 'Angry', 'Surprised'];
       var colors = ['#22c55e', '#fbbf24', '#3b82f6', '#ef4444', '#a855f7'];
-      
       function draw() {
-        ctx.fillStyle = '#111';
-        ctx.fillRect(0, 0, w, h);
-        
-        // Face box
-        ctx.strokeStyle = '#3b82f6';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(50, 40, 200, 180);
-        
-        // Face circle
-        ctx.strokeStyle = '#667eea';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(150, 130, 70, 0, Math.PI * 2);
-        ctx.stroke();
-        
-        // Face points
+        ctx.fillStyle = '#111'; ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 3; ctx.strokeRect(50, 40, 200, 180);
+        ctx.strokeStyle = '#667eea'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(150, 130, 70, 0, Math.PI * 2); ctx.stroke();
         var points = [[130,110],[170,110],[150,140],[125,160],[150,170],[175,160]];
         ctx.fillStyle = '#22c55e';
         for (var i = 0; i < points.length; i++) {
-          ctx.beginPath();
-          ctx.arc(points[i][0] + Math.sin(f * 0.05 + i) * 3, points[i][1] + Math.cos(f * 0.05 + i) * 3, 5, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.beginPath(); ctx.arc(points[i][0] + Math.sin(f * 0.05 + i) * 3, points[i][1] + Math.cos(f * 0.05 + i) * 3, 5, 0, Math.PI * 2); ctx.fill();
         }
-        
-        // Emotion display
         var idx = Math.floor(f / 100) % emojis.length;
-        ctx.font = '60px sans-serif';
-        ctx.fillText(emojis[idx], 350, 100);
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 24px sans-serif';
-        ctx.fillText(labels[idx], 340, 140);
-        ctx.fillStyle = colors[idx];
-        ctx.font = 'bold 28px sans-serif';
-        ctx.fillText('85%', 360, 180);
-        
-        // Graph
-        ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(300, 200, 250, 80);
-        ctx.strokeStyle = colors[idx];
-        ctx.lineWidth = 2;
-        ctx.beginPath();
+        ctx.font = '60px sans-serif'; ctx.fillText(emojis[idx], 350, 100);
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 24px sans-serif'; ctx.fillText(labels[idx], 340, 140);
+        ctx.fillStyle = colors[idx]; ctx.font = 'bold 28px sans-serif'; ctx.fillText('85%', 360, 180);
+        ctx.fillStyle = '#1a1a2e'; ctx.fillRect(300, 200, 250, 80);
+        ctx.strokeStyle = colors[idx]; ctx.lineWidth = 2; ctx.beginPath();
         for (var x = 310; x < 540; x += 4) {
           var gy = 250 - Math.sin((x + f) * 0.04) * 20 - Math.sin((x + f) * 0.08) * 10;
-          if (x === 310) ctx.moveTo(x, gy);
-          else ctx.lineTo(x, gy);
+          if (x === 310) ctx.moveTo(x, gy); else ctx.lineTo(x, gy);
         }
         ctx.stroke();
-        
-        // Label
-        ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
-        ctx.fillRect(50, 15, 100, 20);
-        ctx.fillStyle = '#22c55e';
-        ctx.font = 'bold 11px sans-serif';
-        ctx.fillText('FACE DETECTED', 55, 29);
-        
-        f++;
-        requestAnimationFrame(draw);
+        ctx.fillStyle = 'rgba(34, 197, 94, 0.2)'; ctx.fillRect(50, 15, 100, 20);
+        ctx.fillStyle = '#22c55e'; ctx.font = 'bold 11px sans-serif'; ctx.fillText('FACE DETECTED', 55, 29);
+        f++; requestAnimationFrame(draw);
       }
       draw();
     }
 
     function animateCanvas3() {
-      var canvas = document.getElementById('canvas3');
-      if (!canvas) return;
-      var ctx = canvas.getContext('2d');
-      var w = canvas.width, h = canvas.height, f = 0;
+      var canvas = document.getElementById('canvas3'); if (!canvas) return;
+      var ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height, f = 0;
       var news = [{t:'AI Breakthrough in Health',s:'Tech',c:'#667eea'},{t:'Markets Hit Record High',s:'Finance',c:'#22c55e'},{t:'Climate Summit Updates',s:'World',c:'#f59e0b'},{t:'New League Announced',s:'Sports',c:'#ef4444'}];
-      
       function draw() {
-        ctx.fillStyle = '#111';
-        ctx.fillRect(0, 0, w, h);
-        
-        // Header
-        ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(0, 0, w, 50);
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 20px sans-serif';
-        ctx.fillText('NewsFlow', 20, 32);
-        ctx.fillStyle = '#ef4444';
-        ctx.beginPath();
-        ctx.arc(w - 40, 25, 8, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#fff';
-        ctx.font = '12px sans-serif';
-        ctx.fillText('LIVE', w - 80, 29);
-        
-        // Cards
+        ctx.fillStyle = '#111'; ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, w, 50);
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 20px sans-serif'; ctx.fillText('NewsFlow', 20, 32);
+        ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(w - 40, 25, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.font = '12px sans-serif'; ctx.fillText('LIVE', w - 80, 29);
         var cy = 65;
         for (var i = 0; i < news.length; i++) {
-          var n = news[i];
-          var oy = Math.sin(f * 0.02 + i) * 3;
-          ctx.fillStyle = '#1a1a2e';
-          ctx.fillRect(20, cy + oy, w - 40, 55);
-          ctx.fillStyle = n.c;
-          ctx.fillRect(30, cy + 8 + oy, 50, 40);
-          ctx.fillStyle = '#fff';
-          ctx.font = 'bold 14px sans-serif';
-          ctx.fillText(n.t, 95, cy + 25 + oy);
-          ctx.fillStyle = '#666';
-          ctx.font = '12px sans-serif';
-          ctx.fillText(n.s + ' • 2m ago', 95, cy + 43 + oy);
+          var n = news[i], oy = Math.sin(f * 0.02 + i) * 3;
+          ctx.fillStyle = '#1a1a2e'; ctx.fillRect(20, cy + oy, w - 40, 55);
+          ctx.fillStyle = n.c; ctx.fillRect(30, cy + 8 + oy, 50, 40);
+          ctx.fillStyle = '#fff'; ctx.font = 'bold 14px sans-serif'; ctx.fillText(n.t, 95, cy + 25 + oy);
+          ctx.fillStyle = '#666'; ctx.font = '12px sans-serif'; ctx.fillText(n.s + ' • 2m ago', 95, cy + 43 + oy);
           cy += 60;
         }
-        
-        f++;
-        requestAnimationFrame(draw);
+        f++; requestAnimationFrame(draw);
       }
       draw();
     }
 
-    // Start all canvas animations
-    setTimeout(function() {
-      animateCanvas0();
-      animateCanvas1();
-      animateCanvas2();
-      animateCanvas3();
-    }, 100);
+    setTimeout(function() { animateCanvas0(); animateCanvas1(); animateCanvas2(); animateCanvas3(); }, 100);
 
     // Smooth scroll
-    var links = document.querySelectorAll('a[href^="#"]');
-    for (var i = 0; i < links.length; i++) {
-      links[i].addEventListener('click', function(e) {
+    document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+      link.addEventListener('click', function(e) {
         e.preventDefault();
         var target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
       });
-    }
+    });
   </script>
 </body>
 </html>
