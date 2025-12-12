@@ -32,24 +32,17 @@ const TOPICS = [
 function callPerplexity(prompt) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify({
-      model: "llama-3.1-sonar-large-128k-online",
+      model: "sonar",  // Updated model name
       messages: [
         {
           role: "system",
           content: `You are a tech blog writer specializing in ServiceNow and Enterprise AI. 
           Generate a well-structured blog article based on the latest information.
           
-          Return ONLY valid JSON in this exact format (no markdown, no code blocks):
-          {
-            "title": "Compelling article title",
-            "excerpt": "2-3 sentence summary for preview card",
-            "readTime": "X min read",
-            "content": "<h2>Section</h2><p>Paragraph with details...</p><h2>Another Section</h2><p>More content...</p><ul><li>Key point 1</li><li>Key point 2</li></ul>"
-          }
+          Return ONLY valid JSON in this exact format (no markdown, no code blocks, no extra text):
+          {"title": "Article title", "excerpt": "2-3 sentence summary", "readTime": "X min read", "content": "<h2>Section</h2><p>Content...</p>"}
           
-          Make the content informative, practical, and valuable for ServiceNow developers.
-          Include specific details, code examples where relevant, and actionable insights.
-          Content should be 400-600 words in HTML format.`
+          Make content informative and valuable for ServiceNow developers. 400-600 words in HTML.`
         },
         {
           role: "user",
@@ -57,8 +50,7 @@ function callPerplexity(prompt) {
         }
       ],
       max_tokens: 2000,
-      temperature: 0.7,
-      return_citations: true
+      temperature: 0.7
     });
 
     const options = {
@@ -77,19 +69,38 @@ function callPerplexity(prompt) {
       res.on('data', chunk => body += chunk);
       res.on('end', () => {
         try {
+          console.log(`   API Status: ${res.statusCode}`);
+          
+          if (res.statusCode !== 200) {
+            console.log(`   API Error Response: ${body.substring(0, 500)}`);
+            reject(new Error(`API returned status ${res.statusCode}`));
+            return;
+          }
+          
           const response = JSON.parse(body);
-          if (response.choices && response.choices[0]) {
+          
+          if (response.choices && response.choices[0] && response.choices[0].message) {
             resolve(response.choices[0].message.content);
+          } else if (response.error) {
+            console.log(`   API Error: ${JSON.stringify(response.error)}`);
+            reject(new Error(response.error.message || 'API error'));
           } else {
-            reject(new Error('Invalid API response'));
+            console.log(`   Unexpected response structure: ${JSON.stringify(response).substring(0, 300)}`);
+            reject(new Error('Invalid API response structure'));
           }
         } catch (e) {
+          console.log(`   Parse error: ${e.message}`);
+          console.log(`   Raw response: ${body.substring(0, 500)}`);
           reject(e);
         }
       });
     });
 
-    req.on('error', reject);
+    req.on('error', (e) => {
+      console.log(`   Request error: ${e.message}`);
+      reject(e);
+    });
+    
     req.write(data);
     req.end();
   });
@@ -149,9 +160,13 @@ function formatDate() {
 async function main() {
   if (!PERPLEXITY_API_KEY) {
     console.error('❌ PERPLEXITY_API_KEY not set!');
+    console.error('   Make sure you added the secret in GitHub repo settings.');
     process.exit(1);
   }
 
+  // Show masked key to confirm it's loaded
+  const maskedKey = PERPLEXITY_API_KEY.substring(0, 8) + '...' + PERPLEXITY_API_KEY.substring(PERPLEXITY_API_KEY.length - 4);
+  console.log(`🔑 API Key loaded: ${maskedKey}`);
   console.log('🚀 Fetching latest tech articles...\n');
   
   const existingPosts = loadExistingPosts();
