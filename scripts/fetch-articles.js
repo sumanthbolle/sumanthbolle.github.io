@@ -6,7 +6,29 @@ const https = require('https');
 
 const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
 const POSTS_FILE = 'posts.json';
-const MAX_POSTS = 20; // Keep last 20 articles
+const INTERVIEWS_FILE = 'interviews.json';
+const MAX_POSTS = 20;
+const MAX_INTERVIEWS = 15;
+
+// Interview question topics
+const INTERVIEW_TOPICS = [
+  {
+    query: "Generate a deep technical ServiceNow interview question about GlideRecord performance optimization, database queries, or script efficiency that would be asked at Apple, Google, or ServiceNow for senior developers",
+    category: "Performance"
+  },
+  {
+    query: "Generate a challenging ServiceNow architecture interview question about Business Rules, ACLs, scoped applications, or client-server interactions that top tech companies ask",
+    category: "Architecture"
+  },
+  {
+    query: "Generate an expert-level ServiceNow interview question about Flow Designer, Integration Hub, REST APIs, or asynchronous processing patterns",
+    category: "Integration"
+  },
+  {
+    query: "Generate a difficult ServiceNow security interview question about ACL evaluation, data isolation, cross-scope access, or authentication that FAANG companies ask",
+    category: "Security"
+  }
+];
 
 // Topics to fetch articles about
 const TOPICS = [
@@ -28,21 +50,133 @@ const TOPICS = [
   }
 ];
 
+// Call Perplexity API for interview questions
+function callPerplexityInterview(prompt) {
+  return new Promise((resolve, reject) => {
+    const data = JSON.stringify({
+      model: "sonar",
+      messages: [
+        {
+          role: "system",
+          content: `You are a ServiceNow technical interviewer at a top tech company (Apple, Google, ServiceNow). Generate ONE challenging interview question with a comprehensive answer.
+
+CRITICAL RULES:
+- Return ONLY valid JSON, no markdown code blocks
+- Use HTML for formatting: <strong>, <p>, <h4>, <ul>, <li>, <ol>, <pre>, <code>
+- Do NOT use markdown like **bold** or [citations]
+- Include code examples in <pre> tags
+- Make the question genuinely difficult - test deep platform knowledge
+
+Return this exact JSON structure:
+{"question": "The interview question text", "answer": "<p>Detailed answer with explanation...</p><h4>Code Example:</h4><pre>// code here</pre><ul><li>Key point</li></ul>", "difficulty": "Senior or Expert", "company": "Apple or Google or ServiceNow"}
+
+The answer should be 300-500 words, technically accurate, with practical code examples.`
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 2000,
+      temperature: 0.8
+    });
+
+    const options = {
+      hostname: 'api.perplexity.ai',
+      path: '/chat/completions',
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(data)
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let body = '';
+      res.on('data', chunk => body += chunk);
+      res.on('end', () => {
+        try {
+          if (res.statusCode !== 200) {
+            reject(new Error(`API returned status ${res.statusCode}`));
+            return;
+          }
+          const response = JSON.parse(body);
+          if (response.choices && response.choices[0] && response.choices[0].message) {
+            resolve(response.choices[0].message.content);
+          } else {
+            reject(new Error('Invalid API response'));
+          }
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+
+    req.on('error', reject);
+    req.write(data);
+    req.end();
+  });
+}
+
+// Parse interview question from API response
+function parseInterview(response, category) {
+  try {
+    let cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const interview = JSON.parse(cleaned);
+    
+    let answer = interview.answer || '';
+    answer = answer.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    answer = answer.replace(/\[\d+\](\[\d+\])*/g, '');
+    
+    let question = (interview.question || '').replace(/\[\d+\]/g, '');
+    
+    return {
+      question: question,
+      answer: answer,
+      difficulty: interview.difficulty || 'Senior',
+      company: interview.company || 'ServiceNow',
+      category: category
+    };
+  } catch (e) {
+    console.error('Failed to parse interview:', e.message);
+    return null;
+  }
+}
+
+// Load existing interviews
+function loadExistingInterviews() {
+  try {
+    if (fs.existsSync(INTERVIEWS_FILE)) {
+      return JSON.parse(fs.readFileSync(INTERVIEWS_FILE, 'utf8'));
+    }
+  } catch (e) {
+    console.log('No existing interviews.json');
+  }
+  return [];
+}
+
 // Call Perplexity API
 function callPerplexity(prompt) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify({
-      model: "sonar",  // Updated model name
+      model: "sonar",
       messages: [
         {
           role: "system",
-          content: `You are a tech blog writer specializing in ServiceNow and Enterprise AI. 
-          Generate a well-structured blog article based on the latest information.
-          
-          Return ONLY valid JSON in this exact format (no markdown, no code blocks, no extra text):
-          {"title": "Article title", "excerpt": "2-3 sentence summary", "readTime": "X min read", "content": "<h2>Section</h2><p>Content...</p>"}
-          
-          Make content informative and valuable for ServiceNow developers. 400-600 words in HTML.`
+          content: `You are a tech blog writer for ServiceNow developers. Generate a blog article based on the latest information.
+
+CRITICAL FORMATTING RULES:
+- Return ONLY valid JSON, no markdown code blocks
+- Use HTML tags for formatting: <strong>, <em>, <h2>, <p>, <ul>, <li>, <pre>
+- Do NOT use markdown syntax like **bold** or *italic*
+- Do NOT include citation numbers like [1] or [2]
+- Do NOT include source references in the content
+
+Return this exact JSON structure:
+{"title": "Clear descriptive title", "excerpt": "2-3 sentence summary without citations", "readTime": "X min read", "content": "<h2>Section</h2><p>Paragraph content here...</p><ul><li>Point one</li></ul>"}
+
+Write 400-600 words of practical, actionable content for ServiceNow developers.`
         },
         {
           role: "user",
@@ -117,11 +251,42 @@ function parseArticle(response, category) {
     
     const article = JSON.parse(cleaned);
     
+    // Clean up the content
+    let content = article.content || '<p>Content not available.</p>';
+    
+    // Convert markdown bold **text** to HTML <strong>text</strong>
+    content = content.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert markdown italic *text* to HTML <em>text</em>
+    content = content.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    
+    // Remove citation references like [1], [2], [1][2], etc.
+    content = content.replace(/\[\d+\](\[\d+\])*/g, '');
+    
+    // Remove any leftover markdown links [text](url)
+    content = content.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+    
+    // Fix common encoding issues
+    content = content
+      .replace(/—/g, '—')
+      .replace(/–/g, '–')
+      .replace(/'/g, "'")
+      .replace(/"/g, '"')
+      .replace(/"/g, '"')
+      .replace(/…/g, '...')
+      .replace(/\u00A0/g, ' ')  // Non-breaking space
+      .replace(/[\u200B-\u200D\uFEFF]/g, ''); // Zero-width chars
+    
+    // Clean up excerpt too
+    let excerpt = article.excerpt || '';
+    excerpt = excerpt.replace(/\*\*([^*]+)\*\*/g, '$1');
+    excerpt = excerpt.replace(/\[\d+\](\[\d+\])*/g, '');
+    
     return {
-      title: article.title || 'Untitled Article',
-      excerpt: article.excerpt || '',
+      title: (article.title || 'Untitled Article').replace(/\[\d+\]/g, ''),
+      excerpt: excerpt,
       readTime: article.readTime || '5 min read',
-      content: article.content || '<p>Content not available.</p>',
+      content: content,
       category: category
     };
   } catch (e) {
@@ -220,8 +385,52 @@ async function main() {
   // Save to posts.json
   fs.writeFileSync(POSTS_FILE, JSON.stringify(allPosts, null, 2));
   
-  console.log(`\n✨ Done! Total posts: ${allPosts.length}`);
-  console.log(`📝 New articles added: ${newPosts.length}`);
+  console.log(`\n✨ Articles Done! Total: ${allPosts.length}, New: ${newPosts.length}`);
+
+  // ============ FETCH INTERVIEW QUESTIONS ============
+  console.log('\n📚 Fetching interview questions...\n');
+  
+  const existingInterviews = loadExistingInterviews();
+  const newInterviews = [];
+
+  // Pick 1 random interview topic
+  const interviewTopic = INTERVIEW_TOPICS[Math.floor(Math.random() * INTERVIEW_TOPICS.length)];
+  
+  console.log(`📡 Fetching: ${interviewTopic.category} question...`);
+  
+  try {
+    const response = await callPerplexityInterview(interviewTopic.query);
+    const interview = parseInterview(response, interviewTopic.category);
+    
+    if (interview) {
+      // Check for duplicate questions
+      const isDuplicate = existingInterviews.some(
+        q => q.question.substring(0, 50).toLowerCase() === interview.question.substring(0, 50).toLowerCase()
+      );
+      
+      if (!isDuplicate) {
+        newInterviews.push({
+          id: generateId([...existingInterviews, ...newInterviews]),
+          ...interview,
+          date: today
+        });
+        console.log(`✅ Added: ${interview.question.substring(0, 60)}...`);
+      } else {
+        console.log(`⏭️ Skipped duplicate question`);
+      }
+    }
+  } catch (e) {
+    console.error(`❌ Error fetching interview:`, e.message);
+  }
+
+  // Merge interviews
+  const allInterviews = [...newInterviews, ...existingInterviews].slice(0, MAX_INTERVIEWS);
+  allInterviews.forEach((q, index) => { q.id = index + 1; });
+  
+  fs.writeFileSync(INTERVIEWS_FILE, JSON.stringify(allInterviews, null, 2));
+  
+  console.log(`\n🎯 Interviews Done! Total: ${allInterviews.length}, New: ${newInterviews.length}`);
+  console.log('\n🎉 All updates complete!');
 }
 
 main().catch(console.error);
