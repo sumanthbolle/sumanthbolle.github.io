@@ -1,6 +1,24 @@
 [
   {
     "id": 1,
+    "title": "Latest Enterprise AI and GenAI Breakthroughs: Accelerating Business Automation in ServiceNow",
+    "excerpt": "This week brings major advancements in enterprise AI from Dell-NVIDIA integrations, Microsoft agentic AI tools, and adoption reports highlighting Copilot's dominance. ServiceNow developers can leverage these for smarter automation, from AI factories to LLM orchestration. Explore actionable strategies to integrate these into your Now Platform workflows.",
+    "readTime": "5 min read",
+    "content": "<h2>Enterprise AI Shifts to Agentic Automation</h2><p>Enterprise AI is rapidly evolving from pilots to production-scale deployments, with a strong focus on <strong>GenAI</strong>, <strong>LLMs</strong>, and <strong>AI agents</strong> for business automation. Recent announcements emphasize integrated platforms that streamline AI workloads, addressing key hurdles like data privacy, strategy gaps, and deployment complexity. For ServiceNow developers, these developments offer opportunities to enhance Flow Designer, Virtual Agent, and custom scripts with agentic capabilities.</p><h2>Dell and NVIDIA Advance AI Factories for Scalable Workloads</h2><p>Dell Technologies' latest collaboration with NVIDIA introduces enhancements to the Dell AI Factory, including ObjectScale and PowerScale storage engines integrated with NVIDIA Dynamo. These accelerate AI application workflows and high-performance computing. The expanded Dell Automation Platform now automates full-stack AI deployments, reducing time-to-value for traditional and agentic AI.</p><p>ServiceNow developers can apply this by integrating Dell's AI Data Platform into <strong>ServiceNow IntegrationHub</strong> spokes. For instance:</p><ul><li>Automate AI model provisioning via PowerShell or REST APIs in Flow Designer.</li><li>Use NVIDIA-enabled servers for on-premises LLM inference in ServiceNow's Predictive Intelligence.</li><li>Deploy agentic workflows that trigger Dell ObjectScale for data-intensive automations like incident enrichment.</li></ul><p>Professional services from Dell ensure seamless operations, ideal for hybrid ServiceNow environments.</p><h2>Microsoft Copilot Leads Adoption Amid Privacy Challenges</h2><p>Surveys show Microsoft Copilot adopted by 67.4% of enterprises, outpacing ChatGPT, due to its seamless Microsoft 365 integration. However, 54% of firms remain in pilot mode due to privacy concerns, unclear ROI, and lack of formal strategies. OpenAI's State of Enterprise AI report underscores the shift to production.</p><p>In ServiceNow, pair Copilot with <strong>Now Assist</strong> for generative AI in ITSM:</p><ul><li>Embed Copilot outputs into Knowledge Management via Vancouver or Xanadu releases.</li><li>Build agentic flows using IntegrationHub to fetch Copilot-generated insights for ticket routing.</li><li>Address privacy by configuring on-premises LLMs with ServiceNow's Private AI capabilities.</li></ul><h2>HPE's Secure AI Factories for Regulated Industries</h2><p>HPE's NVIDIA-powered Private Cloud AI features ProLiant DL380a Gen12 servers with RTX PRO 6000 GPUs, topping MLPerf benchmarks. These turnkey AI factories support sovereign and government deployments, simplifying hybrid cloud AI for sensitive data.</p><p>ServiceNow devs can extend this to GRC and CSM modules:</p><ul><li>Integrate HPE servers for secure LLM fine-tuning in Performance Analytics.</li><li>Create AI agents in Virtual Agent that query HPE-managed models for compliance checks.</li><li>Use HPE's unified data strategies to federate ServiceNow data lakes.</li></ul><h2>Actionable Steps for ServiceNow Developers</h2><p>To harness these trends:</p><ul><li><strong>Update Strategies:</strong> Adopt a platform-centric approach; assess Copilot integration via ServiceNow Store apps.</li><li><strong>Build Agentic AI:</strong> Use Microsoft Ignite 2025 tools in Scripted REST APIs for multi-step automations.</li><li><strong>Scale Securely:</strong> Pilot Dell/HPE factories with ServiceNow's Hyperautomation Hub.</li><li><strong>Monitor Trends:</strong> Track Red Hat's LLM tools like llm-d and vLLM for open-source orchestration in custom apps.</li></ul><p>McKinsey's 2025 AI survey highlights value from scaled deployments—prioritize ROI by starting with low-friction tools. These integrations position ServiceNow as the orchestration layer for enterprise AI, driving efficiency in automation pipelines.</p>",
+    "category": "ai",
+    "date": "Dec 12, 2025"
+  },
+  {
+    "id": 2,
+    "title": "ServiceNow December 2025 Store Release: Key Updates, Features, and Developer Best Practices",
+    "excerpt": "Discover the latest ServiceNow December 2025 Store Release highlights, including Impact Platform Health enhancements and Employee Center Pro updates. This article explores new features for developers and actionable best practices to optimize your instance. Stay ahead with tips on proactive governance and seamless upgrades.",
+    "readTime": "5 min read",
+    "content": "<h2>Introduction to December 2025 Updates</h2><p>The ServiceNow December 2025 Store Release brings targeted enhancements focused on platform health, employee experience, and AI-driven operations. Key areas include ServiceNow Impact for technical debt prevention, Employee Center Pro improvements, and strategies for confident upgrades. These updates empower developers to build more resilient instances with proactive tools.</p><h2>New Features in ServiceNow Impact Platform Health</h2><p>ServiceNow Impact now introduces <strong>Platform Health capabilities</strong> to help developers detect and prevent technical debt in real-time. Admins can configure automated scans on nightly, weekly, or monthly cadences to identify issues across the instance. Real-time messaging alerts teams before problems escalate, shifting from reactive fixes to proactive governance.</p><ul><li><strong>Diagnostic Scans and Findings:</strong> Schedule scans to uncover existing technical debt, with detailed findings on impact and remediation paths.</li><li><strong>Personalized Dashboards:</strong> Developers get individual views highlighting personal findings, exceptions, and resolved items for prioritized fixes.</li><li><strong>Executive Dashboards:</strong> High-level metrics track governance trends and progress in reducing technical debt instance-wide.</li></ul><p>For developers, integrate these into your workflows by setting up custom scan rules and exception requests via the Platform Health configuration page.</p><h2>Employee Center Pro Enhancements</h2><p>The December 2025 release for <strong>Employee Center Pro</strong> delivers streamlined user experiences with new features for service delivery. Expect improvements in search, personalization, and integration with core IT workflows, making it easier to manage employee requests efficiently.</p><p>Best practice: Leverage these updates in custom portals by testing UI components in Automated Test Framework to ensure compatibility post-upgrade.</p><h2>Upgrade Strategies and Best Practices</h2><p>A recent Platform Academy session emphasized <strong>upgrading with confidence</strong> using app version management. Developers should align upgrades with app-specific versioning to minimize disruptions across environments.</p><ul><li>Run Automated Test Framework suites before and after upgrades to reduce test duplication and validate functionality.</li><li>Use Advanced Work Assignment (AWA) enhancements for better agent routing, now supporting wrap-up codes and multi-node performance.</li><li>Monitor Instance Data Replication and Service Graph Connectors with Now Assist for optimized data flows.</li></ul><p>Actionable tip: Start with a staging instance to pilot Impact Platform Health scans, then roll out dashboards to dev teams for immediate technical debt reduction.</p><h2>Broader Platform Context and AI Trends</h2><p>While Yokohama (GA end of Q1 2025) previews major AI and OT features like Industrial Process Manager, the December release focuses on immediate Store apps. A new HFS study highlights agentic AI's role in modernizing delivery models—85% of Global 2000 enterprises underutilize ServiceNow, but AI-native approaches accelerate value.</p><p>Best practice for developers: Embed policy-as-code governance in scripts and adopt outcome-first models with reusable IP. ServiceNow's planned Veza acquisition signals stronger identity security integration ahead.</p><h2>Getting Started: Actionable Steps for Developers</h2><p>To implement these updates:</p><ul><li>Access the December Store Release via your instance's app store and enable Impact Platform Health.</li><li>Configure dashboards and scans in <em>Platform Health > Configuration</em>.</li><li>Update Employee Center Pro portals and test with AWA for service channels.</li><li>Schedule a mock upgrade using app versioning tools from the December 4 Platform Academy resources.</li></ul><p>These enhancements reduce technical debt by up to 30% through proactive scans, per early previews. Prioritize Impact setup for long-term instance health.</p>",
+    "category": "servicenow",
+    "date": "Dec 12, 2025"
+  },
+  {
+    "id": 3,
     "title": "Enterprise Automation, ITSM, and Digital Transformation: Practical Trends for ServiceNow Developers",
     "excerpt": "Enterprise automation is converging around AI-driven hyperautomation, low-code platforms, and data-first integration; ITSM is moving toward proactive, AI-assisted service operations; and digital transformation emphasizes composable architectures and automation governance. This article gives ServiceNow developers actionable patterns, priorities, and implementation steps to apply these trends in real projects.",
     "readTime": "6 min read",
@@ -9,7 +27,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 2,
+    "id": 4,
     "title": "New Integration Patterns, Flow Designer Tips, and Integration Hub Updates for ServiceNow Developers",
     "excerpt": "Practical guidance on current ServiceNow integration patterns, actionable Flow Designer tips, and recent Integration Hub capabilities to accelerate reliable, maintainable integrations for ServiceNow developers.",
     "readTime": "6 min read",
@@ -18,7 +36,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 3,
+    "id": 5,
     "title": "Latest Trends in Enterprise Automation, ITSM, and Digital Transformation: Actionable Insights for ServiceNow Developers",
     "excerpt": "Enterprise automation in 2025 is driven by hyperautomation, AI integration, and no-code platforms, delivering up to 30% cost savings and operational scalability. ServiceNow developers can leverage these trends to enhance ITSM workflows and digital transformation initiatives. This article provides practical steps to implement hyperautomation and AI in ServiceNow environments.",
     "readTime": "5 min read",
@@ -27,7 +45,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 4,
+    "id": 6,
     "title": "Mastering ServiceNow Integrations in 2025: New Patterns, Flow Designer Tips, and Integration Hub Updates",
     "excerpt": "Discover the latest ServiceNow integration patterns with the updated Decision Tree, essential Flow Designer tips for efficient automation, and key Integration Hub enhancements like 200+ new connectors. This guide equips developers with actionable strategies to streamline enterprise workflows and boost DevOps productivity. Unlock real-time integrations and error-handling best practices for 2025.",
     "readTime": "6 min read",
@@ -36,7 +54,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 5,
+    "id": 7,
     "title": "This Week in Enterprise AI: GenAI, LLMs, and Agents — Practical Takeaways for ServiceNow Developers",
     "excerpt": "Major vendors released model and agent updates this week that push multimodal reasoning, cheaper inference, and agent-first integrations. ServiceNow developers should focus on connectors, orchestration, security, and observability to operationalize these advances.",
     "readTime": "6 min read",
@@ -45,7 +63,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 6,
+    "id": 8,
     "title": "This Week’s ServiceNow Platform Updates, Features, and Developer Best Practices",
     "excerpt": "A concise roundup of the most important ServiceNow platform updates released this week, practical feature highlights for developers, and actionable best practices to adopt during upgrades and development cycles.",
     "readTime": "6 min read",
@@ -54,7 +72,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 7,
+    "id": 9,
     "title": "2025 Trends in Enterprise Automation, ITSM, and Digital Transformation: A ServiceNow Developer's Guide",
     "excerpt": "Explore the latest 2025 trends in enterprise automation, ITSM, and digital transformation, including hyperautomation, AI integration, and low-code platforms. ServiceNow developers can leverage these advancements to build intelligent workflows and drive operational efficiency. Discover actionable insights tailored for platform customization and implementation.",
     "readTime": "5 min read",
@@ -63,7 +81,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 8,
+    "id": 10,
     "title": "December 2025: Key ServiceNow Platform Updates, Features, and Best Practices for Developers",
     "excerpt": "This week’s ServiceNow updates focus on platform health, agentic AI tooling, Employee Center enhancements, and Canadian public‑sector AI investments — plus practical best practices for ServiceNow developers to adopt immediately.",
     "readTime": "5 min read",
@@ -72,7 +90,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 9,
+    "id": 11,
     "title": "Building AI Agents in ServiceNow: A Complete Guide",
     "excerpt": "Learn how to create intelligent AI agents that automate complex workflows using ServiceNow's AI capabilities and GenAI integration.",
     "category": "servicenow",
@@ -81,7 +99,7 @@
     "content": "<h2>Introduction</h2><p>AI Agents are revolutionizing how enterprises handle automation. In this guide, we'll explore how to build intelligent agents within ServiceNow that can reason, decide, and act autonomously.</p><h2>What are AI Agents?</h2><p>AI Agents are autonomous systems that can perceive their environment, make decisions, and take actions to achieve specific goals. In ServiceNow, these agents can handle everything from incident resolution to complex approval workflows.</p><h2>Getting Started</h2><p>To build an AI Agent in ServiceNow, you'll need:</p><ul><li>ServiceNow Utah or later</li><li>AI Control Tower access</li><li>Integration Hub subscription</li></ul><h2>Implementation Steps</h2><p>First, configure your AI Control Tower settings to enable agent capabilities. Then create a new AI Agent definition:</p><pre>// Sample GlideRecord script for AI Agent\nvar gr = new GlideRecord('sn_ai_agent');\ngr.initialize();\ngr.name = 'Incident Resolution Agent';\ngr.active = true;\ngr.insert();</pre><p>This foundation allows you to build sophisticated automation that learns and adapts over time.</p>"
   },
   {
-    "id": 10,
+    "id": 12,
     "title": "GenAI Summarization for Risk Management",
     "excerpt": "How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace to reduce analysis time by 60%.",
     "category": "ai",
@@ -90,7 +108,7 @@
     "content": "<h2>The Challenge</h2><p>Risk analysts were spending hours reading through lengthy risk assessments and compliance documents. We needed a solution that could summarize key points instantly while maintaining accuracy.</p><h2>The Solution</h2><p>By integrating GenAI capabilities with ServiceNow's GRC module, we created an automated summarization system that processes documents in real-time.</p><h2>Architecture</h2><p>The system uses a three-tier approach:</p><ul><li>Document ingestion via Integration Hub</li><li>GenAI processing with custom prompts</li><li>Results displayed in Risk Workspace widget</li></ul><h2>Results</h2><p>The implementation reduced analysis time by 60% and improved risk detection accuracy by identifying patterns human analysts often missed.</p>"
   },
   {
-    "id": 11,
+    "id": 13,
     "title": "Flow Designer Best Practices for Enterprise Scale",
     "excerpt": "Essential patterns and anti-patterns when building flows that need to handle thousands of executions daily.",
     "category": "tutorial",
@@ -99,7 +117,7 @@
     "content": "<h2>Why Flow Designer Matters</h2><p>Flow Designer is ServiceNow's powerful low-code automation tool. But with great power comes great responsibility—especially at enterprise scale.</p><h2>Best Practices</h2><ul><li><strong>Use Subflows:</strong> Break complex logic into reusable subflows</li><li><strong>Error Handling:</strong> Always implement try-catch patterns</li><li><strong>Async Operations:</strong> Use async for heavy processing</li><li><strong>Monitoring:</strong> Track execution times and failures</li></ul><h2>Anti-Patterns to Avoid</h2><p>Don't create flows that query large datasets without filters. Always use indexed fields and limit result sets.</p><pre>// Bad: Queries all incidents\nvar gr = new GlideRecord('incident');\ngr.query();\n\n// Good: Filtered query\nvar gr = new GlideRecord('incident');\ngr.addQuery('state', 1);\ngr.addQuery('sys_created_on', '>=', gs.daysAgo(7));\ngr.setLimit(100);\ngr.query();</pre>"
   },
   {
-    "id": 12,
+    "id": 14,
     "title": "The Future of Enterprise AI: 2025 Trends",
     "excerpt": "Exploring the emerging trends in enterprise AI adoption and what it means for ServiceNow developers.",
     "category": "general",
