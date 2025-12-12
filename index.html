@@ -291,6 +291,37 @@
     .blog-modal-article ul{margin:16px 0 16px 24px}
     .blog-modal-article li{margin-bottom:8px}
     
+    /* INTERVIEW SECTION */
+    .interview-filters{display:flex;gap:12px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
+    .interview-list{display:flex;flex-direction:column;gap:20px;max-width:900px;margin:0 auto}
+    .interview-card{background:var(--white);border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);overflow:hidden;opacity:0;transform:translateY(20px);transition:all 0.5s}
+    .interview-card.animate{opacity:1;transform:translateY(0)}
+    .interview-header{padding:24px 28px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;transition:background 0.3s}
+    .interview-header:hover{background:var(--bg)}
+    .interview-q{flex:1}
+    .interview-meta{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+    .interview-badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase}
+    .badge-company{background:rgba(0,102,204,0.1);color:var(--blue)}
+    .badge-difficulty{background:rgba(255,149,0,0.1);color:#ff9500}
+    .badge-difficulty.expert{background:rgba(239,68,68,0.1);color:#ef4444}
+    .badge-category{background:rgba(52,199,89,0.1);color:#22c55e}
+    .interview-question{font-size:17px;font-weight:600;line-height:1.5;color:var(--text)}
+    .interview-toggle{width:36px;height:36px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.3s}
+    .interview-toggle svg{width:20px;height:20px;stroke:var(--gray);transition:transform 0.3s}
+    .interview-card.open .interview-toggle{background:var(--blue)}
+    .interview-card.open .interview-toggle svg{stroke:#fff;transform:rotate(180deg)}
+    .interview-answer{max-height:0;overflow:hidden;transition:max-height 0.4s ease-out}
+    .interview-card.open .interview-answer{max-height:2000px}
+    .interview-answer-inner{padding:0 28px 28px;border-top:1px solid rgba(0,0,0,0.06)}
+    .interview-answer-inner h4{font-size:15px;font-weight:600;margin:20px 0 10px;color:var(--text)}
+    .interview-answer-inner p{font-size:15px;line-height:1.7;color:#444;margin-bottom:12px}
+    .interview-answer-inner ul,.interview-answer-inner ol{margin:12px 0 12px 20px;font-size:15px;color:#444}
+    .interview-answer-inner li{margin-bottom:8px;line-height:1.6}
+    .interview-answer-inner pre{background:#1d1d1f;color:#e5e5e5;padding:16px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.5;margin:16px 0}
+    .interview-answer-inner code{background:rgba(0,0,0,0.06);padding:2px 6px;border-radius:4px;font-size:14px}
+    .interview-answer-inner pre code{background:none;padding:0}
+    .interview-date{font-size:12px;color:var(--gray);margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.06)}
+    
     /* Projects Section */
     .projects-section{background:#000;padding:120px 0}
     .project-item{padding:80px 22px;max-width:1200px;margin:0 auto}
@@ -373,14 +404,14 @@
         <li><a href="#experience">Experience</a></li>
         <li><a href="#skills">Skills</a></li>
         <li><a href="#blog">Blog</a></li>
+        <li><a href="#interviews">Interviews</a></li>
         <li><a href="#integrations">Integrations</a></li>
-        <li><a href="#projects">Projects</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
       <button class="menu-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu">
-      <a href="#about">About</a><a href="#experience">Experience</a><a href="#skills">Skills</a><a href="#blog">Blog</a><a href="#integrations">Integrations</a><a href="#projects">Projects</a><a href="#contact">Contact</a>
+      <a href="#about">About</a><a href="#experience">Experience</a><a href="#skills">Skills</a><a href="#blog">Blog</a><a href="#interviews">Interviews</a><a href="#integrations">Integrations</a><a href="#contact">Contact</a>
     </div>
   </nav>
 
@@ -455,6 +486,25 @@
           <button class="filter-btn" data-filter="general">General</button>
         </div>
         <div class="blog-grid" id="blogGrid"></div>
+      </div>
+    </section>
+
+    <!-- INTERVIEW TIPS SECTION -->
+    <section class="section" id="interviews">
+      <div class="section-c">
+        <div class="section-h">
+          <p class="section-eye" data-animate>Interview Prep</p>
+          <h2 class="section-title" data-animate>Technical Interview Questions</h2>
+          <p class="section-sub" data-animate>Deep ServiceNow questions asked at Apple, Google & ServiceNow.</p>
+        </div>
+        <div class="interview-filters">
+          <button class="filter-btn active" data-ifilter="all">All</button>
+          <button class="filter-btn" data-ifilter="Performance">Performance</button>
+          <button class="filter-btn" data-ifilter="Architecture">Architecture</button>
+          <button class="filter-btn" data-ifilter="Security">Security</button>
+          <button class="filter-btn" data-ifilter="Scripting">Scripting</button>
+        </div>
+        <div class="interview-list" id="interviewList"></div>
       </div>
     </section>
 
@@ -635,7 +685,34 @@
   -->
 
   <script>
-    // DEFAULT BLOG POSTS (Used if posts.json doesn't exist)
+    // DEFAULT INTERVIEW QUESTIONS
+    var DEFAULT_INTERVIEWS = [
+      {id:1,question:"Explain the difference between GlideRecord and GlideAggregate. When would you use one over the other, and what are the performance implications?",answer:"<p><strong>GlideRecord</strong> retrieves individual records and loads all fields into memory. <strong>GlideAggregate</strong> performs database-level aggregations (COUNT, SUM, AVG, MIN, MAX) without loading record data.</p><h4>Performance Implications:</h4><ul><li><strong>GlideRecord COUNT anti-pattern:</strong> <code>gr.query(); while(gr.next()) count++;</code> loads every record - O(n) memory.</li><li><strong>GlideAggregate:</strong> <code>ga.addAggregate('COUNT'); ga.query();</code> executes single SQL COUNT - O(1) memory.</li></ul><h4>Code Example:</h4><pre>// ❌ Bad - Loads 100K records\nvar gr = new GlideRecord('incident');\ngr.query();\nvar count = gr.getRowCount();\n\n// ✅ Good - Single DB operation\nvar ga = new GlideAggregate('incident');\nga.addAggregate('COUNT');\nga.query();\nvar count = ga.next() ? ga.getAggregate('COUNT') : 0;</pre>",difficulty:"Senior",category:"Performance",company:"ServiceNow",date:"Dec 12, 2025"},
+      {id:2,question:"A Business Rule and a Client Script both update the same field. Describe the exact execution order and how to prevent race conditions.",answer:"<p><strong>Execution Order (on form submit):</strong></p><ol><li><strong>Client Script (onSubmit)</strong> - Runs in browser BEFORE data sent</li><li><strong>Business Rule (before)</strong> - Runs on server BEFORE DB write</li><li><strong>Database Write</strong> - Actual INSERT/UPDATE</li><li><strong>Business Rule (after)</strong> - Runs AFTER DB write</li><li><strong>Async Business Rule</strong> - Queued, runs independently</li></ol><h4>The Business Rule always wins</h4><p>Because it runs after client script and directly modifies GlideRecord.</p><h4>Prevention:</h4><pre>// BR - respect user's explicit change\nif (!current.priority.changes()) {\n  current.priority = calculatePriority();\n}</pre>",difficulty:"Senior",category:"Architecture",company:"Apple",date:"Dec 12, 2025"},
+      {id:3,question:"How does ServiceNow's ACL evaluation work? Explain the order of evaluation and what happens when multiple ACLs match.",answer:"<p><strong>ACL Evaluation Order (most to least specific):</strong></p><ol><li><strong>Table.Field</strong> - e.g., incident.caller_id</li><li><strong>Table.*</strong> - e.g., incident.*</li><li><strong>*.Field</strong> - e.g., *.caller_id</li><li><strong>*.*</strong> - Global default</li></ol><h4>Multiple ACL Match = ANDed Together</h4><p>All matching ACLs must pass.</p><h4>Admin Override Gotcha:</h4><pre>// This ACL will NEVER block admin!\n// Admin bypasses ACL evaluation unless:\nif (gs.hasRole('admin')) return false;</pre>",difficulty:"Expert",category:"Security",company:"Google",date:"Dec 11, 2025"},
+      {id:4,question:"Design a solution to process 50,000 records nightly without causing performance issues or hitting governor limits.",answer:"<h4>Solution Architecture:</h4><pre>// Scheduled Job triggers Flow Designer\nvar workflow = new GlideFlow('process_flow');\nworkflow.startAsync();</pre><h4>Flow Designer Approach:</h4><ol><li>Query with <code>setLimit(500)</code> per batch</li><li>Use <strong>For Each</strong> with parallel execution</li><li>Subflow handles individual records</li></ol><h4>Performance Tips:</h4><pre>gr.setWorkflow(false); // Skip BRs\ngr.autoSysFields(false); // Skip audit\ngr.setLimit(500); // Always batch\ngr.updateMultiple(); // Bulk updates</pre>",difficulty:"Expert",category:"Performance",company:"ServiceNow",date:"Dec 11, 2025"}
+    ];
+    
+    var INTERVIEWS = DEFAULT_INTERVIEWS;
+    fetch('interviews.json').then(function(r){return r.json();}).then(function(data){INTERVIEWS=data;renderInterviews('all');}).catch(function(){renderInterviews('all');});
+
+    // Render interviews
+    function renderInterviews(filter){
+      var filtered=filter==='all'?INTERVIEWS:INTERVIEWS.filter(function(q){return q.category===filter;});
+      var html='';
+      filtered.forEach(function(q,i){
+        var diffClass=q.difficulty==='Expert'?'expert':'';
+        html+='<div class="interview-card" data-animate-card style="transition-delay:'+(i*.1)+'s"><div class="interview-header" onclick="toggleInterview(this)"><div class="interview-q"><div class="interview-meta"><span class="interview-badge badge-company">'+q.company+'</span><span class="interview-badge badge-difficulty '+diffClass+'">'+q.difficulty+'</span><span class="interview-badge badge-category">'+q.category+'</span></div><p class="interview-question">'+q.question+'</p></div><div class="interview-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div></div><div class="interview-answer"><div class="interview-answer-inner">'+q.answer+'<p class="interview-date">Added: '+q.date+'</p></div></div></div>';
+      });
+      document.getElementById('interviewList').innerHTML=html;
+      document.querySelectorAll('#interviewList .interview-card').forEach(function(el){observer.observe(el);});
+    }
+
+    function toggleInterview(el){el.parentElement.classList.toggle('open');}
+
+    document.querySelectorAll('[data-ifilter]').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('[data-ifilter]').forEach(function(b){b.classList.remove('active');});this.classList.add('active');renderInterviews(this.dataset.ifilter);});});
+
+    // DEFAULT BLOG POSTS
     var DEFAULT_POSTS = [
       {id:1,title:"Building AI Agents in ServiceNow: A Complete Guide",excerpt:"Learn how to create intelligent AI agents that automate complex workflows using ServiceNow's AI capabilities.",category:"servicenow",date:"Dec 10, 2025",readTime:"8 min read",content:"<h2>Introduction</h2><p>AI Agents are revolutionizing enterprise automation. In this guide, we'll explore how to build intelligent agents within ServiceNow.</p><h2>What are AI Agents?</h2><p>AI Agents are autonomous systems that can perceive their environment, make decisions, and take actions to achieve specific goals.</p><h2>Getting Started</h2><ul><li>ServiceNow Utah or later</li><li>AI Control Tower access</li><li>Integration Hub subscription</li></ul><pre>// Sample GlideRecord script\nvar gr = new GlideRecord('incident');\ngr.addQuery('state', 1);\ngr.query();</pre>"},
       {id:2,title:"GenAI Summarization for Risk Management",excerpt:"How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace to reduce analysis time by 60%.",category:"ai",date:"Dec 5, 2025",readTime:"6 min read",content:"<h2>The Challenge</h2><p>Risk analysts were spending hours reading through lengthy assessments. We needed instant summarization.</p><h2>The Solution</h2><p>By integrating GenAI with ServiceNow's GRC module, we created automated summarization.</p><h2>Results</h2><p>60% reduction in analysis time and improved accuracy.</p>"},
