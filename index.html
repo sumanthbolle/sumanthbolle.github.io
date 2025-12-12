@@ -120,6 +120,40 @@
     .cert-card .icon{margin-bottom:16px}
     .cert-card h4{font-size:16px;font-weight:600;margin-bottom:8px;color:var(--white)}
     .cert-issuer{font-size:13px;color:var(--gray)}
+
+    /* PREVIEW SECTIONS - Blog & Interviews */
+    .preview-section{padding:100px 0}
+    .preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;margin-bottom:40px}
+    .preview-card{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);cursor:pointer;opacity:0;transform:translateY(30px);transition:all 0.5s;text-decoration:none;color:inherit}
+    .preview-card.animate{opacity:1;transform:translateY(0)}
+    .preview-card:hover{transform:translateY(-8px);box-shadow:0 12px 40px rgba(0,0,0,0.12)}
+    .preview-thumb{height:140px;position:relative;overflow:hidden}
+    .preview-thumb-bg{width:100%;height:100%}
+    .preview-thumb-bg.blog{background:linear-gradient(135deg,#667eea,#764ba2)}
+    .preview-thumb-bg.interview{background:linear-gradient(135deg,#11998e,#38ef7d)}
+    .preview-category{position:absolute;top:16px;left:16px;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase}
+    .cat-servicenow{background:rgba(129,215,66,0.9);color:#1d1d1f}
+    .cat-ai{background:rgba(88,86,214,0.9);color:#fff}
+    .cat-tutorial{background:rgba(255,149,0,0.9);color:#fff}
+    .cat-general{background:rgba(0,122,255,0.9);color:#fff}
+    .preview-content{padding:20px}
+    .preview-meta{display:flex;gap:16px;font-size:12px;color:var(--gray);margin-bottom:10px}
+    .preview-title{font-size:18px;font-weight:600;margin-bottom:8px;line-height:1.3}
+    .preview-excerpt{font-size:14px;color:var(--gray);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .view-all-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:var(--blue);color:#fff;border-radius:980px;font-size:16px;font-weight:500;text-decoration:none;transition:all 0.3s}
+    .view-all-btn:hover{background:#0055aa;transform:translateY(-2px)}
+    .view-all-container{text-align:center}
+
+    /* Interview preview specific */
+    .interview-preview-card{background:var(--white);border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);opacity:0;transform:translateY(20px);transition:all 0.5s}
+    .interview-preview-card.animate{opacity:1;transform:translateY(0)}
+    .interview-preview-card:hover{box-shadow:0 8px 30px rgba(0,0,0,0.1)}
+    .interview-badges{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+    .interview-badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase}
+    .badge-company{background:rgba(0,102,204,0.1);color:var(--blue)}
+    .badge-difficulty{background:rgba(255,149,0,0.1);color:#ff9500}
+    .badge-difficulty.expert{background:rgba(239,68,68,0.1);color:#ef4444}
+    .interview-preview-q{font-size:16px;font-weight:600;line-height:1.5;color:var(--text)}
     
     /* INTEGRATION SECTION - FULL */
     .integration-section{background:linear-gradient(180deg,#1a1a2e 0%,#0f0f1a 50%,#0a0a12 100%);padding:100px 0;overflow:hidden}
@@ -252,76 +286,6 @@
     .int-type h4{font-size:15px;font-weight:600;margin-bottom:8px;color:#fff}
     .int-type p{font-size:12px;color:var(--gray)}
     
-    /* BLOG SECTION */
-    .blog-filters{display:flex;gap:12px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
-    .filter-btn{padding:8px 20px;border:1px solid rgba(0,0,0,0.1);border-radius:20px;background:var(--white);color:var(--text);font-size:14px;cursor:pointer;transition:all 0.3s}
-    .filter-btn:hover,.filter-btn.active{background:var(--blue);color:var(--white);border-color:var(--blue)}
-    .blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
-    .blog-card{background:var(--white);border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);cursor:pointer;opacity:0;transform:translateY(30px);transition:all 0.5s}
-    .blog-card.animate{opacity:1;transform:translateY(0)}
-    .blog-card:hover{transform:translateY(-8px);box-shadow:0 12px 40px rgba(0,0,0,0.12)}
-    .blog-thumb{height:180px;position:relative;overflow:hidden}
-    .blog-thumb-bg{width:100%;height:100%;background:linear-gradient(135deg,#667eea,#764ba2)}
-    .blog-category{position:absolute;top:16px;left:16px;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase}
-    .cat-servicenow{background:rgba(129,215,66,0.9);color:#1d1d1f}
-    .cat-ai{background:rgba(88,86,214,0.9);color:#fff}
-    .cat-tutorial{background:rgba(255,149,0,0.9);color:#fff}
-    .cat-general{background:rgba(0,122,255,0.9);color:#fff}
-    .blog-content{padding:24px}
-    .blog-meta{display:flex;gap:16px;font-size:12px;color:var(--gray);margin-bottom:12px}
-    .blog-title{font-size:20px;font-weight:600;margin-bottom:12px;line-height:1.3}
-    .blog-excerpt{font-size:14px;color:var(--gray);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-    .blog-footer{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.05)}
-    .read-more{font-size:14px;color:var(--blue);font-weight:500}
-    
-    .blog-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:10000;overflow-y:auto;padding:40px 20px}
-    .blog-modal.active{display:flex;justify-content:center;align-items:flex-start}
-    .blog-modal-content{background:var(--white);max-width:800px;width:100%;border-radius:20px;overflow:hidden;position:relative;margin:auto}
-    .blog-modal-close{position:absolute;top:20px;right:20px;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.5);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;z-index:10}
-    .blog-modal-close:hover{background:rgba(0,0,0,0.7)}
-    .blog-modal-header{height:300px;background:linear-gradient(135deg,#667eea,#764ba2)}
-    .blog-modal-body{padding:40px}
-    .blog-modal-body h1{font-size:32px;font-weight:600;margin-bottom:16px}
-    .blog-modal-meta{display:flex;gap:20px;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid rgba(0,0,0,0.1)}
-    .blog-modal-meta span{font-size:14px;color:var(--gray)}
-    .blog-modal-article{font-size:17px;line-height:1.8}
-    .blog-modal-article h2{font-size:24px;margin:32px 0 16px;font-weight:600}
-    .blog-modal-article p{margin-bottom:20px}
-    .blog-modal-article pre{background:#1d1d1f;color:#fff;padding:20px;border-radius:12px;overflow-x:auto;margin:24px 0;font-size:14px}
-    .blog-modal-article ul{margin:16px 0 16px 24px}
-    .blog-modal-article li{margin-bottom:8px}
-    
-    /* INTERVIEW SECTION */
-    .interview-filters{display:flex;gap:12px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
-    .interview-list{display:flex;flex-direction:column;gap:20px;max-width:900px;margin:0 auto}
-    .interview-card{background:var(--white);border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);overflow:hidden;opacity:0;transform:translateY(20px);transition:all 0.5s}
-    .interview-card.animate{opacity:1;transform:translateY(0)}
-    .interview-header{padding:24px 28px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;transition:background 0.3s}
-    .interview-header:hover{background:var(--bg)}
-    .interview-q{flex:1}
-    .interview-meta{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-    .interview-badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase}
-    .badge-company{background:rgba(0,102,204,0.1);color:var(--blue)}
-    .badge-difficulty{background:rgba(255,149,0,0.1);color:#ff9500}
-    .badge-difficulty.expert{background:rgba(239,68,68,0.1);color:#ef4444}
-    .badge-category{background:rgba(52,199,89,0.1);color:#22c55e}
-    .interview-question{font-size:17px;font-weight:600;line-height:1.5;color:var(--text)}
-    .interview-toggle{width:36px;height:36px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.3s}
-    .interview-toggle svg{width:20px;height:20px;stroke:var(--gray);transition:transform 0.3s}
-    .interview-card.open .interview-toggle{background:var(--blue)}
-    .interview-card.open .interview-toggle svg{stroke:#fff;transform:rotate(180deg)}
-    .interview-answer{max-height:0;overflow:hidden;transition:max-height 0.4s ease-out}
-    .interview-card.open .interview-answer{max-height:2000px}
-    .interview-answer-inner{padding:0 28px 28px;border-top:1px solid rgba(0,0,0,0.06)}
-    .interview-answer-inner h4{font-size:15px;font-weight:600;margin:20px 0 10px;color:var(--text)}
-    .interview-answer-inner p{font-size:15px;line-height:1.7;color:#444;margin-bottom:12px}
-    .interview-answer-inner ul,.interview-answer-inner ol{margin:12px 0 12px 20px;font-size:15px;color:#444}
-    .interview-answer-inner li{margin-bottom:8px;line-height:1.6}
-    .interview-answer-inner pre{background:#1d1d1f;color:#e5e5e5;padding:16px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.5;margin:16px 0}
-    .interview-answer-inner code{background:rgba(0,0,0,0.06);padding:2px 6px;border-radius:4px;font-size:14px}
-    .interview-answer-inner pre code{background:none;padding:0}
-    .interview-date{font-size:12px;color:var(--gray);margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.06)}
-    
     /* Projects Section */
     .projects-section{background:#000;padding:120px 0}
     .project-item{padding:80px 22px;max-width:1200px;margin:0 auto}
@@ -383,7 +347,7 @@
       .about-card.large{grid-column:span 1}
       .stats-row{grid-template-columns:repeat(2,1fr)}
       .exp-item{grid-template-columns:1fr;gap:8px}
-      .blog-grid{grid-template-columns:1fr}
+      .preview-grid{grid-template-columns:1fr}
       .integration-showcase{grid-template-columns:1fr}
       .integration-types{grid-template-columns:repeat(2,1fr)}
       .hub-container{height:320px}
@@ -403,15 +367,15 @@
         <li><a href="#about">About</a></li>
         <li><a href="#experience">Experience</a></li>
         <li><a href="#skills">Skills</a></li>
-        <li><a href="#blog">Blog</a></li>
-        <li><a href="#interviews">Interviews</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="interviews.html">Interviews</a></li>
         <li><a href="#integrations">Integrations</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
       <button class="menu-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu">
-      <a href="#about">About</a><a href="#experience">Experience</a><a href="#skills">Skills</a><a href="#blog">Blog</a><a href="#interviews">Interviews</a><a href="#integrations">Integrations</a><a href="#contact">Contact</a>
+      <a href="#about">About</a><a href="#experience">Experience</a><a href="#skills">Skills</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><a href="#integrations">Integrations</a><a href="#contact">Contact</a>
     </div>
   </nav>
 
@@ -470,45 +434,37 @@
       <div class="cert-scroll" id="certScroll"></div>
     </section>
 
-    <!-- BLOG SECTION -->
-    <section class="section section-gray" id="blog">
+    <!-- BLOG PREVIEW SECTION -->
+    <section class="section preview-section section-gray" id="blog">
       <div class="section-c">
         <div class="section-h">
           <p class="section-eye" data-animate>Blog</p>
           <h2 class="section-title" data-animate>Insights & Tutorials</h2>
           <p class="section-sub" data-animate>ServiceNow tips, AI implementations, and tech explorations.</p>
         </div>
-        <div class="blog-filters">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="servicenow">ServiceNow</button>
-          <button class="filter-btn" data-filter="ai">AI & GenAI</button>
-          <button class="filter-btn" data-filter="tutorial">Tutorials</button>
-          <button class="filter-btn" data-filter="general">General</button>
+        <div class="preview-grid" id="blogPreview"></div>
+        <div class="view-all-container">
+          <a href="blog.html" class="view-all-btn">View All Articles →</a>
         </div>
-        <div class="blog-grid" id="blogGrid"></div>
       </div>
     </section>
 
-    <!-- INTERVIEW TIPS SECTION -->
-    <section class="section" id="interviews">
+    <!-- INTERVIEW PREVIEW SECTION -->
+    <section class="section preview-section" id="interviews">
       <div class="section-c">
         <div class="section-h">
           <p class="section-eye" data-animate>Interview Prep</p>
           <h2 class="section-title" data-animate>Technical Interview Questions</h2>
           <p class="section-sub" data-animate>Deep ServiceNow questions asked at Apple, Google & ServiceNow.</p>
         </div>
-        <div class="interview-filters">
-          <button class="filter-btn active" data-ifilter="all">All</button>
-          <button class="filter-btn" data-ifilter="Performance">Performance</button>
-          <button class="filter-btn" data-ifilter="Architecture">Architecture</button>
-          <button class="filter-btn" data-ifilter="Security">Security</button>
-          <button class="filter-btn" data-ifilter="Scripting">Scripting</button>
+        <div class="preview-grid" id="interviewPreview"></div>
+        <div class="view-all-container">
+          <a href="interviews.html" class="view-all-btn">View All Questions →</a>
         </div>
-        <div class="interview-list" id="interviewList"></div>
       </div>
     </section>
 
-    <!-- INTEGRATION SECTION - FULL -->
+    <!-- INTEGRATION SECTION -->
     <section class="integration-section" id="integrations">
       <div class="section-c">
         <div class="section-h">
@@ -647,90 +603,21 @@
     </section>
   </main>
 
-  <div class="blog-modal" id="blogModal">
-    <div class="blog-modal-content">
-      <button class="blog-modal-close">&times;</button>
-      <div class="blog-modal-header" id="modalHeader"></div>
-      <div class="blog-modal-body">
-        <h1 id="modalTitle"></h1>
-        <div class="blog-modal-meta"><span id="modalDate"></span><span id="modalRead"></span><span id="modalCat"></span></div>
-        <article class="blog-modal-article" id="modalContent"></article>
-      </div>
-    </div>
-  </div>
-
   <button class="back-to-top"><svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg></button>
   <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
 
-  <!-- 
-  ╔═══════════════════════════════════════════════════════════════════════════╗
-  ║  BLOG POSTS - EDIT posts.json FILE INSTEAD OF THIS CODE                   ║
-  ║                                                                           ║
-  ║  Create a file called "posts.json" in your repository root with:          ║
-  ║                                                                           ║
-  ║  [                                                                        ║
-  ║    {                                                                      ║
-  ║      "id": 1,                                                             ║
-  ║      "title": "Your Article Title",                                       ║
-  ║      "excerpt": "Short description...",                                   ║
-  ║      "category": "servicenow",  // servicenow, ai, tutorial, general      ║
-  ║      "date": "Dec 15, 2025",                                              ║
-  ║      "readTime": "5 min read",                                            ║
-  ║      "content": "<h2>Heading</h2><p>Your HTML content...</p>"             ║
-  ║    }                                                                      ║
-  ║  ]                                                                        ║
-  ║                                                                           ║
-  ║  The script will automatically load from posts.json if it exists!         ║
-  ╚═══════════════════════════════════════════════════════════════════════════╝
-  -->
-
   <script>
-    // DEFAULT INTERVIEW QUESTIONS
-    var DEFAULT_INTERVIEWS = [
-      {id:1,question:"Explain the difference between GlideRecord and GlideAggregate. When would you use one over the other, and what are the performance implications?",answer:"<p><strong>GlideRecord</strong> retrieves individual records and loads all fields into memory. <strong>GlideAggregate</strong> performs database-level aggregations (COUNT, SUM, AVG, MIN, MAX) without loading record data.</p><h4>Performance Implications:</h4><ul><li><strong>GlideRecord COUNT anti-pattern:</strong> <code>gr.query(); while(gr.next()) count++;</code> loads every record - O(n) memory.</li><li><strong>GlideAggregate:</strong> <code>ga.addAggregate('COUNT'); ga.query();</code> executes single SQL COUNT - O(1) memory.</li></ul><h4>Code Example:</h4><pre>// ❌ Bad - Loads 100K records\nvar gr = new GlideRecord('incident');\ngr.query();\nvar count = gr.getRowCount();\n\n// ✅ Good - Single DB operation\nvar ga = new GlideAggregate('incident');\nga.addAggregate('COUNT');\nga.query();\nvar count = ga.next() ? ga.getAggregate('COUNT') : 0;</pre>",difficulty:"Senior",category:"Performance",company:"ServiceNow",date:"Dec 12, 2025"},
-      {id:2,question:"A Business Rule and a Client Script both update the same field. Describe the exact execution order and how to prevent race conditions.",answer:"<p><strong>Execution Order (on form submit):</strong></p><ol><li><strong>Client Script (onSubmit)</strong> - Runs in browser BEFORE data sent</li><li><strong>Business Rule (before)</strong> - Runs on server BEFORE DB write</li><li><strong>Database Write</strong> - Actual INSERT/UPDATE</li><li><strong>Business Rule (after)</strong> - Runs AFTER DB write</li><li><strong>Async Business Rule</strong> - Queued, runs independently</li></ol><h4>The Business Rule always wins</h4><p>Because it runs after client script and directly modifies GlideRecord.</p><h4>Prevention:</h4><pre>// BR - respect user's explicit change\nif (!current.priority.changes()) {\n  current.priority = calculatePriority();\n}</pre>",difficulty:"Senior",category:"Architecture",company:"Apple",date:"Dec 12, 2025"},
-      {id:3,question:"How does ServiceNow's ACL evaluation work? Explain the order of evaluation and what happens when multiple ACLs match.",answer:"<p><strong>ACL Evaluation Order (most to least specific):</strong></p><ol><li><strong>Table.Field</strong> - e.g., incident.caller_id</li><li><strong>Table.*</strong> - e.g., incident.*</li><li><strong>*.Field</strong> - e.g., *.caller_id</li><li><strong>*.*</strong> - Global default</li></ol><h4>Multiple ACL Match = ANDed Together</h4><p>All matching ACLs must pass.</p><h4>Admin Override Gotcha:</h4><pre>// This ACL will NEVER block admin!\n// Admin bypasses ACL evaluation unless:\nif (gs.hasRole('admin')) return false;</pre>",difficulty:"Expert",category:"Security",company:"Google",date:"Dec 11, 2025"},
-      {id:4,question:"Design a solution to process 50,000 records nightly without causing performance issues or hitting governor limits.",answer:"<h4>Solution Architecture:</h4><pre>// Scheduled Job triggers Flow Designer\nvar workflow = new GlideFlow('process_flow');\nworkflow.startAsync();</pre><h4>Flow Designer Approach:</h4><ol><li>Query with <code>setLimit(500)</code> per batch</li><li>Use <strong>For Each</strong> with parallel execution</li><li>Subflow handles individual records</li></ol><h4>Performance Tips:</h4><pre>gr.setWorkflow(false); // Skip BRs\ngr.autoSysFields(false); // Skip audit\ngr.setLimit(500); // Always batch\ngr.updateMultiple(); // Bulk updates</pre>",difficulty:"Expert",category:"Performance",company:"ServiceNow",date:"Dec 11, 2025"}
-    ];
-    
-    var INTERVIEWS = DEFAULT_INTERVIEWS;
-    fetch('interviews.json').then(function(r){return r.json();}).then(function(data){INTERVIEWS=data;renderInterviews('all');}).catch(function(){renderInterviews('all');});
-
-    // Render interviews
-    function renderInterviews(filter){
-      var filtered=filter==='all'?INTERVIEWS:INTERVIEWS.filter(function(q){return q.category===filter;});
-      var html='';
-      filtered.forEach(function(q,i){
-        var diffClass=q.difficulty==='Expert'?'expert':'';
-        html+='<div class="interview-card" data-animate-card style="transition-delay:'+(i*.1)+'s"><div class="interview-header" onclick="toggleInterview(this)"><div class="interview-q"><div class="interview-meta"><span class="interview-badge badge-company">'+q.company+'</span><span class="interview-badge badge-difficulty '+diffClass+'">'+q.difficulty+'</span><span class="interview-badge badge-category">'+q.category+'</span></div><p class="interview-question">'+q.question+'</p></div><div class="interview-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div></div><div class="interview-answer"><div class="interview-answer-inner">'+q.answer+'<p class="interview-date">Added: '+q.date+'</p></div></div></div>';
-      });
-      document.getElementById('interviewList').innerHTML=html;
-      document.querySelectorAll('#interviewList .interview-card').forEach(function(el){observer.observe(el);});
-    }
-
-    function toggleInterview(el){el.parentElement.classList.toggle('open');}
-
-    document.querySelectorAll('[data-ifilter]').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('[data-ifilter]').forEach(function(b){b.classList.remove('active');});this.classList.add('active');renderInterviews(this.dataset.ifilter);});});
-
-    // DEFAULT BLOG POSTS
-    var DEFAULT_POSTS = [
-      {id:1,title:"Building AI Agents in ServiceNow: A Complete Guide",excerpt:"Learn how to create intelligent AI agents that automate complex workflows using ServiceNow's AI capabilities.",category:"servicenow",date:"Dec 10, 2025",readTime:"8 min read",content:"<h2>Introduction</h2><p>AI Agents are revolutionizing enterprise automation. In this guide, we'll explore how to build intelligent agents within ServiceNow.</p><h2>What are AI Agents?</h2><p>AI Agents are autonomous systems that can perceive their environment, make decisions, and take actions to achieve specific goals.</p><h2>Getting Started</h2><ul><li>ServiceNow Utah or later</li><li>AI Control Tower access</li><li>Integration Hub subscription</li></ul><pre>// Sample GlideRecord script\nvar gr = new GlideRecord('incident');\ngr.addQuery('state', 1);\ngr.query();</pre>"},
-      {id:2,title:"GenAI Summarization for Risk Management",excerpt:"How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace to reduce analysis time by 60%.",category:"ai",date:"Dec 5, 2025",readTime:"6 min read",content:"<h2>The Challenge</h2><p>Risk analysts were spending hours reading through lengthy assessments. We needed instant summarization.</p><h2>The Solution</h2><p>By integrating GenAI with ServiceNow's GRC module, we created automated summarization.</p><h2>Results</h2><p>60% reduction in analysis time and improved accuracy.</p>"},
-      {id:3,title:"Flow Designer Best Practices for Enterprise Scale",excerpt:"Essential patterns and anti-patterns when building flows that handle thousands of executions daily.",category:"tutorial",date:"Nov 28, 2025",readTime:"10 min read",content:"<h2>Best Practices</h2><ul><li>Use subflows for reusable logic</li><li>Implement proper error handling</li><li>Use async operations for heavy processing</li><li>Monitor execution times</li></ul><h2>Anti-Patterns to Avoid</h2><p>Don't create flows that query large datasets without filters...</p>"},
-      {id:4,title:"The Future of Enterprise AI: 2025 Trends",excerpt:"Exploring emerging trends in enterprise AI and what it means for ServiceNow developers.",category:"general",date:"Nov 20, 2025",readTime:"5 min read",content:"<h2>Enterprise AI in 2025</h2><p>The landscape is evolving rapidly. Key trends include agentic AI and autonomous workflows.</p><h2>What This Means for ServiceNow</h2><p>ServiceNow is well-positioned with its Now Platform AI capabilities.</p>"}
-    ];
-
-    var BLOG_POSTS = DEFAULT_POSTS;
-
-    // Try to load posts.json
-    fetch('posts.json').then(function(r){return r.json();}).then(function(data){BLOG_POSTS=data;renderBlog('all');}).catch(function(){renderBlog('all');});
-
     var ICONS={bolt:'<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',gear:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',rocket:'<svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09zM12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/></svg>',cloud:'<svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>',code:'<svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',database:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',tool:'<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',shield:'<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',trophy:'<svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6M18 9h1.5a2.5 2.5 0 000-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 1012 0V2z"/></svg>',target:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',layers:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',brain:'<svg viewBox="0 0 24 24"><path d="M12 4.5a2.5 2.5 0 00-4.96-.46 2.5 2.5 0 00-1.98 3 2.5 2.5 0 00-1.32 4.24 3 3 0 00.34 5.58 2.5 2.5 0 002.96 3.08A2.5 2.5 0 0012 19.5M12 4.5a2.5 2.5 0 014.96-.46 2.5 2.5 0 011.98 3 2.5 2.5 0 011.32 4.24 3 3 0 01-.34 5.58 2.5 2.5 0 01-2.96 3.08A2.5 2.5 0 0112 19.5"/></svg>',server:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>',link:'<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>',refresh:'<svg viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>'};
+    
     var DATA={about:[{icon:'bolt',cls:'icon-bolt',title:'AI-Native Development',desc:'Expert in integrating Generative AI, LLMs, and AI Agents to automate complex processes.',large:true},{icon:'gear',cls:'icon-gear',title:'ServiceNow Mastery',desc:'Strong expertise across ITSM, ITOM, SecOps, GRC, and custom apps.'},{icon:'rocket',cls:'icon-rocket',title:'Enterprise Scale',desc:'Delivering solutions for global organizations including Walt Disney.'}],stats:[{num:'5+',label:'Years Experience'},{num:'10+',label:'Certifications'},{num:'60%',label:'Manual Work Reduced'},{num:'40%',label:'Faster Completion'}],experience:[{date:'Oct 2025 – Present',role:'Senior Software Engineer',company:'Temus',desc:'Designing agentic workflows for PSU clients with secure LLM hosting.'},{date:'Feb 2024 – Oct 2025',role:'Senior Software Engineer',company:'ServiceNow',desc:'Configured AI Control Tower. Developed AI-powered Risk Workspace.'},{date:'Feb 2023 – Feb 2024',role:'Senior Software Developer',company:'SoftwareONE India',desc:'Platform development for ITSM, CSM. Integrated SailPoint IdentityNow.'},{date:'Nov 2020 – Jan 2023',role:'Senior Engineer',company:'LTIMindtree (Walt Disney)',desc:'ITSM & ITOM development for Walt Disney worldwide.'}],skills:[{icon:'bolt',cls:'icon-bolt',title:'ServiceNow',tags:['ITSM','ITOM','SecOps','GRC','CMDB']},{icon:'brain',cls:'icon-ai',title:'AI & ML',tags:['GenAI','LLMs','TensorFlow','NLP']},{icon:'code',cls:'icon-code',title:'Development',tags:['JavaScript','Python','React','REST']},{icon:'cloud',cls:'icon-cloud',title:'Cloud',tags:['GCP','AWS','Azure']},{icon:'database',cls:'icon-data',title:'Data',tags:['SQL','JSON','XML','SOAP']},{icon:'tool',cls:'icon-tools',title:'Tools',tags:['GlideRecord','Flow Designer','ATF']}],certs:[{icon:'trophy',cls:'icon-trophy',name:'Architecture Excellence',issuer:'ServiceNow • Jul 2025'},{icon:'target',cls:'icon-target',name:'Application Developer',issuer:'ServiceNow • Nov 2023'},{icon:'layers',cls:'icon-layers',name:'Implementation Specialist ITSM',issuer:'ServiceNow • Apr 2024'},{icon:'shield',cls:'icon-shield',name:'Implementation Specialist TPRM',issuer:'ServiceNow • Apr 2024'},{icon:'cloud',cls:'icon-cloud',name:'Associate Cloud Engineer',issuer:'Google Cloud • Oct 2022'},{icon:'brain',cls:'icon-ai',name:'Azure AI Certification',issuer:'Microsoft • Jun 2021'}],integrationTypes:[{icon:'refresh',cls:'icon-cloud',title:'REST API',desc:'Bi-directional sync'},{icon:'server',cls:'icon-server',title:'SOAP Services',desc:'Legacy integrations'},{icon:'link',cls:'icon-link',title:'Integration Hub',desc:'Pre-built spokes'},{icon:'bolt',cls:'icon-bolt',title:'Flow Designer',desc:'Automated workflows'}],projects:[{num:'01',cat:'Computer Vision',title:'Helmet Detection & License Plate Recognition',desc:'Real-time system using OpenCV for traffic safety.',problem:'Manual identification is inefficient.',solution:'Built detection with 97% accuracy.',tech:['OpenCV','Python','SVM','OCR'],stats:[{val:'97%',lbl:'Accuracy'},{val:'30fps',lbl:'Real-time'},{val:'<100ms',lbl:'Detection'}]},{num:'02',cat:'NLP & Voice AI',title:'Instantaneous Informant Chatterbot',desc:'Voice-enabled campus assistant.',problem:'Students waste time searching.',solution:'Multilingual voice chatbot.',tech:['Python','NLP','gTTS','Node.js'],stats:[{val:'Multi',lbl:'Language'},{val:'Voice',lbl:'Enabled'},{val:'<2s',lbl:'Response'}]}],apis:[{method:'POST',endpoint:'/api/now/table/incident',status:'201'},{method:'GET',endpoint:'/api/now/cmdb/instance',status:'200'},{method:'PUT',endpoint:'/api/now/table/change',status:'200'},{method:'GET',endpoint:'/api/now/table/sys_user',status:'200'}]};
+    
+    // Preview data for blog and interviews
+    var BLOG_PREVIEW=[{id:1,title:"Building AI Agents in ServiceNow",excerpt:"Learn how to create intelligent AI agents that automate complex workflows.",category:"servicenow",date:"Dec 10, 2025",readTime:"8 min"},{id:2,title:"GenAI Summarization for Risk Management",excerpt:"How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace.",category:"ai",date:"Dec 5, 2025",readTime:"6 min"},{id:3,title:"Flow Designer Best Practices",excerpt:"Essential patterns when building flows that handle thousands of executions daily.",category:"tutorial",date:"Nov 28, 2025",readTime:"10 min"}];
+    
+    var INTERVIEW_PREVIEW=[{question:"Explain the difference between GlideRecord and GlideAggregate.",company:"ServiceNow",difficulty:"Senior",category:"Performance"},{question:"A Business Rule and Client Script both update the same field. Describe execution order.",company:"Apple",difficulty:"Senior",category:"Architecture"},{question:"How does ServiceNow's ACL evaluation work?",company:"Google",difficulty:"Expert",category:"Security"}];
     
     function icon(n,c){return'<div class="icon '+c+'">'+(ICONS[n]||'')+'</div>';}
 
-    // Intersection Observer - defined first
     var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('animate');});},{threshold:0.1});
 
     // Render sections
@@ -741,25 +628,14 @@
     h='';DATA.certs.forEach(function(c,i){h+='<div class="cert-card" data-animate-card style="transition-delay:'+(i*.1)+'s">'+icon(c.icon,c.cls)+'<h4>'+c.name+'</h4><p class="cert-issuer">'+c.issuer+'</p></div>';});document.getElementById('certScroll').innerHTML=h;
     h='';DATA.integrationTypes.forEach(function(t,i){h+='<div class="int-type" data-animate-card style="transition-delay:'+(i*.1)+'s">'+icon(t.icon,t.cls)+'<h4>'+t.title+'</h4><p>'+t.desc+'</p></div>';});document.getElementById('intTypes').innerHTML=h;
 
+    // Blog Preview
+    h='';BLOG_PREVIEW.forEach(function(p,i){h+='<a href="blog.html#post-'+p.id+'" class="preview-card" data-animate-card style="transition-delay:'+(i*.1)+'s"><div class="preview-thumb"><div class="preview-thumb-bg blog"></div><span class="preview-category cat-'+p.category+'">'+p.category+'</span></div><div class="preview-content"><div class="preview-meta"><span>'+p.date+'</span><span>'+p.readTime+'</span></div><h3 class="preview-title">'+p.title+'</h3><p class="preview-excerpt">'+p.excerpt+'</p></div></a>';});document.getElementById('blogPreview').innerHTML=h;
+
+    // Interview Preview
+    h='';INTERVIEW_PREVIEW.forEach(function(q,i){var diffClass=q.difficulty==='Expert'?'expert':'';h+='<a href="interviews.html" class="preview-card interview-preview-card" data-animate-card style="transition-delay:'+(i*.1)+'s"><div class="interview-badges"><span class="interview-badge badge-company">'+q.company+'</span><span class="interview-badge badge-difficulty '+diffClass+'">'+q.difficulty+'</span></div><p class="interview-preview-q">'+q.question+'</p></a>';});document.getElementById('interviewPreview').innerHTML=h;
+
     // Projects
     h='';DATA.projects.forEach(function(p,i){var tech='',stats='';p.tech.forEach(function(t){tech+='<span class="tech-tag">'+t+'</span>';});p.stats.forEach(function(s){stats+='<div class="project-stat-card"><div class="project-stat-value">'+s.val+'</div><div class="project-stat-label">'+s.lbl+'</div></div>';});h+='<div class="project-item"><div class="project-grid"><div class="project-visual"><div class="project-screen"><canvas id="canvas'+i+'" width="600" height="300"></canvas></div><div class="project-stats-row">'+stats+'</div></div><div class="project-content"><div class="project-num">'+p.num+'</div><span class="project-category">'+p.cat+'</span><h3 class="project-title">'+p.title+'</h3><p class="project-desc">'+p.desc+'</p><div class="project-features"><div class="feature-item"><div class="feature-icon problem">!</div><div class="feature-text"><h4>Problem</h4><p>'+p.problem+'</p></div></div><div class="feature-item"><div class="feature-icon solution">✓</div><div class="feature-text"><h4>Solution</h4><p>'+p.solution+'</p></div></div></div><div class="project-tech">'+tech+'</div></div></div></div>';if(i<DATA.projects.length-1)h+='<div class="project-divider"></div>';});document.getElementById('projectsList').innerHTML=h;
-
-    // Blog render
-    function renderBlog(filter){
-      var filtered=filter==='all'?BLOG_POSTS:BLOG_POSTS.filter(function(p){return p.category===filter;});
-      var html='';
-      filtered.forEach(function(p,i){
-        html+='<article class="blog-card" data-animate-card style="transition-delay:'+(i*.1)+'s" data-id="'+p.id+'"><div class="blog-thumb"><div class="blog-thumb-bg"></div><span class="blog-category cat-'+p.category+'">'+p.category+'</span></div><div class="blog-content"><div class="blog-meta"><span>'+p.date+'</span><span>'+p.readTime+'</span></div><h3 class="blog-title">'+p.title+'</h3><p class="blog-excerpt">'+p.excerpt+'</p><div class="blog-footer"><span class="read-more">Read more →</span></div></div></article>';
-      });
-      document.getElementById('blogGrid').innerHTML=html;
-      document.querySelectorAll('#blogGrid .blog-card').forEach(function(el){observer.observe(el);el.addEventListener('click',function(){openArticle(this.dataset.id);});});
-    }
-
-    document.querySelectorAll('.filter-btn').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});this.classList.add('active');renderBlog(this.dataset.filter);});});
-
-    function openArticle(id){var p=BLOG_POSTS.find(function(x){return x.id==id;});if(!p)return;document.getElementById('modalTitle').textContent=p.title;document.getElementById('modalDate').textContent=p.date;document.getElementById('modalRead').textContent=p.readTime;document.getElementById('modalCat').textContent=p.category;document.getElementById('modalContent').innerHTML=p.content;document.getElementById('blogModal').classList.add('active');document.body.style.overflow='hidden';}
-    document.querySelector('.blog-modal-close').addEventListener('click',function(){document.getElementById('blogModal').classList.remove('active');document.body.style.overflow='';});
-    document.getElementById('blogModal').addEventListener('click',function(e){if(e.target===this){this.classList.remove('active');document.body.style.overflow='';}});
 
     // API Log
     var apiLog=document.getElementById('apiLog');
