@@ -58,26 +58,27 @@ function callPerplexityInterview(prompt) {
       messages: [
         {
           role: "system",
-          content: `You are a ServiceNow technical interviewer at a top tech company (Apple, Google, ServiceNow). Generate ONE challenging interview question with a comprehensive answer.
+          content: `You are a ServiceNow technical interviewer at Apple/Google/ServiceNow. Generate ONE challenging interview question with answer.
 
-CRITICAL RULES:
-- Return ONLY valid JSON, no markdown code blocks
-- Use HTML for formatting: <strong>, <p>, <h4>, <ul>, <li>, <ol>, <pre>, <code>
-- Do NOT use markdown like **bold** or [citations]
-- Include code examples in <pre> tags
-- Make the question genuinely difficult - test deep platform knowledge
+CRITICAL JSON RULES:
+- Return ONLY a valid JSON object
+- Use HTML tags: <strong>, <p>, <h4>, <ul>, <li>, <ol>, <pre>
+- For code in <pre> tags, use a single line or escape newlines as \\n
+- NO markdown like **bold**
+- NO citation numbers like [1]
+- NO actual line breaks inside JSON string values - use \\n instead
 
-Return this exact JSON structure:
-{"question": "The interview question text", "answer": "<p>Detailed answer with explanation...</p><h4>Code Example:</h4><pre>// code here</pre><ul><li>Key point</li></ul>", "difficulty": "Senior or Expert", "company": "Apple or Google or ServiceNow"}
+EXACT FORMAT (single line JSON):
+{"question":"Your question here","answer":"<p>Answer text</p><pre>code here</pre>","difficulty":"Senior","company":"Apple"}
 
-The answer should be 300-500 words, technically accurate, with practical code examples.`
+Keep code examples short (under 5 lines). Answer should be 200-300 words.`
         },
         {
           role: "user",
           content: prompt
         }
       ],
-      max_tokens: 2000,
+      max_tokens: 1500,
       temperature: 0.8
     });
 
@@ -122,12 +123,38 @@ The answer should be 300-500 words, technically accurate, with practical code ex
 // Parse interview question from API response
 function parseInterview(response, category) {
   try {
-    let cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    let cleaned = response
+      .replace(/```json\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim();
+    
+    // Fix common JSON issues from API response
+    // 1. Remove control characters except valid whitespace
+    cleaned = cleaned.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/g, '');
+    
+    // 2. Fix unescaped newlines inside strings (common in code blocks)
+    // This is tricky - we need to be inside a string value
+    // Replace actual newlines with \n escape sequence
+    cleaned = cleaned.replace(/\n/g, '\\n');
+    
+    // 3. Fix unescaped tabs
+    cleaned = cleaned.replace(/\t/g, '\\t');
+    
+    // 4. Try to extract JSON object if there's extra text
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      cleaned = jsonMatch[0];
+    }
+    
     const interview = JSON.parse(cleaned);
     
+    // Clean up the answer content
     let answer = interview.answer || '';
     answer = answer.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     answer = answer.replace(/\[\d+\](\[\d+\])*/g, '');
+    // Convert escaped newlines back to actual newlines for HTML display in <pre> tags
+    // But keep \n for code display
+    answer = answer.replace(/\\n/g, '\n');
     
     let question = (interview.question || '').replace(/\[\d+\]/g, '');
     
@@ -140,6 +167,31 @@ function parseInterview(response, category) {
     };
   } catch (e) {
     console.error('Failed to parse interview:', e.message);
+    console.log('   Attempting fallback parse...');
+    
+    // Fallback: try to extract fields manually with regex
+    try {
+      const questionMatch = response.match(/"question"\s*:\s*"([^"]+)"/);
+      const difficultyMatch = response.match(/"difficulty"\s*:\s*"([^"]+)"/);
+      const companyMatch = response.match(/"company"\s*:\s*"([^"]+)"/);
+      
+      // For answer, get everything between "answer": " and the next top-level key or end
+      const answerMatch = response.match(/"answer"\s*:\s*"([\s\S]*?)"\s*,\s*"(?:difficulty|company|question)"/);
+      
+      if (questionMatch) {
+        console.log('   Fallback parse succeeded!');
+        return {
+          question: questionMatch[1].replace(/\\n/g, ' ').replace(/\[\d+\]/g, ''),
+          answer: answerMatch ? answerMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"') : '<p>Answer parsing failed - please check source.</p>',
+          difficulty: difficultyMatch ? difficultyMatch[1] : 'Senior',
+          company: companyMatch ? companyMatch[1] : 'ServiceNow',
+          category: category
+        };
+      }
+    } catch (fallbackError) {
+      console.log('   Fallback also failed:', fallbackError.message);
+    }
+    
     return null;
   }
 }
