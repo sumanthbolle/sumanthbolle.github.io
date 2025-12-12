@@ -10,43 +10,103 @@ const INTERVIEWS_FILE = 'interviews.json';
 const MAX_POSTS = 20;
 const MAX_INTERVIEWS = 15;
 
-// Interview question topics
-const INTERVIEW_TOPICS = [
-  {
-    query: "Generate a deep technical ServiceNow interview question about GlideRecord performance optimization, database queries, or script efficiency that would be asked at Apple, Google, or ServiceNow for senior developers",
-    category: "Performance"
-  },
-  {
-    query: "Generate a challenging ServiceNow architecture interview question about Business Rules, ACLs, scoped applications, or client-server interactions that top tech companies ask",
-    category: "Architecture"
-  },
-  {
-    query: "Generate an expert-level ServiceNow interview question about Flow Designer, Integration Hub, REST APIs, or asynchronous processing patterns",
-    category: "Integration"
-  },
-  {
-    query: "Generate a difficult ServiceNow security interview question about ACL evaluation, data isolation, cross-scope access, or authentication that FAANG companies ask",
-    category: "Security"
-  }
-];
-
-// Topics to fetch articles about
+// Topics to fetch articles about - Optimized for ServiceNow official sources
 const TOPICS = [
   {
-    query: "Latest ServiceNow platform updates, new features, and best practices released this week",
+    query: `Search community.servicenow.com, docs.servicenow.com, and support.servicenow.com for the latest ServiceNow platform updates this week. Include:
+- New Yokohama/Xanadu release features and upgrade guidance
+- Platform Health and Impact capabilities updates
+- Store app releases and Employee Center enhancements
+- Security patches and performance improvements
+- Best practices from ServiceNow Knowledge Base articles
+Format as a practical developer guide with code examples where applicable.`,
     category: "servicenow"
   },
   {
-    query: "Latest developments in enterprise AI, GenAI, LLMs, and AI agents for business automation this week",
+    query: `Search for the latest developments in ServiceNow AI capabilities from docs.servicenow.com and community.servicenow.com. Include:
+- Now Assist updates and GenAI features
+- AI Control Tower and Predictive Intelligence enhancements
+- Virtual Agent AI improvements and NLU updates
+- Agent-to-Agent (A2A) protocols and MCP integration
+- LLM integration patterns and AI Search capabilities
+- Practical implementation examples for ServiceNow developers
+Focus on actionable guidance with GlideRecord and Flow Designer examples.`,
     category: "ai"
   },
   {
-    query: "New ServiceNow integration patterns, Flow Designer tips, and Integration Hub updates",
+    query: `Search docs.servicenow.com and community.servicenow.com for ServiceNow integration and scripting best practices. Include:
+- Integration Hub spoke updates and new connectors
+- Flow Designer patterns, subflows, and error handling
+- REST API and Scripted REST best practices
+- Stream Connect and ETL patterns for high-volume data
+- GlideRecord performance optimization techniques
+- GlideAggregate vs GlideRecord use cases with code examples
+- Business Rule and Client Script patterns
+Provide copy-paste ready code snippets and anti-patterns to avoid.`,
     category: "tutorial"
   },
   {
-    query: "Latest trends in enterprise automation, ITSM, and digital transformation",
+    query: `Search for latest enterprise ITSM trends and ServiceNow digital transformation strategies from community.servicenow.com and industry sources. Include:
+- Hyperautomation strategies with ServiceNow
+- ITSM modernization and proactive service delivery
+- ServiceNow CMDB and Discovery best practices
+- IT Operations Management (ITOM) automation patterns
+- Workflow automation ROI metrics and case studies
+- Low-code/no-code citizen developer enablement
+Focus on practical implementation guidance for ServiceNow architects and developers.`,
     category: "general"
+  }
+];
+
+// Interview question topics - Enhanced for deeper technical questions
+const INTERVIEW_TOPICS = [
+  {
+    query: `Generate a deep technical ServiceNow interview question from topics covered in docs.servicenow.com about:
+- GlideRecord vs GlideAggregate performance implications
+- Database query optimization and index usage
+- Script execution contexts (server vs client vs async)
+- Memory management and governor limits
+Include a detailed answer with code examples showing correct vs incorrect approaches.`,
+    category: "Performance"
+  },
+  {
+    query: `Generate a challenging ServiceNow architecture interview question from docs.servicenow.com covering:
+- Business Rule execution order (before/after/async) and race conditions
+- Client Script vs UI Policy vs UI Action use cases
+- Scoped application design and cross-scope access patterns
+- Update Set management and deployment strategies
+Include detailed answer explaining the "why" behind best practices.`,
+    category: "Architecture"
+  },
+  {
+    query: `Generate an expert-level ServiceNow interview question about integration patterns from docs.servicenow.com:
+- Integration Hub vs Scripted REST vs Import Sets decision tree
+- Flow Designer error handling and retry patterns
+- Outbound REST message authentication methods
+- MID Server architecture and use cases
+- Stream Connect vs Table API for high-volume integrations
+Include code examples and performance considerations.`,
+    category: "Integration"
+  },
+  {
+    query: `Generate a difficult ServiceNow security interview question from support.servicenow.com and docs.servicenow.com:
+- ACL evaluation order and multiple ACL behavior
+- Row-level security with Before Query Business Rules
+- Cross-scope privilege and application access controls
+- OAuth 2.0 and SSO implementation patterns
+- Data encryption and instance security hardening
+Include specific scenarios and security best practices.`,
+    category: "Security"
+  },
+  {
+    query: `Generate a ServiceNow scripting interview question covering advanced patterns from docs.servicenow.com:
+- Script Include design patterns (extending classes, prototype methods)
+- GlideAjax client-server communication patterns
+- Asynchronous script execution and scheduled jobs
+- Transaction handling and database operations
+- getValue() vs getDisplayValue() vs dot-walking implications
+Include code examples demonstrating proper implementation.`,
+    category: "Scripting"
   }
 ];
 
@@ -54,32 +114,36 @@ const TOPICS = [
 function callPerplexityInterview(prompt) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify({
-      model: "sonar",
+      model: "sonar-pro",
       messages: [
         {
           role: "system",
-          content: `You are a ServiceNow technical interviewer at Apple/Google/ServiceNow. Generate ONE challenging interview question with answer.
+          content: `You are a ServiceNow technical interviewer at Apple/Google/ServiceNow creating questions based on official ServiceNow documentation. Generate ONE challenging interview question with a comprehensive answer.
 
 CRITICAL JSON RULES:
-- Return ONLY a valid JSON object
+- Return ONLY a valid JSON object, no markdown code blocks
 - Use HTML tags: <strong>, <p>, <h4>, <ul>, <li>, <ol>, <pre>
 - For code in <pre> tags, use a single line or escape newlines as \\n
-- NO markdown like **bold**
-- NO citation numbers like [1]
+- NO markdown like **bold** - use <strong>bold</strong>
+- NO citation numbers like [1] or [2]
 - NO actual line breaks inside JSON string values - use \\n instead
 
 EXACT FORMAT (single line JSON):
-{"question":"Your question here","answer":"<p>Answer text</p><pre>code here</pre>","difficulty":"Senior","company":"Apple"}
+{"question":"Your detailed technical question here","answer":"<h4>Key Concept</h4><p>Explanation with context...</p><h4>Code Example</h4><pre>// Correct approach\\nvar gr = new GlideRecord('incident');\\ngr.addQuery('active', true);\\ngr.query();</pre><h4>Common Mistakes</h4><ul><li>Anti-pattern explanation</li></ul>","difficulty":"Senior","company":"Apple"}
 
-Keep code examples short (under 5 lines). Answer should be 200-300 words.`
+Requirements:
+- Question should be specific and test deep understanding
+- Answer should be 300-500 words with practical examples
+- Include both correct approach AND common mistakes
+- Reference ServiceNow best practices from official docs`
         },
         {
           role: "user",
           content: prompt
         }
       ],
-      max_tokens: 1500,
-      temperature: 0.8
+      max_tokens: 2000,
+      temperature: 0.7
     });
 
     const options = {
@@ -129,18 +193,11 @@ function parseInterview(response, category) {
       .trim();
     
     // Fix common JSON issues from API response
-    // 1. Remove control characters except valid whitespace
     cleaned = cleaned.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/g, '');
-    
-    // 2. Fix unescaped newlines inside strings (common in code blocks)
-    // This is tricky - we need to be inside a string value
-    // Replace actual newlines with \n escape sequence
     cleaned = cleaned.replace(/\n/g, '\\n');
-    
-    // 3. Fix unescaped tabs
     cleaned = cleaned.replace(/\t/g, '\\t');
     
-    // 4. Try to extract JSON object if there's extra text
+    // Extract JSON object if there's extra text
     const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       cleaned = jsonMatch[0];
@@ -152,8 +209,6 @@ function parseInterview(response, category) {
     let answer = interview.answer || '';
     answer = answer.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     answer = answer.replace(/\[\d+\](\[\d+\])*/g, '');
-    // Convert escaped newlines back to actual newlines for HTML display in <pre> tags
-    // But keep \n for code display
     answer = answer.replace(/\\n/g, '\n');
     
     let question = (interview.question || '').replace(/\[\d+\]/g, '');
@@ -174,8 +229,6 @@ function parseInterview(response, category) {
       const questionMatch = response.match(/"question"\s*:\s*"([^"]+)"/);
       const difficultyMatch = response.match(/"difficulty"\s*:\s*"([^"]+)"/);
       const companyMatch = response.match(/"company"\s*:\s*"([^"]+)"/);
-      
-      // For answer, get everything between "answer": " and the next top-level key or end
       const answerMatch = response.match(/"answer"\s*:\s*"([\s\S]*?)"\s*,\s*"(?:difficulty|company|question)"/);
       
       if (questionMatch) {
@@ -208,34 +261,46 @@ function loadExistingInterviews() {
   return [];
 }
 
-// Call Perplexity API
+// Call Perplexity API for articles
 function callPerplexity(prompt) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify({
-      model: "sonar",
+      model: "sonar-pro",
       messages: [
         {
           role: "system",
-          content: `You are a tech blog writer for ServiceNow developers. Generate a blog article based on the latest information.
+          content: `You are a technical documentation writer creating content for ServiceNow developers, following the style of Apple and Google technical documentation. Generate a blog article based on the latest information from official ServiceNow sources.
+
+CONTENT QUALITY STANDARDS:
+- Write like Apple/Google docs: clear, scannable, authoritative
+- Include practical code snippets developers can copy-paste
+- Explain the "why" not just the "how"
+- Structure with clear headings and bullet points
+- Include both best practices AND anti-patterns to avoid
 
 CRITICAL FORMATTING RULES:
 - Return ONLY valid JSON, no markdown code blocks
-- Use HTML tags for formatting: <strong>, <em>, <h2>, <p>, <ul>, <li>, <pre>
+- Use HTML tags: <strong>, <em>, <h2>, <h3>, <p>, <ul>, <li>, <ol>, <pre>, <code>
 - Do NOT use markdown syntax like **bold** or *italic*
 - Do NOT include citation numbers like [1] or [2]
-- Do NOT include source references in the content
+- For code blocks use: <pre>// Comment\\nvar gr = new GlideRecord('table');\\ngr.query();</pre>
 
 Return this exact JSON structure:
-{"title": "Clear descriptive title", "excerpt": "2-3 sentence summary without citations", "readTime": "X min read", "content": "<h2>Section</h2><p>Paragraph content here...</p><ul><li>Point one</li></ul>"}
+{
+  "title": "Clear, specific title (not generic)",
+  "excerpt": "2-3 sentence summary that explains the value to developers",
+  "readTime": "X min read",
+  "content": "<h2>Overview</h2><p>Context and why this matters...</p><h2>Implementation</h2><p>Step by step guidance...</p><pre>// Code example</pre><h2>Best Practices</h2><ul><li>Key recommendation</li></ul><h2>Common Pitfalls</h2><ul><li>What to avoid</li></ul>"
+}
 
-Write 400-600 words of practical, actionable content for ServiceNow developers.`
+Write 500-800 words of practical, actionable content. Every article should have code examples where applicable.`
         },
         {
           role: "user",
           content: prompt
         }
       ],
-      max_tokens: 2000,
+      max_tokens: 3000,
       temperature: 0.7
     });
 
@@ -306,16 +371,14 @@ function parseArticle(response, category) {
     // Clean up the content
     let content = article.content || '<p>Content not available.</p>';
     
-    // Convert markdown bold **text** to HTML <strong>text</strong>
+    // Convert any remaining markdown to HTML
     content = content.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    
-    // Convert markdown italic *text* to HTML <em>text</em>
     content = content.replace(/\*([^*]+)\*/g, '<em>$1</em>');
     
-    // Remove citation references like [1], [2], [1][2], etc.
+    // Remove citation references
     content = content.replace(/\[\d+\](\[\d+\])*/g, '');
     
-    // Remove any leftover markdown links [text](url)
+    // Remove any leftover markdown links
     content = content.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
     
     // Fix common encoding issues
@@ -326,10 +389,10 @@ function parseArticle(response, category) {
       .replace(/"/g, '"')
       .replace(/"/g, '"')
       .replace(/…/g, '...')
-      .replace(/\u00A0/g, ' ')  // Non-breaking space
-      .replace(/[\u200B-\u200D\uFEFF]/g, ''); // Zero-width chars
+      .replace(/\u00A0/g, ' ')
+      .replace(/[\u200B-\u200D\uFEFF]/g, '');
     
-    // Clean up excerpt too
+    // Clean up excerpt
     let excerpt = article.excerpt || '';
     excerpt = excerpt.replace(/\*\*([^*]+)\*\*/g, '$1');
     excerpt = excerpt.replace(/\[\d+\](\[\d+\])*/g, '');
@@ -360,8 +423,8 @@ function loadExistingPosts() {
 }
 
 // Generate unique ID
-function generateId(existingPosts) {
-  const maxId = existingPosts.reduce((max, p) => Math.max(max, p.id || 0), 0);
+function generateId(existingItems) {
+  const maxId = existingItems.reduce((max, item) => Math.max(max, item.id || 0), 0);
   return maxId + 1;
 }
 
@@ -384,14 +447,14 @@ async function main() {
   // Show masked key to confirm it's loaded
   const maskedKey = PERPLEXITY_API_KEY.substring(0, 8) + '...' + PERPLEXITY_API_KEY.substring(PERPLEXITY_API_KEY.length - 4);
   console.log(`🔑 API Key loaded: ${maskedKey}`);
-  console.log('🚀 Fetching latest tech articles...\n');
+  console.log('🚀 Fetching latest tech articles from ServiceNow sources...\n');
   
   const existingPosts = loadExistingPosts();
   const newPosts = [];
   const today = formatDate();
 
-  // Pick 1-2 random topics to fetch today (to vary content)
-  const shuffled = TOPICS.sort(() => Math.random() - 0.5);
+  // Pick 2 random topics to fetch today (to vary content)
+  const shuffled = [...TOPICS].sort(() => Math.random() - 0.5);
   const todaysTopics = shuffled.slice(0, 2);
 
   for (const topic of todaysTopics) {
@@ -402,9 +465,9 @@ async function main() {
       const article = parseArticle(response, topic.category);
       
       if (article) {
-        // Check for duplicate titles
+        // Check for duplicate titles (case-insensitive, first 50 chars)
         const isDuplicate = existingPosts.some(
-          p => p.title.toLowerCase() === article.title.toLowerCase()
+          p => p.title.toLowerCase().substring(0, 50) === article.title.toLowerCase().substring(0, 50)
         );
         
         if (!isDuplicate) {
@@ -413,9 +476,9 @@ async function main() {
             ...article,
             date: today
           });
-          console.log(`✅ Added: ${article.title}`);
+          console.log(`✅ Added: ${article.title.substring(0, 60)}...`);
         } else {
-          console.log(`⏭️ Skipped duplicate: ${article.title}`);
+          console.log(`⏭️ Skipped duplicate: ${article.title.substring(0, 50)}...`);
         }
       }
     } catch (e) {
@@ -423,7 +486,7 @@ async function main() {
     }
     
     // Rate limiting - wait between requests
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 2500));
   }
 
   // Merge new posts at the beginning (newest first)
@@ -445,34 +508,40 @@ async function main() {
   const existingInterviews = loadExistingInterviews();
   const newInterviews = [];
 
-  // Pick 1 random interview topic
-  const interviewTopic = INTERVIEW_TOPICS[Math.floor(Math.random() * INTERVIEW_TOPICS.length)];
-  
-  console.log(`📡 Fetching: ${interviewTopic.category} question...`);
-  
-  try {
-    const response = await callPerplexityInterview(interviewTopic.query);
-    const interview = parseInterview(response, interviewTopic.category);
+  // Pick 1-2 random interview topics
+  const shuffledInterviews = [...INTERVIEW_TOPICS].sort(() => Math.random() - 0.5);
+  const todaysInterviewTopics = shuffledInterviews.slice(0, 2);
+
+  for (const interviewTopic of todaysInterviewTopics) {
+    console.log(`📡 Fetching: ${interviewTopic.category} question...`);
     
-    if (interview) {
-      // Check for duplicate questions
-      const isDuplicate = existingInterviews.some(
-        q => q.question.substring(0, 50).toLowerCase() === interview.question.substring(0, 50).toLowerCase()
-      );
+    try {
+      const response = await callPerplexityInterview(interviewTopic.query);
+      const interview = parseInterview(response, interviewTopic.category);
       
-      if (!isDuplicate) {
-        newInterviews.push({
-          id: generateId([...existingInterviews, ...newInterviews]),
-          ...interview,
-          date: today
-        });
-        console.log(`✅ Added: ${interview.question.substring(0, 60)}...`);
-      } else {
-        console.log(`⏭️ Skipped duplicate question`);
+      if (interview) {
+        // Check for duplicate questions
+        const isDuplicate = existingInterviews.some(
+          q => q.question.substring(0, 50).toLowerCase() === interview.question.substring(0, 50).toLowerCase()
+        );
+        
+        if (!isDuplicate) {
+          newInterviews.push({
+            id: generateId([...existingInterviews, ...newInterviews]),
+            ...interview,
+            date: today
+          });
+          console.log(`✅ Added: ${interview.question.substring(0, 60)}...`);
+        } else {
+          console.log(`⏭️ Skipped duplicate question`);
+        }
       }
+    } catch (e) {
+      console.error(`❌ Error fetching interview:`, e.message);
     }
-  } catch (e) {
-    console.error(`❌ Error fetching interview:`, e.message);
+    
+    // Rate limiting
+    await new Promise(r => setTimeout(r, 2500));
   }
 
   // Merge interviews
