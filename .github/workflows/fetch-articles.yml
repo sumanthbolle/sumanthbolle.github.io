@@ -1,5 +1,5 @@
 # .github/workflows/fetch-articles.yml
-# This workflow fetches latest tech articles daily using Perplexity API
+# This workflow fetches latest tech articles and interview questions daily
 
 name: Fetch Daily Tech Articles
 
@@ -8,6 +8,10 @@ on:
     # Runs every day at 8:00 AM UTC (adjust to your timezone)
     - cron: '0 8 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub UI
+
+# IMPORTANT: Grant write permissions to push changes
+permissions:
+  contents: write
 
 jobs:
   fetch-articles:
@@ -32,5 +36,5 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add posts.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update: Daily tech articles $(date +'%Y-%m-%d')" && git push)
+          git add posts.json interviews.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update: Daily content $(date +'%Y-%m-%d')" && git push)
