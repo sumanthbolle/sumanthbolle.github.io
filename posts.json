@@ -1,6 +1,15 @@
 [
   {
     "id": 1,
+    "title": "This Week’s ServiceNow Platform Updates: Yokohama/Xanadu, Impact Platform Health, and Employee Center",
+    "excerpt": "This guide distills the latest ServiceNow platform updates from official docs and community posts into concrete actions for developers. Learn what’s new in Yokohama/Xanadu, Impact Platform Health, Employee Center, and how to safely upgrade, harden security, and improve performance with practical examples.",
+    "readTime": "9 min read",
+    "content": "<h2>Overview</h2><p>The past week has brought a cluster of important ServiceNow updates across the core platform, Impact Platform Health, Employee Center, and Store apps. As a developer, these changes affect how you plan Yokohama/Xanadu upgrades, monitor platform health, and deliver better employee experiences.</p><p>This guide focuses on what you can act on now: how to prepare and test upgrades, wire the new Platform Health capabilities into your workflows, adopt Employee Center enhancements, and apply security and performance best practices from recent knowledge content.</p><h2>Yokohama/Xanadu Release Features and Upgrade Guidance</h2><p>ServiceNow continues to ship patches and hotfixes for the Yokohama family, with updated guidance in the official release notes and upgrade center.</p><h3>Key themes for Yokohama/Xanadu</h3><ul><li><strong>Ongoing patches and hotfixes</strong> – The Yokohama release notes list new patch levels and important fixes across platform, security, and performance.</li><li><strong>App Version–aware upgrades</strong> – Recent Platform Academy content highlights strategies to upgrade with confidence using app versioning and consistent automation.</li><li><strong>AI-first capabilities</strong> – The core platform continues to evolve as an AI control tower, so instances should be kept close to current families to leverage these capabilities.</li></ul><h3>Practical upgrade flow</h3><ol><li><strong>Inventory and freeze</strong><p>Identify in-progress development and freeze non-critical changes before requesting an upgrade in your sub‑prod instances.</p><pre>// Simple inventory of in-progress update sets\nvar us = new GlideRecord('sys_update_set');\nus.addActiveQuery();\nus.addQuery('state', 'in progress');\nus.query();\nwhile (us.next()) {\n  gs.print(us.name + ' - ' + us.sys_id);\n}</pre></li><li><strong>Align app versions</strong><p>Use the application manager to confirm your scoped apps are on versions compatible with Yokohama/Xanadu before scheduling the family upgrade.</p></li><li><strong>Automate regression checks</strong><p>Register critical-path checks in ATF (Automated Test Framework) and run them as a gate before and after upgrading each environment.</p><pre>// Example: create an ATF test programmatically\nvar test = new GlideRecord('sys_atf_test');\ntest.initialize();\ntest.name = 'Critical Incident Flow – Post-Upgrade';\ntest.description = 'Validates core incident creation and assignment.';\ntest.active = true;\nvar testId = test.insert();\n// Add steps via ATF APIs or UI as needed</pre></li><li><strong>Promote with app version control</strong><p>Use a consistent promotion pattern (dev → test → prod) and avoid local hotfixes that diverge app versions by environment.</p></li></ol><h3>Anti‑patterns to avoid</h3><ul><li>Upgrading production before running ATF and sanity checks on a representative sub‑prod environment.</li><li>Skipping app version review and discovering incompatibilities only after the family upgrade.</li><li>Leaving long‑lived in‑progress update sets that span multiple family versions.</li></ul><h2>Platform Health and Impact Capabilities Updates</h2><p>The December Store release introduces expanded <strong>ServiceNow Impact Platform Health</strong> capabilities, including real-time prevention, diagnostic scans, and improved dashboards for developers.</p><h3>What’s new in Impact Platform Health</h3><ul><li><strong>Real-Time Messaging &amp; Prevention</strong> – Proactive alerts and preventive guidance when risky configurations or patterns are detected in near real time.</li><li><strong>Automated Diagnostic Scans</strong> – Configurable scans that run nightly, weekly, or monthly to detect common issues across your instance landscape.</li><li><strong>Developer-centric Dashboards</strong> – Each developer gets a personalized view of findings, exceptions, and technical debt to prioritize remediation.</li></ul><h3>Configuring scheduled diagnostic scans</h3><p>Platform Health configuration lets admins define scan cadences per instance. You can also trigger scans or respond to findings with server-side logic.</p><pre>// Example: post-scan handler to create tasks for high severity findings\nvar finding = new GlideRecord('sn_impact_ph_finding');\nfinding.addQuery('severity', 'high');\nfinding.addQuery('state', 'new');\nfinding.query();\nwhile (finding.next()) {\n  var task = new GlideRecord('sn_custom_tech_debt');\n  task.initialize();\n  task.short_description = 'Platform Health finding: ' + finding.name;\n  task.description = finding.description;\n  task.priority = 1; // Critical\n  task.u_finding = finding.sys_id;\n  task.insert();\n\n  finding.state = 'task_created';\n  finding.update();\n}</pre><h3>Best practices for Platform Health adoption</h3><ul><li>Start with weekly scans in non‑prod to tune noise, then enable nightly scans in production.</li><li>Treat findings as <em>work items</em>: route to the right teams, track SLAs, and close the loop with root-cause fixes.</li><li>Use developer dashboards in sprint planning to prioritize high-impact debt over low‑value cosmetic fixes.</li></ul><h3>Common Platform Health anti‑patterns</h3><ul><li>Running scans but not integrating findings into any work intake process (they quickly become ignored noise).</li><li>Disabling rules that generate findings instead of remediating underlying issues.</li><li>Scanning only production while ignoring technical debt accumulating in dev/test.</li></ul><h2>Store App Releases and Employee Center Enhancements</h2><p>The December 2025 Store release also delivers new features across ServiceNow Impact and Employee Center (Pro).</p><h3>Employee Center (Pro) December enhancements</h3><p>Recent enhancements focus on improving discoverability, content targeting, and experience configuration.</p><ul><li><strong>Richer Employee Center layouts</strong> – New layout options and page components make it easier to compose branded, task-focused employee hubs.</li><li><strong>Improved content targeting</strong> – Finer-grained criteria for who sees which content, driven by user attributes and contextual signals.</li><li><strong>Better search and topic experience</strong> – Updated search components and topic pages to surface relevant knowledge and services more quickly.</li></ul><h3>Practical configuration example</h3><pre>// Example: Assign a topic page to a specific user criteria\nvar crit = new GlideRecord('sn_ec_user_criteria');\ncrit.addQuery('name', 'Canada Employees');\ncrit.query();\nif (crit.next()) {\n  var topic = new GlideRecord('sn_ec_topic_page');\n  topic.addQuery('title', 'Benefits &amp; Leave');\n  topic.query();\n  if (topic.next()) {\n    var map = new GlideRecord('sn_ec_topic_user_criteria_m2m');\n    map.initialize();\n    map.topic_page = topic.sys_id;\n    map.user_criteria = crit.sys_id;\n    map.insert();\n  }\n}</pre><h3>Impact Store updates you should care about</h3><ul><li><strong>New Platform Health experiences</strong> – The December Impact Store release bundles the Platform Health improvements described above.</li><li><strong>Store delivery model</strong> – Many Impact capabilities are delivered via the Store, so staying current with Store app versions is as important as family upgrades.</li></ul><h2>Security Patches and Performance Improvements</h2><p>The Yokohama release notes and available patches pages highlight ongoing security and performance fixes for the family.</p><h3>Actionable security steps</h3><ul><li>Track the latest Yokohama patches and apply them to non-prod quickly, promoting to prod after validation.</li><li>Enable and monitor security-related system properties recommended by release notes (for example, stricter default ACL behavior or encryption options where available).</li><li>Use Impact Platform Health to surface insecure patterns, such as global ACLs or direct table writes from client scripts.</li></ul><pre>// Example: quick scan for overly permissive ACLs\nvar acl = new GlideRecord('sys_security_acl');\nacl.addQuery('type', 'record');\nacl.addNullQuery('condition');\nacl.addNullQuery('script');\nacl.query();\nwhile (acl.next()) {\n  gs.print('ACL without condition/script: ' + acl.name + ' on ' + acl.operation);\n}</pre><h3>Performance tuning themes</h3><ul><li>Apply hotfixes aimed at query performance and caching issues listed in the Yokohama patches page.</li><li>Use Performance Analytics, Platform Health, and logs to find slow transactions and long-running scripts.</li><li>Refactor synchronous work into background or asynchronous flows where latency is not user‑critical.</li></ul><h2>Best Practices from Recent Knowledge and Community Content</h2><p>Recent Knowledge Base and community posts emphasize predictable upgrades, AI‑ready architectures, and disciplined configuration practices.</p><h3>Key best practices</h3><ul><li><strong>Design for AI-first features</strong> – Use standard data models, consistent task types, and well-defined APIs so generative and agentic AI features can reason over your workflows.</li><li><strong>Favor configuration over customization</strong> – Use out-of-the-box flows, UI components, and patterns first; only customize where there is clear, quantified value.</li><li><strong>Treat Store app versions as first-class</strong> – Establish a cadence to review and update Store apps (Impact, Employee Center, etc.) alongside family upgrades.</li><li><strong>Automate guardrails</strong> – Capture guardrails (naming, ACL rules, integration patterns) as code and checks, not tribal knowledge.</li></ul><pre>// Guardrail example: prevent creation of client scripts on core tables via business rule\nif (current.table == 'incident') {\n  gs.addErrorMessage('Client scripts on incident are restricted. Use UI Policies or UX Components.');\n  current.setAbortAction(true);\n}</pre><h3>Common anti‑patterns highlighted in knowledge content</h3><ul><li>Running upgrades and Store app updates without documented rollback and test plans.</li><li>Using Employee Center as a static portal instead of an actively curated, data-driven experience.</li><li>Ignoring Impact Platform Health findings because \"prod is working\" until a critical incident occurs.</li><li>Embedding business logic directly in UI actions and client scripts instead of reusable Script Includes and APIs.</li></ul><p>By combining the latest Yokohama/Xanadu patches, December Store updates, and Impact Platform Health capabilities, you can keep your instance secure, performant, and ready for the next wave of AI-driven features—without sacrificing stability.</p>",
+    "category": "servicenow",
+    "date": "Dec 12, 2025"
+  },
+  {
+    "id": 2,
     "title": "Latest Enterprise AI and GenAI Breakthroughs: Accelerating Business Automation in ServiceNow",
     "excerpt": "This week brings major advancements in enterprise AI from Dell-NVIDIA integrations, Microsoft agentic AI tools, and adoption reports highlighting Copilot's dominance. ServiceNow developers can leverage these for smarter automation, from AI factories to LLM orchestration.",
     "readTime": "5 min read",
@@ -9,7 +18,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 2,
+    "id": 3,
     "title": "ServiceNow December 2025 Store Release: Key Updates, Features, and Developer Best Practices",
     "excerpt": "Discover the latest ServiceNow December 2025 Store Release highlights, including Impact Platform Health enhancements and Employee Center Pro updates. This article explores new features for developers and actionable best practices to optimize your instance.",
     "readTime": "5 min read",
@@ -18,7 +27,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 3,
+    "id": 4,
     "title": "Enterprise Automation, ITSM, and Digital Transformation: Practical Trends for ServiceNow Developers",
     "excerpt": "Enterprise automation is converging around AI-driven hyperautomation, low-code platforms, and data-first integration. This article gives ServiceNow developers actionable patterns, priorities, and implementation steps to apply these trends in real projects.",
     "readTime": "6 min read",
@@ -27,7 +36,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 4,
+    "id": 5,
     "title": "New Integration Patterns, Flow Designer Tips, and Integration Hub Updates for ServiceNow Developers",
     "excerpt": "Practical guidance on current ServiceNow integration patterns, actionable Flow Designer tips, and recent Integration Hub capabilities to accelerate reliable, maintainable integrations.",
     "readTime": "6 min read",
@@ -36,7 +45,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 5,
+    "id": 6,
     "title": "Latest Trends in Enterprise Automation, ITSM, and Digital Transformation: Actionable Insights",
     "excerpt": "Enterprise automation in 2025 is driven by hyperautomation, AI integration, and no-code platforms, delivering up to 30% cost savings. ServiceNow developers can leverage these trends to enhance ITSM workflows.",
     "readTime": "5 min read",
@@ -45,7 +54,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 6,
+    "id": 7,
     "title": "Mastering ServiceNow Integrations in 2025: New Patterns, Flow Designer Tips, and Integration Hub Updates",
     "excerpt": "Discover the latest ServiceNow integration patterns with the updated Decision Tree, essential Flow Designer tips for efficient automation, and key Integration Hub enhancements like 200+ new connectors.",
     "readTime": "6 min read",
@@ -54,7 +63,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 7,
+    "id": 8,
     "title": "This Week in Enterprise AI: GenAI, LLMs, and Agents — Practical Takeaways for ServiceNow Developers",
     "excerpt": "Major vendors released model and agent updates this week that push multimodal reasoning, cheaper inference, and agent-first integrations. ServiceNow developers should focus on connectors, orchestration, security, and observability.",
     "readTime": "6 min read",
@@ -63,7 +72,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 8,
+    "id": 9,
     "title": "This Week's ServiceNow Platform Updates, Features, and Developer Best Practices",
     "excerpt": "A concise roundup of the most important ServiceNow platform updates released this week, practical feature highlights for developers, and actionable best practices to adopt during upgrades.",
     "readTime": "6 min read",
@@ -72,7 +81,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 9,
+    "id": 10,
     "title": "2025 Trends in Enterprise Automation, ITSM, and Digital Transformation: A ServiceNow Developer's Guide",
     "excerpt": "Explore the latest 2025 trends in enterprise automation, ITSM, and digital transformation, including hyperautomation, AI integration, and low-code platforms. Discover actionable insights tailored for platform customization.",
     "readTime": "5 min read",
@@ -81,7 +90,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 10,
+    "id": 11,
     "title": "December 2025: Key ServiceNow Platform Updates, Features, and Best Practices for Developers",
     "excerpt": "This week's ServiceNow updates focus on platform health, agentic AI tooling, Employee Center enhancements, and Canadian public-sector AI investments — plus practical best practices for developers.",
     "readTime": "5 min read",
@@ -90,7 +99,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 11,
+    "id": 12,
     "title": "Building AI Agents in ServiceNow: A Complete Guide",
     "excerpt": "Learn how to create intelligent AI agents that automate complex workflows using ServiceNow's AI capabilities and GenAI integration.",
     "category": "servicenow",
@@ -99,7 +108,7 @@
     "content": "<h2>Introduction</h2><p>AI Agents are revolutionizing how enterprises handle automation. In this guide, we'll explore how to build intelligent agents within ServiceNow that can reason, decide, and act autonomously.</p><h2>What are AI Agents?</h2><p>AI Agents are autonomous systems that can perceive their environment, make decisions, and take actions to achieve specific goals. In ServiceNow, these agents can handle everything from incident resolution to complex approval workflows.</p><h2>Getting Started</h2><p>To build an AI Agent in ServiceNow, you'll need:</p><ul><li>ServiceNow Utah or later</li><li>AI Control Tower access</li><li>Integration Hub subscription</li></ul><h2>Implementation Steps</h2><p>First, configure your AI Control Tower settings to enable agent capabilities. Then create a new AI Agent definition:</p><pre>// Sample GlideRecord script for AI Agent\nvar gr = new GlideRecord('sn_ai_agent');\ngr.initialize();\ngr.name = 'Incident Resolution Agent';\ngr.active = true;\ngr.insert();</pre><p>This foundation allows you to build sophisticated automation that learns and adapts over time.</p>"
   },
   {
-    "id": 12,
+    "id": 13,
     "title": "GenAI Summarization for Risk Management",
     "excerpt": "How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace to reduce analysis time by 60%.",
     "category": "ai",
@@ -108,7 +117,7 @@
     "content": "<h2>The Challenge</h2><p>Risk analysts were spending hours reading through lengthy risk assessments and compliance documents. We needed a solution that could summarize key points instantly while maintaining accuracy.</p><h2>The Solution</h2><p>By integrating GenAI capabilities with ServiceNow's GRC module, we created an automated summarization system that processes documents in real-time.</p><h2>Architecture</h2><p>The system uses a three-tier approach:</p><ul><li>Document ingestion via Integration Hub</li><li>GenAI processing with custom prompts</li><li>Results displayed in Risk Workspace widget</li></ul><h2>Results</h2><p>The implementation reduced analysis time by 60% and improved risk detection accuracy by identifying patterns human analysts often missed.</p>"
   },
   {
-    "id": 13,
+    "id": 14,
     "title": "Flow Designer Best Practices for Enterprise Scale",
     "excerpt": "Essential patterns and anti-patterns when building flows that need to handle thousands of executions daily.",
     "category": "tutorial",
@@ -117,7 +126,7 @@
     "content": "<h2>Why Flow Designer Matters</h2><p>Flow Designer is ServiceNow's powerful low-code automation tool. But with great power comes great responsibility—especially at enterprise scale.</p><h2>Best Practices</h2><ul><li><strong>Use Subflows:</strong> Break complex logic into reusable subflows</li><li><strong>Error Handling:</strong> Always implement try-catch patterns</li><li><strong>Async Operations:</strong> Use async for heavy processing</li><li><strong>Monitoring:</strong> Track execution times and failures</li></ul><h2>Anti-Patterns to Avoid</h2><p>Don't create flows that query large datasets without filters. Always use indexed fields and limit result sets.</p><pre>// Bad: Queries all incidents\nvar gr = new GlideRecord('incident');\ngr.query();\n\n// Good: Filtered query\nvar gr = new GlideRecord('incident');\ngr.addQuery('state', 1);\ngr.addQuery('sys_created_on', '>=', gs.daysAgo(7));\ngr.setLimit(100);\ngr.query();</pre>"
   },
   {
-    "id": 14,
+    "id": 15,
     "title": "The Future of Enterprise AI: 2025 Trends",
     "excerpt": "Exploring the emerging trends in enterprise AI adoption and what it means for ServiceNow developers.",
     "category": "general",
