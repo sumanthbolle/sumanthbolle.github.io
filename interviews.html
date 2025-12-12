@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interview Prep - Sumanth Bolle | ServiceNow Technical Questions</title>
+  <meta name="description" content="Deep ServiceNow interview questions asked at Apple, Google & ServiceNow with detailed answers.">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000}
+    html{scroll-behavior:smooth}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    
+    nav{position:fixed;top:0;width:100%;height:48px;background:rgba(251,251,253,0.8);backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid rgba(0,0,0,0.1)}
+    .nav-c{max-width:1080px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+    .nav-logo{font-size:20px;font-weight:600;color:var(--text);text-decoration:none}
+    .nav-links{display:flex;gap:28px;list-style:none}
+    .nav-links a{color:var(--text);text-decoration:none;font-size:13px;opacity:.8;transition:opacity .3s}
+    .nav-links a:hover,.nav-links a.active{opacity:1;color:var(--blue)}
+    .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
+    .menu-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:0.3s}
+    .mobile-menu{display:none;position:fixed;top:48px;left:0;width:100%;background:rgba(251,251,253,0.98);backdrop-filter:blur(20px);padding:20px;border-bottom:1px solid rgba(0,0,0,0.1)}
+    .mobile-menu.active{display:block}
+    .mobile-menu a{display:block;padding:12px 0;color:var(--text);text-decoration:none;font-size:16px;border-bottom:1px solid rgba(0,0,0,0.05)}
+    
+    .page-header{padding:120px 22px 60px;text-align:center;background:linear-gradient(135deg,#1a1a2e 0%,#0f0f1a 100%);color:var(--white)}
+    .page-header h1{font-size:clamp(36px,8vw,56px);font-weight:600;margin-bottom:12px}
+    .page-header p{font-size:19px;color:var(--gray);max-width:600px;margin:0 auto}
+    .breadcrumb{font-size:13px;color:var(--gray);margin-bottom:24px}
+    .breadcrumb a{color:var(--blue);text-decoration:none}
+    .breadcrumb a:hover{text-decoration:underline}
+    .header-stats{display:flex;gap:40px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+    .header-stat{text-align:center}
+    .header-stat-num{font-size:32px;font-weight:700;color:var(--white)}
+    .header-stat-label{font-size:13px;color:var(--gray);margin-top:4px}
+    
+    .interview-container{max-width:900px;margin:0 auto;padding:60px 22px}
+    
+    .interview-filters{display:flex;gap:12px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
+    .filter-btn{padding:8px 20px;border:1px solid rgba(0,0,0,0.1);border-radius:20px;background:var(--white);color:var(--text);font-size:14px;cursor:pointer;transition:all 0.3s}
+    .filter-btn:hover,.filter-btn.active{background:var(--blue);color:var(--white);border-color:var(--blue)}
+    
+    .interview-list{display:flex;flex-direction:column;gap:20px}
+    .interview-card{background:var(--white);border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,0.06);overflow:hidden;opacity:0;transform:translateY(20px);transition:all 0.5s}
+    .interview-card.animate{opacity:1;transform:translateY(0)}
+    .interview-header{padding:28px 32px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;transition:background 0.3s}
+    .interview-header:hover{background:rgba(0,0,0,0.02)}
+    .interview-q{flex:1}
+    .interview-meta{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+    .interview-badge{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.3px}
+    .badge-company{background:linear-gradient(135deg,rgba(0,102,204,0.15),rgba(0,102,204,0.08));color:var(--blue);border:1px solid rgba(0,102,204,0.2)}
+    .badge-difficulty{background:linear-gradient(135deg,rgba(255,149,0,0.15),rgba(255,149,0,0.08));color:#ff9500;border:1px solid rgba(255,149,0,0.2)}
+    .badge-difficulty.expert{background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(239,68,68,0.08));color:#ef4444;border:1px solid rgba(239,68,68,0.2)}
+    .badge-category{background:linear-gradient(135deg,rgba(52,199,89,0.15),rgba(52,199,89,0.08));color:#22c55e;border:1px solid rgba(52,199,89,0.2)}
+    .interview-question{font-size:18px;font-weight:600;line-height:1.5;color:var(--text)}
+    .interview-toggle{width:40px;height:40px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.3s}
+    .interview-toggle svg{width:20px;height:20px;stroke:var(--gray);fill:none;stroke-width:2;transition:transform 0.3s}
+    .interview-card.open .interview-toggle{background:var(--blue)}
+    .interview-card.open .interview-toggle svg{stroke:#fff;transform:rotate(180deg)}
+    .interview-answer{max-height:0;overflow:hidden;transition:max-height 0.5s ease-out}
+    .interview-card.open .interview-answer{max-height:3000px}
+    .interview-answer-inner{padding:0 32px 32px;border-top:1px solid rgba(0,0,0,0.06)}
+    .interview-answer-inner h4{font-size:16px;font-weight:600;margin:24px 0 12px;color:var(--text);display:flex;align-items:center;gap:8px}
+    .interview-answer-inner h4::before{content:'';width:4px;height:16px;background:var(--blue);border-radius:2px}
+    .interview-answer-inner p{font-size:15px;line-height:1.75;color:#444;margin-bottom:14px}
+    .interview-answer-inner ul,.interview-answer-inner ol{margin:14px 0 14px 24px;font-size:15px;color:#444}
+    .interview-answer-inner li{margin-bottom:10px;line-height:1.65}
+    .interview-answer-inner pre{background:linear-gradient(135deg,#1d1d1f,#2d2d2f);color:#e5e5e5;padding:20px 24px;border-radius:12px;overflow-x:auto;font-size:13px;line-height:1.6;margin:18px 0;font-family:'SF Mono',Monaco,monospace;border:1px solid rgba(255,255,255,0.1)}
+    .interview-answer-inner code{background:rgba(0,0,0,0.06);padding:2px 8px;border-radius:6px;font-size:14px;font-family:'SF Mono',Monaco,monospace}
+    .interview-answer-inner pre code{background:none;padding:0}
+    .interview-date{font-size:12px;color:var(--gray);margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:6px}
+    
+    .tip-box{background:linear-gradient(135deg,rgba(0,102,204,0.08),rgba(0,102,204,0.03));border:1px solid rgba(0,102,204,0.15);border-radius:12px;padding:16px 20px;margin:16px 0}
+    .tip-box h5{font-size:13px;font-weight:600;color:var(--blue);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .tip-box p{font-size:14px;color:#555;line-height:1.6;margin:0}
+    
+    .empty-state{text-align:center;padding:80px 20px;color:var(--gray)}
+    .empty-state h3{font-size:24px;margin-bottom:12px;color:var(--text)}
+    
+    footer{background:var(--white);padding:24px;text-align:center;border-top:1px solid rgba(0,0,0,0.06)}
+    .footer-text{font-size:12px;color:var(--gray)}
+    
+    @media(max-width:768px){
+      .nav-links{display:none}
+      .menu-toggle{display:block}
+      .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+      .menu-toggle.active span:nth-child(2){opacity:0}
+      .menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+      .interview-header{padding:20px 24px}
+      .interview-answer-inner{padding:0 24px 24px}
+      .header-stats{gap:24px}
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-c">
+      <a href="index.html" class="nav-logo">Sumanth Bolle</a>
+      <ul class="nav-links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#experience">Experience</a></li>
+        <li><a href="index.html#skills">Skills</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="interviews.html" class="active">Interviews</a></li>
+        <li><a href="index.html#integrations">Integrations</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <button class="menu-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+    <div class="mobile-menu">
+      <a href="index.html">Home</a><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><a href="blog.html">Blog</a><a href="interviews.html" class="active">Interviews</a><a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <p class="breadcrumb"><a href="index.html">Home</a> / Interview Prep</p>
+    <h1>Technical Interview Questions</h1>
+    <p>Deep ServiceNow questions asked at Apple, Google & ServiceNow with detailed answers.</p>
+    <div class="header-stats">
+      <div class="header-stat"><div class="header-stat-num" id="totalQuestions">0</div><div class="header-stat-label">Questions</div></div>
+      <div class="header-stat"><div class="header-stat-num" id="totalCompanies">3</div><div class="header-stat-label">Companies</div></div>
+      <div class="header-stat"><div class="header-stat-num" id="totalCategories">4</div><div class="header-stat-label">Categories</div></div>
+    </div>
+  </header>
+
+  <main class="interview-container">
+    <div class="interview-filters">
+      <button class="filter-btn active" data-ifilter="all">All Questions</button>
+      <button class="filter-btn" data-ifilter="Performance">Performance</button>
+      <button class="filter-btn" data-ifilter="Architecture">Architecture</button>
+      <button class="filter-btn" data-ifilter="Security">Security</button>
+      <button class="filter-btn" data-ifilter="Scripting">Scripting</button>
+    </div>
+    <div class="interview-list" id="interviewList"></div>
+    <div class="empty-state" id="emptyState" style="display:none">
+      <h3>No questions found</h3>
+      <p>Try selecting a different category.</p>
+    </div>
+  </main>
+
+  <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
+
+  <script>
+    var DEFAULT_INTERVIEWS=[
+      {id:1,question:"Explain the difference between GlideRecord and GlideAggregate. When would you use one over the other, and what are the performance implications?",answer:"<p><strong>GlideRecord</strong> retrieves individual records and loads all fields into memory. <strong>GlideAggregate</strong> performs database-level aggregations (COUNT, SUM, AVG, MIN, MAX) without loading record data.</p><h4>Performance Implications</h4><ul><li><strong>GlideRecord COUNT anti-pattern:</strong> Using <code>gr.query(); while(gr.next()) count++;</code> loads every record into memory - O(n) memory complexity.</li><li><strong>GlideAggregate:</strong> Using <code>ga.addAggregate('COUNT'); ga.query();</code> executes a single SQL COUNT statement - O(1) memory complexity.</li></ul><h4>Code Example</h4><pre>// ❌ Bad - Loads 100K records into memory\nvar gr = new GlideRecord('incident');\ngr.query();\nvar count = gr.getRowCount();\n\n// ✅ Good - Single database operation\nvar ga = new GlideAggregate('incident');\nga.addAggregate('COUNT');\nga.query();\nvar count = ga.next() ? ga.getAggregate('COUNT') : 0;</pre><div class='tip-box'><h5>💡 Pro Tip</h5><p>GlideAggregate also supports grouping with <code>ga.groupBy('field')</code> - essential for building reports and dashboards efficiently.</p></div>",difficulty:"Senior",category:"Performance",company:"ServiceNow",date:"Dec 12, 2025"},
+      {id:2,question:"A Business Rule and a Client Script both update the same field. Describe the exact execution order and how to prevent race conditions.",answer:"<p><strong>Execution Order (on form submit):</strong></p><ol><li><strong>Client Script (onSubmit)</strong> - Runs in browser BEFORE data is sent to server</li><li><strong>Business Rule (before)</strong> - Runs on server BEFORE database write</li><li><strong>Database Write</strong> - Actual INSERT/UPDATE operation</li><li><strong>Business Rule (after)</strong> - Runs AFTER database write completes</li><li><strong>Async Business Rule</strong> - Queued, runs independently on scheduler</li></ol><h4>Why Business Rule Always Wins</h4><p>The Business Rule executes after the Client Script and directly modifies the GlideRecord current object before the database write. Any Client Script changes can be overwritten.</p><h4>Prevention Strategy</h4><pre>// Business Rule - Check if user explicitly changed the field\nif (!current.priority.changes()) {\n  // Only auto-calculate if user didn't touch it\n  current.priority = calculatePriority();\n}</pre><div class='tip-box'><h5>💡 Pro Tip</h5><p>Use <code>current.priority.changes()</code> rather than comparing old/new values. It handles edge cases like empty-to-value changes correctly.</p></div>",difficulty:"Senior",category:"Architecture",company:"Apple",date:"Dec 12, 2025"},
+      {id:3,question:"How does ServiceNow's ACL evaluation work? Explain the order of evaluation and what happens when multiple ACLs match.",answer:"<p><strong>ACL Evaluation Order (most to least specific):</strong></p><ol><li><strong>Table.Field</strong> - e.g., incident.caller_id (most specific)</li><li><strong>Table.*</strong> - e.g., incident.* (table-level wildcard)</li><li><strong>*.Field</strong> - e.g., *.caller_id (field across all tables)</li><li><strong>*.*</strong> - Global default (least specific)</li></ol><h4>Multiple ACL Match = ANDed Together</h4><p>When multiple ACLs match a request, ALL of them must return true for access to be granted. This is a common source of confusion.</p><h4>Admin Override Gotcha</h4><pre>// This ACL will NEVER block admin!\n// Admin bypasses ACL evaluation unless explicitly checked:\nif (gs.hasRole('admin')) {\n  return false; // Actually blocks admin\n}</pre><h4>Debugging ACLs</h4><p>Enable the <code>glide.security.debug</code> system property to see detailed ACL evaluation in the system logs.</p><div class='tip-box'><h5>💡 Pro Tip</h5><p>Use the ACL debugging module in Studio or enable session debugging with <code>gs.setSessionDebug(true)</code> for real-time ACL analysis.</p></div>",difficulty:"Expert",category:"Security",company:"Google",date:"Dec 11, 2025"},
+      {id:4,question:"Design a solution to process 50,000 records nightly without causing performance issues or hitting governor limits.",answer:"<h4>Solution Architecture</h4><pre>// Scheduled Job triggers Flow Designer\nvar workflow = new GlideFlow('process_batch_flow');\nworkflow.startAsync();</pre><h4>Flow Designer Approach</h4><ol><li>Use scheduled flow trigger at off-peak hours (2 AM)</li><li>Query with <code>setLimit(500)</code> per batch iteration</li><li>Use <strong>For Each</strong> action with parallel execution enabled</li><li>Subflow handles individual record processing</li><li>Implement checkpoints for resume capability</li></ol><h4>Performance Optimization Tips</h4><pre>// Essential settings for bulk operations\ngr.setWorkflow(false);     // Skip Business Rules\ngr.autoSysFields(false);   // Skip sys_updated_on, etc.\ngr.setLimit(500);          // Always batch\ngr.updateMultiple();       // Bulk updates when possible\n\n// Use encoded queries for complex filters\ngr.addEncodedQuery('active=true^stateIN1,2,3');</pre><h4>Governor Limits to Watch</h4><ul><li>Script execution time: 120 seconds (background), 60 seconds (foreground)</li><li>Records returned per query: 10,000 default</li><li>Memory usage: Monitor with gs.getMemory()</li></ul><div class='tip-box'><h5>💡 Pro Tip</h5><p>Use Event-driven processing for very large datasets. Create events that trigger Script Actions, allowing ServiceNow's event queue to manage the workload distribution.</p></div>",difficulty:"Expert",category:"Performance",company:"ServiceNow",date:"Dec 11, 2025"},
+      {id:5,question:"Explain the difference between getValue() and getDisplayValue() in GlideRecord. When does the behavior differ significantly?",answer:"<h4>Core Difference</h4><ul><li><strong>getValue()</strong> - Returns the raw database value (sys_id for references, internal value for choice fields)</li><li><strong>getDisplayValue()</strong> - Returns the human-readable display value</li></ul><h4>When Behavior Differs Significantly</h4><pre>// Reference Fields\nvar gr = new GlideRecord('incident');\ngr.get(incidentId);\n\ngr.getValue('caller_id');        // Returns: \"6816f79cc0a8016401c5a33be04be441\"\ngr.getDisplayValue('caller_id'); // Returns: \"Abel Tuter\"\n\n// Choice Fields\ngr.getValue('state');            // Returns: \"1\"\ngr.getDisplayValue('state');     // Returns: \"New\"\n\n// Date/Time Fields (timezone matters!)\ngr.getValue('opened_at');        // Returns: \"2025-12-10 08:30:00\" (UTC)\ngr.getDisplayValue('opened_at'); // Returns: \"2025-12-10 03:30:00\" (User TZ)</pre><h4>Common Mistakes</h4><pre>// ❌ Anti-pattern - Comparing display values\nif (gr.getDisplayValue('state') == 'New') { }\n\n// ✅ Correct - Compare internal values\nif (gr.getValue('state') == '1') { }</pre><div class='tip-box'><h5>💡 Pro Tip</h5><p>When building integrations, always use getValue() to ensure consistency. Display values can change based on user language settings and aren't reliable for logic.</p></div>",difficulty:"Senior",category:"Scripting",company:"Apple",date:"Dec 10, 2025"},
+      {id:6,question:"What is the difference between synchronous and asynchronous Business Rules? Give examples of when to use each.",answer:"<h4>Synchronous Business Rules</h4><p>Execute in the same transaction as the database operation. The user must wait for completion.</p><ul><li><strong>before</strong> - Modify record before save (validation, auto-population)</li><li><strong>after</strong> - React to saved record (cascade updates, notifications)</li></ul><h4>Asynchronous Business Rules</h4><p>Queued and executed by the scheduler. User transaction completes immediately.</p><pre>// async BR - Heavy operations that user doesn't need to wait for\n(function executeRule(current, previous) {\n  // Send to external system\n  var rm = new sn_ws.RESTMessageV2('External_API', 'POST');\n  rm.setRequestBody(JSON.stringify(current));\n  rm.execute(); // Can take several seconds\n})(current, previous);</pre><h4>When to Use Each</h4><table style='width:100%;border-collapse:collapse;margin:16px 0'><tr style='background:#f5f5f7'><td style='padding:12px;border:1px solid #ddd'><strong>Use Sync</strong></td><td style='padding:12px;border:1px solid #ddd'><strong>Use Async</strong></td></tr><tr><td style='padding:12px;border:1px solid #ddd'>Field validation</td><td style='padding:12px;border:1px solid #ddd'>External API calls</td></tr><tr><td style='padding:12px;border:1px solid #ddd'>Auto-populating fields</td><td style='padding:12px;border:1px solid #ddd'>Complex calculations</td></tr><tr><td style='padding:12px;border:1px solid #ddd'>Critical cascade updates</td><td style='padding:12px;border:1px solid #ddd'>Email notifications</td></tr></table><div class='tip-box'><h5>💡 Pro Tip</h5><p>Async BRs don't have access to <code>previous</code> object. Store needed previous values in scratchpad or the record itself if comparison is needed.</p></div>",difficulty:"Senior",category:"Architecture",company:"Google",date:"Dec 10, 2025"},
+      {id:7,question:"How would you implement row-level security in ServiceNow beyond basic ACLs?",answer:"<h4>Advanced Row-Level Security Approaches</h4><h4>1. Before Query Business Rules</h4><pre>// Automatically filters all queries on this table\n(function executeRule(current, previous) {\n  if (!gs.hasRole('admin')) {\n    current.addQuery('department', gs.getUser().getDepartmentID());\n  }\n})(current, previous);</pre><h4>2. Domain Separation</h4><p>For multi-tenant scenarios, domain separation provides complete data isolation at the platform level.</p><h4>3. Query Business Rules with Encoded Queries</h4><pre>// More complex filtering\nvar userGroups = gs.getUser().getMyGroups();\ncurrent.addEncodedQuery('assignment_groupIN' + userGroups.join(','));</pre><h4>4. Data Source Filtering</h4><p>For reports and dashboards, implement data source restrictions that filter based on user context.</p><h4>Performance Considerations</h4><ul><li>Before Query BRs run on EVERY query - keep them lightweight</li><li>Use indexed fields for filter conditions</li><li>Consider caching user's allowed records if checking is complex</li></ul><div class='tip-box'><h5>💡 Pro Tip</h5><p>Combine approaches: ACLs for UI security, Before Query BRs for API/integration security. This ensures security regardless of how data is accessed.</p></div>",difficulty:"Expert",category:"Security",company:"ServiceNow",date:"Dec 9, 2025"},
+      {id:8,question:"Explain script includes vs. UI scripts. What are the scope and execution context differences?",answer:"<h4>Script Includes</h4><ul><li><strong>Execution:</strong> Server-side only</li><li><strong>Scope:</strong> Available to Business Rules, Scheduled Jobs, REST APIs, other Script Includes</li><li><strong>Loading:</strong> On-demand when called</li></ul><pre>// Script Include Definition\nvar IncidentUtils = Class.create();\nIncidentUtils.prototype = {\n  initialize: function() {},\n  \n  calculatePriority: function(impact, urgency) {\n    return impact * urgency;\n  },\n  \n  type: 'IncidentUtils'\n};</pre><h4>UI Scripts</h4><ul><li><strong>Execution:</strong> Client-side (browser)</li><li><strong>Scope:</strong> Available to Client Scripts, UI Policies, UI Actions (client-side)</li><li><strong>Loading:</strong> Loaded when form/page loads (adds to page weight)</li></ul><pre>// UI Script (Global)\nfunction showConfirmation(message) {\n  return confirm(message);\n}\n\nfunction formatCurrency(amount) {\n  return '$' + amount.toFixed(2);\n}</pre><h4>Key Differences</h4><table style='width:100%;border-collapse:collapse;margin:16px 0'><tr style='background:#f5f5f7'><td style='padding:12px;border:1px solid #ddd'><strong>Aspect</strong></td><td style='padding:12px;border:1px solid #ddd'><strong>Script Include</strong></td><td style='padding:12px;border:1px solid #ddd'><strong>UI Script</strong></td></tr><tr><td style='padding:12px;border:1px solid #ddd'>Database Access</td><td style='padding:12px;border:1px solid #ddd'>Direct GlideRecord</td><td style='padding:12px;border:1px solid #ddd'>GlideAjax required</td></tr><tr><td style='padding:12px;border:1px solid #ddd'>Performance</td><td style='padding:12px;border:1px solid #ddd'>No page impact</td><td style='padding:12px;border:1px solid #ddd'>Adds to page load</td></tr></table><div class='tip-box'><h5>💡 Pro Tip</h5><p>For shared client logic, consider Angular Services in Service Portal instead of UI Scripts - better modularization and testing support.</p></div>",difficulty:"Senior",category:"Scripting",company:"Apple",date:"Dec 8, 2025"}
+    ];
+    var INTERVIEWS=DEFAULT_INTERVIEWS;
+    fetch('interviews.json').then(function(r){return r.json();}).then(function(data){INTERVIEWS=data;renderInterviews('all');updateStats();}).catch(function(){renderInterviews('all');updateStats();});
+
+    var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('animate');});},{threshold:0.1});
+
+    function updateStats(){
+      document.getElementById('totalQuestions').textContent=INTERVIEWS.length;
+      var companies=[...new Set(INTERVIEWS.map(function(q){return q.company;}))];
+      var categories=[...new Set(INTERVIEWS.map(function(q){return q.category;}))];
+      document.getElementById('totalCompanies').textContent=companies.length;
+      document.getElementById('totalCategories').textContent=categories.length;
+    }
+
+    function renderInterviews(filter){
+      var filtered=filter==='all'?INTERVIEWS:INTERVIEWS.filter(function(q){return q.category===filter;});
+      var list=document.getElementById('interviewList');
+      var empty=document.getElementById('emptyState');
+      
+      if(filtered.length===0){list.innerHTML='';empty.style.display='block';return;}
+      empty.style.display='none';
+      
+      var html='';
+      filtered.forEach(function(q,i){
+        var diffClass=q.difficulty==='Expert'?'expert':'';
+        html+='<div class="interview-card" data-animate-card style="transition-delay:'+(i*.08)+'s"><div class="interview-header" onclick="toggleInterview(this)"><div class="interview-q"><div class="interview-meta"><span class="interview-badge badge-company">'+q.company+'</span><span class="interview-badge badge-difficulty '+diffClass+'">'+q.difficulty+'</span><span class="interview-badge badge-category">'+q.category+'</span></div><p class="interview-question">'+q.question+'</p></div><div class="interview-toggle"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div></div><div class="interview-answer"><div class="interview-answer-inner">'+q.answer+'<p class="interview-date">📅 Added: '+q.date+'</p></div></div></div>';
+      });
+      list.innerHTML=html;
+      document.querySelectorAll('.interview-card').forEach(function(el){observer.observe(el);});
+    }
+
+    function toggleInterview(el){
+      var card=el.parentElement;
+      var wasOpen=card.classList.contains('open');
+      // Close all others
+      document.querySelectorAll('.interview-card.open').forEach(function(c){c.classList.remove('open');});
+      // Toggle current
+      if(!wasOpen)card.classList.add('open');
+    }
+
+    document.querySelectorAll('[data-ifilter]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        document.querySelectorAll('[data-ifilter]').forEach(function(b){b.classList.remove('active');});
+        this.classList.add('active');
+        renderInterviews(this.dataset.ifilter);
+      });
+    });
+
+    // Mobile menu
+    var menuToggle=document.querySelector('.menu-toggle'),mobileMenu=document.querySelector('.mobile-menu');
+    menuToggle.addEventListener('click',function(){this.classList.toggle('active');mobileMenu.classList.toggle('active');});
+  </script>
+</body>
+</html>
