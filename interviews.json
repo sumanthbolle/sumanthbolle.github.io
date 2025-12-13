@@ -1,117 +1,14 @@
 [
   {
-    "id": 1,
-    "question": "You are designing a new, high‑throughput, bi‑directional integration between ServiceNow and an external HR system. The integration must support near‑real‑time updates (~10k updates/hour), robust error handling with controlled retries, and strict auditability. Walk through your end‑to‑end integration architecture decisions in detail, covering ALL of the following (and justify each decision with performance and maintainability in mind):  1) For inbound HR data into ServiceNow, explain when you would choose <strong>Integration Hub (Flow Designer + spoke)</strong>, <strong>scripted REST APIs</strong>, or <strong>Import Set + transform maps</strong> as the primary entry point. Describe at least two concrete decision criteria (e.g., payload burstiness, need for complex validation, reusability, or customer access control) and outline one scenario where your initial choice would NOT scale and what you would refactor it to.  2) Detail your <strong>Flow Designer</strong> error handling approach for outbound calls to the HR system: which <strong>Retry Policy</strong> type (Exponential Backoff, Fixed Interval, or Honor Retry‑After) you would use for which HTTP status codes, and how you would combine step‑level retry policies with the <strong>Flow Error Handler</strong> so that:    - transient errors (e.g., 408/429) are retried automatically, and    - business errors (e.g., 400/409) are surfaced once with correlation IDs and logged for later replay, without creating alert storms.    Illustrate the pattern with a concise pseudo‑flow.  3) For outbound REST calls implemented as <strong>REST Messages</strong>, compare the authentication methods you would consider (Basic Auth, OAuth 2.0, mutual TLS, API key in header), and explain which you would select for: (a) an internal corporate API via MID Server, and (b) a SaaS HR platform over the public internet. Include one example of how you would configure the chosen auth type programmatically (e.g., setting the auth profile or headers in a <strong>RESTMessageV2</strong> script).  4) Describe how you would use a <strong>MID Server</strong> in this architecture: when it is mandatory vs optional, how it affects throughput and latency, and which design choices reduce load on the MID (e.g., batching, filtering, offloading logic to the instance). Explain how the MID server’s stateless job processing impacts idempotency and retry design for high‑volume integrations.  5) The HR system can also stream change events. Compare using <strong>Stream Connect</strong> (Kafka/Kinesis style streaming) versus <strong>Table API / REST</strong> polling for ingesting those events, specifically for:    - ordering guarantees    - back‑pressure/consumer lag handling    - ServiceNow node and table contention    - failure recovery and replay.    Propose a concrete pattern (including tables/queues you would use) to safely process and persist 10k+ events/hour with minimal impact on end‑user transaction performance.  Write your answer as if you are designing a production integration for a large enterprise and highlight at least three performance or scalability pitfalls that an inexperienced developer would likely overlook.",
-    "answer": "<p><strong>End-to-end architecture (high-throughput, bi-directional, near–real-time, auditable)</strong></p>
-
-<p><strong>High-level design</strong><br>
-I would design this as an event-driven integration with strict separation between ingress/egress endpoints, durable queues, validation and mapping, write execution, and observability. The guiding principle is to avoid heavy logic on synchronous request threads and to rely on buffering, idempotency, and replay for scale and resilience.</p>
-
-<p><strong>Core components</strong></p>
-<ul>
-  <li><strong>Inbound API layer</strong>: Scripted REST or Import Set API depending on payload shape and validation needs.</li>
-  <li><strong>Durable staging tables</strong>: Custom integration envelope tables for raw events and processing state.</li>
-  <li><strong>Processing workers</strong>: Flow Designer for orchestration and Script Includes for logic, executed asynchronously.</li>
-  <li><strong>Outbound dispatcher</strong>: Queue-based sender with bounded retries and dead-letter handling.</li>
-  <li><strong>Audit and correlation</strong>: Correlation IDs, idempotency keys, raw payload storage, and replay capability.</li>
-</ul>
-
-<hr>
-
-<p><strong>1) Inbound HR data ingestion decisions</strong></p>
-
-<p><strong>Integration Hub (Flow Designer + Spokes)</strong> is suitable when the integration requires low-code maintainability, reusable connectors, and moderate event volume. It works best when used as an orchestrator over a staged queue rather than processing each event synchronously.</p>
-
-<p><strong>Scripted REST APIs</strong> are preferred for high-throughput, near–real-time integrations. They allow explicit control over authentication, versioning, idempotency headers, and quick 202 responses while deferring processing asynchronously.</p>
-
-<p><strong>Import Sets and Transform Maps</strong> are optimal for bulk or batch-oriented data loads, backfills, or periodic syncs where transform engine features such as coalescing and staged validation are required.</p>
-
-<p><strong>Non-scaling scenario and refactor</strong><br>
-If Flow Designer is used to synchronously validate, transform, and write data per inbound event, it may fail under bursts due to transaction timeouts and database contention. The refactor would be to stage inbound events in a queue table and process them asynchronously in controlled batches using Script Includes.</p>
-
-<hr>
-
-<p><strong>2) Flow Designer outbound error handling</strong></p>
-
-<p><strong>Retry strategy</strong></p>
-<ul>
-  <li>HTTP 408 and 429: Treated as transient. Use Honor Retry-After for 429 and Exponential Backoff otherwise.</li>
-  <li>HTTP 5xx: Treated as transient. Use Exponential Backoff with bounded retries.</li>
-  <li>HTTP 400 and 409: Business errors. No retries; log once and mark for replay.</li>
-  <li>HTTP 401 and 403: Configuration or authentication errors. Fail fast and alert once.</li>
-</ul>
-
-<p><strong>Flow pattern</strong></p>
-<pre><code>Async Flow
-  - Load outbound event
-  - Build payload
-  - REST step with retry policy
-  - On success: mark SENT and audit
-  - Error handler:
-      - Classify error
-      - Persist failure state
-      - Suppress alert storms
-      - Enable replay
-</code></pre>
-
-<hr>
-
-<p><strong>3) Outbound REST authentication decisions</strong></p>
-
-<ul>
-  <li><strong>Internal corporate APIs via MID Server</strong>: Prefer OAuth 2.0 client credentials or mutual TLS based on enterprise standards.</li>
-  <li><strong>SaaS HR platforms over the internet</strong>: Prefer OAuth 2.0 with scoped tokens and automatic rotation.</li>
-</ul>
-
-<p><strong>RESTMessageV2 OAuth example</strong></p>
-<pre><code>var rm = new sn_ws.RESTMessageV2('HR Outbound', 'post');
-rm.setAuthenticationProfile('oauth2', 'HR_OAUTH_PROFILE_SYSID');
-rm.setRequestHeader('Content-Type', 'application/json');
-rm.setRequestHeader('X-Correlation-ID', correlationId);
-rm.setRequestBody(JSON.stringify(payload));
-var response = rm.execute();
-</code></pre>
-
-<hr>
-
-<p><strong>4) MID Server usage and scalability</strong></p>
-
-<p>The MID Server is mandatory when the HR endpoint is only reachable from internal networks or requires private connectivity. It introduces an additional hop, so throughput must be managed through batching, filtering, and horizontal MID scaling. Since MID processing is stateless, outbound calls must be idempotent and safe for retries.</p>
-
-<hr>
-
-<p><strong>5) Stream Connect vs REST polling</strong></p>
-
-<ul>
-  <li><strong>Stream Connect</strong> provides better ordering guarantees, built-in back-pressure handling, natural replay, and reduced table contention.</li>
-  <li><strong>Polling APIs</strong> are simpler but risk ordering issues, duplicate reads, and higher load under scale.</li>
-</ul>
-
-<p><strong>Recommended pattern</strong></p>
-<ul>
-  <li>Ingest events into a staging table with correlation and idempotency keys.</li>
-  <li>Process events asynchronously in batches using scheduled workers.</li>
-  <li>Persist outcomes and expose a replay queue for failures.</li>
-</ul>
-
-<hr>
-
-<p><strong>Common scalability pitfalls</strong></p>
-<ul>
-  <li>Missing idempotency leading to duplicate updates.</li>
-  <li>Inline processing in Flows causing timeouts under burst load.</li>
-  <li>Unbounded retries creating retry storms.</li>
-  <li>Lack of indexing and coalesce keys causing table contention.</li>
-  <li>Alert storms due to per-event failure notifications.</li>
-</ul>
-
-<p><strong>Conclusion</strong><br>
-This design scales by being asynchronous, idempotent, and queue-driven. It remains maintainable through clear separation of concerns, consistent auditability, and bounded retry strategies, making it suitable for large enterprise ServiceNow deployments.</p>",
-    "difficulty": "Senior",
-    "company": "ServiceNow",
-    "category": "Integration",
-    "date": "Dec 13, 2025"
-  },
+   {
+  "id": 1,
+  "question": "You are designing a new, high‑throughput, bi‑directional integration between ServiceNow and an external HR system. The integration must support near‑real‑time updates (~10k updates/hour), robust error handling with controlled retries, and strict auditability. Walk through your end‑to‑end integration architecture decisions in detail, covering ALL of the following (and justify each decision with performance and maintainability in mind):  1) For inbound HR data into ServiceNow, explain when you would choose <strong>Integration Hub (Flow Designer + spoke)</strong>, <strong>scripted REST APIs</strong>, or <strong>Import Set + transform maps</strong> as the primary entry point. Describe at least two concrete decision criteria (e.g., payload burstiness, need for complex validation, reusability, or customer access control) and outline one scenario where your initial choice would NOT scale and what you would refactor it to.  2) Detail your <strong>Flow Designer</strong> error handling approach for outbound calls to the HR system: which <strong>Retry Policy</strong> type (Exponential Backoff, Fixed Interval, or Honor Retry‑After) you would use for which HTTP status codes, and how you would combine step‑level retry policies with the <strong>Flow Error Handler</strong> so that:    - transient errors (e.g., 408/429) are retried automatically, and    - business errors (e.g., 400/409) are surfaced once with correlation IDs and logged for later replay, without creating alert storms.    Illustrate the pattern with a concise pseudo‑flow.  3) For outbound REST calls implemented as <strong>REST Messages</strong>, compare the authentication methods you would consider (Basic Auth, OAuth 2.0, mutual TLS, API key in header), and explain which you would select for: (a) an internal corporate API via MID Server, and (b) a SaaS HR platform over the public internet. Include one example of how you would configure the chosen auth type programmatically (e.g., setting the auth profile or headers in a <strong>RESTMessageV2</strong> script).  4) Describe how you would use a <strong>MID Server</strong> in this architecture: when it is mandatory vs optional, how it affects throughput and latency, and which design choices reduce load on the MID (e.g., batching, filtering, offloading logic to the instance). Explain how the MID server's stateless job processing impacts idempotency and retry design for high‑volume integrations.  5) The HR system can also stream change events. Compare using <strong>Stream Connect</strong> (Kafka/Kinesis style streaming) versus <strong>Table API / REST</strong> polling for ingesting those events, specifically for:    - ordering guarantees    - back‑pressure/consumer lag handling    - ServiceNow node and table contention    - failure recovery and replay.    Propose a concrete pattern (including tables/queues you would use) to safely process and persist 10k+ events/hour with minimal impact on end‑user transaction performance.  Write your answer as if you are designing a production integration for a large enterprise and highlight at least three performance or scalability pitfalls that an inexperienced developer would likely overlook.",
+  "answer": "<p><strong>End-to-end architecture (high-throughput, bi-directional, near–real-time, auditable)</strong></p>\n\n<p><strong>High-level design</strong><br>\nI would design this as an event-driven integration with strict separation between ingress/egress endpoints, durable queues, validation and mapping, write execution, and observability. The guiding principle is to avoid heavy logic on synchronous request threads and to rely on buffering, idempotency, and replay for scale and resilience.</p>\n\n<p><strong>Core components</strong></p>\n<ul>\n  <li><strong>Inbound API layer</strong>: Scripted REST or Import Set API depending on payload shape and validation needs.</li>\n  <li><strong>Durable staging tables</strong>: Custom integration envelope tables for raw events and processing state.</li>\n  <li><strong>Processing workers</strong>: Flow Designer for orchestration and Script Includes for logic, executed asynchronously.</li>\n  <li><strong>Outbound dispatcher</strong>: Queue-based sender with bounded retries and dead-letter handling.</li>\n  <li><strong>Audit and correlation</strong>: Correlation IDs, idempotency keys, raw payload storage, and replay capability.</li>\n</ul>\n\n<hr>\n\n<p><strong>1) Inbound HR data ingestion decisions</strong></p>\n\n<p><strong>Integration Hub (Flow Designer + Spokes)</strong> is suitable when the integration requires low-code maintainability, reusable connectors, and moderate event volume. It works best when used as an orchestrator over a staged queue rather than processing each event synchronously.</p>\n\n<p><strong>Scripted REST APIs</strong> are preferred for high-throughput, near–real-time integrations. They allow explicit control over authentication, versioning, idempotency headers, and quick 202 responses while deferring processing asynchronously.</p>\n\n<p><strong>Import Sets and Transform Maps</strong> are optimal for bulk or batch-oriented data loads, backfills, or periodic syncs where transform engine features such as coalescing and staged validation are required.</p>\n\n<p><strong>Non-scaling scenario and refactor</strong><br>\nIf Flow Designer is used to synchronously validate, transform, and write data per inbound event, it may fail under bursts due to transaction timeouts and database contention. The refactor would be to stage inbound events in a queue table and process them asynchronously in controlled batches using Script Includes.</p>\n\n<hr>\n\n<p><strong>2) Flow Designer outbound error handling</strong></p>\n\n<p><strong>Retry strategy</strong></p>\n<ul>\n  <li>HTTP 408 and 429: Treated as transient. Use Honor Retry-After for 429 and Exponential Backoff otherwise.</li>\n  <li>HTTP 5xx: Treated as transient. Use Exponential Backoff with bounded retries.</li>\n  <li>HTTP 400 and 409: Business errors. No retries; log once and mark for replay.</li>\n  <li>HTTP 401 and 403: Configuration or authentication errors. Fail fast and alert once.</li>\n</ul>\n\n<p><strong>Flow pattern</strong></p>\n<pre><code>Async Flow\n  - Load outbound event\n  - Build payload\n  - REST step with retry policy\n  - On success: mark SENT and audit\n  - Error handler:\n      - Classify error\n      - Persist failure state\n      - Suppress alert storms\n      - Enable replay\n</code></pre>\n\n<hr>\n\n<p><strong>3) Outbound REST authentication decisions</strong></p>\n\n<ul>\n  <li><strong>Internal corporate APIs via MID Server</strong>: Prefer OAuth 2.0 client credentials or mutual TLS based on enterprise standards.</li>\n  <li><strong>SaaS HR platforms over the internet</strong>: Prefer OAuth 2.0 with scoped tokens and automatic rotation.</li>\n</ul>\n\n<p><strong>RESTMessageV2 OAuth example</strong></p>\n<pre><code>var rm = new sn_ws.RESTMessageV2('HR Outbound', 'post');\nrm.setAuthenticationProfile('oauth2', 'HR_OAUTH_PROFILE_SYSID');\nrm.setRequestHeader('Content-Type', 'application/json');\nrm.setRequestHeader('X-Correlation-ID', correlationId);\nrm.setRequestBody(JSON.stringify(payload));\nvar response = rm.execute();\n</code></pre>\n\n<hr>\n\n<p><strong>4) MID Server usage and scalability</strong></p>\n\n<p>The MID Server is mandatory when the HR endpoint is only reachable from internal networks or requires private connectivity. It introduces an additional hop, so throughput must be managed through batching, filtering, and horizontal MID scaling. Since MID processing is stateless, outbound calls must be idempotent and safe for retries.</p>\n\n<hr>\n\n<p><strong>5) Stream Connect vs REST polling</strong></p>\n\n<ul>\n  <li><strong>Stream Connect</strong> provides better ordering guarantees, built-in back-pressure handling, natural replay, and reduced table contention.</li>\n  <li><strong>Polling APIs</strong> are simpler but risk ordering issues, duplicate reads, and higher load under scale.</li>\n</ul>\n\n<p><strong>Recommended pattern</strong></p>\n<ul>\n  <li>Ingest events into a staging table with correlation and idempotency keys.</li>\n  <li>Process events asynchronously in batches using scheduled workers.</li>\n  <li>Persist outcomes and expose a replay queue for failures.</li>\n</ul>\n\n<hr>\n\n<p><strong>Common scalability pitfalls</strong></p>\n<ul>\n  <li>Missing idempotency leading to duplicate updates.</li>\n  <li>Inline processing in Flows causing timeouts under burst load.</li>\n  <li>Unbounded retries creating retry storms.</li>\n  <li>Lack of indexing and coalesce keys causing table contention.</li>\n  <li>Alert storms due to per-event failure notifications.</li>\n</ul>\n\n<p><strong>Conclusion</strong><br>\nThis design scales by being asynchronous, idempotent, and queue-driven. It remains maintainable through clear separation of concerns, consistent auditability, and bounded retry strategies, making it suitable for large enterprise ServiceNow deployments.</p>",
+  "difficulty": "Senior",
+  "company": "ServiceNow",
+  "category": "Integration",
+  "date": "Dec 13, 2025"
+},
   {
     "id": 2,
     "question": "You are reviewing a custom business rule that calculates and stores the number of open incidents per assignment group. The current implementation runs synchronously on every incident insert/update and uses nested GlideRecord loops to count related records, with no explicit index optimization. In addition, there is a scheduled script that performs similar aggregation logic in a scoped app, sometimes hitting memory/governor limits under peak load.\n\nDesign a refactored solution that:\n- Uses GlideAggregate appropriately instead of GlideRecord where possible\n- Minimizes SQL round-trips and leverages indexes for optimal query performance\n- Chooses correct script execution contexts (synchronous BR vs async/scheduled vs client vs Scripted REST)\n- Reduces memory footprint and respects platform governor limits for long-running / large-data operations\n\nExplain your design decisions, then provide concrete code examples showing an incorrect vs a corrected implementation, and justify them using ServiceNow best practices.",
