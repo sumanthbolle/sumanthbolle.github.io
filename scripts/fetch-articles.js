@@ -531,4 +531,13 @@ async function main() {
   console.log('\n🎉 Done!');
 }
 
-main().catch(e => { console.error('Fatal:', e.message); process.exit(1); });
+main().then(() => {
+  // Run validation after fetching
+  console.log('\n🔍 Running content validation...\n');
+  const { execSync } = require('child_process');
+  try {
+    execSync('node scripts/validate-content.js', { stdio: 'inherit' });
+  } catch (e) {
+    console.error('Validation script failed:', e.message);
+  }
+}).catch(e => { console.error('Fatal:', e.message); process.exit(1); });
