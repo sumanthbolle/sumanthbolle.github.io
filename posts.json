@@ -1,6 +1,24 @@
 [
   {
     "id": 1,
+    "title": "This Week in ServiceNow: December 2025 Platform & Store Updates for Architects and Developers",
+    "excerpt": "A curated, implementation-focused view of this week’s ServiceNow platform, Store, and Employee Center updates. Learn what matters for architecture, upgrades, extensibility, and enterprise risk so you can make informed design and implementation decisions.",
+    "readTime": "10 min read",
+    "content": "<h2>Overview</h2>\n<p>This week’s ServiceNow updates focus on three big themes: <strong>AI-first platform capabilities</strong>, <strong>platform health & observability</strong>, and <strong>experience-layer enhancements</strong> for employees and knowledge workers. Architects, Implementers, and Developers should treat these as inputs into 2026 roadmap planning, upgrade strategy, and governance models.</p>\n<p>Highlights include:</p>\n<ul>\n  <li>New <strong>Yokohama</strong> family patches and hotfixes introducing AI, automation, and governance refinements.</li>\n  <li>New <strong>Knowledge Center</strong> workspace with advanced editing and AI-assisted knowledge workflows.</li>\n  <li><strong>Employee Center (Pro)</strong> December 2025 enhancements focused on engagement, targeting, and extensibility.</li>\n  <li><strong>Impact Platform Health</strong> and Store updates that deepen diagnostics, real-time prevention, and observability.</li>\n  <li>Security, performance, and upgrade guidance that directly affect enterprise-scale implementations.</li>\n</ul>\n\n<h2>Latest Release Updates & Architectural Impact</h2>\n<h3>Yokohama patches & hotfixes</h3>\n<p>The Yokohama family now lists updated patches and hotfixes, including security and performance fixes that are <em>individually shippable</em> and can be applied without a major family upgrade.</p>\n<ul>\n  <li><strong>Architectural impact</strong>: Yokohama continues to expand AI capabilities (AI Governance, Now Assist, AI Search) and industry solutions. These features assume a more mature data model, tighter RBAC, and AI usage governance.</li>\n  <li><strong>Upgrade strategy</strong>: Move away from \"big bang\" family jumps toward <em>smaller, more frequent patch adoption</em>. This aligns with ServiceNow’s guidance to \"upgrade with app version\" for more granular control of app-level changes.</li>\n  <li><strong>Implementation risk</strong>: AI features touch knowledge, search, and case workflows. Misaligned ACLs, knowledge governance, or inconsistent taxonomies can cause incorrect AI responses or overexposure of content.</li>\n</ul>\n<p>Sample upgrade readiness script to quickly surface customizations against a critical table before adopting a patch:</p>\n<pre>// List customizations on a key table before patching\n(function() {\n  var TABLE = 'incident';\n  var gr = new GlideRecord('sys_metadata');\n  gr.addQuery('name', TABLE);\n  gr.addQuery('sys_scope.scope', '!=', 'global');\n  gr.query();\n  gs.info('Customizations on ' + TABLE + ':');\n  while (gr.next()) {\n    gs.info(gr.getDisplayValue('sys_class_name') + ' - ' + gr.getDisplayValue('sys_scope'));\n  }\n})();</pre>\n\n<h3>AI Governance & AI Search (Yokohama)</h3>\n<p>Yokohama introduces <strong>AI Governance</strong> with a unified AI asset inventory and governance workflows, plus improved <strong>Now Assist AI Search</strong> for Genius Results and deflection.</p>\n<ul>\n  <li>Define an enterprise-wide <strong>AI data contract</strong> (which tables, fields, and attachments are AI-eligible) and enforce via dictionary attributes and ACLs.</li>\n  <li>Centralize configuration in a dedicated <em>AI Platform</em> or <em>Center of Excellence</em> application for repeatability.</li>\n</ul>\n<pre>// Example: flag a field as AI-excludable via dictionary attribute\nvar dict = new GlideRecord('sys_dictionary');\nif (dict.get('incident.short_description')) {\n  dict.attributes = (dict.attributes || '') + ',ai_exclude=true';\n  dict.update();\n}</pre>\n\n<h2>Platform Health, Impact & Observability</h2>\n<h3>New Impact Platform Health capabilities</h3>\n<p>The December 2025 Store release for <strong>Impact Platform Health</strong> brings real-time messaging & prevention, scheduled diagnostic scans, and dashboards.</p>\n<ul>\n  <li><strong>Scalability</strong>: Automated scans detect patterns (e.g., unindexed queries, inefficient scripts, high-risk integrations) before they impact performance.</li>\n  <li><strong>Governance</strong>: Findings can be routed into governed remediation workflows and linked to Architecture Review Boards.</li>\n</ul>\n<p>Example: create an on-demand diagnostic scan trigger script for admins:</p>\n<pre>// Trigger a Platform Health scan for a specific scope\n(function() {\n  var scopeName = 'x_acme_finance';\n  var ph = new sn_impact.platform_health.ScanRequest();\n  ph.setScope(scopeName);\n  ph.setPriority('high');\n  ph.execute();\n})();</pre>\n<p><em>Anti-pattern:</em> Treating Platform Health as a one-time go-live step. Instead, schedule scans nightly/weekly and review findings as a recurring SRE/architecture ceremony.</p>\n\n<h2>Employee Center & Store Updates</h2>\n<h3>Employee Center (Pro) – December 2025 enhancements</h3>\n<p>The December 2025 Employee Center Pro update introduces improvements focused on content targeting, extensibility, and integration with HRSD Store features.</p>\n<ul>\n  <li><strong>Adoption guidance</strong>:\n    <ul>\n      <li>Standardize on Employee Center as the single front door; phase out custom portals by mapping key journeys (IT, HR, Facilities, Procurement) into unified experiences.</li>\n      <li>Use <em>topic pages, campaigns, and audience targeting</em> to reduce navigation complexity.</li>\n    </ul>\n  </li>\n  <li><strong>Extensibility</strong>:\n    <ul>\n      <li>Package custom widgets and pages into custom scopes for easier Store-aligned upgrades.</li>\n      <li>Use configuration records (menus, cards, content) instead of hard-coded UI Scripts.</li>\n    </ul>\n  </li>\n</ul>\n<pre>// Simple example: dynamically set Employee Center audience tag\nvar ecAudience = new GlideRecord('sn_ec_audience');\necAudience.initialize();\necAudience.name = 'Managers - North America';\necAudience.active = true;\necAudience.condition = 'user.country=Canada^ORuser.country=United States^user.rolesLIKEmanager';\necAudience.insert();</pre>\n<p><em>Anti-pattern:</em> Copying Service Portal widgets and directly embedding them into Employee Center. Use the supported Employee Center framework and configuration points to avoid brittle dependencies.</p>\n\n<h3>HR Service Delivery Store – December 2025</h3>\n<p>The HRSD December 2025 Store deep dive highlights enhancements that often surface through Employee Center (Pro): improved case experiences, AI-assisted HR interactions, and better content experiences.</p>\n<ul>\n  <li>Ensure HR, IT, and Corporate Comms share a <strong>common information architecture</strong> for knowledge, services, and campaigns.</li>\n  <li>Use Store versions to decouple HRSD innovation from core platform family upgrades.</li>\n</ul>\n\n<h2>Knowledge Center & Content Lifecycle</h2>\n<h3>New Knowledge Center workspace</h3>\n<p>ServiceNow introduced <strong>Knowledge Center</strong>, a new workspace designed to simplify the entire knowledge lifecycle with advanced editing and AI assistance.</p>\n<ul>\n  <li><strong>Architectural implications</strong>:\n    <ul>\n      <li>Knowledge becomes a first-class, governed asset with lifecycle states, ownership, and quality controls.</li>\n      <li>AI experiences (search, deflection, agents) depend heavily on this curated knowledge base.</li>\n    </ul>\n  </li>\n  <li><strong>Implementation guidance</strong>:\n    <ul>\n      <li>Standardize article templates by domain (IT, HR, Security, Facilities) to improve AI quality.</li>\n      <li>Use Knowledge Center’s workflows for review, translation, and retirement instead of custom flows.</li>\n    </ul>\n  </li>\n</ul>\n<pre>// Example: Enforce mandatory template for IT knowledge articles\n(function() {\n  var k = new GlideRecord('kb_knowledge');\n  k.addQuery('kb_knowledge_base', 'IT_KB_SYS_ID');\n  k.addQuery('u_template_used', false);\n  k.setLimit(100);\n  k.query();\n  while (k.next()) {\n    gs.warn('Article without template: ' + k.number);\n  }\n})();</pre>\n<p><em>Anti-pattern:</em> Allowing free-form, unstructured articles. This dramatically reduces the value of AI search and Now Assist and increases maintenance costs.</p>\n\n<h2>Security, Vulnerability Fixes & Performance</h2>\n<h3>Patches and security posture</h3>\n<p>Yokohama patches and hotfixes frequently include <strong>security and performance fixes</strong>. For regulated industries and public sector, timely adoption is an architectural requirement, not just operational hygiene.</p>\n<ul>\n  <li>Integrate <em>patch evaluation</em> into your Change Advisory Board with a standard checklist: assets affected, scopes impacted, regression test coverage.</li>\n  <li>Use Automated Test Framework (ATF) suites to validate after patching core apps (Incident, HR, CSM, GRC).</li>\n</ul>\n<pre>// Minimal smoke ATF test for catalog submission\nvar test = new sn_atf.AutomatedTesting();\nvar suiteId = test.createTestSuite('Post-Patch Smoke Suite');\nvar testId = test.createTest('Submit standard item', suiteId);\n// Add steps via API or UI; here we just log the suite\ngs.info('Created ATF suite: ' + suiteId);</pre>\n<p><em>Anti-pattern:</em> Skipping ATF and relying only on manual, ad-hoc regression testing after security patches.</p>\n\n<h2>Actionable Best Practices & Design Patterns</h2>\n<ul>\n  <li><strong>Treat AI as a platform capability</strong>, not an app: Govern AI asset inventory, data contracts, and risk assessments centrally.</li>\n  <li><strong>Adopt Platform Health as SRE tooling</strong>: Run scheduled scans, track findings as backlog items, and measure mean time to remediation for platform issues.</li>\n  <li><strong>Standardize on Employee Center</strong> as the UX front door: Rationalize legacy portals and unify service catalogs and knowledge across domains.</li>\n  <li><strong>Use Store app versioning</strong> deliberately: Align HRSD and other Store app upgrades with business release trains while keeping platform patches flowing.</li>\n  <li><strong>Codify governance with scripts & policies</strong>: Use GlideRecord utilities, ATF, and configuration policies to enforce consistency (naming, scoping, templates, ACLs).</li>\n</ul>\n\n<h2>Common Pitfalls</h2>\n<ul>\n  <li>Enabling AI features without hardening knowledge, RBAC, and data residency controls first.</li>\n  <li>Treating Platform Health and Impact as optional add-ons instead of core observability tooling.</li>\n  <li>Over-customizing Employee Center with cloned widgets and unsupported client scripts.</li>\n  <li>Deferring Yokohama patches because \"nothing is broken\" and then accumulating security debt.</li>\n  <li>Allowing every team to define its own article structures, taxonomies, and deflection logic.</li>\n</ul>",
+    "category": "servicenow",
+    "date": "Dec 13, 2025"
+  },
+  {
+    "id": 2,
+    "title": "Building on ServiceNow’s Latest AI: Now Assist, AI Control Tower, and Agentic Patterns for Developers",
+    "excerpt": "Explore the newest ServiceNow AI capabilities—from Now Assist model v2.0 and AI Control Tower to Virtual Agent, AI Search, and agent-to-agent patterns. Learn concrete implementation techniques using GlideRecord and Flow Designer so you can safely plug GenAI and LLMs into real workflows.",
+    "readTime": "10 min read",
+    "content": "<h2>Overview</h2><p>ServiceNow continues to expand its AI Platform with deeper GenAI, safer orchestration, and richer virtual agent capabilities. Recent releases introduce upgraded Now Assist models, enhanced governance with AI Control Tower, and new agentic automation patterns that span workflows and external LLMs.</p><p>For developers, the value is twofold: you can now embed powerful AI into everyday flows (summaries, routing, answers) while keeping strict control over data, models, and observability. This article focuses on practical implementation patterns using GlideRecord, Flow Designer, and out-of-box AI components.</p><h2>Now Assist and GenAI Updates</h2><p>ServiceNow’s new AI models and Now Assist experiences deliver better summarization, answer quality, and workspace integration across ITSM, CSM, HR, and Employee Center.</p><h3>Key capabilities</h3><ul><li><strong>Now Assist models v2.0</strong> with improved intent understanding, summarization, and adherence to platform security boundaries.</li><li><strong>Embedded GenAI in workspaces</strong> for incident, case, and knowledge summarization, draft responses, and content generation.</li><li><strong>Knowledge Center</strong> with AI-assisted editing for faster article creation and refinement.</li></ul><h3>Actionable implementation pattern: AI-driven incident summary</h3><p>Typical flow:</p><ol><li>Agent opens an incident in Workspace.</li><li>Now Assist generates a summary from activity and related records.</li><li>Agent optionally stores the summary back on the record.</li></ol><p>To persist a GenAI-generated summary using GlideRecord in a Script Action or Script Include:</p><pre>// Called from a UI Action or Flow Designer Action when the agent accepts a Now Assist summary\n(function(storeSummary) {\n  if (!storeSummary.incident_sys_id || !storeSummary.summary_text)\n    return;\n\n  var gr = new GlideRecord('incident');\n  if (gr.get(storeSummary.incident_sys_id)) {\n    gr.u_ai_summary = storeSummary.summary_text; // Custom field to store AI output\n    gr.update();\n  }\n})({\n  incident_sys_id: current.sys_id,\n  summary_text: inputs.summary // Passed from Flow or UI\n});</pre><p><strong>Best practice:</strong> persist only necessary AI outputs (e.g., summary, classification) and avoid storing raw prompts or sensitive content.</p><h2>AI Control Tower and Predictive Intelligence</h2><p>AI Control Tower centralizes model selection, governance, and observability for Now Assist, Predictive Intelligence, and integrated LLMs. Predictive Intelligence continues to power auto-routing, auto-classification, and recommendations.</p><h3>Control Tower patterns</h3><ul><li>Define <strong>per-use-case policies</strong> (e.g., which LLM for summarization vs. classification).</li><li>Enable <strong>logging and guardrails</strong> for prompts and responses (mask PII where required).</li><li>Route traffic between <strong>Now LLM</strong> and partner models (e.g., Microsoft, OpenAI) while retaining platform security controls.</li></ul><h3>Predictive Intelligence auto-routing in Flow Designer</h3><p>Example: Classify and route new incidents using a trained model, then fall back to business rules if confidence is low.</p><pre>// Script step in Flow Designer: Evaluate PI classification confidence\nvar gr = new GlideRecord('incident');\nif (!gr.get(current.sys_id)) {\n  outputs.is_confident = false;\n  return;\n}\n\n// Assume a classification result is stored by an OOB PI action\nvar confidence = parseFloat(gr.u_pi_confidence || 0);\noutputs.is_confident = confidence &gt;= 0.8;\n</pre><p>Then use a Flow Designer Decision:</p><ul><li><em>If</em> is_confident == true → set assignment group from PI prediction.</li><li><em>Else</em> → route to default triage queue.</li></ul><h2>Virtual Agent AI and NLU Updates</h2><p>Virtual Agent leverages updated NLU and GenAI to handle more complex dialogs, summarize conversations, and draft resolutions.</p><h3>Patterns to implement</h3><ul><li>Use <strong>topic triggers</strong> that rely on new NLU models for broader intent coverage.</li><li>Call Now Assist within a Virtual Agent topic to <strong>summarize the chat</strong> and store it on the associated record.</li><li>Attach <strong>GenAI-generated resolution text</strong> to incident or case work notes from within the topic.</li></ul><p>Example: Virtual Agent topic script to persist a GenAI chat summary:</p><pre>// In a VA Script step (Client callable Script Include pattern)\nvar VaAiUtils = Class.create();\nVaAiUtils.prototype = {\n  initialize: function() {},\n\n  saveSummaryToIncident: function(incidentId, summary) {\n    if (!incidentId || !summary)\n      return false;\n\n    var inc = new GlideRecord('incident');\n    if (!inc.get(incidentId))\n      return false;\n\n    inc.work_notes = 'AI chat summary:\\n' + summary;\n    inc.update();\n    return true;\n  },\n\n  type: 'VaAiUtils'\n};</pre><h2>Agent-to-Agent (A2A), MCP, and LLM Integration</h2><p>ServiceNow’s agentic vision includes AI agents that collaborate with human agents and external systems. Through AI Control Tower and partner integrations (e.g., Microsoft), you can orchestrate multi-agent workflows while keeping governance centralized.</p><h3>Agent-to-Agent &amp; MCP patterns</h3><ul><li>Use <strong>Flow Designer</strong> to orchestrate calls between Now Assist, external LLMs, and internal APIs.</li><li>Configure <strong>AI Control Tower policies</strong> to direct which agent or LLM owns each task (classification, summarization, content generation).</li><li>Integrate with <strong>Microsoft collaboration surfaces</strong> so AI agents can coordinate resolutions from Teams while updating ServiceNow records.</li></ul><p>Example: Flow Designer orchestrated multi-agent flow</p><ol><li>Trigger: Incident created.</li><li>Action 1: Now Assist summarizes description and context.</li><li>Action 2: Predictive Intelligence suggests assignment group.</li><li>Action 3: External LLM via HTTP step drafts a customer-facing update.</li><li>Action 4: GlideRecord step stores outputs and posts a work note.</li></ol><pre>// Example Script step in Flow Designer combining AI outputs\n(function execute(inputs, outputs) {\n  var inc = new GlideRecord('incident');\n  if (!inc.get(current.sys_id))\n    return;\n\n  // Inputs from previous AI actions\n  var aiSummary = inputs.ai_summary || '';\n  var aiReply   = inputs.ai_reply || '';\n\n  if (aiSummary)\n    inc.u_ai_summary = aiSummary;\n\n  if (aiReply)\n    inc.comments = 'Suggested reply (AI):\\n' + aiReply;\n\n  inc.update();\n})(inputs, outputs);</pre><h2>LLM Integration Patterns and AI Search</h2><p>ServiceNow supports flexible LLM choices through AI Control Tower, plus AI Search to provide semantic, relevance-ranked results across knowledge and records.</p><h3>Recommended patterns</h3><ul><li>Use <strong>AI Search</strong> as the primary entry point for AI-powered Q&amp;A instead of calling LLMs directly for data retrieval.</li><li>Combine <strong>AI Search results + Now Assist</strong> to generate grounded answers that reference specific articles or records.</li><li>Configure <strong>index sources</strong> carefully (knowledge, catalog, cases) to avoid exposing sensitive data.</li></ul><p>Example: Scripted AI Search query + answer generation pattern</p><pre>// Pseudo-pattern: use AI Search for grounding, then pass snippets to GenAI\nvar query = 'reset VPN password';\nvar searchGr = new GlideRecord('sa_ai_search_result');\nsearchGr.addQuery('query_string', query);\nsearchGr.query();\n\nvar snippets = [];\nwhile (searchGr.next() &amp;&amp; snippets.length &lt; 3) {\n  snippets.push(searchGr.getValue('snippet')); // Hypothetical field\n}\n\n// Concatenate snippets and send to a Now Assist or LLM action via Flow\noutputs.context_snippets = snippets.join('\\n---\\n');</pre><h2>Best Practices</h2><ul><li><strong>Start with high-value, low-risk use cases</strong> like summaries, routing, and draft responses before moving to autonomous actions.</li><li><strong>Use AI Control Tower</strong> for every production GenAI use case to manage providers, guardrails, and observability.</li><li><strong>Keep prompts and outputs minimal</strong> and avoid sending unnecessary fields or PII to external models.</li><li><strong>Ground GenAI with AI Search</strong> and concrete record data to improve accuracy and reduce hallucinations.</li><li><strong>Capture metrics</strong> (accept/override, resolution time, CSAT) to continuously tune Predictive Intelligence and Now Assist configurations.</li><li><strong>Use Script Includes</strong> as thin AI facades so flows, UI Actions, and Virtual Agent topics share the same logic.</li></ul><h2>Common Pitfalls</h2><ul><li><strong>Calling LLMs directly for system-of-record queries</strong> instead of using AI Search or GlideRecord, leading to inaccurate or stale answers.</li><li><strong>Bypassing AI Control Tower</strong> and hardcoding provider endpoints, which breaks governance, observability, and future portability.</li><li><strong>Overloading prompts with entire records</strong> (including sensitive fields) rather than narrowing to relevant attributes.</li><li><strong>Letting AI auto-update records without human review</strong> for high-risk actions like approvals, major incident communication, or HR decisions.</li><li><strong>Ignoring model versioning</strong> when moving to newer Now Assist models, resulting in untested behavior changes in production workflows.</li><li><strong>Embedding complex business logic</strong> inside prompts (“do X except Y”) instead of enforcing rules in GlideRecord scripts and Flow conditions.</li></ul>",
+    "category": "ai",
+    "date": "Dec 13, 2025"
+  },
+  {
+    "id": 3,
     "title": "Building on ServiceNow’s Latest AI: Practical Patterns for Now Assist, AI Control Tower, and Virtual Agent",
     "excerpt": "Learn how to apply the latest ServiceNow AI capabilities—including Now Assist v2.0 models, AI Control Tower, Virtual Agent AI, and AI Search—in real workflows. This guide focuses on concrete GlideRecord and Flow Designer patterns you can reuse in your own apps.",
     "readTime": "9 min read",
@@ -9,7 +27,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 2,
+    "id": 4,
     "title": "This Week’s ServiceNow Platform Updates: Yokohama/Xanadu, Impact Platform Health, and Employee Center",
     "excerpt": "This guide distills the latest ServiceNow platform updates from official docs and community posts into concrete actions for developers. Learn what’s new in Yokohama/Xanadu, Impact Platform Health, Employee Center, and how to safely upgrade, harden security, and improve performance with practical examples.",
     "readTime": "9 min read",
@@ -18,7 +36,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 3,
+    "id": 5,
     "title": "Latest Enterprise AI and GenAI Breakthroughs: Accelerating Business Automation in ServiceNow",
     "excerpt": "This week brings major advancements in enterprise AI from Dell-NVIDIA integrations, Microsoft agentic AI tools, and adoption reports highlighting Copilot's dominance. ServiceNow developers can leverage these for smarter automation, from AI factories to LLM orchestration.",
     "readTime": "5 min read",
@@ -27,7 +45,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 4,
+    "id": 6,
     "title": "ServiceNow December 2025 Store Release: Key Updates, Features, and Developer Best Practices",
     "excerpt": "Discover the latest ServiceNow December 2025 Store Release highlights, including Impact Platform Health enhancements and Employee Center Pro updates. This article explores new features for developers and actionable best practices to optimize your instance.",
     "readTime": "5 min read",
@@ -36,7 +54,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 5,
+    "id": 7,
     "title": "Enterprise Automation, ITSM, and Digital Transformation: Practical Trends for ServiceNow Developers",
     "excerpt": "Enterprise automation is converging around AI-driven hyperautomation, low-code platforms, and data-first integration. This article gives ServiceNow developers actionable patterns, priorities, and implementation steps to apply these trends in real projects.",
     "readTime": "6 min read",
@@ -45,7 +63,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 6,
+    "id": 8,
     "title": "New Integration Patterns, Flow Designer Tips, and Integration Hub Updates for ServiceNow Developers",
     "excerpt": "Practical guidance on current ServiceNow integration patterns, actionable Flow Designer tips, and recent Integration Hub capabilities to accelerate reliable, maintainable integrations.",
     "readTime": "6 min read",
@@ -54,7 +72,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 7,
+    "id": 9,
     "title": "Latest Trends in Enterprise Automation, ITSM, and Digital Transformation: Actionable Insights",
     "excerpt": "Enterprise automation in 2025 is driven by hyperautomation, AI integration, and no-code platforms, delivering up to 30% cost savings. ServiceNow developers can leverage these trends to enhance ITSM workflows.",
     "readTime": "5 min read",
@@ -63,7 +81,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 8,
+    "id": 10,
     "title": "Mastering ServiceNow Integrations in 2025: New Patterns, Flow Designer Tips, and Integration Hub Updates",
     "excerpt": "Discover the latest ServiceNow integration patterns with the updated Decision Tree, essential Flow Designer tips for efficient automation, and key Integration Hub enhancements like 200+ new connectors.",
     "readTime": "6 min read",
@@ -72,7 +90,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 9,
+    "id": 11,
     "title": "This Week in Enterprise AI: GenAI, LLMs, and Agents — Practical Takeaways for ServiceNow Developers",
     "excerpt": "Major vendors released model and agent updates this week that push multimodal reasoning, cheaper inference, and agent-first integrations. ServiceNow developers should focus on connectors, orchestration, security, and observability.",
     "readTime": "6 min read",
@@ -81,7 +99,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 10,
+    "id": 12,
     "title": "This Week's ServiceNow Platform Updates, Features, and Developer Best Practices",
     "excerpt": "A concise roundup of the most important ServiceNow platform updates released this week, practical feature highlights for developers, and actionable best practices to adopt during upgrades.",
     "readTime": "6 min read",
@@ -90,7 +108,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 11,
+    "id": 13,
     "title": "2025 Trends in Enterprise Automation, ITSM, and Digital Transformation: A ServiceNow Developer's Guide",
     "excerpt": "Explore the latest 2025 trends in enterprise automation, ITSM, and digital transformation, including hyperautomation, AI integration, and low-code platforms. Discover actionable insights tailored for platform customization.",
     "readTime": "5 min read",
@@ -99,7 +117,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 12,
+    "id": 14,
     "title": "December 2025: Key ServiceNow Platform Updates, Features, and Best Practices for Developers",
     "excerpt": "This week's ServiceNow updates focus on platform health, agentic AI tooling, Employee Center enhancements, and Canadian public-sector AI investments — plus practical best practices for developers.",
     "readTime": "5 min read",
@@ -108,7 +126,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 13,
+    "id": 15,
     "title": "Building AI Agents in ServiceNow: A Complete Guide",
     "excerpt": "Learn how to create intelligent AI agents that automate complex workflows using ServiceNow's AI capabilities and GenAI integration.",
     "category": "servicenow",
@@ -117,7 +135,7 @@
     "content": "<h2>Introduction</h2><p>AI Agents are revolutionizing how enterprises handle automation. In this guide, we'll explore how to build intelligent agents within ServiceNow that can reason, decide, and act autonomously.</p><h2>What are AI Agents?</h2><p>AI Agents are autonomous systems that can perceive their environment, make decisions, and take actions to achieve specific goals. In ServiceNow, these agents can handle everything from incident resolution to complex approval workflows.</p><h2>Getting Started</h2><p>To build an AI Agent in ServiceNow, you'll need:</p><ul><li>ServiceNow Utah or later</li><li>AI Control Tower access</li><li>Integration Hub subscription</li></ul><h2>Implementation Steps</h2><p>First, configure your AI Control Tower settings to enable agent capabilities. Then create a new AI Agent definition:</p><pre>// Sample GlideRecord script for AI Agent\nvar gr = new GlideRecord('sn_ai_agent');\ngr.initialize();\ngr.name = 'Incident Resolution Agent';\ngr.active = true;\ngr.insert();</pre><p>This foundation allows you to build sophisticated automation that learns and adapts over time.</p>"
   },
   {
-    "id": 14,
+    "id": 16,
     "title": "GenAI Summarization for Risk Management",
     "excerpt": "How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace to reduce analysis time by 60%.",
     "category": "ai",
@@ -126,7 +144,7 @@
     "content": "<h2>The Challenge</h2><p>Risk analysts were spending hours reading through lengthy risk assessments and compliance documents. We needed a solution that could summarize key points instantly while maintaining accuracy.</p><h2>The Solution</h2><p>By integrating GenAI capabilities with ServiceNow's GRC module, we created an automated summarization system that processes documents in real-time.</p><h2>Architecture</h2><p>The system uses a three-tier approach:</p><ul><li>Document ingestion via Integration Hub</li><li>GenAI processing with custom prompts</li><li>Results displayed in Risk Workspace widget</li></ul><h2>Results</h2><p>The implementation reduced analysis time by 60% and improved risk detection accuracy by identifying patterns human analysts often missed.</p>"
   },
   {
-    "id": 15,
+    "id": 17,
     "title": "Flow Designer Best Practices for Enterprise Scale",
     "excerpt": "Essential patterns and anti-patterns when building flows that need to handle thousands of executions daily.",
     "category": "tutorial",
@@ -135,7 +153,7 @@
     "content": "<h2>Why Flow Designer Matters</h2><p>Flow Designer is ServiceNow's powerful low-code automation tool. But with great power comes great responsibility—especially at enterprise scale.</p><h2>Best Practices</h2><ul><li><strong>Use Subflows:</strong> Break complex logic into reusable subflows</li><li><strong>Error Handling:</strong> Always implement try-catch patterns</li><li><strong>Async Operations:</strong> Use async for heavy processing</li><li><strong>Monitoring:</strong> Track execution times and failures</li></ul><h2>Anti-Patterns to Avoid</h2><p>Don't create flows that query large datasets without filters. Always use indexed fields and limit result sets.</p><pre>// Bad: Queries all incidents\nvar gr = new GlideRecord('incident');\ngr.query();\n\n// Good: Filtered query\nvar gr = new GlideRecord('incident');\ngr.addQuery('state', 1);\ngr.addQuery('sys_created_on', '>=', gs.daysAgo(7));\ngr.setLimit(100);\ngr.query();</pre>"
   },
   {
-    "id": 16,
+    "id": 18,
     "title": "The Future of Enterprise AI: 2025 Trends",
     "excerpt": "Exploring the emerging trends in enterprise AI adoption and what it means for ServiceNow developers.",
     "category": "general",
