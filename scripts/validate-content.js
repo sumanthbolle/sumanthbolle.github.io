@@ -155,7 +155,7 @@ function validatePost(post) {
   
   // Check for code examples in technical categories
   if (rules.mustHaveCodeExample.includes(post.category) && !hasCodeExample(post.content)) {
-    issues.push({ type: 'missing_code_example', severity: 'warning' });
+    issues.push({ type: 'missing_code_example', severity: 'critical' });
   }
   
   // Check topic coverage
@@ -174,7 +174,7 @@ function validatePost(post) {
   return {
     valid: issues.length === 0,
     issues,
-    fixable: hasCritical && issues.some(i => 
+    fixable: issues.some(i => 
       ['content_truncated', 'content_too_short', 'incomplete_coverage', 'missing_code_example'].includes(i.type)
     )
   };
@@ -347,7 +347,14 @@ CATEGORY: ${post.category}
 CURRENT CONTENT:
 ${post.content}
 
-Add 2-3 relevant ServiceNow code examples using <pre> tags. Return the complete updated content.`;
+Add 2-3 relevant ServiceNow code examples using <pre> tags. The code should be practical GlideRecord, Flow Designer, or API examples relevant to the article topic.
+
+Return the COMPLETE updated content with the new code examples integrated naturally into the existing sections. Keep all existing content and add code examples where they make sense.`;
+  }
+  
+  if (!prompt) {
+    console.log(`   ⚠️ No fix strategy for these issues`);
+    return false;
   }
   
   try {
