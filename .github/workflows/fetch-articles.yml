@@ -1,40 +1,46 @@
 # .github/workflows/fetch-articles.yml
-# This workflow fetches latest tech articles and interview questions daily
-
-name: Fetch Daily Tech Articles
+name: Fetch Articles & Validate
 
 on:
   schedule:
-    # Runs every day at 8:00 AM UTC (adjust to your timezone)
-    - cron: '0 8 * * *'
-  workflow_dispatch: # Allows manual trigger from GitHub UI
-
-# IMPORTANT: Grant write permissions to push changes
-permissions:
-  contents: write
+    # Runs daily at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
-  fetch-articles:
+  fetch-and-validate:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Fetch articles from Perplexity API
+      
+      - name: Fetch new articles
         env:
           PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
-        run: |
-          node scripts/fetch-articles.js
-
-      - name: Commit and push if changed
+        run: node scripts/fetch-articles.js
+      
+      - name: Validate and fix content
+        env:
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+        run: node scripts/validate-content.js
+      
+      - name: Commit changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add posts.json interviews.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Auto-update: Daily content $(date +'%Y-%m-%d')" && git push)
+          git diff --staged --quiet || git commit -m "📝 Auto-update: Fetch articles & validate content"
+      
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
