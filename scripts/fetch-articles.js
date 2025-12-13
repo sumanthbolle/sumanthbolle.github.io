@@ -115,6 +115,271 @@ Include code examples demonstrating proper implementation.`,
   }
 ];
 
+// ============ ROBUST JSON SANITIZATION ============
+
+/**
+ * Sanitizes a string to be safely embedded in JSON
+ * Handles control characters, unescaped quotes, and other problematic content
+ */
+function sanitizeJsonString(str) {
+  if (typeof str !== 'string') return str;
+  
+  return str
+    // Remove null bytes and other dangerous control chars
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+    // Preserve actual newlines as escaped
+    .replace(/\r\n/g, '\\n')
+    .replace(/\r/g, '\\n')
+    .replace(/\n/g, '\\n')
+    // Preserve tabs as escaped
+    .replace(/\t/g, '\\t')
+    // Fix unescaped backslashes (but not already-escaped sequences)
+    .replace(/\\(?![nrtbfu"\\\/])/g, '\\\\');
+}
+
+/**
+ * Attempts to fix and parse malformed JSON from LLM responses
+ */
+function robustJsonParse(rawResponse) {
+  // Step 1: Remove markdown code blocks
+  let cleaned = rawResponse
+    .replace(/```json\s*/gi, '')
+    .replace(/```\s*/g, '')
+    .trim();
+  
+  // Step 2: Extract JSON object (in case there's preamble/epilogue text)
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error('No JSON object found in response');
+  }
+  cleaned = jsonMatch[0];
+  
+  // Step 3: Try parsing as-is first
+  try {
+    return JSON.parse(cleaned);
+  } catch (firstError) {
+    console.log(`   Initial parse failed: ${firstError.message}`);
+  }
+  
+  // Step 4: Aggressive sanitization for control characters
+  cleaned = cleaned.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+  
+  // Step 5: Fix common LLM JSON issues
+  // Fix actual newlines inside string values (convert to \n)
+  cleaned = cleaned.replace(/"([^"]*(?:\\.[^"]*)*)"/g, (match, content) => {
+    const fixed = content
+      .replace(/\r\n/g, '\\n')
+      .replace(/\r/g, '\\n')
+      .replace(/\n/g, '\\n')
+      .replace(/\t/g, '\\t');
+    return `"${fixed}"`;
+  });
+  
+  // Step 6: Try parsing again
+  try {
+    return JSON.parse(cleaned);
+  } catch (secondError) {
+    console.log(`   Sanitized parse failed: ${secondError.message}`);
+  }
+  
+  // Step 7: More aggressive fixes for unterminated strings
+  // Try to fix unterminated strings by finding the position and closing them
+  try {
+    // Replace any remaining problematic characters in string contexts
+    let inString = false;
+    let escaped = false;
+    let result = '';
+    
+    for (let i = 0; i < cleaned.length; i++) {
+      const char = cleaned[i];
+      
+      if (escaped) {
+        result += char;
+        escaped = false;
+        continue;
+      }
+      
+      if (char === '\\' && inString) {
+        escaped = true;
+        result += char;
+        continue;
+      }
+      
+      if (char === '"') {
+        inString = !inString;
+        result += char;
+        continue;
+      }
+      
+      // If we're in a string and hit a real newline, escape it
+      if (inString && (char === '\n' || char === '\r')) {
+        result += '\\n';
+        continue;
+      }
+      
+      result += char;
+    }
+    
+    // If string was never terminated, close it
+    if (inString) {
+      result += '"';
+      // Try to close the JSON structure
+      const openBraces = (result.match(/\{/g) || []).length;
+      const closeBraces = (result.match(/\}/g) || []).length;
+      for (let i = closeBraces; i < openBraces; i++) {
+        result += '}';
+      }
+    }
+    
+    return JSON.parse(result);
+  } catch (thirdError) {
+    console.log(`   Character-level fix failed: ${thirdError.message}`);
+  }
+  
+  // Step 8: Last resort - try to extract fields with regex
+  throw new Error('All JSON parse attempts failed');
+}
+
+/**
+ * Extract fields manually using regex as ultimate fallback
+ */
+function extractFieldsManually(response, fields) {
+  const result = {};
+  
+  for (const field of fields) {
+    // Match "field": "value" or "field": "<html content>"
+    const regex = new RegExp(`"${field}"\\s*:\\s*"([\\s\\S]*?)"\\s*(?:,\\s*"|\\})`);
+    const match = response.match(regex);
+    
+    if (match) {
+      result[field] = match[1]
+        .replace(/\\n/g, '\n')
+        .replace(/\\t/g, '\t')
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, '\\');
+    }
+  }
+  
+  return result;
+}
+
+// ============ PARSING FUNCTIONS (UPDATED) ============
+
+// Parse interview question from API response
+function parseInterview(response, category) {
+  try {
+    const interview = robustJsonParse(response);
+    
+    // Clean up the answer content
+    let answer = interview.answer || '';
+    answer = answer.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    answer = answer.replace(/\[\d+\](\[\d+\])*/g, '');
+    answer = answer.replace(/\\n/g, '\n');
+    
+    let question = (interview.question || '').replace(/\[\d+\]/g, '');
+    
+    return {
+      question: question,
+      answer: answer,
+      difficulty: interview.difficulty || 'Senior',
+      company: interview.company || 'ServiceNow',
+      category: category
+    };
+  } catch (e) {
+    console.error('Failed to parse interview:', e.message);
+    console.log('   Attempting manual field extraction...');
+    
+    // Fallback: extract fields manually with regex
+    try {
+      const extracted = extractFieldsManually(response, ['question', 'answer', 'difficulty', 'company']);
+      
+      if (extracted.question) {
+        console.log('   Manual extraction succeeded!');
+        return {
+          question: extracted.question.replace(/\[\d+\]/g, ''),
+          answer: extracted.answer || '<p>Answer parsing failed - please check source.</p>',
+          difficulty: extracted.difficulty || 'Senior',
+          company: extracted.company || 'ServiceNow',
+          category: category
+        };
+      }
+    } catch (fallbackError) {
+      console.log('   Manual extraction also failed:', fallbackError.message);
+    }
+    
+    return null;
+  }
+}
+
+// Parse article JSON from API response
+function parseArticle(response, category) {
+  try {
+    const article = robustJsonParse(response);
+    
+    // Clean up the content
+    let content = article.content || '<p>Content not available.</p>';
+    
+    // Convert any remaining markdown to HTML
+    content = content.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    content = content.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    
+    // Remove citation references
+    content = content.replace(/\[\d+\](\[\d+\])*/g, '');
+    
+    // Remove any leftover markdown links
+    content = content.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+    
+    // Fix common encoding issues
+    content = content
+      .replace(/—/g, '—')
+      .replace(/–/g, '–')
+      .replace(/'/g, "'")
+      .replace(/"/g, '"')
+      .replace(/"/g, '"')
+      .replace(/…/g, '...')
+      .replace(/\u00A0/g, ' ')
+      .replace(/[\u200B-\u200D\uFEFF]/g, '');
+    
+    // Clean up excerpt
+    let excerpt = article.excerpt || '';
+    excerpt = excerpt.replace(/\*\*([^*]+)\*\*/g, '$1');
+    excerpt = excerpt.replace(/\[\d+\](\[\d+\])*/g, '');
+    
+    return {
+      title: (article.title || 'Untitled Article').replace(/\[\d+\]/g, ''),
+      excerpt: excerpt,
+      readTime: article.readTime || '5 min read',
+      content: content,
+      category: category
+    };
+  } catch (e) {
+    console.error('Failed to parse article:', e.message);
+    console.log('   Attempting manual field extraction...');
+    
+    // Fallback: extract fields manually
+    try {
+      const extracted = extractFieldsManually(response, ['title', 'excerpt', 'readTime', 'content']);
+      
+      if (extracted.title && extracted.content) {
+        console.log('   Manual extraction succeeded!');
+        return {
+          title: extracted.title.replace(/\[\d+\]/g, ''),
+          excerpt: extracted.excerpt || '',
+          readTime: extracted.readTime || '5 min read',
+          content: extracted.content,
+          category: category
+        };
+      }
+    } catch (fallbackError) {
+      console.log('   Manual extraction also failed:', fallbackError.message);
+    }
+    
+    return null;
+  }
+}
+
+// ============ API CALL FUNCTIONS ============
+
 // Call Perplexity API for interview questions
 function callPerplexityInterview(prompt) {
   return new Promise((resolve, reject) => {
@@ -187,71 +452,6 @@ Requirements:
     req.write(data);
     req.end();
   });
-}
-
-// Parse interview question from API response
-function parseInterview(response, category) {
-  try {
-    let cleaned = response
-      .replace(/```json\n?/g, '')
-      .replace(/```\n?/g, '')
-      .trim();
-    
-    // Fix common JSON issues from API response
-    cleaned = cleaned.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/g, '');
-    cleaned = cleaned.replace(/\n/g, '\\n');
-    cleaned = cleaned.replace(/\t/g, '\\t');
-    
-    // Extract JSON object if there's extra text
-    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      cleaned = jsonMatch[0];
-    }
-    
-    const interview = JSON.parse(cleaned);
-    
-    // Clean up the answer content
-    let answer = interview.answer || '';
-    answer = answer.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    answer = answer.replace(/\[\d+\](\[\d+\])*/g, '');
-    answer = answer.replace(/\\n/g, '\n');
-    
-    let question = (interview.question || '').replace(/\[\d+\]/g, '');
-    
-    return {
-      question: question,
-      answer: answer,
-      difficulty: interview.difficulty || 'Senior',
-      company: interview.company || 'ServiceNow',
-      category: category
-    };
-  } catch (e) {
-    console.error('Failed to parse interview:', e.message);
-    console.log('   Attempting fallback parse...');
-    
-    // Fallback: try to extract fields manually with regex
-    try {
-      const questionMatch = response.match(/"question"\s*:\s*"([^"]+)"/);
-      const difficultyMatch = response.match(/"difficulty"\s*:\s*"([^"]+)"/);
-      const companyMatch = response.match(/"company"\s*:\s*"([^"]+)"/);
-      const answerMatch = response.match(/"answer"\s*:\s*"([\s\S]*?)"\s*,\s*"(?:difficulty|company|question)"/);
-      
-      if (questionMatch) {
-        console.log('   Fallback parse succeeded!');
-        return {
-          question: questionMatch[1].replace(/\\n/g, ' ').replace(/\[\d+\]/g, ''),
-          answer: answerMatch ? answerMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"') : '<p>Answer parsing failed - please check source.</p>',
-          difficulty: difficultyMatch ? difficultyMatch[1] : 'Senior',
-          company: companyMatch ? companyMatch[1] : 'ServiceNow',
-          category: category
-        };
-      }
-    } catch (fallbackError) {
-      console.log('   Fallback also failed:', fallbackError.message);
-    }
-    
-    return null;
-  }
 }
 
 // Load existing interviews
@@ -360,59 +560,6 @@ Write 500-800 words of practical, actionable content. Every article should have 
     req.write(data);
     req.end();
   });
-}
-
-// Parse article JSON from API response
-function parseArticle(response, category) {
-  try {
-    // Clean up response - remove markdown code blocks if present
-    let cleaned = response
-      .replace(/```json\n?/g, '')
-      .replace(/```\n?/g, '')
-      .trim();
-    
-    const article = JSON.parse(cleaned);
-    
-    // Clean up the content
-    let content = article.content || '<p>Content not available.</p>';
-    
-    // Convert any remaining markdown to HTML
-    content = content.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    content = content.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-    
-    // Remove citation references
-    content = content.replace(/\[\d+\](\[\d+\])*/g, '');
-    
-    // Remove any leftover markdown links
-    content = content.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
-    
-    // Fix common encoding issues
-    content = content
-      .replace(/—/g, '—')
-      .replace(/–/g, '–')
-      .replace(/'/g, "'")
-      .replace(/"/g, '"')
-      .replace(/"/g, '"')
-      .replace(/…/g, '...')
-      .replace(/\u00A0/g, ' ')
-      .replace(/[\u200B-\u200D\uFEFF]/g, '');
-    
-    // Clean up excerpt
-    let excerpt = article.excerpt || '';
-    excerpt = excerpt.replace(/\*\*([^*]+)\*\*/g, '$1');
-    excerpt = excerpt.replace(/\[\d+\](\[\d+\])*/g, '');
-    
-    return {
-      title: (article.title || 'Untitled Article').replace(/\[\d+\]/g, ''),
-      excerpt: excerpt,
-      readTime: article.readTime || '5 min read',
-      content: content,
-      category: category
-    };
-  } catch (e) {
-    console.error('Failed to parse article:', e.message);
-    return null;
-  }
 }
 
 // Load existing posts
