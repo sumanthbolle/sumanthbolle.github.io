@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ServiceNow Quiz - Test Your Knowledge | Sumanth Bolle</title>
+  <meta name="description" content="Test your ServiceNow knowledge with quizzes on Architecture, Scripting, Modules, and Platform Fundamentals.">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    
+    :root{
+      --transition:0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    
+    /* Light Theme */
+    [data-theme="light"]{
+      --bg-primary:#ffffff;
+      --bg-secondary:#f5f5f7;
+      --bg-tertiary:#e8e8ed;
+      --bg-card:#ffffff;
+      --bg-card-hover:#fafafa;
+      --text-primary:#1d1d1f;
+      --text-secondary:#6e6e73;
+      --text-tertiary:#86868b;
+      --border-color:rgba(0,0,0,0.08);
+      --border-light:rgba(0,0,0,0.04);
+      --shadow-sm:0 2px 8px rgba(0,0,0,0.04);
+      --shadow-md:0 8px 30px rgba(0,0,0,0.08);
+      --shadow-lg:0 20px 60px rgba(0,0,0,0.12);
+      --shadow-glow:0 0 40px rgba(0,102,204,0.15);
+      --accent:#0071e3;
+      --accent-hover:#0077ed;
+      --accent-light:rgba(0,113,227,0.1);
+      --success:#34c759;
+      --success-light:rgba(52,199,89,0.12);
+      --error:#ff3b30;
+      --error-light:rgba(255,59,48,0.12);
+      --warning:#ff9f0a;
+      --warning-light:rgba(255,159,10,0.12);
+      --gradient-card:linear-gradient(135deg,#ffffff 0%,#f8f8fa 100%);
+      --gradient-header:linear-gradient(180deg,#f5f5f7 0%,#ffffff 100%);
+      --nav-bg:rgba(255,255,255,0.72);
+      --code-bg:#1d1d1f;
+      --code-text:#f5f5f7;
+    }
+    
+    /* Dark Theme */
+    [data-theme="dark"]{
+      --bg-primary:#000000;
+      --bg-secondary:#0d0d0d;
+      --bg-tertiary:#1a1a1a;
+      --bg-card:#161616;
+      --bg-card-hover:#1c1c1e;
+      --text-primary:#f5f5f7;
+      --text-secondary:#a1a1a6;
+      --text-tertiary:#6e6e73;
+      --border-color:rgba(255,255,255,0.08);
+      --border-light:rgba(255,255,255,0.04);
+      --shadow-sm:0 2px 8px rgba(0,0,0,0.3);
+      --shadow-md:0 8px 30px rgba(0,0,0,0.4);
+      --shadow-lg:0 20px 60px rgba(0,0,0,0.5);
+      --shadow-glow:0 0 60px rgba(0,113,227,0.2);
+      --accent:#2997ff;
+      --accent-hover:#40a9ff;
+      --accent-light:rgba(41,151,255,0.15);
+      --success:#30d158;
+      --success-light:rgba(48,209,88,0.15);
+      --error:#ff453a;
+      --error-light:rgba(255,69,58,0.15);
+      --warning:#ffd60a;
+      --warning-light:rgba(255,214,10,0.15);
+      --gradient-card:linear-gradient(135deg,#1c1c1e 0%,#161616 100%);
+      --gradient-header:linear-gradient(180deg,#000000 0%,#0d0d0d 100%);
+      --nav-bg:rgba(0,0,0,0.72);
+      --code-bg:#0d0d0d;
+      --code-text:#f5f5f7;
+    }
+    
+    html{scroll-behavior:smooth}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;background:var(--bg-primary);color:var(--text-primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;min-height:100vh;transition:background var(--transition),color var(--transition)}
+    
+    /* Navigation */
+    nav{position:fixed;top:0;width:100%;height:52px;background:var(--nav-bg);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);z-index:9999;border-bottom:1px solid var(--border-color);transition:background var(--transition)}
+    .nav-c{max-width:1200px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+    .nav-logo{font-size:21px;font-weight:600;color:var(--text-primary);text-decoration:none;letter-spacing:-0.3px}
+    .nav-links{display:flex;gap:32px;list-style:none;align-items:center}
+    .nav-links a{color:var(--text-secondary);text-decoration:none;font-size:14px;font-weight:400;transition:color 0.3s}
+    .nav-links a:hover,.nav-links a.active{color:var(--text-primary)}
+    
+    /* Theme Toggle */
+    .theme-toggle{width:44px;height:44px;border-radius:50%;background:var(--bg-tertiary);border:1px solid var(--border-color);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;position:relative;overflow:hidden}
+    .theme-toggle:hover{background:var(--bg-card-hover);transform:scale(1.05)}
+    .theme-toggle svg{width:20px;height:20px;fill:var(--text-primary);transition:transform 0.5s,opacity 0.3s;position:absolute}
+    .theme-toggle .sun{opacity:0;transform:rotate(90deg) scale(0)}
+    .theme-toggle .moon{opacity:1;transform:rotate(0) scale(1)}
+    [data-theme="light"] .theme-toggle .sun{opacity:1;transform:rotate(0) scale(1)}
+    [data-theme="light"] .theme-toggle .moon{opacity:0;transform:rotate(-90deg) scale(0)}
+    
+    .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;flex-direction:column;gap:5px}
+    .menu-toggle span{display:block;width:22px;height:2px;background:var(--text-primary);transition:0.3s}
+    .mobile-menu{display:none;position:fixed;top:52px;left:0;width:100%;background:var(--nav-bg);backdrop-filter:saturate(180%) blur(20px);padding:20px 24px;border-bottom:1px solid var(--border-color)}
+    .mobile-menu.active{display:block}
+    .mobile-menu a{display:block;padding:14px 0;color:var(--text-secondary);text-decoration:none;font-size:17px;border-bottom:1px solid var(--border-light)}
+
+    /* Page Header */
+    .page-header{padding:140px 24px 80px;text-align:center;background:var(--gradient-header);position:relative;overflow:hidden}
+    .page-header::before{content:'';position:absolute;width:800px;height:800px;background:radial-gradient(circle,var(--accent-light) 0%,transparent 70%);top:-400px;left:50%;transform:translateX(-50%);pointer-events:none}
+    .page-header::after{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(48,209,88,0.08) 0%,transparent 70%);bottom:-300px;right:-200px;pointer-events:none}
+    .page-header h1{font-size:clamp(40px,8vw,64px);font-weight:700;letter-spacing:-0.03em;margin-bottom:16px;position:relative;background:linear-gradient(135deg,var(--text-primary) 0%,var(--text-secondary) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .page-header p{font-size:21px;color:var(--text-secondary);max-width:600px;margin:0 auto;position:relative;font-weight:400;line-height:1.5}
+    .breadcrumb{font-size:14px;color:var(--text-tertiary);margin-bottom:20px;position:relative}
+    .breadcrumb a{color:var(--accent);text-decoration:none;transition:opacity 0.3s}
+    .breadcrumb a:hover{opacity:0.7}
+
+    .quiz-container{max-width:960px;margin:0 auto;padding:60px 24px 100px}
+
+    /* Category Cards */
+    .category-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:48px}
+    .category-card{background:var(--gradient-card);border:1px solid var(--border-color);border-radius:24px;padding:40px 32px;text-align:center;cursor:pointer;transition:all var(--transition);position:relative;overflow:hidden}
+    .category-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent-light),transparent 60%);opacity:0;transition:opacity 0.4s}
+    .category-card::after{content:'';position:absolute;inset:-2px;border-radius:26px;background:linear-gradient(135deg,var(--accent),transparent 60%);opacity:0;z-index:-1;transition:opacity 0.4s}
+    .category-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-lg)}
+    .category-card:hover::before{opacity:1}
+    .category-card.selected{border-color:var(--accent);box-shadow:var(--shadow-glow)}
+    .category-card.selected::after{opacity:0.5}
+    
+    .category-icon{width:88px;height:88px;border-radius:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:40px;position:relative;box-shadow:var(--shadow-md)}
+    .category-icon.arch{background:linear-gradient(135deg,#5e5ce6 0%,#bf5af2 100%)}
+    .category-icon.script{background:linear-gradient(135deg,#ff375f 0%,#ff6482 100%)}
+    .category-icon.module{background:linear-gradient(135deg,#0a84ff 0%,#5ac8fa 100%)}
+    .category-icon.basics{background:linear-gradient(135deg,#30d158 0%,#63e6be 100%)}
+    
+    .category-card h3{font-size:24px;font-weight:600;margin-bottom:12px;letter-spacing:-0.02em}
+    .category-card p{font-size:15px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px}
+    .category-card .question-count{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--bg-tertiary);border-radius:100px;font-size:13px;font-weight:500;color:var(--text-secondary)}
+
+    .start-btn{display:block;width:100%;max-width:320px;margin:0 auto;padding:18px 36px;background:var(--accent);color:#fff;border:none;border-radius:980px;font-size:17px;font-weight:600;cursor:pointer;transition:all 0.3s;opacity:0.4;pointer-events:none;letter-spacing:-0.01em}
+    .start-btn.active{opacity:1;pointer-events:auto;box-shadow:0 4px 20px rgba(0,113,227,0.4)}
+    .start-btn.active:hover{background:var(--accent-hover);transform:scale(1.02);box-shadow:0 6px 30px rgba(0,113,227,0.5)}
+
+    /* Quiz Screen */
+    .quiz-screen{display:none;animation:fadeSlideIn 0.6s cubic-bezier(0.25,0.46,0.45,0.94)}
+    .quiz-screen.active{display:block}
+    @keyframes fadeSlideIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+    .quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;padding:24px 28px;background:var(--gradient-card);border:1px solid var(--border-color);border-radius:20px}
+    .quiz-category-badge{display:flex;align-items:center;gap:16px}
+    .quiz-category-badge .mini-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:var(--shadow-sm)}
+    .quiz-category-badge span{font-weight:600;font-size:18px;letter-spacing:-0.02em}
+    .quiz-progress{text-align:right}
+    .quiz-progress .question-num{font-size:32px;font-weight:700;color:var(--accent);letter-spacing:-0.02em}
+    .quiz-progress .total{font-size:16px;color:var(--text-tertiary);margin-left:2px}
+
+    .progress-bar{height:6px;background:var(--bg-tertiary);border-radius:100px;margin-bottom:40px;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#5856d6);border-radius:100px;transition:width 0.6s cubic-bezier(0.25,0.46,0.45,0.94)}
+
+    .question-card{background:var(--gradient-card);border:1px solid var(--border-color);border-radius:28px;padding:48px;margin-bottom:28px;box-shadow:var(--shadow-sm)}
+    .question-text{font-size:24px;font-weight:600;line-height:1.5;margin-bottom:32px;letter-spacing:-0.02em}
+    .question-code{background:var(--code-bg);color:var(--code-text);padding:24px;border-radius:16px;font-family:'SF Mono',SFMono-Regular,Menlo,Monaco,monospace;font-size:14px;line-height:1.6;margin:24px 0;overflow-x:auto;white-space:pre-wrap;border:1px solid var(--border-color)}
+
+    .options-list{display:flex;flex-direction:column;gap:14px}
+    .option-btn{display:flex;align-items:center;gap:18px;width:100%;padding:20px 26px;background:var(--bg-secondary);border:2px solid var(--border-color);border-radius:16px;cursor:pointer;transition:all 0.3s;text-align:left}
+    .option-btn:hover:not(.disabled){background:var(--accent-light);border-color:var(--accent)}
+    .option-btn.selected{background:var(--accent-light);border-color:var(--accent)}
+    .option-btn.correct{background:var(--success-light);border-color:var(--success)}
+    .option-btn.incorrect{background:var(--error-light);border-color:var(--error)}
+    .option-btn.disabled{pointer-events:none}
+    
+    .option-letter{width:42px;height:42px;border-radius:50%;background:var(--bg-tertiary);border:2px solid var(--border-color);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px;flex-shrink:0;transition:all 0.3s}
+    .option-btn:hover:not(.disabled) .option-letter{border-color:var(--accent);color:var(--accent)}
+    .option-btn.selected .option-letter{background:var(--accent);border-color:var(--accent);color:#fff}
+    .option-btn.correct .option-letter{background:var(--success);border-color:var(--success);color:#fff}
+    .option-btn.incorrect .option-letter{background:var(--error);border-color:var(--error);color:#fff}
+    .option-text{font-size:16px;line-height:1.5;color:var(--text-primary)}
+
+    .explanation-box{margin-top:28px;padding:24px 28px;background:var(--accent-light);border-radius:16px;border-left:4px solid var(--accent);display:none}
+    .explanation-box.show{display:block;animation:fadeSlideIn 0.4s ease}
+    .explanation-box h4{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em}
+    .explanation-box p{font-size:16px;color:var(--text-secondary);line-height:1.7}
+
+    .quiz-actions{display:flex;justify-content:space-between;align-items:center;margin-top:36px}
+    .quit-btn{padding:16px 32px;background:transparent;color:var(--error);border:2px solid var(--error);border-radius:980px;font-size:16px;font-weight:500;cursor:pointer;transition:all 0.3s}
+    .quit-btn:hover{background:var(--error);color:#fff}
+    .next-btn{padding:16px 40px;background:var(--accent);color:#fff;border:none;border-radius:980px;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s;opacity:0.4;pointer-events:none}
+    .next-btn.active{opacity:1;pointer-events:auto;box-shadow:0 4px 20px rgba(0,113,227,0.4)}
+    .next-btn.active:hover{background:var(--accent-hover);transform:scale(1.02)}
+
+    /* Results Screen */
+    .results-screen{display:none;text-align:center;animation:fadeSlideIn 0.6s ease}
+    .results-screen.active{display:block}
+    .results-card{background:var(--gradient-card);border:1px solid var(--border-color);border-radius:32px;padding:56px 48px;max-width:520px;margin:0 auto;box-shadow:var(--shadow-lg)}
+    
+    .score-circle{width:200px;height:200px;border-radius:50%;margin:0 auto 40px;position:relative;display:flex;align-items:center;justify-content:center}
+    .score-circle svg{position:absolute;width:100%;height:100%;transform:rotate(-90deg)}
+    .score-circle circle{fill:none;stroke-width:10;stroke-linecap:round}
+    .score-circle .bg{stroke:var(--bg-tertiary)}
+    .score-circle .progress{stroke:var(--success);stroke-dasharray:565;stroke-dashoffset:565;transition:stroke-dashoffset 1.5s cubic-bezier(0.25,0.46,0.45,0.94)}
+    .score-circle.poor .progress{stroke:var(--error)}
+    .score-circle.average .progress{stroke:var(--warning)}
+    .score-text{display:flex;align-items:baseline;justify-content:center;gap:4px}
+    .score-text .num{font-size:64px;font-weight:700;color:var(--text-primary);letter-spacing:-0.03em}
+    .score-text .denom{font-size:28px;color:var(--text-tertiary);font-weight:500}
+    
+    .results-title{font-size:32px;font-weight:700;margin-bottom:12px;letter-spacing:-0.02em}
+    .results-subtitle{font-size:18px;color:var(--text-secondary);margin-bottom:40px;line-height:1.5}
+    
+    .results-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px}
+    .stat-box{padding:20px;background:var(--bg-secondary);border:1px solid var(--border-light);border-radius:16px}
+    .stat-box .num{font-size:28px;font-weight:700;letter-spacing:-0.02em}
+    .stat-box .num.correct{color:var(--success)}
+    .stat-box .num.incorrect{color:var(--error)}
+    .stat-box .num.time{color:var(--accent)}
+    .stat-box .label{font-size:13px;color:var(--text-tertiary);margin-top:6px;text-transform:uppercase;letter-spacing:0.05em}
+    
+    .results-actions{display:flex;gap:16px;justify-content:center}
+    .retry-btn{padding:16px 36px;background:var(--accent);color:#fff;border:none;border-radius:980px;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s}
+    .retry-btn:hover{background:var(--accent-hover);transform:scale(1.02)}
+    .home-btn{padding:16px 36px;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border-color);border-radius:980px;font-size:16px;font-weight:500;cursor:pointer;transition:all 0.3s}
+    .home-btn:hover{background:var(--bg-tertiary)}
+
+    /* Warning Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:10000;align-items:center;justify-content:center}
+    .modal-overlay.active{display:flex}
+    .modal-content{background:var(--bg-card);border:1px solid var(--border-color);border-radius:28px;padding:40px;max-width:420px;width:90%;text-align:center;animation:modalIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94);box-shadow:var(--shadow-lg)}
+    @keyframes modalIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .modal-icon{width:72px;height:72px;border-radius:50%;background:var(--error-light);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:32px}
+    .modal-content h3{font-size:24px;font-weight:600;margin-bottom:12px;letter-spacing:-0.02em}
+    .modal-content p{font-size:16px;color:var(--text-secondary);margin-bottom:28px;line-height:1.6}
+    .modal-actions{display:flex;gap:12px;justify-content:center}
+    .modal-cancel{padding:14px 28px;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border-color);border-radius:980px;font-size:15px;font-weight:500;cursor:pointer;transition:all 0.3s}
+    .modal-cancel:hover{background:var(--bg-tertiary)}
+    .modal-confirm{padding:14px 28px;background:var(--error);color:#fff;border:none;border-radius:980px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.3s}
+    .modal-confirm:hover{opacity:0.9}
+
+    footer{background:var(--bg-secondary);padding:28px;text-align:center;border-top:1px solid var(--border-color)}
+    .footer-text{font-size:13px;color:var(--text-tertiary)}
+
+    @media(max-width:768px){
+      .nav-links{display:none}
+      .menu-toggle{display:flex}
+      .category-grid{grid-template-columns:1fr}
+      .quiz-header{flex-direction:column;gap:20px;text-align:center}
+      .question-card{padding:28px}
+      .question-text{font-size:20px}
+      .results-card{padding:36px 24px}
+      .results-stats{grid-template-columns:1fr}
+      .results-actions{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-c">
+      <a href="index.html" class="nav-logo">Sumanth Bolle</a>
+      <ul class="nav-links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="interviews.html">Interviews</a></li>
+        <li><a href="quiz.html" class="active">Quiz</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <li>
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <svg class="sun" viewBox="0 0 24 24"><path d="M12 17.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zm0 1.5a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-17a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 2zm0 18a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 20zM4.22 4.22a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06L4.22 5.28a.75.75 0 0 1 0-1.06zm13.44 13.44a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.06zM2 12a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 2 12zm18 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 20 12zM5.28 18.72a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 1 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0zm13.44-13.44a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 1 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0z"/></svg>
+            <svg class="moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+          </button>
+        </li>
+      </ul>
+      <button class="menu-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+    <div class="mobile-menu">
+      <a href="index.html">Home</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><a href="quiz.html" class="active">Quiz</a><a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <p class="breadcrumb"><a href="index.html">Home</a> / Quiz</p>
+    <h1>Test Your Knowledge</h1>
+    <p>Challenge yourself with expertly crafted quizzes on ServiceNow Architecture, Scripting, Modules, and Fundamentals.</p>
+  </header>
+
+  <main class="quiz-container">
+    <!-- Category Selection -->
+    <div class="quiz-screen active" id="categoryScreen">
+      <div class="category-grid">
+        <div class="category-card" data-category="architecture">
+          <div class="category-icon arch">🏗️</div>
+          <h3>Architecture</h3>
+          <p>Business Rules, ACLs, Client Scripts, Scoped Applications, and platform design patterns.</p>
+          <span class="question-count">📝 10 Questions</span>
+        </div>
+        <div class="category-card" data-category="scripting">
+          <div class="category-icon script">💻</div>
+          <h3>Scripting</h3>
+          <p>GlideRecord, GlideAjax, Script Includes, server-side and client-side APIs.</p>
+          <span class="question-count">📝 10 Questions</span>
+        </div>
+        <div class="category-card" data-category="modules">
+          <div class="category-icon module">📦</div>
+          <h3>Modules</h3>
+          <p>ITSM, ITOM, CMDB, Service Portal, Flow Designer, and Integration Hub.</p>
+          <span class="question-count">📝 10 Questions</span>
+        </div>
+        <div class="category-card" data-category="basics">
+          <div class="category-icon basics">📚</div>
+          <h3>Fundamentals</h3>
+          <p>Tables, forms, lists, UI policies, notifications, and core platform concepts.</p>
+          <span class="question-count">📝 10 Questions</span>
+        </div>
+      </div>
+      <button class="start-btn" id="startBtn">Select a Category to Begin</button>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div class="quiz-screen" id="quizScreen">
+      <div class="quiz-header">
+        <div class="quiz-category-badge">
+          <div class="mini-icon" id="quizIcon"></div>
+          <span id="quizCategoryName"></span>
+        </div>
+        <div class="quiz-progress">
+          <span class="question-num" id="currentQ">1</span>
+          <span class="total">/ 10</span>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="question-card">
+        <p class="question-text" id="questionText"></p>
+        <div class="question-code" id="questionCode" style="display:none"></div>
+        <div class="options-list" id="optionsList"></div>
+        <div class="explanation-box" id="explanationBox">
+          <h4>Explanation</h4>
+          <p id="explanationText"></p>
+        </div>
+      </div>
+      <div class="quiz-actions">
+        <button class="quit-btn" id="quitBtn">Quit Quiz</button>
+        <button class="next-btn" id="nextBtn">Next Question</button>
+      </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div class="quiz-screen results-screen" id="resultsScreen">
+      <div class="results-card">
+        <div class="score-circle" id="scoreCircle">
+          <svg viewBox="0 0 200 200">
+            <circle class="bg" cx="100" cy="100" r="90"/>
+            <circle class="progress" cx="100" cy="100" r="90" id="scoreProgress"/>
+          </svg>
+          <div class="score-text"><span class="num" id="scoreNum">0</span><span class="denom">/10</span></div>
+        </div>
+        <h2 class="results-title" id="resultsTitle">Great Job!</h2>
+        <p class="results-subtitle" id="resultsSubtitle">You have solid ServiceNow knowledge.</p>
+        <div class="results-stats">
+          <div class="stat-box"><div class="num correct" id="correctCount">0</div><div class="label">Correct</div></div>
+          <div class="stat-box"><div class="num incorrect" id="incorrectCount">0</div><div class="label">Incorrect</div></div>
+          <div class="stat-box"><div class="num time" id="timeTaken">0:00</div><div class="label">Time</div></div>
+        </div>
+        <div class="results-actions">
+          <button class="retry-btn" id="retryBtn">Try Again</button>
+          <button class="home-btn" id="homeBtn">Choose Category</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Warning Modal -->
+  <div class="modal-overlay" id="warningModal">
+    <div class="modal-content">
+      <div class="modal-icon">⚠️</div>
+      <h3>Leave Quiz?</h3>
+      <p>Your progress will be lost and the quiz will reset. Are you sure you want to leave?</p>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="modalCancel">Continue Quiz</button>
+        <button class="modal-confirm" id="modalConfirm">Leave</button>
+      </div>
+    </div>
+  </div>
+
+  <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
+
+  <script>
+// Theme Management
+const themeToggle = document.getElementById('themeToggle');
+const html = document.documentElement;
+
+// Load saved theme or default to dark
+const savedTheme = localStorage.getItem('theme') || 'dark';
+html.setAttribute('data-theme', savedTheme);
+
+themeToggle.addEventListener('click', () => {
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+});
+
+// Quiz Questions Database
+const QUESTIONS = {
+  architecture: [
+    {q:"What is the execution order of Business Rules when a record is inserted?",code:null,options:["before → after → async","async → before → after","after → before → async","before → async → after"],correct:0,explanation:"Business Rules execute in order: 'before' rules run first (can modify data), then 'after' rules (record is saved), and finally 'async' rules run on a separate thread."},
+    {q:"Which ACL type has the highest priority in ServiceNow's evaluation order?",code:null,options:["*.* (global)","table.* (table level)","table.field (field level)","*.field (field across tables)"],correct:2,explanation:"ACL evaluation order from highest to lowest priority: table.field → table.* → *.field → *.* The most specific ACL takes precedence."},
+    {q:"What happens when multiple ACLs match a single operation?",code:null,options:["Only the first ACL is evaluated","All matching ACLs are ORed together","All matching ACLs are ANDed together","The most permissive ACL wins"],correct:2,explanation:"When multiple ACLs match, they are ANDed together - ALL must return true for access to be granted."},
+    {q:"In a scoped application, which script can access tables in the global scope by default?",code:null,options:["Client Scripts only","Business Rules only","Script Includes with 'Accessible from' set to 'All'","None - requires explicit configuration"],correct:3,explanation:"Scoped apps cannot access global tables by default. You must configure Application Cross-Scope Access."},
+    {q:"What is the purpose of the 'Display' Business Rule?",code:null,options:["To modify field display values on forms","To run before the form loads and modify the current record","To run client-side for real-time updates","To cache frequently accessed records"],correct:1,explanation:"Display Business Rules run when a form loads (before rendering) and can modify the current object's display."},
+    {q:"Which statement about Client Scripts is correct?",code:null,options:["They can directly query the database using GlideRecord","They execute on the server when form fields change","They run in the browser and cannot access server data directly","They can modify records without user interaction"],correct:2,explanation:"Client Scripts run in the browser. To access server data, they must use GlideAjax."},
+    {q:"What is the relationship between UI Policies and Client Scripts?",code:null,options:["UI Policies replace Client Scripts entirely","UI Policies run before Client Scripts","Client Scripts run before UI Policies","They run independently and can conflict"],correct:2,explanation:"Execution order: Client Scripts (onLoad) → UI Policies. UI Policies will override Client Script changes."},
+    {q:"How does ServiceNow handle Update Set collisions?",code:null,options:["Automatically merges all changes","Skips the conflicting update","Presents collision options to resolve","Fails the entire Update Set"],correct:2,explanation:"When collisions occur, ServiceNow presents options: skip, accept remote, or manually merge."},
+    {q:"What is the maximum recommended number of Business Rules on a single table?",code:null,options:["5","10","20","No limit, but consolidate where possible"],correct:3,explanation:"There's no hard limit, but best practice is to consolidate Business Rules to reduce complexity."},
+    {q:"Which approach is best for implementing row-level security beyond ACLs?",code:null,options:["Client Scripts to hide records","UI Policies to filter lists","Before Query Business Rules","Display Business Rules"],correct:2,explanation:"Before Query Business Rules add conditions to EVERY query on a table, ensuring row-level security."}
+  ],
+  scripting: [
+    {q:"What is the key difference between GlideRecord and GlideAggregate?",code:null,options:["GlideAggregate is faster for all operations","GlideRecord cannot perform queries","GlideAggregate performs database-level aggregations without loading records","GlideAggregate is only for counting"],correct:2,explanation:"GlideAggregate executes COUNT, SUM, AVG, MIN, MAX at the database level - far more efficient."},
+    {q:"What does this code return?",code:"var gr = new GlideRecord('incident');\ngr.get('active', true);\ngs.print(gr.getRowCount());",options:["The count of all active incidents","1 (if found) or 0","undefined - getRowCount() doesn't exist","Throws an error"],correct:1,explanation:"gr.get() retrieves only ONE record. getRowCount() after get() returns 1 if found, 0 if not."},
+    {q:"Which method should you use to get a reference field's display value?",code:null,options:["gr.caller_id","gr.getValue('caller_id')","gr.getDisplayValue('caller_id')","gr.caller_id.getDisplayValue()"],correct:2,explanation:"getDisplayValue() returns the human-readable value. getValue() returns the sys_id."},
+    {q:"What is wrong with this Script Include?",code:"var MyUtils = Class.create();\nMyUtils.prototype = {\n  getData: function() {\n    return current.getValue('field');\n  },\n  type: 'MyUtils'\n};",options:["Missing 'extends AbstractAjaxProcessor'","'current' is not available in Script Includes","Class.create() is deprecated","Nothing - this is correct"],correct:1,explanation:"Script Includes don't have access to 'current'. Pass the GlideRecord as a parameter instead."},
+    {q:"How do you properly call a Script Include from a Client Script?",code:null,options:["var utils = new MyUtils();","Use GlideAjax with a client-callable Script Include","Import the Script Include directly","Script Includes cannot be called from clients"],correct:1,explanation:"Client Scripts must use GlideAjax. The Script Include must extend AbstractAjaxProcessor."},
+    {q:"What does setWorkflow(false) do on a GlideRecord?",code:null,options:["Disables Flow Designer triggers","Skips Business Rules during the operation","Prevents audit records from being created","Disables UI Actions"],correct:1,explanation:"setWorkflow(false) skips Business Rules for that operation. Use with caution."},
+    {q:"Which is the correct way to check if a field changed in a Business Rule?",code:null,options:["current.field != previous.field","current.field.changes()","current.getValue('field').changed()","current.field.hasChanged()"],correct:1,explanation:"current.field.changes() is the correct method. Returns true if the field value changed."},
+    {q:"What happens when you call gr.insert() in an 'after' Business Rule?",code:null,options:["Inserts a new record normally","Causes an infinite loop","Nothing - insert() is disabled","Throws a security exception"],correct:0,explanation:"gr.insert() works in 'after' Business Rules. Be careful not to trigger recursion."},
+    {q:"How do you execute a GlideRecord query asynchronously?",code:null,options:["gr.queryAsync()","gr.setBackground(true)","Use a Scheduled Job or async Business Rule","GlideRecord is always synchronous"],correct:2,explanation:"GlideRecord itself is synchronous. Use async Business Rules or Scheduled Jobs."},
+    {q:"What is the purpose of GlideRecordSecure?",code:null,options:["Encrypts data in transit","Enforces ACL rules on queries","Prevents SQL injection","Validates input data"],correct:1,explanation:"GlideRecordSecure enforces ACL rules, returning only records the user can access."}
+  ],
+  modules: [
+    {q:"In ITSM, what is the correct state flow for Incident Management?",code:null,options:["New → Active → Resolved → Closed","New → In Progress → On Hold → Resolved → Closed","Open → Work in Progress → Closed","Draft → Submitted → Approved → Closed"],correct:1,explanation:"Standard incident states: New → In Progress → On Hold → Resolved → Closed."},
+    {q:"What is the primary purpose of the CMDB Identification Engine?",code:null,options:["To generate unique sys_ids","To prevent duplicate CIs by matching incoming data","To identify security vulnerabilities","To classify CIs by category"],correct:1,explanation:"The CMDB Identification Engine uses rules to match incoming data to existing CIs."},
+    {q:"Which Integration Hub feature should you use for high-volume real-time data?",code:null,options:["REST Step","Import Sets","Stream Connect","SOAP Message"],correct:2,explanation:"Stream Connect handles high-volume, real-time event streams using message queues."},
+    {q:"What is the difference between Flow Designer and Workflow Editor?",code:null,options:["They are the same tool","Workflow Editor is for approvals only","Flow Designer is the modern replacement with better features","Flow Designer is only for Integration Hub"],correct:2,explanation:"Flow Designer is ServiceNow's modern automation tool with reusable subflows and better testing."},
+    {q:"In Service Portal, which widget property contains the server-side controller?",code:null,options:["Client Script","Server Script","Link function","Template"],correct:1,explanation:"Server Script runs on the server and passes data to the client via the 'data' object."},
+    {q:"What does Discovery use to gather data from network devices?",code:null,options:["SNMP, SSH, and WMI probes","Direct database connections","REST API calls only","Agent software installation"],correct:0,explanation:"Discovery uses probes: SNMP for network devices, SSH for Unix/Linux, WMI for Windows."},
+    {q:"Which ITOM module handles event correlation and alert management?",code:null,options:["Discovery","Service Mapping","Event Management","Cloud Management"],correct:2,explanation:"Event Management ingests events from monitoring tools, correlates them, and creates alerts."},
+    {q:"What is a Catalog Client Script's 'Applies to' option for?",code:null,options:["Specifying which users can run the script","Defining whether it runs on the item or variable set","Setting the script's execution priority","Controlling form visibility"],correct:1,explanation:"'Applies to' determines scope: 'Catalog Item' or 'Variable Set' for reusability."},
+    {q:"How do you properly test Flow Designer flows?",code:null,options:["Manual testing only","Use ATF with Flow tests","Export to test instance","Built-in test mode only"],correct:1,explanation:"ATF supports Flow testing with the ability to mock inputs and validate outputs."},
+    {q:"What is the recommended pattern for Integration Hub error handling?",code:null,options:["Let errors fail silently","Use try-catch in the calling flow","Implement Error Handlers with retry logic","Always skip errors"],correct:2,explanation:"Use Error Handler steps with retry policies, fallback actions, and notifications."}
+  ],
+  basics: [
+    {q:"What is a sys_id in ServiceNow?",code:null,options:["A sequential auto-increment number","A 32-character globally unique identifier","A user-defined primary key","A combination of table name and number"],correct:1,explanation:"sys_id is a 32-character GUID that uniquely identifies every record in ServiceNow."},
+    {q:"Which field type should you use for a dropdown with predefined values?",code:null,options:["String","Reference","Choice","Select Box"],correct:2,explanation:"Choice fields store predefined options in the sys_choice table."},
+    {q:"What is the purpose of the Dictionary table (sys_dictionary)?",code:null,options:["Stores language translations","Defines table structures and field attributes","Contains documentation","Maps field labels to values"],correct:1,explanation:"sys_dictionary defines every field: its type, max length, default value, and other attributes."},
+    {q:"How do you make a field mandatory only when another field has a specific value?",code:null,options:["Dictionary attribute","UI Policy with condition","Client Script only","Business Rule"],correct:1,explanation:"UI Policies handle conditional field behavior (mandatory, visible, read-only)."},
+    {q:"What is an Update Set used for?",code:null,options:["Updating multiple records at once","Tracking and migrating customizations between instances","Creating backups of data","Scheduling batch updates"],correct:1,explanation:"Update Sets capture configuration changes and allow migration between instances."},
+    {q:"Which is TRUE about ServiceNow tables?",code:null,options:["All tables must extend another table","Tables cannot be created without code","Tables can inherit fields from parent tables","Table names cannot contain underscores"],correct:2,explanation:"Table extension allows inheritance - child tables get all parent fields plus their own."},
+    {q:"What does a Reference field store in the database?",code:null,options:["The display value of the referenced record","The sys_id of the referenced record","Both sys_id and display value","A copy of the referenced record"],correct:1,explanation:"Reference fields store only the sys_id. The display value is looked up when rendering."},
+    {q:"How do you prevent users from accessing a specific application menu?",code:null,options:["Delete the application menu","Use ACLs on the application","Use Roles on the Application Menu module","Hide it with CSS"],correct:2,explanation:"Application menus and modules have Role requirements for access control."},
+    {q:"What is the difference between an Inbound Action and a Business Rule?",code:null,options:["Inbound Actions run on the client","Inbound Actions are triggered by incoming emails","Business Rules cannot update records","There is no difference"],correct:1,explanation:"Inbound Actions process incoming emails. Business Rules are triggered by database operations."},
+    {q:"What happens when you delete a parent record with related child records?",code:null,options:["Child records are always deleted","Child records are orphaned","The delete is blocked","Depends on the relationship's 'Delete' option"],correct:3,explanation:"The relationship definition determines behavior: None, Cascade, or No Delete."}
+  ]
+};
+
+// Quiz State
+let state = {
+  category: null,
+  currentQuestion: 0,
+  score: 0,
+  answers: [],
+  startTime: null,
+  quizInProgress: false,
+  selectedOption: null,
+  answered: false,
+  pendingNavigation: null
+};
+
+// DOM Elements
+const categoryScreen = document.getElementById('categoryScreen');
+const quizScreen = document.getElementById('quizScreen');
+const resultsScreen = document.getElementById('resultsScreen');
+const categoryCards = document.querySelectorAll('.category-card');
+const startBtn = document.getElementById('startBtn');
+const warningModal = document.getElementById('warningModal');
+
+// Category Selection
+categoryCards.forEach(card => {
+  card.addEventListener('click', () => {
+    categoryCards.forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.category = card.dataset.category;
+    startBtn.textContent = `Start ${card.querySelector('h3').textContent} Quiz`;
+    startBtn.classList.add('active');
+  });
+});
+
+// Start Quiz
+startBtn.addEventListener('click', () => {
+  if (!state.category) return;
+  startQuiz();
+});
+
+function startQuiz() {
+  state.currentQuestion = 0;
+  state.score = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.quizInProgress = true;
+  state.selectedOption = null;
+  state.answered = false;
+
+  categoryScreen.classList.remove('active');
+  resultsScreen.classList.remove('active');
+  quizScreen.classList.add('active');
+
+  updateQuizHeader();
+  loadQuestion();
+}
+
+function updateQuizHeader() {
+  const icons = {architecture:'🏗️',scripting:'💻',modules:'📦',basics:'📚'};
+  const names = {architecture:'Architecture',scripting:'Scripting',modules:'Modules',basics:'Fundamentals'};
+  const colors = {architecture:'arch',scripting:'script',modules:'module',basics:'basics'};
+  
+  document.getElementById('quizIcon').className = `mini-icon ${colors[state.category]}`;
+  document.getElementById('quizIcon').textContent = icons[state.category];
+  document.getElementById('quizCategoryName').textContent = names[state.category];
+}
+
+function loadQuestion() {
+  const questions = QUESTIONS[state.category];
+  const q = questions[state.currentQuestion];
+  
+  document.getElementById('currentQ').textContent = state.currentQuestion + 1;
+  document.getElementById('progressFill').style.width = `${((state.currentQuestion) / 10) * 100}%`;
+  document.getElementById('questionText').textContent = q.q;
+  
+  const codeEl = document.getElementById('questionCode');
+  if (q.code) {
+    codeEl.textContent = q.code;
+    codeEl.style.display = 'block';
+  } else {
+    codeEl.style.display = 'none';
+  }
+  
+  const optionsList = document.getElementById('optionsList');
+  const letters = ['A', 'B', 'C', 'D'];
+  optionsList.innerHTML = q.options.map((opt, i) => `
+    <button class="option-btn" data-index="${i}">
+      <span class="option-letter">${letters[i]}</span>
+      <span class="option-text">${opt}</span>
+    </button>
+  `).join('');
+  
+  document.querySelectorAll('.option-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectOption(parseInt(btn.dataset.index)));
+  });
+  
+  document.getElementById('explanationBox').classList.remove('show');
+  document.getElementById('nextBtn').classList.remove('active');
+  document.getElementById('nextBtn').textContent = state.currentQuestion === 9 ? 'See Results' : 'Next Question';
+  
+  state.selectedOption = null;
+  state.answered = false;
+}
+
+function selectOption(index) {
+  if (state.answered) return;
+  
+  state.selectedOption = index;
+  state.answered = true;
+  
+  const questions = QUESTIONS[state.category];
+  const q = questions[state.currentQuestion];
+  const isCorrect = index === q.correct;
+  
+  if (isCorrect) state.score++;
+  state.answers.push({question: state.currentQuestion, selected: index, correct: q.correct, isCorrect});
+  
+  document.querySelectorAll('.option-btn').forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === q.correct) btn.classList.add('correct');
+    if (i === index && !isCorrect) btn.classList.add('incorrect');
+    if (i === index) btn.classList.add('selected');
+  });
+  
+  document.getElementById('explanationText').textContent = q.explanation;
+  document.getElementById('explanationBox').classList.add('show');
+  document.getElementById('nextBtn').classList.add('active');
+}
+
+// Next Question
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (!state.answered) return;
+  
+  if (state.currentQuestion < 9) {
+    state.currentQuestion++;
+    loadQuestion();
+  } else {
+    showResults();
+  }
+});
+
+function showResults() {
+  state.quizInProgress = false;
+  quizScreen.classList.remove('active');
+  resultsScreen.classList.add('active');
+  
+  const timeTaken = Math.floor((Date.now() - state.startTime) / 1000);
+  const minutes = Math.floor(timeTaken / 60);
+  const seconds = timeTaken % 60;
+  
+  document.getElementById('scoreNum').textContent = state.score;
+  document.getElementById('correctCount').textContent = state.score;
+  document.getElementById('incorrectCount').textContent = 10 - state.score;
+  document.getElementById('timeTaken').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  
+  const scoreCircle = document.getElementById('scoreCircle');
+  const progress = document.getElementById('scoreProgress');
+  const circumference = 2 * Math.PI * 90;
+  const offset = circumference - (state.score / 10) * circumference;
+  
+  scoreCircle.classList.remove('poor', 'average');
+  if (state.score < 5) scoreCircle.classList.add('poor');
+  else if (state.score < 7) scoreCircle.classList.add('average');
+  
+  setTimeout(() => {
+    progress.style.strokeDashoffset = offset;
+  }, 100);
+  
+  const titles = {
+    10: ["Perfect Score! 🏆", "You're a ServiceNow Master!"],
+    9: ["Excellent! 🌟", "Outstanding knowledge!"],
+    8: ["Great Job! 👏", "You really know your stuff!"],
+    7: ["Well Done! 👍", "Solid ServiceNow skills!"],
+    6: ["Good Effort! 💪", "Above average performance!"],
+    5: ["Not Bad! 📚", "Room for improvement."],
+    default: ["Keep Learning! 📖", "Review the fundamentals."]
+  };
+  
+  const [title, subtitle] = titles[state.score] || titles.default;
+  document.getElementById('resultsTitle').textContent = title;
+  document.getElementById('resultsSubtitle').textContent = subtitle;
+}
+
+// Retry & Home
+document.getElementById('retryBtn').addEventListener('click', startQuiz);
+document.getElementById('homeBtn').addEventListener('click', () => {
+  resultsScreen.classList.remove('active');
+  categoryScreen.classList.add('active');
+  categoryCards.forEach(c => c.classList.remove('selected'));
+  startBtn.classList.remove('active');
+  startBtn.textContent = 'Select a Category to Begin';
+  state.category = null;
+});
+
+// Quit Button
+document.getElementById('quitBtn').addEventListener('click', () => {
+  showWarningModal(() => {
+    state.quizInProgress = false;
+    quizScreen.classList.remove('active');
+    categoryScreen.classList.add('active');
+    categoryCards.forEach(c => c.classList.remove('selected'));
+    startBtn.classList.remove('active');
+    startBtn.textContent = 'Select a Category to Begin';
+    state.category = null;
+  });
+});
+
+// Warning Modal
+function showWarningModal(onConfirm) {
+  state.pendingNavigation = onConfirm;
+  warningModal.classList.add('active');
+}
+
+document.getElementById('modalCancel').addEventListener('click', () => {
+  warningModal.classList.remove('active');
+  state.pendingNavigation = null;
+});
+
+document.getElementById('modalConfirm').addEventListener('click', () => {
+  warningModal.classList.remove('active');
+  if (state.pendingNavigation) {
+    state.pendingNavigation();
+    state.pendingNavigation = null;
+  }
+});
+
+// Prevent navigation during quiz
+window.addEventListener('beforeunload', (e) => {
+  if (state.quizInProgress) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+// Intercept link clicks during quiz
+document.querySelectorAll('nav a, .mobile-menu a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    if (state.quizInProgress && !link.classList.contains('active')) {
+      e.preventDefault();
+      showWarningModal(() => {
+        state.quizInProgress = false;
+        window.location.href = link.href;
+      });
+    }
+  });
+});
+
+// Mobile menu
+const menuToggle = document.querySelector('.menu-toggle');
+const mobileMenu = document.querySelector('.mobile-menu');
+menuToggle.addEventListener('click', () => {
+  menuToggle.classList.toggle('active');
+  mobileMenu.classList.toggle('active');
+});
+  </script>
+</body>
+</html>
