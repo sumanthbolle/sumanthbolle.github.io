@@ -12,53 +12,29 @@ const MAX_INTERVIEWS = 15;
 
 const TOPICS = [
   {
-    query: `Search community.servicenow.com, docs.servicenow.com, and support.servicenow.com for the most recent ServiceNow platform updates published this week. Curate insights relevant to ServiceNow Architects, Implementers, and Developers, covering:
-	•	Latest release updates with architectural impact, upgrade considerations, and implementation risks
-	•	Platform Health, Impact, and Observability enhancements affecting scalability, performance, and governance decisions
-	•	ServiceNow Store app releases and Employee Center improvements, including adoption guidance and extensibility considerations
-	•	Security patches, vulnerability fixes, and performance optimizations with implications for enterprise environments
-	•	Actionable best practices from ServiceNow Knowledge Base and community posts, highlighting design patterns, configuration guidance, and scripting recommendations`,
+    query: `Latest ServiceNow platform updates from docs.servicenow.com: recent release notes, security patches, performance improvements. Include practical code examples for developers.`,
     category: "servicenow"
   },
   {
-    query: `Search for the latest developments in ServiceNow AI capabilities from docs.servicenow.com and community.servicenow.com. Include:
-- Now Assist updates and GenAI features
-- AI Control Tower and Predictive Intelligence enhancements
-- Virtual Agent AI improvements and NLU updates
-- Agent-to-Agent (A2A) protocols and MCP integration
-- LLM integration patterns and AI Search capabilities
-- Practical implementation examples for ServiceNow developers
-Focus on actionable guidance with GlideRecord and Flow Designer examples.`,
+    query: `ServiceNow AI features: Now Assist, Predictive Intelligence, Virtual Agent updates. Include implementation code examples.`,
     category: "ai"
   },
   {
-    query: `Search docs.servicenow.com and community.servicenow.com for current and evolving ServiceNow developer APIs, platform primitives, and core fundamentals. Focus on:
-- Core server-side APIs (GlideRecord, GlideAggregate, GlideQuery, GlideAjax)
-- Integration APIs (IntegrationHub, RESTMessageV2, Scripted REST)
-- Flow Designer internals and error handling
-- Performance primitives (index usage, async processing, caching)
-- Security fundamentals (scoped apps, ACL evaluation)
-Present as developer reference with code examples.`,
+    query: `ServiceNow core APIs guide: GlideRecord, GlideAggregate, RESTMessageV2, Flow Designer patterns. Include best practices and code examples.`,
     category: "tutorial"
   },
   {
-    query: `Search for latest enterprise ITSM trends and ServiceNow digital transformation strategies from community.servicenow.com and industry sources. Include:
-- Hyperautomation strategies with ServiceNow
-- ITSM modernization and proactive service delivery
-- ServiceNow CMDB and Discovery best practices
-- IT Operations Management (ITOM) automation patterns
-- Workflow automation ROI metrics and case studies
-Focus on practical implementation guidance for ServiceNow architects.`,
+    query: `ServiceNow ITSM automation: CMDB best practices, workflow optimization, hyperautomation patterns. Practical implementation guidance.`,
     category: "general"
   }
 ];
 
 const INTERVIEW_TOPICS = [
-  { query: `Generate a deep technical ServiceNow interview question about GlideRecord vs GlideAggregate performance, database optimization, script execution contexts, and governor limits. Include code examples.`, category: "Performance" },
-  { query: `Generate a challenging ServiceNow architecture interview question about Business Rule execution order, Client Script vs UI Policy use cases, scoped application design, and Update Set strategies.`, category: "Architecture" },
-  { query: `Generate an expert ServiceNow integration interview question about Integration Hub vs Scripted REST vs Import Sets, Flow Designer error handling, REST authentication, and MID Server architecture.`, category: "Integration" },
-  { query: `Generate a difficult ServiceNow security interview question about ACL evaluation order, row-level security, cross-scope access controls, OAuth 2.0 patterns, and instance hardening.`, category: "Security" },
-  { query: `Generate a ServiceNow scripting interview question about Script Include patterns, GlideAjax, async execution, transaction handling, and getValue() vs dot-walking implications.`, category: "Scripting" }
+  { query: `ServiceNow interview question: GlideRecord vs GlideAggregate performance, query optimization, governor limits. Include code example.`, category: "Performance" },
+  { query: `ServiceNow interview question: Business Rule execution order, Client Script vs UI Policy, scoped app design. Include explanation.`, category: "Architecture" },
+  { query: `ServiceNow interview question: Integration Hub vs Scripted REST, Flow Designer error handling, MID Server use cases. Include code.`, category: "Integration" },
+  { query: `ServiceNow interview question: ACL evaluation order, row-level security, OAuth 2.0 implementation. Include scenario.`, category: "Security" },
+  { query: `ServiceNow interview question: Script Include patterns, GlideAjax, getValue() vs dot-walking. Include code example.`, category: "Scripting" }
 ];
 
 // ============ FAST & ROBUST JSON PARSING ============
@@ -205,7 +181,7 @@ function parseArticle(response, category) {
 
 // ============ API CALLS WITH TIMEOUT ============
 
-function callPerplexityWithTimeout(prompt, systemPrompt, timeoutMs = 30000) {
+function callPerplexityWithTimeout(prompt, systemPrompt, timeoutMs = 60000) {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
       reject(new Error(`API call timed out after ${timeoutMs/1000}s`));
@@ -217,7 +193,7 @@ function callPerplexityWithTimeout(prompt, systemPrompt, timeoutMs = 30000) {
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt }
       ],
-      max_tokens: 2500,
+      max_tokens: 1800,
       temperature: 0.7
     });
 
@@ -297,6 +273,21 @@ function formatDate() {
   return `${m[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
+// ============ RETRY HELPER ============
+
+async function callWithRetry(prompt, systemPrompt, maxRetries = 2) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      if (attempt > 1) console.log(`   Retry attempt ${attempt}/${maxRetries}...`);
+      return await callPerplexityWithTimeout(prompt, systemPrompt, 60000);
+    } catch (e) {
+      if (attempt === maxRetries) throw e;
+      console.log(`   ${e.message} - retrying in 5s...`);
+      await new Promise(r => setTimeout(r, 5000));
+    }
+  }
+}
+
 // ============ MAIN ============
 
 async function main() {
@@ -318,7 +309,7 @@ async function main() {
   for (const topic of shuffled) {
     console.log(`📡 Fetching: ${topic.category}...`);
     try {
-      const response = await callPerplexityWithTimeout(topic.query, ARTICLE_SYSTEM_PROMPT, 45000);
+      const response = await callWithRetry(topic.query, ARTICLE_SYSTEM_PROMPT);
       console.log(`   Response length: ${response.length} chars`);
       const article = parseArticle(response, topic.category);
       
@@ -354,7 +345,7 @@ async function main() {
   for (const topic of shuffledInt) {
     console.log(`📡 Fetching: ${topic.category}...`);
     try {
-      const response = await callPerplexityWithTimeout(topic.query, INTERVIEW_SYSTEM_PROMPT, 45000);
+      const response = await callWithRetry(topic.query, INTERVIEW_SYSTEM_PROMPT);
       console.log(`   Response length: ${response.length} chars`);
       const interview = parseInterview(response, topic.category);
       
