@@ -1,6 +1,15 @@
 [
   {
     "id": 1,
+    "title": "Building on ServiceNow’s Latest AI: Practical Patterns for Now Assist, AI Control Tower, and Virtual Agent",
+    "excerpt": "Learn how to apply the latest ServiceNow AI capabilities—including Now Assist v2.0 models, AI Control Tower, Virtual Agent AI, and AI Search—in real workflows. This guide focuses on concrete GlideRecord and Flow Designer patterns you can reuse in your own apps.",
+    "readTime": "9 min read",
+    "content": "<h2>Overview</h2><p>ServiceNow’s AI stack has matured into a cohesive platform: updated Now Assist models, AI Control Tower, Predictive Intelligence, Virtual Agent AI, AI Search, and deep LLM integrations. Recent releases add higher-quality ServiceNow AI Models v2.0 for Now Assist, expanded Microsoft and third-party LLM integrations with governance, and new AI-powered experiences in workspace UIs.</p><p>For developers, the opportunity is to orchestrate these capabilities from server-side scripts and Flow Designer, so AI is embedded directly into records, tasks, and custom apps—not tacked on as a chatbot.</p><h2>Implementation</h2><h3>Now Assist and ServiceNow AI Models v2.0</h3><p>New instances and upgrades now default to ServiceNow AI Models v2.0 for Now Assist, improving summarization, action suggestions, and knowledge answers across workspaces.</p><p>A common pattern is to let Now Assist summarize large incident histories and save a concise summary on the record for reporting or handoffs.</p><pre>// Example: Generate and persist an AI summary for an Incident\n// Assumes you’ve configured Now Assist for ITSM and enabled summarization\n\nvar incidentGr = new GlideRecord('incident');\nif (incidentGr.get(current.sys_id)) {\n  // Build the prompt from comments/work notes\n  var workNotes = '';\n  var journalGr = new GlideRecord('sys_journal_field');\n  journalGr.addQuery('element_id', current.sys_id);\n  journalGr.addQuery('element', 'work_notes');\n  journalGr.orderBy('sys_created_on');\n  journalGr.query();\n  while (journalGr.next()) {\n    workNotes += '\\n[' + journalGr.sys_created_on + '] ' + journalGr.value;\n  }\n\n  // Call a Scripted REST API or Script Include that wraps the GenAI Controller / Now Assist APIs\n  var ai = new NowAssistUtils(); // your Script Include\n  var summary = ai.summarizeIncident(incidentGr.number.toString(), workNotes);\n\n  incidentGr.u_ai_summary = summary;\n  incidentGr.update();\n}</pre><p>In this pattern, the Script Include encapsulates Now Assist / GenAI Controller calls, keeping your business logic clean.</p><h3>AI Control Tower, Predictive Intelligence, and Flow Designer</h3><p>AI Control Tower centralizes LLMs (ServiceNow models plus Microsoft/OpenAI/etc.), safety rules, and usage policies. Predictive Intelligence continues to drive auto-routing, categorization, and recommendations based on ML models trained on your data.</p><p>A typical developer workflow:</p><ol><li>Use Predictive Intelligence to auto-classify and route records.</li><li>Use AI Control Tower to call a governed LLM for generative tasks (summaries, drafts, explanations).</li><li>Orchestrate both via Flow Designer actions and subflows.</li></ol><pre>// Server-side helper: invoke an AI Control Tower endpoint via REST\n\nvar AiTowerClient = Class.create();\nAiTowerClient.prototype = {\n  initialize: function() {},\n\n  generateResolutionSuggestion: function(incidentSysId) {\n    var inc = new GlideRecord('incident');\n    if (!inc.get(incidentSysId))\n      return '';\n\n    var r = new sn_ws.RESTMessageV2('x_your_app.ai_control_tower', 'generate_resolution');\n    r.setRequestBody(JSON.stringify({\n      short_description: inc.short_description.toString(),\n      description: inc.description.toString(),\n      category: inc.category.toString(),\n      subcategory: inc.subcategory.toString()\n    }));\n\n    var res = r.execute();\n    var body = res.getBody();\n    var parsed = JSON.parse(body);\n    return parsed.suggestion || '';\n  },\n\n  type: 'AiTowerClient'\n};</pre><p>In Flow Designer, expose this via an Action that takes an Incident Sys ID and writes the returned suggestion to a work note or custom field.</p><h3>Virtual Agent AI, NLU, and MCP / Agent-to-Agent</h3><p>Virtual Agent now uses generative AI to handle more open-ended questions, with improved NLU models. With Agent-to-Agent (A2A) and MCP-style protocols, you can let ServiceNow agents collaborate with external AI agents or tools while keeping the Virtual Agent conversation in control.</p><p>Typical integration pattern:</p><ul><li>Virtual Agent topic collects user intent and context.</li><li>Flow Designer subflow calls an external tool or AI agent (via API, MCP, or other protocol).</li><li>Virtual Agent presents the AI agent’s result, with guardrails defined in AI Control Tower.</li></ul><pre>// Example: GlideRecord step in a Virtual Agent action to fetch user’s open requests\n\nvar gr = new GlideRecord('sc_request');\ngr.addQuery('requested_for', gs.getUserID());\ngr.addActiveQuery();\ngr.orderByDesc('sys_created_on');\ngr.setLimit(5);\ngr.query();\n\nvar results = [];\nwhile (gr.next()) {\n  results.push({\n    number: gr.number.toString(),\n    short_description: gr.short_description.toString(),\n    state: gr.state.getDisplayValue()\n  });\n}\n\n// Pass 'results' back to Virtual Agent as an array to render in a carousel or list</pre><h3>LLM Integration Patterns and AI Search</h3><p>ServiceNow now supports seamless integration with Microsoft AI services and other LLMs, coordinated through AI Control Tower. AI Search provides vector-based, relevance-tuned search across records and knowledge.</p><p>Common patterns:</p><ul><li>AI Search widget/Global Search with AI-powered answer snippets.</li><li>Server-side retrieve-then-generate: query AI Search, then send top results to an LLM via AI Control Tower for a tailored answer.</li></ul><pre>// Pseudo-pattern: retrieve-then-generate using AI Search + LLM\n\nvar query = 'How do I reset my VPN token?';\n\n// 1. AI Search (example, using a custom Scripted REST or API wrapper)\nvar aiSearch = new AiSearchUtils();\nvar docs = aiSearch.searchKnowledge(query, 5); // returns array of {number, short_description, text}\n\n// 2. Compose context for LLM\nvar contextText = '';\ndocs.forEach(function(doc, idx) {\n  contextText += '\\n[' + (idx+1) + '] ' + doc.short_description + '\\n' + doc.text + '\\n';\n});\n\n// 3. Call AI Control Tower to generate a consolidated answer\nvar tower = new AiTowerClient();\nvar answer = tower.generateAnswerFromContext(query, contextText);\n\n// 4. Persist or return the answer\ncurrent.u_ai_answer = answer;\ncurrent.update();</pre><h2>Best Practices</h2><ul><li><strong>Centralize AI calls in Script Includes</strong>: Wrap Now Assist, AI Control Tower, and external LLM calls in Script Includes to keep flows, UI Actions, and Business Rules simple.</li><li><strong>Use Flow Designer for orchestration</strong>: Trigger AI-processing subflows from lifecycle events (create/update/close) instead of one-off scripts in forms.</li><li><strong>Start with narrow, high-value use cases</strong>: Summaries, resolution suggestions, and classification are safer first steps than full autonomous flows.</li><li><strong>Leverage AI Control Tower policies</strong>: Define which tables, fields, and roles are allowed to send data to external LLMs; log and review usage.</li><li><strong>Keep prompts and context minimal but rich</strong>: Provide only relevant fields and a small set of related records or knowledge articles to reduce hallucination and latency.</li><li><strong>Design Virtual Agent topics with clear guardrails</strong>: Use intent detection and topic routing; fall back to classic scripted paths when confidence is low.</li><li><strong>Monitor and retrain Predictive Intelligence models</strong>: Regularly review classification accuracy and retrain when data or routing logic changes.</li><li><strong>Version your prompts</strong>: Store prompts and config in sys_properties or custom tables so you can iterate without code changes.</li></ul><h2>Common Pitfalls</h2><ul><li><strong>Calling LLMs directly from many places</strong>: Scattering REST calls in Business Rules, Scripted REST APIs, and UI Actions leads to inconsistent behavior and policy bypass. Always route through a shared utility or AI Control Tower configuration.</li><li><strong>Sending full records or logs to external models</strong>: Dumping entire incident histories or knowledge bases risks PII/PHI exposure and bloats tokens. Always filter to the minimal needed fields and anonymize where possible.</li><li><strong>Skipping data hygiene before Predictive Intelligence</strong>: Training models on dirty or inconsistent data yields poor routing and recommendations. Clean your categories, assignment groups, and mandatory fields first.</li><li><strong>Over-automating Virtual Agent</strong>: Letting generative responses handle every query without explicit intents, disambiguation, or exit paths frustrates users. Preserve deterministic flows for critical processes.</li><li><strong>Ignoring observability</strong>: Not logging prompts, responses, and decisions from AI-powered flows makes debugging and compliance audits difficult. Capture AI activity (with redaction) in a dedicated log table or ATF tests.</li><li><strong>Blocking human override</strong>: AI-suggested categories, resolutions, or summaries must be editable by agents. Avoid hard enforcement via Business Rules that reject human corrections.</li><li><strong>Tight coupling to a single LLM provider</strong>: Hard-coding vendor-specific APIs undermines AI Control Tower’s value. Use its abstraction so you can switch providers without rewriting flows.</li></ul>",
+    "category": "ai",
+    "date": "Dec 13, 2025"
+  },
+  {
+    "id": 2,
     "title": "This Week’s ServiceNow Platform Updates: Yokohama/Xanadu, Impact Platform Health, and Employee Center",
     "excerpt": "This guide distills the latest ServiceNow platform updates from official docs and community posts into concrete actions for developers. Learn what’s new in Yokohama/Xanadu, Impact Platform Health, Employee Center, and how to safely upgrade, harden security, and improve performance with practical examples.",
     "readTime": "9 min read",
@@ -9,7 +18,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 2,
+    "id": 3,
     "title": "Latest Enterprise AI and GenAI Breakthroughs: Accelerating Business Automation in ServiceNow",
     "excerpt": "This week brings major advancements in enterprise AI from Dell-NVIDIA integrations, Microsoft agentic AI tools, and adoption reports highlighting Copilot's dominance. ServiceNow developers can leverage these for smarter automation, from AI factories to LLM orchestration.",
     "readTime": "5 min read",
@@ -18,7 +27,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 3,
+    "id": 4,
     "title": "ServiceNow December 2025 Store Release: Key Updates, Features, and Developer Best Practices",
     "excerpt": "Discover the latest ServiceNow December 2025 Store Release highlights, including Impact Platform Health enhancements and Employee Center Pro updates. This article explores new features for developers and actionable best practices to optimize your instance.",
     "readTime": "5 min read",
@@ -27,7 +36,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 4,
+    "id": 5,
     "title": "Enterprise Automation, ITSM, and Digital Transformation: Practical Trends for ServiceNow Developers",
     "excerpt": "Enterprise automation is converging around AI-driven hyperautomation, low-code platforms, and data-first integration. This article gives ServiceNow developers actionable patterns, priorities, and implementation steps to apply these trends in real projects.",
     "readTime": "6 min read",
@@ -36,7 +45,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 5,
+    "id": 6,
     "title": "New Integration Patterns, Flow Designer Tips, and Integration Hub Updates for ServiceNow Developers",
     "excerpt": "Practical guidance on current ServiceNow integration patterns, actionable Flow Designer tips, and recent Integration Hub capabilities to accelerate reliable, maintainable integrations.",
     "readTime": "6 min read",
@@ -45,7 +54,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 6,
+    "id": 7,
     "title": "Latest Trends in Enterprise Automation, ITSM, and Digital Transformation: Actionable Insights",
     "excerpt": "Enterprise automation in 2025 is driven by hyperautomation, AI integration, and no-code platforms, delivering up to 30% cost savings. ServiceNow developers can leverage these trends to enhance ITSM workflows.",
     "readTime": "5 min read",
@@ -54,7 +63,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 7,
+    "id": 8,
     "title": "Mastering ServiceNow Integrations in 2025: New Patterns, Flow Designer Tips, and Integration Hub Updates",
     "excerpt": "Discover the latest ServiceNow integration patterns with the updated Decision Tree, essential Flow Designer tips for efficient automation, and key Integration Hub enhancements like 200+ new connectors.",
     "readTime": "6 min read",
@@ -63,7 +72,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 8,
+    "id": 9,
     "title": "This Week in Enterprise AI: GenAI, LLMs, and Agents — Practical Takeaways for ServiceNow Developers",
     "excerpt": "Major vendors released model and agent updates this week that push multimodal reasoning, cheaper inference, and agent-first integrations. ServiceNow developers should focus on connectors, orchestration, security, and observability.",
     "readTime": "6 min read",
@@ -72,7 +81,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 9,
+    "id": 10,
     "title": "This Week's ServiceNow Platform Updates, Features, and Developer Best Practices",
     "excerpt": "A concise roundup of the most important ServiceNow platform updates released this week, practical feature highlights for developers, and actionable best practices to adopt during upgrades.",
     "readTime": "6 min read",
@@ -81,7 +90,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 10,
+    "id": 11,
     "title": "2025 Trends in Enterprise Automation, ITSM, and Digital Transformation: A ServiceNow Developer's Guide",
     "excerpt": "Explore the latest 2025 trends in enterprise automation, ITSM, and digital transformation, including hyperautomation, AI integration, and low-code platforms. Discover actionable insights tailored for platform customization.",
     "readTime": "5 min read",
@@ -90,7 +99,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 11,
+    "id": 12,
     "title": "December 2025: Key ServiceNow Platform Updates, Features, and Best Practices for Developers",
     "excerpt": "This week's ServiceNow updates focus on platform health, agentic AI tooling, Employee Center enhancements, and Canadian public-sector AI investments — plus practical best practices for developers.",
     "readTime": "5 min read",
@@ -99,7 +108,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 12,
+    "id": 13,
     "title": "Building AI Agents in ServiceNow: A Complete Guide",
     "excerpt": "Learn how to create intelligent AI agents that automate complex workflows using ServiceNow's AI capabilities and GenAI integration.",
     "category": "servicenow",
@@ -108,7 +117,7 @@
     "content": "<h2>Introduction</h2><p>AI Agents are revolutionizing how enterprises handle automation. In this guide, we'll explore how to build intelligent agents within ServiceNow that can reason, decide, and act autonomously.</p><h2>What are AI Agents?</h2><p>AI Agents are autonomous systems that can perceive their environment, make decisions, and take actions to achieve specific goals. In ServiceNow, these agents can handle everything from incident resolution to complex approval workflows.</p><h2>Getting Started</h2><p>To build an AI Agent in ServiceNow, you'll need:</p><ul><li>ServiceNow Utah or later</li><li>AI Control Tower access</li><li>Integration Hub subscription</li></ul><h2>Implementation Steps</h2><p>First, configure your AI Control Tower settings to enable agent capabilities. Then create a new AI Agent definition:</p><pre>// Sample GlideRecord script for AI Agent\nvar gr = new GlideRecord('sn_ai_agent');\ngr.initialize();\ngr.name = 'Incident Resolution Agent';\ngr.active = true;\ngr.insert();</pre><p>This foundation allows you to build sophisticated automation that learns and adapts over time.</p>"
   },
   {
-    "id": 13,
+    "id": 14,
     "title": "GenAI Summarization for Risk Management",
     "excerpt": "How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace to reduce analysis time by 60%.",
     "category": "ai",
@@ -117,7 +126,7 @@
     "content": "<h2>The Challenge</h2><p>Risk analysts were spending hours reading through lengthy risk assessments and compliance documents. We needed a solution that could summarize key points instantly while maintaining accuracy.</p><h2>The Solution</h2><p>By integrating GenAI capabilities with ServiceNow's GRC module, we created an automated summarization system that processes documents in real-time.</p><h2>Architecture</h2><p>The system uses a three-tier approach:</p><ul><li>Document ingestion via Integration Hub</li><li>GenAI processing with custom prompts</li><li>Results displayed in Risk Workspace widget</li></ul><h2>Results</h2><p>The implementation reduced analysis time by 60% and improved risk detection accuracy by identifying patterns human analysts often missed.</p>"
   },
   {
-    "id": 14,
+    "id": 15,
     "title": "Flow Designer Best Practices for Enterprise Scale",
     "excerpt": "Essential patterns and anti-patterns when building flows that need to handle thousands of executions daily.",
     "category": "tutorial",
@@ -126,7 +135,7 @@
     "content": "<h2>Why Flow Designer Matters</h2><p>Flow Designer is ServiceNow's powerful low-code automation tool. But with great power comes great responsibility—especially at enterprise scale.</p><h2>Best Practices</h2><ul><li><strong>Use Subflows:</strong> Break complex logic into reusable subflows</li><li><strong>Error Handling:</strong> Always implement try-catch patterns</li><li><strong>Async Operations:</strong> Use async for heavy processing</li><li><strong>Monitoring:</strong> Track execution times and failures</li></ul><h2>Anti-Patterns to Avoid</h2><p>Don't create flows that query large datasets without filters. Always use indexed fields and limit result sets.</p><pre>// Bad: Queries all incidents\nvar gr = new GlideRecord('incident');\ngr.query();\n\n// Good: Filtered query\nvar gr = new GlideRecord('incident');\ngr.addQuery('state', 1);\ngr.addQuery('sys_created_on', '>=', gs.daysAgo(7));\ngr.setLimit(100);\ngr.query();</pre>"
   },
   {
-    "id": 15,
+    "id": 16,
     "title": "The Future of Enterprise AI: 2025 Trends",
     "excerpt": "Exploring the emerging trends in enterprise AI adoption and what it means for ServiceNow developers.",
     "category": "general",
