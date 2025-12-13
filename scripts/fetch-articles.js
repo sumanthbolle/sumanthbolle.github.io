@@ -13,13 +13,12 @@ const MAX_INTERVIEWS = 15;
 // Topics to fetch articles about - Optimized for ServiceNow official sources
 const TOPICS = [
   {
-    query: `Search community.servicenow.com, docs.servicenow.com, and support.servicenow.com for the latest ServiceNow platform updates this week. Include:
-- New Yokohama/Xanadu release features and upgrade guidance
-- Platform Health and Impact capabilities updates
-- Store app releases and Employee Center enhancements
-- Security patches and performance improvements
-- Best practices from ServiceNow Knowledge Base articles
-Format as a practical developer guide with code examples where applicable.`,
+    query: `Search community.servicenow.com, docs.servicenow.com, and support.servicenow.com for the most recent ServiceNow platform updates published this week. Curate insights relevant to ServiceNow Architects, Implementers, and Developers, covering:
+	•	Latest release updates with architectural impact, upgrade considerations, and implementation risks
+	•	Platform Health, Impact, and Observability enhancements affecting scalability, performance, and governance decisions
+	•	ServiceNow Store app releases and Employee Center improvements, including adoption guidance and extensibility considerations
+	•	Security patches, vulnerability fixes, and performance optimizations with implications for enterprise environments
+	•	Actionable best practices from ServiceNow Knowledge Base and community posts, highlighting design patterns, configuration guidance, and scripting recommendations`,
     category: "servicenow"
   },
   {
@@ -33,18 +32,24 @@ Format as a practical developer guide with code examples where applicable.`,
 Focus on actionable guidance with GlideRecord and Flow Designer examples.`,
     category: "ai"
   },
-  {
-    query: `Search docs.servicenow.com and community.servicenow.com for ServiceNow integration and scripting best practices. Include:
-- Integration Hub spoke updates and new connectors
-- Flow Designer patterns, subflows, and error handling
-- REST API and Scripted REST best practices
-- Stream Connect and ETL patterns for high-volume data
-- GlideRecord performance optimization techniques
-- GlideAggregate vs GlideRecord use cases with code examples
-- Business Rule and Client Script patterns
-Provide copy-paste ready code snippets and anti-patterns to avoid.`,
-    category: "tutorial"
-  },
+ {
+  query: `Search docs.servicenow.com and community.servicenow.com for current and evolving ServiceNow developer APIs, platform primitives, and core fundamentals used to design, extend, and integrate the Now Platform. Focus on guidance that helps Architects, Implementers, and Developers reason about *how the platform works*, not just *what to configure*, including:
+
+- Core server-side APIs and execution models (GlideRecord, GlideAggregate, GlideQuery, GlideAjax, Scoped APIs, async APIs, transaction boundaries)
+- Integration and data-movement APIs (IntegrationHub APIs, RESTMessageV2, Scripted REST frameworks, pagination and rate-control patterns)
+- Flow Designer and Automation Engine internals (Flow execution context, subflow reuse, error propagation, rollback behavior)
+- Data ingestion and streaming foundations (Stream Connect APIs, Import Set & Transform Engine behavior, ETL scalability considerations)
+- Client–server interaction fundamentals (Client Scripts, Script Includes, UI Actions, GlideAjax patterns, async client calls)
+- Performance and scale primitives (index usage, query planning, async processing, caching strategies, batch vs transactional execution)
+- Security and isolation fundamentals (scoped application boundaries, ACL evaluation order, API access controls)
+
+Present findings as a living developer reference with:
+- API intent and lifecycle (when and why the API exists)
+- Usage patterns that scale and patterns that break at enterprise volume
+- Copy-paste–ready examples tied to real execution contexts
+- Anti-patterns that commonly cause performance, security, or upgrade issues.`,
+  category: "tutorial"
+}
   {
     query: `Search for latest enterprise ITSM trends and ServiceNow digital transformation strategies from community.servicenow.com and industry sources. Include:
 - Hyperautomation strategies with ServiceNow
