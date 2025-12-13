@@ -1,6 +1,15 @@
 [
   {
     "id": 1,
+    "title": "ServiceNow ITSM Automation: CMDB, Workflow Optimization, and Hyperautomation",
+    "excerpt": "Practical patterns and implementation guidance for designing a reliable CMDB, optimizing ITSM workflows with Flow Designer, and building toward hyperautomation on ServiceNow. Focused on incident/change/problem/request use cases, decision logic, and governance so dev teams can implement safely at scale.",
+    "readTime": "9 min read",
+    "content": "<h2>Overview</h2><p>This guide focuses on three areas for ServiceNow ITSM teams:</p><ul><li><b>CMDB best practices</b> to make automation reliable.</li><li><b>Workflow optimization</b> using Flow Designer and ITIL-aligned processes.</li><li><b>Hyperautomation patterns</b> that combine CMDB, ITSM, ITOM, and AI.</li></ul><p>It is written for ServiceNow developers and platform owners who want concrete implementation guidance rather than theory.</p>\n\n<h2>1. CMDB Best Practices for Automation</h2><p>Your automation is only as good as your CMDB. Treat the CMDB as a product with clear ownership, standards, and quality controls.</p>\n\n<h3>1.1 CMDB design principles</h3><ul><li><b>Model services, not just servers</b><br/>Implement a top-down model: Business Service → Application Service → Infrastructure CIs. Use Service Offerings and relationships (Runs on, Depends on, Hosted on) to support incident and change impact analysis.</li><li><b>Standardize CI classes and attributes</b><br/>Define a minimal, mandatory attribute set per CI class (e.g., owner, environment, criticality, support group). Avoid bloated schemas that no one maintains.</li><li><b>Use relationships aggressively</b><br/>Automations such as auto-assignment, impact analysis, and change approvals can key off relationships like <i>Depends on</i>, <i>Used by</i>, and <i>Owned by</i>.</li><li><b>Separate discovery source from truth</b><br/>Use multiple data sources (Discovery, SCCM/Intune, cloud APIs) but normalize into a single canonical CI per asset. Maintain data source precedence rules.</li></ul>\n\n<h3>1.2 CMDB data quality and governance</h3><ul><li><b>Define CMDB SLOs</b><br/>Examples: CI completeness ≥ 95% for critical services, relationship accuracy ≥ 90% for production business services. Track via reports and dashboards.</li><li><b>Automated data quality checks</b><br/>Schedule jobs or flows that detect anomalies (orphaned CIs, missing owners, CIs without relationships, duplicates) and open tasks for CI owners.</li><li><b>Ownership model</b><br/>Assign <i>Service owners</i> (business and technical) per business service, and <i>CI owners</i> for key infrastructure classes. Use these for approvals, notifications, and escalation.</li><li><b>Change-driven CMDB updates</b><br/>Enforce that changes to production infrastructure/services must update the CMDB as part of the change workflow (tasks or automated discovery re-scans post-implementation).</li></ul>\n\n<h3>1.3 CMDB patterns that enable specific automations</h3><ul><li><b>Incident auto-assignment</b><br/>Pattern: Incident → CI → Assignment group / Support group on CI.<br/>Implementation: a Flow Designer flow on Incident insert/update that resolves the CI, then chooses assignment group based on CI.support_group or service owner.</li><li><b>Change impact analysis</b><br/>Pattern: Change → CI(s) → Related services → Dependent incidents/requests.<br/>Implementation: script action or flow that walks relationships from affected CIs to Business Services, then attaches impacted CIs/services and notifies owners.</li><li><b>Risk scoring</b><br/>Pattern: Risk = f(CI criticality, environment, service tier, change type, historical failures).<br/>Implementation: Decision table that uses CI attributes to assign risk; use in Change workflows for CAB vs. standard changes.</li></ul>\n\n<h2>2. Workflow Optimization (Flow Designer���First)</h2><p>Modern ITSM automation should be implemented primarily with Flow Designer and subflows, keeping scripts small and well-encapsulated.</p>\n\n<h3>2.1 General workflow design best practices</h3><ul><li><b>Flow Designer as default</b><br/>Use Flow Designer for incident, request, change, and problem flows. Reserve server/client scripts for logic that is not expressible in standard actions or where performance is critical.</li><li><b>Modular subflows</b><br/>Create reusable subflows for common actions such as \\",
+    "category": "general",
+    "date": "Dec 13, 2025"
+  },
+  {
+    "id": 2,
     "title": "ServiceNow Developer Core APIs & Platform Fundamentals (Zurich/Yokohama Era)",
     "excerpt": "Practical reference to current ServiceNow server-side and integration APIs with a focus on core primitives, Flow Designer internals, performance, and security fundamentals for scoped app developers.",
     "readTime": "14 min read",
@@ -9,7 +18,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 2,
+    "id": 3,
     "title": "This Week in ServiceNow: December 2025 Platform & Store Updates for Architects and Developers",
     "excerpt": "A curated, implementation-focused view of this week’s ServiceNow platform, Store, and Employee Center updates. Learn what matters for architecture, upgrades, extensibility, and enterprise risk so you can make informed design and implementation decisions.",
     "readTime": "10 min read",
@@ -18,7 +27,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 3,
+    "id": 4,
     "title": "Building on ServiceNow’s Latest AI: Now Assist, AI Control Tower, and Agentic Patterns for Developers",
     "excerpt": "Explore the newest ServiceNow AI capabilities—from Now Assist model v2.0 and AI Control Tower to Virtual Agent, AI Search, and agent-to-agent patterns. Learn concrete implementation techniques using GlideRecord and Flow Designer so you can safely plug GenAI and LLMs into real workflows.",
     "readTime": "10 min read",
@@ -27,7 +36,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 4,
+    "id": 5,
     "title": "Building on ServiceNow’s Latest AI: Practical Patterns for Now Assist, AI Control Tower, and Virtual Agent",
     "excerpt": "Learn how to apply the latest ServiceNow AI capabilities—including Now Assist v2.0 models, AI Control Tower, Virtual Agent AI, and AI Search—in real workflows. This guide focuses on concrete GlideRecord and Flow Designer patterns you can reuse in your own apps.",
     "readTime": "9 min read",
@@ -36,7 +45,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 5,
+    "id": 6,
     "title": "This Week’s ServiceNow Platform Updates: Yokohama/Xanadu, Impact Platform Health, and Employee Center",
     "excerpt": "This guide distills the latest ServiceNow platform updates from official docs and community posts into concrete actions for developers. Learn what’s new in Yokohama/Xanadu, Impact Platform Health, Employee Center, and how to safely upgrade, harden security, and improve performance with practical examples.",
     "readTime": "9 min read",
@@ -45,7 +54,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 6,
+    "id": 7,
     "title": "Latest Enterprise AI and GenAI Breakthroughs: Accelerating Business Automation in ServiceNow",
     "excerpt": "This week brings major advancements in enterprise AI from Dell-NVIDIA integrations, Microsoft agentic AI tools, and adoption reports highlighting Copilot's dominance. ServiceNow developers can leverage these for smarter automation, from AI factories to LLM orchestration.",
     "readTime": "5 min read",
@@ -54,7 +63,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 7,
+    "id": 8,
     "title": "ServiceNow December 2025 Store Release: Key Updates, Features, and Developer Best Practices",
     "excerpt": "Discover the latest ServiceNow December 2025 Store Release highlights, including Impact Platform Health enhancements and Employee Center Pro updates. This article explores new features for developers and actionable best practices to optimize your instance.",
     "readTime": "5 min read",
@@ -63,7 +72,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 8,
+    "id": 9,
     "title": "Enterprise Automation, ITSM, and Digital Transformation: Practical Trends for ServiceNow Developers",
     "excerpt": "Enterprise automation is converging around AI-driven hyperautomation, low-code platforms, and data-first integration. This article gives ServiceNow developers actionable patterns, priorities, and implementation steps to apply these trends in real projects.",
     "readTime": "6 min read",
@@ -72,7 +81,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 9,
+    "id": 10,
     "title": "New Integration Patterns, Flow Designer Tips, and Integration Hub Updates for ServiceNow Developers",
     "excerpt": "Practical guidance on current ServiceNow integration patterns, actionable Flow Designer tips, and recent Integration Hub capabilities to accelerate reliable, maintainable integrations.",
     "readTime": "6 min read",
@@ -81,7 +90,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 10,
+    "id": 11,
     "title": "Latest Trends in Enterprise Automation, ITSM, and Digital Transformation: Actionable Insights",
     "excerpt": "Enterprise automation in 2025 is driven by hyperautomation, AI integration, and no-code platforms, delivering up to 30% cost savings. ServiceNow developers can leverage these trends to enhance ITSM workflows.",
     "readTime": "5 min read",
@@ -90,7 +99,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 11,
+    "id": 12,
     "title": "Mastering ServiceNow Integrations in 2025: New Patterns, Flow Designer Tips, and Integration Hub Updates",
     "excerpt": "Discover the latest ServiceNow integration patterns with the updated Decision Tree, essential Flow Designer tips for efficient automation, and key Integration Hub enhancements like 200+ new connectors.",
     "readTime": "6 min read",
@@ -99,7 +108,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 12,
+    "id": 13,
     "title": "This Week in Enterprise AI: GenAI, LLMs, and Agents — Practical Takeaways for ServiceNow Developers",
     "excerpt": "Major vendors released model and agent updates this week that push multimodal reasoning, cheaper inference, and agent-first integrations. ServiceNow developers should focus on connectors, orchestration, security, and observability.",
     "readTime": "6 min read",
@@ -108,7 +117,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 13,
+    "id": 14,
     "title": "This Week's ServiceNow Platform Updates, Features, and Developer Best Practices",
     "excerpt": "A concise roundup of the most important ServiceNow platform updates released this week, practical feature highlights for developers, and actionable best practices to adopt during upgrades.",
     "readTime": "6 min read",
@@ -117,7 +126,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 14,
+    "id": 15,
     "title": "2025 Trends in Enterprise Automation, ITSM, and Digital Transformation: A ServiceNow Developer's Guide",
     "excerpt": "Explore the latest 2025 trends in enterprise automation, ITSM, and digital transformation, including hyperautomation, AI integration, and low-code platforms. Discover actionable insights tailored for platform customization.",
     "readTime": "5 min read",
@@ -126,7 +135,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 15,
+    "id": 16,
     "title": "December 2025: Key ServiceNow Platform Updates, Features, and Best Practices for Developers",
     "excerpt": "This week's ServiceNow updates focus on platform health, agentic AI tooling, Employee Center enhancements, and Canadian public-sector AI investments — plus practical best practices for developers.",
     "readTime": "5 min read",
@@ -135,7 +144,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 16,
+    "id": 17,
     "title": "Building AI Agents in ServiceNow: A Complete Guide",
     "excerpt": "Learn how to create intelligent AI agents that automate complex workflows using ServiceNow's AI capabilities and GenAI integration.",
     "category": "servicenow",
@@ -144,7 +153,7 @@
     "content": "<h2>Introduction</h2><p>AI Agents are revolutionizing how enterprises handle automation. In this guide, we'll explore how to build intelligent agents within ServiceNow that can reason, decide, and act autonomously.</p><h2>What are AI Agents?</h2><p>AI Agents are autonomous systems that can perceive their environment, make decisions, and take actions to achieve specific goals. In ServiceNow, these agents can handle everything from incident resolution to complex approval workflows.</p><h2>Getting Started</h2><p>To build an AI Agent in ServiceNow, you'll need:</p><ul><li>ServiceNow Utah or later</li><li>AI Control Tower access</li><li>Integration Hub subscription</li></ul><h2>Implementation Steps</h2><p>First, configure your AI Control Tower settings to enable agent capabilities. Then create a new AI Agent definition:</p><pre>// Sample GlideRecord script for AI Agent\nvar gr = new GlideRecord('sn_ai_agent');\ngr.initialize();\ngr.name = 'Incident Resolution Agent';\ngr.active = true;\ngr.insert();</pre><p>This foundation allows you to build sophisticated automation that learns and adapts over time.</p>"
   },
   {
-    "id": 17,
+    "id": 18,
     "title": "GenAI Summarization for Risk Management",
     "excerpt": "How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace to reduce analysis time by 60%.",
     "category": "ai",
@@ -153,7 +162,7 @@
     "content": "<h2>The Challenge</h2><p>Risk analysts were spending hours reading through lengthy risk assessments and compliance documents. We needed a solution that could summarize key points instantly while maintaining accuracy.</p><h2>The Solution</h2><p>By integrating GenAI capabilities with ServiceNow's GRC module, we created an automated summarization system that processes documents in real-time.</p><h2>Architecture</h2><p>The system uses a three-tier approach:</p><ul><li>Document ingestion via Integration Hub</li><li>GenAI processing with custom prompts</li><li>Results displayed in Risk Workspace widget</li></ul><h2>Results</h2><p>The implementation reduced analysis time by 60% and improved risk detection accuracy by identifying patterns human analysts often missed.</p>"
   },
   {
-    "id": 18,
+    "id": 19,
     "title": "Flow Designer Best Practices for Enterprise Scale",
     "excerpt": "Essential patterns and anti-patterns when building flows that need to handle thousands of executions daily.",
     "category": "tutorial",
@@ -162,7 +171,7 @@
     "content": "<h2>Why Flow Designer Matters</h2><p>Flow Designer is ServiceNow's powerful low-code automation tool. But with great power comes great responsibility—especially at enterprise scale.</p><h2>Best Practices</h2><ul><li><strong>Use Subflows:</strong> Break complex logic into reusable subflows</li><li><strong>Error Handling:</strong> Always implement try-catch patterns</li><li><strong>Async Operations:</strong> Use async for heavy processing</li><li><strong>Monitoring:</strong> Track execution times and failures</li></ul><h2>Anti-Patterns to Avoid</h2><p>Don't create flows that query large datasets without filters. Always use indexed fields and limit result sets.</p><pre>// Bad: Queries all incidents\nvar gr = new GlideRecord('incident');\ngr.query();\n\n// Good: Filtered query\nvar gr = new GlideRecord('incident');\ngr.addQuery('state', 1);\ngr.addQuery('sys_created_on', '>=', gs.daysAgo(7));\ngr.setLimit(100);\ngr.query();</pre>"
   },
   {
-    "id": 19,
+    "id": 20,
     "title": "The Future of Enterprise AI: 2025 Trends",
     "excerpt": "Exploring the emerging trends in enterprise AI adoption and what it means for ServiceNow developers.",
     "category": "general",
