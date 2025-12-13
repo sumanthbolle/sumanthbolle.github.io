@@ -49,7 +49,7 @@ Present findings as a living developer reference with:
 - Copy-paste–ready examples tied to real execution contexts
 - Anti-patterns that commonly cause performance, security, or upgrade issues.`,
   category: "tutorial"
-}
+},
   {
     query: `Search for latest enterprise ITSM trends and ServiceNow digital transformation strategies from community.servicenow.com and industry sources. Include:
 - Hyperautomation strategies with ServiceNow
