@@ -212,6 +212,7 @@
       document.getElementById('modalRead').innerHTML='⏱️ '+p.readTime;
       document.getElementById('modalCat').innerHTML='🏷️ '+p.category.charAt(0).toUpperCase()+p.category.slice(1);
       document.getElementById('modalContent').innerHTML=p.content;
+      document.getElementById('modalContent').innerHTML =p.content.replace(/<(?=\s*\d)/g, '&lt;');
       document.getElementById('modalHeaderBg').className='blog-modal-header-bg blog-thumb-bg '+p.category;
       document.getElementById('blogModal').classList.add('active');
       document.body.style.overflow='hidden';
