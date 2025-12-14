@@ -32,12 +32,15 @@ jobs:
           PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
         run: node scripts/validate-content.js
       
+      - name: Generate sitemap
+        run: node scripts/generate-sitemap.js
+      
       - name: Commit changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add posts.json interviews.json
-          git diff --staged --quiet || git commit -m "📝 Auto-update: Fetch articles & validate content"
+          git add posts.json interviews.json sitemap.xml
+          git diff --staged --quiet || git commit -m "📝 Auto-update: Fetch articles, validate & update sitemap"
       
       - name: Push changes
         uses: ad-m/github-push-action@master
