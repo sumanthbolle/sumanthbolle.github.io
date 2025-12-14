@@ -1,6 +1,15 @@
 [
   {
     "id": 1,
+    "title": "Exploring the Latest ServiceNow Zurich Release: Key Updates, Security, and Performance Enhancements",
+    "excerpt": "The ServiceNow Zurich release (Q4 2025) introduces powerful AI-driven analytics, developer tools, and performance optimizations. This article covers release notes, security patches, performance fixes, and includes practical code examples to help you leverage these updates.",
+    "readTime": "5 min read",
+    "content": "<h2>Overview of ServiceNow Zurich Release</h2><p>The ServiceNow AI Platform Zurich release, available in Q4 2025, brings significant advancements in analytics, user experience, developer tools, and operational efficiency. Building on previous releases like Xanadu (Q3 2024) and upcoming Yokohama (Q1 2025), Zurich emphasizes AI root cause analysis, upgraded Process Mining, and enhanced mobile capabilities. Key focuses include better performance monitoring, accessibility improvements, and streamlined workflows for admins and developers.</p><h2>Release Notes Highlights</h2><p>Zurich introduces User Experience Analytics (UXA), a dashboard tracking page views, load times, and user actions to identify bottlenecks. The Theme Builder now supports custom fonts, accessibility checks, and direct publishing of the Coral Theme. ServiceNow Studio is pre-installed, simplifying developer setups. Workflow Studio gains a 'Help me decide' feature for automation choices, while flows and Scheduled Jobs offer advanced scheduling like 'last Saturday of the month' or relative weekdays.</p><ul><li>Service Portal enhancements: Widget Designer 'clock' icon defers loading until viewport entry, improving initial load times for desktop, tablet, or mobile.</li><li>Change Management integrates with Service Operations Workspace for CAB Workbench access.</li><li>Catalog Builder supports Custom Client Scripts for complex logic without UI switches.</li></ul><p>Now Assist updates for App Engine, Document Intelligence, and Security Operations enhance AI functionalities across the platform.</p><h2>Security Patches and Fixes</h2><p>Security remains a priority with ongoing patches via the Instance Security Center (evolved from earlier releases). Zurich complements Registered Product Release (RPR) with Release Ops for advanced pipelines, without deprecating RPR. Legacy features like old Studio, Service Creator, and Clone methods are sunsetted to bolster modern security. Clone Admin Console preserves update sets up to 12 minutes pre-clone, reducing risks. Hotfixes are listed in official release notes for vulnerabilities in UI, integrations, and SecOps.</p><h2>Performance Fixes and Optimizations</h2><p>Performance gains include deferred widget loading in Service Portals, reducing page load times. UXA dashboards pinpoint slow areas via metrics like average duration. Scheduled Jobs and flow triggers with granular controls prevent resource overloads. MetricBase improvements from prior releases carry forward, aiding data migration and analysis. Frequent data archiving and enhanced cloud service mapping ensure scalable operations.</p><h2>Practical Code Examples</h2><p>Here are two examples leveraging Zurich enhancements.</p><p><strong>Example 1: Scheduled Job with New Run Types</strong> (Script Include for monthly-specific execution):</p><pre>var job = new GlideScheduledJob();\njob.setName('MonthlyReportJob');\njob.setScript('runMonthlyReport()');\njob.setRunType('monthly_specific'); // New Zurich type: e.g., 1st Monday\njob.setNextRun();\njob.insert();</pre><p>This uses advanced scheduling to run on relative weekdays, optimizing resource use.</p><p><strong>Example 2: Custom Client Script in Catalog Builder</strong> (For catalog item validation):</p><pre>function onLoad() {\n  var field = g_form.getReference('u_custom_field');\n  if (field &amp;&amp; field.u_value &gt; 100) {\n    g_form.addErrorMessage('Value exceeds limit.');\n    g_form.setMandatory('u_custom_field', true);\n  }\n}</pre><p>This script adds client-side logic directly in Catalog Builder for better UX.</p><p><strong>Example 3: GlideRecord Query with Performance Optimization</strong> (Using limits and conditions for faster queries):</p><pre>var gr = new GlideRecord('incident');\ngr.addQuery('priority', '1');\ngr.setLimit(50);\ngr.query();\nwhile (gr.next()) {\n  gs.info('High Priority: ' + gr.number);\n}</pre><h2>Next Steps for Upgrade</h2><p>Review full Zurich release notes on ServiceNow docs, test in sub-prod, and plan migrations from sunset features. These updates position your instance for AI-driven efficiency and robust security.</p>",
+    "category": "servicenow",
+    "date": "Dec 14, 2025"
+  },
+  {
+    "id": 2,
     "title": "Automating ITSM with a Healthy CMDB: ServiceNow Best Practices and Workflow Tips",
     "excerpt": "Learn how to combine CMDB governance with automation to optimize ServiceNow ITSM workflows. This article covers CMDB best practices, workflow design strategies, and includes two simple code examples for scripted automation.",
     "readTime": "5 min read",
@@ -9,7 +18,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 2,
+    "id": 3,
     "title": "ServiceNow ITSM Automation: CMDB Best Practices and Workflow Optimization",
     "excerpt": "Discover best practices for leveraging ServiceNow's CMDB to enhance ITSM automation and optimize workflows for faster incident resolution and better service delivery. This guide includes practical code examples to implement these strategies effectively.",
     "readTime": "5 min read",
@@ -18,7 +27,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 3,
+    "id": 4,
     "title": "Inside the Latest ServiceNow AI Platform Updates: Release Notes, Security, and Performance",
     "excerpt": "A concise tour of the latest ServiceNow AI Platform (Zurich and late Yokohama) updates with a focus on release notes, security hardening, and performance improvements. Includes practical code snippets to help admins and developers quickly validate, secure, and tune their instances.",
     "readTime": "5 min read",
@@ -27,7 +36,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 4,
+    "id": 5,
     "title": "ServiceNow ITSM Automation: CMDB, Workflow Optimization, and Hyperautomation",
     "excerpt": "Practical patterns and implementation guidance for designing a reliable CMDB, optimizing ITSM workflows with Flow Designer, and building toward hyperautomation on ServiceNow. Focused on incident/change/problem/request use cases, decision logic, and governance so dev teams can implement safely at scale.",
     "readTime": "9 min read",
@@ -36,7 +45,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 5,
+    "id": 6,
     "title": "ServiceNow Developer Core APIs & Platform Fundamentals (Zurich/Yokohama Era)",
     "excerpt": "Practical reference to current ServiceNow server-side and integration APIs with a focus on core primitives, Flow Designer internals, performance, and security fundamentals for scoped app developers.",
     "readTime": "14 min read",
@@ -45,7 +54,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 6,
+    "id": 7,
     "title": "This Week in ServiceNow: December 2025 Platform & Store Updates for Architects and Developers",
     "excerpt": "A curated, implementation-focused view of this week’s ServiceNow platform, Store, and Employee Center updates. Learn what matters for architecture, upgrades, extensibility, and enterprise risk so you can make informed design and implementation decisions.",
     "readTime": "10 min read",
@@ -54,7 +63,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 7,
+    "id": 8,
     "title": "Building on ServiceNow’s Latest AI: Now Assist, AI Control Tower, and Agentic Patterns for Developers",
     "excerpt": "Explore the newest ServiceNow AI capabilities—from Now Assist model v2.0 and AI Control Tower to Virtual Agent, AI Search, and agent-to-agent patterns. Learn concrete implementation techniques using GlideRecord and Flow Designer so you can safely plug GenAI and LLMs into real workflows.",
     "readTime": "10 min read",
@@ -63,7 +72,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 8,
+    "id": 9,
     "title": "Building on ServiceNow’s Latest AI: Practical Patterns for Now Assist, AI Control Tower, and Virtual Agent",
     "excerpt": "Learn how to apply the latest ServiceNow AI capabilities—including Now Assist v2.0 models, AI Control Tower, Virtual Agent AI, and AI Search—in real workflows. This guide focuses on concrete GlideRecord and Flow Designer patterns you can reuse in your own apps.",
     "readTime": "9 min read",
@@ -72,7 +81,7 @@
     "date": "Dec 13, 2025"
   },
   {
-    "id": 9,
+    "id": 10,
     "title": "This Week’s ServiceNow Platform Updates: Yokohama/Xanadu, Impact Platform Health, and Employee Center",
     "excerpt": "This guide distills the latest ServiceNow platform updates from official docs and community posts into concrete actions for developers. Learn what’s new in Yokohama/Xanadu, Impact Platform Health, Employee Center, and how to safely upgrade, harden security, and improve performance with practical examples.",
     "readTime": "9 min read",
@@ -81,7 +90,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 10,
+    "id": 11,
     "title": "Latest Enterprise AI and GenAI Breakthroughs: Accelerating Business Automation in ServiceNow",
     "excerpt": "This week brings major advancements in enterprise AI from Dell-NVIDIA integrations, Microsoft agentic AI tools, and adoption reports highlighting Copilot's dominance. ServiceNow developers can leverage these for smarter automation, from AI factories to LLM orchestration.",
     "readTime": "5 min read",
@@ -90,7 +99,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 11,
+    "id": 12,
     "title": "ServiceNow December 2025 Store Release: Key Updates, Features, and Developer Best Practices",
     "excerpt": "Discover the latest ServiceNow December 2025 Store Release highlights, including Impact Platform Health enhancements and Employee Center Pro updates. This article explores new features for developers and actionable best practices to optimize your instance.",
     "readTime": "5 min read",
@@ -99,7 +108,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 12,
+    "id": 13,
     "title": "Enterprise Automation, ITSM, and Digital Transformation: Practical Trends for ServiceNow Developers",
     "excerpt": "Enterprise automation is converging around AI-driven hyperautomation, low-code platforms, and data-first integration. This article gives ServiceNow developers actionable patterns, priorities, and implementation steps to apply these trends in real projects.",
     "readTime": "6 min read",
@@ -108,7 +117,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 13,
+    "id": 14,
     "title": "New Integration Patterns, Flow Designer Tips, and Integration Hub Updates for ServiceNow Developers",
     "excerpt": "Practical guidance on current ServiceNow integration patterns, actionable Flow Designer tips, and recent Integration Hub capabilities to accelerate reliable, maintainable integrations.",
     "readTime": "6 min read",
@@ -117,7 +126,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 14,
+    "id": 15,
     "title": "Latest Trends in Enterprise Automation, ITSM, and Digital Transformation: Actionable Insights",
     "excerpt": "Enterprise automation in 2025 is driven by hyperautomation, AI integration, and no-code platforms, delivering up to 30% cost savings. ServiceNow developers can leverage these trends to enhance ITSM workflows.",
     "readTime": "5 min read",
@@ -126,7 +135,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 15,
+    "id": 16,
     "title": "Mastering ServiceNow Integrations in 2025: New Patterns, Flow Designer Tips, and Integration Hub Updates",
     "excerpt": "Discover the latest ServiceNow integration patterns with the updated Decision Tree, essential Flow Designer tips for efficient automation, and key Integration Hub enhancements like 200+ new connectors.",
     "readTime": "6 min read",
@@ -135,7 +144,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 16,
+    "id": 17,
     "title": "This Week in Enterprise AI: GenAI, LLMs, and Agents — Practical Takeaways for ServiceNow Developers",
     "excerpt": "Major vendors released model and agent updates this week that push multimodal reasoning, cheaper inference, and agent-first integrations. ServiceNow developers should focus on connectors, orchestration, security, and observability.",
     "readTime": "6 min read",
@@ -144,7 +153,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 17,
+    "id": 18,
     "title": "This Week's ServiceNow Platform Updates, Features, and Developer Best Practices",
     "excerpt": "A concise roundup of the most important ServiceNow platform updates released this week, practical feature highlights for developers, and actionable best practices to adopt during upgrades.",
     "readTime": "6 min read",
@@ -153,7 +162,7 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 18,
+    "id": 19,
     "title": "2025 Trends in Enterprise Automation, ITSM, and Digital Transformation: A ServiceNow Developer's Guide",
     "excerpt": "Explore the latest 2025 trends in enterprise automation, ITSM, and digital transformation, including hyperautomation, AI integration, and low-code platforms. Discover actionable insights tailored for platform customization.",
     "readTime": "5 min read",
@@ -162,21 +171,12 @@
     "date": "Dec 12, 2025"
   },
   {
-    "id": 19,
+    "id": 20,
     "title": "December 2025: Key ServiceNow Platform Updates, Features, and Best Practices for Developers",
     "excerpt": "This week's ServiceNow updates focus on platform health, agentic AI tooling, Employee Center enhancements, and Canadian public-sector AI investments — plus practical best practices for developers.",
     "readTime": "5 min read",
     "content": "<h2>Overview — What Changed This Week</h2>\n<p>ServiceNow's December 2025 wave emphasizes proactive platform health tooling, expanded agentic AI capabilities and protocols, targeted Employee Center improvements, and strategic investments to enable AI adoption in regulated environments.</p>\n\n<h2>New and Updated Platform Features</h2>\n<p><strong>Platform Health (Impact)</strong>: ServiceNow announced a new Platform Health capability in the Impact portfolio that provides scheduled diagnostic scans, real-time messaging for prevention, scan findings, and role-specific dashboards for executives and developers.</p>\n<p><strong>Agentic AI &amp; A2A protocol support</strong>: The platform now recommends and supports A2A protocol v0.3 for agent-to-agent communications and documents OAuth 2.0 as the security scheme for those A2A flows.</p>\n<p><strong>Employee Center Pro — December enhancements</strong>: Employee Center received a December 2025 update with multiple UX and admin improvements.</p>\n<p><strong>Regional AI investments</strong>: ServiceNow announced a CA$110M multi-year investment to build Canada-hosted, AI-ready infrastructure.</p>\n\n<h2>Practical Best Practices for ServiceNow Developers</h2>\n<ul>\n<li><strong>Adopt Platform Health scans early:</strong> Enable scheduled scans and route findings to developer dashboards.</li>\n<li><strong>Design for agentic workflows with security in mind:</strong> Follow the A2A v0.3 guidance and use OAuth2 for auth between agents.</li>\n<li><strong>Use app versioning to simplify upgrades:</strong> Maintain explicit app versions and test versioned apps in lower environments.</li>\n<li><strong>Instrument governance and policy-as-code:</strong> Embed guardrails in CI/CD for flows and agents.</li>\n</ul>\n\n<h3>Example: Query and route Platform Health findings to a developer dashboard</h3>\n<p>The following server-side script (for example in a Script Include or Scheduled Script Execution) demonstrates how you might query Platform Health scan findings and populate a simple custom table used to back a developer dashboard.</p>\n<pre>var findingGr = new GlideRecord('x_impact_ph_finding'); // example table for Platform Health findings\nfindingGr.addQuery('state', 'open');\nfindingGr.orderByDesc('risk_score');\nfindingGr.setLimit(100);\nfindingGr.query();\n\nvar devFindingGr = new GlideRecord('x_custom_dev_finding'); // your custom dashboard table\nwhile (findingGr.next()) {\n    devFindingGr.initialize();\n    devFindingGr.u_finding = findingGr.getUniqueValue();\n    devFindingGr.u_short_description = findingGr.getValue('short_description');\n    devFindingGr.u_risk_score = findingGr.getValue('risk_score');\n    devFindingGr.u_assigned_developer = findingGr.getValue('assigned_to');\n    devFindingGr.u_scan_run = findingGr.getValue('scan_run');\n    devFindingGr.insert();\n}</pre>\n\n<h3>Example: Flow Designer policy-as-code check for AI agent changes</h3>\n<p>You can use Flow Designer with custom actions to enforce guardrails when AI agent-related records are created or updated. The following pseudo-code shows a Script step in a Flow Designer action that validates changes to an AI agent configuration record before allowing the flow to proceed.</p>\n<pre>// This script runs in a Flow Designer \"Run script\" step\n(function execute(inputs, outputs) {\n    var agentGr = new GlideRecord('x_ai_agent_config');\n    if (!agentGr.get(inputs.agent_sys_id)) {\n        outputs.approved = false;\n        outputs.message = 'Agent configuration not found.';\n        return;\n    }\n\n    // Basic guardrail: prevent unapproved scopes in production\n    var isProd = gs.getProperty('instance_type') === 'production';\n    var requestedScope = agentGr.getValue('scope');\n\n    if (isProd &amp;&amp; requestedScope === 'global_unrestricted') {\n        outputs.approved = false;\n        outputs.message = 'Unrestricted global scope is not allowed in production.';\n        return;\n    }\n\n    // Enforce maximum model temperature for regulated environments\n    var temperature = parseFloat(agentGr.getValue('model_temperature')) || 0.0;\n    if (temperature &gt; 0.5) {\n        outputs.approved = false;\n        outputs.message = 'Model temperature exceeds approved threshold (0.5).';\n        return;\n    }\n\n    outputs.approved = true;\n    outputs.message = 'Agent change approved by policy-as-code.';\n})(inputs, outputs);</pre>\n\n<h3>Example: Calling a ServiceNow API with OAuth 2.0 from another agent</h3>\n<p>The following example uses a Scripted REST API or integration script in ServiceNow to act as an OAuth 2.0 client when communicating with another ServiceNow instance or external agent endpoint as part of an A2A v0.3 flow. It retrieves an access token from an OAuth profile and calls a remote agent API.</p>\n<pre>var client = new sn_ws.RESTMessageV2();\nclient.setHttpMethod('post');\nclient.setEndpoint('https://partner-instance.example.com/api/x_a2a/agent/v0_3/execute');\n\n// Use an existing OAuth 2.0 profile configured in the instance\nclient.setAuthenticationProfile('oauth2', 'partner_oauth_profile');\n\n// Set headers and payload expected by the A2A v0.3-compatible endpoint\nclient.setRequestHeader('Content-Type', 'application/json');\nclient.setRequestHeader('Accept', 'application/json');\n\nvar payload = {\n    \"agent_id\": \"routing_agent_01\",\n    \"correlation_id\": gs.generateGUID(),\n    \"task\": {\n        \"type\": \"incident_resolution\",\n        \"input\": {\n            \"incident_number\": \"INC0010001\"\n        }\n    },\n    \"context\": {\n        \"source_instance\": gs.getProperty('instance_name'),\n        \"requested_by\": gs.getUserName()\n    }\n};\n\nclient.setRequestBody(JSON.stringify(payload));\n\nvar response = client.execute();\nvar status = response.getStatusCode();\nvar body = response.getBody();\ngs.info('A2A call status: ' + status + ', response: ' + body);</pre>\n\n<h2>Developer Checklist for the Next 30 Days</h2>\n<ul>\n<li>Enable Platform Health scans in a sandbox and review the first set of findings.</li>\n<li>Assess any agentic workflows for compatibility with A2A v0.3.</li>\n<li>Register apps with app versioning and review Platform Academy materials.</li>\n<li>Update CI/CD to include policy-as-code checks for new AI agents.</li>\n</ul>\n<p>By combining these new platform capabilities with practical automation patterns in scripts, flows, and integrations, ServiceNow developers can proactively manage technical debt, secure agentic workflows, and streamline adoption of December 2025 features across their environments.</p>",
     "category": "servicenow",
     "date": "Dec 12, 2025"
-  },
-  {
-    "id": 20,
-    "title": "Building AI Agents in ServiceNow: A Complete Guide",
-    "excerpt": "Learn how to create intelligent AI agents that automate complex workflows using ServiceNow's AI capabilities and GenAI integration.",
-    "category": "servicenow",
-    "date": "Dec 12, 2025",
-    "readTime": "8 min read",
-    "content": "<h2>Introduction</h2><p>AI Agents are revolutionizing how enterprises handle automation. Unlike traditional workflows that follow rigid paths, AI agents can reason about context, make decisions, and take autonomous actions to achieve goals. In ServiceNow, these agents leverage Now Assist, Predictive Intelligence, and GenAI integrations to handle everything from incident resolution to complex approval workflows.</p><h2>What are AI Agents?</h2><p>AI Agents are autonomous systems that can perceive their environment, make decisions, and take actions to achieve specific goals. They differ from simple automation in three key ways:</p><ul><li><b>Reasoning:</b> Agents analyze context and determine the best course of action rather than following predetermined paths.</li><li><b>Tool usage:</b> Agents can invoke APIs, query databases, and trigger workflows as needed.</li><li><b>Goal-oriented:</b> Agents work toward outcomes rather than executing fixed sequences.</li></ul><p>In ServiceNow, AI agents combine Virtual Agent conversations, Now Assist capabilities, and Flow Designer orchestration into cohesive autonomous systems.</p><h2>Prerequisites</h2><p>To build AI Agents in ServiceNow, you'll need:</p><ul><li>ServiceNow Yokohama or later (Zurich recommended for full AI Control Tower)</li><li>AI Control Tower access and configuration</li><li>Integration Hub subscription for external tool connections</li><li>Now Assist entitlement for GenAI capabilities</li><li>Predictive Intelligence for ML-based routing and classification</li></ul><h2>Architecture Overview</h2><p>A ServiceNow AI Agent consists of these components:</p><ul><li><b>Agent Definition:</b> Configuration that defines the agent's purpose, capabilities, and constraints.</li><li><b>Tool Registry:</b> Available actions the agent can invoke (GlideRecord operations, REST calls, Flow triggers).</li><li><b>Context Manager:</b> Gathers relevant data for decision-making (record history, user context, related CIs).</li><li><b>Orchestration Layer:</b> Flow Designer flows that coordinate agent actions and handle outcomes.</li><li><b>Guardrails:</b> Policies that constrain agent behavior and require human approval for high-risk actions.</li></ul><h2>Step 1: Configure AI Control Tower</h2><p>AI Control Tower centralizes governance for all AI capabilities. Start by configuring policies for your agent.</p><pre>// Check AI Control Tower readiness\nvar aiConfig = new GlideRecord('sn_ai_core_ai_config');\naiConfig.addQuery('active', true);\naiConfig.query();\nif (aiConfig.next()) {\n  gs.info('AI Control Tower active: ' + aiConfig.name);\n  gs.info('Default model: ' + aiConfig.default_model);\n} else {\n  gs.warn('AI Control Tower not configured');\n}</pre><p>Configure these key settings in AI Control Tower:</p><ul><li><b>Model selection:</b> Choose which LLM handles which tasks (summarization, classification, generation).</li><li><b>Data policies:</b> Define which fields and tables can be sent to AI models.</li><li><b>Logging:</b> Enable prompt/response logging for audit and debugging.</li><li><b>Rate limits:</b> Set usage thresholds to control costs and prevent abuse.</li></ul><h2>Step 2: Define Agent Capabilities</h2><p>Create a Script Include that defines what your agent can do. Each capability maps to a specific action.</p><pre>var IncidentResolutionAgent = Class.create();\nIncidentResolutionAgent.prototype = {\n  initialize: function(incidentSysId) {\n    this.incidentGr = new GlideRecord('incident');\n    this.incidentGr.get(incidentSysId);\n    this.capabilities = [\n      'summarize_history',\n      'suggest_resolution',\n      'find_similar_incidents',\n      'auto_categorize',\n      'notify_stakeholders'\n    ];\n  },\n\n  // Capability: Summarize incident history\n  summarizeHistory: function() {\n    var notes = [];\n    var journal = new GlideRecord('sys_journal_field');\n    journal.addQuery('element_id', this.incidentGr.sys_id);\n    journal.orderBy('sys_created_on');\n    journal.setLimit(20);\n    journal.query();\n    while (journal.next()) {\n      notes.push(journal.value.toString());\n    }\n    // Call Now Assist for summarization\n    return this._callGenAI('summarize', notes.join('\\n'));\n  },\n\n  // Capability: Find similar resolved incidents\n  findSimilarIncidents: function() {\n    var similar = [];\n    var gr = new GlideRecord('incident');\n    gr.addQuery('state', 6); // Resolved\n    gr.addQuery('category', this.incidentGr.category);\n    gr.addQuery('sys_id', '!=', this.incidentGr.sys_id);\n    gr.orderByDesc('sys_updated_on');\n    gr.setLimit(5);\n    gr.query();\n    while (gr.next()) {\n      similar.push({\n        number: gr.number.toString(),\n        resolution: gr.close_notes.toString(),\n        short_description: gr.short_description.toString()\n      });\n    }\n    return similar;\n  },\n\n  // Capability: Auto-categorize using Predictive Intelligence\n  autoCategorize: function() {\n    // Trigger PI classification\n    var prediction = new global.PredictiveIntelligenceAPI();\n    var result = prediction.getPrediction(\n      'incident',\n      this.incidentGr.sys_id,\n      ['category', 'subcategory', 'assignment_group']\n    );\n    return result;\n  },\n\n  // Internal: Call GenAI via AI Control Tower\n  _callGenAI: function(task, content) {\n    try {\n      var ai = new sn_ai.GenAIController();\n      var response = ai.generate({\n        task: task,\n        content: content,\n        max_tokens: 500\n      });\n      return response.text || '';\n    } catch (e) {\n      gs.error('GenAI call failed: ' + e.message);\n      return '';\n    }\n  },\n\n  type: 'IncidentResolutionAgent'\n};</pre><h2>Step 3: Create Orchestration Flows</h2><p>Use Flow Designer to orchestrate agent actions. The flow coordinates capabilities based on context and outcomes.</p><p><b>Agent Orchestration Flow Pattern:</b></p><ol><li><b>Trigger:</b> Incident created or updated with specific conditions.</li><li><b>Gather Context:</b> Script step calls agent to collect relevant data.</li><li><b>Analyze:</b> Agent evaluates context and determines actions.</li><li><b>Execute:</b> Flow invokes appropriate capabilities based on agent decision.</li><li><b>Validate:</b> Check outcomes and determine if human review is needed.</li><li><b>Complete:</b> Update record with results and audit trail.</li></ol><pre>// Flow Designer Script Step: Agent Decision Logic\n(function execute(inputs, outputs) {\n  var agent = new IncidentResolutionAgent(inputs.incident_sys_id);\n  \n  // Step 1: Gather context\n  var summary = agent.summarizeHistory();\n  var similar = agent.findSimilarIncidents();\n  var prediction = agent.autoCategorize();\n  \n  // Step 2: Determine confidence and action\n  var confidence = parseFloat(prediction.confidence || 0);\n  \n  if (confidence >= 0.9 && similar.length > 0) {\n    outputs.action = 'auto_resolve';\n    outputs.suggested_resolution = similar[0].resolution;\n    outputs.requires_approval = false;\n  } else if (confidence >= 0.7) {\n    outputs.action = 'suggest_resolution';\n    outputs.suggested_resolution = similar.length > 0 ? similar[0].resolution : '';\n    outputs.requires_approval = true;\n  } else {\n    outputs.action = 'escalate';\n    outputs.suggested_resolution = '';\n    outputs.requires_approval = true;\n  }\n  \n  outputs.summary = summary;\n  outputs.confidence = confidence;\n})(inputs, outputs);</pre><h2>Step 4: Implement Guardrails</h2><p>AI agents must have constraints to prevent unintended actions. Implement guardrails at multiple levels.</p><pre>var AgentGuardrails = Class.create();\nAgentGuardrails.prototype = {\n  initialize: function() {\n    this.highRiskActions = ['auto_resolve', 'reassign', 'close', 'delete'];\n    this.confidenceThreshold = 0.85;\n    this.requireApprovalRoles = ['itil_admin', 'incident_manager'];\n  },\n\n  // Check if action requires human approval\n  requiresApproval: function(action, confidence, record) {\n    // High-risk actions always need approval below threshold\n    if (this.highRiskActions.indexOf(action) >= 0) {\n      if (confidence < this.confidenceThreshold) {\n        return true;\n      }\n    }\n    \n    // Priority 1 incidents always need human review\n    if (record.priority == 1) {\n      return true;\n    }\n    \n    // VIP callers need approval\n    var caller = new GlideRecord('sys_user');\n    if (caller.get(record.caller_id) && caller.vip == true) {\n      return true;\n    }\n    \n    return false;\n  },\n\n  // Log agent decision for audit\n  logDecision: function(agentName, action, confidence, approved, details) {\n    var log = new GlideRecord('u_ai_agent_audit');\n    log.initialize();\n    log.u_agent_name = agentName;\n    log.u_action = action;\n    log.u_confidence = confidence;\n    log.u_approved = approved;\n    log.u_details = JSON.stringify(details);\n    log.u_timestamp = new GlideDateTime();\n    log.insert();\n  },\n\n  type: 'AgentGuardrails'\n};</pre><h2>Step 5: Handle Agent-to-Agent Communication</h2><p>For complex scenarios, multiple agents may need to collaborate. Use the A2A protocol pattern.</p><pre>// Agent-to-Agent message handler\nvar AgentMessaging = Class.create();\nAgentMessaging.prototype = {\n  initialize: function(agentId) {\n    this.agentId = agentId;\n  },\n\n  // Send task to another agent\n  delegateTask: function(targetAgent, task, context) {\n    var message = {\n      from: this.agentId,\n      to: targetAgent,\n      task: task,\n      context: context,\n      timestamp: new GlideDateTime().getNumericValue(),\n      correlation_id: gs.generateGUID()\n    };\n    \n    // Queue message for target agent\n    var queue = new GlideRecord('u_agent_message_queue');\n    queue.initialize();\n    queue.u_message = JSON.stringify(message);\n    queue.u_target_agent = targetAgent;\n    queue.u_status = 'pending';\n    queue.insert();\n    \n    return message.correlation_id;\n  },\n\n  // Process incoming messages\n  processMessages: function() {\n    var queue = new GlideRecord('u_agent_message_queue');\n    queue.addQuery('u_target_agent', this.agentId);\n    queue.addQuery('u_status', 'pending');\n    queue.query();\n    \n    while (queue.next()) {\n      var message = JSON.parse(queue.u_message);\n      this._handleMessage(message);\n      queue.u_status = 'processed';\n      queue.update();\n    }\n  },\n\n  type: 'AgentMessaging'\n};</pre><h2>Best Practices</h2><ul><li><b>Start narrow:</b> Begin with a single, well-defined use case before expanding agent capabilities.</li><li><b>Always log decisions:</b> Create an audit table to track all agent actions, inputs, and outcomes.</li><li><b>Human-in-the-loop:</b> Require approval for high-impact actions until confidence is proven.</li><li><b>Test with edge cases:</b> Agents must handle missing data, ambiguous inputs, and error conditions gracefully.</li><li><b>Monitor continuously:</b> Track accuracy, false positives, and user overrides to tune agent behavior.</li><li><b>Version capabilities:</b> Store capability definitions in versioned records so you can roll back changes.</li><li><b>Scope credentials:</b> Give agents minimum necessary permissions via dedicated service accounts.</li></ul><h2>Common Pitfalls</h2><ul><li><b>Over-automation:</b> Letting agents take destructive actions without approval gates leads to incidents.</li><li><b>Ignoring context limits:</b> Sending too much data to GenAI models causes token limits and latency issues.</li><li><b>No fallback path:</b> Agents must gracefully degrade when AI services are unavailable.</li><li><b>Skipping audit:</b> Without decision logs, you cannot debug issues or demonstrate compliance.</li><li><b>Tight coupling:</b> Hardcoding model endpoints instead of using AI Control Tower breaks governance.</li><li><b>Ignoring user feedback:</b> Not capturing when users override agent suggestions prevents learning.</li></ul><h2>Conclusion</h2><p>Building AI agents in ServiceNow requires combining multiple platform capabilities: AI Control Tower for governance, Now Assist for GenAI, Predictive Intelligence for ML, and Flow Designer for orchestration. Start with well-defined capabilities, implement strong guardrails, and continuously monitor agent performance. With this foundation, you can progressively expand agent autonomy as confidence grows.</p>"
   }
 ]
