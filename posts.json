@@ -9,16 +9,7 @@
     "date": "Dec 14, 2025"
   },
   {
-  "id": 2,
-  "title": "ServiceNow Governor Limits and Performance Benchmarks: Real-World Scaling Guide",
-  "excerpt": "Master the critical governor limits, timeout values, and performance thresholds that determine whether your ServiceNow implementation scales. Includes practical benchmarks and optimization patterns.",
-  "readTime": "10 min read",
-  "content": "<h2>Default Timeout Values (Transaction Quota Rules)</h2><p>Understanding these limits prevents unexpected failures in production:</p><ul><li><strong>UI Transactions:</strong> 298 seconds</li><li><strong>REST Table/Attachment/Import Set API:</strong> 60 seconds</li><li><strong>REST and JSON Catch All:</strong> 300 seconds</li><li><strong>Outbound HTTP/REST sync:</strong> 30 seconds (glide.http.outbound.max_timeout)</li></ul><h2>Critical Governor Limits</h2><ul><li><strong>JVM Heap Space:</strong> 2GB per node, safe range 20–60% utilization</li><li><strong>Slow Query Threshold:</strong> &gt;5 seconds logged to sys_query_pattern</li><li><strong>Script Code Cache:</strong> Code &gt;64KB gets interpreted (not cached)</li><li><strong>Maximum indexes per table:</strong> 64 (INNODB limit)</li><li><strong>Scheduler workers:</strong> 8 default—when consumed, SLA updates, events, and emails block</li></ul><h2>Query Optimization Patterns</h2><pre>// NEVER use getRowCount() in production—it loads all records\n// Instead use GlideAggregate:\nvar ga = new GlideAggregate('incident');\nga.addQuery('active', true);\nga.addAggregate('COUNT');\nga.setGroup(false);\nga.query();\nif (ga.next()) {\n  var count = ga.getAggregate('COUNT');\n}\n\n// Store sys_ids, not GlideElement objects\nvar arrIncidents = [];\nwhile (myIncident.next()) {\n  arrIncidents.push(myIncident.getValue('caller_id'));\n}</pre><h2>High-Volume Benchmarks</h2><table><tr><th>Operation</th><th>Safe Threshold</th><th>Warning Zone</th></tr><tr><td>Records per GlideRecord loop</td><td>&lt;1,000</td><td>&gt;5,000</td></tr><tr><td>Business rules per table</td><td>&lt;20</td><td>&gt;50</td></tr><tr><td>Async BR queue depth</td><td>&lt;100</td><td>&gt;500</td></tr><tr><td>Concurrent REST calls</td><td>&lt;50/min</td><td>&gt;200/min</td></tr><tr><td>Scheduled job duration</td><td>&lt;5 min</td><td>&gt;30 min</td></tr></table><h2>Memory-Efficient Patterns</h2><pre>// Batch processing for large datasets\nvar BATCH_SIZE = 200;\nvar lastId = '';\n\nfunction processBatch() {\n  var gr = new GlideRecord('cmdb_ci');\n  gr.addQuery('sys_id', '>', lastId);\n  gr.orderBy('sys_id');\n  gr.setLimit(BATCH_SIZE);\n  gr.query();\n\n  var count = 0;\n  while (gr.next()) {\n    lastId = gr.getUniqueValue();\n    count++;\n  }\n\n  if (count == BATCH_SIZE) {\n    gs.eventQueueScheduled('batch.process', null, lastId, '', new GlideDateTime().addSeconds(5));\n  }\n}</pre><h2>Index Strategy</h2><ul><li>Query on indexed fields: sys_id, number, active, state</li><li>Avoid ENDSWITH—cannot use indexes</li><li>CONTAINS and STARTSWITH are efficient</li><li>Composite indexes for frequent multi-field queries</li><li>Monitor sys_query_pattern for slow queries</li></ul>",
-  "category": "tutorial",
-  "date": "Dec 14, 2025"
-},
-  {
-    "id": 3,
+    "id": 2,
     "title": "Scoped Application Security Patterns: Cross-Scope Access Done Right",
     "excerpt": "Navigate ServiceNow's scoped application security model with confidence. Learn cross-scope access patterns, ACL evaluation order, and security best practices for enterprise applications.",
     "readTime": "9 min read",
