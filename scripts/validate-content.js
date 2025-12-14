@@ -78,6 +78,36 @@ function hasCodeExample(content) {
 }
 
 /**
+ * Check if code examples are meaningful (not just stubs)
+ */
+function hasCompleteCodeExample(content) {
+  if (!hasCodeExample(content)) return false;
+  
+  // Extract code blocks
+  const codeBlocks = content.match(/<pre>([\s\S]*?)<\/pre>/gi) || [];
+  
+  for (const block of codeBlocks) {
+    const code = block.replace(/<\/?pre>/gi, '').trim();
+    
+    // Check for stub patterns (incomplete code)
+    const stubPatterns = [
+      /^\/\/\s*(example|todo|placeholder)/i,
+      /^var\s+\w+\s*=\s*new\s+GlideRecord\([^)]+\);\s*$/,  // Just declaration, no query
+      /^\s*\/\/.*\n?\s*$/,  // Only comments
+    ];
+    
+    const isStub = stubPatterns.some(p => p.test(code));
+    const isTooShort = code.split('\n').filter(l => l.trim() && !l.trim().startsWith('//')).length < 3;
+    
+    if (isStub || isTooShort) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+/**
  * Check if content covers promised topics (basic check)
  */
 function checkTopicCoverage(title, excerpt, content) {
@@ -158,6 +188,11 @@ function validatePost(post) {
     issues.push({ type: 'missing_code_example', severity: 'critical' });
   }
   
+  // Check for incomplete/stub code examples
+  if (hasCodeExample(post.content) && !hasCompleteCodeExample(post.content)) {
+    issues.push({ type: 'incomplete_code_example', severity: 'critical' });
+  }
+  
   // Check topic coverage
   const topicIssues = checkTopicCoverage(post.title, post.excerpt, post.content);
   for (const issue of topicIssues) {
@@ -175,7 +210,7 @@ function validatePost(post) {
     valid: issues.length === 0,
     issues,
     fixable: issues.some(i => 
-      ['content_truncated', 'content_too_short', 'incomplete_coverage', 'missing_code_example'].includes(i.type)
+      ['content_truncated', 'content_too_short', 'incomplete_coverage', 'missing_code_example', 'incomplete_code_example'].includes(i.type)
     )
   };
 }
@@ -216,13 +251,18 @@ function validateInterview(interview) {
     issues.push({ type: 'answer_truncated', severity: 'critical' });
   }
   
+  // Check for incomplete/stub code examples
+  if (hasCodeExample(interview.answer) && !hasCompleteCodeExample(interview.answer)) {
+    issues.push({ type: 'incomplete_code_example', severity: 'critical' });
+  }
+  
   const hasCritical = issues.some(i => i.severity === 'critical');
   
   return {
     valid: issues.length === 0,
     issues,
-    fixable: hasCritical && issues.some(i => 
-      ['answer_truncated', 'answer_too_short'].includes(i.type)
+    fixable: issues.some(i => 
+      ['answer_truncated', 'answer_too_short', 'incomplete_code_example'].includes(i.type)
     )
   };
 }
@@ -387,17 +427,42 @@ Return the COMPLETE updated content with the new code examples integrated natura
 async function fixInterview(interview, issues) {
   console.log(`   🔧 Fixing interview: ${interview.question.substring(0, 50)}...`);
   
+  const issueTypes = issues.map(i => i.type);
+  
   const systemPrompt = `You are a ServiceNow technical interviewer. Complete this interview Q&A.
 
 CRITICAL RULES:
 1. Return ONLY the answer content - no JSON wrapper
 2. Use HTML: <p>, <h4>, <ul>, <li>, <pre>, <strong>
-3. Include code examples where relevant
-4. Answer should be 300-500 words
-5. MUST end with complete sentence and closed tags
-6. No [1] citations, no **markdown**`;
+3. Include COMPLETE, WORKING code examples (not stubs)
+4. Code should be 5-15 lines with real functionality
+5. Answer should be 400-600 words
+6. MUST end with complete sentence and closed tags
+7. No [1] citations, no **markdown**`;
 
-  const prompt = `This ServiceNow interview answer is incomplete. Complete it.
+  let prompt = '';
+  
+  if (issueTypes.includes('incomplete_code_example')) {
+    prompt = `This ServiceNow interview answer has incomplete/stub code examples that need to be expanded.
+
+QUESTION: ${interview.question}
+CATEGORY: ${interview.category}
+DIFFICULTY: ${interview.difficulty}
+
+CURRENT ANSWER (with stub code):
+${interview.answer}
+
+The code examples are just stubs like "var gr = new GlideRecord('table');" with no real logic.
+
+Provide a COMPLETE answer with FULL, WORKING code examples that:
+1. Demonstrate the concept being asked about
+2. Have 5-15 lines of meaningful code
+3. Include proper queries, loops, and logic
+4. Show both correct and incorrect approaches where relevant
+
+Return ONLY the HTML content for the complete answer.`;
+  } else {
+    prompt = `This ServiceNow interview answer is incomplete. Complete it.
 
 QUESTION: ${interview.question}
 CATEGORY: ${interview.category}
@@ -408,11 +473,12 @@ ${interview.answer}
 
 Provide the COMPLETE answer with:
 1. Clear explanation of the concept
-2. Code example if applicable
+2. FULL, WORKING code examples (not stubs)
 3. Best practices and common mistakes
 4. Proper conclusion
 
 Return ONLY the HTML content for the answer.`;
+  }
 
   try {
     const fixedAnswer = await callPerplexityFix(prompt, systemPrompt);
