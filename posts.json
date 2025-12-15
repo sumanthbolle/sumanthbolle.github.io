@@ -1,6 +1,15 @@
 [
   {
     "id": 1,
+    "title": "ServiceNow ITSM Automation: CMDB Best Practices and Workflow Optimization",
+    "excerpt": "Discover essential best practices for automating ITSM in ServiceNow, focusing on maintaining an accurate CMDB for better decision-making and optimizing workflows with Flow Designer for efficiency. This guide includes code examples to implement automated incident routing and CMDB updates.",
+    "readTime": "5 min read",
+    "content": "<h2>Introduction to ITSM Automation in ServiceNow</h2><p>ServiceNow ITSM automation transforms IT service management by leveraging ITIL best practices, enabling organizations to streamline processes, reduce manual efforts, and enhance service delivery. Key areas include Configuration Management Database (CMDB) maintenance for asset visibility and workflow optimization using tools like Flow Designer for low-code automation.</p><h2>CMDB Best Practices for ITSM Excellence</h2><p>The CMDB serves as a central repository for IT asset relationships, crucial for incident, change, and problem management. Keeping CMDB records accurate and current improves decision-making, accelerates impact analysis, and boosts visibility into the IT environment.</p><ul><li><strong>Maintain Data Accuracy:</strong> Regularly audit and update CI (Configuration Item) records to reflect real-world relationships, preventing errors in change processes.</li><li><strong>Leverage Integrations:</strong> Use ServiceNow's integration features to automate data sync from discovery tools, reducing manual entry and errors.</li><li><strong>Implement Relationships:</strong> Map dependencies between CIs to enable proactive issue resolution and minimize service disruptions.</li><li><strong>Adopt ITIL Alignment:</strong> Standardize CMDB usage per ITIL guidelines for configuration management, ensuring compliance and operational efficiency.</li></ul><p>Example: Automate CMDB updates during incident creation to link affected CIs dynamically.</p><pre>var incident = new GlideRecord('incident');\nif (incident.get(current.getValue('sys_id'))) {\n    var cmdbCi = new GlideRecord('cmdb_ci');\n    cmdbCi.addQuery('name', incident.affected_ci);\n    cmdbCi.query();\n    if (cmdbCi.next()) {\n        incident.cmdb_ci = cmdbCi.sys_id;\n        incident.update();\n    }\n}</pre><h2>Workflow Optimization Best Practices</h2><p>Workflow optimization in ServiceNow focuses on modular design, error handling, and AI-driven automation to handle incidents, changes, and requests efficiently. Migrate from legacy workflows to Flow Designer for low-code, maintainable automations.</p><ul><li><strong>Use Modular Subflows:</strong> Build reusable subflows with data pills instead of scripted inputs to enhance flexibility and readability.</li><li><strong>Implement Error Handlers:</strong> Capture diagnostics, notify admins, and enable recovery to ensure graceful failures.</li><li><strong>Leverage Decision Tables:</strong> Simplify complex routing with tables for approvals based on variables like cost or department.</li><li><strong>Automate Incident Routing:</strong> Categorize, prioritize, and assign incidents using ML and CI relationships for faster resolution.</li></ul><p>Practical example: Automate incident assignment based on CMDB CI owner group.</p><pre>var grInc = new GlideRecord('incident');\nif (grInc.get(current.sys_id)) {\n    var ci = new GlideRecord('cmdb_ci');\n    if (ci.get(grInc.cmdb_ci)) {\n        grInc.assignment_group = ci.owned_by;\n        grInc.update();\n    }\n}</pre><h2>Implementing Automation for Continuous Improvement</h2><p>Combine CMDB best practices with optimized workflows to achieve operational excellence. Start with process assessments, build incrementally with testing, and use AI for predictive routing. This approach reduces bottlenecks, improves SLAs, and adapts to business needs, driving ITSM success in ServiceNow.</p>",
+    "category": "general",
+    "date": "Dec 15, 2025"
+  },
+  {
+    "id": 2,
     "title": "What’s New in the ServiceNow Zurich Release: Features, Fixes, and Practical Examples",
     "excerpt": "A concise overview of the latest ServiceNow Zurich platform updates, covering key release highlights, security patches, and performance improvements, with practical code examples for admins and developers.",
     "readTime": "5 min read",
@@ -9,7 +18,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 2,
+    "id": 3,
     "title": "Flow Designer Transaction Boundaries: What Every ServiceNow Developer Must Know",
     "excerpt": "Flow Designer executes asynchronously with no native rollback. Learn how transactions commit, when to use business rules instead, and proven compensating transaction patterns for production workflows.",
     "readTime": "8 min read",
@@ -18,7 +27,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 3,
+    "id": 4,
     "title": "Scoped Application Security Patterns: Cross-Scope Access Done Right",
     "excerpt": "Navigate ServiceNow's scoped application security model with confidence. Learn cross-scope access patterns, ACL evaluation order, and security best practices for enterprise applications.",
     "readTime": "9 min read",
@@ -27,7 +36,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 4,
+    "id": 5,
     "title": "Predictive Intelligence Deep Dive: Requirements, Limitations, and Production Patterns",
     "excerpt": "Predictive Intelligence requires minimum 10,000 records for classification training. Learn the real requirements, common misconceptions, and patterns for production ML implementations.",
     "readTime": "8 min read",
@@ -36,7 +45,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 5,
+    "id": 6,
     "title": "Yokohama MFA Enforcement: What You Need to Know Before Upgrading",
     "excerpt": "Multi-factor authentication is mandatory in Yokohama with a 90-day grace period. Here's everything you need to configure before upgrading to avoid authentication lockouts.",
     "readTime": "6 min read",
@@ -45,7 +54,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 6,
+    "id": 7,
     "title": "Upgrade Regression Testing Framework: ATF Patterns for ServiceNow Customizations",
     "excerpt": "Build a comprehensive automated testing framework for ServiceNow upgrades. Learn ATF patterns, test suite organization, and CI/CD integration for confident upgrades.",
     "readTime": "9 min read",
@@ -54,7 +63,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 7,
+    "id": 8,
     "title": "Now Assist Consumption Optimization: Managing Your 'Assists' Budget",
     "excerpt": "Now Assist uses a consumption-based 'assists' model with Pro Plus licensing. Learn strategies to optimize usage, monitor consumption, and maximize ROI from your AI investment.",
     "readTime": "7 min read",
@@ -63,7 +72,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 8,
+    "id": 9,
     "title": "ServiceNow for Financial Services: SOX, PCI-DSS, and Basel III Implementation Guide",
     "excerpt": "Implement ServiceNow in regulated financial environments with proven patterns for SOX compliance, PCI-DSS controls, and Basel III operational risk management.",
     "readTime": "10 min read",
@@ -72,7 +81,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 9,
+    "id": 10,
     "title": "ServiceNow Healthcare Implementation: HIPAA, EMR Integration, and Clinical Workflows",
     "excerpt": "Build HIPAA-compliant ServiceNow implementations with EMR integration patterns, clinical device management, and healthcare-specific workflow automation.",
     "readTime": "9 min read",
@@ -81,7 +90,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 10,
+    "id": 11,
     "title": "ServiceNow Manufacturing: OT/IT Convergence and Connected Operations",
     "excerpt": "Implement ServiceNow for manufacturing with OT/IT convergence patterns, IoT integration, and field service optimization for Industry 4.0 environments.",
     "readTime": "8 min read",
@@ -90,7 +99,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 11,
+    "id": 12,
     "title": "ServiceNow Government: FedRAMP High Implementation and Citizen Services",
     "excerpt": "Deploy ServiceNow in government environments with FedRAMP High authorization, citizen service playbooks, and accessibility compliance patterns.",
     "readTime": "8 min read",
@@ -99,7 +108,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 12,
+    "id": 13,
     "title": "CMDB Relationship Patterns: API Examples and Naming Conventions",
     "excerpt": "Master CMDB relationship types, naming conventions, and REST API patterns for creating CIs with proper relationships in ServiceNow.",
     "readTime": "7 min read",
@@ -108,7 +117,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 13,
+    "id": 14,
     "title": "Yokohama and Zurich Known Errors: Patch Tracking and Workarounds",
     "excerpt": "Track known errors across Yokohama and Zurich releases with KB article references, patch levels, and proven workarounds for common issues.",
     "readTime": "6 min read",
@@ -117,7 +126,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 14,
+    "id": 15,
     "title": "Platform Health and Proactive Code Check: 62 Checks Every Developer Should Know",
     "excerpt": "ServiceNow Impact Platform Health includes 62 proactive code checks in Yokohama. Learn what they scan for and how to remediate common violations.",
     "readTime": "8 min read",
@@ -126,7 +135,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 15,
+    "id": 16,
     "title": "Integration Retry Patterns: Exponential Backoff and Error Handling",
     "excerpt": "Build resilient ServiceNow integrations with proper retry patterns, exponential backoff, and intelligent error handling for common HTTP failures.",
     "readTime": "7 min read",
@@ -135,7 +144,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 16,
+    "id": 17,
     "title": "Scripting Decision Framework: When to Use Business Rules vs Flow Designer",
     "excerpt": "Make the right choice between Business Rules, Flow Designer, UI Policies, and other scripting options. Includes a decision matrix and performance considerations.",
     "readTime": "6 min read",
@@ -144,7 +153,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 17,
+    "id": 18,
     "title": "AI Control Tower and Now Assist v2.0: Configuration and Licensing Deep Dive",
     "excerpt": "Configure AI Control Tower for enterprise AI governance and understand Now Assist v2.0 model options, licensing requirements, and deployment prerequisites.",
     "readTime": "8 min read",
@@ -153,7 +162,7 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 18,
+    "id": 19,
     "title": "Outage Prevention: Understanding Async Business Rule Risks and Scheduler Workers",
     "excerpt": "Prevent ServiceNow outages caused by async business rule backlogs, scheduler worker exhaustion, and recursive triggers. Learn monitoring and prevention patterns.",
     "readTime": "7 min read",
@@ -162,21 +171,12 @@
     "date": "Dec 14, 2025"
   },
   {
-    "id": 19,
+    "id": 20,
     "title": "User Experience Analytics (UXA) in Yokohama: Complete Re-platforming Guide",
     "excerpt": "Yokohama completely redesigned User Experience Analytics with extended history, cross-app filtering, and new navigation paths. Learn the new capabilities and migration considerations.",
     "readTime": "6 min read",
     "content": "<h2>Major UXA Changes in Yokohama</h2><p>UXA (App Scope: <code>sn_uxa_dashboard</code>, version 5.0.8) underwent a <strong>complete redesign</strong>:</p><ul><li>Extended user history to <strong>two years</strong> (previously limited)</li><li>Cross-application view filtering</li><li>Granular event property filtering with new condition builder</li><li>Dashboard moved under Platform Analytics in All Menu</li><li>Navigation Paths replaces redundant \"Users flow\" feature</li></ul><h2>Captured Metrics</h2><p>UXA captures across Next Experience apps, Virtual Agent, Service Portal, and Employee Center:</p><ul><li>Page views</li><li>Average duration</li><li>Load times</li><li>Session analytics</li><li>Retention metrics</li><li>Navigation paths</li></ul><h2>Required Roles</h2><table><tr><th>Role</th><th>Access Level</th></tr><tr><td>analytics_admin</td><td>Full configuration</td></tr><tr><td>analytics_viewer</td><td>View dashboards</td></tr><tr><td>sn_uxa_mobile_admin</td><td>Mobile analytics</td></tr><tr><td>sn_uxa_portal_admin</td><td>Portal analytics</td></tr><tr><td>sn_uxa_core_admin</td><td>Core UI analytics</td></tr></table><h2>Consent Policy Change</h2><p><strong>Important:</strong> Starting in Yokohama, \"No Consent Required\" is the default consent policy. This is significant for privacy-conscious implementations.</p><pre>// Check current consent policy\nvar policy = gs.getProperty('sn_uxa.consent_policy');\ngs.info('Current UXA consent policy: ' + policy);\n\n// If you need opt-in consent:\ngs.setProperty('sn_uxa.consent_policy', 'opt_in');</pre><h2>Querying UXA Data</h2><pre>// Get page view statistics\nvar pageViews = new GlideAggregate('sn_uxa_page_view');\npageViews.addQuery('sys_created_on', '>=', gs.daysAgo(30));\npageViews.addAggregate('COUNT');\npageViews.groupBy('page_id');\npageViews.orderByAggregate('COUNT', 'DESC');\npageViews.setLimit(10);\npageViews.query();\n\ngs.info('Top 10 pages (last 30 days):');\nwhile (pageViews.next()) {\n  gs.info(pageViews.page_id + ': ' + pageViews.getAggregate('COUNT') + ' views');\n}</pre><h2>Performance Analysis Pattern</h2><pre>// Identify slow-loading pages\nvar slowPages = new GlideRecord('sn_uxa_page_view');\nslowPages.addQuery('load_time', '>', 3000); // > 3 seconds\nslowPages.addQuery('sys_created_on', '>=', gs.daysAgo(7));\nslowPages.query();\n\nvar pageStats = {};\nwhile (slowPages.next()) {\n  var pageId = slowPages.getValue('page_id');\n  if (!pageStats[pageId]) {\n    pageStats[pageId] = { count: 0, totalTime: 0 };\n  }\n  pageStats[pageId].count++;\n  pageStats[pageId].totalTime += parseInt(slowPages.getValue('load_time'));\n}\n\n// Calculate average and report\nfor (var page in pageStats) {\n  var avg = pageStats[page].totalTime / pageStats[page].count;\n  gs.info('Slow page: ' + page + \n    ' | Occurrences: ' + pageStats[page].count +\n    ' | Avg load time: ' + avg + 'ms');\n}</pre><h2>Migration Considerations</h2><ul><li>Users flow reports need reconfiguration as Navigation Paths</li><li>Review consent settings for GDPR/privacy compliance</li><li>Update any reports using old UXA table structures</li><li>Verify role assignments include new specialized roles</li></ul>",
     "category": "servicenow",
-    "date": "Dec 14, 2025"
-  },
-  {
-    "id": 20,
-    "title": "Technical Debt Management: The 5% TDR Rule and Upgrade-Safe Development",
-    "excerpt": "Keep technical debt under control with the 5% Technical Debt Ratio standard, upgrade-safe development patterns, and systematic remediation strategies.",
-    "readTime": "7 min read",
-    "content": "<h2>Technical Debt Warning Signs</h2><ul><li>Poor coding standards across team</li><li>Unclear code ownership</li><li>Bug rate exceeding closed rate</li><li>Health Scan scores not improving</li><li>Multiple teams on same code without coordination</li></ul><h2>The 5% TDR Standard</h2><p>The Technical Debt Ratio (TDR) standard cap is <strong>5%</strong>—higher indicates significant problems requiring immediate attention.</p><pre>// Calculate simple TDR proxy\nvar findings = new GlideAggregate('sn_impact_ph_finding');\nfindings.addQuery('state', 'open');\nfindings.addAggregate('COUNT');\nfindings.query();\nfindings.next();\nvar openFindings = parseInt(findings.getAggregate('COUNT'));\n\nvar totalObjects = new GlideAggregate('sys_metadata');\ntotalObjects.addQuery('sys_scope', 'x_custom_app');\ntotalObjects.addAggregate('COUNT');\ntotalObjects.query();\ntotalObjects.next();\nvar totalCount = parseInt(totalObjects.getAggregate('COUNT'));\n\nvar tdr = (openFindings / totalCount) * 100;\ngs.info('Technical Debt Ratio: ' + tdr.toFixed(2) + '%');\n\nif (tdr > 5) {\n  gs.warn('TDR exceeds 5% threshold - remediation required');\n}</pre><h2>Configure Before Customize Principle</h2><p>Risk hierarchy for modifications:</p><table><tr><th>Change Type</th><th>Risk Level</th><th>Guidance</th></tr><tr><td>Form layout changes</td><td>Minimal</td><td>Safe to modify</td></tr><tr><td>UI Policy additions</td><td>Low</td><td>Preferred approach</td></tr><tr><td>New Business Rules</td><td>Low</td><td>Keep scoped</td></tr><tr><td>Modified Business Rules</td><td>Medium</td><td>Clone and modify</td></tr><tr><td>Baseline Script Include mods</td><td>High</td><td>Avoid - extend instead</td></tr><tr><td>Core table modifications</td><td>Very High</td><td>Create extension tables</td></tr></table><h2>Upgrade-Safe Checklist</h2><ul><li>Never modify baseline/OOTB records—create new or extend</li><li>Use scoped applications for custom functionality</li><li>Preview update sets before committing to identify conflicts</li><li>Review skipped records after each upgrade cycle</li><li>Document all customizations and their business justification</li></ul><h2>Extension Pattern</h2><pre>// Instead of modifying baseline Script Include:\n// DON'T: Edit IncidentUtils directly\n\n// DO: Create extension in your scope\nvar IncidentUtilsExtended = Class.create();\nIncidentUtilsExtended.prototype = Object.extendsObject(IncidentUtils, {\n  \n  // Override specific method\n  getAssignmentGroup: function(incident) {\n    // Custom logic first\n    var customGroup = this._customRouting(incident);\n    if (customGroup) {\n      return customGroup;\n    }\n    \n    // Fall back to baseline behavior\n    return IncidentUtils.prototype.getAssignmentGroup.call(this, incident);\n  },\n  \n  // Add new methods\n  _customRouting: function(incident) {\n    // Your custom logic here\n    return null;\n  },\n  \n  type: 'IncidentUtilsExtended'\n});</pre><h2>Update Set Conflict Resolution</h2><pre>// Pre-commit conflict check\nvar conflicts = new GlideRecord('sys_update_preview_problem');\nconflicts.addQuery('remote_update_set', 'UPDATE_SET_SYS_ID');\nconflicts.addQuery('type', 'conflict');\nconflicts.query();\n\nwhile (conflicts.next()) {\n  gs.warn('Conflict detected: ' + conflicts.description);\n  gs.info('Affected record: ' + conflicts.remote_update.name);\n  gs.info('Resolution needed: ' + conflicts.disposition);\n}</pre><h2>Remediation Prioritization</h2><ol><li><strong>Security vulnerabilities:</strong> Immediate</li><li><strong>Performance impacts:</strong> Within sprint</li><li><strong>Upgrade blockers:</strong> Before next upgrade</li><li><strong>Maintainability issues:</strong> Quarterly cleanup</li><li><strong>Code style violations:</strong> Opportunistic</li></ol>",
-    "category": "tutorial",
     "date": "Dec 14, 2025"
   }
 ]
