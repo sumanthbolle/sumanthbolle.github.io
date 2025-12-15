@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5489116590667279"
-     crossorigin="anonymous"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog - Sumanth Bolle | ServiceNow & AI Insights</title>
@@ -77,16 +75,29 @@
     .blog-modal-meta span{font-size:14px;color:var(--gray);display:flex;align-items:center;gap:6px}
     .blog-modal-article{font-size:17px;line-height:1.85;color:#333}
     .blog-modal-article h2{font-size:26px;margin:40px 0 20px;font-weight:600;color:var(--text)}
+    .blog-modal-article h3{font-size:20px;margin:30px 0 15px;font-weight:600;color:var(--text)}
     .blog-modal-article p{margin-bottom:24px}
     .blog-modal-article pre{background:#1d1d1f;color:#e5e5e5;padding:24px;border-radius:14px;overflow-x:auto;margin:28px 0;font-size:14px;line-height:1.6;font-family:'SF Mono',Monaco,monospace}
     .blog-modal-article ul,.blog-modal-article ol{margin:20px 0 20px 28px}
     .blog-modal-article li{margin-bottom:10px}
     .blog-modal-article code{background:rgba(0,0,0,0.06);padding:3px 8px;border-radius:6px;font-size:15px;font-family:'SF Mono',Monaco,monospace}
     .blog-modal-article pre code{background:none;padding:0}
-    
-    .back-link{display:inline-flex;align-items:center;gap:8px;color:var(--blue);text-decoration:none;font-size:15px;margin-bottom:24px;transition:gap 0.3s}
-    .back-link:hover{gap:12px}
-    .back-link svg{width:20px;height:20px;stroke:currentColor;fill:none}
+    .blog-modal-article table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+    .blog-modal-article th,.blog-modal-article td{border:1px solid rgba(0,0,0,0.1);padding:12px 16px;text-align:left}
+    .blog-modal-article th{background:var(--bg);font-weight:600}
+    .blog-modal-article .scenario-box{background:linear-gradient(135deg,#f8f9fa,#e9ecef);border-left:4px solid var(--blue);padding:24px;border-radius:0 12px 12px 0;margin:24px 0}
+    .blog-modal-article .tip-box{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-left:4px solid #4caf50;padding:20px;border-radius:0 12px 12px 0;margin:24px 0}
+    .blog-modal-article .warning-box{background:linear-gradient(135deg,#fff3e0,#ffe0b2);border-left:4px solid #ff9800;padding:20px;border-radius:0 12px 12px 0;margin:24px 0}
+    .blog-modal-article .series-nav{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0;padding:20px;background:#f8f9fa;border-radius:12px}
+    .blog-modal-article .series-nav a{padding:8px 16px;background:var(--white);border-radius:20px;font-size:13px;color:var(--text);text-decoration:none;border:1px solid rgba(0,0,0,0.1);transition:all 0.3s;cursor:pointer}
+    .blog-modal-article .series-nav a:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .blog-modal-article .series-nav a.current{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .blog-modal-article .chapter-nav{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:32px;border-top:2px solid rgba(0,0,0,0.1);gap:16px;flex-wrap:wrap}
+    .blog-modal-article .chapter-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;background:var(--blue);color:#fff;text-decoration:none;border-radius:12px;font-weight:500;font-size:15px;transition:all 0.3s;cursor:pointer;border:none}
+    .blog-modal-article .chapter-btn:hover{background:#0052a3;transform:translateY(-2px)}
+    .blog-modal-article .chapter-btn.prev{background:var(--white);color:var(--text);border:1px solid rgba(0,0,0,0.1)}
+    .blog-modal-article .chapter-btn.prev:hover{background:var(--bg)}
+    .blog-modal-article .chapter-btn.disabled{opacity:0.4;pointer-events:none}
     
     .empty-state{text-align:center;padding:80px 20px;color:var(--gray)}
     .empty-state h3{font-size:24px;margin-bottom:12px;color:var(--text)}
@@ -103,6 +114,8 @@
       .blog-grid{grid-template-columns:1fr}
       .blog-modal-body{padding:28px}
       .blog-modal-body h1{font-size:28px}
+      .blog-modal-article .series-nav{padding:12px}
+      .blog-modal-article .series-nav a{padding:6px 12px;font-size:12px}
     }
   </style>
 </head>
@@ -166,7 +179,970 @@
   <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
 
   <script>
+    // Define the JS tutorial series for navigation
+    var JS_TUTORIAL_SERIES = [
+      {id: 7, num: 1, title: "Introduction"},
+      {id: 8, num: 2, title: "GlideRecord Basics"},
+      {id: 9, num: 3, title: "Business Rules"},
+      {id: 10, num: 4, title: "Script Includes"},
+      {id: 11, num: 5, title: "GlideAjax"},
+      {id: 12, num: 6, title: "Advanced Patterns"}
+    ];
+
+    function getSeriesNav(currentId) {
+      var html = '<div class="series-nav">';
+      JS_TUTORIAL_SERIES.forEach(function(item) {
+        var cls = item.id == currentId ? 'current' : '';
+        html += '<a class="' + cls + '" onclick="openArticle(' + item.id + ')">' + item.num + '. ' + item.title + '</a>';
+      });
+      html += '</div>';
+      return html;
+    }
+
+    function getChapterNav(currentId) {
+      var idx = JS_TUTORIAL_SERIES.findIndex(function(x) { return x.id == currentId; });
+      var prev = idx > 0 ? JS_TUTORIAL_SERIES[idx - 1] : null;
+      var next = idx < JS_TUTORIAL_SERIES.length - 1 ? JS_TUTORIAL_SERIES[idx + 1] : null;
+      
+      var html = '<div class="chapter-nav">';
+      if (prev) {
+        html += '<button class="chapter-btn prev" onclick="openArticle(' + prev.id + ')">← ' + prev.num + '. ' + prev.title + '</button>';
+      } else {
+        html += '<span></span>';
+      }
+      if (next) {
+        html += '<button class="chapter-btn next" onclick="openArticle(' + next.id + ')">Next: ' + next.num + '. ' + next.title + ' →</button>';
+      } else {
+        html += '<span class="chapter-btn disabled">Series Complete ✓</span>';
+      }
+      html += '</div>';
+      return html;
+    }
+
     var DEFAULT_POSTS=[
+      {id:7,series:'js-tutorial',title:"JS for ServiceNow: 1. Introduction",excerpt:"Master JavaScript in ServiceNow from beginner to expert. Learn through real interview scenarios, step-by-step execution walkthroughs, and interactive examples.",category:"tutorial",date:"Dec 15, 2025",readTime:"15 min read",content:`<h2>Welcome to Your JavaScript Journey</h2>
+<p>Whether you're an HR analyst automating leave calculations, an IT service desk manager building incident workflows, or a finance professional streamlining approvals—this tutorial series will transform you into a confident ServiceNow developer.</p>
+
+<p>What makes this series different? We teach through the lens of <strong>real interview scenarios</strong>, show you <strong>exactly how code executes</strong> line by line, and give you <strong>working examples</strong> you can use immediately.</p>
+
+<h2>Why Server-Side First?</h2>
+<p>ServiceNow JavaScript differs fundamentally from web JavaScript. The platform's architecture demands a specific learning path. We start with GlideRecord because it's the gateway to everything else—once you master querying data, every other concept builds naturally.</p>
+
+<div class="tip-box"><strong>💡 The Golden Rule:</strong> GlideRecord → Business Rules → Script Includes → GlideAjax. Never skip ahead. Each concept depends on the previous one.</div>
+
+<h2>The Learning Path</h2>
+<table>
+<tr><th>Phase</th><th>Topics</th><th>Why This Order</th></tr>
+<tr><td>Weeks 1-2</td><td>JS Fundamentals + Platform Basics</td><td>Foundation for everything</td></tr>
+<tr><td>Weeks 3-4</td><td>GlideRecord + GlideSystem APIs</td><td>Core database operations</td></tr>
+<tr><td>Weeks 5-6</td><td>Business Rules (before, after, async)</td><td>Most important server script</td></tr>
+<tr><td>Weeks 7-8</td><td>Script Includes + Client Scripts</td><td>Reusability + client-side intro</td></tr>
+<tr><td>Weeks 9-10</td><td>GlideAjax + UI Policies</td><td>Client-server communication</td></tr>
+<tr><td>Weeks 11-12</td><td>Catalog Scripts + ACLs</td><td>Portal and security</td></tr>
+</table>
+
+<h2>How Each Tutorial Works</h2>
+<p>Every lesson follows the <strong>PRIMM framework</strong>—a research-backed approach that dramatically improves retention:</p>
+
+<h3>1. Interview Scenario</h3>
+<div class="scenario-box">
+<strong>🎯 SCENARIO:</strong> Your organization's Incident Management team reports that high-priority incidents assigned to inactive users remain unaddressed for days.<br><br>
+<strong>BUSINESS CONTEXT:</strong> User accounts become inactive when employees leave, but incidents may still reference them as assignees.<br><br>
+<strong>YOUR TASK:</strong> Write a Business Rule that automatically reassigns incidents from inactive users to the assignment group's manager.
+</div>
+
+<h3>2. Code Walkthrough with Labeled Steps</h3>
+<pre>// === STEP 1: CHECK TRIGGER CONDITION ===
+if (current.state == 6) {  // Resolved state
+    
+    // === STEP 2: VALIDATE REQUIRED DATA ===
+    if (gs.nil(current.assignment_group)) {
+        return;  // Can't proceed without group
+    }
+    
+    // === STEP 3: PERFORM DATABASE LOOKUP ===
+    var groupGr = new GlideRecord('sys_user_group');
+    groupGr.get(current.assignment_group);
+    
+    // === STEP 4: UPDATE THE RECORD ===
+    current.u_resolved_by_group = groupGr.getValue('name');
+}</pre>
+
+<h3>3. Execution Trace Table</h3>
+<table>
+<tr><th>Line</th><th>Action</th><th>current.state</th><th>Result</th></tr>
+<tr><td>1</td><td>Check if state == 6</td><td>6</td><td>true, continue</td></tr>
+<tr><td>4</td><td>Check if group is nil</td><td>-</td><td>false, continue</td></tr>
+<tr><td>8</td><td>Create GlideRecord</td><td>-</td><td>groupGr initialized</td></tr>
+<tr><td>9</td><td>Query for group</td><td>-</td><td>1 record found</td></tr>
+<tr><td>12</td><td>Set field value</td><td>-</td><td>"IT Support" assigned</td></tr>
+</table>
+
+<h2>For Non-Programmers: The Spreadsheet Bridge</h2>
+<p>Think of GlideRecord as a "database formula"—just like Excel formulas filter and transform data:</p>
+
+<table>
+<tr><th>Excel Concept</th><th>ServiceNow Equivalent</th></tr>
+<tr><td>=SUMIF(range, criteria)</td><td>GlideAggregate with addQuery</td></tr>
+<tr><td>=VLOOKUP(value, table)</td><td>gr.get(sys_id)</td></tr>
+<tr><td>Filter by column value</td><td>gr.addQuery('field', 'value')</td></tr>
+<tr><td>Sort A-Z</td><td>gr.orderBy('field')</td></tr>
+</table>
+
+<div class="tip-box"><strong>🚀 Pro Tip:</strong> Get a free Personal Developer Instance at <a href="https://developer.servicenow.com" target="_blank">developer.servicenow.com</a> to follow along with hands-on practice.</div>
+
+<p>Ready to start? Click <strong>Next</strong> to dive into GlideRecord fundamentals!</p>`},
+
+      {id:8,series:'js-tutorial',title:"JS for ServiceNow: 2. GlideRecord Basics",excerpt:"Master the most important API in ServiceNow. Learn to query, create, update, and delete records with real interview scenarios and execution traces.",category:"tutorial",date:"Dec 15, 2025",readTime:"20 min read",content:`<h2>The Foundation of Everything</h2>
+<p>GlideRecord is the single most important skill for ServiceNow development. It's how you interact with the database—querying, creating, updating, and deleting records. Master this, and everything else becomes easier.</p>
+
+<div class="scenario-box">
+<strong>🎯 INTERVIEW SCENARIO:</strong> "Write a script that finds all active high-priority incidents assigned to the 'Network' group and updates their state to 'In Progress' if they've been open for more than 24 hours."<br><br>
+<strong>WHAT THEY'RE TESTING:</strong> Query construction, date comparisons, efficient updates, and understanding of when conditions.
+</div>
+
+<h2>Basic Query Pattern</h2>
+<p>Every GlideRecord interaction follows the same pattern: Create → Configure → Query → Iterate</p>
+
+<pre>// === CREATE: Initialize GlideRecord on a table ===
+var gr = new GlideRecord('incident');
+
+// === CONFIGURE: Add your conditions ===
+gr.addQuery('active', true);
+gr.addQuery('priority', 1);  // High priority
+
+// === QUERY: Execute the database query ===
+gr.query();
+
+// === ITERATE: Loop through results ===
+while (gr.next()) {
+    gs.info('Found: ' + gr.getValue('number'));
+}</pre>
+
+<h3>Execution Trace</h3>
+<table>
+<tr><th>Step</th><th>What Happens</th><th>Database Impact</th></tr>
+<tr><td>new GlideRecord('incident')</td><td>Creates object pointing to incident table</td><td>None yet</td></tr>
+<tr><td>addQuery('active', true)</td><td>Adds WHERE active=true to internal query</td><td>None yet</td></tr>
+<tr><td>addQuery('priority', 1)</td><td>Adds AND priority=1 to internal query</td><td>None yet</td></tr>
+<tr><td>query()</td><td>Executes: SELECT * FROM incident WHERE active=true AND priority=1</td><td>Database hit!</td></tr>
+<tr><td>next()</td><td>Moves pointer to first/next record</td><td>None</td></tr>
+</table>
+
+<h2>The get() Shortcut</h2>
+<p>When you need exactly ONE record by sys_id or a unique field:</p>
+
+<pre>// By sys_id (most common)
+var gr = new GlideRecord('incident');
+if (gr.get('a1b2c3d4...')) {
+    gs.info('Found: ' + gr.getValue('number'));
+}
+
+// By any unique field
+var userGr = new GlideRecord('sys_user');
+if (userGr.get('user_name', 'admin')) {
+    gs.info('Admin sys_id: ' + userGr.getUniqueValue());
+}</pre>
+
+<div class="warning-box"><strong>⚠️ ANTI-PATTERN #1: Null Variable Queries</strong><br><br>
+When an undefined variable passes to addQuery(), ServiceNow returns ALL records where that field is NULL—potentially millions!
+<pre>// ❌ DANGEROUS
+var assignedTo;  // undefined!
+var gr = new GlideRecord('incident');
+gr.addQuery('assigned_to', assignedTo);
+gr.query();  // Returns ALL incidents with no assignee!
+
+// ✅ SAFE - always validate
+if (assignedTo) {
+    gr.addQuery('assigned_to', assignedTo);
+}</pre></div>
+
+<h2>Creating Records</h2>
+<pre>var gr = new GlideRecord('incident');
+gr.initialize();  // Prepares a new empty record
+gr.setValue('short_description', 'Network outage in Building A');
+gr.setValue('category', 'network');
+gr.setValue('priority', 2);
+var newSysId = gr.insert();  // Returns sys_id of new record
+
+gs.info('Created incident: ' + newSysId);</pre>
+
+<h2>Updating Records</h2>
+<pre>var gr = new GlideRecord('incident');
+gr.addQuery('number', 'INC0010001');
+gr.query();
+
+if (gr.next()) {
+    gr.setValue('state', 2);  // In Progress
+    gr.setValue('assigned_to', gs.getUserID());
+    gr.update();  // Saves changes
+}</pre>
+
+<div class="warning-box"><strong>⚠️ ANTI-PATTERN #2: The GlideElement Pointer Problem</strong><br><br>
+<code>gr.field</code> returns a GlideElement (pointer), not the actual value. This causes bugs when building arrays:
+<pre>// ❌ WRONG - all items become the last record's sys_id
+var ids = [];
+while (gr.next()) {
+    ids.push(gr.sys_id);  // Pushing a pointer!
+}
+
+// ✅ CORRECT - use getValue()
+var ids = [];
+while (gr.next()) {
+    ids.push(gr.getValue('sys_id'));  // Pushing the actual value
+}</pre></div>
+
+<h2>Deleting Records</h2>
+<pre>// Delete single record
+var gr = new GlideRecord('incident');
+if (gr.get('sys_id_here')) {
+    gr.deleteRecord();
+}
+
+// Delete multiple records (use with caution!)
+var gr = new GlideRecord('incident');
+gr.addQuery('state', 7);  // Closed
+gr.addQuery('sys_created_on', '<', gs.daysAgo(365));
+gr.deleteMultiple();  // Deletes ALL matching records</pre>
+
+<h2>Essential Query Operators</h2>
+<table>
+<tr><th>Operator</th><th>Example</th><th>Meaning</th></tr>
+<tr><td>=</td><td>addQuery('priority', 1)</td><td>Equals</td></tr>
+<tr><td>!=</td><td>addQuery('state', '!=', 6)</td><td>Not equals</td></tr>
+<tr><td>></td><td>addQuery('priority', '>', 2)</td><td>Greater than</td></tr>
+<tr><td>IN</td><td>addQuery('state', 'IN', '1,2,3')</td><td>In list</td></tr>
+<tr><td>CONTAINS</td><td>addQuery('short_description', 'CONTAINS', 'network')</td><td>Contains text</td></tr>
+<tr><td>ISEMPTY</td><td>addQuery('assigned_to', 'ISEMPTY', '')</td><td>Field is empty</td></tr>
+</table>
+
+<h2>Performance: setLimit()</h2>
+<div class="tip-box"><strong>💡 Always use setLimit() when you only need a few records:</strong>
+<pre>var gr = new GlideRecord('incident');
+gr.addQuery('active', true);
+gr.setLimit(10);  // Only fetch 10 records max
+gr.query();</pre>
+Without setLimit(), you might accidentally query millions of records!</div>
+
+<h2>Try It Yourself</h2>
+<div class="scenario-box">
+<strong>🏋️ CHALLENGE:</strong> Write a script that:<br>
+1. Finds all incidents in "New" state (state=1)<br>
+2. That have been open for more than 48 hours<br>
+3. And have no assigned user<br>
+4. Update their priority to 2 (High)<br><br>
+<em>Hint: Use gs.hoursAgo(48) for time comparison</em>
+</div>`},
+
+      {id:9,series:'js-tutorial',title:"JS for ServiceNow: 3. Business Rules",excerpt:"Learn when and how to use Business Rules effectively. Understand before vs after rules, avoid common pitfalls, and master the 'current' and 'previous' objects.",category:"tutorial",date:"Dec 15, 2025",readTime:"22 min read",content:`<h2>The Heart of Server-Side Logic</h2>
+<p>Business Rules are scripts that run when records are inserted, updated, deleted, or queried. They're the most powerful—and most commonly misused—server-side scripting tool in ServiceNow.</p>
+
+<div class="scenario-box">
+<strong>🎯 INTERVIEW SCENARIO:</strong> "An incident's priority should automatically escalate to P1 if it remains unassigned for more than 4 hours. How would you implement this?"<br><br>
+<strong>WHAT THEY'RE TESTING:</strong> Understanding of rule timing, when to use scheduled jobs vs business rules, and efficient database operations.
+</div>
+
+<h2>When Do Business Rules Run?</h2>
+<table>
+<tr><th>Type</th><th>When It Runs</th><th>Use Case</th></tr>
+<tr><td><strong>Before</strong></td><td>Before record is saved to database</td><td>Validate data, set default values, modify current record</td></tr>
+<tr><td><strong>After</strong></td><td>After record is saved to database</td><td>Update related records, send notifications, create tasks</td></tr>
+<tr><td><strong>Async</strong></td><td>After save, in background</td><td>Heavy processing, external API calls</td></tr>
+<tr><td><strong>Display</strong></td><td>When form loads (query)</td><td>Set up client-side variables (g_scratchpad)</td></tr>
+</table>
+
+<h2>The 'current' and 'previous' Objects</h2>
+<pre>// 'current' = the record being saved (with new values)
+// 'previous' = the record before changes (read-only)
+
+// Example: Detect if priority changed
+if (current.priority.changesTo(1)) {
+    gs.info('Priority escalated to P1!');
+}
+
+// Example: Detect any change to a field
+if (current.state.changes()) {
+    gs.info('State changed from ' + previous.state + ' to ' + current.state);
+}</pre>
+
+<h3>Execution Trace: Before Rule</h3>
+<table>
+<tr><th>Step</th><th>current.state</th><th>previous.state</th><th>Database</th></tr>
+<tr><td>User clicks Save</td><td>3 (new value)</td><td>1 (old value)</td><td>Still has 1</td></tr>
+<tr><td>Before rule runs</td><td>3</td><td>1</td><td>Still has 1</td></tr>
+<tr><td>Rule modifies current</td><td>Modified</td><td>1</td><td>Still has 1</td></tr>
+<tr><td>After rule completes</td><td>-</td><td>-</td><td>NOW saves current</td></tr>
+</table>
+
+<div class="warning-box"><strong>⚠️ ANTI-PATTERN: update() in Before Rules</strong><br><br>
+Never call <code>current.update()</code> in a Before rule! The system automatically saves current after the rule runs.
+<pre>// ❌ WRONG - causes double save and recursion risk
+(function executeRule(current, previous) {
+    current.priority = 1;
+    current.update();  // DON'T DO THIS!
+})(current, previous);
+
+// ✅ CORRECT - just set the value
+(function executeRule(current, previous) {
+    current.priority = 1;
+    // No update() needed - system saves automatically
+})(current, previous);</pre></div>
+
+<h2>Before Rule Example: Auto-Set Assignment Group</h2>
+<div class="scenario-box">
+<strong>🎯 SCENARIO:</strong> When a user selects a Category of "Network", automatically set the Assignment Group to "Network Support".
+</div>
+
+<pre>// Business Rule: Auto-assign Network Incidents
+// Table: incident
+// When: before insert, before update
+// Condition: current.category.changesTo('network')
+
+(function executeRule(current, previous) {
+    
+    // === STEP 1: Find the Network Support group ===
+    var groupGr = new GlideRecord('sys_user_group');
+    groupGr.addQuery('name', 'Network Support');
+    groupGr.query();
+    
+    // === STEP 2: Set assignment group if found ===
+    if (groupGr.next()) {
+        current.assignment_group = groupGr.getUniqueValue();
+    }
+    
+})(current, previous);</pre>
+
+<h2>After Rule Example: Create Follow-up Task</h2>
+<div class="scenario-box">
+<strong>🎯 SCENARIO:</strong> When an incident is resolved, automatically create a follow-up task for customer satisfaction survey.
+</div>
+
+<pre>// Business Rule: Create Survey Task on Resolution
+// Table: incident
+// When: after update
+// Condition: current.state.changesTo(6)
+
+(function executeRule(current, previous) {
+    
+    // === CREATE FOLLOW-UP TASK ===
+    var task = new GlideRecord('task');
+    task.initialize();
+    task.short_description = 'Customer survey for ' + current.number;
+    task.parent = current.getUniqueValue();
+    task.assigned_to = current.assigned_to;
+    task.description = 'Please contact customer to complete satisfaction survey.';
+    task.insert();
+    
+    gs.info('Created follow-up task for ' + current.number);
+    
+})(current, previous);</pre>
+
+<h2>Condition Field vs Script Conditions</h2>
+<p>Use the Condition field for simple checks—it's faster and clearer:</p>
+<table>
+<tr><th>Approach</th><th>When to Use</th></tr>
+<tr><td>Condition field: <code>current.priority == 1</code></td><td>Simple field comparisons</td></tr>
+<tr><td>Script: <code>if (complexLogic()) {...}</code></td><td>Multiple conditions, lookups, calculations</td></tr>
+</table>
+
+<div class="tip-box"><strong>💡 Performance Tip:</strong> Put as much logic as possible in the Condition field. It's evaluated before the script even loads, saving processing time when conditions aren't met.</div>
+
+<h2>Controlling Execution Order</h2>
+<pre>// Order field: Lower numbers run first (100, 200, 300...)
+// Use 100-increment spacing for easy insertion later
+
+Order 100: Validate required fields
+Order 200: Set default values  
+Order 300: Calculate derived fields
+Order 400: Send notifications</pre>
+
+<h2>Preventing Recursion</h2>
+<pre>// Use current.setWorkflow(false) to prevent Business Rules 
+// from triggering on your update
+
+var gr = new GlideRecord('incident');
+if (gr.get(relatedIncidentId)) {
+    gr.setWorkflow(false);  // Skip Business Rules
+    gr.autoSysFields(false); // Don't update sys_updated_on/by
+    gr.setValue('state', 6);
+    gr.update();
+}</pre>
+
+<h2>Try It Yourself</h2>
+<div class="scenario-box">
+<strong>🏋️ CHALLENGE:</strong> Create a Before Business Rule that:<br>
+1. Triggers when an incident's state changes to "Resolved" (6)<br>
+2. Checks if there's a resolution code<br>
+3. If no resolution code, sets one based on category<br>
+4. Logs the action using gs.info()<br><br>
+<em>Hint: Use current.state.changesTo(6) in the condition</em>
+</div>`},
+
+      {id:10,series:'js-tutorial',title:"JS for ServiceNow: 4. Script Includes",excerpt:"Build reusable code libraries with Script Includes. Learn the difference between classless and class-based includes, and when to use client-callable scripts.",category:"tutorial",date:"Dec 15, 2025",readTime:"18 min read",content:`<h2>Write Once, Use Everywhere</h2>
+<p>Script Includes are reusable server-side code libraries. Instead of copying the same code into multiple Business Rules, you write it once in a Script Include and call it from anywhere.</p>
+
+<div class="scenario-box">
+<strong>🎯 INTERVIEW SCENARIO:</strong> "Your team has the same incident validation logic duplicated across 5 Business Rules. How would you refactor this?"<br><br>
+<strong>WHAT THEY'RE TESTING:</strong> Understanding of code reusability, Script Include patterns, and maintainability best practices.
+</div>
+
+<h2>Two Types of Script Includes</h2>
+
+<h3>1. Classless (Simple Function Library)</h3>
+<pre>// Script Include: IncidentUtils
+// Client callable: false
+
+function getIncidentCount(userId) {
+    var count = 0;
+    var gr = new GlideAggregate('incident');
+    gr.addQuery('assigned_to', userId);
+    gr.addQuery('active', true);
+    gr.addAggregate('COUNT');
+    gr.query();
+    if (gr.next()) {
+        count = parseInt(gr.getAggregate('COUNT'));
+    }
+    return count;
+}
+
+function isVIPUser(userId) {
+    var gr = new GlideRecord('sys_user');
+    if (gr.get(userId)) {
+        return gr.getValue('vip') == 'true';
+    }
+    return false;
+}</pre>
+
+<p><strong>Usage in Business Rule:</strong></p>
+<pre>var count = getIncidentCount(current.caller_id);
+if (count > 10 && isVIPUser(current.caller_id)) {
+    current.priority = 1;
+}</pre>
+
+<h3>2. Class-Based (Object-Oriented)</h3>
+<pre>// Script Include: IncidentHelper
+// Client callable: false
+
+var IncidentHelper = Class.create();
+IncidentHelper.prototype = {
+    
+    initialize: function(incidentGr) {
+        this.incident = incidentGr;
+    },
+    
+    isHighPriority: function() {
+        return this.incident.getValue('priority') <= 2;
+    },
+    
+    getAssignmentGroupName: function() {
+        var group = this.incident.assignment_group.getRefRecord();
+        return group.getValue('name') || 'Unassigned';
+    },
+    
+    escalate: function(reason) {
+        this.incident.priority = 1;
+        this.incident.work_notes = 'Escalated: ' + reason;
+        return this.incident.update();
+    },
+    
+    type: 'IncidentHelper'
+};</pre>
+
+<p><strong>Usage in Business Rule:</strong></p>
+<pre>var helper = new IncidentHelper(current);
+
+if (!helper.isHighPriority()) {
+    var groupName = helper.getAssignmentGroupName();
+    gs.info('Low priority incident for group: ' + groupName);
+}
+
+// Escalate if VIP caller
+if (isVIPUser(current.caller_id)) {
+    helper.escalate('VIP customer');
+}</pre>
+
+<h2>Execution Flow</h2>
+<table>
+<tr><th>Step</th><th>What Happens</th></tr>
+<tr><td>1. Business Rule starts</td><td>Script loads</td></tr>
+<tr><td>2. new IncidentHelper(current)</td><td>Creates instance, runs initialize()</td></tr>
+<tr><td>3. helper.isHighPriority()</td><td>Calls method on the instance</td></tr>
+<tr><td>4. this.incident.getValue()</td><td>Accesses the GlideRecord passed in initialize</td></tr>
+</table>
+
+<h2>Client-Callable Script Includes</h2>
+<p>These can be called from client-side scripts via GlideAjax (covered in next chapter):</p>
+
+<pre>// Script Include: UserAjax
+// Client callable: ✅ TRUE
+
+var UserAjax = Class.create();
+UserAjax.prototype = Object.extendsObject(AbstractAjaxProcessor, {
+    
+    // Method callable from client
+    getUserEmail: function() {
+        var userId = this.getParameter('sysparm_user_id');
+        var gr = new GlideRecord('sys_user');
+        if (gr.get(userId)) {
+            return gr.getValue('email');
+        }
+        return '';
+    },
+    
+    // Another client-callable method
+    isUserActive: function() {
+        var userId = this.getParameter('sysparm_user_id');
+        var gr = new GlideRecord('sys_user');
+        if (gr.get(userId)) {
+            return gr.getValue('active');
+        }
+        return 'false';
+    },
+    
+    type: 'UserAjax'
+});</pre>
+
+<div class="warning-box"><strong>⚠️ Security Warning:</strong> Client-callable Script Includes are accessible from the browser. Never expose sensitive operations or bypass ACLs in these scripts!</div>
+
+<h2>Best Practices</h2>
+
+<div class="tip-box"><strong>💡 Naming Conventions:</strong>
+<ul>
+<li><code>*Utils</code> - Utility functions (IncidentUtils, UserUtils)</li>
+<li><code>*Helper</code> - Class-based helpers (IncidentHelper)</li>
+<li><code>*Ajax</code> - Client-callable includes (UserAjax)</li>
+<li><code>*Service</code> - Integration/external service wrappers</li>
+</ul></div>
+
+<pre>// ✅ GOOD: Single responsibility
+var IncidentValidator = Class.create();  // Only validation
+var IncidentNotifier = Class.create();   // Only notifications
+
+// ❌ BAD: God class that does everything
+var IncidentDoEverything = Class.create(); // Validation + Notification + Reporting + ...</pre>
+
+<h2>Extending Classes</h2>
+<pre>// Base class
+var BaseValidator = Class.create();
+BaseValidator.prototype = {
+    initialize: function() {},
+    validate: function() { return true; },
+    type: 'BaseValidator'
+};
+
+// Extended class
+var IncidentValidator = Class.create();
+IncidentValidator.prototype = Object.extendsObject(BaseValidator, {
+    
+    validate: function() {
+        // Call parent method first
+        if (!BaseValidator.prototype.validate.call(this)) {
+            return false;
+        }
+        // Add incident-specific validation
+        return this.validateCategory();
+    },
+    
+    validateCategory: function() {
+        // Custom logic
+        return true;
+    },
+    
+    type: 'IncidentValidator'
+});</pre>
+
+<h2>Try It Yourself</h2>
+<div class="scenario-box">
+<strong>🏋️ CHALLENGE:</strong> Create a class-based Script Include called "TaskHelper" that:<br>
+1. Accepts a task GlideRecord in initialize()<br>
+2. Has a method isOverdue() that returns true if past due date<br>
+3. Has a method getDaysSinceCreated() that returns the number<br>
+4. Has a method assignToMe() that sets assigned_to to current user<br><br>
+<em>Hint: Use GlideDateTime for date calculations</em>
+</div>`},
+
+      {id:11,series:'js-tutorial',title:"JS for ServiceNow: 5. GlideAjax",excerpt:"Connect client and server with GlideAjax. Learn asynchronous patterns, callback handling, and how to build responsive forms without page reloads.",category:"tutorial",date:"Dec 15, 2025",readTime:"20 min read",content:`<h2>Client Meets Server</h2>
+<p>GlideAjax lets client-side scripts call server-side Script Includes without reloading the page. It's essential for dynamic forms, real-time validation, and fetching data based on user input.</p>
+
+<div class="scenario-box">
+<strong>🎯 INTERVIEW SCENARIO:</strong> "When a user selects a Configuration Item, you need to display its current status and owner from the server. How would you implement this without a page reload?"<br><br>
+<strong>WHAT THEY'RE TESTING:</strong> Understanding of client-server communication, asynchronous callbacks, and proper GlideAjax implementation.
+</div>
+
+<h2>The Two-Part Pattern</h2>
+<p>GlideAjax requires TWO pieces working together:</p>
+
+<h3>Part 1: Server-Side Script Include</h3>
+<pre>// Script Include: CIInfoAjax
+// Client callable: ✅ TRUE (REQUIRED!)
+
+var CIInfoAjax = Class.create();
+CIInfoAjax.prototype = Object.extendsObject(AbstractAjaxProcessor, {
+    
+    getCIDetails: function() {
+        var ciId = this.getParameter('sysparm_ci_id');
+        var result = {};
+        
+        var gr = new GlideRecord('cmdb_ci');
+        if (gr.get(ciId)) {
+            result.name = gr.getValue('name');
+            result.status = gr.getDisplayValue('operational_status');
+            result.owner = gr.getDisplayValue('owned_by');
+            result.location = gr.getDisplayValue('location');
+        }
+        
+        return JSON.stringify(result);
+    },
+    
+    type: 'CIInfoAjax'
+});</pre>
+
+<h3>Part 2: Client-Side Script (Client Script or UI Policy)</h3>
+<pre>// Client Script: Fetch CI Details
+// Type: onChange
+// Field: cmdb_ci
+
+function onChange(control, oldValue, newValue, isLoading) {
+    if (isLoading || newValue === '') {
+        return;
+    }
+    
+    // === STEP 1: Create GlideAjax instance ===
+    var ga = new GlideAjax('CIInfoAjax');
+    
+    // === STEP 2: Set the method to call ===
+    ga.addParam('sysparm_name', 'getCIDetails');
+    
+    // === STEP 3: Pass parameters ===
+    ga.addParam('sysparm_ci_id', newValue);
+    
+    // === STEP 4: Execute with callback ===
+    ga.getXMLAnswer(function(response) {
+        var data = JSON.parse(response);
+        
+        // Update form fields with server data
+        g_form.setValue('u_ci_status', data.status);
+        g_form.setValue('u_ci_owner', data.owner);
+        
+        // Show info message
+        g_form.addInfoMessage('CI: ' + data.name + ' at ' + data.location);
+    });
+}</pre>
+
+<h2>Execution Flow</h2>
+<table>
+<tr><th>Step</th><th>Location</th><th>What Happens</th></tr>
+<tr><td>1</td><td>Browser</td><td>User selects a CI</td></tr>
+<tr><td>2</td><td>Browser</td><td>onChange fires, creates GlideAjax</td></tr>
+<tr><td>3</td><td>Network</td><td>AJAX request sent to server</td></tr>
+<tr><td>4</td><td>Server</td><td>CIInfoAjax.getCIDetails() executes</td></tr>
+<tr><td>5</td><td>Server</td><td>GlideRecord queries database</td></tr>
+<tr><td>6</td><td>Network</td><td>JSON response sent back</td></tr>
+<tr><td>7</td><td>Browser</td><td>Callback function runs with response</td></tr>
+<tr><td>8</td><td>Browser</td><td>Form fields updated, message shown</td></tr>
+</table>
+
+<div class="warning-box"><strong>⚠️ ANTI-PATTERN: Synchronous GlideAjax</strong><br><br>
+Never use <code>getXMLWait()</code> - it freezes the browser until the server responds!
+<pre>// ❌ NEVER DO THIS - blocks the entire browser
+var ga = new GlideAjax('MyAjax');
+ga.addParam('sysparm_name', 'myMethod');
+ga.getXMLWait();  // Browser freezes here!
+var answer = ga.getAnswer();
+
+// ✅ ALWAYS use async callback
+ga.getXMLAnswer(function(answer) {
+    // Handle response here
+});</pre></div>
+
+<h2>Returning Multiple Values</h2>
+<pre>// Server-side: Return JSON
+getCIDetails: function() {
+    var result = {
+        name: gr.getValue('name'),
+        status: gr.getDisplayValue('operational_status'),
+        owner: gr.getDisplayValue('owned_by'),
+        supportGroup: gr.getDisplayValue('support_group')
+    };
+    return JSON.stringify(result);
+}
+
+// Client-side: Parse JSON
+ga.getXMLAnswer(function(response) {
+    var data = JSON.parse(response);
+    g_form.setValue('field1', data.name);
+    g_form.setValue('field2', data.status);
+    g_form.setValue('field3', data.owner);
+});</pre>
+
+<h2>Error Handling</h2>
+<pre>// Client-side with error handling
+ga.getXMLAnswer(function(response) {
+    try {
+        if (!response || response === 'null') {
+            g_form.addErrorMessage('Could not retrieve CI information');
+            return;
+        }
+        var data = JSON.parse(response);
+        // Process data...
+    } catch (e) {
+        g_form.addErrorMessage('Error processing response: ' + e.message);
+    }
+});</pre>
+
+<div class="tip-box"><strong>💡 isLoading Check:</strong> Always check <code>isLoading</code> in onChange scripts to prevent GlideAjax calls when the form first loads:
+<pre>function onChange(control, oldValue, newValue, isLoading) {
+    if (isLoading) return;  // Don't run on form load
+    if (!newValue) return;  // Don't run if field cleared
+    // ... rest of code
+}</pre></div>
+
+<h2>Advanced: Chaining Multiple Calls</h2>
+<pre>// Get CI details, then get related incidents
+function fetchCIAndIncidents(ciId) {
+    var ga1 = new GlideAjax('CIInfoAjax');
+    ga1.addParam('sysparm_name', 'getCIDetails');
+    ga1.addParam('sysparm_ci_id', ciId);
+    
+    ga1.getXMLAnswer(function(ciResponse) {
+        var ciData = JSON.parse(ciResponse);
+        g_form.setValue('u_ci_name', ciData.name);
+        
+        // Now fetch incidents for this CI
+        var ga2 = new GlideAjax('IncidentAjax');
+        ga2.addParam('sysparm_name', 'getOpenIncidents');
+        ga2.addParam('sysparm_ci_id', ciId);
+        
+        ga2.getXMLAnswer(function(incResponse) {
+            var incData = JSON.parse(incResponse);
+            g_form.setValue('u_open_incidents', incData.count);
+        });
+    });
+}</pre>
+
+<h2>Try It Yourself</h2>
+<div class="scenario-box">
+<strong>🏋️ CHALLENGE:</strong> Build a GlideAjax solution that:<br>
+1. Script Include "LocationAjax" with method "getLocationDetails"<br>
+2. Accepts a location sys_id parameter<br>
+3. Returns: building name, city, country, and manager name<br>
+4. Client Script that calls this when a Location field changes<br>
+5. Displays results in an info message<br><br>
+<em>Hint: Don't forget Client callable = true!</em>
+</div>`},
+
+      {id:12,series:'js-tutorial',title:"JS for ServiceNow: 6. Advanced Patterns",excerpt:"Master performance optimization, scoped applications, GlideQuery, and architectural patterns used by senior ServiceNow developers.",category:"tutorial",date:"Dec 15, 2025",readTime:"25 min read",content:`<h2>Level Up Your ServiceNow Development</h2>
+<p>You've mastered the fundamentals. Now let's explore the patterns and techniques that separate senior developers from the rest—performance optimization, modern APIs, and architectural best practices.</p>
+
+<div class="scenario-box">
+<strong>🎯 INTERVIEW SCENARIO:</strong> "Your business rule is causing page load times of 15+ seconds. How would you diagnose and fix this?"<br><br>
+<strong>WHAT THEY'RE TESTING:</strong> Understanding of performance profiling, N+1 queries, batch operations, and optimization techniques.
+</div>
+
+<h2>The N+1 Query Problem</h2>
+<p>The most common performance killer in ServiceNow:</p>
+
+<pre>// ❌ N+1 PROBLEM: 1 query + N queries = slow!
+var incGr = new GlideRecord('incident');
+incGr.addQuery('active', true);
+incGr.query();  // 1 query
+
+while (incGr.next()) {
+    // This runs a NEW query for EACH incident!
+    var userGr = new GlideRecord('sys_user');
+    userGr.get(incGr.assigned_to);  // N queries!
+    gs.info(userGr.getValue('email'));
+}
+// Total: 1 + 1000 = 1001 queries for 1000 incidents!</pre>
+
+<pre>// ✅ SOLUTION: Batch lookup with IN clause
+var incGr = new GlideRecord('incident');
+incGr.addQuery('active', true);
+incGr.query();
+
+// Collect all user IDs first
+var userIds = [];
+while (incGr.next()) {
+    var userId = incGr.getValue('assigned_to');
+    if (userId && userIds.indexOf(userId) === -1) {
+        userIds.push(userId);
+    }
+}
+
+// Single query for all users
+var userMap = {};
+var userGr = new GlideRecord('sys_user');
+userGr.addQuery('sys_id', 'IN', userIds.join(','));
+userGr.query();  // 1 query!
+while (userGr.next()) {
+    userMap[userGr.getUniqueValue()] = userGr.getValue('email');
+}
+
+// Total: 2 queries regardless of incident count!</pre>
+
+<h2>GlideQuery: The Modern API</h2>
+<p>GlideQuery is a newer, more readable API for database operations:</p>
+
+<pre>// Traditional GlideRecord
+var gr = new GlideRecord('incident');
+gr.addQuery('active', true);
+gr.addQuery('priority', '<=', 2);
+gr.orderByDesc('sys_created_on');
+gr.setLimit(10);
+gr.query();
+var results = [];
+while (gr.next()) {
+    results.push({
+        number: gr.getValue('number'),
+        short_description: gr.getValue('short_description')
+    });
+}
+
+// GlideQuery equivalent - cleaner and chainable!
+var results = new GlideQuery('incident')
+    .where('active', true)
+    .where('priority', '<=', 2)
+    .orderByDesc('sys_created_on')
+    .limit(10)
+    .select('number', 'short_description')
+    .toArray(10);</pre>
+
+<h3>GlideQuery Aggregations</h3>
+<pre>// Count incidents by priority
+var counts = new GlideQuery('incident')
+    .where('active', true)
+    .groupBy('priority')
+    .aggregate('COUNT')
+    .toArray(100);
+
+// Result: [{priority: 1, count: 45}, {priority: 2, count: 123}, ...]</pre>
+
+<h2>Scoped Application Patterns</h2>
+<p>In scoped apps, you have isolated namespaces and different API access:</p>
+
+<pre>// Accessing tables from other scopes
+var gr = new GlideRecord('x_other_scope_custom_table');
+// May fail if cross-scope access not configured!
+
+// Check if table is accessible
+if (GlideTableDescriptor.get('x_other_scope_custom_table').isValid()) {
+    // Safe to query
+}
+
+// Scoped GlideRecord for your own tables
+var gr = new GlideRecord('x_myapp_mytable');  // Full table name in scopes</pre>
+
+<div class="tip-box"><strong>💡 Scoped Best Practice:</strong> Use Application Properties instead of System Properties:
+<pre>// Global scope
+gs.getProperty('my.property');
+
+// Scoped application
+gs.getProperty('x_myapp.my.property');
+// Or use Application Properties module</pre></div>
+
+<h2>Efficient Record Updates</h2>
+<pre>// ❌ SLOW: Update in loop
+var gr = new GlideRecord('incident');
+gr.addQuery('state', 1);
+gr.query();
+while (gr.next()) {
+    gr.setValue('priority', 3);
+    gr.update();  // Database write for EACH record!
+}
+
+// ✅ FAST: Use updateMultiple for bulk changes
+var gr = new GlideRecord('incident');
+gr.addQuery('state', 1);
+gr.setValue('priority', 3);
+gr.updateMultiple();  // Single operation!
+
+// ⚠️ Note: updateMultiple skips Business Rules!
+// Use setWorkflow(true) if you need them:
+gr.setWorkflow(true);
+gr.updateMultiple();</pre>
+
+<h2>Recursive Protection Pattern</h2>
+<pre>// Prevent infinite loops in Business Rules
+var recursionCheck = 'BR_UpdateRelated_' + current.getUniqueValue();
+
+if (gs.nil(gs.getSession().getClientData(recursionCheck))) {
+    // Set flag before making changes
+    gs.getSession().putClientData(recursionCheck, 'true');
+    
+    try {
+        // Your update logic here
+        var related = new GlideRecord('related_table');
+        related.addQuery('parent', current.getUniqueValue());
+        related.query();
+        while (related.next()) {
+            related.setValue('status', 'Updated');
+            related.update();  // Won't trigger infinite loop
+        }
+    } finally {
+        // Always clear flag
+        gs.getSession().clearClientData(recursionCheck);
+    }
+}</pre>
+
+<h2>Event-Driven Architecture</h2>
+<pre>// Instead of doing everything in Business Rules,
+// fire events and handle them separately
+
+// Business Rule: Fire event
+gs.eventQueue('x_myapp.incident.escalated', current, current.priority, current.assigned_to);
+
+// Script Action: Handle event (runs async)
+// Event: x_myapp.incident.escalated
+var incident = event.parm1;
+var priority = event.parm2;
+
+// Send notifications, update dashboards, etc.
+// This runs in background - doesn't slow down the user!</pre>
+
+<h2>Debugging Techniques</h2>
+<pre>// Session Debug for GlideRecord queries
+gs.setSessionDebug('SQL', true);
+// ... run your code ...
+gs.setSessionDebug('SQL', false);
+// Check session log for actual SQL queries
+
+// Transaction log for performance
+var startTime = new GlideDateTime();
+// ... your code ...
+var endTime = new GlideDateTime();
+var duration = GlideDateTime.subtract(startTime, endTime);
+gs.info('Operation took: ' + duration.getDisplayValue());</pre>
+
+<h2>Architecture Decision Guide</h2>
+<table>
+<tr><th>Need</th><th>Use</th><th>Avoid</th></tr>
+<tr><td>Simple field default</td><td>Before Business Rule</td><td>Client Script (runs too late)</td></tr>
+<tr><td>Update related records</td><td>After Business Rule</td><td>Before Rule (current not saved yet)</td></tr>
+<tr><td>Heavy processing</td><td>Async Business Rule / Event</td><td>Sync rules (blocks user)</td></tr>
+<tr><td>Scheduled task</td><td>Scheduled Job</td><td>Business Rule with timer logic</td></tr>
+<tr><td>Client-server data</td><td>GlideAjax</td><td>Synchronous API calls</td></tr>
+<tr><td>Complex workflow</td><td>Flow Designer</td><td>Multiple chained Business Rules</td></tr>
+<tr><td>Reusable logic</td><td>Script Include</td><td>Duplicate code in rules</td></tr>
+</table>
+
+<h2>Congratulations! 🎉</h2>
+<p>You've completed the JavaScript for ServiceNow tutorial series! You now have the knowledge to:</p>
+<ul>
+<li>Query and manipulate data with GlideRecord</li>
+<li>Build server-side logic with Business Rules</li>
+<li>Create reusable code with Script Includes</li>
+<li>Connect client and server with GlideAjax</li>
+<li>Optimize performance and avoid common pitfalls</li>
+</ul>
+
+<div class="tip-box"><strong>🚀 Next Steps:</strong>
+<ul>
+<li>Build a complete scoped application</li>
+<li>Explore Flow Designer for no-code automation</li>
+<li>Learn IntegrationHub for external APIs</li>
+<li>Study for ServiceNow certifications (CSA, CAD)</li>
+</ul></div>`},
+
       {id:1,title:"Building AI Agents in ServiceNow: A Complete Guide",excerpt:"Learn how to create intelligent AI agents that automate complex workflows using ServiceNow's AI capabilities and the Now Platform.",category:"servicenow",date:"Dec 10, 2025",readTime:"8 min read",content:"<h2>Introduction</h2><p>AI Agents are revolutionizing enterprise automation. In this comprehensive guide, we'll explore how to build intelligent agents within ServiceNow that can handle complex decision-making and automate sophisticated workflows.</p><h2>What are AI Agents?</h2><p>AI Agents are autonomous systems that can perceive their environment, make decisions, and take actions to achieve specific goals. Unlike traditional automation which follows rigid rules, AI agents can adapt to new situations and learn from interactions.</p><h2>Prerequisites</h2><ul><li>ServiceNow Utah or later release</li><li>AI Control Tower access and configuration</li><li>Integration Hub Professional subscription</li><li>Basic understanding of Flow Designer</li></ul><h2>Getting Started</h2><p>First, let's set up the foundation for our AI agent:</p><pre>// Initialize AI Agent Configuration\nvar agentConfig = new sn_ai.AgentConfig();\nagentConfig.setName('Incident Resolution Agent');\nagentConfig.setDescription('Automates incident triage and resolution');\nagentConfig.setModel('gpt-4');\nagentConfig.initialize();</pre><h2>Building the Agent Logic</h2><p>The core of any AI agent is its decision-making capability. We'll implement a simple incident classification agent that can analyze incoming tickets and route them appropriately.</p><pre>// Agent Decision Script\nvar incident = current;\nvar aiAgent = new sn_ai.Agent('incident_classifier');\n\nvar analysis = aiAgent.analyze({\n  shortDescription: incident.short_description,\n  description: incident.description,\n  category: incident.category\n});\n\nif (analysis.confidence > 0.85) {\n  incident.assignment_group = analysis.recommendedGroup;\n  incident.priority = analysis.recommendedPriority;\n}</pre><h2>Best Practices</h2><p>When building AI agents, always implement proper error handling, set confidence thresholds, and maintain human oversight for critical decisions.</p>"},
       {id:2,title:"GenAI Summarization for Risk Management",excerpt:"How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace to reduce analysis time by 60% and improve accuracy.",category:"ai",date:"Dec 5, 2025",readTime:"6 min read",content:"<h2>The Challenge</h2><p>Risk analysts at enterprise organizations were spending 4-6 hours daily reading through lengthy risk assessments, compliance documents, and audit reports. We needed a solution that could provide instant, accurate summarization while maintaining context and highlighting critical information.</p><h2>The Solution Architecture</h2><p>We integrated ServiceNow's Now Assist with custom GenAI capabilities to create an intelligent summarization engine specifically tuned for risk management contexts.</p><pre>// Risk Summarization Flow\nvar riskDoc = new GlideRecord('sn_grc_document');\nriskDoc.get(documentId);\n\nvar summarizer = new sn_genai.Summarizer();\nsummarizer.setContext('risk_management');\nsummarizer.setMaxTokens(500);\n\nvar summary = summarizer.process({\n  content: riskDoc.getValue('content'),\n  extractKeyRisks: true,\n  highlightCompliance: true\n});</pre><h2>Results</h2><p>After implementing the solution, we achieved remarkable improvements:</p><ul><li>60% reduction in document analysis time</li><li>92% accuracy in risk identification</li><li>40% improvement in compliance issue detection</li><li>Significant reduction in analyst fatigue and oversight errors</li></ul><h2>Key Learnings</h2><p>The success of this project hinged on proper prompt engineering and domain-specific fine-tuning. Generic summarization models often missed nuanced risk indicators that were critical for compliance.</p>"},
       {id:3,title:"Flow Designer Best Practices for Enterprise Scale",excerpt:"Essential patterns and anti-patterns when building flows that handle thousands of executions daily without performance degradation.",category:"tutorial",date:"Nov 28, 2025",readTime:"10 min read",content:"<h2>Introduction</h2><p>Flow Designer is incredibly powerful, but with great power comes the responsibility to build efficient, maintainable flows. This guide covers patterns I've learned from building flows that process 50,000+ executions daily.</p><h2>Best Practices</h2><h3>1. Use Subflows for Reusable Logic</h3><p>Instead of duplicating actions across flows, create subflows that encapsulate common operations:</p><pre>// Subflow: Get User Manager Chain\n// Input: user_sys_id (String)\n// Output: manager_chain (Array)\n\nvar managers = [];\nvar currentUser = user_sys_id;\n\nwhile (currentUser && managers.length < 5) {\n  var gr = new GlideRecord('sys_user');\n  if (gr.get(currentUser) && gr.manager) {\n    managers.push(gr.manager.toString());\n    currentUser = gr.manager.toString();\n  } else {\n    break;\n  }\n}\nreturn managers;</pre><h3>2. Implement Proper Error Handling</h3><p>Always wrap critical operations in try-catch blocks and implement retry logic for transient failures.</p><h3>3. Use Async Operations</h3><p>For heavy processing, leverage scheduled flows or async subflows to prevent blocking.</p><h2>Anti-Patterns to Avoid</h2><ul><li>Never query large datasets without filters in loops</li><li>Avoid synchronous HTTP calls in high-volume flows</li><li>Don't use Flow Designer for simple field updates - use Business Rules</li></ul>"},
@@ -174,8 +1150,9 @@
       {id:5,title:"Advanced GlideRecord Techniques",excerpt:"Deep dive into GlideRecord optimizations, ACL considerations, and patterns for high-performance ServiceNow development.",category:"servicenow",date:"Nov 15, 2025",readTime:"12 min read",content:"<h2>Beyond the Basics</h2><p>Most ServiceNow developers know how to use GlideRecord for basic CRUD operations. This guide explores advanced techniques that separate senior developers from the rest.</p><h2>Performance Optimizations</h2><pre>// ❌ Anti-pattern: Loading all fields\nvar gr = new GlideRecord('incident');\ngr.query();\n\n// ✅ Best practice: Select only needed fields\nvar gr = new GlideRecord('incident');\ngr.addQuery('active', true);\ngr.setLimit(100);\ngr.chooseWindow(0, 100);\ngr.query();</pre><h2>ACL Considerations</h2><p>Understanding when to use GlideRecordSecure vs GlideRecord is crucial for security:</p><pre>// Use for user-facing scripts\nvar grSecure = new GlideRecordSecure('incident');\n\n// Use for system operations (with caution)\nvar gr = new GlideRecord('incident');\ngr.setWorkflow(false); // Skip business rules if appropriate</pre><h2>Encoded Queries</h2><p>For complex queries, encoded queries are more maintainable and performant:</p><pre>var gr = new GlideRecord('incident');\ngr.addEncodedQuery('active=true^priority<=2^assignment_groupISNOTEMPTY');\ngr.query();</pre>"},
       {id:6,title:"Integrating ServiceNow with Modern LLM APIs",excerpt:"Step-by-step guide to connecting ServiceNow with OpenAI, Claude, and other LLM providers using Integration Hub.",category:"ai",date:"Nov 10, 2025",readTime:"15 min read",content:"<h2>Overview</h2><p>Integrating Large Language Models with ServiceNow opens up powerful automation possibilities. This guide walks through setting up secure, efficient connections to major LLM providers.</p><h2>Architecture Considerations</h2><ul><li>Use Integration Hub for managed connections</li><li>Implement proper credential storage</li><li>Design for rate limiting and quotas</li><li>Cache responses where appropriate</li></ul><h2>OpenAI Integration</h2><pre>// REST Message Setup\nvar rm = new sn_ws.RESTMessageV2('OpenAI', 'Chat Completion');\nrm.setRequestHeader('Authorization', 'Bearer ' + gs.getProperty('openai.api.key'));\nrm.setRequestBody(JSON.stringify({\n  model: 'gpt-4',\n  messages: [{\n    role: 'user',\n    content: prompt\n  }],\n  max_tokens: 1000\n}));\n\nvar response = rm.execute();\nvar body = JSON.parse(response.getBody());</pre><h2>Error Handling</h2><p>Always implement robust error handling for API calls, including retry logic with exponential backoff.</p>"}
     ];
+    
     var BLOG_POSTS=DEFAULT_POSTS;
-    fetch('posts.json').then(function(r){return r.json();}).then(function(data){BLOG_POSTS=data;renderBlog('all');checkHash();}).catch(function(){renderBlog('all');checkHash();});
+    fetch('posts.json').then(function(r){return r.json();}).then(function(data){BLOG_POSTS=data;renderBlog('all');}).catch(function(){renderBlog('all');});
 
     var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('animate');});},{threshold:0.1});
 
@@ -213,31 +1190,30 @@
       document.getElementById('modalDate').innerHTML='📅 '+p.date;
       document.getElementById('modalRead').innerHTML='⏱️ '+p.readTime;
       document.getElementById('modalCat').innerHTML='🏷️ '+p.category.charAt(0).toUpperCase()+p.category.slice(1);
-      document.getElementById('modalContent').innerHTML=p.content;
-      document.getElementById('modalContent').innerHTML =p.content.replace(/<(?=\s*\d)/g, '&lt;');
+      
+      var content = p.content;
+      // Add series navigation for tutorial posts
+      if (p.series === 'js-tutorial') {
+        content = getSeriesNav(p.id) + content + getChapterNav(p.id);
+      }
+      
+      document.getElementById('modalContent').innerHTML=content;
       document.getElementById('modalHeaderBg').className='blog-modal-header-bg blog-thumb-bg '+p.category;
       document.getElementById('blogModal').classList.add('active');
       document.body.style.overflow='hidden';
-      history.pushState(null,null,'#post-'+id);
+      
+      // Scroll modal to top
+      document.querySelector('.blog-modal').scrollTop = 0;
     }
 
     function closeModal(){
       document.getElementById('blogModal').classList.remove('active');
       document.body.style.overflow='';
-      history.pushState(null,null,window.location.pathname);
     }
 
     document.querySelector('.blog-modal-close').addEventListener('click',closeModal);
     document.getElementById('blogModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
     document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
-
-    function checkHash(){
-      var hash=window.location.hash;
-      if(hash.startsWith('#post-')){
-        var id=hash.replace('#post-','');
-        setTimeout(function(){openArticle(id);},100);
-      }
-    }
 
     // Mobile menu
     var menuToggle=document.querySelector('.menu-toggle'),mobileMenu=document.querySelector('.mobile-menu');
