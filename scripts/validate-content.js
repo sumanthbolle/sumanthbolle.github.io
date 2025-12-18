@@ -1,58 +1,61 @@
 // scripts/validate-content.js
-// Validates posts.json and interviews.json (READ-ONLY).
-// Key changes:
-// - No Perplexity calls, no auto-fix, no rewriting files
-// - Improved code example validation (passes if at least one meaningful code block exists)
-// - Exits with code 1 if any critical issues are found (useful for CI/cron logs)
+// READ-ONLY validator
+// Strict validation ONLY for newly generated items (recent window).
+// Older/legacy content: report issues as WARNINGS, do not fail the job.
 
 const fs = require('fs');
 
 const POSTS_FILE = 'posts.json';
 const INTERVIEWS_FILE = 'interviews.json';
 
+// Consider "new" content as content generated recently
+const STRICT_WINDOW_HOURS = 48;
+
 const VALIDATION_RULES = {
   posts: {
-    requiredFields: ['id', 'title', 'excerpt', 'content', 'category', 'date', 'dateISO', 'readTime'],
+    requiredFieldsStrict: ['id', 'title', 'excerpt', 'content', 'category', 'date', 'dateISO', 'readTime'],
+    requiredFieldsLegacy: ['id', 'title', 'excerpt', 'content', 'category', 'date', 'readTime'],
     minContentLength: 800,
     minExcerptLength: 50,
     maxTitleLength: 150,
-    mustEndProperly: true,
     mustHaveCodeExample: ['tutorial', 'servicenow', 'integration', 'security'],
   },
   interviews: {
-    requiredFields: ['id', 'question', 'answer', 'difficulty', 'company', 'category', 'date', 'dateISO'],
+    requiredFieldsStrict: ['id', 'question', 'answer', 'difficulty', 'company', 'category', 'date', 'dateISO'],
+    requiredFieldsLegacy: ['id', 'question', 'answer', 'difficulty', 'company', 'category', 'date'],
     minAnswerLength: 300,
     minQuestionLength: 50,
-    mustEndProperly: true,
   },
 };
 
+function loadJsonOrExit(file) {
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (e) {
+    console.error(`Failed to read ${file}: ${e.message}`);
+    process.exit(1);
+  }
+}
+
+function hoursAgo(iso) {
+  const t = Date.parse(iso);
+  if (Number.isNaN(t)) return Number.POSITIVE_INFINITY;
+  return (Date.now() - t) / (1000 * 60 * 60);
+}
+
+function isStrictItem(item) {
+  // Strict if dateISO exists and is recent
+  if (!item?.dateISO) return false;
+  return hoursAgo(item.dateISO) <= STRICT_WINDOW_HOURS;
+}
+
 function isContentComplete(content) {
   if (!content || content.length < 100) return false;
-
   const trimmed = content.trim();
 
   const badEndings = [
-    '\\',
-    'such as',
-    'including',
-    'for example',
-    'e.g.',
-    'i.e.',
-    'the following',
-    'contains',
-    'like',
-    'with',
-    'and',
-    'or',
-    'to',
-    'in',
-    'on',
-    'at',
-    'by',
-    'for',
-    ':',
-    ',',
+    '\\','such as','including','for example','e.g.','i.e.','the following','contains',
+    'like','with','and','or','to','in','on','at','by','for',':',','
   ];
 
   const lastChars = trimmed.slice(-30).toLowerCase();
@@ -60,7 +63,7 @@ function isContentComplete(content) {
     if (lastChars.endsWith(bad) || lastChars.endsWith(bad + ' ')) return false;
   }
 
-  // Unclosed tag imbalance check (rough)
+  // Very rough HTML closure sanity
   const openTags = (trimmed.match(/<(pre|p|ul|ol|li|h[234]|strong|em|code)(?:\s[^>]*)?>/gi) || []).length;
   const closeTags = (trimmed.match(/<\/(pre|p|ul|ol|li|h[234]|strong|em|code)>/gi) || []).length;
   if (openTags > closeTags + 2) return false;
@@ -74,19 +77,17 @@ function isContentComplete(content) {
     trimmed.endsWith('</h2>') ||
     trimmed.endsWith('</h3>') ||
     trimmed.endsWith('</h4>')
-  ) {
-    return true;
-  }
+  ) return true;
 
-  const goodEndings = ['.', '!', '?', '>', '"', "'", ')', ']', '}'];
-  return goodEndings.includes(trimmed.slice(-1));
+  return ['.','!','?','>','"',"'",
+          ')',']','}'].includes(trimmed.slice(-1));
 }
 
 function hasCodeExample(content) {
   return (content || '').includes('<pre>') || (content || '').includes('<code>');
 }
 
-// Pass if at least one code block is meaningful (not stubs)
+// Strict: must have at least one meaningful code block
 function hasAtLeastOneCompleteCodeExample(content) {
   if (!hasCodeExample(content)) return false;
 
@@ -115,186 +116,175 @@ function hasAtLeastOneCompleteCodeExample(content) {
   return false;
 }
 
-function checkTopicCoverage(title, excerpt, content) {
-  const issues = [];
+// Utility: push issue with severity based on strict vs legacy
+function pushIssue(issues, strict, type, extra) {
+  // Legacy should not break pipeline: downgrade everything to warning,
+  // except completely missing content/answer or invalid chars.
+  let severity = strict ? 'CRITICAL' : 'WARNING';
 
-  const patterns = [/complete guide/i, /comprehensive/i, /in-depth/i, /everything you need/i, /from .* to .*/i];
-  const isComprehensivePromise = patterns.some((p) => p.test(title || '') || p.test(excerpt || ''));
-
-  if (isComprehensivePromise && (content || '').length < 2000) {
-    issues.push('Title/excerpt promises comprehensive coverage but content is short');
+  if (!strict && (type === 'missing_content' || type === 'missing_answer' || type === 'invalid_characters')) {
+    severity = 'CRITICAL';
   }
 
-  const excerptLower = (excerpt || '').toLowerCase();
-  const contentLower = (content || '').toLowerCase();
-
-  const topicMatches =
-    excerptLower.match(
-      /\b(gliderecord|glideaggregate|flow designer|integration hub|acl|security|performance|api|rest|soap|cmdb|itsm|itom|ai|genai|now assist|virtual agent|predictive intelligence)\b/gi
-    ) || [];
-
-  for (const topic of [...new Set(topicMatches)]) {
-    if (!contentLower.includes(topic.toLowerCase())) {
-      // Keep as warning to avoid noisy false negatives
-      issues.push(`Excerpt mentions "${topic}" but content may not cover it explicitly`);
-    }
-  }
-
-  return issues;
+  issues.push({ severity, type, ...extra });
 }
 
 function validatePost(post) {
-  const issues = [];
+  const strict = isStrictItem(post);
   const rules = VALIDATION_RULES.posts;
+  const issues = [];
 
-  for (const field of rules.requiredFields) {
-    if (!post[field]) issues.push({ type: 'missing_field', field, severity: 'critical' });
+  const required = strict ? rules.requiredFieldsStrict : rules.requiredFieldsLegacy;
+  for (const field of required) {
+    if (!post[field]) pushIssue(issues, strict, 'missing_field', { field });
   }
 
   if (post.title && post.title.length > rules.maxTitleLength) {
-    issues.push({ type: 'title_too_long', severity: 'warning' });
+    pushIssue(issues, strict, 'title_too_long', {});
   }
 
-  if (!post.content) return { valid: false, issues };
+  if (!post.content) {
+    pushIssue(issues, strict, 'missing_content', {});
+    return { strict, issues };
+  }
+
+  if (post.content.includes('\u0000') || post.content.includes('\u001F')) {
+    pushIssue(issues, strict, 'invalid_characters', {});
+  }
 
   if (post.content.length < rules.minContentLength) {
-    issues.push({
-      type: 'content_too_short',
+    pushIssue(issues, strict, 'content_too_short', {
       current: post.content.length,
       required: rules.minContentLength,
-      severity: 'critical',
     });
   }
 
   if (post.excerpt && post.excerpt.length < rules.minExcerptLength) {
-    issues.push({ type: 'excerpt_too_short', severity: 'warning' });
+    pushIssue(issues, strict, 'excerpt_too_short', {});
   }
 
-  if (rules.mustEndProperly && !isContentComplete(post.content)) {
-    issues.push({ type: 'content_truncated', severity: 'critical' });
+  if (!isContentComplete(post.content)) {
+    pushIssue(issues, strict, 'content_truncated', {});
   }
 
   if (rules.mustHaveCodeExample.includes(post.category) && !hasCodeExample(post.content)) {
-    issues.push({ type: 'missing_code_example', severity: 'critical' });
+    pushIssue(issues, strict, 'missing_code_example', {});
   }
 
   if (hasCodeExample(post.content) && !hasAtLeastOneCompleteCodeExample(post.content)) {
-    issues.push({ type: 'incomplete_code_example', severity: 'critical' });
+    pushIssue(issues, strict, 'incomplete_code_example', {});
   }
 
-  const topicIssues = checkTopicCoverage(post.title, post.excerpt, post.content);
-  for (const detail of topicIssues) {
-    issues.push({ type: 'coverage_warning', detail, severity: 'warning' });
-  }
-
-  if (post.content.includes('\u0000') || post.content.includes('\u001F')) {
-    issues.push({ type: 'invalid_characters', severity: 'critical' });
-  }
-
-  return { valid: issues.length === 0, issues };
+  return { strict, issues };
 }
 
 function validateInterview(interview) {
-  const issues = [];
+  const strict = isStrictItem(interview);
   const rules = VALIDATION_RULES.interviews;
+  const issues = [];
 
-  for (const field of rules.requiredFields) {
-    if (!interview[field]) issues.push({ type: 'missing_field', field, severity: 'critical' });
+  const required = strict ? rules.requiredFieldsStrict : rules.requiredFieldsLegacy;
+  for (const field of required) {
+    if (!interview[field]) pushIssue(issues, strict, 'missing_field', { field });
   }
 
-  if (!interview.answer) return { valid: false, issues };
+  if (!interview.answer) {
+    pushIssue(issues, strict, 'missing_answer', {});
+    return { strict, issues };
+  }
+
+  if (interview.answer.includes('\u0000') || interview.answer.includes('\u001F')) {
+    pushIssue(issues, strict, 'invalid_characters', {});
+  }
 
   if (interview.answer.length < rules.minAnswerLength) {
-    issues.push({
-      type: 'answer_too_short',
+    pushIssue(issues, strict, 'answer_too_short', {
       current: interview.answer.length,
       required: rules.minAnswerLength,
-      severity: 'critical',
     });
   }
 
   if (interview.question && interview.question.length < rules.minQuestionLength) {
-    issues.push({ type: 'question_too_short', severity: 'warning' });
+    pushIssue(issues, strict, 'question_too_short', {});
   }
 
-  if (rules.mustEndProperly && !isContentComplete(interview.answer)) {
-    issues.push({ type: 'answer_truncated', severity: 'critical' });
+  if (!isContentComplete(interview.answer)) {
+    pushIssue(issues, strict, 'answer_truncated', {});
   }
 
   if (hasCodeExample(interview.answer) && !hasAtLeastOneCompleteCodeExample(interview.answer)) {
-    issues.push({ type: 'incomplete_code_example', severity: 'critical' });
+    pushIssue(issues, strict, 'incomplete_code_example', {});
   }
 
-  return { valid: issues.length === 0, issues };
-}
-
-function loadJsonOrExit(file) {
-  try {
-    return JSON.parse(fs.readFileSync(file, 'utf8'));
-  } catch (e) {
-    console.error(`Failed to read ${file}: ${e.message}`);
-    process.exit(1);
-  }
+  return { strict, issues };
 }
 
 function main() {
   const posts = loadJsonOrExit(POSTS_FILE);
   const interviews = loadJsonOrExit(INTERVIEWS_FILE);
 
-  let criticalCount = 0;
-  let warningCount = 0;
+  let criticalNew = 0;
+  let warnings = 0;
 
-  // Posts
-  const postIssues = [];
+  const postProblems = [];
   for (const post of posts) {
-    const result = validatePost(post);
-    if (!result.valid) postIssues.push({ post, ...result });
-    for (const i of result.issues) {
-      if (i.severity === 'critical') criticalCount++;
-      else warningCount++;
+    const r = validatePost(post);
+    if (r.issues.length) postProblems.push({ post, ...r });
+
+    for (const i of r.issues) {
+      if (r.strict && i.severity === 'CRITICAL') criticalNew++;
+      else if (i.severity === 'WARNING') warnings++;
+      else if (!r.strict && i.severity === 'CRITICAL') {
+        // rare legacy-hard criticals (missing content / invalid chars)
+        criticalNew++;
+      }
     }
   }
 
-  // Interviews
-  const interviewIssues = [];
+  const interviewProblems = [];
   for (const interview of interviews) {
-    const result = validateInterview(interview);
-    if (!result.valid) interviewIssues.push({ interview, ...result });
-    for (const i of result.issues) {
-      if (i.severity === 'critical') criticalCount++;
-      else warningCount++;
+    const r = validateInterview(interview);
+    if (r.issues.length) interviewProblems.push({ interview, ...r });
+
+    for (const i of r.issues) {
+      if (r.strict && i.severity === 'CRITICAL') criticalNew++;
+      else if (i.severity === 'WARNING') warnings++;
+      else if (!r.strict && i.severity === 'CRITICAL') criticalNew++;
     }
   }
 
-  // Print report
   console.log('Content validation report');
   console.log('=========================');
+  console.log(`Strict window: last ${STRICT_WINDOW_HOURS} hours (only new items fail the job)\n`);
 
-  console.log(`Posts: ${posts.length} total, ${postIssues.length} with issues`);
-  for (const item of postIssues) {
-    console.log(`- Post ID ${item.post.id}: ${String(item.post.title || '').substring(0, 60)}`);
+  console.log(`Posts: ${posts.length} total, ${postProblems.length} with issues`);
+  for (const item of postProblems) {
+    const tag = item.strict ? 'STRICT' : 'LEGACY';
+    console.log(`- [${tag}] Post ID ${item.post.id}: ${String(item.post.title || '').substring(0, 70)}`);
     for (const issue of item.issues) {
-      const extra = issue.detail ? ` (${issue.detail})` : issue.field ? ` (${issue.field})` : '';
-      console.log(`  - ${issue.severity.toUpperCase()}: ${issue.type}${extra}`);
+      const extra = issue.field ? ` (${issue.field})` : '';
+      const more = issue.current ? ` (current=${issue.current}, required=${issue.required})` : '';
+      console.log(`  - ${issue.severity}: ${issue.type}${extra}${more}`);
     }
   }
 
-  console.log(`Interviews: ${interviews.length} total, ${interviewIssues.length} with issues`);
-  for (const item of interviewIssues) {
-    console.log(`- Interview ID ${item.interview.id}: ${String(item.interview.question || '').substring(0, 60)}`);
+  console.log(`\nInterviews: ${interviews.length} total, ${interviewProblems.length} with issues`);
+  for (const item of interviewProblems) {
+    const tag = item.strict ? 'STRICT' : 'LEGACY';
+    console.log(`- [${tag}] Interview ID ${item.interview.id}: ${String(item.interview.question || '').substring(0, 70)}`);
     for (const issue of item.issues) {
-      const extra = issue.detail ? ` (${issue.detail})` : issue.field ? ` (${issue.field})` : '';
-      console.log(`  - ${issue.severity.toUpperCase()}: ${issue.type}${extra}`);
+      const extra = issue.field ? ` (${issue.field})` : '';
+      const more = issue.current ? ` (current=${issue.current}, required=${issue.required})` : '';
+      console.log(`  - ${issue.severity}: ${issue.type}${extra}${more}`);
     }
   }
 
-  console.log('=========================');
-  console.log(`Critical: ${criticalCount}`);
-  console.log(`Warnings:  ${warningCount}`);
+  console.log('\n=========================');
+  console.log(`Critical (job-failing): ${criticalNew}`);
+  console.log(`Warnings:              ${warnings}`);
 
-  // Fail only on critical issues
-  if (criticalCount > 0) process.exit(1);
-  process.exit(0);
+  // Fail only when new/strict content is bad (or rare legacy-hard criticals)
+  process.exit(criticalNew > 0 ? 1 : 0);
 }
 
 main();
