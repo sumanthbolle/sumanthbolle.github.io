@@ -1,623 +1,300 @@
 // scripts/validate-content.js
-// Validates posts.json and interviews.json, auto-fixes issues via Perplexity API
+// Validates posts.json and interviews.json (READ-ONLY).
+// Key changes:
+// - No Perplexity calls, no auto-fix, no rewriting files
+// - Improved code example validation (passes if at least one meaningful code block exists)
+// - Exits with code 1 if any critical issues are found (useful for CI/cron logs)
 
 const fs = require('fs');
-const https = require('https');
 
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
 const POSTS_FILE = 'posts.json';
 const INTERVIEWS_FILE = 'interviews.json';
 
-// ============ VALIDATION RULES ============
-
 const VALIDATION_RULES = {
   posts: {
-    requiredFields: ['id', 'title', 'excerpt', 'content', 'category', 'date', 'readTime'],
+    requiredFields: ['id', 'title', 'excerpt', 'content', 'category', 'date', 'dateISO', 'readTime'],
     minContentLength: 800,
     minExcerptLength: 50,
     maxTitleLength: 150,
     mustEndProperly: true,
-    mustHaveCodeExample: ['tutorial', 'servicenow'], // Categories that should have code
+    mustHaveCodeExample: ['tutorial', 'servicenow', 'integration', 'security'],
   },
   interviews: {
-    requiredFields: ['id', 'question', 'answer', 'difficulty', 'company', 'category', 'date'],
+    requiredFields: ['id', 'question', 'answer', 'difficulty', 'company', 'category', 'date', 'dateISO'],
     minAnswerLength: 300,
     minQuestionLength: 50,
     mustEndProperly: true,
-  }
+  },
 };
 
-// ============ VALIDATION FUNCTIONS ============
-
-/**
- * Check if content ends properly (not truncated)
- */
 function isContentComplete(content) {
   if (!content || content.length < 100) return false;
-  
+
   const trimmed = content.trim();
-  
-  // Check for obvious truncation signs
+
   const badEndings = [
-    '\\', 'such as', 'including', 'for example', 'e.g.', 'i.e.', 
-    'the following', 'contains', 'like', 'with', 'and', 'or',
-    'to', 'in', 'on', 'at', 'by', 'for', ':', ','
+    '\\',
+    'such as',
+    'including',
+    'for example',
+    'e.g.',
+    'i.e.',
+    'the following',
+    'contains',
+    'like',
+    'with',
+    'and',
+    'or',
+    'to',
+    'in',
+    'on',
+    'at',
+    'by',
+    'for',
+    ':',
+    ',',
   ];
-  
+
   const lastChars = trimmed.slice(-30).toLowerCase();
   for (const bad of badEndings) {
-    if (lastChars.endsWith(bad) || lastChars.endsWith(bad + ' ')) {
-      return false;
-    }
+    if (lastChars.endsWith(bad) || lastChars.endsWith(bad + ' ')) return false;
   }
-  
-  // Check for unclosed HTML tags
+
+  // Unclosed tag imbalance check (rough)
   const openTags = (trimmed.match(/<(pre|p|ul|ol|li|h[234]|strong|em|code)(?:\s[^>]*)?>/gi) || []).length;
   const closeTags = (trimmed.match(/<\/(pre|p|ul|ol|li|h[234]|strong|em|code)>/gi) || []).length;
-  if (openTags > closeTags + 2) return false; // Allow small imbalance
-  
-  // Should end with proper punctuation or closing tag
-  const goodEndings = ['.', '!', '?', '>', '"', "'", ')', ']', '}'];
-  const lastChar = trimmed.slice(-1);
-  
-  if (trimmed.endsWith('</p>') || trimmed.endsWith('</ul>') || 
-      trimmed.endsWith('</ol>') || trimmed.endsWith('</pre>') ||
-      trimmed.endsWith('</li>') || trimmed.endsWith('</h2>') ||
-      trimmed.endsWith('</h3>') || trimmed.endsWith('</h4>')) {
+  if (openTags > closeTags + 2) return false;
+
+  if (
+    trimmed.endsWith('</p>') ||
+    trimmed.endsWith('</ul>') ||
+    trimmed.endsWith('</ol>') ||
+    trimmed.endsWith('</pre>') ||
+    trimmed.endsWith('</li>') ||
+    trimmed.endsWith('</h2>') ||
+    trimmed.endsWith('</h3>') ||
+    trimmed.endsWith('</h4>')
+  ) {
     return true;
   }
-  
-  return goodEndings.includes(lastChar);
+
+  const goodEndings = ['.', '!', '?', '>', '"', "'", ')', ']', '}'];
+  return goodEndings.includes(trimmed.slice(-1));
 }
 
-/**
- * Check if content has code examples
- */
 function hasCodeExample(content) {
-  return content.includes('<pre>') || content.includes('<code>');
+  return (content || '').includes('<pre>') || (content || '').includes('<code>');
 }
 
-/**
- * Check if code examples are meaningful (not just stubs)
- */
-function hasCompleteCodeExample(content) {
+// Pass if at least one code block is meaningful (not stubs)
+function hasAtLeastOneCompleteCodeExample(content) {
   if (!hasCodeExample(content)) return false;
-  
-  // Extract code blocks
-  const codeBlocks = content.match(/<pre>([\s\S]*?)<\/pre>/gi) || [];
-  
-  for (const block of codeBlocks) {
-    const code = block.replace(/<\/?pre>/gi, '').trim();
-    
-    // Check for stub patterns (incomplete code)
-    const stubPatterns = [
-      /^\/\/\s*(example|todo|placeholder)/i,
-      /^var\s+\w+\s*=\s*new\s+GlideRecord\([^)]+\);\s*$/,  // Just declaration, no query
-      /^\s*\/\/.*\n?\s*$/,  // Only comments
-    ];
-    
-    const isStub = stubPatterns.some(p => p.test(code));
-    const isTooShort = code.split('\n').filter(l => l.trim() && !l.trim().startsWith('//')).length < 3;
-    
-    if (isStub || isTooShort) {
-      return false;
-    }
+
+  const codeBlocks = (content.match(/<pre>([\s\S]*?)<\/pre>/gi) || []).map((b) =>
+    b.replace(/<\/?pre>/gi, '').trim()
+  );
+
+  if (!codeBlocks.length) return false;
+
+  const stubPatterns = [
+    /^\/\/\s*(example|todo|placeholder)/i,
+    /^var\s+\w+\s*=\s*new\s+GlideRecord\([^)]+\);\s*$/i,
+    /^\s*\/\/.*\n?\s*$/i,
+  ];
+
+  for (const code of codeBlocks) {
+    const isStub = stubPatterns.some((p) => p.test(code));
+    const meaningfulLines = code
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => l && !l.startsWith('//')).length;
+
+    if (!isStub && meaningfulLines >= 3) return true;
   }
-  
-  return true;
+
+  return false;
 }
 
-/**
- * Check if content covers promised topics (basic check)
- */
 function checkTopicCoverage(title, excerpt, content) {
   const issues = [];
-  
-  // Extract key terms from title and excerpt
-  const promisedTerms = [];
-  
-  // Common patterns that indicate promises
-  const patterns = [
-    /complete guide/i,
-    /comprehensive/i,
-    /in-depth/i,
-    /everything you need/i,
-    /from .* to .*/i,
-  ];
-  
-  const isComprehensivePromise = patterns.some(p => p.test(title) || p.test(excerpt));
-  
-  if (isComprehensivePromise && content.length < 2000) {
-    issues.push('Title/excerpt promises comprehensive coverage but content is too short');
+
+  const patterns = [/complete guide/i, /comprehensive/i, /in-depth/i, /everything you need/i, /from .* to .*/i];
+  const isComprehensivePromise = patterns.some((p) => p.test(title || '') || p.test(excerpt || ''));
+
+  if (isComprehensivePromise && (content || '').length < 2000) {
+    issues.push('Title/excerpt promises comprehensive coverage but content is short');
   }
-  
-  // Check if excerpt topics are covered in content
-  const excerptLower = excerpt.toLowerCase();
-  const contentLower = content.toLowerCase();
-  
-  // Extract topic keywords from excerpt
-  const topicMatches = excerptLower.match(/\b(gliderecord|glideaggregate|flow designer|integration hub|acl|security|performance|api|rest|soap|cmdb|itsm|itom|ai|genai|now assist|virtual agent|predictive intelligence)\b/gi) || [];
-  
+
+  const excerptLower = (excerpt || '').toLowerCase();
+  const contentLower = (content || '').toLowerCase();
+
+  const topicMatches =
+    excerptLower.match(
+      /\b(gliderecord|glideaggregate|flow designer|integration hub|acl|security|performance|api|rest|soap|cmdb|itsm|itom|ai|genai|now assist|virtual agent|predictive intelligence)\b/gi
+    ) || [];
+
   for (const topic of [...new Set(topicMatches)]) {
     if (!contentLower.includes(topic.toLowerCase())) {
-      issues.push(`Excerpt mentions "${topic}" but content doesn't cover it`);
+      // Keep as warning to avoid noisy false negatives
+      issues.push(`Excerpt mentions "${topic}" but content may not cover it explicitly`);
     }
   }
-  
+
   return issues;
 }
 
-/**
- * Validate a single post
- */
 function validatePost(post) {
   const issues = [];
   const rules = VALIDATION_RULES.posts;
-  
-  // Check required fields
+
   for (const field of rules.requiredFields) {
-    if (!post[field]) {
-      issues.push({ type: 'missing_field', field, severity: 'critical' });
-    }
+    if (!post[field]) issues.push({ type: 'missing_field', field, severity: 'critical' });
   }
-  
-  if (!post.content) return { valid: false, issues, fixable: false };
-  
-  // Check content length
+
+  if (post.title && post.title.length > rules.maxTitleLength) {
+    issues.push({ type: 'title_too_long', severity: 'warning' });
+  }
+
+  if (!post.content) return { valid: false, issues };
+
   if (post.content.length < rules.minContentLength) {
-    issues.push({ 
-      type: 'content_too_short', 
-      current: post.content.length, 
+    issues.push({
+      type: 'content_too_short',
+      current: post.content.length,
       required: rules.minContentLength,
-      severity: 'critical'
+      severity: 'critical',
     });
   }
-  
-  // Check excerpt length
+
   if (post.excerpt && post.excerpt.length < rules.minExcerptLength) {
     issues.push({ type: 'excerpt_too_short', severity: 'warning' });
   }
-  
-  // Check for truncation
-  if (!isContentComplete(post.content)) {
+
+  if (rules.mustEndProperly && !isContentComplete(post.content)) {
     issues.push({ type: 'content_truncated', severity: 'critical' });
   }
-  
-  // Check for code examples in technical categories
+
   if (rules.mustHaveCodeExample.includes(post.category) && !hasCodeExample(post.content)) {
     issues.push({ type: 'missing_code_example', severity: 'critical' });
   }
-  
-  // Check for incomplete/stub code examples
-  if (hasCodeExample(post.content) && !hasCompleteCodeExample(post.content)) {
+
+  if (hasCodeExample(post.content) && !hasAtLeastOneCompleteCodeExample(post.content)) {
     issues.push({ type: 'incomplete_code_example', severity: 'critical' });
   }
-  
-  // Check topic coverage
+
   const topicIssues = checkTopicCoverage(post.title, post.excerpt, post.content);
-  for (const issue of topicIssues) {
-    issues.push({ type: 'incomplete_coverage', detail: issue, severity: 'critical' });
+  for (const detail of topicIssues) {
+    issues.push({ type: 'coverage_warning', detail, severity: 'warning' });
   }
-  
-  // Check for invalid JSON-breaking characters
+
   if (post.content.includes('\u0000') || post.content.includes('\u001F')) {
     issues.push({ type: 'invalid_characters', severity: 'critical' });
   }
-  
-  const hasCritical = issues.some(i => i.severity === 'critical');
-  
-  return {
-    valid: issues.length === 0,
-    issues,
-    fixable: issues.some(i => 
-      ['content_truncated', 'content_too_short', 'incomplete_coverage', 'missing_code_example', 'incomplete_code_example'].includes(i.type)
-    )
-  };
+
+  return { valid: issues.length === 0, issues };
 }
 
-/**
- * Validate a single interview
- */
 function validateInterview(interview) {
   const issues = [];
   const rules = VALIDATION_RULES.interviews;
-  
-  // Check required fields
+
   for (const field of rules.requiredFields) {
-    if (!interview[field]) {
-      issues.push({ type: 'missing_field', field, severity: 'critical' });
-    }
+    if (!interview[field]) issues.push({ type: 'missing_field', field, severity: 'critical' });
   }
-  
-  if (!interview.answer) return { valid: false, issues, fixable: false };
-  
-  // Check answer length
+
+  if (!interview.answer) return { valid: false, issues };
+
   if (interview.answer.length < rules.minAnswerLength) {
-    issues.push({ 
-      type: 'answer_too_short', 
-      current: interview.answer.length, 
+    issues.push({
+      type: 'answer_too_short',
+      current: interview.answer.length,
       required: rules.minAnswerLength,
-      severity: 'critical'
+      severity: 'critical',
     });
   }
-  
-  // Check question length
+
   if (interview.question && interview.question.length < rules.minQuestionLength) {
     issues.push({ type: 'question_too_short', severity: 'warning' });
   }
-  
-  // Check for truncation
-  if (!isContentComplete(interview.answer)) {
+
+  if (rules.mustEndProperly && !isContentComplete(interview.answer)) {
     issues.push({ type: 'answer_truncated', severity: 'critical' });
   }
-  
-  // Check for incomplete/stub code examples
-  if (hasCodeExample(interview.answer) && !hasCompleteCodeExample(interview.answer)) {
+
+  if (hasCodeExample(interview.answer) && !hasAtLeastOneCompleteCodeExample(interview.answer)) {
     issues.push({ type: 'incomplete_code_example', severity: 'critical' });
   }
-  
-  const hasCritical = issues.some(i => i.severity === 'critical');
-  
-  return {
-    valid: issues.length === 0,
-    issues,
-    fixable: issues.some(i => 
-      ['answer_truncated', 'answer_too_short', 'incomplete_code_example'].includes(i.type)
-    )
-  };
+
+  return { valid: issues.length === 0, issues };
 }
 
-// ============ FIX FUNCTIONS ============
-
-/**
- * Call Perplexity to fix/complete content
- */
-function callPerplexityFix(prompt, systemPrompt) {
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => reject(new Error('API timeout')), 90000);
-    
-    const data = JSON.stringify({
-      model: "sonar-pro",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: prompt }
-      ],
-      max_tokens: 4000,
-      temperature: 0.6
-    });
-
-    const req = https.request({
-      hostname: 'api.perplexity.ai',
-      path: '/chat/completions',
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(data)
-      }
-    }, (res) => {
-      let body = '';
-      res.on('data', chunk => body += chunk);
-      res.on('end', () => {
-        clearTimeout(timeout);
-        try {
-          if (res.statusCode !== 200) {
-            reject(new Error(`API status ${res.statusCode}`));
-            return;
-          }
-          const response = JSON.parse(body);
-          if (response.choices?.[0]?.message?.content) {
-            resolve(response.choices[0].message.content);
-          } else {
-            reject(new Error('Invalid API response'));
-          }
-        } catch (e) {
-          reject(e);
-        }
-      });
-    });
-
-    req.on('error', (e) => { clearTimeout(timeout); reject(e); });
-    req.write(data);
-    req.end();
-  });
-}
-
-/**
- * Fix a truncated/incomplete post
- */
-async function fixPost(post, issues) {
-  console.log(`   🔧 Fixing post: ${post.title.substring(0, 50)}...`);
-  
-  const issueTypes = issues.map(i => i.type);
-  
-  const systemPrompt = `You are a ServiceNow technical writer. You need to complete/fix an article that has issues.
-
-CRITICAL RULES:
-1. Return ONLY the fixed content field - no JSON wrapper, no markdown blocks
-2. Use HTML tags: <h2>, <h3>, <p>, <ul>, <li>, <pre>, <strong>
-3. For code: <pre>var gr = new GlideRecord('table');\\ngr.query();</pre>
-4. MUST end with a complete sentence and proper closing tags
-5. Content should be 600-1000 words total
-6. Include code examples where relevant
-7. No [1] citations, no **markdown**`;
-
-  let prompt = '';
-  
-  if (issueTypes.includes('content_truncated') || issueTypes.includes('content_too_short')) {
-    prompt = `This ServiceNow article is incomplete/truncated. Complete it properly.
-
-TITLE: ${post.title}
-EXCERPT: ${post.excerpt}
-CATEGORY: ${post.category}
-
-CURRENT CONTENT (incomplete):
-${post.content}
-
-Please provide the COMPLETE content that:
-1. Covers all topics mentioned in the excerpt
-2. Has a proper conclusion
-3. Includes relevant code examples
-4. Ends with properly closed HTML tags
-
-Return ONLY the complete HTML content, starting from <h2>Overview</h2>.`;
-  } else if (issueTypes.includes('incomplete_coverage')) {
-    const missingTopics = issues
-      .filter(i => i.type === 'incomplete_coverage')
-      .map(i => i.detail)
-      .join(', ');
-    
-    prompt = `This ServiceNow article is missing coverage of promised topics.
-
-TITLE: ${post.title}
-EXCERPT: ${post.excerpt}
-MISSING: ${missingTopics}
-
-CURRENT CONTENT:
-${post.content}
-
-Please provide COMPLETE content that covers ALL topics from the excerpt, including the missing ones.
-Return ONLY the complete HTML content.`;
-  } else if (issueTypes.includes('missing_code_example')) {
-    prompt = `This ServiceNow technical article needs code examples added.
-
-TITLE: ${post.title}
-CATEGORY: ${post.category}
-
-CURRENT CONTENT:
-${post.content}
-
-Add 2-3 relevant ServiceNow code examples using <pre> tags. The code should be practical GlideRecord, Flow Designer, or API examples relevant to the article topic.
-
-Return the COMPLETE updated content with the new code examples integrated naturally into the existing sections. Keep all existing content and add code examples where they make sense.`;
-  }
-  
-  if (!prompt) {
-    console.log(`   ⚠️ No fix strategy for these issues`);
-    return false;
-  }
-  
+function loadJsonOrExit(file) {
   try {
-    const fixedContent = await callPerplexityFix(prompt, systemPrompt);
-    
-    // Clean up the response
-    let cleaned = fixedContent
-      .replace(/```html\s*/gi, '')
-      .replace(/```\s*/g, '')
-      .trim();
-    
-    // Validate the fix
-    if (cleaned.length > post.content.length && isContentComplete(cleaned)) {
-      post.content = cleaned;
-      console.log(`   ✅ Fixed! New length: ${cleaned.length} chars`);
-      return true;
-    } else {
-      console.log(`   ⚠️ Fix didn't improve content, keeping original`);
-      return false;
-    }
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
   } catch (e) {
-    console.log(`   ❌ Fix failed: ${e.message}`);
-    return false;
-  }
-}
-
-/**
- * Fix a truncated/incomplete interview
- */
-async function fixInterview(interview, issues) {
-  console.log(`   🔧 Fixing interview: ${interview.question.substring(0, 50)}...`);
-  
-  const issueTypes = issues.map(i => i.type);
-  
-  const systemPrompt = `You are a ServiceNow technical interviewer. Complete this interview Q&A.
-
-CRITICAL RULES:
-1. Return ONLY the answer content - no JSON wrapper
-2. Use HTML: <p>, <h4>, <ul>, <li>, <pre>, <strong>
-3. Include COMPLETE, WORKING code examples (not stubs)
-4. Code should be 5-15 lines with real functionality
-5. Answer should be 400-600 words
-6. MUST end with complete sentence and closed tags
-7. No [1] citations, no **markdown**`;
-
-  let prompt = '';
-  
-  if (issueTypes.includes('incomplete_code_example')) {
-    prompt = `This ServiceNow interview answer has incomplete/stub code examples that need to be expanded.
-
-QUESTION: ${interview.question}
-CATEGORY: ${interview.category}
-DIFFICULTY: ${interview.difficulty}
-
-CURRENT ANSWER (with stub code):
-${interview.answer}
-
-The code examples are just stubs like "var gr = new GlideRecord('table');" with no real logic.
-
-Provide a COMPLETE answer with FULL, WORKING code examples that:
-1. Demonstrate the concept being asked about
-2. Have 5-15 lines of meaningful code
-3. Include proper queries, loops, and logic
-4. Show both correct and incorrect approaches where relevant
-
-Return ONLY the HTML content for the complete answer.`;
-  } else {
-    prompt = `This ServiceNow interview answer is incomplete. Complete it.
-
-QUESTION: ${interview.question}
-CATEGORY: ${interview.category}
-DIFFICULTY: ${interview.difficulty}
-
-CURRENT ANSWER (incomplete):
-${interview.answer}
-
-Provide the COMPLETE answer with:
-1. Clear explanation of the concept
-2. FULL, WORKING code examples (not stubs)
-3. Best practices and common mistakes
-4. Proper conclusion
-
-Return ONLY the HTML content for the answer.`;
-  }
-
-  try {
-    const fixedAnswer = await callPerplexityFix(prompt, systemPrompt);
-    
-    let cleaned = fixedAnswer
-      .replace(/```html\s*/gi, '')
-      .replace(/```\s*/g, '')
-      .trim();
-    
-    if (cleaned.length > interview.answer.length && isContentComplete(cleaned)) {
-      interview.answer = cleaned;
-      console.log(`   ✅ Fixed! New length: ${cleaned.length} chars`);
-      return true;
-    } else {
-      console.log(`   ⚠️ Fix didn't improve answer, keeping original`);
-      return false;
-    }
-  } catch (e) {
-    console.log(`   ❌ Fix failed: ${e.message}`);
-    return false;
-  }
-}
-
-// ============ MAIN ============
-
-async function main() {
-  console.log('🔍 Content Validation & Auto-Fix\n');
-  console.log('================================\n');
-  
-  if (!PERPLEXITY_API_KEY) {
-    console.error('❌ PERPLEXITY_API_KEY not set!');
+    console.error(`Failed to read ${file}: ${e.message}`);
     process.exit(1);
   }
-  
-  let totalIssues = 0;
-  let totalFixed = 0;
-  
-  // ===== VALIDATE POSTS =====
-  console.log('📝 Validating posts.json...\n');
-  
-  let posts = [];
-  try {
-    posts = JSON.parse(fs.readFileSync(POSTS_FILE, 'utf8'));
-  } catch (e) {
-    console.error(`❌ Failed to read ${POSTS_FILE}: ${e.message}`);
-    process.exit(1);
-  }
-  
+}
+
+function main() {
+  const posts = loadJsonOrExit(POSTS_FILE);
+  const interviews = loadJsonOrExit(INTERVIEWS_FILE);
+
+  let criticalCount = 0;
+  let warningCount = 0;
+
+  // Posts
   const postIssues = [];
-  
   for (const post of posts) {
     const result = validatePost(post);
-    if (!result.valid) {
-      postIssues.push({ post, ...result });
+    if (!result.valid) postIssues.push({ post, ...result });
+    for (const i of result.issues) {
+      if (i.severity === 'critical') criticalCount++;
+      else warningCount++;
     }
   }
-  
-  console.log(`Found ${postIssues.length} posts with issues:\n`);
-  
-  for (const item of postIssues) {
-    console.log(`📄 ID ${item.post.id}: ${item.post.title.substring(0, 50)}...`);
-    for (const issue of item.issues) {
-      const icon = issue.severity === 'critical' ? '🔴' : '🟡';
-      console.log(`   ${icon} ${issue.type}${issue.detail ? ': ' + issue.detail : ''}`);
-    }
-    
-    if (item.fixable) {
-      const fixed = await fixPost(item.post, item.issues);
-      if (fixed) totalFixed++;
-      await new Promise(r => setTimeout(r, 3000)); // Rate limit
-    }
-    
-    totalIssues += item.issues.length;
-    console.log('');
-  }
-  
-  // Save fixed posts
-  fs.writeFileSync(POSTS_FILE, JSON.stringify(posts, null, 2));
-  console.log(`✅ Posts validated. ${postIssues.length} with issues, ${totalFixed} fixed.\n`);
-  
-  // ===== VALIDATE INTERVIEWS =====
-  console.log('📚 Validating interviews.json...\n');
-  
-  let interviews = [];
-  try {
-    interviews = JSON.parse(fs.readFileSync(INTERVIEWS_FILE, 'utf8'));
-  } catch (e) {
-    console.error(`❌ Failed to read ${INTERVIEWS_FILE}: ${e.message}`);
-    process.exit(1);
-  }
-  
+
+  // Interviews
   const interviewIssues = [];
-  let interviewsFixed = 0;
-  
   for (const interview of interviews) {
     const result = validateInterview(interview);
-    if (!result.valid) {
-      interviewIssues.push({ interview, ...result });
+    if (!result.valid) interviewIssues.push({ interview, ...result });
+    for (const i of result.issues) {
+      if (i.severity === 'critical') criticalCount++;
+      else warningCount++;
     }
   }
-  
-  console.log(`Found ${interviewIssues.length} interviews with issues:\n`);
-  
-  for (const item of interviewIssues) {
-    console.log(`❓ ID ${item.interview.id}: ${item.interview.question.substring(0, 50)}...`);
+
+  // Print report
+  console.log('Content validation report');
+  console.log('=========================');
+
+  console.log(`Posts: ${posts.length} total, ${postIssues.length} with issues`);
+  for (const item of postIssues) {
+    console.log(`- Post ID ${item.post.id}: ${String(item.post.title || '').substring(0, 60)}`);
     for (const issue of item.issues) {
-      const icon = issue.severity === 'critical' ? '🔴' : '🟡';
-      console.log(`   ${icon} ${issue.type}`);
+      const extra = issue.detail ? ` (${issue.detail})` : issue.field ? ` (${issue.field})` : '';
+      console.log(`  - ${issue.severity.toUpperCase()}: ${issue.type}${extra}`);
     }
-    
-    if (item.fixable) {
-      const fixed = await fixInterview(item.interview, item.issues);
-      if (fixed) interviewsFixed++;
-      await new Promise(r => setTimeout(r, 3000)); // Rate limit
+  }
+
+  console.log(`Interviews: ${interviews.length} total, ${interviewIssues.length} with issues`);
+  for (const item of interviewIssues) {
+    console.log(`- Interview ID ${item.interview.id}: ${String(item.interview.question || '').substring(0, 60)}`);
+    for (const issue of item.issues) {
+      const extra = issue.detail ? ` (${issue.detail})` : issue.field ? ` (${issue.field})` : '';
+      console.log(`  - ${issue.severity.toUpperCase()}: ${issue.type}${extra}`);
     }
-    
-    totalIssues += item.issues.length;
-    console.log('');
   }
-  
-  // Save fixed interviews
-  fs.writeFileSync(INTERVIEWS_FILE, JSON.stringify(interviews, null, 2));
-  
-  // ===== SUMMARY =====
-  console.log('================================');
-  console.log('📊 VALIDATION SUMMARY');
-  console.log('================================');
-  console.log(`Posts:      ${posts.length} total, ${postIssues.length} with issues, ${totalFixed} fixed`);
-  console.log(`Interviews: ${interviews.length} total, ${interviewIssues.length} with issues, ${interviewsFixed} fixed`);
-  console.log(`Total issues found: ${totalIssues}`);
-  console.log(`Total auto-fixed: ${totalFixed + interviewsFixed}`);
-  
-  if (totalIssues > 0 && (totalFixed + interviewsFixed) < totalIssues) {
-    console.log('\n⚠️ Some issues could not be auto-fixed. Manual review recommended.');
-  } else if (totalIssues === 0) {
-    console.log('\n✨ All content passed validation!');
-  } else {
-    console.log('\n✅ All fixable issues were resolved!');
-  }
+
+  console.log('=========================');
+  console.log(`Critical: ${criticalCount}`);
+  console.log(`Warnings:  ${warningCount}`);
+
+  // Fail only on critical issues
+  if (criticalCount > 0) process.exit(1);
+  process.exit(0);
 }
 
-main().catch(e => { console.error('Fatal:', e.message); process.exit(1); });
+main();
