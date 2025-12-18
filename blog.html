@@ -164,113 +164,190 @@
     </div>
   </div>
   <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
-  <script>
-    // JS Tutorial Series Navigation
-    var JS_TUTORIAL_SERIES = [
-      {id: 100, num: 1, title: "Introduction"},
-      {id: 101, num: 2, title: "GlideRecord Basics"},
-      {id: 102, num: 3, title: "Business Rules"},
-      {id: 103, num: 4, title: "Script Includes"},
-      {id: 104, num: 5, title: "GlideAjax"},
-      {id: 105, num: 6, title: "Advanced Patterns"}
-    ];
+<script>
+  // JS Tutorial Series Navigation (match IDs from posts.json)
+  var JS_TUTORIAL_SERIES = [
+    { id: 4, num: 1, title: "Introduction" },
+    { id: 5, num: 2, title: "GlideRecord Basics" },
+    { id: 6, num: 3, title: "Business Rules" },
+    { id: 7, num: 4, title: "Script Includes" },
+    { id: 8, num: 5, title: "GlideAjax" },
+    { id: 9, num: 6, title: "Advanced Patterns" }
+  ];
 
-    function getSeriesNav(currentId) {
-      var html = '<div class="series-nav">';
-      JS_TUTORIAL_SERIES.forEach(function(item) {
-        var cls = item.id == currentId ? 'current' : '';
-        html += '<a class="' + cls + '" onclick="openArticle(' + item.id + ')">' + item.num + '. ' + item.title + '</a>';
-      });
-      html += '</div>';
-      return html;
+  function getSeriesNav(currentId) {
+    var html = '<div class="series-nav">';
+    JS_TUTORIAL_SERIES.forEach(function (item) {
+      var cls = item.id == currentId ? 'current' : '';
+      html += '<a class="' + cls + '" onclick="openArticle(' + item.id + ')">' + item.num + '. ' + item.title + '</a>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function getChapterNav(currentId) {
+    var idx = JS_TUTORIAL_SERIES.findIndex(function (x) { return x.id == currentId; });
+    var prev = idx > 0 ? JS_TUTORIAL_SERIES[idx - 1] : null;
+    var next = idx < JS_TUTORIAL_SERIES.length - 1 ? JS_TUTORIAL_SERIES[idx + 1] : null;
+
+    var html = '<div class="chapter-nav">';
+    if (prev) {
+      html += '<button class="chapter-btn prev" onclick="openArticle(' + prev.id + ')">← ' + prev.num + '. ' + prev.title + '</button>';
+    } else {
+      html += '<span></span>';
     }
+    if (next) {
+      html += '<button class="chapter-btn next" onclick="openArticle(' + next.id + ')">Next: ' + next.num + '. ' + next.title + ' →</button>';
+    } else {
+      html += '<span class="chapter-btn disabled">Series Complete ✓</span>';
+    }
+    html += '</div>';
+    return html;
+  }
 
-    function escapePreBlocks(html) {
-  return html.replace(/<pre>([\s\S]*?)<\/pre>/g, function (_, code) {
-    return '<pre>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>';
+  // Escapes < and > only inside <pre> blocks so code doesn't break your HTML
+  function escapePreBlocks(html) {
+    return (html || '').replace(/<pre>([\s\S]*?)<\/pre>/g, function (_, code) {
+      return '<pre>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>';
+    });
+  }
+
+  var BLOG_POSTS = [];
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) e.target.classList.add('animate');
+    });
+  }, { threshold: 0.1 });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    bindFilters();
+    bindModalEvents();
+    bindMobileMenu();
+    loadPostsAndRender();
   });
-}
 
-    function getChapterNav(currentId) {
-      var idx = JS_TUTORIAL_SERIES.findIndex(function(x) { return x.id == currentId; });
-      var prev = idx > 0 ? JS_TUTORIAL_SERIES[idx - 1] : null;
-      var next = idx < JS_TUTORIAL_SERIES.length - 1 ? JS_TUTORIAL_SERIES[idx + 1] : null;
-      var html = '<div class="chapter-nav">';
-      if (prev) {
-        html += '<button class="chapter-btn prev" onclick="openArticle(' + prev.id + ')">← ' + prev.num + '. ' + prev.title + '</button>';
-      } else {
-        html += '<span></span>';
-      }
-      if (next) {
-        html += '<button class="chapter-btn next" onclick="openArticle(' + next.id + ')">Next: ' + next.num + '. ' + next.title + ' →</button>';
-      } else {
-        html += '<span class="chapter-btn disabled">Series Complete ✓</span>';
-      }
-      html += '</div>';
-      return html;
-    }
+  async function loadPostsAndRender() {
+    try {
+      // cache busting helps when GitHub Pages / CDN is stubborn
+      var res = await fetch('/posts.json?v=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) throw new Error('posts.json fetch failed: ' + res.status);
 
-    var BLOG_POSTS = [{"id":100,"series":"js-tutorial","title":"JS for ServiceNow: 1. Introduction","excerpt":"Master JavaScript in ServiceNow from beginner to expert. Learn through real interview scenarios, step-by-step execution walkthroughs, and interactive examples.","category":"tutorial","date":"Dec 15, 2025","readTime":"15 min read","content":"<h2>Welcome to Your JavaScript Journey</h2><p>Whether you're an HR analyst automating leave calculations, an IT service desk manager building incident workflows, or a finance professional streamlining approvals—this tutorial series will transform you into a confident ServiceNow developer.</p><p>What makes this series different? We teach through the lens of <strong>real interview scenarios</strong>, show you <strong>exactly how code executes</strong> line by line, and give you <strong>working examples</strong> you can use immediately.</p><h2>Why Server-Side First?</h2><p>ServiceNow JavaScript differs fundamentally from web JavaScript. The platform's architecture demands a specific learning path. We start with GlideRecord because it's the gateway to everything else—once you master querying data, every other concept builds naturally.</p><div class=\"tip-box\"><strong>💡 The Golden Rule:</strong> GlideRecord → Business Rules → Script Includes → GlideAjax. Never skip ahead. Each concept depends on the previous one.</div><h2>The Learning Path</h2><table><tr><th>Phase</th><th>Topics</th><th>Why This Order</th></tr><tr><td>Weeks 1-2</td><td>JS Fundamentals + Platform Basics</td><td>Foundation for everything</td></tr><tr><td>Weeks 3-4</td><td>GlideRecord + GlideSystem APIs</td><td>Core database operations</td></tr><tr><td>Weeks 5-6</td><td>Business Rules (before, after, async)</td><td>Most important server script</td></tr><tr><td>Weeks 7-8</td><td>Script Includes + Client Scripts</td><td>Reusability + client-side intro</td></tr><tr><td>Weeks 9-10</td><td>GlideAjax + UI Policies</td><td>Client-server communication</td></tr><tr><td>Weeks 11-12</td><td>Catalog Scripts + ACLs</td><td>Portal and security</td></tr></table><h2>How Each Tutorial Works</h2><p>Every lesson follows the <strong>PRIMM framework</strong>—a research-backed approach that dramatically improves retention:</p><h3>1. Interview Scenario</h3><div class=\"scenario-box\"><strong>🎯 SCENARIO:</strong> Your organization's Incident Management team reports that high-priority incidents assigned to inactive users remain unaddressed for days.<br><br><strong>BUSINESS CONTEXT:</strong> User accounts become inactive when employees leave, but incidents may still reference them as assignees.<br><br><strong>YOUR TASK:</strong> Write a Business Rule that automatically reassigns incidents from inactive users to the assignment group's manager.</div><h3>2. Code Walkthrough with Labeled Steps</h3><pre>// === STEP 1: CHECK TRIGGER CONDITION ===\nif (current.state == 6) {\n    // === STEP 2: VALIDATE REQUIRED DATA ===\n    if (gs.nil(current.assignment_group)) {\n        return;\n    }\n    // === STEP 3: PERFORM DATABASE LOOKUP ===\n    var groupGr = new GlideRecord('sys_user_group');\n    groupGr.get(current.assignment_group);\n    // === STEP 4: UPDATE THE RECORD ===\n    current.u_resolved_by_group = groupGr.getValue('name');\n}</pre><h3>3. Execution Trace Table</h3><table><tr><th>Line</th><th>Action</th><th>current.state</th><th>Result</th></tr><tr><td>1</td><td>Check if state == 6</td><td>6</td><td>true, continue</td></tr><tr><td>4</td><td>Check if group is nil</td><td>-</td><td>false, continue</td></tr><tr><td>8</td><td>Create GlideRecord</td><td>-</td><td>groupGr initialized</td></tr><tr><td>9</td><td>Query for group</td><td>-</td><td>1 record found</td></tr><tr><td>12</td><td>Set field value</td><td>-</td><td>IT Support assigned</td></tr></table><h2>For Non-Programmers: The Spreadsheet Bridge</h2><p>Think of GlideRecord as a database formula—just like Excel formulas filter and transform data:</p><table><tr><th>Excel Concept</th><th>ServiceNow Equivalent</th></tr><tr><td>=SUMIF(range, criteria)</td><td>GlideAggregate with addQuery</td></tr><tr><td>=VLOOKUP(value, table)</td><td>gr.get(sys_id)</td></tr><tr><td>Filter by column value</td><td>gr.addQuery('field', 'value')</td></tr><tr><td>Sort A-Z</td><td>gr.orderBy('field')</td></tr></table><div class=\"tip-box\"><strong>🚀 Pro Tip:</strong> Get a free Personal Developer Instance at <a href=\"https://developer.servicenow.com\" target=\"_blank\">developer.servicenow.com</a> to follow along with hands-on practice.</div><p>Ready to start? Click <strong>Next</strong> to dive into GlideRecord fundamentals!</p>"},{"id":101,"series":"js-tutorial","title":"JS for ServiceNow: 2. GlideRecord Basics","excerpt":"Master the most important API in ServiceNow. Learn to query, create, update, and delete records with real interview scenarios and execution traces.","category":"tutorial","date":"Dec 15, 2025","readTime":"20 min read","content":"<h2>The Foundation of Everything</h2><p>GlideRecord is the single most important skill for ServiceNow development. It's how you interact with the database—querying, creating, updating, and deleting records.</p><div class=\"scenario-box\"><strong>🎯 INTERVIEW SCENARIO:</strong> Write a script that finds all active high-priority incidents assigned to the Network group and updates their state to In Progress if they've been open for more than 24 hours.<br><br><strong>WHAT THEY'RE TESTING:</strong> Query construction, date comparisons, efficient updates, and understanding of when conditions.</div><h2>Basic Query Pattern</h2><p>Every GlideRecord interaction follows the same pattern: Create → Configure → Query → Iterate</p><pre>// === CREATE: Initialize GlideRecord on a table ===\nvar gr = new GlideRecord('incident');\n\n// === CONFIGURE: Add your conditions ===\ngr.addQuery('active', true);\ngr.addQuery('priority', 1);\n\n// === QUERY: Execute the database query ===\ngr.query();\n\n// === ITERATE: Loop through results ===\nwhile (gr.next()) {\n    gs.info('Found: ' + gr.getValue('number'));\n}</pre><h3>Execution Trace</h3><table><tr><th>Step</th><th>What Happens</th><th>Database Impact</th></tr><tr><td>new GlideRecord('incident')</td><td>Creates object pointing to incident table</td><td>None yet</td></tr><tr><td>addQuery('active', true)</td><td>Adds WHERE active=true to internal query</td><td>None yet</td></tr><tr><td>query()</td><td>Executes SELECT * FROM incident WHERE...</td><td>Database hit!</td></tr><tr><td>next()</td><td>Moves pointer to first/next record</td><td>None</td></tr></table><h2>The get() Shortcut</h2><pre>// By sys_id (most common)\nvar gr = new GlideRecord('incident');\nif (gr.get('a1b2c3d4...')) {\n    gs.info('Found: ' + gr.getValue('number'));\n}\n\n// By any unique field\nvar userGr = new GlideRecord('sys_user');\nif (userGr.get('user_name', 'admin')) {\n    gs.info('Admin sys_id: ' + userGr.getUniqueValue());\n}</pre><div class=\"warning-box\"><strong>⚠️ ANTI-PATTERN #1: Null Variable Queries</strong><br><br>When an undefined variable passes to addQuery(), ServiceNow returns ALL records where that field is NULL—potentially millions!<pre>// ❌ DANGEROUS\nvar assignedTo;  // undefined!\ngr.addQuery('assigned_to', assignedTo);\ngr.query();  // Returns ALL incidents with no assignee!\n\n// ✅ SAFE - always validate\nif (assignedTo) {\n    gr.addQuery('assigned_to', assignedTo);\n}</pre></div><h2>Creating Records</h2><pre>var gr = new GlideRecord('incident');\ngr.initialize();\ngr.setValue('short_description', 'Network outage in Building A');\ngr.setValue('category', 'network');\ngr.setValue('priority', 2);\nvar newSysId = gr.insert();\ngs.info('Created incident: ' + newSysId);</pre><h2>Updating Records</h2><pre>var gr = new GlideRecord('incident');\ngr.addQuery('number', 'INC0010001');\ngr.query();\nif (gr.next()) {\n    gr.setValue('state', 2);\n    gr.setValue('assigned_to', gs.getUserID());\n    gr.update();\n}</pre><div class=\"warning-box\"><strong>⚠️ ANTI-PATTERN #2: The GlideElement Pointer Problem</strong><br><br><code>gr.field</code> returns a GlideElement (pointer), not the actual value:<pre>// ❌ WRONG - all items become the last record's sys_id\nvar ids = [];\nwhile (gr.next()) {\n    ids.push(gr.sys_id);  // Pushing a pointer!\n}\n\n// ✅ CORRECT - use getValue()\nvar ids = [];\nwhile (gr.next()) {\n    ids.push(gr.getValue('sys_id'));\n}</pre></div><h2>Essential Query Operators</h2><table><tr><th>Operator</th><th>Example</th><th>Meaning</th></tr><tr><td>=</td><td>addQuery('priority', 1)</td><td>Equals</td></tr><tr><td>!=</td><td>addQuery('state', '!=', 6)</td><td>Not equals</td></tr><tr><td>IN</td><td>addQuery('state', 'IN', '1,2,3')</td><td>In list</td></tr><tr><td>CONTAINS</td><td>addQuery('short_description', 'CONTAINS', 'network')</td><td>Contains text</td></tr><tr><td>ISEMPTY</td><td>addQuery('assigned_to', 'ISEMPTY', '')</td><td>Field is empty</td></tr></table><div class=\"tip-box\"><strong>💡 Always use setLimit() when you only need a few records:</strong><pre>var gr = new GlideRecord('incident');\ngr.addQuery('active', true);\ngr.setLimit(10);\ngr.query();</pre></div><h2>Try It Yourself</h2><div class=\"scenario-box\"><strong>🏋️ CHALLENGE:</strong> Write a script that:<br>1. Finds all incidents in New state (state=1)<br>2. That have been open for more than 48 hours<br>3. And have no assigned user<br>4. Update their priority to 2 (High)<br><br><em>Hint: Use gs.hoursAgo(48) for time comparison</em></div>"}
-  /* SNIP: the JSON is long; keep the rest exactly as provided in your BLOG_POSTS array, with the same escaping applied to every <pre> block. */
-]
-    var observer = new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('animate');});},{threshold:0.1});
-    renderBlog('all');
-    function renderBlog(filter){
-      var filtered = filter === 'all' ? BLOG_POSTS : BLOG_POSTS.filter(function(p){return p.category === filter;});
-      var grid = document.getElementById('blogGrid');
+      BLOG_POSTS = await res.json();
+
+      // Optional: newest first (uses dateISO if present)
+      BLOG_POSTS.sort(function (a, b) {
+        return (b.dateISO || '').localeCompare(a.dateISO || '');
+      });
+
+      renderBlog('all');
+    } catch (err) {
+      console.error(err);
+      document.getElementById('blogGrid').innerHTML = '';
       var empty = document.getElementById('emptyState');
-      if(filtered.length === 0){grid.innerHTML = '';empty.style.display = 'block';return;}
-      empty.style.display = 'none';
-      var html = '';
-      filtered.forEach(function(p, i){
-        html += '<article class="blog-card" style="transition-delay:' + (i * 0.08) + 's" data-id="' + p.id + '"><div class="blog-thumb"><div class="blog-thumb-bg ' + p.category + '"></div><span class="blog-category cat-' + p.category + '">' + p.category + '</span></div><div class="blog-content"><div class="blog-meta"><span>' + p.date + '</span><span>' + p.readTime + '</span></div><h3 class="blog-title">' + p.title + '</h3><p class="blog-excerpt">' + p.excerpt + '</p><div class="blog-footer"><span class="read-more">Read article <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></div></article>';
-      });
-      grid.innerHTML = html;
-      document.querySelectorAll('.blog-card').forEach(function(el){
-        observer.observe(el);
-        el.addEventListener('click', function(){openArticle(this.dataset.id);});
-      });
+      empty.style.display = 'block';
+      empty.querySelector('h3').textContent = 'Posts failed to load';
+      empty.querySelector('p').textContent = 'Check that posts.json exists at the site root and is accessible.';
+    }
+  }
+
+  function renderBlog(filter) {
+    var filtered = filter === 'all'
+      ? BLOG_POSTS
+      : BLOG_POSTS.filter(function (p) { return p.category === filter; });
+
+    var grid = document.getElementById('blogGrid');
+    var empty = document.getElementById('emptyState');
+
+    if (!filtered.length) {
+      grid.innerHTML = '';
+      empty.style.display = 'block';
+      return;
     }
 
-    document.querySelectorAll('.filter-btn').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
-        this.classList.add('active');
-        renderBlog(this.dataset.filter);
-      });
+    empty.style.display = 'none';
+
+    var html = '';
+    filtered.forEach(function (p, i) {
+      html += ''
+        + '<article class="blog-card" style="transition-delay:' + (i * 0.08) + 's" data-id="' + p.id + '">'
+        + '  <div class="blog-thumb">'
+        + '    <div class="blog-thumb-bg ' + (p.category || 'general') + '"></div>'
+        + '    <span class="blog-category cat-' + (p.category || 'general') + '">' + (p.category || 'general') + '</span>'
+        + '  </div>'
+        + '  <div class="blog-content">'
+        + '    <div class="blog-meta"><span>' + (p.date || '') + '</span><span>' + (p.readTime || '') + '</span></div>'
+        + '    <h3 class="blog-title">' + (p.title || '') + '</h3>'
+        + '    <p class="blog-excerpt">' + (p.excerpt || '') + '</p>'
+        + '    <div class="blog-footer">'
+        + '      <span class="read-more">Read article <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>'
+        + '    </div>'
+        + '  </div>'
+        + '</article>';
     });
 
-    function openArticle(id){
-      var p = BLOG_POSTS.find(function(x){return x.id == id;});
-      if(!p) return;
-      document.getElementById('modalTitle').textContent = p.title;
-      document.getElementById('modalDate').innerHTML = '📅 ' + p.date;
-      document.getElementById('modalRead').innerHTML = '⏱️ ' + p.readTime;
-      document.getElementById('modalCat').innerHTML = '🏷️ ' + p.category.charAt(0).toUpperCase() + p.category.slice(1);
-      var content = p.content;
-      content = escapePreBlocks(content);
+    grid.innerHTML = html;
 
-      if (p.series === 'js-tutorial') {
-        content = getSeriesNav(p.id) + content + getChapterNav(p.id);
-      }
-      document.getElementById('modalContent').innerHTML = content;
-      document.getElementById('modalHeaderBg').className = 'blog-modal-header-bg blog-thumb-bg ' + p.category;
-      document.getElementById('blogModal').classList.add('active');
-      document.body.style.overflow = 'hidden';
-      document.querySelector('.blog-modal').scrollTop = 0;
+    document.querySelectorAll('.blog-card').forEach(function (el) {
+      observer.observe(el);
+      el.addEventListener('click', function () { openArticle(this.dataset.id); });
+    });
+  }
+
+  function bindFilters() {
+    document.querySelectorAll('.filter-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        renderBlog(btn.dataset.filter);
+      });
+    });
+  }
+
+  function openArticle(id) {
+    var p = BLOG_POSTS.find(function (x) { return String(x.id) === String(id); });
+    if (!p) return;
+
+    document.getElementById('modalTitle').textContent = p.title || '';
+    document.getElementById('modalDate').innerHTML = '📅 ' + (p.date || '');
+    document.getElementById('modalRead').innerHTML = '⏱️ ' + (p.readTime || '');
+    document.getElementById('modalCat').innerHTML = '🏷️ ' + ((p.category || '').charAt(0).toUpperCase() + (p.category || '').slice(1));
+
+    var content = escapePreBlocks(p.content || '');
+    if (p.series === 'js-tutorial') {
+      content = getSeriesNav(p.id) + content + getChapterNav(p.id);
     }
 
-    function closeModal(){
-      document.getElementById('blogModal').classList.remove('active');
-      document.body.style.overflow = '';
-    }
+    document.getElementById('modalContent').innerHTML = content;
+    document.getElementById('modalHeaderBg').className = 'blog-modal-header-bg blog-thumb-bg ' + (p.category || 'general');
 
+    document.getElementById('blogModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.querySelector('.blog-modal').scrollTop = 0;
+  }
+
+  function closeModal() {
+    document.getElementById('blogModal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function bindModalEvents() {
     document.querySelector('.blog-modal-close').addEventListener('click', closeModal);
-    document.getElementById('blogModal').addEventListener('click', function(e){if(e.target === this) closeModal();});
-    document.addEventListener('keydown', function(e){if(e.key === 'Escape') closeModal();});
+    document.getElementById('blogModal').addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  }
 
-    var menuToggle = document.querySelector('.menu-toggle'), mobileMenu = document.querySelector('.mobile-menu');
-    menuToggle.addEventListener('click', function(){this.classList.toggle('active');mobileMenu.classList.toggle('active');});
-  </script>
+  function bindMobileMenu() {
+    var menuToggle = document.querySelector('.menu-toggle');
+    var mobileMenu = document.querySelector('.mobile-menu');
+    menuToggle.addEventListener('click', function () {
+      this.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+    });
+  }
+</script>
 </body>
 </html>
