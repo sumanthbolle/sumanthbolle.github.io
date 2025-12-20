@@ -200,11 +200,16 @@ IMPORTANT RULES:
 2. Answer: 350-600 words
 3. MUST end answer with complete sentence and closing tag
 4. Use HTML: <p>, <h4>, <ul>, <li>, <pre>, <strong>
-5. Include one 8-12 line code example that is NOT a stub. Must include query + condition + loop or aggregation.
+5. Code example MUST be 8-12 lines with REAL working logic:
+   - Include variable declaration (var gr = new GlideRecord/GlideAggregate)
+   - Include addQuery or addEncodedQuery with actual field conditions
+   - Include query() call
+   - Include while(gr.next()) loop with 2+ lines of processing logic inside
+   - NO stubs, NO placeholders, NO "// your code here", NO empty loops
 6. No [1] citations, no **markdown**
 
 JSON format:
-{"question":"Your specific technical question here?","answer":"<h4>Key Concept</h4><p>Explanation.</p><pre>// code example</pre><p>Summary point.</p>","difficulty":"Senior","company":"ServiceNow"}`;
+{"question":"Your specific technical question here?","answer":"<h4>Key Concept</h4><p>Explanation.</p><pre>var gr = new GlideRecord('incident');\\ngr.addEncodedQuery('state=1^priority=1');\\ngr.query();\\nwhile (gr.next()) {\\n  var count = gr.getValue('reassignment_count');\\n  gr.setValue('priority', 2);\\n  gr.update();\\n}</pre><p>Summary point.</p>","difficulty":"Senior","company":"ServiceNow"}`;
 
 // ---------- main ----------
 async function main() {
