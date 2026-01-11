@@ -1,6 +1,5 @@
 # .github/workflows/fetch-articles.yml
 name: Fetch Articles & Validate
-
 on:
   schedule:
     # Runs daily at 6 AM UTC
@@ -27,10 +26,43 @@ jobs:
           PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
         run: node scripts/fetch-articles.js
       
-      - name: Validate and fix content
+      - name: Sanitize content (remove invalid characters)
+        run: node scripts/sanitize-content.js
+      
+      - name: Validate content
+        id: validate
         env:
           PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
         run: node scripts/validate-content.js
+      
+      - name: Show validation report
+        if: always()
+        run: |
+          echo ""
+          echo "📋 VALIDATION REPORT"
+          echo "===================="
+          if [ -f validation-report.json ]; then
+            echo "Posts with issues: $(jq '.posts.problems | length' validation-report.json)"
+            echo "Interviews with issues: $(jq '.interviews.problems | length' validation-report.json)"
+            echo "Critical issues: $(jq '.summary.critical' validation-report.json)"
+            echo "Warnings: $(jq '.summary.warnings' validation-report.json)"
+            echo ""
+            if [ "$(jq '.summary.critical' validation-report.json)" -gt 0 ]; then
+              echo "❌ CRITICAL ISSUES:"
+              jq -r '.posts.problems[] | select(.issues[] | .severity == "CRITICAL") | "  Post ID \(.id): \(.title)"' validation-report.json 2>/dev/null || true
+              jq -r '.interviews.problems[] | select(.issues[] | .severity == "CRITICAL") | "  Interview ID \(.id)"' validation-report.json 2>/dev/null || true
+            fi
+          else
+            echo "⚠️ validation-report.json not found"
+          fi
+      
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: validation-report.json
+          if-no-files-found: ignore
       
       - name: Generate sitemap
         run: node scripts/generate-sitemap.js
