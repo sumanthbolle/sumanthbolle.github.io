@@ -1,640 +1,835 @@
 // scripts/fetch-articles.js
-// Generates ServiceNow learning content in Scenario-Question-Answer format
-// Organized by learning paths: Foundations → ITSM → Modules → Architecture
+// =============================================================================
+// SERVICENOW LEARNING CONTENT GENERATOR v3.0
+// =============================================================================
 // Target: sumanthbolle.com - The definitive ServiceNow learning resource
+// 
+// PHILOSOPHY:
+// - Dynamic content generation for ANY tech professional transitioning to ServiceNow
+// - AI-first approach: ServiceNow + AI solving real enterprise problems
+// - Senior professional focus: Respect existing expertise, show translation paths
+// - Enterprise-grade: Real scenarios, production patterns, business impact
+//
+// ARCHITECTURE:
+// - Domain templates (not hardcoded topics) enable infinite scalability
+// - AI content pillars address real organizational transformation
+// - Dynamic prompt composition creates unique, relevant articles
+// =============================================================================
 
 const fs = require('fs');
 const https = require('https');
 const { execSync } = require('child_process');
 
 const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
-
 const POSTS_FILE = 'posts.json';
 const INTERVIEWS_FILE = 'interviews.json';
-
 const MAX_POSTS = 30;
 const MAX_INTERVIEWS = 20;
 
 // =============================================================================
-// LEARNING PATH STRUCTURE - Certification Aligned
+// DYNAMIC DOMAIN SYSTEM - Scales to Any Tech Background
 // =============================================================================
 
-const LEARNING_PATHS = {
-  foundations: { order: 1, name: 'Platform Foundations', cert: 'CSA' },
-  itsm: { order: 2, name: 'IT Service Management', cert: 'CSA, CIS-ITSM' },
-  development: { order: 3, name: 'Development & Scripting', cert: 'CAD' },
-  integration: { order: 4, name: 'Integration & Automation', cert: 'CAD' },
-  modules: { order: 5, name: 'Specialized Modules', cert: 'CIS-*' },
-  architecture: { order: 6, name: 'Architecture & Best Practices', cert: 'CTA' },
+const DOMAIN_CATEGORIES = {
+  // HOT DOMAINS - Current high-demand transitions
+  hot: {
+    weight: 3, // Higher weight = more likely to be selected
+    domains: [
+      {
+        name: 'Cloud & Infrastructure',
+        sources: ['AWS', 'Azure', 'GCP', 'Kubernetes', 'Terraform', 'Docker'],
+        snTarget: ['ITOM', 'Cloud Management', 'Discovery', 'Event Management'],
+        skills: ['Infrastructure as Code', 'Container orchestration', 'Cloud architecture', 'Multi-cloud management'],
+        businessValue: 'unified infrastructure visibility and automated remediation',
+      },
+      {
+        name: 'Modern Development',
+        sources: ['React', 'Angular', 'Vue', 'Node.js', 'TypeScript', 'Next.js'],
+        snTarget: ['Now Experience', 'UI Builder', 'Service Portal', 'Workspaces'],
+        skills: ['Component architecture', 'State management', 'API integration', 'Responsive design'],
+        businessValue: 'modern employee and customer experiences on enterprise platform',
+      },
+      {
+        name: 'Data & Analytics',
+        sources: ['Python', 'Spark', 'Airflow', 'Snowflake', 'dbt', 'Pandas'],
+        snTarget: ['Performance Analytics', 'Reporting', 'Integration Hub', 'CMDB'],
+        skills: ['ETL pipelines', 'Data modeling', 'Analytics', 'Data governance'],
+        businessValue: 'operational intelligence and data-driven decision making',
+      },
+      {
+        name: 'DevOps & SRE',
+        sources: ['Jenkins', 'GitLab CI', 'GitHub Actions', 'ArgoCD', 'Prometheus', 'Grafana'],
+        snTarget: ['DevOps Change Velocity', 'Event Management', 'Service Mapping', 'AIOps'],
+        skills: ['CI/CD pipelines', 'Observability', 'Incident response', 'SLO management'],
+        businessValue: 'automated change management with compliance and velocity',
+      },
+      {
+        name: 'AI & Machine Learning',
+        sources: ['TensorFlow', 'PyTorch', 'LangChain', 'OpenAI', 'Hugging Face', 'MLflow'],
+        snTarget: ['Now Assist', 'Predictive Intelligence', 'Virtual Agent', 'Document Intelligence'],
+        skills: ['Model training', 'RAG architecture', 'Prompt engineering', 'MLOps'],
+        businessValue: 'intelligent automation and AI-powered service delivery',
+      },
+      {
+        name: 'Full Stack Engineering',
+        sources: ['MERN', 'MEAN', 'Django', 'FastAPI', 'GraphQL', 'Microservices'],
+        snTarget: ['Scripted REST APIs', 'Integration Hub', 'Flow Designer', 'App Engine'],
+        skills: ['API design', 'Database management', 'Authentication', 'Scalable architecture'],
+        businessValue: 'enterprise application development on governed platform',
+      },
+      {
+        name: 'CRM & Customer Platforms',
+        sources: ['Salesforce', 'HubSpot', 'Dynamics 365', 'Zendesk', 'Freshdesk'],
+        snTarget: ['CSM', 'FSM', 'Service Portal', 'Customer Workflows'],
+        skills: ['Customer data management', 'Case management', 'Workflow automation', 'Portal development'],
+        businessValue: 'unified customer service on single enterprise platform',
+      },
+      {
+        name: 'Security & Compliance',
+        sources: ['Splunk', 'CrowdStrike', 'Palo Alto', 'Qualys', 'Tenable', 'SIEM tools'],
+        snTarget: ['SecOps', 'GRC', 'Vulnerability Response', 'Threat Intelligence'],
+        skills: ['Threat detection', 'Vulnerability management', 'Compliance automation', 'Security orchestration'],
+        businessValue: 'security operations integrated with IT remediation',
+      },
+    ],
+  },
+  
+  // LEGACY DOMAINS - Still valuable, platforms declining
+  legacy: {
+    weight: 2,
+    domains: [
+      {
+        name: 'Legacy ITSM Platforms',
+        sources: ['BMC Remedy', 'HP Service Manager', 'CA Service Desk', 'Cherwell', 'Ivanti'],
+        snTarget: ['ITSM', 'ITOM', 'Service Catalog', 'CMDB'],
+        skills: ['ITIL processes', 'Workflow design', 'Integration patterns', 'Change management'],
+        businessValue: 'modern cloud-native ITSM with faster innovation cycles',
+      },
+      {
+        name: 'Enterprise ERP',
+        sources: ['SAP', 'Oracle EBS', 'PeopleSoft', 'JD Edwards', 'Workday'],
+        snTarget: ['HRSD', 'Integration Hub', 'Employee Center', 'Strategic Portfolio Management'],
+        skills: ['Enterprise processes', 'Master data management', 'Compliance', 'Integration architecture'],
+        businessValue: 'employee experience layer and workflow orchestration across ERP',
+      },
+      {
+        name: 'Traditional Development',
+        sources: ['Java Enterprise', '.NET Framework', 'C#', 'Spring Boot', 'WebSphere', 'WCF'],
+        snTarget: ['App Engine', 'Scoped Applications', 'Script Includes', 'Integration'],
+        skills: ['Object-oriented design', 'Enterprise patterns', 'API development', 'Transaction management'],
+        businessValue: 'rapid application development with built-in governance',
+      },
+      {
+        name: 'Database Administration',
+        sources: ['Oracle DBA', 'SQL Server', 'PostgreSQL', 'MySQL', 'DB2'],
+        snTarget: ['Platform data model', 'Performance optimization', 'CMDB architecture', 'Reporting'],
+        skills: ['Query optimization', 'Data modeling', 'Indexing strategies', 'Backup and recovery'],
+        businessValue: 'platform performance and data architecture expertise',
+      },
+      {
+        name: 'Mainframe & Legacy Systems',
+        sources: ['COBOL', 'JCL', 'CICS', 'AS/400', 'z/OS', 'VSAM'],
+        snTarget: ['Scheduled Jobs', 'Business Rules', 'Integration', 'Batch processing'],
+        skills: ['Enterprise-scale thinking', 'Batch processing', 'Transaction integrity', 'Mission-critical systems'],
+        businessValue: 'enterprise discipline applied to modern cloud platform',
+      },
+      {
+        name: 'Microsoft Ecosystem',
+        sources: ['SharePoint', 'Power Platform', 'Power Automate', 'Dynamics', 'Teams'],
+        snTarget: ['Flow Designer', 'Employee Center', 'Virtual Agent', 'Integration Hub'],
+        skills: ['Workflow automation', 'Portal development', 'Business process design', 'Collaboration'],
+        businessValue: 'enterprise service management beyond document workflows',
+      },
+      {
+        name: 'Project & Portfolio Tools',
+        sources: ['Jira', 'Confluence', 'Monday.com', 'Asana', 'MS Project', 'CA Clarity'],
+        snTarget: ['Strategic Portfolio Management', 'ITBM', 'Agile Development', 'Resource Management'],
+        skills: ['Agile methodologies', 'Portfolio management', 'Resource planning', 'Reporting'],
+        businessValue: 'integrated IT business management with service delivery',
+      },
+    ],
+  },
+  
+  // EMERGING DOMAINS - Future-forward transitions
+  emerging: {
+    weight: 2,
+    domains: [
+      {
+        name: 'Platform Engineering',
+        sources: ['Backstage', 'Port', 'Humanitec', 'Internal Developer Platforms'],
+        snTarget: ['App Engine', 'Developer Portal', 'Service Catalog', 'Flow Designer'],
+        skills: ['Developer experience', 'Self-service platforms', 'Golden paths', 'API management'],
+        businessValue: 'enterprise developer platform with governance built-in',
+      },
+      {
+        name: 'Low-Code/No-Code',
+        sources: ['OutSystems', 'Mendix', 'Appian', 'Bubble', 'Retool'],
+        snTarget: ['App Engine Studio', 'Flow Designer', 'UI Builder', 'Creator Workflows'],
+        skills: ['Visual development', 'Citizen development', 'Process automation', 'Rapid prototyping'],
+        businessValue: 'enterprise-grade low-code with security and compliance',
+      },
+      {
+        name: 'Observability & AIOps',
+        sources: ['Datadog', 'New Relic', 'Dynatrace', 'PagerDuty', 'Moogsoft'],
+        snTarget: ['Event Management', 'Health Log Analytics', 'AIOps', 'Service Mapping'],
+        skills: ['Event correlation', 'Anomaly detection', 'Root cause analysis', 'Alert management'],
+        businessValue: 'intelligent operations with automated incident creation',
+      },
+    ],
+  },
 };
 
 // =============================================================================
-// TOPIC LIBRARY - 25+ Scenario-Based Topics
+// AI CONTENT PILLARS - Enterprise AI Transformation
 // =============================================================================
 
-const TOPICS = [
-  // =========================================================================
-  // FOUNDATIONS - Why ServiceNow Exists & Core Concepts
-  // =========================================================================
-  {
-    query: `Write an educational article: "What is ServiceNow and Why Did It Disrupt Enterprise IT?"
+const AI_PILLARS = {
+  // Core AI Capabilities
+  capabilities: [
+    {
+      name: 'Now Assist',
+      focus: 'Generative AI for enterprise service delivery',
+      businessProblems: [
+        'Agents spending 40% of time on documentation',
+        'Employees waiting hours for simple answers',
+        'Knowledge articles outdated and unfindable',
+        'Code development bottlenecks',
+      ],
+      outcomes: ['70% faster case resolution', '50% reduction in documentation time', '24/7 intelligent self-service'],
+    },
+    {
+      name: 'Predictive Intelligence',
+      focus: 'Machine learning for classification and routing',
+      businessProblems: [
+        'Inconsistent ticket categorization',
+        'Misrouted requests causing delays',
+        'Manual triage consuming skilled resources',
+        'No pattern recognition in incident data',
+      ],
+      outcomes: ['85% auto-classification accuracy', '60% reduction in routing errors', 'Proactive problem identification'],
+    },
+    {
+      name: 'Virtual Agent',
+      focus: 'Conversational AI for self-service',
+      businessProblems: [
+        'Help desk overwhelmed with repetitive questions',
+        'Employees frustrated with menu-based systems',
+        'After-hours support gaps',
+        'Inconsistent answers across channels',
+      ],
+      outcomes: ['40-60% deflection rates', '24/7 availability', 'Consistent employee experience'],
+    },
+    {
+      name: 'Document Intelligence',
+      focus: 'AI-powered document processing',
+      businessProblems: [
+        'Manual data entry from forms and PDFs',
+        'Onboarding document processing delays',
+        'Contract review bottlenecks',
+        'Compliance document management',
+      ],
+      outcomes: ['90% reduction in manual entry', 'Hours to minutes processing', 'Automated workflow triggering'],
+    },
+    {
+      name: 'AI-Powered Search',
+      focus: 'Intelligent knowledge retrieval',
+      businessProblems: [
+        'Employees can\'t find relevant information',
+        'Search returns too many irrelevant results',
+        'Knowledge silos across departments',
+        'Duplicate questions to support teams',
+      ],
+      outcomes: ['3x improvement in search relevance', '50% reduction in duplicate tickets', 'Cross-silo knowledge access'],
+    },
+  ],
+  
+  // Enterprise AI Strategies
+  strategies: [
+    {
+      name: 'AI-First Service Desk',
+      description: 'Transform traditional help desk into intelligent support',
+      components: ['Virtual Agent', 'Now Assist', 'Predictive Intelligence', 'Knowledge Management'],
+      metrics: ['MTTR', 'First Contact Resolution', 'Employee Satisfaction', 'Cost per Ticket'],
+    },
+    {
+      name: 'Intelligent IT Operations',
+      description: 'AIOps-driven infrastructure management',
+      components: ['Event Management', 'Health Log Analytics', 'Service Mapping', 'Auto-remediation'],
+      metrics: ['MTTR', 'Alert Noise Reduction', 'Automated Resolutions', 'Availability'],
+    },
+    {
+      name: 'AI-Enhanced Employee Experience',
+      description: 'Personalized, proactive employee services',
+      components: ['Employee Center', 'Now Assist', 'Journey Management', 'Predictive HR'],
+      metrics: ['eNPS', 'Time to Resolution', 'Self-Service Adoption', 'Onboarding Time'],
+    },
+    {
+      name: 'Cognitive Security Operations',
+      description: 'AI-powered threat detection and response',
+      components: ['SecOps', 'Threat Intelligence', 'Vulnerability Prioritization', 'Auto-containment'],
+      metrics: ['MTTR for Security', 'False Positive Reduction', 'Vulnerability Closure Rate'],
+    },
+    {
+      name: 'Intelligent Automation Factory',
+      description: 'Scale automation with AI-assisted development',
+      components: ['Now Assist for Code', 'Flow Designer', 'Integration Hub', 'Process Mining'],
+      metrics: ['Automation Rate', 'Development Velocity', 'Process Efficiency'],
+    },
+  ],
+  
+  // AI Implementation Challenges
+  challenges: [
+    { name: 'Data Quality', solution: 'Foundation before AI: clean data, consistent categorization' },
+    { name: 'Change Management', solution: 'Human-in-the-loop, gradual automation, trust building' },
+    { name: 'ROI Measurement', solution: 'Baseline metrics, A/B testing, business outcome focus' },
+    { name: 'Security & Privacy', solution: 'Data governance, ACL awareness, audit trails' },
+    { name: 'Hallucination Risk', solution: 'RAG architecture, grounding, confidence thresholds' },
+    { name: 'Integration Complexity', solution: 'Knowledge source strategy, data pipeline design' },
+  ],
+};
 
-SCENARIO: A 15-year IT veteran (sysadmin/developer) is evaluating whether to learn ServiceNow. They've used Jira, Remedy, and built custom apps. They ask: "What makes ServiceNow different from dozens of ITSM tools I've seen?"
+// =============================================================================
+// SERVICENOW KNOWLEDGE BASE - Core Concepts for Translation
+// =============================================================================
 
-QUESTIONS TO ANSWER:
-- Q: How is ServiceNow different from Jira/Remedy/BMC? (It's a platform, not just ticketing)
-- Q: What does "single platform" actually mean for enterprises? (One data model, one workflow engine)
-- Q: Why do Fortune 500 companies pay millions for this? (ROI from consolidation, automation)
-- Q: What real problems can I solve that I couldn't before? (Cross-department workflows, CMDB-driven automation)
-- Q: Is the job market real or hype? (231,000 developers needed by 2028, salary data)
-
-Include the market context: 85% of Fortune 500 use ServiceNow, $103B projected market.`,
-    category: 'foundations',
-    learningPath: 'foundations',
-    difficulty: 'Beginner',
-    certAlignment: 'CSA',
-    forPersona: ['Career Changers', 'IT Veterans'],
+const SN_CONCEPTS = {
+  architecture: {
+    core: ['Tables', 'Records', 'sys_id', 'Dictionary', 'ACLs', 'Scoped Applications'],
+    data: ['GlideRecord', 'GlideAggregate', 'Reference fields', 'Dot-walking', 'Encoded queries'],
+    automation: ['Business Rules', 'Flow Designer', 'Scheduled Jobs', 'Events', 'Script Includes'],
+    integration: ['REST API', 'Integration Hub', 'MID Server', 'Import Sets', 'Transform Maps'],
+    ui: ['Service Portal', 'Now Experience', 'UI Builder', 'Workspaces', 'Mobile'],
   },
-  {
-    query: `Write an educational article: "ServiceNow Architecture for Experienced Developers"
-
-SCENARIO: A .NET developer with 10 years experience starts a ServiceNow role. Day one confusion: "Where's the database? Where do I write code? What's this Update Set thing? Why does everything feel different?"
-
-QUESTIONS TO ANSWER:
-- Q: Where is my code stored? (Script fields in database records - code IS data)
-- Q: Why can't I just use SQL? (GlideRecord abstracts security, business logic)
-- Q: What's the difference between Global and Scoped apps? (Isolation, upgrade safety)
-- Q: Why Update Sets instead of Git? (Instance-based development model)
-- Q: Where's the MVC pattern I'm used to? (Server scripts, UI policies, client scripts)
-- Q: What will feel familiar vs completely different? (JavaScript yes, but platform-specific APIs)
-
-Use analogies to .NET/Java patterns they already know.`,
-    category: 'foundations',
-    learningPath: 'foundations',
-    difficulty: 'Beginner',
-    certAlignment: 'CSA',
-    forPersona: ['Developers', 'Career Changers'],
+  
+  modules: {
+    itsm: { name: 'IT Service Management', tables: ['incident', 'change_request', 'problem', 'sc_request'] },
+    itom: { name: 'IT Operations Management', tables: ['em_alert', 'cmdb_ci', 'sa_metric'] },
+    hrsd: { name: 'HR Service Delivery', tables: ['sn_hr_core_case', 'sn_hr_core_profile'] },
+    csm: { name: 'Customer Service Management', tables: ['sn_customerservice_case', 'customer_account'] },
+    secops: { name: 'Security Operations', tables: ['sn_si_incident', 'sn_vul_vulnerability'] },
+    spm: { name: 'Strategic Portfolio Management', tables: ['pm_project', 'dmn_demand'] },
   },
-  {
-    query: `Write an educational article: "ServiceNow Tables, Records, and Data Model Explained"
-
-SCENARIO: A DBA with Oracle/SQL Server experience starts ServiceNow work. They think in tables, joins, foreign keys. They ask: "How does ServiceNow's database work? What are these sys_id values everywhere?"
-
-QUESTIONS TO ANSWER:
-- Q: Can I access the database directly? (No - and why that's actually good for security)
-- Q: What's a sys_id and why is everything referenced by it? (32-char GUID, universal key)
-- Q: How does table inheritance work? (Task → Incident, extends pattern)
-- Q: How do "joins" work in ServiceNow? (Reference fields, dot-walking)
-- Q: What's the Dictionary and why does it matter? (Schema metadata, field definitions)
-- Q: How do I see the actual ERD/schema? (Table relationships, schema map)
-
-Show SQL-to-GlideRecord mental mapping.`,
-    category: 'foundations',
-    learningPath: 'foundations',
-    difficulty: 'Beginner',
-    certAlignment: 'CSA',
-    forPersona: ['DBAs', 'Developers'],
+  
+  careers: {
+    admin: { cert: 'CSA', focus: 'Configuration, user management, basic automation' },
+    developer: { cert: 'CAD', focus: 'Scripting, integration, custom applications' },
+    implementer: { cert: 'CIS-*', focus: 'Module-specific deep expertise' },
+    architect: { cert: 'CTA', focus: 'Enterprise strategy, performance, governance' },
   },
-  {
-    query: `Write an educational article: "Navigating ServiceNow Like a Power User"
+};
 
-SCENARIO: A new admin opens their first ServiceNow instance. Application Navigator, forms, lists, dozens of modules. They ask: "How do I find anything? How do experienced users work 10x faster?"
+// =============================================================================
+// DYNAMIC TOPIC GENERATORS
+// =============================================================================
 
-QUESTIONS TO ANSWER:
-- Q: What's the fastest way to find anything? (Global search, .list trick, navigator filter)
-- Q: How is navigation organized? (Applications, Modules, Menus hierarchy)
-- Q: What are these sys_* tables I keep seeing? (System tables pattern)
-- Q: What keyboard shortcuts save the most time? (Ctrl+Shift+J, .config, etc.)
-- Q: How do I see what's happening under the hood? (System logs, debugging)
-- Q: How do I customize my own navigation? (Favorites, homepage)
+function generateDomainTransitionTopic(domain, category) {
+  const source = domain.sources[Math.floor(Math.random() * domain.sources.length)];
+  const target = domain.snTarget[Math.floor(Math.random() * domain.snTarget.length)];
+  const skill = domain.skills[Math.floor(Math.random() * domain.skills.length)];
+  
+  const templates = [
+    {
+      titlePattern: `From ${source} to ServiceNow: A Senior Engineer's Translation Guide`,
+      scenario: `A senior ${domain.name.toLowerCase()} professional with 10+ years of ${source} experience joins a ServiceNow project. They have deep expertise in ${skill.toLowerCase()} but the ServiceNow paradigm feels foreign.`,
+      questions: [
+        `How does my ${source} experience translate to ServiceNow ${target}?`,
+        `What concepts from ${skill.toLowerCase()} apply directly vs need rethinking?`,
+        `Where will I feel at home and where will I struggle?`,
+        `How do I leverage my background to add value faster?`,
+        `What's the realistic timeline to become productive?`,
+        `How do I position my experience in ServiceNow interviews?`,
+      ],
+    },
+    {
+      titlePattern: `${source} Expert's Guide to ServiceNow ${target}`,
+      scenario: `An organization is implementing ServiceNow ${target}. They need someone who understands both ${source} patterns and ServiceNow. A ${domain.name.toLowerCase()} specialist asks: "Can I bridge both worlds?"`,
+      questions: [
+        `What's the ServiceNow equivalent of ${source}'s core features?`,
+        `How do integration patterns differ between platforms?`,
+        `What ${skill.toLowerCase()} knowledge transfers directly?`,
+        `Where does ServiceNow's approach fundamentally differ?`,
+        `How do I become the ${source}-ServiceNow bridge expert?`,
+        `What salary premium does dual expertise command?`,
+      ],
+    },
+    {
+      titlePattern: `Why ${domain.name} Professionals Thrive in ServiceNow`,
+      scenario: `A ${domain.name.toLowerCase()} professional considers ServiceNow. They hear mixed signals - some say it's "just ticketing," others say it's a massive platform. They ask: "Is this a real career move or a step backward?"`,
+      questions: [
+        `Is ServiceNow a legitimate career path for ${domain.name.toLowerCase()} experts?`,
+        `What makes ${skill.toLowerCase()} valuable in ServiceNow?`,
+        `How does ServiceNow compare architecturally to ${source}?`,
+        `What's the job market like for people with my background?`,
+        `Do I need to "start over" or can I leverage my experience?`,
+        `What's the business value of ${domain.businessValue}?`,
+      ],
+    },
+  ];
+  
+  const template = templates[Math.floor(Math.random() * templates.length)];
+  
+  return {
+    query: `Write an educational article: "${template.titlePattern}"
 
-Include the .list, .do, .config URL hacks.`,
-    category: 'foundations',
-    learningPath: 'foundations',
-    difficulty: 'Beginner',
-    certAlignment: 'CSA',
-    forPersona: ['Admins', 'All Roles'],
-  },
-
-  // =========================================================================
-  // ITSM - The Core That Powers 80% of Jobs
-  // =========================================================================
-  {
-    query: `Write an educational article: "Incident Management Done Right in ServiceNow"
-
-SCENARIO: A help desk manager with 8 years using Remedy/Zendesk implements ServiceNow Incident Management. They ask: "I know ITIL incident process. What does ServiceNow add? How do I configure it properly?"
-
-QUESTIONS TO ANSWER:
-- Q: What's the default incident workflow and when should I customize it? (States, transitions)
-- Q: How do assignment rules actually work? (Group rules, user rules, priority)
-- Q: What's the relationship between Priority, Impact, and Urgency? (Matrix calculation)
-- Q: How do SLAs attach and drive notifications? (Task SLA, breach rules)
-- Q: When do I use Business Rule vs Flow for automation? (Decision framework)
-- Q: What integrations make incidents more powerful? (CMDB, monitoring, email)
-
-Include before/after: email support chaos vs ServiceNow automation.`,
-    category: 'itsm',
-    learningPath: 'itsm',
-    difficulty: 'Intermediate',
-    certAlignment: 'CSA, CIS-ITSM',
-    forPersona: ['Admins', 'ITSM Practitioners'],
-  },
-  {
-    query: `Write an educational article: "Change Management - Balancing Control and Speed"
-
-SCENARIO: An IT manager's team makes production changes without tracking. Outages happen, nobody knows what changed. They ask: "How do I implement Change Management without slowing developers to a crawl?"
-
-QUESTIONS TO ANSWER:
-- Q: Standard vs Normal vs Emergency - when to use each? (Risk-based selection)
-- Q: Do I really need a CAB (Change Advisory Board)? (When yes, when no)
-- Q: How do I automate low-risk while controlling high-risk? (Auto-approval rules)
-- Q: How does Change connect to CMDB? (Affected CIs, impact analysis)
-- Q: What's the conflict detection and blackout window? (Change collision)
-- Q: How do I measure Change Management success? (Metrics, failed change rate)
-
-Balance governance with developer productivity.`,
-    category: 'itsm',
-    learningPath: 'itsm',
-    difficulty: 'Intermediate',
-    certAlignment: 'CSA, CIS-ITSM',
-    forPersona: ['IT Managers', 'Admins'],
-  },
-  {
-    query: `Write an educational article: "CMDB - Why It Matters and How to Keep It Accurate"
-
-SCENARIO: An architect hears "we need a CMDB" but the org failed twice before. Data got stale, nobody trusted it. They ask: "What makes ServiceNow CMDB different? How do I keep it accurate this time?"
+SCENARIO: ${template.scenario}
 
 QUESTIONS TO ANSWER:
-- Q: What's a CI vs just an asset? (Configuration vs ownership)
-- Q: How does Discovery actually work? (Probes, sensors, patterns)
-- Q: What CI relationships matter most? (runs_on, depends_on, hosted_on)
-- Q: How do I connect CMDB to Incident/Change/Problem? (Impact, root cause)
-- Q: What's Service Mapping vs Discovery? (Application topology)
-- Q: How do I measure CMDB health? (Completeness, compliance, correctness)
+${template.questions.map(q => `- Q: ${q}`).join('\n')}
 
-Address the real problem: "Server down - who's affected? What services break?"`,
-    category: 'itsm',
-    learningPath: 'itsm',
+KEY CONTEXT:
+- Source expertise: ${domain.sources.join(', ')}
+- ServiceNow targets: ${domain.snTarget.join(', ')}
+- Transferable skills: ${domain.skills.join(', ')}
+- Business value: ${domain.businessValue}
+
+Write for a senior professional who doesn't need basic concepts explained, but needs the translation map to their new environment. Include specific analogies, honest trade-offs, and production-learned insights.`,
+    category: category === 'hot' ? 'career' : 'career',
+    learningPath: 'career',
+    difficulty: category === 'hot' ? 'Intermediate' : 'Beginner',
+    forPersona: [domain.name, 'Career Changers'],
+    uniqueId: `career-${domain.name.toLowerCase().replace(/\s+/g, '-')}-${source.toLowerCase().replace(/\s+/g, '-')}`,
+  };
+}
+
+function generateAITopic() {
+  const pillarTypes = ['capability', 'strategy', 'challenge', 'implementation'];
+  const pillarType = pillarTypes[Math.floor(Math.random() * pillarTypes.length)];
+  
+  if (pillarType === 'capability') {
+    const capability = AI_PILLARS.capabilities[Math.floor(Math.random() * AI_PILLARS.capabilities.length)];
+    const problem = capability.businessProblems[Math.floor(Math.random() * capability.businessProblems.length)];
+    
+    return {
+      query: `Write an educational article: "Solving '${problem}' with ServiceNow ${capability.name}"
+
+SCENARIO: An organization struggles with: "${problem}". Leadership has heard about ServiceNow ${capability.name} but is skeptical. They ask: "Does this actually work, or is it just AI hype?"
+
+QUESTIONS TO ANSWER:
+- Q: What is ServiceNow ${capability.name} technically? (Architecture, not marketing)
+- Q: How does it specifically address "${problem}"?
+- Q: What data and prerequisites are needed? (Honest assessment)
+- Q: What are realistic outcomes? (${capability.outcomes.join(', ')})
+- Q: What are the limitations and edge cases?
+- Q: How do I build a business case? (ROI metrics, implementation timeline)
+
+Focus on ${capability.focus}. Include technical architecture for architects and business value for executives. Be honest about what works and what doesn't.`,
+      category: 'ai',
+      learningPath: 'ai',
+      difficulty: 'Intermediate',
+      forPersona: ['Architects', 'IT Leaders', 'AI Engineers'],
+      uniqueId: `ai-${capability.name.toLowerCase().replace(/\s+/g, '-')}-${problem.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}`,
+    };
+  }
+  
+  if (pillarType === 'strategy') {
+    const strategy = AI_PILLARS.strategies[Math.floor(Math.random() * AI_PILLARS.strategies.length)];
+    
+    return {
+      query: `Write an educational article: "${strategy.name}: A Complete Implementation Blueprint"
+
+SCENARIO: A CIO wants to implement "${strategy.name}" but needs a concrete plan, not vendor slides. They ask: "What does this actually look like? What do we need to succeed?"
+
+QUESTIONS TO ANSWER:
+- Q: What components make up ${strategy.name}? (${strategy.components.join(', ')})
+- Q: What's the implementation sequence? (Phase 1, 2, 3)
+- Q: What metrics prove success? (${strategy.metrics.join(', ')})
+- Q: What organizational changes are required?
+- Q: What's the realistic timeline and budget?
+- Q: What are common failure modes and how to avoid them?
+
+CONTEXT: ${strategy.description}
+
+Write for a senior IT leader who will present this to the board. Include executive summary, technical architecture, and change management considerations.`,
+      category: 'ai',
+      learningPath: 'ai',
+      difficulty: 'Advanced',
+      forPersona: ['Executives', 'Architects', 'Program Managers'],
+      uniqueId: `ai-strategy-${strategy.name.toLowerCase().replace(/\s+/g, '-')}`,
+    };
+  }
+  
+  if (pillarType === 'challenge') {
+    const challenge = AI_PILLARS.challenges[Math.floor(Math.random() * AI_PILLARS.challenges.length)];
+    
+    return {
+      query: `Write an educational article: "Conquering ${challenge.name} in ServiceNow AI Implementation"
+
+SCENARIO: An organization's AI initiative is struggling because of ${challenge.name.toLowerCase()} issues. The team asks: "How do successful organizations overcome this?"
+
+QUESTIONS TO ANSWER:
+- Q: Why does ${challenge.name.toLowerCase()} derail AI projects?
+- Q: What are the warning signs early in implementation?
+- Q: What's the solution approach? (${challenge.solution})
+- Q: What tools and processes help?
+- Q: How do we measure improvement?
+- Q: What does "good enough" look like to proceed?
+
+Be practical and honest. Include real examples, anti-patterns, and recovery strategies for teams already struggling.`,
+      category: 'ai',
+      learningPath: 'ai',
+      difficulty: 'Advanced',
+      forPersona: ['Project Managers', 'Architects', 'Data Engineers'],
+      uniqueId: `ai-challenge-${challenge.name.toLowerCase().replace(/\s+/g, '-')}`,
+    };
+  }
+  
+  // Implementation deep-dive
+  const capability = AI_PILLARS.capabilities[Math.floor(Math.random() * AI_PILLARS.capabilities.length)];
+  
+  return {
+    query: `Write an educational article: "Hands-On: Building Production-Ready ${capability.name} Solutions"
+
+SCENARIO: A ServiceNow developer needs to implement ${capability.name} for real users. They've seen demos but ask: "How do I build this properly? What do the demos skip?"
+
+QUESTIONS TO ANSWER:
+- Q: What's the technical architecture I need to build?
+- Q: What are the step-by-step implementation phases?
+- Q: How do I handle security, ACLs, and data access?
+- Q: What testing strategy ensures quality?
+- Q: How do I monitor and improve over time?
+- Q: What production issues should I anticipate?
+
+Include working code examples, configuration screenshots (describe them), and troubleshooting guides. Focus on what the official documentation doesn't tell you.`,
+    category: 'ai',
+    learningPath: 'ai',
     difficulty: 'Advanced',
-    certAlignment: 'CIS-ITSM',
-    forPersona: ['Architects', 'ITSM Practitioners'],
-  },
-  {
-    query: `Write an educational article: "Service Catalog - Building an IT Storefront Employees Actually Use"
-
-SCENARIO: IT gets hundreds of emails asking for the same things: laptop, software, new hire setup. They want a Service Catalog but ask: "How do I design it so people actually use it instead of emailing?"
-
-QUESTIONS TO ANSWER:
-- Q: Catalog Items vs Record Producers - when to use each? (Request vs create record)
-- Q: How do Variables and Variable Sets work? (Dynamic forms)
-- Q: How do I handle multi-level approvals? (Approval workflows)
-- Q: What makes a catalog "employee-friendly"? (UX, categories, search)
-- Q: How do I add dynamic behavior to catalog forms? (Catalog client scripts)
-- Q: How do I measure catalog adoption? (Usage metrics, time savings)
-
-Include a real "New Hire Onboarding" item example.`,
-    category: 'itsm',
-    learningPath: 'itsm',
-    difficulty: 'Intermediate',
-    certAlignment: 'CSA, CIS-ITSM',
-    forPersona: ['Admins', 'Developers'],
-  },
-
-  // =========================================================================
-  // DEVELOPMENT - No-Code to Pro-Code Progression
-  // =========================================================================
-  {
-    query: `Write an educational article: "GlideRecord Mastery - The Most Important ServiceNow API"
-
-SCENARIO: A JavaScript developer joins a ServiceNow team. They know JS but GlideRecord isn't standard JavaScript. They ask: "What is GlideRecord? Why can't I use fetch() or SQL? How do I do CRUD?"
-
-QUESTIONS TO ANSWER:
-- Q: Why does ServiceNow have its own data API? (ACLs, business rules, abstraction)
-- Q: GlideRecord vs GlideAggregate - when to use each? (Row data vs counts/sums)
-- Q: Why gr.next() instead of forEach? (Record-by-record processing pattern)
-- Q: How do I query with multiple conditions? (addQuery, addEncodedQuery)
-- Q: What's the N+1 query problem and how do I avoid it? (Performance anti-pattern)
-- Q: Server-side vs client-side GlideRecord? (GlideAjax for client needs)
-
-Include 4+ complete code examples with real tables.`,
-    category: 'development',
-    learningPath: 'development',
-    difficulty: 'Intermediate',
-    certAlignment: 'CAD',
-    forPersona: ['Developers'],
-  },
-  {
-    query: `Write an educational article: "Business Rules - The Complete Execution Model"
-
-SCENARIO: A developer creates a Business Rule to auto-set a field. Strange things happen: infinite loops, performance issues, fields not updating. They ask: "What did I do wrong? How do Business Rules actually execute?"
-
-QUESTIONS TO ANSWER:
-- Q: Before vs After vs Async vs Display - which do I choose? (Execution timing)
-- Q: What do 'current' and 'previous' contain at each stage? (Data availability)
-- Q: Why did my rule cause an infinite loop? How to prevent it? (Recursion guard)
-- Q: When is Business Rule vs Flow Designer vs Workflow? (Decision framework)
-- Q: How do I update related records without performance issues? (Best practices)
-- Q: What's setWorkflow(false) and when is it dangerous? (Bypass patterns)
-
-Include working code for each Business Rule type.`,
-    category: 'development',
-    learningPath: 'development',
-    difficulty: 'Intermediate',
-    certAlignment: 'CAD',
-    forPersona: ['Developers', 'Admins'],
-  },
-  {
-    query: `Write an educational article: "Script Includes - Building Reusable Code Libraries"
-
-SCENARIO: A developer copies the same code into multiple Business Rules. A senior dev says "put that in a Script Include" but doesn't explain. They ask: "What's a Script Include? How do I call it? What's this 'extend' syntax?"
-
-QUESTIONS TO ANSWER:
-- Q: Class-based vs function-based Script Includes - when to use each? (Patterns)
-- Q: How do I call a Script Include from a Business Rule? (Instantiation)
-- Q: What's 'Client Callable' and how does GlideAjax work? (Client-server bridge)
-- Q: How does scope affect Script Include access? (Cross-scope patterns)
-- Q: What's the prototype and extend pattern? (Inheritance)
-- Q: How do I unit test a Script Include? (ATF patterns)
-
-Show complete Script Include + calling code + GlideAjax example.`,
-    category: 'development',
-    learningPath: 'development',
-    difficulty: 'Intermediate',
-    certAlignment: 'CAD',
-    forPersona: ['Developers'],
-  },
-  {
-    query: `Write an educational article: "Client Scripts vs UI Policies - Making Forms Dynamic"
-
-SCENARIO: An admin needs to make a field mandatory when another field equals a value. They can use UI Policy or Client Script. They ask: "What's the difference? When do I use code vs configuration?"
-
-QUESTIONS TO ANSWER:
-- Q: UI Policy vs Client Script - decision matrix? (Complexity, maintenance)
-- Q: onChange vs onLoad vs onSubmit - when does each fire? (Event timing)
-- Q: What's g_form and what are the key methods? (Form API)
-- Q: Why doesn't my Client Script work on mobile/Service Portal? (Context issues)
-- Q: How do I get server data without page refresh? (GlideAjax pattern)
-- Q: What are the performance implications? (Script execution cost)
-
-Show same use case solved both ways.`,
-    category: 'development',
-    learningPath: 'development',
-    difficulty: 'Intermediate',
-    certAlignment: 'CAD, CSA',
-    forPersona: ['Developers', 'Admins'],
-  },
-  {
-    query: `Write an educational article: "Flow Designer - The Future of ServiceNow Automation"
-
-SCENARIO: A team has hundreds of legacy Workflows. ServiceNow pushes Flow Designer. The architect asks: "Should we migrate? What can Flow Designer do that Workflow can't?"
-
-QUESTIONS TO ANSWER:
-- Q: Flow Designer vs Workflow Editor - real differences? (Architecture, capabilities)
-- Q: What are Triggers, Actions, Subflows, and Spokes? (Component model)
-- Q: Can I use JavaScript in Flow Designer? When should I? (Script steps)
-- Q: What about Integration Hub and Spokes? (Pre-built connectors)
-- Q: How do I handle errors and retries? (Error handling patterns)
-- Q: What's the migration strategy? (When to move, when to leave)
-
-Connect to no-code → low-code → pro-code philosophy.`,
-    category: 'development',
-    learningPath: 'development',
-    difficulty: 'Intermediate',
-    certAlignment: 'CAD',
     forPersona: ['Developers', 'Architects'],
-  },
+    uniqueId: `ai-impl-${capability.name.toLowerCase().replace(/\s+/g, '-')}`,
+  };
+}
 
-  // =========================================================================
-  // INTEGRATION - Connecting ServiceNow to the Enterprise
-  // =========================================================================
-  {
-    query: `Write an educational article: "REST API Integration - Consuming and Exposing APIs"
+function generateCoreTechnicalTopic() {
+  const areas = [
+    {
+      area: 'Performance Engineering',
+      scenarios: [
+        'Instance running slow with 5+ second form loads',
+        'Reports timing out with large datasets',
+        'Business Rules causing transaction delays',
+        'Client-side scripts freezing browser',
+      ],
+      concepts: ['Query optimization', 'Index strategy', 'Script efficiency', 'Caching', 'Async patterns'],
+    },
+    {
+      area: 'Integration Architecture',
+      scenarios: [
+        'Integrating with 20+ external systems',
+        'Real-time vs batch integration decisions',
+        'Error handling across distributed systems',
+        'API versioning and backward compatibility',
+      ],
+      concepts: ['REST patterns', 'Integration Hub', 'MID Server', 'Error handling', 'Retry logic'],
+    },
+    {
+      area: 'Security & Access Control',
+      scenarios: [
+        'Complex ACL requirements by department',
+        'Data segregation for multi-tenant',
+        'Audit and compliance requirements',
+        'Sensitive data handling',
+      ],
+      concepts: ['ACL design', 'Role hierarchy', 'Domain separation', 'Encryption', 'Audit trails'],
+    },
+    {
+      area: 'Upgrade-Safe Development',
+      scenarios: [
+        'Customizations breaking on every upgrade',
+        'Update Set conflicts in team development',
+        'OOB functionality overwritten',
+        'Instance divergence from baseline',
+      ],
+      concepts: ['Extension vs modification', 'Scoped apps', 'Update Set strategy', 'ATF testing'],
+    },
+    {
+      area: 'Flow Designer Patterns',
+      scenarios: [
+        'Complex multi-level approval workflows',
+        'Error handling and retry in flows',
+        'Integration with external systems',
+        'Parallel processing requirements',
+      ],
+      concepts: ['Subflows', 'Error handling', 'Data pills', 'Actions', 'Triggers'],
+    },
+    {
+      area: 'CMDB & Data Architecture',
+      scenarios: [
+        'CMDB data nobody trusts',
+        'Discovery gaps and stale data',
+        'Complex CI relationships',
+        'CMDB-driven automation failing',
+      ],
+      concepts: ['CI identification', 'Reconciliation', 'Discovery patterns', 'Data quality metrics'],
+    },
+  ];
+  
+  const selected = areas[Math.floor(Math.random() * areas.length)];
+  const scenario = selected.scenarios[Math.floor(Math.random() * selected.scenarios.length)];
+  
+  return {
+    query: `Write an educational article: "Mastering ${selected.area}: ${scenario.split(' ').slice(0, 4).join(' ')}..."
 
-SCENARIO: A developer needs to integrate ServiceNow with an external HR system. They've done REST before but ask: "How does ServiceNow handle outbound calls? How do I expose ServiceNow data?"
-
-QUESTIONS TO ANSWER:
-- Q: RESTMessageV2 - how do I make outbound calls? (Configuration + scripting)
-- Q: How do I handle authentication (Basic, OAuth, API Keys)? (Auth profiles)
-- Q: Scripted REST APIs - how do I expose ServiceNow data? (Custom endpoints)
-- Q: What about error handling, retries, timeouts? (Production patterns)
-- Q: How do I debug integration failures? (Logging, REST API Explorer)
-- Q: REST vs Integration Hub - when to use which? (Decision framework)
-
-Include complete outbound + inbound examples.`,
-    category: 'integration',
-    learningPath: 'integration',
-    difficulty: 'Advanced',
-    certAlignment: 'CAD',
-    forPersona: ['Developers', 'Architects'],
-  },
-  {
-    query: `Write an educational article: "Import Sets and Transform Maps - Bulk Data Integration"
-
-SCENARIO: An org needs to import 50,000 user records from HR nightly. API is too slow. Someone mentions "Import Sets." They ask: "What's the pattern for bulk data loading?"
-
-QUESTIONS TO ANSWER:
-- Q: What's an Import Set Table and why is it needed? (Staging concept)
-- Q: How do Transform Maps work? What's coalesce? (Mapping, deduplication)
-- Q: How do I handle updates vs inserts (upsert)? (Coalesce fields)
-- Q: What about data validation and error handling? (Transform scripts)
-- Q: How do I schedule recurring imports? (Data sources, scheduled jobs)
-- Q: Performance considerations for large imports? (Batch size, indexing)
-
-Show complete Import Set → Transform → Target flow.`,
-    category: 'integration',
-    learningPath: 'integration',
-    difficulty: 'Advanced',
-    certAlignment: 'CAD',
-    forPersona: ['Developers', 'Architects'],
-  },
-
-  // =========================================================================
-  // MODULES - Specialized Product Deep-Dives
-  // =========================================================================
-  {
-    query: `Write an educational article: "HRSD Explained - Why Organizations Buy It"
-
-SCENARIO: An HR director evaluates ServiceNow HRSD. They use spreadsheets, email, legacy portal. They ask: "What problems does HRSD solve? Is it worth the license cost?"
-
-QUESTIONS TO ANSWER:
-- Q: What's included in HRSD vs add-ons? (Core vs additional products)
-- Q: What's Employee Center vs Service Portal? (Employee experience)
-- Q: What's Employee Journey Management? (Lifecycle orchestration)
-- Q: How does HRSD handle sensitive data and access? (Security model)
-- Q: What are typical use cases? (Onboarding, offboarding, inquiries)
-- Q: What ROI do organizations actually see? (Metrics: hours saved, satisfaction)
-
-Include real metrics: "10,000+ hours saved, 23% satisfaction improvement."`,
-    category: 'modules',
-    learningPath: 'modules',
-    difficulty: 'Intermediate',
-    certAlignment: 'CIS-HR',
-    forPersona: ['HR Professionals', 'Decision Makers'],
-  },
-  {
-    query: `Write an educational article: "CSM - How ServiceNow Competes with Salesforce"
-
-SCENARIO: A CTO's company uses Salesforce Service Cloud but hates the complexity and cost. They hear ServiceNow CSM is a Gartner Leader. They ask: "How is CSM different? Can it replace our CRM?"
-
-QUESTIONS TO ANSWER:
-- Q: What does CSM include vs what needs other modules? (Scope)
-- Q: How does Case management differ from Incident? (External vs internal)
-- Q: What's the customer portal capability? (Self-service)
-- Q: How does CSM integrate with ServiceNow ITSM? (Single platform advantage)
-- Q: What about field service, contracts, entitlements? (Extended capabilities)
-- Q: Honest Salesforce vs ServiceNow CSM comparison? (Strengths/weaknesses)
-
-Reference 2024 Gartner Magic Quadrant Leader positioning.`,
-    category: 'modules',
-    learningPath: 'modules',
-    difficulty: 'Intermediate',
-    certAlignment: 'CIS-CSM',
-    forPersona: ['Decision Makers', 'Customer Service Leaders'],
-  },
-  {
-    query: `Write an educational article: "SecOps - Connecting Security Alerts to IT Remediation"
-
-SCENARIO: A CISO's security team uses SIEM for alerts but handoff to IT for remediation is broken. Emails get lost, vulnerabilities sit unfixed. They ask: "How does SecOps close this gap?"
+SCENARIO: ${scenario}. The senior developer/architect asks: "What's the systematic approach to solve this? What do experts do differently?"
 
 QUESTIONS TO ANSWER:
-- Q: What's Security Incident Response vs Vulnerability Response? (Two products)
-- Q: How does SecOps connect to ITSM? (Incident, Change, CMDB)
-- Q: What integrations exist with security tools? (SIEM, scanners, threat intel)
-- Q: How do I prioritize thousands of vulnerabilities? (Risk scoring, CMDB)
-- Q: What's Threat Intelligence? (Enrichment, indicators)
-- Q: What skills do I need to implement SecOps? (Career opportunity)
+- Q: What's the root cause diagnosis approach?
+- Q: What are the key concepts I need to master? (${selected.concepts.join(', ')})
+- Q: What's the step-by-step solution pattern?
+- Q: What are the common mistakes and anti-patterns?
+- Q: How do I prevent this in future development?
+- Q: How do I measure success?
 
-Premium salary module - highlight career opportunity.`,
-    category: 'modules',
-    learningPath: 'modules',
-    difficulty: 'Advanced',
-    certAlignment: 'CIS-SecOps',
-    forPersona: ['Security Professionals', 'Architects'],
-  },
-  {
-    query: `Write an educational article: "ITOM - Managing Infrastructure Through ServiceNow"
-
-SCENARIO: An infrastructure manager has dozens of monitoring tools (Nagios, Datadog, CloudWatch) but no single view. Alert fatigue is real. They ask: "Can ServiceNow ITOM actually unify this?"
-
-QUESTIONS TO ANSWER:
-- Q: What are the ITOM components? (Discovery, Event Management, etc.)
-- Q: How does Discovery find and map infrastructure? (Probes, patterns)
-- Q: What's the MID Server and why do I need it? (On-premise bridge)
-- Q: How does Event Management reduce alert noise? (Correlation, dedup)
-- Q: What's Service Mapping vs Discovery? (Application topology)
-- Q: How does ITOM connect to ITSM? (Incident, Change, CMDB)
-
-Infrastructure/DevOps career path content.`,
-    category: 'modules',
-    learningPath: 'modules',
-    difficulty: 'Advanced',
-    certAlignment: 'CIS-ITOM',
-    forPersona: ['Infrastructure Engineers', 'DevOps'],
-  },
-
-  // =========================================================================
-  // ARCHITECTURE - Senior/Architect Level
-  // =========================================================================
-  {
-    query: `Write an educational article: "Instance Strategy - Dev/Test/Prod and Update Set Management"
-
-SCENARIO: A company scales ServiceNow. One instance does everything. The architect asks: "Should we have multiple instances? How do we move changes safely?"
-
-QUESTIONS TO ANSWER:
-- Q: Dev/Test/Prod - what's the ideal instance strategy? (Environment model)
-- Q: How do Update Sets actually work? (Capture, move, commit)
-- Q: When should I clone vs manually refresh? (Data strategies)
-- Q: What are Application Scopes and why do they matter? (Isolation)
-- Q: How do I handle data in non-prod instances? (Sanitization, subsets)
-- Q: What's ATF's role in CI/CD? (Automated testing)
-
-Connect to DevOps/CI-CD patterns they know.`,
+Include production-tested code examples, before/after comparisons, and real metrics. Write for a senior professional who needs depth, not basics.`,
     category: 'architecture',
     learningPath: 'architecture',
     difficulty: 'Advanced',
-    certAlignment: 'CTA',
-    forPersona: ['Architects', 'Senior Developers'],
-  },
-  {
-    query: `Write an educational article: "Performance Engineering - Building ServiceNow for Scale"
-
-SCENARIO: An organization's ServiceNow is slow. Forms take 5+ seconds, reports time out. A senior developer must fix it. They ask: "How do I diagnose and fix performance issues?"
-
-QUESTIONS TO ANSWER:
-- Q: What are common causes of slow instances? (Scripts, queries, ACLs)
-- Q: How do I identify slow queries? (Query rules, slow query log)
-- Q: What's the impact of too many Business Rules? (Execution time)
-- Q: How do indexes work? When do I need custom ones? (Database tuning)
-- Q: Client-side vs server-side performance issues? (Diagnosis)
-- Q: What platform limits should I know? (Quotas, timeouts)
-
-Include before/after optimization examples.`,
-    category: 'architecture',
-    learningPath: 'architecture',
-    difficulty: 'Advanced',
-    certAlignment: 'CTA, CAD',
     forPersona: ['Senior Developers', 'Architects'],
-  },
-  {
-    query: `Write an educational article: "ServiceNow Certification Path - CSA to CTA Strategy"
-
-SCENARIO: An IT professional wants to break into ServiceNow. Dozens of certifications exist. They ask: "What's the order? Which certifications matter for jobs? How long does each take?"
-
-QUESTIONS TO ANSWER:
-- Q: CSA first - what does it cover? How to prepare? (Foundation cert)
-- Q: CAD vs CIS - developer vs specialist path? (Career direction)
-- Q: Which CIS certification should I get first? (Market demand)
-- Q: What's the CTA and is it worth $7000? (Elite certification)
-- Q: How do I maintain certifications? (Delta exams, annual renewal)
-- Q: Do certifications alone get you hired? (Experience reality)
-
-Address: official training doesn't match exam format.`,
-    category: 'career',
-    learningPath: 'foundations',
-    difficulty: 'Beginner',
-    certAlignment: 'All',
-    forPersona: ['Career Changers', 'All Roles'],
-  },
-  {
-    query: `Write an educational article: "Career Transition - Leveraging IT Experience for ServiceNow"
-
-SCENARIO: A 15-year IT veteran (sysadmin, developer, DBA) wants to move into ServiceNow. Strong skills but no ServiceNow experience. They ask: "How do I leverage what I know? Why hire me over someone with ServiceNow experience?"
-
-QUESTIONS TO ANSWER:
-- Q: I'm a sysadmin - which ServiceNow role fits me? (Admin path)
-- Q: I'm a developer - how is ServiceNow dev different? (JavaScript + platform)
-- Q: I'm a DBA - does database knowledge help? (Data model understanding)
-- Q: How do I get "experience" without a ServiceNow job? (PDI portfolio)
-- Q: What should I build to show skills? (Demo projects)
-- Q: How do I position my background in interviews? (Translation strategy)
-
-Address chicken-and-egg: need experience to get experience.`,
-    category: 'career',
-    learningPath: 'foundations',
-    difficulty: 'Beginner',
-    certAlignment: 'CSA',
-    forPersona: ['Career Changers'],
-  },
-];
+    uniqueId: `tech-${selected.area.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
+  };
+}
 
 // =============================================================================
-// INTERVIEW TOPICS - Scenario-Based Senior Questions
+// TOPIC SELECTION ENGINE
 // =============================================================================
 
-const INTERVIEW_TOPICS = [
-  {
-    query: `Create ONE senior ServiceNow interview question on GlideRecord performance.
+function selectTopic(existingPosts) {
+  // Calculate what we have
+  const categoryCounts = {};
+  const uniqueIds = new Set();
+  
+  for (const post of existingPosts) {
+    const cat = post.category || 'other';
+    categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+    if (post.uniqueId) uniqueIds.add(post.uniqueId);
+  }
+  
+  console.log(`  📊 Current distribution:`, JSON.stringify(categoryCounts));
+  
+  // Determine content type based on distribution and randomness
+  const aiCount = categoryCounts['ai'] || 0;
+  const careerCount = categoryCounts['career'] || 0;
+  const techCount = (categoryCounts['architecture'] || 0) + (categoryCounts['development'] || 0);
+  
+  // Weighted random selection favoring underrepresented categories
+  // Target: ~40% AI, ~35% Career, ~25% Technical
+  const aiWeight = Math.max(1, 12 - aiCount);
+  const careerWeight = Math.max(1, 10 - careerCount);
+  const techWeight = Math.max(1, 8 - techCount);
+  const totalWeight = aiWeight + careerWeight + techWeight;
+  
+  const rand = Math.random() * totalWeight;
+  
+  let topic;
+  if (rand < aiWeight) {
+    console.log(`  🎯 Generating AI topic...`);
+    topic = generateAITopic();
+  } else if (rand < aiWeight + careerWeight) {
+    console.log(`  🎯 Generating career transition topic...`);
+    // Select domain category with weights
+    const categories = Object.entries(DOMAIN_CATEGORIES);
+    const totalDomainWeight = categories.reduce((sum, [_, cat]) => sum + cat.weight, 0);
+    let domainRand = Math.random() * totalDomainWeight;
+    
+    let selectedCategory = 'hot';
+    let selectedDomains = DOMAIN_CATEGORIES.hot.domains;
+    
+    for (const [catName, cat] of categories) {
+      if (domainRand < cat.weight) {
+        selectedCategory = catName;
+        selectedDomains = cat.domains;
+        break;
+      }
+      domainRand -= cat.weight;
+    }
+    
+    const domain = selectedDomains[Math.floor(Math.random() * selectedDomains.length)];
+    topic = generateDomainTransitionTopic(domain, selectedCategory);
+  } else {
+    console.log(`  🎯 Generating technical topic...`);
+    topic = generateCoreTechnicalTopic();
+  }
+  
+  // Check for duplicate uniqueId (regenerate if needed)
+  let attempts = 0;
+  while (uniqueIds.has(topic.uniqueId) && attempts < 5) {
+    console.log(`  ⚠️ Duplicate uniqueId, regenerating...`);
+    topic = rand < aiWeight ? generateAITopic() : 
+            rand < aiWeight + careerWeight ? generateDomainTransitionTopic(
+              DOMAIN_CATEGORIES.hot.domains[Math.floor(Math.random() * DOMAIN_CATEGORIES.hot.domains.length)], 
+              'hot'
+            ) : generateCoreTechnicalTopic();
+    attempts++;
+  }
+  
+  return topic;
+}
 
-SCENARIO: A developer writes a Business Rule that loops through incidents and updates related records. Works in dev, times out in production with 100k records.
+// =============================================================================
+// INTERVIEW TOPIC GENERATORS
+// =============================================================================
+
+function generateInterviewTopic() {
+  const categories = [
+    {
+      category: 'AI Implementation',
+      scenarios: [
+        'Now Assist returning irrelevant or hallucinated responses',
+        'Predictive Intelligence accuracy stuck at 60%',
+        'Virtual Agent adoption extremely low',
+        'AI implementation not showing ROI',
+      ],
+    },
+    {
+      category: 'Performance',
+      scenarios: [
+        'Business Rule causing 100k record update timeout',
+        'Complex report timing out in production',
+        'Form load taking 8+ seconds',
+        'Integration causing transaction delays',
+      ],
+    },
+    {
+      category: 'Architecture',
+      scenarios: [
+        'Update Set conflicts in 10-developer team',
+        'Customizations breaking on every upgrade',
+        'Multi-instance strategy decisions',
+        'CMDB nobody trusts or uses',
+      ],
+    },
+    {
+      category: 'Integration',
+      scenarios: [
+        'REST integration failing intermittently',
+        'Import Set creating duplicates nightly',
+        'Real-time vs batch integration decision',
+        'External system authentication complexity',
+      ],
+    },
+    {
+      category: 'Security',
+      scenarios: [
+        'ACL blocking users who should have access',
+        'Sensitive data exposure concerns',
+        'Cross-scope access requirements',
+        'Audit compliance gaps',
+      ],
+    },
+  ];
+  
+  const selected = categories[Math.floor(Math.random() * categories.length)];
+  const scenario = selected.scenarios[Math.floor(Math.random() * selected.scenarios.length)];
+  
+  return {
+    query: `Create ONE senior ServiceNow interview question.
+
+SCENARIO: ${scenario}
 
 Test understanding of:
-- How to identify the performance problem
-- GlideAggregate vs GlideRecord decision
-- setLimit, encoded queries, pagination
-- N+1 query anti-pattern
+- Root cause diagnosis approach
+- Multiple solution options with trade-offs
+- Production considerations
+- What separates good from great answers
 
-Include 8-12 line code showing inefficient pattern AND optimized solution.`,
-    category: 'Performance',
-  },
-  {
-    query: `Create ONE senior ServiceNow interview question on Business Rule execution order.
+Include 8-12 line code example showing problem AND solution. Focus on "why" not just "how".`,
+    category: selected.category,
+  };
+}
 
-SCENARIO: A developer creates an after Business Rule that updates a related record. Sometimes works, sometimes the update doesn't happen. Confused about when current.update() is needed.
+// =============================================================================
+// PROMPTS
+// =============================================================================
 
-Test understanding of:
-- Before vs After timing and 'current' contents
-- When setWorkflow(false) is needed/dangerous
-- Transaction boundaries
-- Recursion prevention
+const ARTICLE_PROMPT = `You are a senior ServiceNow architect writing for sumanthbolle.com - the definitive ServiceNow learning resource serving as a SINGLE INTERFACE for ALL tech professionals in the enterprise era.
 
-Include 8-12 line code demonstrating proper after rule with related updates.`,
-    category: 'Architecture',
-  },
-  {
-    query: `Create ONE senior ServiceNow interview question on ACL design and debugging.
+TARGET AUDIENCE:
+- Senior tech professionals (10-25 years) from ANY technology background
+- Full-stack developers, AI engineers, cloud architects, DBAs, DevOps engineers
+- They have DEEP expertise in their domain - respect that
+- They want TRANSLATION, not beginner tutorials
+- They value honest trade-offs over marketing speak
 
-SCENARIO: Security admin creates ACL to restrict access but users who should have access are blocked. Debug logs show confusing "ACL evaluation" messages.
+WRITING PHILOSOPHY:
+- Peer-to-peer: Senior professional to senior professional
+- Bridge builder: Show how their skills translate, don't dismiss them
+- Honest: Acknowledge limitations, trade-offs, learning curves
+- Practical: Production patterns, not theory
+- Business-aware: Connect technical to business value
 
-Test understanding of:
-- ACL evaluation order (table → field → row)
-- How to read security debug logs
-- Role requirements vs condition/script
-- Common ACL mistakes
+UNIQUE TITLE REQUIREMENT:
+Generate a SPECIFIC, UNIQUE title that no other article would have.
+BAD: "Introduction to ServiceNow for Developers" (generic)
+GOOD: "From Kubernetes to ServiceNow: Why Container Orchestrators Love Service Mapping"
+GOOD: "The RAG Architecture Behind Now Assist: What AI Engineers Need to Know"
 
-Include 8-12 line ACL script with role checks and conditions.`,
-    category: 'Security',
-  },
-  {
-    query: `Create ONE senior ServiceNow interview question on REST integration error handling.
+STRUCTURE:
 
-SCENARIO: Developer builds outbound REST integration that usually works. Occasionally external system returns errors or times out, team has no visibility into failures.
+<h2>The Scenario</h2>
+<p>3-4 sentences painting a realistic problem from their perspective.</p>
 
-Test understanding of:
-- RESTMessageV2 try-catch pattern
-- HTTP status code checking
-- Retry logic with backoff
-- Production logging/debugging
+<h2>Key Questions Answered</h2>
+<h3>Q: [Question they'd actually ask]?</h3>
+<p><strong>A:</strong> Direct answer with their terminology, analogies to what they know...</p>
+(4-6 questions total)
 
-Include 8-12 line code with complete error handling.`,
-    category: 'Integration',
-  },
-  {
-    query: `Create ONE senior ServiceNow interview question on Import Set duplicate prevention.
+<h2>The Translation Map</h2>
+<p>Explicit mapping of their concepts to ServiceNow equivalents. Use tables or clear comparisons.</p>
 
-SCENARIO: Integration imports 50,000 records nightly. Duplicates keep appearing - same record inserted instead of updated.
+<h2>Hands-On: See It Work</h2>
+<pre>// 10-15 lines of working code
+// Real table names, real APIs
+// Comments showing equivalent in their world</pre>
+<p>Walk through what the code does and why.</p>
 
-Test understanding of:
-- Coalesce fields and common mistakes
-- Transform Map scripting
-- Error handling without failing entire import
-- Performance for large imports
+<h2>What Transfers vs What's Different</h2>
+<p>Honest assessment of skills that apply directly vs require new learning.</p>
 
-Include 8-12 line Transform script with proper deduplication.`,
-    category: 'Integration',
-  },
-  {
-    query: `Create ONE senior ServiceNow interview question on Script Include patterns.
+<h2>The Business Impact</h2>
+<p>Why this matters to the organization - connect technical to business value.</p>
 
-SCENARIO: Team has copy-pasted the same function into 15 Business Rules. Want to refactor but unsure about structure.
+<h2>Common Traps to Avoid</h2>
+<ul><li><strong>Trap:</strong> Description. <strong>Solution:</strong> Fix.</li></ul>
 
-Test understanding of:
-- Class-based vs function-based design
-- Cross-scope accessibility
-- Client-callable with GlideAjax
-- Unit testing approaches
+<h2>Your Next Steps</h2>
+<ul><li>Concrete action 1</li><li>Concrete action 2</li><li>Concrete action 3</li></ul>
 
-Include 8-12 line Script Include with proper structure + calling example.`,
-    category: 'Scripting',
-  },
-  {
-    query: `Create ONE senior ServiceNow interview question on Flow Designer vs scripted automation.
+RULES:
+1. Return ONLY valid JSON
+2. Content: 1200-1600 words
+3. Use HTML only: <h2>, <h3>, <p>, <ul>, <li>, <pre>, <strong>, <em>
+4. Code must be complete and working
+5. No citations [1], no **markdown**
+6. End with complete sentence
 
-SCENARIO: Architect deciding between Flow Designer and Business Rules for complex approval workflow. Team is split.
+JSON FORMAT:
+{"title":"Unique Specific Title","excerpt":"2-3 sentences: scenario + outcome.","readTime":"12 min read","content":"<h2>The Scenario</h2><p>...</p>..."}`;
 
-Test understanding of:
-- When Flow Designer is right vs scripted
-- Error handling and retry in flows
-- Subflow patterns
-- Performance and debugging
+const INTERVIEW_PROMPT = `You are a senior ServiceNow architect conducting interviews for senior/lead positions.
 
-Provide clear decision criteria with practical example.`,
-    category: 'Architecture',
-  },
-  {
-    query: `Create ONE senior ServiceNow interview question on Update Set best practices.
+CANDIDATE PROFILE:
+- 5+ years ServiceNow OR 10+ years other enterprise platforms transitioning
+- Should demonstrate deep understanding, production experience
+- Must show problem-solving approach, not just syntax
 
-SCENARIO: Development team has Update Set collisions. Changes work in dev but break in prod. Need better process.
+QUESTION STYLE:
+- Realistic production scenario with specific context
+- Test diagnosis approach, not just solution
+- Include what separates good from great answers
+- Cover edge cases and failure modes
 
-Test understanding of:
-- Update Set naming and scoping
-- Handling conflicts
-- Proper promotion order
-- What should NOT be in Update Sets
+FORMAT:
+- Scenario: Specific situation with real numbers/context
+- Expected answer: Structured response with code
+- What makes it a "great" answer: Senior considerations
 
-Practical guidance, not just theory.`,
-    category: 'Architecture',
-  },
-];
+RULES:
+1. Return ONLY valid JSON
+2. Answer: 500-700 words
+3. Use HTML: <p>, <h4>, <ul>, <li>, <pre>, <strong>
+4. Code: 8-12 lines, working, no stubs
+5. No citations, no markdown
+
+JSON FORMAT:
+{"question":"Scenario-based question?","answer":"<h4>Understanding the Problem</h4><p>...</p><h4>The Solution</h4><pre>// code</pre><h4>Senior Considerations</h4><ul><li>...</li></ul>","difficulty":"Senior","company":"ServiceNow"}`;
 
 // =============================================================================
 // HELPERS
@@ -660,9 +855,19 @@ function nowISO() {
   return new Date().toISOString();
 }
 
-function isDuplicateByPrefix(existing, title, len = 60) {
-  const normalize = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, len);
-  return existing.some((p) => normalize(p.title) === normalize(title));
+function isDuplicateTitle(existing, newTitle) {
+  if (!newTitle) return true;
+  const normalize = (s) => (s || '').toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+  const newNorm = normalize(newTitle);
+  
+  for (const post of existing) {
+    const existNorm = normalize(post.title);
+    if (newNorm === existNorm) return true;
+    if (newNorm.includes(existNorm) || existNorm.includes(newNorm)) {
+      if (Math.min(newNorm.length, existNorm.length) > 40) return true;
+    }
+  }
+  return false;
 }
 
 function cleanResponseToLikelyJson(text) {
@@ -679,19 +884,6 @@ function parseJsonFromResponse(cleaned) {
   return JSON.parse(jsonStr);
 }
 
-function pickTopic(topics, existing) {
-  const shuffled = [...topics].sort(() => Math.random() - 0.5);
-  for (const topic of shuffled.slice(0, 5)) {
-    const keyTerms = topic.query.match(/\b(GlideRecord|GlideAggregate|ACL|Import Set|REST|Flow Designer|Business Rule|Script Include|CMDB|ITSM|HRSD|CSM|SecOps|ITOM|Change|Incident|Catalog|Update Set|CSA|CAD|CTA)\b/gi) || [];
-    const hasSimilar = existing.some(p => {
-      const title = (p.title || '').toLowerCase();
-      return keyTerms.filter(t => title.includes(t.toLowerCase())).length >= 2;
-    });
-    if (!hasSimilar) return topic;
-  }
-  return shuffled[0];
-}
-
 // =============================================================================
 // API
 // =============================================================================
@@ -705,8 +897,8 @@ function callPerplexity(prompt, systemPrompt) {
         { role: 'system', content: systemPrompt },
         { role: 'user', content: prompt },
       ],
-      max_tokens: 4500,
-      temperature: 0.7,
+      max_tokens: 5000,
+      temperature: 0.75,
     });
 
     const req = https.request({
@@ -744,7 +936,7 @@ async function callWithRetry(prompt, systemPrompt, maxRetries = 3) {
     try {
       return await callPerplexity(prompt, systemPrompt);
     } catch (e) {
-      console.log(`Attempt ${i} failed: ${e.message}`);
+      console.log(`  Attempt ${i} failed: ${e.message}`);
       if (i === maxRetries) throw e;
       await new Promise((r) => setTimeout(r, 5000 * i));
     }
@@ -752,174 +944,158 @@ async function callWithRetry(prompt, systemPrompt, maxRetries = 3) {
 }
 
 // =============================================================================
-// PROMPTS - Scenario-Question-Answer Format
-// =============================================================================
-
-const ARTICLE_PROMPT = `You are a senior ServiceNow architect writing for sumanthbolle.com - the definitive ServiceNow learning resource for global developers, admins, and architects.
-
-TARGET AUDIENCE:
-- IT professionals with 10+ years in OTHER domains (Java, .NET, infrastructure) learning ServiceNow
-- They understand IT concepts but need ServiceNow-specific patterns explained
-- They want "WHY" not just "HOW"
-- They learn through scenarios connecting to problems they already understand
-
-WRITING STYLE:
-- Mentor-like: friendly, expert, never condescending
-- Use analogies to concepts they know (SQL→GlideRecord, Git→Update Sets)
-- Every section answers a specific QUESTION
-- Include "I've seen this in production" examples
-- Be honest about trade-offs
-
-REQUIRED STRUCTURE (Scenario-Question-Answer):
-
-<h2>The Scenario</h2>
-<p>3-4 sentences painting a realistic problem.</p>
-
-<h2>Key Questions Answered</h2>
-<h3>Q: [First specific question they'd ask]?</h3>
-<p><strong>A:</strong> Detailed answer with explanation...</p>
-
-<h3>Q: [Second question]?</h3>
-<p><strong>A:</strong> Answer...</p>
-(Continue for 4-6 questions)
-
-<h2>Hands-On Example</h2>
-<pre>// 8-15 lines of working code with comments
-// Use real table names (incident, sys_user, etc.)
-// Complete logic, NOT stubs</pre>
-<p>Explanation of the code...</p>
-
-<h2>Common Mistakes to Avoid</h2>
-<ul>
-<li><strong>Mistake:</strong> Description. <strong>Fix:</strong> Solution.</li>
-</ul>
-
-<h2>Key Takeaways</h2>
-<ul>
-<li>Main point 1</li>
-<li>Main point 2</li>
-<li>Main point 3</li>
-</ul>
-
-RULES:
-1. Return ONLY valid JSON - no markdown
-2. Content: 1000-1400 words
-3. End with complete sentence and closing tag
-4. Use HTML only: <h2>, <h3>, <p>, <ul>, <li>, <pre>, <strong>, <em>
-5. Code: 8-15 lines, real tables, complete logic
-6. No citations [1], no **markdown**
-
-JSON FORMAT:
-{"title":"Clear Title Describing What They Learn","excerpt":"2-3 sentences: scenario + what reader can do after.","readTime":"10 min read","content":"<h2>The Scenario</h2><p>...</p>..."}`;
-
-const INTERVIEW_PROMPT = `You are a senior ServiceNow architect conducting interviews. Create challenging scenario-based questions testing real problem-solving.
-
-STYLE:
-- Realistic production scenarios
-- Test "why" not just "how"
-- Include what senior candidates should mention
-
-RULES:
-1. Return ONLY valid JSON
-2. Answer: 500-700 words
-3. End with complete sentence
-4. Use HTML: <p>, <h4>, <ul>, <li>, <pre>, <strong>
-5. Code: 8-12 lines, real tables, working logic, NO stubs
-6. No citations, no markdown
-
-JSON FORMAT:
-{"question":"Scenario-based question?","answer":"<h4>Understanding the Problem</h4><p>...</p><h4>The Solution</h4><pre>// code</pre><h4>Senior Considerations</h4><ul><li>...</li></ul>","difficulty":"Senior","company":"ServiceNow"}`;
-
-// =============================================================================
 // MAIN
 // =============================================================================
 
 async function main() {
   if (!PERPLEXITY_API_KEY) {
-    console.error('PERPLEXITY_API_KEY not set');
+    console.error('❌ PERPLEXITY_API_KEY not set');
     process.exit(1);
   }
 
   const today = formatDate();
   const iso = nowISO();
 
-  // Article
-  const posts = loadJson(POSTS_FILE);
-  const topic = pickTopic(TOPICS, posts);
+  console.log(`
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  🚀 ServiceNow Content Generator v3.0                                        ║
+║  Dynamic Topic Engine • AI-First Strategy • Enterprise Professional Focus    ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║  Date: ${today.padEnd(68)}║
+║  Domain Categories: ${Object.keys(DOMAIN_CATEGORIES).length} (${Object.values(DOMAIN_CATEGORIES).reduce((s, c) => s + c.domains.length, 0)} domains)                                              ║
+║  AI Pillars: ${AI_PILLARS.capabilities.length} capabilities, ${AI_PILLARS.strategies.length} strategies                                 ║
+╚══════════════════════════════════════════════════════════════════════════════╝`);
 
-  console.log(`\n📚 ARTICLE: ${topic.learningPath} | ${topic.category} | ${topic.difficulty}`);
+  // =========================================================================
+  // ARTICLE GENERATION
+  // =========================================================================
+  const posts = loadJson(POSTS_FILE);
+  console.log(`\n📚 ARTICLE GENERATION`);
+  console.log(`   Existing posts: ${posts.length}/${MAX_POSTS}`);
+  
+  const topic = selectTopic(posts);
+  console.log(`   Category: ${topic.category}`);
+  console.log(`   Learning path: ${topic.learningPath}`);
+  console.log(`   Target: ${topic.forPersona?.join(', ') || 'All professionals'}`);
+  console.log(`   UniqueId: ${topic.uniqueId}`);
 
   let newArticle = null;
-  for (let attempt = 1; attempt <= 2 && !newArticle; attempt++) {
+  let skipReason = null;
+  
+  for (let attempt = 1; attempt <= 3 && !newArticle; attempt++) {
+    console.log(`\n   🔄 Attempt ${attempt}/3...`);
     try {
       const raw = await callWithRetry(topic.query, ARTICLE_PROMPT);
       const data = parseJsonFromResponse(cleanResponseToLikelyJson(raw));
-      if (data?.title && data?.content && !isDuplicateByPrefix(posts, data.title)) {
-        newArticle = {
-          id: nextId(posts),
-          title: data.title,
-          excerpt: data.excerpt || '',
-          readTime: data.readTime || '10 min read',
-          content: data.content,
-          category: topic.category,
-          learningPath: topic.learningPath,
-          difficulty: topic.difficulty,
-          certAlignment: topic.certAlignment,
-          forPersona: topic.forPersona,
-          date: today,
-          dateISO: iso,
-        };
-        console.log(`✅ ${data.title.substring(0, 60)}...`);
+      
+      if (!data?.title) {
+        skipReason = 'No title in response';
+        continue;
       }
+      if (!data?.content) {
+        skipReason = 'No content in response';
+        continue;
+      }
+      
+      console.log(`   📝 "${data.title.substring(0, 65)}..."`);
+      
+      if (isDuplicateTitle(posts, data.title)) {
+        skipReason = 'Duplicate title';
+        continue;
+      }
+      
+      newArticle = {
+        id: nextId(posts),
+        title: data.title,
+        excerpt: data.excerpt || '',
+        readTime: data.readTime || '12 min read',
+        content: data.content,
+        category: topic.category,
+        learningPath: topic.learningPath,
+        difficulty: topic.difficulty,
+        forPersona: topic.forPersona,
+        uniqueId: topic.uniqueId,
+        date: today,
+        dateISO: iso,
+      };
+      console.log(`   ✅ Created: ID ${newArticle.id}`);
+      
     } catch (e) {
-      console.error(`❌ Attempt ${attempt}: ${e.message}`);
+      skipReason = e.message;
+      console.log(`   ❌ ${e.message}`);
     }
+  }
+
+  if (!newArticle) {
+    console.log(`\n   ⚠️ NO ARTICLE GENERATED: ${skipReason}`);
   }
 
   const allPosts = (newArticle ? [newArticle, ...posts] : posts).slice(0, MAX_POSTS);
   fs.writeFileSync(POSTS_FILE, JSON.stringify(allPosts, null, 2));
+  console.log(`   💾 Saved ${allPosts.length} posts`);
 
   await new Promise((r) => setTimeout(r, 3000));
 
-  // Interview
+  // =========================================================================
+  // INTERVIEW GENERATION
+  // =========================================================================
   const interviews = loadJson(INTERVIEWS_FILE);
-  const intTopic = INTERVIEW_TOPICS[Math.floor(Math.random() * INTERVIEW_TOPICS.length)];
-
-  console.log(`\n🎯 INTERVIEW: ${intTopic.category}`);
+  console.log(`\n🎯 INTERVIEW GENERATION`);
+  console.log(`   Existing: ${interviews.length}/${MAX_INTERVIEWS}`);
+  
+  const intTopic = generateInterviewTopic();
+  console.log(`   Category: ${intTopic.category}`);
 
   let newInterview = null;
   try {
     const raw = await callWithRetry(intTopic.query, INTERVIEW_PROMPT);
     const data = parseJsonFromResponse(cleanResponseToLikelyJson(raw));
+    
     if (data?.question && data?.answer) {
       const isDupe = interviews.some(q => 
-        (q.question || '').substring(0, 45).toLowerCase() === data.question.substring(0, 45).toLowerCase()
+        (q.question || '').substring(0, 50).toLowerCase() === data.question.substring(0, 50).toLowerCase()
       );
+      
       if (!isDupe) {
         newInterview = {
           id: nextId(interviews),
           question: data.question,
           answer: data.answer,
           difficulty: data.difficulty || 'Senior',
-          company: data.company || 'ServiceNow',
+          company: 'ServiceNow',
           category: intTopic.category,
           date: today,
           dateISO: iso,
         };
-        console.log(`✅ ${data.question.substring(0, 60)}...`);
+        console.log(`   ✅ Created: ID ${newInterview.id}`);
+      } else {
+        console.log(`   ⚠️ Duplicate question`);
       }
     }
   } catch (e) {
-    console.error(`❌ ${e.message}`);
+    console.log(`   ❌ ${e.message}`);
   }
 
   const allInterviews = (newInterview ? [newInterview, ...interviews] : interviews).slice(0, MAX_INTERVIEWS);
   fs.writeFileSync(INTERVIEWS_FILE, JSON.stringify(allInterviews, null, 2));
+  console.log(`   💾 Saved ${interviews.length} interviews`);
+
+  // =========================================================================
+  // SUMMARY
+  // =========================================================================
+  console.log(`
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  📊 GENERATION SUMMARY                                                       ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║  Article:   ${(newArticle ? '✅ ' + newArticle.title.substring(0, 55) + '...' : '❌ None generated').padEnd(66)}║
+║  Interview: ${(newInterview ? '✅ ' + newInterview.category : '❌ None generated').padEnd(66)}║
+╚══════════════════════════════════════════════════════════════════════════════╝
+`);
 }
 
 main()
   .then(() => {
-    console.log('\n--- Validation ---\n');
+    console.log('--- Running Validation ---\n');
     try {
       execSync('node scripts/validate-content.js', { stdio: 'inherit' });
     } catch (e) {
