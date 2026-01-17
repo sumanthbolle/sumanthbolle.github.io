@@ -7,7 +7,7 @@
   <meta name="description" content="ServiceNow tips, AI implementations, and tech explorations by Sumanth Bolle.">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    :root{--blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000}
+    :root{--blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000;--green:#34c759;--orange:#ff9500;--purple:#5856d6;--red:#ff3b30}
     html{scroll-behavior:smooth}
     body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
     nav{position:fixed;top:0;width:100%;height:48px;background:rgba(251,251,253,0.8);backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid rgba(0,0,0,0.1)}
@@ -27,6 +27,20 @@
     .breadcrumb{font-size:13px;color:var(--gray);margin-bottom:24px}
     .breadcrumb a{color:var(--blue);text-decoration:none}
     .breadcrumb a:hover{text-decoration:underline}
+    
+    /* Main Tab Navigation */
+    .main-tabs{display:flex;justify-content:center;gap:8px;padding:24px 22px;background:var(--white);border-bottom:1px solid rgba(0,0,0,0.1);position:sticky;top:48px;z-index:100}
+    .main-tab{padding:12px 28px;border:none;border-radius:24px;background:transparent;color:var(--text);font-size:15px;font-weight:500;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:8px}
+    .main-tab:hover{background:rgba(0,0,0,0.05)}
+    .main-tab.active{background:var(--blue);color:var(--white)}
+    .main-tab .tab-icon{font-size:18px}
+    .main-tab .tab-badge{background:var(--green);color:var(--white);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+    
+    /* Content Sections */
+    .content-section{display:none}
+    .content-section.active{display:block}
+    
+    /* Blog Section Styles (existing) */
     .blog-container{max-width:1080px;margin:0 auto;padding:60px 22px}
     .blog-filters{display:flex;gap:12px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
     .filter-btn{padding:8px 20px;border:1px solid rgba(0,0,0,0.1);border-radius:20px;background:var(--white);color:var(--text);font-size:14px;cursor:pointer;transition:all 0.3s}
@@ -55,23 +69,140 @@
     .read-more{font-size:14px;color:var(--blue);font-weight:500;display:flex;align-items:center;gap:6px}
     .read-more svg{width:16px;height:16px;stroke:currentColor;fill:none;transition:transform 0.3s}
     .blog-card:hover .read-more svg{transform:translateX(4px)}
+    
+    /* Certification Section Styles */
+    .cert-container{max-width:1200px;margin:0 auto;padding:40px 22px}
+    
+    /* Certification Hero */
+    .cert-hero{background:linear-gradient(135deg,#1a5a2e 0%,#2d8a4e 50%,#3da565 100%);border-radius:24px;padding:48px;margin-bottom:40px;color:var(--white);position:relative;overflow:hidden}
+    .cert-hero::before{content:'';position:absolute;top:-50%;right:-20%;width:80%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 60%);pointer-events:none}
+    .cert-hero-content{position:relative;z-index:1}
+    .cert-hero h2{font-size:clamp(28px,5vw,42px);font-weight:700;margin-bottom:16px}
+    .cert-hero p{font-size:18px;opacity:0.9;max-width:600px;line-height:1.6;margin-bottom:24px}
+    .cert-hero-stats{display:flex;gap:32px;flex-wrap:wrap}
+    .cert-stat{text-align:center}
+    .cert-stat-num{font-size:36px;font-weight:700}
+    .cert-stat-label{font-size:13px;opacity:0.8;text-transform:uppercase;letter-spacing:1px}
+    
+    /* Progress Tracker */
+    .progress-section{background:var(--white);border-radius:20px;padding:32px;margin-bottom:40px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+    .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:16px}
+    .progress-title{font-size:20px;font-weight:600}
+    .progress-percent{font-size:32px;font-weight:700;color:var(--green)}
+    .progress-bar-container{background:rgba(0,0,0,0.08);border-radius:12px;height:12px;overflow:hidden;margin-bottom:16px}
+    .progress-bar{height:100%;background:linear-gradient(90deg,var(--green),#2ecc71);border-radius:12px;transition:width 0.5s ease}
+    .progress-modules{display:flex;justify-content:space-between;font-size:13px;color:var(--gray)}
+    
+    /* Learning Path */
+    .learning-path{display:grid;gap:24px}
+    
+    .path-module{background:var(--white);border-radius:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:all 0.3s}
+    .path-module:hover{box-shadow:0 8px 30px rgba(0,0,0,0.12)}
+    .path-module.locked{opacity:0.6}
+    .path-module.locked .module-header{cursor:not-allowed}
+    
+    .module-header{padding:24px 28px;display:flex;align-items:center;gap:20px;cursor:pointer;transition:background 0.3s}
+    .module-header:hover{background:rgba(0,0,0,0.02)}
+    
+    .module-number{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--white);flex-shrink:0}
+    .module-number.foundations{background:linear-gradient(135deg,#667eea,#764ba2)}
+    .module-number.platform{background:linear-gradient(135deg,#11998e,#38ef7d)}
+    .module-number.config{background:linear-gradient(135deg,#f093fb,#f5576c)}
+    .module-number.data{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+    .module-number.selfservice{background:linear-gradient(135deg,#fa709a,#fee140)}
+    .module-number.admin{background:linear-gradient(135deg,#a8edea,#fed6e3)}
+    .module-number.reporting{background:linear-gradient(135deg,#ff9a9e,#fecfef)}
+    .module-number.exam{background:linear-gradient(135deg,#ffecd2,#fcb69f)}
+    
+    .module-info{flex:1}
+    .module-title{font-size:20px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+    .module-title .badge{font-size:10px;padding:4px 10px;border-radius:10px;font-weight:600;text-transform:uppercase}
+    .badge-beginner{background:#e8f5e9;color:#2e7d32}
+    .badge-intermediate{background:#fff3e0;color:#ef6c00}
+    .badge-advanced{background:#fce4ec;color:#c2185b}
+    .badge-new{background:#e3f2fd;color:#1565c0}
+    .module-desc{font-size:14px;color:var(--gray);line-height:1.5}
+    
+    .module-meta{display:flex;gap:16px;align-items:center;flex-shrink:0}
+    .module-duration{font-size:13px;color:var(--gray);display:flex;align-items:center;gap:4px}
+    .module-status{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
+    .status-complete{background:#e8f5e9;color:var(--green)}
+    .status-progress{background:#fff3e0;color:var(--orange)}
+    .status-locked{background:#f5f5f5;color:var(--gray)}
+    
+    .module-expand{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;transition:transform 0.3s}
+    .module-expand.rotated{transform:rotate(180deg)}
+    
+    .module-content{display:none;padding:0 28px 28px;border-top:1px solid rgba(0,0,0,0.06)}
+    .module-content.active{display:block}
+    
+    /* Topics Grid */
+    .topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:24px}
+    
+    .topic-card{background:var(--bg);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.3s;border:2px solid transparent}
+    .topic-card:hover{background:var(--white);border-color:var(--blue);transform:translateY(-4px)}
+    .topic-card.completed{border-color:var(--green);background:rgba(52,199,89,0.05)}
+    
+    .topic-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+    .topic-num{font-size:12px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px}
+    .topic-check{width:24px;height:24px;border-radius:50%;border:2px solid rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.3s}
+    .topic-card.completed .topic-check{background:var(--green);border-color:var(--green);color:var(--white)}
+    
+    .topic-title{font-size:16px;font-weight:600;margin-bottom:8px;line-height:1.4}
+    .topic-desc{font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:12px}
+    .topic-tags{display:flex;gap:6px;flex-wrap:wrap}
+    .topic-tag{font-size:11px;padding:4px 10px;background:rgba(0,0,0,0.06);border-radius:6px;color:var(--gray)}
+    
+    /* Scenario Box */
+    .scenario-card{background:linear-gradient(135deg,#f8f9fa,#e9ecef);border-left:4px solid var(--blue);padding:24px;border-radius:0 14px 14px 0;margin-top:24px}
+    .scenario-card h4{font-size:16px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .scenario-card p{font-size:14px;color:#555;line-height:1.7}
+    .scenario-card pre{background:#1d1d1f;color:#e5e5e5;padding:16px;border-radius:10px;overflow-x:auto;margin-top:16px;font-size:13px;line-height:1.5}
+    
+    /* Resources Box */
+    .resources-box{background:var(--white);border:1px solid rgba(0,0,0,0.1);border-radius:14px;padding:20px;margin-top:24px}
+    .resources-box h4{font-size:14px;font-weight:600;margin-bottom:16px;color:var(--gray);text-transform:uppercase;letter-spacing:1px}
+    .resource-links{display:flex;flex-direction:column;gap:10px}
+    .resource-link{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:10px;text-decoration:none;color:var(--text);font-size:14px;transition:all 0.3s}
+    .resource-link:hover{background:var(--blue);color:var(--white)}
+    .resource-link span{font-size:18px}
+    
+    /* Exam Tips */
+    .exam-tips{background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px;padding:32px;margin-top:40px;color:var(--white)}
+    .exam-tips h3{font-size:24px;font-weight:600;margin-bottom:20px}
+    .tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+    .tip-item{background:rgba(255,255,255,0.15);border-radius:12px;padding:20px}
+    .tip-item h4{font-size:15px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+    .tip-item p{font-size:13px;opacity:0.9;line-height:1.6}
+    
+    /* Coming Soon Certs */
+    .coming-soon{margin-top:40px}
+    .coming-soon h3{font-size:20px;font-weight:600;margin-bottom:20px;text-align:center}
+    .cert-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+    .cert-card{background:var(--white);border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.06);opacity:0.7;transition:all 0.3s}
+    .cert-card:hover{opacity:1;transform:translateY(-4px)}
+    .cert-card-icon{font-size:40px;margin-bottom:12px}
+    .cert-card-name{font-size:16px;font-weight:600;margin-bottom:4px}
+    .cert-card-label{font-size:12px;color:var(--gray)}
+    
+    /* Blog Modal (existing) */
     .blog-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10000;overflow-y:auto;padding:40px 20px}
     .blog-modal.active{display:flex;justify-content:center;align-items:flex-start}
-    .blog-modal-content{background:var(--white);max-width:800px;width:100%;border-radius:24px;overflow:hidden;position:relative;margin:auto;animation:modalIn 0.4s ease}
+    .blog-modal-content{background:var(--white);max-width:900px;width:100%;border-radius:24px;overflow:hidden;position:relative;margin:auto;animation:modalIn 0.4s ease}
     @keyframes modalIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
     .blog-modal-close{position:absolute;top:20px;right:20px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;z-index:10;transition:all 0.3s}
     .blog-modal-close:hover{background:rgba(0,0,0,0.8);transform:scale(1.1)}
-    .blog-modal-header{height:320px;position:relative}
+    .blog-modal-header{height:200px;position:relative}
     .blog-modal-header-bg{width:100%;height:100%}
     .blog-modal-body{padding:48px}
-    .blog-modal-body h1{font-size:36px;font-weight:600;margin-bottom:20px;line-height:1.25}
+    .blog-modal-body h1{font-size:32px;font-weight:600;margin-bottom:20px;line-height:1.25}
     .blog-modal-meta{display:flex;gap:24px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid rgba(0,0,0,0.1);flex-wrap:wrap}
     .blog-modal-meta span{font-size:14px;color:var(--gray);display:flex;align-items:center;gap:6px}
     .blog-modal-article{font-size:17px;line-height:1.85;color:#333}
-    .blog-modal-article h2{font-size:26px;margin:40px 0 20px;font-weight:600;color:var(--text)}
-    .blog-modal-article h3{font-size:20px;margin:30px 0 15px;font-weight:600;color:var(--text)}
-    .blog-modal-article p{margin-bottom:24px}
-    .blog-modal-article pre{background:#1d1d1f;color:#e5e5e5;padding:24px;border-radius:14px;overflow-x:auto;margin:28px 0;font-size:14px;line-height:1.6;font-family:'SF Mono',Monaco,monospace}
+    .blog-modal-article h2{font-size:24px;margin:36px 0 18px;font-weight:600;color:var(--text)}
+    .blog-modal-article h3{font-size:20px;margin:28px 0 14px;font-weight:600;color:var(--text)}
+    .blog-modal-article p{margin-bottom:20px}
+    .blog-modal-article pre{background:#1d1d1f;color:#e5e5e5;padding:24px;border-radius:14px;overflow-x:auto;margin:24px 0;font-size:14px;line-height:1.6;font-family:'SF Mono',Monaco,monospace}
     .blog-modal-article ul,.blog-modal-article ol{margin:20px 0 20px 28px}
     .blog-modal-article li{margin-bottom:10px}
     .blog-modal-article code{background:rgba(0,0,0,0.06);padding:3px 8px;border-radius:6px;font-size:15px;font-family:'SF Mono',Monaco,monospace}
@@ -82,31 +213,29 @@
     .blog-modal-article .scenario-box{background:linear-gradient(135deg,#f8f9fa,#e9ecef);border-left:4px solid var(--blue);padding:24px;border-radius:0 12px 12px 0;margin:24px 0}
     .blog-modal-article .tip-box{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-left:4px solid #4caf50;padding:20px;border-radius:0 12px 12px 0;margin:24px 0}
     .blog-modal-article .warning-box{background:linear-gradient(135deg,#fff3e0,#ffe0b2);border-left:4px solid #ff9800;padding:20px;border-radius:0 12px 12px 0;margin:24px 0}
-    .blog-modal-article .series-nav{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0;padding:20px;background:#f8f9fa;border-radius:12px}
-    .blog-modal-article .series-nav a{padding:8px 16px;background:var(--white);border-radius:20px;font-size:13px;color:var(--text);text-decoration:none;border:1px solid rgba(0,0,0,0.1);transition:all 0.3s;cursor:pointer}
-    .blog-modal-article .series-nav a:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
-    .blog-modal-article .series-nav a.current{background:var(--blue);color:#fff;border-color:var(--blue)}
-    .blog-modal-article .chapter-nav{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:32px;border-top:2px solid rgba(0,0,0,0.1);gap:16px;flex-wrap:wrap}
-    .blog-modal-article .chapter-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;background:var(--blue);color:#fff;text-decoration:none;border-radius:12px;font-weight:500;font-size:15px;transition:all 0.3s;cursor:pointer;border:none}
-    .blog-modal-article .chapter-btn:hover{background:#0052a3;transform:translateY(-2px)}
-    .blog-modal-article .chapter-btn.prev{background:var(--white);color:var(--text);border:1px solid rgba(0,0,0,0.1)}
-    .blog-modal-article .chapter-btn.prev:hover{background:var(--bg)}
-    .blog-modal-article .chapter-btn.disabled{opacity:0.4;pointer-events:none}
+    
     .empty-state{text-align:center;padding:80px 20px;color:var(--gray)}
     .empty-state h3{font-size:24px;margin-bottom:12px;color:var(--text)}
     footer{background:var(--white);padding:24px;text-align:center;border-top:1px solid rgba(0,0,0,0.06)}
     .footer-text{font-size:12px;color:var(--gray)}
+    
     @media(max-width:768px){
       .nav-links{display:none}
       .menu-toggle{display:block}
       .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
       .menu-toggle.active span:nth-child(2){opacity:0}
       .menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+      .main-tabs{flex-wrap:wrap;gap:8px}
+      .main-tab{padding:10px 16px;font-size:13px}
+      .cert-hero{padding:32px 24px}
+      .cert-hero-stats{gap:20px}
+      .module-header{flex-wrap:wrap}
+      .module-meta{width:100%;justify-content:flex-start;margin-top:12px}
       .blog-grid{grid-template-columns:1fr}
+      .topics-grid{grid-template-columns:1fr}
+      .tips-grid{grid-template-columns:1fr}
       .blog-modal-body{padding:28px}
-      .blog-modal-body h1{font-size:28px}
-      .blog-modal-article .series-nav{padding:12px}
-      .blog-modal-article .series-nav a{padding:6px 12px;font-size:12px}
+      .blog-modal-body h1{font-size:24px}
     }
   </style>
 </head>
@@ -129,25 +258,207 @@
       <a href="index.html">Home</a><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><a href="blog.html" class="active">Blog</a><a href="interviews.html">Interviews</a><a href="index.html#contact">Contact</a>
     </div>
   </nav>
+
   <header class="page-header">
     <p class="breadcrumb"><a href="index.html">Home</a> / Blog</p>
     <h1>Insights & Tutorials</h1>
-    <p>ServiceNow tips, AI implementations, and tech explorations.</p>
+    <p>ServiceNow tips, AI implementations, certification guides, and tech explorations.</p>
   </header>
-  <main class="blog-container">
-    <div class="blog-filters">
-      <button class="filter-btn active" data-filter="all">All Posts</button>
-      <button class="filter-btn" data-filter="servicenow">ServiceNow</button>
-      <button class="filter-btn" data-filter="ai">AI & GenAI</button>
-      <button class="filter-btn" data-filter="tutorial">Tutorials</button>
-      <button class="filter-btn" data-filter="general">General</button>
+
+  <!-- Main Tab Navigation -->
+  <div class="main-tabs">
+    <button class="main-tab active" data-section="blog">
+      <span class="tab-icon">📝</span> Blog Posts
+    </button>
+    <button class="main-tab" data-section="csa">
+      <span class="tab-icon">🎓</span> CSA Certification
+      <span class="tab-badge">New</span>
+    </button>
+    <button class="main-tab" data-section="certpath">
+      <span class="tab-icon">🚀</span> All Certifications
+    </button>
+  </div>
+
+  <!-- Blog Section (existing) -->
+  <section class="content-section active" id="blogSection">
+    <main class="blog-container">
+      <div class="blog-filters">
+        <button class="filter-btn active" data-filter="all">All Posts</button>
+        <button class="filter-btn" data-filter="servicenow">ServiceNow</button>
+        <button class="filter-btn" data-filter="ai">AI & GenAI</button>
+        <button class="filter-btn" data-filter="tutorial">Tutorials</button>
+        <button class="filter-btn" data-filter="general">General</button>
+      </div>
+      <div class="blog-grid" id="blogGrid"></div>
+      <div class="empty-state" id="emptyState" style="display:none">
+        <h3>No posts found</h3>
+        <p>Try selecting a different category.</p>
+      </div>
+    </main>
+  </section>
+
+  <!-- CSA Certification Section -->
+  <section class="content-section" id="csaSection">
+    <div class="cert-container">
+      <!-- Hero -->
+      <div class="cert-hero">
+        <div class="cert-hero-content">
+          <h2>🏆 ServiceNow Certified System Administrator</h2>
+          <p>Master the ServiceNow platform from zero to certified professional. This comprehensive learning path covers everything you need to pass the CSA exam and excel in real-world implementations.</p>
+          <div class="cert-hero-stats">
+            <div class="cert-stat">
+              <div class="cert-stat-num">8</div>
+              <div class="cert-stat-label">Modules</div>
+            </div>
+            <div class="cert-stat">
+              <div class="cert-stat-num">50+</div>
+              <div class="cert-stat-label">Topics</div>
+            </div>
+            <div class="cert-stat">
+              <div class="cert-stat-num">40+</div>
+              <div class="cert-stat-label">Hours</div>
+            </div>
+            <div class="cert-stat">
+              <div class="cert-stat-num">100%</div>
+              <div class="cert-stat-label">Exam Ready</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Tracker -->
+      <div class="progress-section">
+        <div class="progress-header">
+          <div class="progress-title">📊 Your Learning Progress</div>
+          <div class="progress-percent" id="progressPercent">0%</div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+        <div class="progress-modules">
+          <span id="completedCount">0 of 50 topics completed</span>
+          <span>Keep going! 💪</span>
+        </div>
+      </div>
+
+      <!-- Learning Path -->
+      <div class="learning-path" id="learningPath">
+        <!-- Modules will be rendered by JavaScript -->
+      </div>
+
+      <!-- Exam Tips -->
+      <div class="exam-tips">
+        <h3>💡 CSA Exam Pro Tips</h3>
+        <div class="tips-grid">
+          <div class="tip-item">
+            <h4>📚 Know the Fundamentals</h4>
+            <p>60% of questions test core concepts: tables, forms, lists, and basic administration. Master these first.</p>
+          </div>
+          <div class="tip-item">
+            <h4>🔧 Hands-On Practice</h4>
+            <p>Get a free PDI (Personal Developer Instance) and practice every concept. Theory alone won't pass the exam.</p>
+          </div>
+          <div class="tip-item">
+            <h4>⏱️ Time Management</h4>
+            <p>60 questions in 90 minutes = 1.5 min per question. Flag difficult ones and move on.</p>
+          </div>
+          <div class="tip-item">
+            <h4>🎯 Focus Areas</h4>
+            <p>UI Policies vs Client Scripts vs Business Rules — know when to use each. This is heavily tested.</p>
+          </div>
+          <div class="tip-item">
+            <h4>📖 Official Docs</h4>
+            <p>The exam references docs.servicenow.com. Familiarize yourself with navigation and terminology.</p>
+          </div>
+          <div class="tip-item">
+            <h4>🔄 Update Sets</h4>
+            <p>Understand the complete lifecycle: create, capture, transfer, preview, commit. Common exam topic.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coming Soon -->
+      <div class="coming-soon">
+        <h3>🎯 Your Certification Journey</h3>
+        <div class="cert-cards">
+          <div class="cert-card" style="opacity:1;border:2px solid var(--green)">
+            <div class="cert-card-icon">✅</div>
+            <div class="cert-card-name">CSA</div>
+            <div class="cert-card-label">Current Focus</div>
+          </div>
+          <div class="cert-card">
+            <div class="cert-card-icon">🔜</div>
+            <div class="cert-card-name">CAD</div>
+            <div class="cert-card-label">Coming Soon</div>
+          </div>
+          <div class="cert-card">
+            <div class="cert-card-icon">🔜</div>
+            <div class="cert-card-name">CIS-ITSM</div>
+            <div class="cert-card-label">Coming Soon</div>
+          </div>
+          <div class="cert-card">
+            <div class="cert-card-icon">🔜</div>
+            <div class="cert-card-name">CIS-HR</div>
+            <div class="cert-card-label">Coming Soon</div>
+          </div>
+          <div class="cert-card">
+            <div class="cert-card-icon">🎯</div>
+            <div class="cert-card-name">CTA</div>
+            <div class="cert-card-label">Ultimate Goal</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="blog-grid" id="blogGrid"></div>
-    <div class="empty-state" id="emptyState" style="display:none">
-      <h3>No posts found</h3>
-      <p>Try selecting a different category.</p>
+  </section>
+
+  <!-- All Certifications Section (placeholder) -->
+  <section class="content-section" id="certpathSection">
+    <div class="cert-container">
+      <div class="cert-hero" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)">
+        <div class="cert-hero-content">
+          <h2>🚀 ServiceNow Certification Roadmap</h2>
+          <p>Your complete journey from CSA to CTA. We're building comprehensive guides for every certification level.</p>
+        </div>
+      </div>
+      <div class="coming-soon" style="margin-top:40px">
+        <h3>📍 Certification Tracks</h3>
+        <div class="cert-cards">
+          <div class="cert-card" style="opacity:1">
+            <div class="cert-card-icon">🎓</div>
+            <div class="cert-card-name">CSA</div>
+            <div class="cert-card-label" style="color:var(--green)">Available Now</div>
+          </div>
+          <div class="cert-card">
+            <div class="cert-card-icon">💻</div>
+            <div class="cert-card-name">CAD</div>
+            <div class="cert-card-label">Q2 2026</div>
+          </div>
+          <div class="cert-card">
+            <div class="cert-card-icon">🎫</div>
+            <div class="cert-card-name">CIS-ITSM</div>
+            <div class="cert-card-label">Q2 2026</div>
+          </div>
+          <div class="cert-card">
+            <div class="cert-card-icon">👥</div>
+            <div class="cert-card-name">CIS-HR</div>
+            <div class="cert-card-label">Q3 2026</div>
+          </div>
+          <div class="cert-card">
+            <div class="cert-card-icon">🔒</div>
+            <div class="cert-card-name">CIS-SecOps</div>
+            <div class="cert-card-label">Q3 2026</div>
+          </div>
+          <div class="cert-card">
+            <div class="cert-card-icon">🏗️</div>
+            <div class="cert-card-name">CTA</div>
+            <div class="cert-card-label">Q4 2026</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </main>
+  </section>
+
+  <!-- Blog Modal -->
   <div class="blog-modal" id="blogModal">
     <div class="blog-modal-content">
       <button class="blog-modal-close">&times;</button>
@@ -163,191 +474,2250 @@
       </div>
     </div>
   </div>
+
+  <!-- Topic Modal -->
+  <div class="blog-modal" id="topicModal">
+    <div class="blog-modal-content">
+      <button class="blog-modal-close" onclick="closeTopicModal()">&times;</button>
+      <div class="blog-modal-header"><div class="blog-modal-header-bg" id="topicModalHeaderBg" style="background:linear-gradient(135deg,#81d742,#4a8f24)"></div></div>
+      <div class="blog-modal-body">
+        <h1 id="topicModalTitle"></h1>
+        <div class="blog-modal-meta">
+          <span id="topicModalModule">📚 </span>
+          <span id="topicModalTime">⏱️ </span>
+          <span id="topicModalLevel">📊 </span>
+        </div>
+        <article class="blog-modal-article" id="topicModalContent"></article>
+        <div style="margin-top:32px;padding-top:24px;border-top:1px solid rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+          <button onclick="markTopicComplete()" id="markCompleteBtn" style="padding:14px 28px;background:var(--green);color:white;border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px">
+            ✓ Mark as Complete
+          </button>
+          <div style="display:flex;gap:12px">
+            <button onclick="navigateTopic('prev')" id="prevTopicBtn" style="padding:12px 20px;background:var(--bg);border:1px solid rgba(0,0,0,0.1);border-radius:10px;cursor:pointer;font-size:14px">← Previous</button>
+            <button onclick="navigateTopic('next')" id="nextTopicBtn" style="padding:12px 20px;background:var(--blue);color:white;border:none;border-radius:10px;cursor:pointer;font-size:14px">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
+
 <script>
-  // JS Tutorial Series Navigation (match IDs from posts.json)
-  var JS_TUTORIAL_SERIES = [
-    { id: 4, num: 1, title: "Introduction" },
-    { id: 5, num: 2, title: "GlideRecord Basics" },
-    { id: 6, num: 3, title: "Business Rules" },
-    { id: 7, num: 4, title: "Script Includes" },
-    { id: 8, num: 5, title: "GlideAjax" },
-    { id: 9, num: 6, title: "Advanced Patterns" }
-  ];
+// ==================== CSA CERTIFICATION DATA ====================
+const CSA_MODULES = [
+  {
+    id: 1,
+    number: "01",
+    title: "ServiceNow Foundations",
+    description: "Understand what ServiceNow is, its architecture, and why enterprises choose it over other platforms.",
+    duration: "4 hours",
+    level: "beginner",
+    colorClass: "foundations",
+    topics: [
+      {
+        id: "1.1",
+        title: "What is ServiceNow?",
+        description: "Platform overview, use cases, and how it differs from traditional tools.",
+        duration: "30 min",
+        tags: ["Platform", "Overview"],
+        content: `
+          <h2>What is ServiceNow?</h2>
+          <p>ServiceNow is a cloud-based platform that provides digital workflows for enterprise operations. Think of it as the central nervous system for your organization — connecting people, processes, and technology on a single platform.</p>
+          
+          <h3>Why ServiceNow Matters</h3>
+          <p>Before ServiceNow, organizations used dozens of disconnected tools:</p>
+          <ul>
+            <li><strong>IT used</strong> Remedy, HP Service Manager, or spreadsheets</li>
+            <li><strong>HR used</strong> Workday tickets or email</li>
+            <li><strong>Facilities used</strong> paper forms or SharePoint</li>
+            <li><strong>Security used</strong> separate SIEM tools</li>
+          </ul>
+          <p>ServiceNow unifies all these on ONE platform with ONE data model.</p>
+          
+          <div class="scenario-box">
+            <h4>🎯 Real-World Scenario</h4>
+            <p><strong>Before ServiceNow:</strong> Employee reports laptop issue via email → IT creates ticket in Remedy → If it needs replacement, procurement uses SAP → Asset team updates Excel → 5 systems, 3 days minimum.</p>
+            <p><strong>With ServiceNow:</strong> Employee reports via portal → Auto-creates incident → Workflow checks warranty → Auto-triggers procurement → Asset auto-updated → 1 system, same day resolution.</p>
+          </div>
+          
+          <h3>The Platform Approach</h3>
+          <p>ServiceNow isn't just an ITSM tool — it's a Platform-as-a-Service (PaaS) that can automate ANY business process:</p>
+          <table>
+            <tr><th>Module</th><th>Purpose</th><th>Example Use Case</th></tr>
+            <tr><td>ITSM</td><td>IT Service Management</td><td>Incident, Problem, Change management</td></tr>
+            <tr><td>HRSD</td><td>HR Service Delivery</td><td>Employee onboarding, case management</td></tr>
+            <tr><td>CSM</td><td>Customer Service</td><td>Customer cases, product support</td></tr>
+            <tr><td>SecOps</td><td>Security Operations</td><td>Vulnerability response, threat intelligence</td></tr>
+            <tr><td>ITOM</td><td>IT Operations</td><td>Discovery, Event Management, Cloud Management</td></tr>
+          </table>
+          
+          <div class="tip-box">
+            <h4>💡 For Clarity/Medallia Professionals</h4>
+            <p>If you're coming from Clarity PPM, think of ServiceNow as Clarity's project-centric approach applied to EVERYTHING — not just projects, but incidents, requests, HR cases, security alerts, and more. Every "thing" is a record flowing through workflows.</p>
+          </div>
+          
+          <h3>Key Differentiators</h3>
+          <ul>
+            <li><strong>Single Data Model:</strong> All modules share the same tables, relationships, and reporting</li>
+            <li><strong>Low-Code Platform:</strong> Business users can build apps without deep coding</li>
+            <li><strong>AI Built-In:</strong> Predictive Intelligence, Virtual Agent, Now Assist are native</li>
+            <li><strong>Always Current:</strong> Cloud-based with 2 releases per year (automatically updated)</li>
+          </ul>
+        `
+      },
+      {
+        id: "1.2",
+        title: "Platform Architecture",
+        description: "Multi-instance architecture, data centers, and the Now Platform components.",
+        duration: "45 min",
+        tags: ["Architecture", "Technical"],
+        content: `
+          <h2>Platform Architecture</h2>
+          <p>Understanding ServiceNow's architecture is crucial for the CSA exam and real-world troubleshooting.</p>
+          
+          <h3>Multi-Instance Architecture (MIA)</h3>
+          <p>Unlike multi-tenant SaaS where customers share infrastructure, ServiceNow gives each customer their own:</p>
+          <ul>
+            <li><strong>Dedicated instance</strong> (your own URL: yourcompany.service-now.com)</li>
+            <li><strong>Isolated database</strong> (your data never mixes with others)</li>
+            <li><strong>Separate application server</strong> (performance isolation)</li>
+          </ul>
+          
+          <div class="scenario-box">
+            <h4>🏢 Why This Matters</h4>
+            <p>A major bank can customize ServiceNow extensively without affecting a hospital's instance. If the bank's instance has issues, the hospital is unaffected. This isolation is critical for regulated industries.</p>
+          </div>
+          
+          <h3>Instance Types</h3>
+          <table>
+            <tr><th>Type</th><th>Purpose</th><th>Refresh Frequency</th></tr>
+            <tr><td>Production (PROD)</td><td>Live business operations</td><td>Never refreshed from another</td></tr>
+            <tr><td>Test (TEST)</td><td>UAT, integration testing</td><td>Weekly/Monthly from PROD</td></tr>
+            <tr><td>Development (DEV)</td><td>Building new features</td><td>As needed from PROD/TEST</td></tr>
+            <tr><td>Personal Developer (PDI)</td><td>Learning & experimentation</td><td>Free, resets after 10 days inactive</td></tr>
+          </table>
+          
+          <h3>The Now Platform Stack</h3>
+          <pre>
+┌─────────────────────────────────────────────────┐
+│           USER INTERFACES                        │
+│   Now Mobile | Service Portal | Workspaces      │
+├─────────────────────────────────────────────────┤
+│           APPLICATION LAYER                      │
+│   ITSM | HRSD | CSM | SecOps | Custom Apps      │
+├─────────────────────────────────────────────────┤
+│           NOW PLATFORM                           │
+│   Workflow Engine | AI/ML | Integration Hub     │
+├─────────────────────────────────────────────────┤
+│           DATA LAYER                             │
+│   Tables | CMDB | Knowledge | Attachments       │
+├─────────────────────────────────────────────────┤
+│           INFRASTRUCTURE                         │
+│   Servers | Storage | Network | Security        │
+└─────────────────────────────────────────────────┘
+          </pre>
+          
+          <h3>Key Components</h3>
+          <ul>
+            <li><strong>Application Server:</strong> Runs the platform code, handles requests</li>
+            <li><strong>Database:</strong> MariaDB (MySQL compatible) storing all records</li>
+            <li><strong>MID Server:</strong> On-premise component for integrations behind firewalls</li>
+            <li><strong>Edge Encryption:</strong> Encrypts sensitive data before it leaves your network</li>
+          </ul>
+          
+          <div class="warning-box">
+            <h4>⚠️ Exam Alert</h4>
+            <p>Know that ServiceNow uses a multi-instance (NOT multi-tenant) architecture. Each customer has dedicated resources. This is a common exam question!</p>
+          </div>
+        `
+      },
+      {
+        id: "1.3",
+        title: "Release Cycle & Versions",
+        description: "Understanding ServiceNow releases, naming conventions, and upgrade process.",
+        duration: "30 min",
+        tags: ["Releases", "Upgrades"],
+        content: `
+          <h2>Release Cycle & Versions</h2>
+          <p>ServiceNow releases two major versions per year, following a city-based naming convention.</p>
+          
+          <h3>Release Naming Convention</h3>
+          <p>Releases are named alphabetically after cities:</p>
+          <ul>
+            <li><strong>Utah</strong> (March 2023)</li>
+            <li><strong>Vancouver</strong> (September 2023)</li>
+            <li><strong>Washington DC</strong> (March 2024)</li>
+            <li><strong>Xanadu</strong> (September 2024)</li>
+            <li><strong>Yokohama</strong> (March 2025)</li>
+            <li><strong>Zurich</strong> (September 2025) — <em>Current as of this training</em></li>
+          </ul>
+          
+          <h3>Release Types</h3>
+          <table>
+            <tr><th>Type</th><th>Frequency</th><th>Content</th></tr>
+            <tr><td>Family Release</td><td>2x per year</td><td>Major features, new applications</td></tr>
+            <tr><td>Patch</td><td>Monthly</td><td>Bug fixes, security updates</td></tr>
+            <tr><td>Hotfix</td><td>As needed</td><td>Critical fixes, zero-day vulnerabilities</td></tr>
+          </table>
+          
+          <h3>N-1 Support Policy</h3>
+          <p>ServiceNow supports only the current release (N) and one prior (N-1):</p>
+          <ul>
+            <li>If current is <strong>Zurich</strong>, then <strong>Yokohama</strong> is also supported</li>
+            <li><strong>Xanadu</strong> and older are unsupported</li>
+            <li>Security patches only come to supported versions</li>
+          </ul>
+          
+          <div class="scenario-box">
+            <h4>🔄 Upgrade Reality</h4>
+            <p>Most enterprises upgrade once per year. They skip a release to reduce upgrade fatigue while staying in the support window. Example: Utah → Washington DC → Yokohama (skipping Vancouver and Xanadu).</p>
+          </div>
+          
+          <h3>Upgrade Process Overview</h3>
+          <ol>
+            <li><strong>Review Release Notes:</strong> Check for deprecated features, breaking changes</li>
+            <li><strong>Run Upgrade Preview:</strong> ServiceNow scans your instance for issues</li>
+            <li><strong>Upgrade Non-Prod First:</strong> Always DEV → TEST → PROD</li>
+            <li><strong>Test Thoroughly:</strong> Custom scripts, integrations, user acceptance</li>
+            <li><strong>Schedule Production:</strong> Usually during maintenance windows</li>
+          </ol>
+          
+          <div class="tip-box">
+            <h4>💡 CSA Exam Tip</h4>
+            <p>You won't perform upgrades as a CSA, but you should know: upgrades are managed by ServiceNow (cloud platform), and customers control WHEN they upgrade within the support window.</p>
+          </div>
+        `
+      },
+      {
+        id: "1.4",
+        title: "Getting Your Developer Instance",
+        description: "How to get a free PDI and set up your learning environment.",
+        duration: "20 min",
+        tags: ["Hands-On", "Setup"],
+        content: `
+          <h2>Getting Your Developer Instance (PDI)</h2>
+          <p>A Personal Developer Instance is your free ServiceNow playground — essential for learning and exam prep.</p>
+          
+          <h3>Step-by-Step Setup</h3>
+          <ol>
+            <li>Go to <a href="https://developer.servicenow.com" target="_blank">developer.servicenow.com</a></li>
+            <li>Click "Sign Up" and create your account</li>
+            <li>Verify your email</li>
+            <li>From the dashboard, click "Request Instance"</li>
+            <li>Choose the latest release (e.g., Zurich)</li>
+            <li>Wait 5-10 minutes for provisioning</li>
+            <li>You'll receive your instance URL and admin credentials</li>
+          </ol>
+          
+          <h3>PDI Specifications</h3>
+          <table>
+            <tr><th>Feature</th><th>Details</th></tr>
+            <tr><td>Cost</td><td>100% Free</td></tr>
+            <tr><td>Duration</td><td>Active for 10 days after last login</td></tr>
+            <tr><td>Included Apps</td><td>ITSM, HRSD, CSM, App Engine Studio, and more</td></tr>
+            <tr><td>Data</td><td>Demo data included (sample users, incidents, etc.)</td></tr>
+            <tr><td>Limitations</td><td>No integrations, limited email, no production use</td></tr>
+          </table>
+          
+          <div class="warning-box">
+            <h4>⚠️ Keep It Active!</h4>
+            <p>Your PDI will hibernate after 10 days of inactivity. Data persists for 10 more days, then it's deleted. Log in at least every 9 days during your study period!</p>
+          </div>
+          
+          <h3>First Login Checklist</h3>
+          <ul>
+            <li>✅ Log in with provided admin credentials</li>
+            <li>✅ Change your password immediately</li>
+            <li>✅ Navigate to System Administrator > Users and find your admin user</li>
+            <li>✅ Explore the Application Navigator (left sidebar)</li>
+            <li>✅ Create your first Incident (Incident > Create New)</li>
+          </ul>
+          
+          <div class="scenario-box">
+            <h4>🎯 Your First Task</h4>
+            <p>After getting your PDI, complete this exercise:</p>
+            <ol>
+              <li>Navigate to <strong>Incident > Create New</strong></li>
+              <li>Fill in: Caller = "System Administrator", Short Description = "Test incident for learning"</li>
+              <li>Submit the form</li>
+              <li>Find your incident in the list</li>
+              <li>Try changing its State from New → In Progress → Resolved</li>
+            </ol>
+            <p>Congratulations! You've just completed your first ServiceNow workflow.</p>
+          </div>
+        `
+      },
+      {
+        id: "1.5",
+        title: "Navigating the Platform",
+        description: "Application Navigator, All Search, and keyboard shortcuts.",
+        duration: "45 min",
+        tags: ["Navigation", "UI"],
+        content: `
+          <h2>Navigating the Platform</h2>
+          <p>Efficient navigation is key to productivity. Learn these skills and you'll work 10x faster.</p>
+          
+          <h3>The Application Navigator</h3>
+          <p>The left sidebar is your command center:</p>
+          <ul>
+            <li><strong>Filter Navigator:</strong> Type to instantly find modules (Ctrl+Shift+F)</li>
+            <li><strong>Favorites:</strong> Star frequently used modules for quick access</li>
+            <li><strong>History:</strong> View recently accessed modules</li>
+            <li><strong>Applications:</strong> Organized groups of related modules</li>
+          </ul>
+          
+          <h3>All Search (Global Search)</h3>
+          <p>The search bar at the top searches EVERYTHING:</p>
+          <ul>
+            <li>Records (incidents, users, knowledge articles)</li>
+            <li>Navigation items (modules, applications)</li>
+            <li>Documentation</li>
+            <li>Attachments</li>
+          </ul>
+          
+          <div class="tip-box">
+            <h4>💡 Search Shortcuts</h4>
+            <p>Type prefixes for faster results:</p>
+            <ul>
+              <li><code>INC0001234</code> — Jump directly to that incident</li>
+              <li><code>*.do</code> — Find admin pages (like sys_properties.do)</li>
+              <li><code>user:</code> — Search only users</li>
+            </ul>
+          </div>
+          
+          <h3>Essential Keyboard Shortcuts</h3>
+          <table>
+            <tr><th>Shortcut</th><th>Action</th></tr>
+            <tr><td>Ctrl + Shift + F</td><td>Focus on Filter Navigator</td></tr>
+            <tr><td>Ctrl + Shift + G</td><td>Open Global Search</td></tr>
+            <tr><td>Ctrl + Right Arrow</td><td>Next tab</td></tr>
+            <tr><td>Ctrl + Left Arrow</td><td>Previous tab</td></tr>
+            <tr><td>Ctrl + S</td><td>Save (on forms)</td></tr>
+            <tr><td>Ctrl + Shift + S</td><td>Save and Stay (on forms)</td></tr>
+          </table>
+          
+          <h3>Next Experience UI vs Classic UI</h3>
+          <p>ServiceNow has two interface modes:</p>
+          <table>
+            <tr><th>Feature</th><th>Next Experience (Polaris)</th><th>Classic UI (UI16)</th></tr>
+            <tr><td>Look</td><td>Modern, clean, dark mode available</td><td>Traditional, familiar</td></tr>
+            <tr><td>Default Since</td><td>San Diego (2022)</td><td>Legacy</td></tr>
+            <tr><td>Unified Navigation</td><td>Yes</td><td>No</td></tr>
+            <tr><td>Favorites</td><td>Star icons in nav</td><td>Separate favorites app</td></tr>
+          </table>
+          
+          <div class="scenario-box">
+            <h4>🎯 Navigation Challenge</h4>
+            <p>In your PDI, try these exercises:</p>
+            <ol>
+              <li>Find the "Business Rules" module using only the Filter Navigator</li>
+              <li>Star "Incidents > All" as a favorite</li>
+              <li>Use global search to find incident "INC0000001"</li>
+              <li>Navigate between 3 open tabs using keyboard shortcuts</li>
+              <li>Find where User records are stored (Users module)</li>
+            </ol>
+          </div>
+        `
+      }
+    ]
+  },
+  {
+    id: 2,
+    number: "02",
+    title: "User Interface & Lists",
+    description: "Master lists, forms, filters, and personalization — the foundation of daily work.",
+    duration: "5 hours",
+    level: "beginner",
+    colorClass: "platform",
+    topics: [
+      {
+        id: "2.1",
+        title: "Understanding Lists",
+        description: "List anatomy, column configuration, and data display.",
+        duration: "40 min",
+        tags: ["Lists", "UI"],
+        content: `
+          <h2>Understanding Lists</h2>
+          <p>Lists are how you view multiple records at once. Master lists and you'll navigate ServiceNow like a pro.</p>
+          
+          <h3>Anatomy of a List</h3>
+          <ul>
+            <li><strong>Title Bar:</strong> Shows table name and record count</li>
+            <li><strong>Column Headers:</strong> Field names, click to sort</li>
+            <li><strong>Rows:</strong> Individual records</li>
+            <li><strong>List Controls:</strong> Refresh, filters, export options</li>
+            <li><strong>Breadcrumbs:</strong> Shows current filter/query</li>
+          </ul>
+          
+          <h3>Column Operations</h3>
+          <table>
+            <tr><th>Action</th><th>How To</th></tr>
+            <tr><td>Sort ascending</td><td>Click column header once</td></tr>
+            <tr><td>Sort descending</td><td>Click column header twice</td></tr>
+            <tr><td>Add column</td><td>Right-click header > Insert a column</td></tr>
+            <tr><td>Remove column</td><td>Right-click header > Remove column</td></tr>
+            <tr><td>Resize column</td><td>Drag column border</td></tr>
+            <tr><td>Rearrange columns</td><td>Drag header to new position</td></tr>
+          </table>
+          
+          <h3>List Personalization</h3>
+          <p>Configure columns that persist for YOUR view only:</p>
+          <ol>
+            <li>Right-click any column header</li>
+            <li>Select "Configure" > "List Layout"</li>
+            <li>Move fields between Available and Selected</li>
+            <li>Drag to reorder selected fields</li>
+            <li>Click Save</li>
+          </ol>
+          
+          <div class="scenario-box">
+            <h4>🎯 Practical Exercise</h4>
+            <p>Configure the Incident list for a Service Desk agent:</p>
+            <p>Recommended columns: Number, Priority, State, Short description, Assignment group, Assigned to, Updated</p>
+          </div>
+          
+          <div class="tip-box">
+            <h4>💡 Pro Tip: List Views</h4>
+            <p>You can save different column configurations as "views" and switch between them. Great for different tasks like "My Work" vs "Team Queue" vs "Escalations".</p>
+          </div>
+        `
+      },
+      {
+        id: "2.2",
+        title: "Filtering & Searching",
+        description: "Build powerful filters, use conditions, and save filter queries.",
+        duration: "50 min",
+        tags: ["Filters", "Search"],
+        content: `
+          <h2>Filtering & Searching</h2>
+          <p>Filters help you find exactly what you need among thousands of records.</p>
+          
+          <h3>Basic Filtering</h3>
+          <p>Click the funnel icon or use the breadcrumbs area:</p>
+          <ol>
+            <li>Click the funnel icon on any list</li>
+            <li>Select a field (e.g., Priority)</li>
+            <li>Choose operator (is, is not, contains, etc.)</li>
+            <li>Enter value (e.g., 1 - Critical)</li>
+            <li>Click "Run" to apply</li>
+          </ol>
+          
+          <h3>Common Operators</h3>
+          <table>
+            <tr><th>Operator</th><th>Use Case</th><th>Example</th></tr>
+            <tr><td>is</td><td>Exact match</td><td>State is "Open"</td></tr>
+            <tr><td>is not</td><td>Exclude value</td><td>State is not "Closed"</td></tr>
+            <tr><td>contains</td><td>Partial text match</td><td>Short desc contains "email"</td></tr>
+            <tr><td>starts with</td><td>Beginning match</td><td>Number starts with "INC"</td></tr>
+            <tr><td>is empty</td><td>No value</td><td>Assignment group is empty</td></tr>
+            <tr><td>is one of</td><td>Multiple values</td><td>Priority is one of 1,2</td></tr>
+            <tr><td>between</td><td>Date ranges</td><td>Created between last 7 days</td></tr>
+          </table>
+          
+          <h3>AND vs OR Conditions</h3>
+          <ul>
+            <li><strong>AND (same row):</strong> All conditions must be true</li>
+            <li><strong>OR (new row):</strong> Any condition can be true</li>
+          </ul>
+          
+          <div class="scenario-box">
+            <h4>🎯 Filter Challenge</h4>
+            <p>Build this filter: "All Priority 1 or 2 incidents that are NOT closed, assigned to my group, created in the last 30 days"</p>
+            <pre>
+Priority is one of 1 - Critical, 2 - High
+AND State is not Closed
+AND State is not Resolved  
+AND Assignment group is [Your Group]
+AND Created on After last 30 days
+            </pre>
+          </div>
+          
+          <h3>Saving Filters</h3>
+          <ol>
+            <li>Build your filter</li>
+            <li>Click the hamburger menu (≡) in breadcrumbs</li>
+            <li>Select "Save as" > "Favorite"</li>
+            <li>Name it descriptively (e.g., "My P1-P2 Open Incidents")</li>
+          </ol>
+          
+          <div class="tip-box">
+            <h4>💡 Encoded Queries</h4>
+            <p>Every filter has an encoded query string. Right-click breadcrumbs > "Copy query" to get it. This is essential for scripting and sharing filters:</p>
+            <code>priority=1^stateNOT IN6,7^assignment_group=YOUR_GROUP</code>
+          </div>
+        `
+      },
+      {
+        id: "2.3",
+        title: "Working with Forms",
+        description: "Form layout, sections, fields, and the form lifecycle.",
+        duration: "45 min",
+        tags: ["Forms", "UI"],
+        content: `
+          <h2>Working with Forms</h2>
+          <p>Forms are where you view and edit individual records. Understanding form behavior is critical.</p>
+          
+          <h3>Form Anatomy</h3>
+          <ul>
+            <li><strong>Header:</strong> Record identifier, state indicators</li>
+            <li><strong>Form Sections:</strong> Collapsible groups of fields</li>
+            <li><strong>Fields:</strong> Individual data points (text, choice, reference, etc.)</li>
+            <li><strong>Related Lists:</strong> Associated records (below the form)</li>
+            <li><strong>Activity Stream:</strong> Work notes, comments, history</li>
+            <li><strong>Context Menu:</strong> Right-click for additional options</li>
+          </ul>
+          
+          <h3>Field Types</h3>
+          <table>
+            <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+            <tr><td>String</td><td>Plain text</td><td>Short description</td></tr>
+            <tr><td>Choice</td><td>Dropdown selection</td><td>Priority, State</td></tr>
+            <tr><td>Reference</td><td>Link to another record</td><td>Caller, Assigned to</td></tr>
+            <tr><td>Date/Time</td><td>Temporal values</td><td>Created, Due date</td></tr>
+            <tr><td>Journal</td><td>Chronological entries</td><td>Work notes, Comments</td></tr>
+            <tr><td>HTML</td><td>Rich text</td><td>Description (sometimes)</td></tr>
+            <tr><td>Attachment</td><td>File uploads</td><td>Screenshots, documents</td></tr>
+          </table>
+          
+          <h3>Form Personalization</h3>
+          <ol>
+            <li>Right-click form header > Configure > Form Layout</li>
+            <li>Move fields between sections</li>
+            <li>Create new sections for organization</li>
+            <li>Mark fields as mandatory or read-only</li>
+            <li>Save for yourself or all users</li>
+          </ol>
+          
+          <div class="scenario-box">
+            <h4>🎯 Practical Exercise</h4>
+            <p>Customize the Incident form:</p>
+            <ol>
+              <li>Create a new section called "VIP Details"</li>
+              <li>Move "Business Service" and "Priority" into it</li>
+              <li>Save as a view called "VIP View"</li>
+              <li>Switch between Default and VIP views</li>
+            </ol>
+          </div>
+          
+          <div class="warning-box">
+            <h4>⚠️ Personal vs System Changes</h4>
+            <p>As a CSA, you can personalize YOUR view. System-wide form changes require Form Designer or admin access — that's different!</p>
+          </div>
+        `
+      },
+      {
+        id: "2.4",
+        title: "Related Lists & Activity",
+        description: "Working with related records and the activity formatter.",
+        duration: "35 min",
+        tags: ["Related Lists", "Activity"],
+        content: `
+          <h2>Related Lists & Activity</h2>
+          <p>Related lists show connected records, while the activity formatter shows the communication history.</p>
+          
+          <h3>Related Lists</h3>
+          <p>Found below the main form, related lists show:</p>
+          <ul>
+            <li>Child records (Tasks under an Incident)</li>
+            <li>Associated records (Attachments, Change Requests)</li>
+            <li>History (Audit logs, Approval history)</li>
+          </ul>
+          
+          <h3>Configuring Related Lists</h3>
+          <ol>
+            <li>Right-click the related list header area</li>
+            <li>Select "Configure" > "Related Lists"</li>
+            <li>Add or remove related lists</li>
+            <li>Drag to reorder</li>
+            <li>Save</li>
+          </ol>
+          
+          <h3>Activity Formatter</h3>
+          <p>The Activity section shows all journal entries in chronological order:</p>
+          <ul>
+            <li><strong>Work Notes:</strong> Internal notes (visible to fulfiller roles)</li>
+            <li><strong>Additional Comments:</strong> Customer-visible notes</li>
+            <li><strong>System entries:</strong> Automated updates</li>
+          </ul>
+          
+          <div class="tip-box">
+            <h4>💡 Work Notes vs Comments</h4>
+            <p><strong>Work Notes</strong> = Internal team communication (customer CANNOT see)</p>
+            <p><strong>Additional Comments</strong> = Customer communication (visible in portal)</p>
+            <p>This is a critical distinction for customer service!</p>
+          </div>
+          
+          <h3>Activity Filter Options</h3>
+          <ul>
+            <li>All entries</li>
+            <li>Work notes only</li>
+            <li>Customer visible only</li>
+            <li>Field changes</li>
+            <li>Attachments</li>
+          </ul>
+          
+          <div class="scenario-box">
+            <h4>🎯 Exercise</h4>
+            <p>Open an incident and:</p>
+            <ol>
+              <li>Add a Work Note: "Investigating issue"</li>
+              <li>Add a Comment: "We're looking into this"</li>
+              <li>Change the State to "In Progress"</li>
+              <li>View the Activity stream to see all three actions</li>
+            </ol>
+          </div>
+        `
+      },
+      {
+        id: "2.5",
+        title: "Views & Homepages",
+        description: "Create and manage different views, homepages, and dashboards.",
+        duration: "40 min",
+        tags: ["Views", "Dashboards"],
+        content: `
+          <h2>Views & Homepages</h2>
+          <p>Customize how you see ServiceNow to match your workflow.</p>
+          
+          <h3>Form Views</h3>
+          <p>Different form layouts for different purposes:</p>
+          <ul>
+            <li><strong>Default:</strong> Standard view for all users</li>
+            <li><strong>Mobile:</strong> Optimized for small screens</li>
+            <li><strong>Custom:</strong> Created for specific roles or workflows</li>
+          </ul>
+          
+          <h3>Creating Form Views</h3>
+          <ol>
+            <li>Configure form layout as desired</li>
+            <li>Click "Save" and enter a new View name</li>
+            <li>View appears in View dropdown</li>
+            <li>Can set view as default for specific groups</li>
+          </ol>
+          
+          <h3>Homepages</h3>
+          <p>Homepages are personal dashboards with widgets:</p>
+          <ul>
+            <li><strong>Reports:</strong> Charts and visualizations</li>
+            <li><strong>Lists:</strong> Filtered record views</li>
+            <li><strong>Gauges:</strong> Quick metrics</li>
+            <li><strong>Custom widgets:</strong> HTML, images, links</li>
+          </ul>
+          
+          <h3>Creating a Homepage</h3>
+          <ol>
+            <li>Self-Service > My Homepage</li>
+            <li>Click "Add content"</li>
+            <li>Select widget type</li>
+            <li>Configure widget (select report, filter, etc.)</li>
+            <li>Drag to position</li>
+            <li>Save</li>
+          </ol>
+          
+          <div class="scenario-box">
+            <h4>🎯 Build Your Dashboard</h4>
+            <p>Create a Service Desk homepage with:</p>
+            <ul>
+              <li>Gauge: "Open P1 Incidents"</li>
+              <li>List: "My Assigned Incidents"</li>
+              <li>Chart: "Incidents by Category"</li>
+              <li>List: "Team Queue (Unassigned)"</li>
+            </ul>
+          </div>
+          
+          <div class="tip-box">
+            <h4>💡 Dashboards vs Homepages</h4>
+            <p><strong>Homepages:</strong> Personal, user-specific</p>
+            <p><strong>Dashboards:</strong> Shared across teams, managed centrally, more powerful</p>
+            <p>Most organizations use Dashboards for team metrics and Homepages for personal productivity.</p>
+          </div>
+        `
+      }
+    ]
+  },
+  {
+    id: 3,
+    number: "03",
+    title: "Database & Schema",
+    description: "Understand tables, fields, relationships, and the data model that powers everything.",
+    duration: "4 hours",
+    level: "intermediate",
+    colorClass: "config",
+    topics: [
+      {
+        id: "3.1",
+        title: "Tables & Records",
+        description: "How ServiceNow stores data in tables and records.",
+        duration: "45 min",
+        tags: ["Tables", "Database"],
+        content: `
+          <h2>Tables & Records</h2>
+          <p>Everything in ServiceNow is a record in a table. Master this concept and you understand the platform.</p>
+          
+          <h3>The Table Concept</h3>
+          <p>Think of tables like spreadsheets:</p>
+          <ul>
+            <li><strong>Table</strong> = Spreadsheet (e.g., "Incidents")</li>
+            <li><strong>Record</strong> = Row (e.g., "INC0001234")</li>
+            <li><strong>Field</strong> = Column (e.g., "Short description")</li>
+            <li><strong>Value</strong> = Cell content (e.g., "Email not working")</li>
+          </ul>
+          
+          <h3>Common Tables</h3>
+          <table>
+            <tr><th>Table Name</th><th>Label</th><th>Purpose</th></tr>
+            <tr><td>incident</td><td>Incident</td><td>IT incidents</td></tr>
+            <tr><td>change_request</td><td>Change Request</td><td>IT changes</td></tr>
+            <tr><td>sys_user</td><td>User</td><td>All users</td></tr>
+            <tr><td>sys_user_group</td><td>Group</td><td>User groups</td></tr>
+            <tr><td>cmdb_ci</td><td>Configuration Item</td><td>IT assets</td></tr>
+            <tr><td>kb_knowledge</td><td>Knowledge</td><td>KB articles</td></tr>
+          </table>
+          
+          <h3>Sys_id: The Universal Key</h3>
+          <p>Every record has a unique 32-character identifier called sys_id:</p>
+          <code>a9d3e2b3c4d5e6f7a8b9c0d1e2f3a4b5</code>
+          <p>This is how ServiceNow links records internally, regardless of display value.</p>
+          
+          <div class="scenario-box">
+            <h4>🎯 Exploring Tables</h4>
+            <p>In your PDI:</p>
+            <ol>
+              <li>Navigate to System Definition > Tables</li>
+              <li>Search for "incident"</li>
+              <li>Click to open the table record</li>
+              <li>Scroll down to see all fields (Columns tab)</li>
+              <li>Notice the "Name" (internal) vs "Label" (display)</li>
+            </ol>
+          </div>
+          
+          <div class="tip-box">
+            <h4>💡 Table vs Label</h4>
+            <p><strong>Table Name:</strong> Technical name used in scripts (incident, sys_user)</p>
+            <p><strong>Label:</strong> Display name shown to users (Incident, User)</p>
+            <p>Scripts always use table names; UI shows labels.</p>
+          </div>
+        `
+      },
+      {
+        id: "3.2",
+        title: "Field Types Deep Dive",
+        description: "Understanding all field types and when to use each.",
+        duration: "50 min",
+        tags: ["Fields", "Data Types"],
+        content: `
+          <h2>Field Types Deep Dive</h2>
+          <p>Choosing the right field type is crucial for data integrity and functionality.</p>
+          
+          <h3>Field Types Overview</h3>
+          <table>
+            <tr><th>Type</th><th>Max Length</th><th>Use Case</th></tr>
+            <tr><td>String</td><td>40-4000 chars</td><td>Short text (names, titles)</td></tr>
+            <tr><td>Choice</td><td>40 chars</td><td>Fixed options (dropdowns)</td></tr>
+            <tr><td>Reference</td><td>32 chars (sys_id)</td><td>Link to another table</td></tr>
+            <tr><td>True/False</td><td>1 char</td><td>Boolean checkboxes</td></tr>
+            <tr><td>Integer</td><td>40 digits</td><td>Whole numbers</td></tr>
+            <tr><td>Decimal</td><td>15 digits</td><td>Numbers with decimals</td></tr>
+            <tr><td>Date</td><td>N/A</td><td>Date only</td></tr>
+            <tr><td>Date/Time</td><td>N/A</td><td>Date and time</td></tr>
+            <tr><td>Journal</td><td>Unlimited</td><td>Work notes, comments</td></tr>
+            <tr><td>HTML</td><td>Unlimited</td><td>Rich text content</td></tr>
+          </table>
+          
+          <h3>Reference Fields</h3>
+          <p>Reference fields link to other tables:</p>
+          <ul>
+            <li><strong>Assigned to</strong> → references sys_user table</li>
+            <li><strong>Assignment group</strong> → references sys_user_group table</li>
+            <li><strong>Configuration item</strong> → references cmdb_ci table</li>
+          </ul>
+          
+          <div class="warning-box">
+            <h4>⚠️ Reference vs String</h4>
+            <p>Don't store user names as strings! Use reference fields to link to sys_user. This ensures:</p>
+            <ul>
+              <li>Data stays updated if user name changes</li>
+              <li>You can access related user info (email, manager, department)</li>
+              <li>Proper security and access control</li>
+            </ul>
+          </div>
+          
+          <h3>Choice Fields</h3>
+          <p>Predefined options stored in sys_choice table:</p>
+          <ul>
+            <li><strong>Dependent choices:</strong> Options change based on another field</li>
+            <li><strong>Suggestion lists:</strong> Allow typed entries + suggestions</li>
+            <li><strong>None option:</strong> Allow empty selection</li>
+          </ul>
+          
+          <div class="scenario-box">
+            <h4>🎯 Field Type Exercise</h4>
+            <p>For a "Project Request" table, what field type would you use for:</p>
+            <ul>
+              <li>Project Name → <strong>String</strong></li>
+              <li>Project Manager → <strong>Reference (to User)</strong></li>
+              <li>Budget Amount → <strong>Decimal</strong></li>
+              <li>Start Date → <strong>Date</strong></li>
+              <li>Status → <strong>Choice</strong></li>
+              <li>Is Approved → <strong>True/False</strong></li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        id: "3.3",
+        title: "Table Inheritance",
+        description: "Base tables, extended tables, and the Task hierarchy.",
+        duration: "40 min",
+        tags: ["Inheritance", "Task"],
+        content: `
+          <h2>Table Inheritance</h2>
+          <p>ServiceNow uses object-oriented table inheritance — understanding this unlocks powerful design patterns.</p>
+          
+          <h3>How Inheritance Works</h3>
+          <p>Child tables inherit all fields from parent tables:</p>
+          <pre>
+Task (parent)
+├── Incident
+├── Change Request
+├── Problem
+├── Service Catalog Request
+│   └── Requested Item
+│       └── Catalog Task
+└── HR Case
+          </pre>
+          
+          <h3>The Task Table</h3>
+          <p>Task is the foundation of workflow in ServiceNow. Common fields on Task:</p>
+          <ul>
+            <li>Number, Short description, Description</li>
+            <li>State, Priority, Urgency, Impact</li>
+            <li>Assigned to, Assignment group</li>
+            <li>Opened by, Opened at</li>
+            <li>Work notes, Additional comments</li>
+          </ul>
+          <p>ALL child tables (Incident, Change, etc.) automatically have these fields!</p>
+          
+          <h3>Benefits of Inheritance</h3>
+          <ul>
+            <li><strong>Consistency:</strong> All "work items" behave similarly</li>
+            <li><strong>Reusability:</strong> Logic on Task applies to all children</li>
+            <li><strong>Reporting:</strong> Query Task table to see ALL work items</li>
+            <li><strong>SLAs:</strong> One SLA definition can work across multiple task types</li>
+          </ul>
+          
+          <div class="scenario-box">
+            <h4>🎯 Real-World Impact</h4>
+            <p>A Business Rule on the Task table that "sends notification when Priority is 1" will automatically work for:</p>
+            <ul>
+              <li>All P1 Incidents</li>
+              <li>All P1 Change Requests</li>
+              <li>All P1 Problems</li>
+              <li>Any future task types created!</li>
+            </ul>
+            <p>That's the power of inheritance.</p>
+          </div>
+          
+          <div class="tip-box">
+            <h4>💡 Exam Tip</h4>
+            <p>The CSA exam loves questions about Task inheritance. Know that Incident, Problem, Change, and Request tables all extend Task.</p>
+          </div>
+        `
+      },
+      {
+        id: "3.4",
+        title: "Data Dictionary",
+        description: "Using the Dictionary to understand and configure table schema.",
+        duration: "35 min",
+        tags: ["Dictionary", "Schema"],
+        content: `
+          <h2>Data Dictionary</h2>
+          <p>The Dictionary is where you define and manage table structure.</p>
+          
+          <h3>Accessing the Dictionary</h3>
+          <ul>
+            <li><strong>Quick way:</strong> Right-click any field label > Configure Dictionary</li>
+            <li><strong>Full view:</strong> System Definition > Tables > Select table > Columns tab</li>
+            <li><strong>Direct:</strong> System Definition > Dictionary</li>
+          </ul>
+          
+          <h3>Key Dictionary Properties</h3>
+          <table>
+            <tr><th>Property</th><th>Description</th></tr>
+            <tr><td>Column name</td><td>Internal field name (used in scripts)</td></tr>
+            <tr><td>Column label</td><td>Display name (shown to users)</td></tr>
+            <tr><td>Type</td><td>Field data type</td></tr>
+            <tr><td>Max length</td><td>Maximum characters allowed</td></tr>
+            <tr><td>Default value</td><td>Value when record is created</td></tr>
+            <tr><td>Mandatory</td><td>Require value before save</td></tr>
+            <tr><td>Read only</td><td>Cannot be edited</td></tr>
+            <tr><td>Active</td><td>Field is in use</td></tr>
+          </table>
+          
+          <h3>Dictionary Overrides</h3>
+          <p>Change field behavior on extended tables without affecting the parent:</p>
+          <ul>
+            <li>Make a field mandatory only on Incident (not all Tasks)</li>
+            <li>Change default value for specific table</li>
+            <li>Modify max length for specific use case</li>
+          </ul>
+          
+          <div class="scenario-box">
+            <h4>🎯 Dictionary Exercise</h4>
+            <ol>
+              <li>Open any Incident record</li>
+              <li>Right-click the "Category" field label</li>
+              <li>Select "Configure Dictionary"</li>
+              <li>Observe the field properties</li>
+              <li>Note the Type (choice), Max length, and whether it's Mandatory</li>
+            </ol>
+          </div>
+          
+          <div class="warning-box">
+            <h4>⚠️ Be Careful!</h4>
+            <p>Dictionary changes affect the database schema. In production:</p>
+            <ul>
+              <li>Always make changes in DEV first</li>
+              <li>Test thoroughly before promoting</li>
+              <li>Changing field types can cause data loss</li>
+              <li>Reducing max length can truncate existing data</li>
+            </ul>
+          </div>
+        `
+      }
+    ]
+  },
+  {
+    id: 4,
+    number: "04",
+    title: "Application Configuration",
+    description: "Configure applications without code — the CSA's primary toolkit.",
+    duration: "6 hours",
+    level: "intermediate",
+    colorClass: "data",
+    topics: [
+      {
+        id: "4.1",
+        title: "UI Policies",
+        description: "Control form field behavior dynamically without scripting.",
+        duration: "60 min",
+        tags: ["UI Policy", "Forms", "No-Code"],
+        content: `
+          <h2>UI Policies</h2>
+          <p>UI Policies dynamically change form field behavior based on conditions — no scripting required!</p>
+          
+          <h3>What UI Policies Can Do</h3>
+          <ul>
+            <li><strong>Mandatory:</strong> Require field entry</li>
+            <li><strong>Visible:</strong> Show or hide fields</li>
+            <li><strong>Read only:</strong> Prevent editing</li>
+          </ul>
+          
+          <h3>Creating a UI Policy</h3>
+          <ol>
+            <li>Navigate to System UI > UI Policies</li>
+            <li>Click New</li>
+            <li>Select Table (e.g., Incident)</li>
+            <li>Set conditions (When to apply)</li>
+            <li>Configure actions (What to do)</li>
+            <li>Set timing options</li>
+            <li>Save</li>
+          </ol>
+          
+          <h3>Key Settings</h3>
+          <table>
+            <tr><th>Setting</th><th>Purpose</th></tr>
+            <tr><td>Short description</td><td>Name your policy clearly</td></tr>
+            <tr><td>Table</td><td>Which form it applies to</td></tr>
+            <tr><td>Conditions</td><td>When the policy activates</td></tr>
+            <tr><td>On load</td><td>Run when form loads</td></tr>
+            <tr><td>Reverse if false</td><td>Undo actions when condition fails</td></tr>
+            <tr><td>Inherit</td><td>Apply to extended tables</td></tr>
+          </table>
+          
+          <div class="scenario-box">
+            <h4>🎯 Hands-On: VIP Incident Policy</h4>
+            <p><strong>Requirement:</strong> When Priority is 1-Critical, make Work Notes mandatory and highlight it.</p>
+            <ol>
+              <li>System UI > UI Policies > New</li>
+              <li>Table: Incident</li>
+              <li>Short description: "P1 - Require Work Notes"</li>
+              <li>Condition: Priority is 1 - Critical</li>
+              <li>On load: ✓, Reverse if false: ✓</li>
+              <li>Save, then add UI Policy Action:</li>
+              <li>Field: Work notes, Mandatory: true</li>
+              <li>Test by changing incident priority</li>
+            </ol>
+          </div>
+          
+          <div class="tip-box">
+            <h4>💡 UI Policy vs Client Script</h4>
+            <p><strong>Use UI Policy when:</strong> Simple show/hide/mandatory/read-only actions</p>
+            <p><strong>Use Client Script when:</strong> Complex logic, calculations, external calls, alerts</p>
+            <p>Always prefer UI Policies — they're easier to maintain and don't require scripting!</p>
+          </div>
+          
+          <h3>Common Mistakes</h3>
+          <ul>
+            <li>❌ Forgetting "Reverse if false" (field stays mandatory forever)</li>
+            <li>❌ Not checking "On load" (only works on field change)</li>
+            <li>❌ Conflicting policies (two policies on same field)</li>
+            <li>❌ Using UI Policy for server-side validation (won't prevent API updates)</li>
+          </ul>
+        `
+      },
+      {
+        id: "4.2",
+        title: "Data Policies",
+        description: "Enforce data rules on server side for all access methods.",
+        duration: "40 min",
+        tags: ["Data Policy", "Validation", "Server"],
+        content: `
+          <h2>Data Policies</h2>
+          <p>Data Policies enforce rules on the SERVER — they work even when data comes from APIs, imports, or workflows.</p>
+          
+          <h3>UI Policy vs Data Policy</h3>
+          <table>
+            <tr><th>Feature</th><th>UI Policy</th><th>Data Policy</th></tr>
+            <tr><td>Runs on</td><td>Browser (client)</td><td>Server</td></tr>
+            <tr><td>Protects forms</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Protects APIs</td><td>✗</td><td>✓</td></tr>
+            <tr><td>Protects imports</td><td>✗</td><td>✓</td></tr>
+            <tr><td>Visual feedback</td><td>Immediate</td><td>On save</td></tr>
+          </table>
+          
+          <h3>Creating a Data Policy</h3>
+          <ol>
+            <li>System Policy > Data Policies > New</li>
+            <li>Select Table</li>
+            <li>Set Conditions</li>
+            <li>Add Rules (mandatory, read-only)</li>
+            <li>Activate</li>
+          </ol>
+          
+          <div class="scenario-box">
+            <h4>🎯 Real-World Use Case</h4>
+            <p><strong>Problem:</strong> Integration team keeps creating incidents without Assignment Group via API.</p>
+            <p><strong>Solution:</strong> Data Policy on Incident table:</p>
+            <ul>
+              <li>Condition: State is not "Closed"</li>
+              <li>Rule: Assignment group is Mandatory</li>
+            </ul>
+            <p>Now ALL incidents — form, API, import — require Assignment Group!</p>
+          </div>
+          
+          <div class="tip-box">
+            <h4>💡 Best Practice</h4>
+            <p>Use BOTH UI Policy and Data Policy together:</p>
+            <ul>
+              <li>UI Policy gives instant user feedback</li>
+              <li>Data Policy protects data integrity from ALL sources</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        id: "4.3",
+        title: "Business Rules Introduction",
+        description: "Server-side scripts that run on database operations.",
+        duration: "90 min",
+        tags: ["Business Rules", "Server", "Scripting"],
+        content: `
+          <h2>Business Rules Introduction</h2>
+          <p>Business Rules are server-side scripts that execute when records are queried, inserted, updated, or deleted.</p>
+          
+          <h3>When Business Rules Run</h3>
+          <table>
+            <tr><th>Timing</th><th>When</th><th>Use Case</th></tr>
+            <tr><td>Before</td><td>Before database operation</td><td>Validate, modify data, abort</td></tr>
+            <tr><td>After</td><td>After database operation</td><td>Create related records, notifications</td></tr>
+            <tr><td>Async</td><td>After, in background</td><td>Heavy processing, integrations</td></tr>
+            <tr><td>Display</td><td>When form loads (query)</td><td>Calculate display values</td></tr>
+          </table>
+          
+          <h3>Creating a Business Rule</h3>
+          <ol>
+            <li>System Definition > Business Rules > New</li>
+            <li>Name it descriptively</li>
+            <li>Select Table</li>
+            <li>Choose When: before/after/async/display</li>
+            <li>Choose Operations: insert/update/delete/query</li>
+            <li>Set Conditions (or use script)</li>
+            <li>Write script (Advanced checkbox)</li>
+            <li>Save</li>
+          </ol>
+          
+          <h3>Key Objects</h3>
+          <pre>
+// current - the record being processed
+current.short_description = "Modified by BR";
+current.priority = 1;
 
-  function getSeriesNav(currentId) {
-    var html = '<div class="series-nav">';
-    JS_TUTORIAL_SERIES.forEach(function (item) {
-      var cls = item.id == currentId ? 'current' : '';
-      html += '<a class="' + cls + '" onclick="openArticle(' + item.id + ')">' + item.num + '. ' + item.title + '</a>';
-    });
-    html += '</div>';
-    return html;
+// previous - values BEFORE update (only in update)
+if (current.state != previous.state) {
+  // State changed!
+}
+
+// gs - GlideSystem utilities
+gs.info("Business Rule executed");
+gs.getUserID();  // Current user
+gs.now();        // Current datetime
+          </pre>
+          
+          <div class="scenario-box">
+            <h4>🎯 Hands-On: Auto-Assignment Rule</h4>
+            <p><strong>Requirement:</strong> When Category is "Network", auto-assign to "Network Support" group.</p>
+            <pre>
+Name: Auto-Assign Network Incidents
+Table: Incident
+When: before
+Insert: ✓, Update: ✓
+Condition: Category is Network
+
+Script:
+(function executeRule(current, previous) {
+  var gr = new GlideRecord('sys_user_group');
+  gr.addQuery('name', 'Network Support');
+  gr.query();
+  if (gr.next()) {
+    current.assignment_group = gr.sys_id;
   }
+})(current, previous);
+            </pre>
+          </div>
+          
+          <div class="warning-box">
+            <h4>⚠️ Business Rule Best Practices</h4>
+            <ul>
+              <li>Always use conditions to limit when rules fire</li>
+              <li>Never do queries in Display rules (performance)</li>
+              <li>Use Async for heavy operations</li>
+              <li>current.update() in Before rules can cause recursion!</li>
+              <li>Always test in DEV first</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        id: "4.4",
+        title: "Client Scripts",
+        description: "Browser-side scripts for form interactivity.",
+        duration: "60 min",
+        tags: ["Client Script", "JavaScript", "Forms"],
+        content: `
+          <h2>Client Scripts</h2>
+          <p>Client Scripts run in the user's browser, providing immediate interactivity on forms.</p>
+          
+          <h3>Client Script Types</h3>
+          <table>
+            <tr><th>Type</th><th>When</th><th>Use Case</th></tr>
+            <tr><td>onLoad</td><td>Form loads</td><td>Set defaults, show messages</td></tr>
+            <tr><td>onChange</td><td>Field value changes</td><td>React to user input, populate fields</td></tr>
+            <tr><td>onSubmit</td><td>Form is submitted</td><td>Validate before save</td></tr>
+            <tr><td>onCellEdit</td><td>List cell is edited</td><td>List editing validation</td></tr>
+          </table>
+          
+          <h3>Key GlideForm (g_form) Methods</h3>
+          <pre>
+// Get/Set values
+g_form.getValue('field_name');
+g_form.setValue('field_name', 'value');
 
-  function getChapterNav(currentId) {
-    var idx = JS_TUTORIAL_SERIES.findIndex(function (x) { return x.id == currentId; });
-    var prev = idx > 0 ? JS_TUTORIAL_SERIES[idx - 1] : null;
-    var next = idx < JS_TUTORIAL_SERIES.length - 1 ? JS_TUTORIAL_SERIES[idx + 1] : null;
+// Field visibility
+g_form.setVisible('field_name', true/false);
+g_form.setMandatory('field_name', true/false);
+g_form.setReadOnly('field_name', true/false);
 
-    var html = '<div class="chapter-nav">';
-    if (prev) {
-      html += '<button class="chapter-btn prev" onclick="openArticle(' + prev.id + ')">← ' + prev.num + '. ' + prev.title + '</button>';
-    } else {
-      html += '<span></span>';
+// Messages
+g_form.addInfoMessage('Information');
+g_form.addErrorMessage('Error!');
+g_form.showFieldMsg('field', 'message', 'error');
+
+// Reference fields
+g_form.getReference('caller_id', function(ref) {
+  // ref contains the referenced record
+  alert(ref.email);
+});
+          </pre>
+          
+          <div class="scenario-box">
+            <h4>🎯 Hands-On: onChange Script</h4>
+            <p><strong>Requirement:</strong> When Priority changes to 1, show alert and set Impact to 1.</p>
+            <pre>
+Name: Priority 1 Alert
+Table: Incident
+Type: onChange
+Field name: priority
+
+Script:
+function onChange(control, oldValue, newValue, isLoading) {
+  if (isLoading) return;  // Don't run on form load
+  
+  if (newValue == '1') {
+    g_form.addInfoMessage('This is a Critical Priority incident!');
+    g_form.setValue('impact', '1');
+  }
+}
+            </pre>
+          </div>
+          
+          <h3>onSubmit Validation</h3>
+          <pre>
+function onSubmit() {
+  var shortDesc = g_form.getValue('short_description');
+  
+  if (shortDesc.length < 10) {
+    g_form.addErrorMessage('Description must be at least 10 characters');
+    return false;  // Prevent save
+  }
+  
+  return true;  // Allow save
+}
+          </pre>
+          
+          <div class="tip-box">
+            <h4>💡 Client Script Best Practices</h4>
+            <ul>
+              <li>Always check <code>isLoading</code> in onChange to avoid firing on form load</li>
+              <li>Use UI Policies when possible (no scripting required)</li>
+              <li>Client scripts don't protect data — use Data Policies/BRs too</li>
+              <li>Minimize server calls (g_form.getReference) for performance</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        id: "4.5",
+        title: "UI Actions",
+        description: "Create custom buttons, links, and context menu items.",
+        duration: "45 min",
+        tags: ["UI Actions", "Buttons", "Custom"],
+        content: `
+          <h2>UI Actions</h2>
+          <p>UI Actions add custom buttons, links, and menu items to forms and lists.</p>
+          
+          <h3>UI Action Types</h3>
+          <ul>
+            <li><strong>Form button:</strong> Button in header/footer</li>
+            <li><strong>Form link:</strong> Link in related links</li>
+            <li><strong>Form context menu:</strong> Right-click option</li>
+            <li><strong>List button:</strong> Button above list</li>
+            <li><strong>List link:</strong> Link in list row</li>
+            <li><strong>List context menu:</strong> Right-click on list row</li>
+          </ul>
+          
+          <h3>Creating a UI Action</h3>
+          <ol>
+            <li>System Definition > UI Actions > New</li>
+            <li>Configure display options (where it appears)</li>
+            <li>Set conditions (when it shows)</li>
+            <li>Add script (what it does)</li>
+            <li>Save</li>
+          </ol>
+          
+          <div class="scenario-box">
+            <h4>🎯 Hands-On: Escalate Button</h4>
+            <p><strong>Requirement:</strong> Create "Escalate to Manager" button on Incident form.</p>
+            <pre>
+Name: Escalate to Manager
+Table: Incident
+Form button: ✓
+Show update: ✓
+Condition: current.priority != 1 && current.active
+
+Script:
+current.priority = 1;
+current.escalation = 1;
+current.work_notes = "Escalated by " + gs.getUserDisplayName();
+current.update();
+action.setRedirectURL(current);
+            </pre>
+          </div>
+          
+          <h3>Client vs Server</h3>
+          <p>UI Actions can run on client, server, or both:</p>
+          <ul>
+            <li><strong>Client:</strong> Use g_form, immediate feedback</li>
+            <li><strong>Server:</strong> Use current, GlideRecord, database updates</li>
+          </ul>
+          
+          <pre>
+// Client-side portion
+function clientSubmit() {
+  if (!confirm("Are you sure you want to escalate?")) {
+    return false;
+  }
+  return true;
+}
+
+// Server-side runs after client returns true
+          </pre>
+        `
+      },
+      {
+        id: "4.6",
+        title: "Notifications",
+        description: "Configure email notifications and triggers.",
+        duration: "50 min",
+        tags: ["Notifications", "Email"],
+        content: `
+          <h2>Notifications</h2>
+          <p>Notifications send emails based on record events or conditions.</p>
+          
+          <h3>Notification Components</h3>
+          <ul>
+            <li><strong>When to send:</strong> Record inserted, updated, specific event</li>
+            <li><strong>Who will receive:</strong> Users, groups, email addresses</li>
+            <li><strong>What it contains:</strong> Subject, body (with variables)</li>
+          </ul>
+          
+          <h3>Creating a Notification</h3>
+          <ol>
+            <li>System Notification > Email > Notifications > New</li>
+            <li>Select Table</li>
+            <li>Set trigger (insert/update/event)</li>
+            <li>Add conditions</li>
+            <li>Configure recipients</li>
+            <li>Design email content</li>
+            <li>Activate</li>
+          </ol>
+          
+          <h3>Email Variables</h3>
+          <pre>
+Subject: Incident \${number} - \${short_description}
+
+Body:
+Priority: \${priority}
+Assigned to: \${assigned_to.name}
+Description: \${description}
+
+Direct link: \${URI_REF}
+          </pre>
+          
+          <div class="scenario-box">
+            <h4>🎯 Hands-On: P1 Alert</h4>
+            <p><strong>Requirement:</strong> Email IT Manager when P1 incident is created.</p>
+            <ul>
+              <li>Table: Incident</li>
+              <li>When: Record inserted</li>
+              <li>Condition: Priority is 1 - Critical</li>
+              <li>Recipients: IT Manager group</li>
+              <li>Subject: 🚨 P1 INCIDENT: \${number}</li>
+            </ul>
+          </div>
+          
+          <div class="tip-box">
+            <h4>💡 Notification Best Practices</h4>
+            <ul>
+              <li>Use Email Layouts for consistent branding</li>
+              <li>Test with email logs (System Mailboxes > Outbound)</li>
+              <li>Avoid notification storms (too many emails)</li>
+              <li>Let users unsubscribe from non-critical notifications</li>
+            </ul>
+          </div>
+        `
+      }
+    ]
+  },
+  {
+    id: 5,
+    number: "05",
+    title: "Import & Integration",
+    description: "Bring data into ServiceNow using Import Sets and Transform Maps.",
+    duration: "4 hours",
+    level: "intermediate",
+    colorClass: "selfservice",
+    topics: [
+      {
+        id: "5.1",
+        title: "Import Sets Overview",
+        description: "Understanding the import architecture and staging tables.",
+        duration: "40 min",
+        tags: ["Import", "Data"],
+        content: `
+          <h2>Import Sets Overview</h2>
+          <p>Import Sets are ServiceNow's ETL (Extract, Transform, Load) mechanism for bringing external data into the platform.</p>
+          
+          <h3>The Import Flow</h3>
+          <pre>
+External Source → Import Set Table → Transform Map → Target Table
+   (CSV, Excel)      (Staging)         (Mapping)      (incident, user)
+          </pre>
+          
+          <h3>Why Staging Tables?</h3>
+          <ul>
+            <li><strong>Validation:</strong> Check data before it hits production tables</li>
+            <li><strong>Transformation:</strong> Convert values, lookup references</li>
+            <li><strong>Error handling:</strong> Fix issues without affecting live data</li>
+            <li><strong>Audit trail:</strong> Track what was imported</li>
+          </ul>
+          
+          <h3>Import Set Components</h3>
+          <table>
+            <tr><th>Component</th><th>Purpose</th></tr>
+            <tr><td>Data Source</td><td>Where data comes from (file, JDBC, REST)</td></tr>
+            <tr><td>Import Set Table</td><td>Temporary staging area</td></tr>
+            <tr><td>Transform Map</td><td>Field mapping and conversion rules</td></tr>
+            <tr><td>Transform Script</td><td>Custom transformation logic</td></tr>
+          </table>
+          
+          <div class="scenario-box">
+            <h4>🎯 Real-World Example</h4>
+            <p>HR sends you a CSV of 500 new employees:</p>
+            <ol>
+              <li>CSV uploads to import set table (staging)</li>
+              <li>Transform map matches columns to sys_user fields</li>
+              <li>Transform creates user records, assigns departments</li>
+              <li>Errors logged for review, successful imports active</li>
+            </ol>
+          </div>
+        `
+      },
+      {
+        id: "5.2",
+        title: "Transform Maps",
+        description: "Map source fields to target tables and handle data conversion.",
+        duration: "60 min",
+        tags: ["Transform", "Mapping"],
+        content: `
+          <h2>Transform Maps</h2>
+          <p>Transform Maps define how import set data becomes records in target tables.</p>
+          
+          <h3>Creating a Transform Map</h3>
+          <ol>
+            <li>System Import Sets > Transform Maps > New</li>
+            <li>Select source (import set table)</li>
+            <li>Select target table</li>
+            <li>Auto-map fields (or manual mapping)</li>
+            <li>Configure coalesce (matching) fields</li>
+            <li>Add transformation scripts if needed</li>
+          </ol>
+          
+          <h3>Field Mapping Options</h3>
+          <table>
+            <tr><th>Option</th><th>Use Case</th></tr>
+            <tr><td>Use source field</td><td>Direct copy</td></tr>
+            <tr><td>Choice action</td><td>Map to choice values</td></tr>
+            <tr><td>Reference value</td><td>Lookup reference by field</td></tr>
+            <tr><td>Script</td><td>Custom transformation logic</td></tr>
+            <tr><td>Date format</td><td>Parse date strings</td></tr>
+          </table>
+          
+          <h3>Coalesce (Deduplication)</h3>
+          <p>Coalesce fields determine if a record should be inserted or updated:</p>
+          <ul>
+            <li>If match found → Update existing record</li>
+            <li>If no match → Insert new record</li>
+            <li>Common coalesce fields: email, employee_number, asset_tag</li>
+          </ul>
+          
+          <div class="scenario-box">
+            <h4>🎯 Hands-On: User Import</h4>
+            <p>Import CSV with columns: name, email, dept_name</p>
+            <ol>
+              <li>Create import set from CSV</li>
+              <li>Create Transform Map to sys_user</li>
+              <li>Map name → name (direct)</li>
+              <li>Map email → email (coalesce)</li>
+              <li>Map dept_name → department (reference lookup)</li>
+              <li>Run transform</li>
+              <li>Check results</li>
+            </ol>
+          </div>
+          
+          <div class="tip-box">
+            <h4>💡 Transform Script Example</h4>
+            <pre>
+// In onBefore transform script
+// Combine first_name + last_name
+target.name = source.u_first_name + ' ' + source.u_last_name;
+
+// Set default if empty
+if (!source.u_department) {
+  target.department = 'General';  // Default department sys_id
+}
+            </pre>
+          </div>
+        `
+      }
+    ]
+  },
+  {
+    id: 6,
+    number: "06",
+    title: "Service Catalog & Knowledge",
+    description: "Build self-service experiences for users.",
+    duration: "5 hours",
+    level: "intermediate",
+    colorClass: "admin",
+    topics: [
+      {
+        id: "6.1",
+        title: "Service Catalog Basics",
+        description: "Understand catalog structure: categories, items, and variables.",
+        duration: "50 min",
+        tags: ["Catalog", "Self-Service"],
+        content: `
+          <h2>Service Catalog Basics</h2>
+          <p>The Service Catalog lets users request services, hardware, software, and more through a self-service portal.</p>
+          
+          <h3>Catalog Structure</h3>
+          <pre>
+Service Catalog
+├── Category: Hardware
+│   ├── Item: New Laptop
+│   ├── Item: Monitor Request
+│   └── Item: Keyboard/Mouse
+├── Category: Software
+│   ├── Item: Software Installation
+│   └── Item: License Request
+└── Category: Access
+    ├── Item: VPN Access
+    └── Item: Building Access
+          </pre>
+          
+          <h3>Key Components</h3>
+          <table>
+            <tr><th>Component</th><th>Purpose</th></tr>
+            <tr><td>Catalog</td><td>Container for categories</td></tr>
+            <tr><td>Category</td><td>Groups related items</td></tr>
+            <tr><td>Catalog Item</td><td>Something users can request</td></tr>
+            <tr><td>Variable</td><td>Form field on the item</td></tr>
+            <tr><td>Variable Set</td><td>Reusable group of variables</td></tr>
+          </table>
+          
+          <h3>What Happens When User Submits</h3>
+          <ol>
+            <li>Request (sc_request) created</li>
+            <li>Requested Item (sc_req_item) created per item</li>
+            <li>Catalog Tasks (sc_task) created for fulfillment</li>
+            <li>Workflow/Flow runs for approvals/tasks</li>
+          </ol>
+          
+          <div class="scenario-box">
+            <h4>🎯 Hands-On: New Laptop Item</h4>
+            <ol>
+              <li>Service Catalog > Catalog Definitions > Maintain Items > New</li>
+              <li>Name: "New Laptop Request"</li>
+              <li>Add variables: Laptop Type (choice), Justification (text), Needed By (date)</li>
+              <li>Set fulfillment group</li>
+              <li>Test from Service Portal</li>
+            </ol>
+          </div>
+        `
+      },
+      {
+        id: "6.2",
+        title: "Knowledge Management",
+        description: "Create and organize knowledge articles for self-service.",
+        duration: "40 min",
+        tags: ["Knowledge", "KB"],
+        content: `
+          <h2>Knowledge Management</h2>
+          <p>Knowledge articles reduce ticket volume by helping users solve problems themselves.</p>
+          
+          <h3>Knowledge Structure</h3>
+          <ul>
+            <li><strong>Knowledge Base:</strong> Container (e.g., "IT Support KB")</li>
+            <li><strong>Category:</strong> Topic grouping</li>
+            <li><strong>Article:</strong> Individual document</li>
+          </ul>
+          
+          <h3>Article Lifecycle</h3>
+          <pre>
+Draft → Review → Published → Retired
+          </pre>
+          
+          <h3>Creating an Article</h3>
+          <ol>
+            <li>Knowledge > Articles > Create New</li>
+            <li>Select Knowledge Base</li>
+            <li>Choose Category</li>
+            <li>Write Short Description and Article Body</li>
+            <li>Submit for approval (if workflow enabled)</li>
+            <li>Publish when approved</li>
+          </ol>
+          
+          <div class="tip-box">
+            <h4>💡 Knowledge Best Practices</h4>
+            <ul>
+              <li>Write clear, searchable titles</li>
+              <li>Include keywords users would search for</li>
+              <li>Add screenshots for visual steps</li>
+              <li>Review and update regularly</li>
+              <li>Track article usefulness with feedback</li>
+            </ul>
+          </div>
+        `
+      }
+    ]
+  },
+  {
+    id: 7,
+    number: "07",
+    title: "Flow Designer & Automation",
+    description: "Build automated workflows with low-code Flow Designer.",
+    duration: "4 hours",
+    level: "intermediate",
+    colorClass: "reporting",
+    topics: [
+      {
+        id: "7.1",
+        title: "Flow Designer Introduction",
+        description: "Build automated workflows without code.",
+        duration: "60 min",
+        tags: ["Flow Designer", "Automation", "Low-Code"],
+        content: `
+          <h2>Flow Designer Introduction</h2>
+          <p>Flow Designer is ServiceNow's low-code automation tool — build complex workflows without scripting.</p>
+          
+          <h3>When to Use Flow Designer</h3>
+          <ul>
+            <li>Multi-step approval processes</li>
+            <li>Creating related records</li>
+            <li>Sending notifications</li>
+            <li>Integrating with external systems</li>
+            <li>Scheduled automation</li>
+          </ul>
+          
+          <h3>Flow Components</h3>
+          <table>
+            <tr><th>Component</th><th>Purpose</th></tr>
+            <tr><td>Trigger</td><td>What starts the flow (record created, scheduled, etc.)</td></tr>
+            <tr><td>Action</td><td>What the flow does (create record, send email, etc.)</td></tr>
+            <tr><td>Flow Logic</td><td>If/Else, For Each, Wait, etc.</td></tr>
+            <tr><td>Subflow</td><td>Reusable flow component</td></tr>
+          </table>
+          
+          <h3>Common Triggers</h3>
+          <ul>
+            <li><strong>Record Created:</strong> When new record inserted</li>
+            <li><strong>Record Updated:</strong> When record modified</li>
+            <li><strong>Scheduled:</strong> Daily, weekly, etc.</li>
+            <li><strong>Inbound Email:</strong> When email received</li>
+            <li><strong>Service Catalog:</strong> When request submitted</li>
+          </ul>
+          
+          <div class="scenario-box">
+            <h4>🎯 Hands-On: P1 Notification Flow</h4>
+            <p><strong>Requirement:</strong> When P1 Incident created, notify IT Manager and create a Slack message.</p>
+            <ol>
+              <li>Process Automation > Flow Designer</li>
+              <li>New Flow</li>
+              <li>Trigger: Record Created on Incident</li>
+              <li>Condition: Priority = 1</li>
+              <li>Action 1: Send Email to IT Manager</li>
+              <li>Action 2: Look up Assignment Group Manager</li>
+              <li>Action 3: Create Task for immediate response</li>
+              <li>Activate and test</li>
+            </ol>
+          </div>
+          
+          <div class="tip-box">
+            <h4>💡 Flow Designer vs Workflow</h4>
+            <p><strong>Workflow (Legacy):</strong> Visual, but harder to maintain</p>
+            <p><strong>Flow Designer (Modern):</strong> Low-code, better testing, reusable actions</p>
+            <p>ServiceNow recommends Flow Designer for all new automation!</p>
+          </div>
+        `
+      }
+    ]
+  },
+  {
+    id: 8,
+    number: "08",
+    title: "Security & Administration",
+    description: "Manage users, roles, ACLs, and update sets — the admin essentials.",
+    duration: "5 hours",
+    level: "advanced",
+    colorClass: "exam",
+    topics: [
+      {
+        id: "8.1",
+        title: "Users, Groups & Roles",
+        description: "User management fundamentals.",
+        duration: "50 min",
+        tags: ["Users", "Security"],
+        content: `
+          <h2>Users, Groups & Roles</h2>
+          <p>Security in ServiceNow is built on Users, Groups, and Roles.</p>
+          
+          <h3>The Security Model</h3>
+          <pre>
+User ──belongs to──→ Group
+User ──has──→ Role
+Group ──has──→ Role
+Role ──grants──→ Permissions (ACLs)
+          </pre>
+          
+          <h3>Key Tables</h3>
+          <table>
+            <tr><th>Table</th><th>Purpose</th></tr>
+            <tr><td>sys_user</td><td>User records</td></tr>
+            <tr><td>sys_user_group</td><td>Group records</td></tr>
+            <tr><td>sys_user_role</td><td>Role definitions</td></tr>
+            <tr><td>sys_user_has_role</td><td>User-role assignments</td></tr>
+            <tr><td>sys_user_grmember</td><td>Group membership</td></tr>
+          </table>
+          
+          <h3>Common Roles</h3>
+          <ul>
+            <li><strong>admin:</strong> Full system access</li>
+            <li><strong>itil:</strong> IT staff (incidents, changes, etc.)</li>
+            <li><strong>catalog_admin:</strong> Manage service catalog</li>
+            <li><strong>knowledge_admin:</strong> Manage knowledge base</li>
+            <li><strong>report_admin:</strong> Create/share reports</li>
+          </ul>
+          
+          <div class="warning-box">
+            <h4>⚠️ Least Privilege Principle</h4>
+            <p>Only grant roles users NEED. Never give admin role broadly. Create custom roles for specific functions.</p>
+          </div>
+        `
+      },
+      {
+        id: "8.2",
+        title: "Access Control Lists (ACLs)",
+        description: "Control who can see and do what.",
+        duration: "60 min",
+        tags: ["ACLs", "Security"],
+        content: `
+          <h2>Access Control Lists (ACLs)</h2>
+          <p>ACLs define who can read, write, create, and delete records and fields.</p>
+          
+          <h3>ACL Types</h3>
+          <table>
+            <tr><th>Type</th><th>Controls</th></tr>
+            <tr><td>Table ACL</td><td>Access to entire table</td></tr>
+            <tr><td>Field ACL</td><td>Access to specific field</td></tr>
+            <tr><td>Record ACL</td><td>Access based on record content</td></tr>
+          </table>
+          
+          <h3>ACL Operations</h3>
+          <ul>
+            <li><strong>read:</strong> Can view records</li>
+            <li><strong>write:</strong> Can edit records</li>
+            <li><strong>create:</strong> Can create new records</li>
+            <li><strong>delete:</strong> Can delete records</li>
+          </ul>
+          
+          <h3>ACL Evaluation Order</h3>
+          <p>ServiceNow checks ACLs from most specific to least:</p>
+          <ol>
+            <li>table.field (most specific)</li>
+            <li>table.*</li>
+            <li>*.field</li>
+            <li>*.* (least specific)</li>
+          </ol>
+          
+          <div class="scenario-box">
+            <h4>🎯 Hands-On: Salary Field ACL</h4>
+            <p><strong>Requirement:</strong> Only HR Managers can see the Salary field on User.</p>
+            <ol>
+              <li>System Security > ACL > New</li>
+              <li>Type: record</li>
+              <li>Operation: read</li>
+              <li>Name: sys_user.salary</li>
+              <li>Requires role: hr_manager</li>
+              <li>Save and test with impersonation</li>
+            </ol>
+          </div>
+        `
+      },
+      {
+        id: "8.3",
+        title: "Update Sets",
+        description: "Package and deploy customizations between instances.",
+        duration: "60 min",
+        tags: ["Update Sets", "Deployment"],
+        content: `
+          <h2>Update Sets</h2>
+          <p>Update Sets capture customizations for migration between instances (DEV → TEST → PROD).</p>
+          
+          <h3>The Update Set Lifecycle</h3>
+          <pre>
+DEV: Create → Capture changes → Complete
+     ↓
+PROD: Retrieved → Previewed → Committed
+          </pre>
+          
+          <h3>What's Captured</h3>
+          <ul>
+            <li>✅ Business Rules, Client Scripts, UI Policies</li>
+            <li>✅ Form layouts, Lists, Views</li>
+            <li>✅ Reports, Dashboards</li>
+            <li>✅ Workflows, Flows</li>
+            <li>❌ DATA (records) — only configuration</li>
+            <li>❌ Attachments (by default)</li>
+          </ul>
+          
+          <h3>Creating an Update Set</h3>
+          <ol>
+            <li>System Update Sets > Local Update Sets > New</li>
+            <li>Name it descriptively (e.g., "PROJ-123 VIP Incident Enhancements")</li>
+            <li>Set as current update set</li>
+            <li>Make your changes</li>
+            <li>Complete when done</li>
+            <li>Export (right-click > Export to XML)</li>
+          </ol>
+          
+          <h3>Applying an Update Set</h3>
+          <ol>
+            <li>System Update Sets > Retrieved Update Sets</li>
+            <li>Import from XML or pull from remote instance</li>
+            <li>Preview (checks for conflicts)</li>
+            <li>Review preview results</li>
+            <li>Commit (applies changes)</li>
+          </ol>
+          
+          <div class="warning-box">
+            <h4>⚠️ Update Set Best Practices</h4>
+            <ul>
+              <li>One update set per feature/ticket</li>
+              <li>Always preview before commit</li>
+              <li>Test in non-prod first</li>
+              <li>Document what's included</li>
+              <li>Back out plan for emergencies</li>
+            </ul>
+          </div>
+          
+          <div class="scenario-box">
+            <h4>🎯 Exam Scenario</h4>
+            <p>You created a Business Rule in DEV. How do you deploy to PROD?</p>
+            <p><strong>Answer:</strong> Complete the update set in DEV → Export to XML → Import in PROD → Preview for conflicts → Commit</p>
+          </div>
+        `
+      },
+      {
+        id: "8.4",
+        title: "Impersonation & Debugging",
+        description: "Test as different users and troubleshoot issues.",
+        duration: "30 min",
+        tags: ["Impersonation", "Testing"],
+        content: `
+          <h2>Impersonation & Debugging</h2>
+          <p>Impersonation lets admins see the system as another user — essential for testing and troubleshooting.</p>
+          
+          <h3>How to Impersonate</h3>
+          <ol>
+            <li>Click your user avatar (top right)</li>
+            <li>Select "Impersonate User"</li>
+            <li>Search for and select user</li>
+            <li>System now shows what they see</li>
+            <li>Click "End Impersonation" when done</li>
+          </ol>
+          
+          <h3>Why Impersonate?</h3>
+          <ul>
+            <li>Test ACL configurations</li>
+            <li>Verify role-based access</li>
+            <li>Debug user-reported issues</li>
+            <li>Test notifications</li>
+            <li>Validate UI Policies for different roles</li>
+          </ul>
+          
+          <div class="warning-box">
+            <h4>⚠️ Impersonation Auditing</h4>
+            <p>All impersonation is logged! Never use impersonation to access data you shouldn't see. It's for testing, not snooping.</p>
+          </div>
+          
+          <h3>Debugging Tools</h3>
+          <ul>
+            <li><strong>Session Debug:</strong> Activate under user menu</li>
+            <li><strong>Script Debugger:</strong> Step through Business Rules</li>
+            <li><strong>System Logs:</strong> View errors and warnings</li>
+            <li><strong>Debug Security:</strong> See ACL evaluations</li>
+          </ul>
+        `
+      }
+    ]
+  }
+];
+
+// ==================== CSA CERTIFICATION FUNCTIONS ====================
+let completedTopics = JSON.parse(localStorage.getItem('csa_completed_topics') || '[]');
+let currentTopicId = null;
+
+function initCSA() {
+  renderLearningPath();
+  updateProgress();
+}
+
+function renderLearningPath() {
+  const container = document.getElementById('learningPath');
+  if (!container) return;
+  
+  let html = '';
+  CSA_MODULES.forEach((module, idx) => {
+    const completedCount = module.topics.filter(t => completedTopics.includes(t.id)).length;
+    const isComplete = completedCount === module.topics.length;
+    const inProgress = completedCount > 0 && !isComplete;
+    
+    html += `
+      <div class="path-module" data-module-id="${module.id}">
+        <div class="module-header" onclick="toggleModule(${module.id})">
+          <div class="module-number ${module.colorClass}">${module.number}</div>
+          <div class="module-info">
+            <div class="module-title">
+              ${module.title}
+              <span class="badge badge-${module.level}">${module.level}</span>
+            </div>
+            <div class="module-desc">${module.description}</div>
+          </div>
+          <div class="module-meta">
+            <span class="module-duration">⏱️ ${module.duration}</span>
+            <span class="module-status ${isComplete ? 'status-complete' : inProgress ? 'status-progress' : 'status-locked'}">
+              ${isComplete ? '✓' : inProgress ? '◔' : '○'}
+            </span>
+            <div class="module-expand" id="expand-${module.id}">▼</div>
+          </div>
+        </div>
+        <div class="module-content" id="content-${module.id}">
+          <div class="topics-grid">
+            ${module.topics.map(topic => `
+              <div class="topic-card ${completedTopics.includes(topic.id) ? 'completed' : ''}" onclick="openTopic('${topic.id}')">
+                <div class="topic-header">
+                  <span class="topic-num">Topic ${topic.id}</span>
+                  <span class="topic-check">${completedTopics.includes(topic.id) ? '✓' : ''}</span>
+                </div>
+                <div class="topic-title">${topic.title}</div>
+                <div class="topic-desc">${topic.description}</div>
+                <div class="topic-tags">
+                  ${topic.tags.map(tag => `<span class="topic-tag">${tag}</span>`).join('')}
+                  <span class="topic-tag">⏱️ ${topic.duration}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="resources-box">
+            <h4>📚 Module Resources</h4>
+            <div class="resource-links">
+              <a href="https://docs.servicenow.com" target="_blank" class="resource-link">
+                <span>📖</span> Official Documentation
+              </a>
+              <a href="https://developer.servicenow.com" target="_blank" class="resource-link">
+                <span>💻</span> Developer Instance
+              </a>
+              <a href="https://nowlearning.servicenow.com" target="_blank" class="resource-link">
+                <span>🎓</span> Now Learning
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function toggleModule(moduleId) {
+  const content = document.getElementById(`content-${moduleId}`);
+  const expand = document.getElementById(`expand-${moduleId}`);
+  
+  if (content.classList.contains('active')) {
+    content.classList.remove('active');
+    expand.classList.remove('rotated');
+  } else {
+    // Close others
+    document.querySelectorAll('.module-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.module-expand').forEach(e => e.classList.remove('rotated'));
+    
+    content.classList.add('active');
+    expand.classList.add('rotated');
+  }
+}
+
+function openTopic(topicId) {
+  currentTopicId = topicId;
+  
+  let topic = null;
+  let moduleName = '';
+  
+  for (const module of CSA_MODULES) {
+    const found = module.topics.find(t => t.id === topicId);
+    if (found) {
+      topic = found;
+      moduleName = module.title;
+      break;
     }
-    if (next) {
-      html += '<button class="chapter-btn next" onclick="openArticle(' + next.id + ')">Next: ' + next.num + '. ' + next.title + ' →</button>';
-    } else {
-      html += '<span class="chapter-btn disabled">Series Complete ✓</span>';
-    }
-    html += '</div>';
-    return html;
+  }
+  
+  if (!topic) return;
+  
+  document.getElementById('topicModalTitle').textContent = topic.title;
+  document.getElementById('topicModalModule').innerHTML = '📚 ' + moduleName;
+  document.getElementById('topicModalTime').innerHTML = '⏱️ ' + topic.duration;
+  document.getElementById('topicModalLevel').innerHTML = '📊 ' + topic.tags.join(', ');
+  document.getElementById('topicModalContent').innerHTML = topic.content;
+  
+  // Update mark complete button
+  const btn = document.getElementById('markCompleteBtn');
+  if (completedTopics.includes(topicId)) {
+    btn.innerHTML = '✓ Completed';
+    btn.style.background = '#666';
+  } else {
+    btn.innerHTML = '✓ Mark as Complete';
+    btn.style.background = 'var(--green)';
+  }
+  
+  document.getElementById('topicModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeTopicModal() {
+  document.getElementById('topicModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function markTopicComplete() {
+  if (!currentTopicId) return;
+  
+  if (!completedTopics.includes(currentTopicId)) {
+    completedTopics.push(currentTopicId);
+  } else {
+    completedTopics = completedTopics.filter(id => id !== currentTopicId);
+  }
+  
+  localStorage.setItem('csa_completed_topics', JSON.stringify(completedTopics));
+  updateProgress();
+  renderLearningPath();
+  openTopic(currentTopicId); // Refresh modal
+}
+
+function navigateTopic(direction) {
+  let allTopics = [];
+  CSA_MODULES.forEach(m => {
+    m.topics.forEach(t => allTopics.push(t.id));
+  });
+  
+  const currentIdx = allTopics.indexOf(currentTopicId);
+  let newIdx = direction === 'next' ? currentIdx + 1 : currentIdx - 1;
+  
+  if (newIdx >= 0 && newIdx < allTopics.length) {
+    openTopic(allTopics[newIdx]);
+  }
+}
+
+function updateProgress() {
+  let totalTopics = 0;
+  CSA_MODULES.forEach(m => totalTopics += m.topics.length);
+  
+  const completed = completedTopics.length;
+  const percent = Math.round((completed / totalTopics) * 100);
+  
+  const progressBar = document.getElementById('progressBar');
+  const progressPercent = document.getElementById('progressPercent');
+  const completedCount = document.getElementById('completedCount');
+  
+  if (progressBar) progressBar.style.width = percent + '%';
+  if (progressPercent) progressPercent.textContent = percent + '%';
+  if (completedCount) completedCount.textContent = `${completed} of ${totalTopics} topics completed`;
+}
+
+// ==================== BLOG FUNCTIONS (EXISTING) ====================
+var JS_TUTORIAL_SERIES = [
+  { id: 4, num: 1, title: "Introduction" },
+  { id: 5, num: 2, title: "GlideRecord Basics" },
+  { id: 6, num: 3, title: "Business Rules" },
+  { id: 7, num: 4, title: "Script Includes" },
+  { id: 8, num: 5, title: "GlideAjax" },
+  { id: 9, num: 6, title: "Advanced Patterns" }
+];
+
+function getSeriesNav(currentId) {
+  var html = '<div class="series-nav">';
+  JS_TUTORIAL_SERIES.forEach(function (item) {
+    var cls = item.id == currentId ? 'current' : '';
+    html += '<a class="' + cls + '" onclick="openArticle(' + item.id + ')">' + item.num + '. ' + item.title + '</a>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function getChapterNav(currentId) {
+  var idx = JS_TUTORIAL_SERIES.findIndex(function (x) { return x.id == currentId; });
+  var prev = idx > 0 ? JS_TUTORIAL_SERIES[idx - 1] : null;
+  var next = idx < JS_TUTORIAL_SERIES.length - 1 ? JS_TUTORIAL_SERIES[idx + 1] : null;
+
+  var html = '<div class="chapter-nav">';
+  if (prev) {
+    html += '<button class="chapter-btn prev" onclick="openArticle(' + prev.id + ')">← ' + prev.num + '. ' + prev.title + '</button>';
+  } else {
+    html += '<span></span>';
+  }
+  if (next) {
+    html += '<button class="chapter-btn next" onclick="openArticle(' + next.id + ')">Next: ' + next.num + '. ' + next.title + ' →</button>';
+  } else {
+    html += '<span class="chapter-btn disabled">Series Complete ✓</span>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function escapePreBlocks(html) {
+  return (html || '').replace(/<pre>([\s\S]*?)<\/pre>/g, function (_, code) {
+    return '<pre>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>';
+  });
+}
+
+var BLOG_POSTS = [];
+var observer = new IntersectionObserver(function (entries) {
+  entries.forEach(function (e) {
+    if (e.isIntersecting) e.target.classList.add('animate');
+  });
+}, { threshold: 0.1 });
+
+document.addEventListener('DOMContentLoaded', function () {
+  bindMainTabs();
+  bindFilters();
+  bindModalEvents();
+  bindMobileMenu();
+  loadPostsAndRender();
+  initCSA();
+});
+
+function bindMainTabs() {
+  document.querySelectorAll('.main-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      // Update tabs
+      document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      // Update sections
+      const section = tab.dataset.section;
+      document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+      document.getElementById(section + 'Section').classList.add('active');
+    });
+  });
+}
+
+async function loadPostsAndRender() {
+  try {
+    var res = await fetch('/posts.json?v=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('posts.json fetch failed: ' + res.status);
+
+    BLOG_POSTS = await res.json();
+    BLOG_POSTS.sort(function (a, b) {
+      return (b.dateISO || '').localeCompare(a.dateISO || '');
+    });
+
+    renderBlog('all');
+  } catch (err) {
+    console.error(err);
+    document.getElementById('blogGrid').innerHTML = '';
+    var empty = document.getElementById('emptyState');
+    empty.style.display = 'block';
+    empty.querySelector('h3').textContent = 'Posts failed to load';
+    empty.querySelector('p').textContent = 'Check that posts.json exists at the site root.';
+  }
+}
+
+function renderBlog(filter) {
+  var filtered = filter === 'all'
+    ? BLOG_POSTS
+    : BLOG_POSTS.filter(function (p) { return p.category === filter; });
+
+  var grid = document.getElementById('blogGrid');
+  var empty = document.getElementById('emptyState');
+
+  if (!filtered.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
   }
 
-  // Escapes < and > only inside <pre> blocks so code doesn't break your HTML
-  function escapePreBlocks(html) {
-    return (html || '').replace(/<pre>([\s\S]*?)<\/pre>/g, function (_, code) {
-      return '<pre>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>';
-    });
-  }
+  empty.style.display = 'none';
 
-  var BLOG_POSTS = [];
-  var observer = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (e.isIntersecting) e.target.classList.add('animate');
-    });
-  }, { threshold: 0.1 });
-
-  document.addEventListener('DOMContentLoaded', function () {
-    bindFilters();
-    bindModalEvents();
-    bindMobileMenu();
-    loadPostsAndRender();
+  var html = '';
+  filtered.forEach(function (p, i) {
+    html += ''
+      + '<article class="blog-card" style="transition-delay:' + (i * 0.08) + 's" data-id="' + p.id + '">'
+      + '  <div class="blog-thumb">'
+      + '    <div class="blog-thumb-bg ' + (p.category || 'general') + '"></div>'
+      + '    <span class="blog-category cat-' + (p.category || 'general') + '">' + (p.category || 'general') + '</span>'
+      + '  </div>'
+      + '  <div class="blog-content">'
+      + '    <div class="blog-meta"><span>' + (p.date || '') + '</span><span>' + (p.readTime || '') + '</span></div>'
+      + '    <h3 class="blog-title">' + (p.title || '') + '</h3>'
+      + '    <p class="blog-excerpt">' + (p.excerpt || '') + '</p>'
+      + '    <div class="blog-footer">'
+      + '      <span class="read-more">Read article <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>'
+      + '    </div>'
+      + '  </div>'
+      + '</article>';
   });
 
-  async function loadPostsAndRender() {
-    try {
-      // cache busting helps when GitHub Pages / CDN is stubborn
-      var res = await fetch('/posts.json?v=' + Date.now(), { cache: 'no-store' });
-      if (!res.ok) throw new Error('posts.json fetch failed: ' + res.status);
+  grid.innerHTML = html;
 
-      BLOG_POSTS = await res.json();
+  document.querySelectorAll('.blog-card').forEach(function (el) {
+    observer.observe(el);
+    el.addEventListener('click', function () { openArticle(this.dataset.id); });
+  });
+}
 
-      // Optional: newest first (uses dateISO if present)
-      BLOG_POSTS.sort(function (a, b) {
-        return (b.dateISO || '').localeCompare(a.dateISO || '');
-      });
+function bindFilters() {
+  document.querySelectorAll('.filter-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderBlog(btn.dataset.filter);
+    });
+  });
+}
 
-      renderBlog('all');
-    } catch (err) {
-      console.error(err);
-      document.getElementById('blogGrid').innerHTML = '';
-      var empty = document.getElementById('emptyState');
-      empty.style.display = 'block';
-      empty.querySelector('h3').textContent = 'Posts failed to load';
-      empty.querySelector('p').textContent = 'Check that posts.json exists at the site root and is accessible.';
+function openArticle(id) {
+  var p = BLOG_POSTS.find(function (x) { return String(x.id) === String(id); });
+  if (!p) return;
+
+  document.getElementById('modalTitle').textContent = p.title || '';
+  document.getElementById('modalDate').innerHTML = '📅 ' + (p.date || '');
+  document.getElementById('modalRead').innerHTML = '⏱️ ' + (p.readTime || '');
+  document.getElementById('modalCat').innerHTML = '🏷️ ' + ((p.category || '').charAt(0).toUpperCase() + (p.category || '').slice(1));
+
+  var content = escapePreBlocks(p.content || '');
+  if (p.series === 'js-tutorial') {
+    content = getSeriesNav(p.id) + content + getChapterNav(p.id);
+  }
+
+  document.getElementById('modalContent').innerHTML = content;
+  document.getElementById('modalHeaderBg').className = 'blog-modal-header-bg blog-thumb-bg ' + (p.category || 'general');
+
+  document.getElementById('blogModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.querySelector('.blog-modal').scrollTop = 0;
+}
+
+function closeModal() {
+  document.getElementById('blogModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function bindModalEvents() {
+  document.querySelector('.blog-modal-close').addEventListener('click', closeModal);
+  document.getElementById('blogModal').addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+  });
+  document.getElementById('topicModal').addEventListener('click', function (e) {
+    if (e.target === this) closeTopicModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeModal();
+      closeTopicModal();
     }
-  }
+  });
+}
 
-  function renderBlog(filter) {
-    var filtered = filter === 'all'
-      ? BLOG_POSTS
-      : BLOG_POSTS.filter(function (p) { return p.category === filter; });
-
-    var grid = document.getElementById('blogGrid');
-    var empty = document.getElementById('emptyState');
-
-    if (!filtered.length) {
-      grid.innerHTML = '';
-      empty.style.display = 'block';
-      return;
-    }
-
-    empty.style.display = 'none';
-
-    var html = '';
-    filtered.forEach(function (p, i) {
-      html += ''
-        + '<article class="blog-card" style="transition-delay:' + (i * 0.08) + 's" data-id="' + p.id + '">'
-        + '  <div class="blog-thumb">'
-        + '    <div class="blog-thumb-bg ' + (p.category || 'general') + '"></div>'
-        + '    <span class="blog-category cat-' + (p.category || 'general') + '">' + (p.category || 'general') + '</span>'
-        + '  </div>'
-        + '  <div class="blog-content">'
-        + '    <div class="blog-meta"><span>' + (p.date || '') + '</span><span>' + (p.readTime || '') + '</span></div>'
-        + '    <h3 class="blog-title">' + (p.title || '') + '</h3>'
-        + '    <p class="blog-excerpt">' + (p.excerpt || '') + '</p>'
-        + '    <div class="blog-footer">'
-        + '      <span class="read-more">Read article <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>'
-        + '    </div>'
-        + '  </div>'
-        + '</article>';
-    });
-
-    grid.innerHTML = html;
-
-    document.querySelectorAll('.blog-card').forEach(function (el) {
-      observer.observe(el);
-      el.addEventListener('click', function () { openArticle(this.dataset.id); });
-    });
-  }
-
-  function bindFilters() {
-    document.querySelectorAll('.filter-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        renderBlog(btn.dataset.filter);
-      });
-    });
-  }
-
-  function openArticle(id) {
-    var p = BLOG_POSTS.find(function (x) { return String(x.id) === String(id); });
-    if (!p) return;
-
-    document.getElementById('modalTitle').textContent = p.title || '';
-    document.getElementById('modalDate').innerHTML = '📅 ' + (p.date || '');
-    document.getElementById('modalRead').innerHTML = '⏱️ ' + (p.readTime || '');
-    document.getElementById('modalCat').innerHTML = '🏷️ ' + ((p.category || '').charAt(0).toUpperCase() + (p.category || '').slice(1));
-
-    var content = escapePreBlocks(p.content || '');
-    if (p.series === 'js-tutorial') {
-      content = getSeriesNav(p.id) + content + getChapterNav(p.id);
-    }
-
-    document.getElementById('modalContent').innerHTML = content;
-    document.getElementById('modalHeaderBg').className = 'blog-modal-header-bg blog-thumb-bg ' + (p.category || 'general');
-
-    document.getElementById('blogModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-    document.querySelector('.blog-modal').scrollTop = 0;
-  }
-
-  function closeModal() {
-    document.getElementById('blogModal').classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  function bindModalEvents() {
-    document.querySelector('.blog-modal-close').addEventListener('click', closeModal);
-    document.getElementById('blogModal').addEventListener('click', function (e) {
-      if (e.target === this) closeModal();
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closeModal();
-    });
-  }
-
-  function bindMobileMenu() {
-    var menuToggle = document.querySelector('.menu-toggle');
-    var mobileMenu = document.querySelector('.mobile-menu');
-    menuToggle.addEventListener('click', function () {
-      this.classList.toggle('active');
-      mobileMenu.classList.toggle('active');
-    });
-  }
+function bindMobileMenu() {
+  var menuToggle = document.querySelector('.menu-toggle');
+  var mobileMenu = document.querySelector('.mobile-menu');
+  menuToggle.addEventListener('click', function () {
+    this.classList.toggle('active');
+    mobileMenu.classList.toggle('active');
+  });
+}
 </script>
 </body>
 </html>
