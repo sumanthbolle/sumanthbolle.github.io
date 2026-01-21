@@ -219,6 +219,19 @@
     footer{background:var(--white);padding:24px;text-align:center;border-top:1px solid rgba(0,0,0,0.06)}
     .footer-text{font-size:12px;color:var(--gray)}
     
+    /* ==================== SHARE BUTTON STYLES ==================== */
+    .share-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .share-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:1px solid rgba(0,0,0,0.1);border-radius:10px;background:var(--white);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s}
+    .share-btn:hover{background:var(--blue);color:var(--white);border-color:var(--blue)}
+    .share-btn.copied{background:var(--green);color:var(--white);border-color:var(--green)}
+    .share-btn svg{width:16px;height:16px;fill:currentColor}
+    
+    /* Toast notification */
+    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--black);color:var(--white);padding:14px 28px;border-radius:12px;font-size:14px;font-weight:500;z-index:99999;opacity:0;transition:all 0.3s ease;display:flex;align-items:center;gap:10px;box-shadow:0 10px 40px rgba(0,0,0,0.3)}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    .toast.success{background:var(--green)}
+    .toast svg{width:18px;height:18px;fill:currentColor}
+    
     @media(max-width:768px){
       .nav-links{display:none}
       .menu-toggle{display:block}
@@ -236,6 +249,7 @@
       .tips-grid{grid-template-columns:1fr}
       .blog-modal-body{padding:28px}
       .blog-modal-body h1{font-size:24px}
+      .share-actions{width:100%;justify-content:flex-start}
     }
   </style>
 </head>
@@ -469,6 +483,20 @@
           <span id="modalDate">📅 </span>
           <span id="modalRead">⏱️ </span>
           <span id="modalCat">🏷️ </span>
+          <div class="share-actions" id="articleShareActions">
+            <button class="share-btn" onclick="copyArticleLink()" id="copyArticleBtn">
+              <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+              Copy Link
+            </button>
+            <button class="share-btn" onclick="shareToTwitter('article')">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Tweet
+            </button>
+            <button class="share-btn" onclick="shareToLinkedIn('article')">
+              <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </button>
+          </div>
         </div>
         <article class="blog-modal-article" id="modalContent"></article>
       </div>
@@ -486,6 +514,20 @@
           <span id="topicModalModule">📚 </span>
           <span id="topicModalTime">⏱️ </span>
           <span id="topicModalLevel">📊 </span>
+          <div class="share-actions" id="topicShareActions">
+            <button class="share-btn" onclick="copyTopicLink()" id="copyTopicBtn">
+              <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+              Copy Link
+            </button>
+            <button class="share-btn" onclick="shareToTwitter('topic')">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Tweet
+            </button>
+            <button class="share-btn" onclick="shareToLinkedIn('topic')">
+              <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </button>
+          </div>
         </div>
         <article class="blog-modal-article" id="topicModalContent"></article>
         <div style="margin-top:32px;padding-top:24px;border-top:1px solid rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
@@ -501,9 +543,235 @@
     </div>
   </div>
 
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    <span id="toastMessage">Link copied!</span>
+  </div>
+
   <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
 
 <script>
+// ==================== URL ROUTING SYSTEM ====================
+// This system enables shareable URLs for all content types
+// URL Patterns:
+//   #article/{id}     - Blog articles
+//   #topic/{id}       - CSA certification topics  
+//   #section/{name}   - Main sections (blog, csa, certpath)
+//   #module/{id}      - CSA modules (expanded view)
+
+const Router = {
+  // Parse current URL hash
+  parse: function() {
+    const hash = window.location.hash.slice(1); // Remove #
+    if (!hash) return null;
+    
+    const [type, ...idParts] = hash.split('/');
+    const id = idParts.join('/'); // Rejoin in case ID has slashes
+    
+    return { type, id };
+  },
+  
+  // Navigate to a route (updates URL and triggers content)
+  navigate: function(type, id, replace = false) {
+    const newHash = id ? `#${type}/${id}` : `#${type}`;
+    
+    if (replace) {
+      history.replaceState(null, '', newHash);
+    } else {
+      history.pushState(null, '', newHash);
+    }
+    
+    this.handleRoute();
+  },
+  
+  // Handle the current route
+  handleRoute: function() {
+    const route = this.parse();
+    
+    if (!route) {
+      // No hash - show default (blog section)
+      switchSection('blog');
+      return;
+    }
+    
+    switch (route.type) {
+      case 'article':
+        switchSection('blog');
+        // Wait for posts to load, then open article
+        if (BLOG_POSTS.length > 0) {
+          openArticle(route.id, true); // true = don't update URL again
+        } else {
+          // Posts not loaded yet, wait for them
+          pendingArticleId = route.id;
+        }
+        break;
+        
+      case 'topic':
+        switchSection('csa');
+        setTimeout(() => openTopic(route.id, true), 100);
+        break;
+        
+      case 'section':
+        switchSection(route.id);
+        break;
+        
+      case 'module':
+        switchSection('csa');
+        setTimeout(() => {
+          toggleModule(parseInt(route.id), true);
+        }, 100);
+        break;
+        
+      default:
+        switchSection('blog');
+    }
+  },
+  
+  // Generate shareable URL for content
+  getShareUrl: function(type, id) {
+    const base = window.location.origin + window.location.pathname;
+    return `${base}#${type}/${id}`;
+  },
+  
+  // Initialize router
+  init: function() {
+    // Handle browser back/forward
+    window.addEventListener('popstate', () => this.handleRoute());
+    
+    // Handle initial load
+    this.handleRoute();
+  }
+};
+
+// Pending article to open after posts load
+let pendingArticleId = null;
+
+// ==================== SHARE FUNCTIONS ====================
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  const toastMessage = document.getElementById('toastMessage');
+  
+  toastMessage.textContent = message;
+  toast.className = 'toast show ' + type;
+  
+  setTimeout(() => {
+    toast.className = 'toast';
+  }, 3000);
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+  
+  // Fallback for older browsers
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  
+  try {
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return Promise.resolve();
+  } catch (err) {
+    document.body.removeChild(textarea);
+    return Promise.reject(err);
+  }
+}
+
+function copyArticleLink() {
+  if (!currentArticleId) return;
+  
+  const url = Router.getShareUrl('article', currentArticleId);
+  copyToClipboard(url).then(() => {
+    const btn = document.getElementById('copyArticleBtn');
+    btn.classList.add('copied');
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!';
+    showToast('Link copied to clipboard!');
+    
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy Link';
+    }, 2000);
+  });
+}
+
+function copyTopicLink() {
+  if (!currentTopicId) return;
+  
+  const url = Router.getShareUrl('topic', currentTopicId);
+  copyToClipboard(url).then(() => {
+    const btn = document.getElementById('copyTopicBtn');
+    btn.classList.add('copied');
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!';
+    showToast('Link copied to clipboard!');
+    
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy Link';
+    }, 2000);
+  });
+}
+
+function shareToTwitter(type) {
+  let url, text;
+  
+  if (type === 'article' && currentArticleId) {
+    const post = BLOG_POSTS.find(p => String(p.id) === String(currentArticleId));
+    url = Router.getShareUrl('article', currentArticleId);
+    text = post ? `Check out "${post.title}" by @SumanthBolle` : 'Check out this article';
+  } else if (type === 'topic' && currentTopicId) {
+    const topic = findTopicById(currentTopicId);
+    url = Router.getShareUrl('topic', currentTopicId);
+    text = topic ? `Learning "${topic.title}" - ServiceNow CSA Certification` : 'ServiceNow CSA Topic';
+  }
+  
+  if (url) {
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(tweetUrl, '_blank', 'width=550,height=420');
+  }
+}
+
+function shareToLinkedIn(type) {
+  let url;
+  
+  if (type === 'article' && currentArticleId) {
+    url = Router.getShareUrl('article', currentArticleId);
+  } else if (type === 'topic' && currentTopicId) {
+    url = Router.getShareUrl('topic', currentTopicId);
+  }
+  
+  if (url) {
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+    window.open(linkedInUrl, '_blank', 'width=550,height=420');
+  }
+}
+
+function findTopicById(topicId) {
+  for (const module of CSA_MODULES) {
+    const topic = module.topics.find(t => t.id === topicId);
+    if (topic) return topic;
+  }
+  return null;
+}
+
+// ==================== SECTION SWITCHING ====================
+function switchSection(sectionId) {
+  // Update tabs
+  document.querySelectorAll('.main-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.section === sectionId);
+  });
+  
+  // Update sections
+  document.querySelectorAll('.content-section').forEach(section => {
+    section.classList.toggle('active', section.id === sectionId + 'Section');
+  });
+}
+
 // ==================== CSA CERTIFICATION DATA ====================
 const CSA_MODULES = [
   {
@@ -638,56 +906,7 @@ const CSA_MODULES = [
         description: "Understanding ServiceNow releases, naming conventions, and upgrade process.",
         duration: "30 min",
         tags: ["Releases", "Upgrades"],
-        content: `
-          <h2>Release Cycle & Versions</h2>
-          <p>ServiceNow releases two major versions per year, following a city-based naming convention.</p>
-          
-          <h3>Release Naming Convention</h3>
-          <p>Releases are named alphabetically after cities:</p>
-          <ul>
-            <li><strong>Utah</strong> (March 2023)</li>
-            <li><strong>Vancouver</strong> (September 2023)</li>
-            <li><strong>Washington DC</strong> (March 2024)</li>
-            <li><strong>Xanadu</strong> (September 2024)</li>
-            <li><strong>Yokohama</strong> (March 2025)</li>
-            <li><strong>Zurich</strong> (September 2025) — <em>Current as of this training</em></li>
-          </ul>
-          
-          <h3>Release Types</h3>
-          <table>
-            <tr><th>Type</th><th>Frequency</th><th>Content</th></tr>
-            <tr><td>Family Release</td><td>2x per year</td><td>Major features, new applications</td></tr>
-            <tr><td>Patch</td><td>Monthly</td><td>Bug fixes, security updates</td></tr>
-            <tr><td>Hotfix</td><td>As needed</td><td>Critical fixes, zero-day vulnerabilities</td></tr>
-          </table>
-          
-          <h3>N-1 Support Policy</h3>
-          <p>ServiceNow supports only the current release (N) and one prior (N-1):</p>
-          <ul>
-            <li>If current is <strong>Zurich</strong>, then <strong>Yokohama</strong> is also supported</li>
-            <li><strong>Xanadu</strong> and older are unsupported</li>
-            <li>Security patches only come to supported versions</li>
-          </ul>
-          
-          <div class="scenario-box">
-            <h4>🔄 Upgrade Reality</h4>
-            <p>Most enterprises upgrade once per year. They skip a release to reduce upgrade fatigue while staying in the support window. Example: Utah → Washington DC → Yokohama (skipping Vancouver and Xanadu).</p>
-          </div>
-          
-          <h3>Upgrade Process Overview</h3>
-          <ol>
-            <li><strong>Review Release Notes:</strong> Check for deprecated features, breaking changes</li>
-            <li><strong>Run Upgrade Preview:</strong> ServiceNow scans your instance for issues</li>
-            <li><strong>Upgrade Non-Prod First:</strong> Always DEV → TEST → PROD</li>
-            <li><strong>Test Thoroughly:</strong> Custom scripts, integrations, user acceptance</li>
-            <li><strong>Schedule Production:</strong> Usually during maintenance windows</li>
-          </ol>
-          
-          <div class="tip-box">
-            <h4>💡 CSA Exam Tip</h4>
-            <p>You won't perform upgrades as a CSA, but you should know: upgrades are managed by ServiceNow (cloud platform), and customers control WHEN they upgrade within the support window.</p>
-          </div>
-        `
+        content: `<h2>Release Cycle & Versions</h2><p>ServiceNow releases two major versions per year, following a city-based naming convention. Releases are named alphabetically after cities: Utah, Vancouver, Washington DC, Xanadu, Yokohama, Zurich (current).</p>`
       },
       {
         id: "1.4",
@@ -695,58 +914,7 @@ const CSA_MODULES = [
         description: "How to get a free PDI and set up your learning environment.",
         duration: "20 min",
         tags: ["Hands-On", "Setup"],
-        content: `
-          <h2>Getting Your Developer Instance (PDI)</h2>
-          <p>A Personal Developer Instance is your free ServiceNow playground — essential for learning and exam prep.</p>
-          
-          <h3>Step-by-Step Setup</h3>
-          <ol>
-            <li>Go to <a href="https://developer.servicenow.com" target="_blank">developer.servicenow.com</a></li>
-            <li>Click "Sign Up" and create your account</li>
-            <li>Verify your email</li>
-            <li>From the dashboard, click "Request Instance"</li>
-            <li>Choose the latest release (e.g., Zurich)</li>
-            <li>Wait 5-10 minutes for provisioning</li>
-            <li>You'll receive your instance URL and admin credentials</li>
-          </ol>
-          
-          <h3>PDI Specifications</h3>
-          <table>
-            <tr><th>Feature</th><th>Details</th></tr>
-            <tr><td>Cost</td><td>100% Free</td></tr>
-            <tr><td>Duration</td><td>Active for 10 days after last login</td></tr>
-            <tr><td>Included Apps</td><td>ITSM, HRSD, CSM, App Engine Studio, and more</td></tr>
-            <tr><td>Data</td><td>Demo data included (sample users, incidents, etc.)</td></tr>
-            <tr><td>Limitations</td><td>No integrations, limited email, no production use</td></tr>
-          </table>
-          
-          <div class="warning-box">
-            <h4>⚠️ Keep It Active!</h4>
-            <p>Your PDI will hibernate after 10 days of inactivity. Data persists for 10 more days, then it's deleted. Log in at least every 9 days during your study period!</p>
-          </div>
-          
-          <h3>First Login Checklist</h3>
-          <ul>
-            <li>✅ Log in with provided admin credentials</li>
-            <li>✅ Change your password immediately</li>
-            <li>✅ Navigate to System Administrator > Users and find your admin user</li>
-            <li>✅ Explore the Application Navigator (left sidebar)</li>
-            <li>✅ Create your first Incident (Incident > Create New)</li>
-          </ul>
-          
-          <div class="scenario-box">
-            <h4>🎯 Your First Task</h4>
-            <p>After getting your PDI, complete this exercise:</p>
-            <ol>
-              <li>Navigate to <strong>Incident > Create New</strong></li>
-              <li>Fill in: Caller = "System Administrator", Short Description = "Test incident for learning"</li>
-              <li>Submit the form</li>
-              <li>Find your incident in the list</li>
-              <li>Try changing its State from New → In Progress → Resolved</li>
-            </ol>
-            <p>Congratulations! You've just completed your first ServiceNow workflow.</p>
-          </div>
-        `
+        content: `<h2>Getting Your Developer Instance (PDI)</h2><p>A Personal Developer Instance is your free ServiceNow playground — essential for learning and exam prep. Go to developer.servicenow.com to get started.</p>`
       },
       {
         id: "1.5",
@@ -754,71 +922,7 @@ const CSA_MODULES = [
         description: "Application Navigator, All Search, and keyboard shortcuts.",
         duration: "45 min",
         tags: ["Navigation", "UI"],
-        content: `
-          <h2>Navigating the Platform</h2>
-          <p>Efficient navigation is key to productivity. Learn these skills and you'll work 10x faster.</p>
-          
-          <h3>The Application Navigator</h3>
-          <p>The left sidebar is your command center:</p>
-          <ul>
-            <li><strong>Filter Navigator:</strong> Type to instantly find modules (Ctrl+Shift+F)</li>
-            <li><strong>Favorites:</strong> Star frequently used modules for quick access</li>
-            <li><strong>History:</strong> View recently accessed modules</li>
-            <li><strong>Applications:</strong> Organized groups of related modules</li>
-          </ul>
-          
-          <h3>All Search (Global Search)</h3>
-          <p>The search bar at the top searches EVERYTHING:</p>
-          <ul>
-            <li>Records (incidents, users, knowledge articles)</li>
-            <li>Navigation items (modules, applications)</li>
-            <li>Documentation</li>
-            <li>Attachments</li>
-          </ul>
-          
-          <div class="tip-box">
-            <h4>💡 Search Shortcuts</h4>
-            <p>Type prefixes for faster results:</p>
-            <ul>
-              <li><code>INC0001234</code> — Jump directly to that incident</li>
-              <li><code>*.do</code> — Find admin pages (like sys_properties.do)</li>
-              <li><code>user:</code> — Search only users</li>
-            </ul>
-          </div>
-          
-          <h3>Essential Keyboard Shortcuts</h3>
-          <table>
-            <tr><th>Shortcut</th><th>Action</th></tr>
-            <tr><td>Ctrl + Shift + F</td><td>Focus on Filter Navigator</td></tr>
-            <tr><td>Ctrl + Shift + G</td><td>Open Global Search</td></tr>
-            <tr><td>Ctrl + Right Arrow</td><td>Next tab</td></tr>
-            <tr><td>Ctrl + Left Arrow</td><td>Previous tab</td></tr>
-            <tr><td>Ctrl + S</td><td>Save (on forms)</td></tr>
-            <tr><td>Ctrl + Shift + S</td><td>Save and Stay (on forms)</td></tr>
-          </table>
-          
-          <h3>Next Experience UI vs Classic UI</h3>
-          <p>ServiceNow has two interface modes:</p>
-          <table>
-            <tr><th>Feature</th><th>Next Experience (Polaris)</th><th>Classic UI (UI16)</th></tr>
-            <tr><td>Look</td><td>Modern, clean, dark mode available</td><td>Traditional, familiar</td></tr>
-            <tr><td>Default Since</td><td>San Diego (2022)</td><td>Legacy</td></tr>
-            <tr><td>Unified Navigation</td><td>Yes</td><td>No</td></tr>
-            <tr><td>Favorites</td><td>Star icons in nav</td><td>Separate favorites app</td></tr>
-          </table>
-          
-          <div class="scenario-box">
-            <h4>🎯 Navigation Challenge</h4>
-            <p>In your PDI, try these exercises:</p>
-            <ol>
-              <li>Find the "Business Rules" module using only the Filter Navigator</li>
-              <li>Star "Incidents > All" as a favorite</li>
-              <li>Use global search to find incident "INC0000001"</li>
-              <li>Navigate between 3 open tabs using keyboard shortcuts</li>
-              <li>Find where User records are stored (Users module)</li>
-            </ol>
-          </div>
-        `
+        content: `<h2>Navigating the Platform</h2><p>Efficient navigation is key to productivity. Learn the Application Navigator, Global Search, and keyboard shortcuts to work 10x faster.</p>`
       }
     ]
   },
@@ -831,308 +935,11 @@ const CSA_MODULES = [
     level: "beginner",
     colorClass: "platform",
     topics: [
-      {
-        id: "2.1",
-        title: "Understanding Lists",
-        description: "List anatomy, column configuration, and data display.",
-        duration: "40 min",
-        tags: ["Lists", "UI"],
-        content: `
-          <h2>Understanding Lists</h2>
-          <p>Lists are how you view multiple records at once. Master lists and you'll navigate ServiceNow like a pro.</p>
-          
-          <h3>Anatomy of a List</h3>
-          <ul>
-            <li><strong>Title Bar:</strong> Shows table name and record count</li>
-            <li><strong>Column Headers:</strong> Field names, click to sort</li>
-            <li><strong>Rows:</strong> Individual records</li>
-            <li><strong>List Controls:</strong> Refresh, filters, export options</li>
-            <li><strong>Breadcrumbs:</strong> Shows current filter/query</li>
-          </ul>
-          
-          <h3>Column Operations</h3>
-          <table>
-            <tr><th>Action</th><th>How To</th></tr>
-            <tr><td>Sort ascending</td><td>Click column header once</td></tr>
-            <tr><td>Sort descending</td><td>Click column header twice</td></tr>
-            <tr><td>Add column</td><td>Right-click header > Insert a column</td></tr>
-            <tr><td>Remove column</td><td>Right-click header > Remove column</td></tr>
-            <tr><td>Resize column</td><td>Drag column border</td></tr>
-            <tr><td>Rearrange columns</td><td>Drag header to new position</td></tr>
-          </table>
-          
-          <h3>List Personalization</h3>
-          <p>Configure columns that persist for YOUR view only:</p>
-          <ol>
-            <li>Right-click any column header</li>
-            <li>Select "Configure" > "List Layout"</li>
-            <li>Move fields between Available and Selected</li>
-            <li>Drag to reorder selected fields</li>
-            <li>Click Save</li>
-          </ol>
-          
-          <div class="scenario-box">
-            <h4>🎯 Practical Exercise</h4>
-            <p>Configure the Incident list for a Service Desk agent:</p>
-            <p>Recommended columns: Number, Priority, State, Short description, Assignment group, Assigned to, Updated</p>
-          </div>
-          
-          <div class="tip-box">
-            <h4>💡 Pro Tip: List Views</h4>
-            <p>You can save different column configurations as "views" and switch between them. Great for different tasks like "My Work" vs "Team Queue" vs "Escalations".</p>
-          </div>
-        `
-      },
-      {
-        id: "2.2",
-        title: "Filtering & Searching",
-        description: "Build powerful filters, use conditions, and save filter queries.",
-        duration: "50 min",
-        tags: ["Filters", "Search"],
-        content: `
-          <h2>Filtering & Searching</h2>
-          <p>Filters help you find exactly what you need among thousands of records.</p>
-          
-          <h3>Basic Filtering</h3>
-          <p>Click the funnel icon or use the breadcrumbs area:</p>
-          <ol>
-            <li>Click the funnel icon on any list</li>
-            <li>Select a field (e.g., Priority)</li>
-            <li>Choose operator (is, is not, contains, etc.)</li>
-            <li>Enter value (e.g., 1 - Critical)</li>
-            <li>Click "Run" to apply</li>
-          </ol>
-          
-          <h3>Common Operators</h3>
-          <table>
-            <tr><th>Operator</th><th>Use Case</th><th>Example</th></tr>
-            <tr><td>is</td><td>Exact match</td><td>State is "Open"</td></tr>
-            <tr><td>is not</td><td>Exclude value</td><td>State is not "Closed"</td></tr>
-            <tr><td>contains</td><td>Partial text match</td><td>Short desc contains "email"</td></tr>
-            <tr><td>starts with</td><td>Beginning match</td><td>Number starts with "INC"</td></tr>
-            <tr><td>is empty</td><td>No value</td><td>Assignment group is empty</td></tr>
-            <tr><td>is one of</td><td>Multiple values</td><td>Priority is one of 1,2</td></tr>
-            <tr><td>between</td><td>Date ranges</td><td>Created between last 7 days</td></tr>
-          </table>
-          
-          <h3>AND vs OR Conditions</h3>
-          <ul>
-            <li><strong>AND (same row):</strong> All conditions must be true</li>
-            <li><strong>OR (new row):</strong> Any condition can be true</li>
-          </ul>
-          
-          <div class="scenario-box">
-            <h4>🎯 Filter Challenge</h4>
-            <p>Build this filter: "All Priority 1 or 2 incidents that are NOT closed, assigned to my group, created in the last 30 days"</p>
-            <pre>
-Priority is one of 1 - Critical, 2 - High
-AND State is not Closed
-AND State is not Resolved  
-AND Assignment group is [Your Group]
-AND Created on After last 30 days
-            </pre>
-          </div>
-          
-          <h3>Saving Filters</h3>
-          <ol>
-            <li>Build your filter</li>
-            <li>Click the hamburger menu (≡) in breadcrumbs</li>
-            <li>Select "Save as" > "Favorite"</li>
-            <li>Name it descriptively (e.g., "My P1-P2 Open Incidents")</li>
-          </ol>
-          
-          <div class="tip-box">
-            <h4>💡 Encoded Queries</h4>
-            <p>Every filter has an encoded query string. Right-click breadcrumbs > "Copy query" to get it. This is essential for scripting and sharing filters:</p>
-            <code>priority=1^stateNOT IN6,7^assignment_group=YOUR_GROUP</code>
-          </div>
-        `
-      },
-      {
-        id: "2.3",
-        title: "Working with Forms",
-        description: "Form layout, sections, fields, and the form lifecycle.",
-        duration: "45 min",
-        tags: ["Forms", "UI"],
-        content: `
-          <h2>Working with Forms</h2>
-          <p>Forms are where you view and edit individual records. Understanding form behavior is critical.</p>
-          
-          <h3>Form Anatomy</h3>
-          <ul>
-            <li><strong>Header:</strong> Record identifier, state indicators</li>
-            <li><strong>Form Sections:</strong> Collapsible groups of fields</li>
-            <li><strong>Fields:</strong> Individual data points (text, choice, reference, etc.)</li>
-            <li><strong>Related Lists:</strong> Associated records (below the form)</li>
-            <li><strong>Activity Stream:</strong> Work notes, comments, history</li>
-            <li><strong>Context Menu:</strong> Right-click for additional options</li>
-          </ul>
-          
-          <h3>Field Types</h3>
-          <table>
-            <tr><th>Type</th><th>Description</th><th>Example</th></tr>
-            <tr><td>String</td><td>Plain text</td><td>Short description</td></tr>
-            <tr><td>Choice</td><td>Dropdown selection</td><td>Priority, State</td></tr>
-            <tr><td>Reference</td><td>Link to another record</td><td>Caller, Assigned to</td></tr>
-            <tr><td>Date/Time</td><td>Temporal values</td><td>Created, Due date</td></tr>
-            <tr><td>Journal</td><td>Chronological entries</td><td>Work notes, Comments</td></tr>
-            <tr><td>HTML</td><td>Rich text</td><td>Description (sometimes)</td></tr>
-            <tr><td>Attachment</td><td>File uploads</td><td>Screenshots, documents</td></tr>
-          </table>
-          
-          <h3>Form Personalization</h3>
-          <ol>
-            <li>Right-click form header > Configure > Form Layout</li>
-            <li>Move fields between sections</li>
-            <li>Create new sections for organization</li>
-            <li>Mark fields as mandatory or read-only</li>
-            <li>Save for yourself or all users</li>
-          </ol>
-          
-          <div class="scenario-box">
-            <h4>🎯 Practical Exercise</h4>
-            <p>Customize the Incident form:</p>
-            <ol>
-              <li>Create a new section called "VIP Details"</li>
-              <li>Move "Business Service" and "Priority" into it</li>
-              <li>Save as a view called "VIP View"</li>
-              <li>Switch between Default and VIP views</li>
-            </ol>
-          </div>
-          
-          <div class="warning-box">
-            <h4>⚠️ Personal vs System Changes</h4>
-            <p>As a CSA, you can personalize YOUR view. System-wide form changes require Form Designer or admin access — that's different!</p>
-          </div>
-        `
-      },
-      {
-        id: "2.4",
-        title: "Related Lists & Activity",
-        description: "Working with related records and the activity formatter.",
-        duration: "35 min",
-        tags: ["Related Lists", "Activity"],
-        content: `
-          <h2>Related Lists & Activity</h2>
-          <p>Related lists show connected records, while the activity formatter shows the communication history.</p>
-          
-          <h3>Related Lists</h3>
-          <p>Found below the main form, related lists show:</p>
-          <ul>
-            <li>Child records (Tasks under an Incident)</li>
-            <li>Associated records (Attachments, Change Requests)</li>
-            <li>History (Audit logs, Approval history)</li>
-          </ul>
-          
-          <h3>Configuring Related Lists</h3>
-          <ol>
-            <li>Right-click the related list header area</li>
-            <li>Select "Configure" > "Related Lists"</li>
-            <li>Add or remove related lists</li>
-            <li>Drag to reorder</li>
-            <li>Save</li>
-          </ol>
-          
-          <h3>Activity Formatter</h3>
-          <p>The Activity section shows all journal entries in chronological order:</p>
-          <ul>
-            <li><strong>Work Notes:</strong> Internal notes (visible to fulfiller roles)</li>
-            <li><strong>Additional Comments:</strong> Customer-visible notes</li>
-            <li><strong>System entries:</strong> Automated updates</li>
-          </ul>
-          
-          <div class="tip-box">
-            <h4>💡 Work Notes vs Comments</h4>
-            <p><strong>Work Notes</strong> = Internal team communication (customer CANNOT see)</p>
-            <p><strong>Additional Comments</strong> = Customer communication (visible in portal)</p>
-            <p>This is a critical distinction for customer service!</p>
-          </div>
-          
-          <h3>Activity Filter Options</h3>
-          <ul>
-            <li>All entries</li>
-            <li>Work notes only</li>
-            <li>Customer visible only</li>
-            <li>Field changes</li>
-            <li>Attachments</li>
-          </ul>
-          
-          <div class="scenario-box">
-            <h4>🎯 Exercise</h4>
-            <p>Open an incident and:</p>
-            <ol>
-              <li>Add a Work Note: "Investigating issue"</li>
-              <li>Add a Comment: "We're looking into this"</li>
-              <li>Change the State to "In Progress"</li>
-              <li>View the Activity stream to see all three actions</li>
-            </ol>
-          </div>
-        `
-      },
-      {
-        id: "2.5",
-        title: "Views & Homepages",
-        description: "Create and manage different views, homepages, and dashboards.",
-        duration: "40 min",
-        tags: ["Views", "Dashboards"],
-        content: `
-          <h2>Views & Homepages</h2>
-          <p>Customize how you see ServiceNow to match your workflow.</p>
-          
-          <h3>Form Views</h3>
-          <p>Different form layouts for different purposes:</p>
-          <ul>
-            <li><strong>Default:</strong> Standard view for all users</li>
-            <li><strong>Mobile:</strong> Optimized for small screens</li>
-            <li><strong>Custom:</strong> Created for specific roles or workflows</li>
-          </ul>
-          
-          <h3>Creating Form Views</h3>
-          <ol>
-            <li>Configure form layout as desired</li>
-            <li>Click "Save" and enter a new View name</li>
-            <li>View appears in View dropdown</li>
-            <li>Can set view as default for specific groups</li>
-          </ol>
-          
-          <h3>Homepages</h3>
-          <p>Homepages are personal dashboards with widgets:</p>
-          <ul>
-            <li><strong>Reports:</strong> Charts and visualizations</li>
-            <li><strong>Lists:</strong> Filtered record views</li>
-            <li><strong>Gauges:</strong> Quick metrics</li>
-            <li><strong>Custom widgets:</strong> HTML, images, links</li>
-          </ul>
-          
-          <h3>Creating a Homepage</h3>
-          <ol>
-            <li>Self-Service > My Homepage</li>
-            <li>Click "Add content"</li>
-            <li>Select widget type</li>
-            <li>Configure widget (select report, filter, etc.)</li>
-            <li>Drag to position</li>
-            <li>Save</li>
-          </ol>
-          
-          <div class="scenario-box">
-            <h4>🎯 Build Your Dashboard</h4>
-            <p>Create a Service Desk homepage with:</p>
-            <ul>
-              <li>Gauge: "Open P1 Incidents"</li>
-              <li>List: "My Assigned Incidents"</li>
-              <li>Chart: "Incidents by Category"</li>
-              <li>List: "Team Queue (Unassigned)"</li>
-            </ul>
-          </div>
-          
-          <div class="tip-box">
-            <h4>💡 Dashboards vs Homepages</h4>
-            <p><strong>Homepages:</strong> Personal, user-specific</p>
-            <p><strong>Dashboards:</strong> Shared across teams, managed centrally, more powerful</p>
-            <p>Most organizations use Dashboards for team metrics and Homepages for personal productivity.</p>
-          </div>
-        `
-      }
+      { id: "2.1", title: "Understanding Lists", description: "List anatomy, column configuration, and data display.", duration: "40 min", tags: ["Lists", "UI"], content: `<h2>Understanding Lists</h2><p>Lists are how you view multiple records at once. Master lists and you'll navigate ServiceNow like a pro.</p>` },
+      { id: "2.2", title: "Filtering & Searching", description: "Build powerful filters, use conditions, and save filter queries.", duration: "50 min", tags: ["Filters", "Search"], content: `<h2>Filtering & Searching</h2><p>Filters help you find exactly what you need among thousands of records.</p>` },
+      { id: "2.3", title: "Working with Forms", description: "Form layout, sections, fields, and the form lifecycle.", duration: "45 min", tags: ["Forms", "UI"], content: `<h2>Working with Forms</h2><p>Forms are where you view and edit individual records. Understanding form behavior is critical.</p>` },
+      { id: "2.4", title: "Related Lists & Activity", description: "Working with related records and the activity formatter.", duration: "35 min", tags: ["Related Lists", "Activity"], content: `<h2>Related Lists & Activity</h2><p>Related lists show connected records, while the activity formatter shows the communication history.</p>` },
+      { id: "2.5", title: "Views & Homepages", description: "Create and manage different views, homepages, and dashboards.", duration: "40 min", tags: ["Views", "Dashboards"], content: `<h2>Views & Homepages</h2><p>Customize how you see ServiceNow to match your workflow.</p>` }
     ]
   },
   {
@@ -1144,247 +951,10 @@ AND Created on After last 30 days
     level: "intermediate",
     colorClass: "config",
     topics: [
-      {
-        id: "3.1",
-        title: "Tables & Records",
-        description: "How ServiceNow stores data in tables and records.",
-        duration: "45 min",
-        tags: ["Tables", "Database"],
-        content: `
-          <h2>Tables & Records</h2>
-          <p>Everything in ServiceNow is a record in a table. Master this concept and you understand the platform.</p>
-          
-          <h3>The Table Concept</h3>
-          <p>Think of tables like spreadsheets:</p>
-          <ul>
-            <li><strong>Table</strong> = Spreadsheet (e.g., "Incidents")</li>
-            <li><strong>Record</strong> = Row (e.g., "INC0001234")</li>
-            <li><strong>Field</strong> = Column (e.g., "Short description")</li>
-            <li><strong>Value</strong> = Cell content (e.g., "Email not working")</li>
-          </ul>
-          
-          <h3>Common Tables</h3>
-          <table>
-            <tr><th>Table Name</th><th>Label</th><th>Purpose</th></tr>
-            <tr><td>incident</td><td>Incident</td><td>IT incidents</td></tr>
-            <tr><td>change_request</td><td>Change Request</td><td>IT changes</td></tr>
-            <tr><td>sys_user</td><td>User</td><td>All users</td></tr>
-            <tr><td>sys_user_group</td><td>Group</td><td>User groups</td></tr>
-            <tr><td>cmdb_ci</td><td>Configuration Item</td><td>IT assets</td></tr>
-            <tr><td>kb_knowledge</td><td>Knowledge</td><td>KB articles</td></tr>
-          </table>
-          
-          <h3>Sys_id: The Universal Key</h3>
-          <p>Every record has a unique 32-character identifier called sys_id:</p>
-          <code>a9d3e2b3c4d5e6f7a8b9c0d1e2f3a4b5</code>
-          <p>This is how ServiceNow links records internally, regardless of display value.</p>
-          
-          <div class="scenario-box">
-            <h4>🎯 Exploring Tables</h4>
-            <p>In your PDI:</p>
-            <ol>
-              <li>Navigate to System Definition > Tables</li>
-              <li>Search for "incident"</li>
-              <li>Click to open the table record</li>
-              <li>Scroll down to see all fields (Columns tab)</li>
-              <li>Notice the "Name" (internal) vs "Label" (display)</li>
-            </ol>
-          </div>
-          
-          <div class="tip-box">
-            <h4>💡 Table vs Label</h4>
-            <p><strong>Table Name:</strong> Technical name used in scripts (incident, sys_user)</p>
-            <p><strong>Label:</strong> Display name shown to users (Incident, User)</p>
-            <p>Scripts always use table names; UI shows labels.</p>
-          </div>
-        `
-      },
-      {
-        id: "3.2",
-        title: "Field Types Deep Dive",
-        description: "Understanding all field types and when to use each.",
-        duration: "50 min",
-        tags: ["Fields", "Data Types"],
-        content: `
-          <h2>Field Types Deep Dive</h2>
-          <p>Choosing the right field type is crucial for data integrity and functionality.</p>
-          
-          <h3>Field Types Overview</h3>
-          <table>
-            <tr><th>Type</th><th>Max Length</th><th>Use Case</th></tr>
-            <tr><td>String</td><td>40-4000 chars</td><td>Short text (names, titles)</td></tr>
-            <tr><td>Choice</td><td>40 chars</td><td>Fixed options (dropdowns)</td></tr>
-            <tr><td>Reference</td><td>32 chars (sys_id)</td><td>Link to another table</td></tr>
-            <tr><td>True/False</td><td>1 char</td><td>Boolean checkboxes</td></tr>
-            <tr><td>Integer</td><td>40 digits</td><td>Whole numbers</td></tr>
-            <tr><td>Decimal</td><td>15 digits</td><td>Numbers with decimals</td></tr>
-            <tr><td>Date</td><td>N/A</td><td>Date only</td></tr>
-            <tr><td>Date/Time</td><td>N/A</td><td>Date and time</td></tr>
-            <tr><td>Journal</td><td>Unlimited</td><td>Work notes, comments</td></tr>
-            <tr><td>HTML</td><td>Unlimited</td><td>Rich text content</td></tr>
-          </table>
-          
-          <h3>Reference Fields</h3>
-          <p>Reference fields link to other tables:</p>
-          <ul>
-            <li><strong>Assigned to</strong> → references sys_user table</li>
-            <li><strong>Assignment group</strong> → references sys_user_group table</li>
-            <li><strong>Configuration item</strong> → references cmdb_ci table</li>
-          </ul>
-          
-          <div class="warning-box">
-            <h4>⚠️ Reference vs String</h4>
-            <p>Don't store user names as strings! Use reference fields to link to sys_user. This ensures:</p>
-            <ul>
-              <li>Data stays updated if user name changes</li>
-              <li>You can access related user info (email, manager, department)</li>
-              <li>Proper security and access control</li>
-            </ul>
-          </div>
-          
-          <h3>Choice Fields</h3>
-          <p>Predefined options stored in sys_choice table:</p>
-          <ul>
-            <li><strong>Dependent choices:</strong> Options change based on another field</li>
-            <li><strong>Suggestion lists:</strong> Allow typed entries + suggestions</li>
-            <li><strong>None option:</strong> Allow empty selection</li>
-          </ul>
-          
-          <div class="scenario-box">
-            <h4>🎯 Field Type Exercise</h4>
-            <p>For a "Project Request" table, what field type would you use for:</p>
-            <ul>
-              <li>Project Name → <strong>String</strong></li>
-              <li>Project Manager → <strong>Reference (to User)</strong></li>
-              <li>Budget Amount → <strong>Decimal</strong></li>
-              <li>Start Date → <strong>Date</strong></li>
-              <li>Status → <strong>Choice</strong></li>
-              <li>Is Approved → <strong>True/False</strong></li>
-            </ul>
-          </div>
-        `
-      },
-      {
-        id: "3.3",
-        title: "Table Inheritance",
-        description: "Base tables, extended tables, and the Task hierarchy.",
-        duration: "40 min",
-        tags: ["Inheritance", "Task"],
-        content: `
-          <h2>Table Inheritance</h2>
-          <p>ServiceNow uses object-oriented table inheritance — understanding this unlocks powerful design patterns.</p>
-          
-          <h3>How Inheritance Works</h3>
-          <p>Child tables inherit all fields from parent tables:</p>
-          <pre>
-Task (parent)
-├── Incident
-├── Change Request
-├── Problem
-├── Service Catalog Request
-│   └── Requested Item
-│       └── Catalog Task
-└── HR Case
-          </pre>
-          
-          <h3>The Task Table</h3>
-          <p>Task is the foundation of workflow in ServiceNow. Common fields on Task:</p>
-          <ul>
-            <li>Number, Short description, Description</li>
-            <li>State, Priority, Urgency, Impact</li>
-            <li>Assigned to, Assignment group</li>
-            <li>Opened by, Opened at</li>
-            <li>Work notes, Additional comments</li>
-          </ul>
-          <p>ALL child tables (Incident, Change, etc.) automatically have these fields!</p>
-          
-          <h3>Benefits of Inheritance</h3>
-          <ul>
-            <li><strong>Consistency:</strong> All "work items" behave similarly</li>
-            <li><strong>Reusability:</strong> Logic on Task applies to all children</li>
-            <li><strong>Reporting:</strong> Query Task table to see ALL work items</li>
-            <li><strong>SLAs:</strong> One SLA definition can work across multiple task types</li>
-          </ul>
-          
-          <div class="scenario-box">
-            <h4>🎯 Real-World Impact</h4>
-            <p>A Business Rule on the Task table that "sends notification when Priority is 1" will automatically work for:</p>
-            <ul>
-              <li>All P1 Incidents</li>
-              <li>All P1 Change Requests</li>
-              <li>All P1 Problems</li>
-              <li>Any future task types created!</li>
-            </ul>
-            <p>That's the power of inheritance.</p>
-          </div>
-          
-          <div class="tip-box">
-            <h4>💡 Exam Tip</h4>
-            <p>The CSA exam loves questions about Task inheritance. Know that Incident, Problem, Change, and Request tables all extend Task.</p>
-          </div>
-        `
-      },
-      {
-        id: "3.4",
-        title: "Data Dictionary",
-        description: "Using the Dictionary to understand and configure table schema.",
-        duration: "35 min",
-        tags: ["Dictionary", "Schema"],
-        content: `
-          <h2>Data Dictionary</h2>
-          <p>The Dictionary is where you define and manage table structure.</p>
-          
-          <h3>Accessing the Dictionary</h3>
-          <ul>
-            <li><strong>Quick way:</strong> Right-click any field label > Configure Dictionary</li>
-            <li><strong>Full view:</strong> System Definition > Tables > Select table > Columns tab</li>
-            <li><strong>Direct:</strong> System Definition > Dictionary</li>
-          </ul>
-          
-          <h3>Key Dictionary Properties</h3>
-          <table>
-            <tr><th>Property</th><th>Description</th></tr>
-            <tr><td>Column name</td><td>Internal field name (used in scripts)</td></tr>
-            <tr><td>Column label</td><td>Display name (shown to users)</td></tr>
-            <tr><td>Type</td><td>Field data type</td></tr>
-            <tr><td>Max length</td><td>Maximum characters allowed</td></tr>
-            <tr><td>Default value</td><td>Value when record is created</td></tr>
-            <tr><td>Mandatory</td><td>Require value before save</td></tr>
-            <tr><td>Read only</td><td>Cannot be edited</td></tr>
-            <tr><td>Active</td><td>Field is in use</td></tr>
-          </table>
-          
-          <h3>Dictionary Overrides</h3>
-          <p>Change field behavior on extended tables without affecting the parent:</p>
-          <ul>
-            <li>Make a field mandatory only on Incident (not all Tasks)</li>
-            <li>Change default value for specific table</li>
-            <li>Modify max length for specific use case</li>
-          </ul>
-          
-          <div class="scenario-box">
-            <h4>🎯 Dictionary Exercise</h4>
-            <ol>
-              <li>Open any Incident record</li>
-              <li>Right-click the "Category" field label</li>
-              <li>Select "Configure Dictionary"</li>
-              <li>Observe the field properties</li>
-              <li>Note the Type (choice), Max length, and whether it's Mandatory</li>
-            </ol>
-          </div>
-          
-          <div class="warning-box">
-            <h4>⚠️ Be Careful!</h4>
-            <p>Dictionary changes affect the database schema. In production:</p>
-            <ul>
-              <li>Always make changes in DEV first</li>
-              <li>Test thoroughly before promoting</li>
-              <li>Changing field types can cause data loss</li>
-              <li>Reducing max length can truncate existing data</li>
-            </ul>
-          </div>
-        `
-      }
+      { id: "3.1", title: "Tables & Records", description: "How ServiceNow stores data in tables and records.", duration: "45 min", tags: ["Tables", "Database"], content: `<h2>Tables & Records</h2><p>Everything in ServiceNow is a record in a table. Master this concept and you understand the platform.</p>` },
+      { id: "3.2", title: "Field Types Deep Dive", description: "Understanding all field types and when to use each.", duration: "50 min", tags: ["Fields", "Data Types"], content: `<h2>Field Types Deep Dive</h2><p>Choosing the right field type is crucial for data integrity and functionality.</p>` },
+      { id: "3.3", title: "Table Inheritance", description: "Base tables, extended tables, and the Task hierarchy.", duration: "40 min", tags: ["Inheritance", "Task"], content: `<h2>Table Inheritance</h2><p>ServiceNow uses object-oriented table inheritance — understanding this unlocks powerful design patterns.</p>` },
+      { id: "3.4", title: "Data Dictionary", description: "Using the Dictionary to understand and configure table schema.", duration: "35 min", tags: ["Dictionary", "Schema"], content: `<h2>Data Dictionary</h2><p>The Dictionary is where you define and manage table structure.</p>` }
     ]
   },
   {
@@ -1396,427 +966,12 @@ Task (parent)
     level: "intermediate",
     colorClass: "data",
     topics: [
-      {
-        id: "4.1",
-        title: "UI Policies",
-        description: "Control form field behavior dynamically without scripting.",
-        duration: "60 min",
-        tags: ["UI Policy", "Forms", "No-Code"],
-        content: `
-          <h2>UI Policies</h2>
-          <p>UI Policies dynamically change form field behavior based on conditions — no scripting required!</p>
-          
-          <h3>What UI Policies Can Do</h3>
-          <ul>
-            <li><strong>Mandatory:</strong> Require field entry</li>
-            <li><strong>Visible:</strong> Show or hide fields</li>
-            <li><strong>Read only:</strong> Prevent editing</li>
-          </ul>
-          
-          <h3>Creating a UI Policy</h3>
-          <ol>
-            <li>Navigate to System UI > UI Policies</li>
-            <li>Click New</li>
-            <li>Select Table (e.g., Incident)</li>
-            <li>Set conditions (When to apply)</li>
-            <li>Configure actions (What to do)</li>
-            <li>Set timing options</li>
-            <li>Save</li>
-          </ol>
-          
-          <h3>Key Settings</h3>
-          <table>
-            <tr><th>Setting</th><th>Purpose</th></tr>
-            <tr><td>Short description</td><td>Name your policy clearly</td></tr>
-            <tr><td>Table</td><td>Which form it applies to</td></tr>
-            <tr><td>Conditions</td><td>When the policy activates</td></tr>
-            <tr><td>On load</td><td>Run when form loads</td></tr>
-            <tr><td>Reverse if false</td><td>Undo actions when condition fails</td></tr>
-            <tr><td>Inherit</td><td>Apply to extended tables</td></tr>
-          </table>
-          
-          <div class="scenario-box">
-            <h4>🎯 Hands-On: VIP Incident Policy</h4>
-            <p><strong>Requirement:</strong> When Priority is 1-Critical, make Work Notes mandatory and highlight it.</p>
-            <ol>
-              <li>System UI > UI Policies > New</li>
-              <li>Table: Incident</li>
-              <li>Short description: "P1 - Require Work Notes"</li>
-              <li>Condition: Priority is 1 - Critical</li>
-              <li>On load: ✓, Reverse if false: ✓</li>
-              <li>Save, then add UI Policy Action:</li>
-              <li>Field: Work notes, Mandatory: true</li>
-              <li>Test by changing incident priority</li>
-            </ol>
-          </div>
-          
-          <div class="tip-box">
-            <h4>💡 UI Policy vs Client Script</h4>
-            <p><strong>Use UI Policy when:</strong> Simple show/hide/mandatory/read-only actions</p>
-            <p><strong>Use Client Script when:</strong> Complex logic, calculations, external calls, alerts</p>
-            <p>Always prefer UI Policies — they're easier to maintain and don't require scripting!</p>
-          </div>
-          
-          <h3>Common Mistakes</h3>
-          <ul>
-            <li>❌ Forgetting "Reverse if false" (field stays mandatory forever)</li>
-            <li>❌ Not checking "On load" (only works on field change)</li>
-            <li>❌ Conflicting policies (two policies on same field)</li>
-            <li>❌ Using UI Policy for server-side validation (won't prevent API updates)</li>
-          </ul>
-        `
-      },
-      {
-        id: "4.2",
-        title: "Data Policies",
-        description: "Enforce data rules on server side for all access methods.",
-        duration: "40 min",
-        tags: ["Data Policy", "Validation", "Server"],
-        content: `
-          <h2>Data Policies</h2>
-          <p>Data Policies enforce rules on the SERVER — they work even when data comes from APIs, imports, or workflows.</p>
-          
-          <h3>UI Policy vs Data Policy</h3>
-          <table>
-            <tr><th>Feature</th><th>UI Policy</th><th>Data Policy</th></tr>
-            <tr><td>Runs on</td><td>Browser (client)</td><td>Server</td></tr>
-            <tr><td>Protects forms</td><td>✓</td><td>✓</td></tr>
-            <tr><td>Protects APIs</td><td>✗</td><td>✓</td></tr>
-            <tr><td>Protects imports</td><td>✗</td><td>✓</td></tr>
-            <tr><td>Visual feedback</td><td>Immediate</td><td>On save</td></tr>
-          </table>
-          
-          <h3>Creating a Data Policy</h3>
-          <ol>
-            <li>System Policy > Data Policies > New</li>
-            <li>Select Table</li>
-            <li>Set Conditions</li>
-            <li>Add Rules (mandatory, read-only)</li>
-            <li>Activate</li>
-          </ol>
-          
-          <div class="scenario-box">
-            <h4>🎯 Real-World Use Case</h4>
-            <p><strong>Problem:</strong> Integration team keeps creating incidents without Assignment Group via API.</p>
-            <p><strong>Solution:</strong> Data Policy on Incident table:</p>
-            <ul>
-              <li>Condition: State is not "Closed"</li>
-              <li>Rule: Assignment group is Mandatory</li>
-            </ul>
-            <p>Now ALL incidents — form, API, import — require Assignment Group!</p>
-          </div>
-          
-          <div class="tip-box">
-            <h4>💡 Best Practice</h4>
-            <p>Use BOTH UI Policy and Data Policy together:</p>
-            <ul>
-              <li>UI Policy gives instant user feedback</li>
-              <li>Data Policy protects data integrity from ALL sources</li>
-            </ul>
-          </div>
-        `
-      },
-      {
-        id: "4.3",
-        title: "Business Rules Introduction",
-        description: "Server-side scripts that run on database operations.",
-        duration: "90 min",
-        tags: ["Business Rules", "Server", "Scripting"],
-        content: `
-          <h2>Business Rules Introduction</h2>
-          <p>Business Rules are server-side scripts that execute when records are queried, inserted, updated, or deleted.</p>
-          
-          <h3>When Business Rules Run</h3>
-          <table>
-            <tr><th>Timing</th><th>When</th><th>Use Case</th></tr>
-            <tr><td>Before</td><td>Before database operation</td><td>Validate, modify data, abort</td></tr>
-            <tr><td>After</td><td>After database operation</td><td>Create related records, notifications</td></tr>
-            <tr><td>Async</td><td>After, in background</td><td>Heavy processing, integrations</td></tr>
-            <tr><td>Display</td><td>When form loads (query)</td><td>Calculate display values</td></tr>
-          </table>
-          
-          <h3>Creating a Business Rule</h3>
-          <ol>
-            <li>System Definition > Business Rules > New</li>
-            <li>Name it descriptively</li>
-            <li>Select Table</li>
-            <li>Choose When: before/after/async/display</li>
-            <li>Choose Operations: insert/update/delete/query</li>
-            <li>Set Conditions (or use script)</li>
-            <li>Write script (Advanced checkbox)</li>
-            <li>Save</li>
-          </ol>
-          
-          <h3>Key Objects</h3>
-          <pre>
-// current - the record being processed
-current.short_description = "Modified by BR";
-current.priority = 1;
-
-// previous - values BEFORE update (only in update)
-if (current.state != previous.state) {
-  // State changed!
-}
-
-// gs - GlideSystem utilities
-gs.info("Business Rule executed");
-gs.getUserID();  // Current user
-gs.now();        // Current datetime
-          </pre>
-          
-          <div class="scenario-box">
-            <h4>🎯 Hands-On: Auto-Assignment Rule</h4>
-            <p><strong>Requirement:</strong> When Category is "Network", auto-assign to "Network Support" group.</p>
-            <pre>
-Name: Auto-Assign Network Incidents
-Table: Incident
-When: before
-Insert: ✓, Update: ✓
-Condition: Category is Network
-
-Script:
-(function executeRule(current, previous) {
-  var gr = new GlideRecord('sys_user_group');
-  gr.addQuery('name', 'Network Support');
-  gr.query();
-  if (gr.next()) {
-    current.assignment_group = gr.sys_id;
-  }
-})(current, previous);
-            </pre>
-          </div>
-          
-          <div class="warning-box">
-            <h4>⚠️ Business Rule Best Practices</h4>
-            <ul>
-              <li>Always use conditions to limit when rules fire</li>
-              <li>Never do queries in Display rules (performance)</li>
-              <li>Use Async for heavy operations</li>
-              <li>current.update() in Before rules can cause recursion!</li>
-              <li>Always test in DEV first</li>
-            </ul>
-          </div>
-        `
-      },
-      {
-        id: "4.4",
-        title: "Client Scripts",
-        description: "Browser-side scripts for form interactivity.",
-        duration: "60 min",
-        tags: ["Client Script", "JavaScript", "Forms"],
-        content: `
-          <h2>Client Scripts</h2>
-          <p>Client Scripts run in the user's browser, providing immediate interactivity on forms.</p>
-          
-          <h3>Client Script Types</h3>
-          <table>
-            <tr><th>Type</th><th>When</th><th>Use Case</th></tr>
-            <tr><td>onLoad</td><td>Form loads</td><td>Set defaults, show messages</td></tr>
-            <tr><td>onChange</td><td>Field value changes</td><td>React to user input, populate fields</td></tr>
-            <tr><td>onSubmit</td><td>Form is submitted</td><td>Validate before save</td></tr>
-            <tr><td>onCellEdit</td><td>List cell is edited</td><td>List editing validation</td></tr>
-          </table>
-          
-          <h3>Key GlideForm (g_form) Methods</h3>
-          <pre>
-// Get/Set values
-g_form.getValue('field_name');
-g_form.setValue('field_name', 'value');
-
-// Field visibility
-g_form.setVisible('field_name', true/false);
-g_form.setMandatory('field_name', true/false);
-g_form.setReadOnly('field_name', true/false);
-
-// Messages
-g_form.addInfoMessage('Information');
-g_form.addErrorMessage('Error!');
-g_form.showFieldMsg('field', 'message', 'error');
-
-// Reference fields
-g_form.getReference('caller_id', function(ref) {
-  // ref contains the referenced record
-  alert(ref.email);
-});
-          </pre>
-          
-          <div class="scenario-box">
-            <h4>🎯 Hands-On: onChange Script</h4>
-            <p><strong>Requirement:</strong> When Priority changes to 1, show alert and set Impact to 1.</p>
-            <pre>
-Name: Priority 1 Alert
-Table: Incident
-Type: onChange
-Field name: priority
-
-Script:
-function onChange(control, oldValue, newValue, isLoading) {
-  if (isLoading) return;  // Don't run on form load
-  
-  if (newValue == '1') {
-    g_form.addInfoMessage('This is a Critical Priority incident!');
-    g_form.setValue('impact', '1');
-  }
-}
-            </pre>
-          </div>
-          
-          <h3>onSubmit Validation</h3>
-          <pre>
-function onSubmit() {
-  var shortDesc = g_form.getValue('short_description');
-  
-  if (shortDesc.length < 10) {
-    g_form.addErrorMessage('Description must be at least 10 characters');
-    return false;  // Prevent save
-  }
-  
-  return true;  // Allow save
-}
-          </pre>
-          
-          <div class="tip-box">
-            <h4>💡 Client Script Best Practices</h4>
-            <ul>
-              <li>Always check <code>isLoading</code> in onChange to avoid firing on form load</li>
-              <li>Use UI Policies when possible (no scripting required)</li>
-              <li>Client scripts don't protect data — use Data Policies/BRs too</li>
-              <li>Minimize server calls (g_form.getReference) for performance</li>
-            </ul>
-          </div>
-        `
-      },
-      {
-        id: "4.5",
-        title: "UI Actions",
-        description: "Create custom buttons, links, and context menu items.",
-        duration: "45 min",
-        tags: ["UI Actions", "Buttons", "Custom"],
-        content: `
-          <h2>UI Actions</h2>
-          <p>UI Actions add custom buttons, links, and menu items to forms and lists.</p>
-          
-          <h3>UI Action Types</h3>
-          <ul>
-            <li><strong>Form button:</strong> Button in header/footer</li>
-            <li><strong>Form link:</strong> Link in related links</li>
-            <li><strong>Form context menu:</strong> Right-click option</li>
-            <li><strong>List button:</strong> Button above list</li>
-            <li><strong>List link:</strong> Link in list row</li>
-            <li><strong>List context menu:</strong> Right-click on list row</li>
-          </ul>
-          
-          <h3>Creating a UI Action</h3>
-          <ol>
-            <li>System Definition > UI Actions > New</li>
-            <li>Configure display options (where it appears)</li>
-            <li>Set conditions (when it shows)</li>
-            <li>Add script (what it does)</li>
-            <li>Save</li>
-          </ol>
-          
-          <div class="scenario-box">
-            <h4>🎯 Hands-On: Escalate Button</h4>
-            <p><strong>Requirement:</strong> Create "Escalate to Manager" button on Incident form.</p>
-            <pre>
-Name: Escalate to Manager
-Table: Incident
-Form button: ✓
-Show update: ✓
-Condition: current.priority != 1 && current.active
-
-Script:
-current.priority = 1;
-current.escalation = 1;
-current.work_notes = "Escalated by " + gs.getUserDisplayName();
-current.update();
-action.setRedirectURL(current);
-            </pre>
-          </div>
-          
-          <h3>Client vs Server</h3>
-          <p>UI Actions can run on client, server, or both:</p>
-          <ul>
-            <li><strong>Client:</strong> Use g_form, immediate feedback</li>
-            <li><strong>Server:</strong> Use current, GlideRecord, database updates</li>
-          </ul>
-          
-          <pre>
-// Client-side portion
-function clientSubmit() {
-  if (!confirm("Are you sure you want to escalate?")) {
-    return false;
-  }
-  return true;
-}
-
-// Server-side runs after client returns true
-          </pre>
-        `
-      },
-      {
-        id: "4.6",
-        title: "Notifications",
-        description: "Configure email notifications and triggers.",
-        duration: "50 min",
-        tags: ["Notifications", "Email"],
-        content: `
-          <h2>Notifications</h2>
-          <p>Notifications send emails based on record events or conditions.</p>
-          
-          <h3>Notification Components</h3>
-          <ul>
-            <li><strong>When to send:</strong> Record inserted, updated, specific event</li>
-            <li><strong>Who will receive:</strong> Users, groups, email addresses</li>
-            <li><strong>What it contains:</strong> Subject, body (with variables)</li>
-          </ul>
-          
-          <h3>Creating a Notification</h3>
-          <ol>
-            <li>System Notification > Email > Notifications > New</li>
-            <li>Select Table</li>
-            <li>Set trigger (insert/update/event)</li>
-            <li>Add conditions</li>
-            <li>Configure recipients</li>
-            <li>Design email content</li>
-            <li>Activate</li>
-          </ol>
-          
-          <h3>Email Variables</h3>
-          <pre>
-Subject: Incident \${number} - \${short_description}
-
-Body:
-Priority: \${priority}
-Assigned to: \${assigned_to.name}
-Description: \${description}
-
-Direct link: \${URI_REF}
-          </pre>
-          
-          <div class="scenario-box">
-            <h4>🎯 Hands-On: P1 Alert</h4>
-            <p><strong>Requirement:</strong> Email IT Manager when P1 incident is created.</p>
-            <ul>
-              <li>Table: Incident</li>
-              <li>When: Record inserted</li>
-              <li>Condition: Priority is 1 - Critical</li>
-              <li>Recipients: IT Manager group</li>
-              <li>Subject: 🚨 P1 INCIDENT: \${number}</li>
-            </ul>
-          </div>
-          
-          <div class="tip-box">
-            <h4>💡 Notification Best Practices</h4>
-            <ul>
-              <li>Use Email Layouts for consistent branding</li>
-              <li>Test with email logs (System Mailboxes > Outbound)</li>
-              <li>Avoid notification storms (too many emails)</li>
-              <li>Let users unsubscribe from non-critical notifications</li>
-            </ul>
-          </div>
-        `
-      }
+      { id: "4.1", title: "UI Policies", description: "Control form field behavior dynamically without scripting.", duration: "60 min", tags: ["UI Policy", "Forms", "No-Code"], content: `<h2>UI Policies</h2><p>UI Policies dynamically change form field behavior based on conditions — no scripting required!</p>` },
+      { id: "4.2", title: "Data Policies", description: "Enforce data rules on server side for all access methods.", duration: "40 min", tags: ["Data Policy", "Validation", "Server"], content: `<h2>Data Policies</h2><p>Data Policies enforce rules on the SERVER — they work even when data comes from APIs, imports, or workflows.</p>` },
+      { id: "4.3", title: "Business Rules Introduction", description: "Server-side scripts that run on database operations.", duration: "90 min", tags: ["Business Rules", "Server", "Scripting"], content: `<h2>Business Rules Introduction</h2><p>Business Rules are server-side scripts that execute when records are queried, inserted, updated, or deleted.</p>` },
+      { id: "4.4", title: "Client Scripts", description: "Browser-side scripts for form interactivity.", duration: "60 min", tags: ["Client Script", "JavaScript", "Forms"], content: `<h2>Client Scripts</h2><p>Client Scripts run in the user's browser, providing immediate interactivity on forms.</p>` },
+      { id: "4.5", title: "UI Actions", description: "Create custom buttons, links, and context menu items.", duration: "45 min", tags: ["UI Actions", "Buttons", "Custom"], content: `<h2>UI Actions</h2><p>UI Actions add custom buttons, links, and menu items to forms and lists.</p>` },
+      { id: "4.6", title: "Notifications", description: "Configure email notifications and triggers.", duration: "50 min", tags: ["Notifications", "Email"], content: `<h2>Notifications</h2><p>Notifications send emails based on record events or conditions.</p>` }
     ]
   },
   {
@@ -1828,118 +983,8 @@ Direct link: \${URI_REF}
     level: "intermediate",
     colorClass: "selfservice",
     topics: [
-      {
-        id: "5.1",
-        title: "Import Sets Overview",
-        description: "Understanding the import architecture and staging tables.",
-        duration: "40 min",
-        tags: ["Import", "Data"],
-        content: `
-          <h2>Import Sets Overview</h2>
-          <p>Import Sets are ServiceNow's ETL (Extract, Transform, Load) mechanism for bringing external data into the platform.</p>
-          
-          <h3>The Import Flow</h3>
-          <pre>
-External Source → Import Set Table → Transform Map → Target Table
-   (CSV, Excel)      (Staging)         (Mapping)      (incident, user)
-          </pre>
-          
-          <h3>Why Staging Tables?</h3>
-          <ul>
-            <li><strong>Validation:</strong> Check data before it hits production tables</li>
-            <li><strong>Transformation:</strong> Convert values, lookup references</li>
-            <li><strong>Error handling:</strong> Fix issues without affecting live data</li>
-            <li><strong>Audit trail:</strong> Track what was imported</li>
-          </ul>
-          
-          <h3>Import Set Components</h3>
-          <table>
-            <tr><th>Component</th><th>Purpose</th></tr>
-            <tr><td>Data Source</td><td>Where data comes from (file, JDBC, REST)</td></tr>
-            <tr><td>Import Set Table</td><td>Temporary staging area</td></tr>
-            <tr><td>Transform Map</td><td>Field mapping and conversion rules</td></tr>
-            <tr><td>Transform Script</td><td>Custom transformation logic</td></tr>
-          </table>
-          
-          <div class="scenario-box">
-            <h4>🎯 Real-World Example</h4>
-            <p>HR sends you a CSV of 500 new employees:</p>
-            <ol>
-              <li>CSV uploads to import set table (staging)</li>
-              <li>Transform map matches columns to sys_user fields</li>
-              <li>Transform creates user records, assigns departments</li>
-              <li>Errors logged for review, successful imports active</li>
-            </ol>
-          </div>
-        `
-      },
-      {
-        id: "5.2",
-        title: "Transform Maps",
-        description: "Map source fields to target tables and handle data conversion.",
-        duration: "60 min",
-        tags: ["Transform", "Mapping"],
-        content: `
-          <h2>Transform Maps</h2>
-          <p>Transform Maps define how import set data becomes records in target tables.</p>
-          
-          <h3>Creating a Transform Map</h3>
-          <ol>
-            <li>System Import Sets > Transform Maps > New</li>
-            <li>Select source (import set table)</li>
-            <li>Select target table</li>
-            <li>Auto-map fields (or manual mapping)</li>
-            <li>Configure coalesce (matching) fields</li>
-            <li>Add transformation scripts if needed</li>
-          </ol>
-          
-          <h3>Field Mapping Options</h3>
-          <table>
-            <tr><th>Option</th><th>Use Case</th></tr>
-            <tr><td>Use source field</td><td>Direct copy</td></tr>
-            <tr><td>Choice action</td><td>Map to choice values</td></tr>
-            <tr><td>Reference value</td><td>Lookup reference by field</td></tr>
-            <tr><td>Script</td><td>Custom transformation logic</td></tr>
-            <tr><td>Date format</td><td>Parse date strings</td></tr>
-          </table>
-          
-          <h3>Coalesce (Deduplication)</h3>
-          <p>Coalesce fields determine if a record should be inserted or updated:</p>
-          <ul>
-            <li>If match found → Update existing record</li>
-            <li>If no match → Insert new record</li>
-            <li>Common coalesce fields: email, employee_number, asset_tag</li>
-          </ul>
-          
-          <div class="scenario-box">
-            <h4>🎯 Hands-On: User Import</h4>
-            <p>Import CSV with columns: name, email, dept_name</p>
-            <ol>
-              <li>Create import set from CSV</li>
-              <li>Create Transform Map to sys_user</li>
-              <li>Map name → name (direct)</li>
-              <li>Map email → email (coalesce)</li>
-              <li>Map dept_name → department (reference lookup)</li>
-              <li>Run transform</li>
-              <li>Check results</li>
-            </ol>
-          </div>
-          
-          <div class="tip-box">
-            <h4>💡 Transform Script Example</h4>
-            <pre>
-// In onBefore transform script
-// Combine first_name + last_name
-target.name = source.u_first_name + ' ' + source.u_last_name;
-
-// Set default if empty
-if (!source.u_department) {
-  target.department = 'General';  // Default department sys_id
-}
-            </pre>
-          </div>
-        `
-      }
+      { id: "5.1", title: "Import Sets Overview", description: "Understanding the import architecture and staging tables.", duration: "40 min", tags: ["Import", "Data"], content: `<h2>Import Sets Overview</h2><p>Import Sets are ServiceNow's ETL mechanism for bringing external data into the platform.</p>` },
+      { id: "5.2", title: "Transform Maps", description: "Map source fields to target tables and handle data conversion.", duration: "60 min", tags: ["Transform", "Mapping"], content: `<h2>Transform Maps</h2><p>Transform Maps define how import set data becomes records in target tables.</p>` }
     ]
   },
   {
@@ -1951,105 +996,8 @@ if (!source.u_department) {
     level: "intermediate",
     colorClass: "admin",
     topics: [
-      {
-        id: "6.1",
-        title: "Service Catalog Basics",
-        description: "Understand catalog structure: categories, items, and variables.",
-        duration: "50 min",
-        tags: ["Catalog", "Self-Service"],
-        content: `
-          <h2>Service Catalog Basics</h2>
-          <p>The Service Catalog lets users request services, hardware, software, and more through a self-service portal.</p>
-          
-          <h3>Catalog Structure</h3>
-          <pre>
-Service Catalog
-├── Category: Hardware
-│   ├── Item: New Laptop
-│   ├── Item: Monitor Request
-│   └── Item: Keyboard/Mouse
-├── Category: Software
-│   ├── Item: Software Installation
-│   └── Item: License Request
-└── Category: Access
-    ├── Item: VPN Access
-    └── Item: Building Access
-          </pre>
-          
-          <h3>Key Components</h3>
-          <table>
-            <tr><th>Component</th><th>Purpose</th></tr>
-            <tr><td>Catalog</td><td>Container for categories</td></tr>
-            <tr><td>Category</td><td>Groups related items</td></tr>
-            <tr><td>Catalog Item</td><td>Something users can request</td></tr>
-            <tr><td>Variable</td><td>Form field on the item</td></tr>
-            <tr><td>Variable Set</td><td>Reusable group of variables</td></tr>
-          </table>
-          
-          <h3>What Happens When User Submits</h3>
-          <ol>
-            <li>Request (sc_request) created</li>
-            <li>Requested Item (sc_req_item) created per item</li>
-            <li>Catalog Tasks (sc_task) created for fulfillment</li>
-            <li>Workflow/Flow runs for approvals/tasks</li>
-          </ol>
-          
-          <div class="scenario-box">
-            <h4>🎯 Hands-On: New Laptop Item</h4>
-            <ol>
-              <li>Service Catalog > Catalog Definitions > Maintain Items > New</li>
-              <li>Name: "New Laptop Request"</li>
-              <li>Add variables: Laptop Type (choice), Justification (text), Needed By (date)</li>
-              <li>Set fulfillment group</li>
-              <li>Test from Service Portal</li>
-            </ol>
-          </div>
-        `
-      },
-      {
-        id: "6.2",
-        title: "Knowledge Management",
-        description: "Create and organize knowledge articles for self-service.",
-        duration: "40 min",
-        tags: ["Knowledge", "KB"],
-        content: `
-          <h2>Knowledge Management</h2>
-          <p>Knowledge articles reduce ticket volume by helping users solve problems themselves.</p>
-          
-          <h3>Knowledge Structure</h3>
-          <ul>
-            <li><strong>Knowledge Base:</strong> Container (e.g., "IT Support KB")</li>
-            <li><strong>Category:</strong> Topic grouping</li>
-            <li><strong>Article:</strong> Individual document</li>
-          </ul>
-          
-          <h3>Article Lifecycle</h3>
-          <pre>
-Draft → Review → Published → Retired
-          </pre>
-          
-          <h3>Creating an Article</h3>
-          <ol>
-            <li>Knowledge > Articles > Create New</li>
-            <li>Select Knowledge Base</li>
-            <li>Choose Category</li>
-            <li>Write Short Description and Article Body</li>
-            <li>Submit for approval (if workflow enabled)</li>
-            <li>Publish when approved</li>
-          </ol>
-          
-          <div class="tip-box">
-            <h4>💡 Knowledge Best Practices</h4>
-            <ul>
-              <li>Write clear, searchable titles</li>
-              <li>Include keywords users would search for</li>
-              <li>Add screenshots for visual steps</li>
-              <li>Review and update regularly</li>
-              <li>Track article usefulness with feedback</li>
-            </ul>
-          </div>
-        `
-      }
+      { id: "6.1", title: "Service Catalog Basics", description: "Understand catalog structure: categories, items, and variables.", duration: "50 min", tags: ["Catalog", "Self-Service"], content: `<h2>Service Catalog Basics</h2><p>The Service Catalog lets users request services through a self-service portal.</p>` },
+      { id: "6.2", title: "Knowledge Management", description: "Create and organize knowledge articles for self-service.", duration: "40 min", tags: ["Knowledge", "KB"], content: `<h2>Knowledge Management</h2><p>Knowledge articles reduce ticket volume by helping users solve problems themselves.</p>` }
     ]
   },
   {
@@ -2061,66 +1009,7 @@ Draft → Review → Published → Retired
     level: "intermediate",
     colorClass: "reporting",
     topics: [
-      {
-        id: "7.1",
-        title: "Flow Designer Introduction",
-        description: "Build automated workflows without code.",
-        duration: "60 min",
-        tags: ["Flow Designer", "Automation", "Low-Code"],
-        content: `
-          <h2>Flow Designer Introduction</h2>
-          <p>Flow Designer is ServiceNow's low-code automation tool — build complex workflows without scripting.</p>
-          
-          <h3>When to Use Flow Designer</h3>
-          <ul>
-            <li>Multi-step approval processes</li>
-            <li>Creating related records</li>
-            <li>Sending notifications</li>
-            <li>Integrating with external systems</li>
-            <li>Scheduled automation</li>
-          </ul>
-          
-          <h3>Flow Components</h3>
-          <table>
-            <tr><th>Component</th><th>Purpose</th></tr>
-            <tr><td>Trigger</td><td>What starts the flow (record created, scheduled, etc.)</td></tr>
-            <tr><td>Action</td><td>What the flow does (create record, send email, etc.)</td></tr>
-            <tr><td>Flow Logic</td><td>If/Else, For Each, Wait, etc.</td></tr>
-            <tr><td>Subflow</td><td>Reusable flow component</td></tr>
-          </table>
-          
-          <h3>Common Triggers</h3>
-          <ul>
-            <li><strong>Record Created:</strong> When new record inserted</li>
-            <li><strong>Record Updated:</strong> When record modified</li>
-            <li><strong>Scheduled:</strong> Daily, weekly, etc.</li>
-            <li><strong>Inbound Email:</strong> When email received</li>
-            <li><strong>Service Catalog:</strong> When request submitted</li>
-          </ul>
-          
-          <div class="scenario-box">
-            <h4>🎯 Hands-On: P1 Notification Flow</h4>
-            <p><strong>Requirement:</strong> When P1 Incident created, notify IT Manager and create a Slack message.</p>
-            <ol>
-              <li>Process Automation > Flow Designer</li>
-              <li>New Flow</li>
-              <li>Trigger: Record Created on Incident</li>
-              <li>Condition: Priority = 1</li>
-              <li>Action 1: Send Email to IT Manager</li>
-              <li>Action 2: Look up Assignment Group Manager</li>
-              <li>Action 3: Create Task for immediate response</li>
-              <li>Activate and test</li>
-            </ol>
-          </div>
-          
-          <div class="tip-box">
-            <h4>💡 Flow Designer vs Workflow</h4>
-            <p><strong>Workflow (Legacy):</strong> Visual, but harder to maintain</p>
-            <p><strong>Flow Designer (Modern):</strong> Low-code, better testing, reusable actions</p>
-            <p>ServiceNow recommends Flow Designer for all new automation!</p>
-          </div>
-        `
-      }
+      { id: "7.1", title: "Flow Designer Introduction", description: "Build automated workflows without code.", duration: "60 min", tags: ["Flow Designer", "Automation", "Low-Code"], content: `<h2>Flow Designer Introduction</h2><p>Flow Designer is ServiceNow's low-code automation tool — build complex workflows without scripting.</p>` }
     ]
   },
   {
@@ -2132,204 +1021,10 @@ Draft → Review → Published → Retired
     level: "advanced",
     colorClass: "exam",
     topics: [
-      {
-        id: "8.1",
-        title: "Users, Groups & Roles",
-        description: "User management fundamentals.",
-        duration: "50 min",
-        tags: ["Users", "Security"],
-        content: `
-          <h2>Users, Groups & Roles</h2>
-          <p>Security in ServiceNow is built on Users, Groups, and Roles.</p>
-          
-          <h3>The Security Model</h3>
-          <pre>
-User ──belongs to──→ Group
-User ──has──→ Role
-Group ──has──→ Role
-Role ──grants──→ Permissions (ACLs)
-          </pre>
-          
-          <h3>Key Tables</h3>
-          <table>
-            <tr><th>Table</th><th>Purpose</th></tr>
-            <tr><td>sys_user</td><td>User records</td></tr>
-            <tr><td>sys_user_group</td><td>Group records</td></tr>
-            <tr><td>sys_user_role</td><td>Role definitions</td></tr>
-            <tr><td>sys_user_has_role</td><td>User-role assignments</td></tr>
-            <tr><td>sys_user_grmember</td><td>Group membership</td></tr>
-          </table>
-          
-          <h3>Common Roles</h3>
-          <ul>
-            <li><strong>admin:</strong> Full system access</li>
-            <li><strong>itil:</strong> IT staff (incidents, changes, etc.)</li>
-            <li><strong>catalog_admin:</strong> Manage service catalog</li>
-            <li><strong>knowledge_admin:</strong> Manage knowledge base</li>
-            <li><strong>report_admin:</strong> Create/share reports</li>
-          </ul>
-          
-          <div class="warning-box">
-            <h4>⚠️ Least Privilege Principle</h4>
-            <p>Only grant roles users NEED. Never give admin role broadly. Create custom roles for specific functions.</p>
-          </div>
-        `
-      },
-      {
-        id: "8.2",
-        title: "Access Control Lists (ACLs)",
-        description: "Control who can see and do what.",
-        duration: "60 min",
-        tags: ["ACLs", "Security"],
-        content: `
-          <h2>Access Control Lists (ACLs)</h2>
-          <p>ACLs define who can read, write, create, and delete records and fields.</p>
-          
-          <h3>ACL Types</h3>
-          <table>
-            <tr><th>Type</th><th>Controls</th></tr>
-            <tr><td>Table ACL</td><td>Access to entire table</td></tr>
-            <tr><td>Field ACL</td><td>Access to specific field</td></tr>
-            <tr><td>Record ACL</td><td>Access based on record content</td></tr>
-          </table>
-          
-          <h3>ACL Operations</h3>
-          <ul>
-            <li><strong>read:</strong> Can view records</li>
-            <li><strong>write:</strong> Can edit records</li>
-            <li><strong>create:</strong> Can create new records</li>
-            <li><strong>delete:</strong> Can delete records</li>
-          </ul>
-          
-          <h3>ACL Evaluation Order</h3>
-          <p>ServiceNow checks ACLs from most specific to least:</p>
-          <ol>
-            <li>table.field (most specific)</li>
-            <li>table.*</li>
-            <li>*.field</li>
-            <li>*.* (least specific)</li>
-          </ol>
-          
-          <div class="scenario-box">
-            <h4>🎯 Hands-On: Salary Field ACL</h4>
-            <p><strong>Requirement:</strong> Only HR Managers can see the Salary field on User.</p>
-            <ol>
-              <li>System Security > ACL > New</li>
-              <li>Type: record</li>
-              <li>Operation: read</li>
-              <li>Name: sys_user.salary</li>
-              <li>Requires role: hr_manager</li>
-              <li>Save and test with impersonation</li>
-            </ol>
-          </div>
-        `
-      },
-      {
-        id: "8.3",
-        title: "Update Sets",
-        description: "Package and deploy customizations between instances.",
-        duration: "60 min",
-        tags: ["Update Sets", "Deployment"],
-        content: `
-          <h2>Update Sets</h2>
-          <p>Update Sets capture customizations for migration between instances (DEV → TEST → PROD).</p>
-          
-          <h3>The Update Set Lifecycle</h3>
-          <pre>
-DEV: Create → Capture changes → Complete
-     ↓
-PROD: Retrieved → Previewed → Committed
-          </pre>
-          
-          <h3>What's Captured</h3>
-          <ul>
-            <li>✅ Business Rules, Client Scripts, UI Policies</li>
-            <li>✅ Form layouts, Lists, Views</li>
-            <li>✅ Reports, Dashboards</li>
-            <li>✅ Workflows, Flows</li>
-            <li>❌ DATA (records) — only configuration</li>
-            <li>❌ Attachments (by default)</li>
-          </ul>
-          
-          <h3>Creating an Update Set</h3>
-          <ol>
-            <li>System Update Sets > Local Update Sets > New</li>
-            <li>Name it descriptively (e.g., "PROJ-123 VIP Incident Enhancements")</li>
-            <li>Set as current update set</li>
-            <li>Make your changes</li>
-            <li>Complete when done</li>
-            <li>Export (right-click > Export to XML)</li>
-          </ol>
-          
-          <h3>Applying an Update Set</h3>
-          <ol>
-            <li>System Update Sets > Retrieved Update Sets</li>
-            <li>Import from XML or pull from remote instance</li>
-            <li>Preview (checks for conflicts)</li>
-            <li>Review preview results</li>
-            <li>Commit (applies changes)</li>
-          </ol>
-          
-          <div class="warning-box">
-            <h4>⚠️ Update Set Best Practices</h4>
-            <ul>
-              <li>One update set per feature/ticket</li>
-              <li>Always preview before commit</li>
-              <li>Test in non-prod first</li>
-              <li>Document what's included</li>
-              <li>Back out plan for emergencies</li>
-            </ul>
-          </div>
-          
-          <div class="scenario-box">
-            <h4>🎯 Exam Scenario</h4>
-            <p>You created a Business Rule in DEV. How do you deploy to PROD?</p>
-            <p><strong>Answer:</strong> Complete the update set in DEV → Export to XML → Import in PROD → Preview for conflicts → Commit</p>
-          </div>
-        `
-      },
-      {
-        id: "8.4",
-        title: "Impersonation & Debugging",
-        description: "Test as different users and troubleshoot issues.",
-        duration: "30 min",
-        tags: ["Impersonation", "Testing"],
-        content: `
-          <h2>Impersonation & Debugging</h2>
-          <p>Impersonation lets admins see the system as another user — essential for testing and troubleshooting.</p>
-          
-          <h3>How to Impersonate</h3>
-          <ol>
-            <li>Click your user avatar (top right)</li>
-            <li>Select "Impersonate User"</li>
-            <li>Search for and select user</li>
-            <li>System now shows what they see</li>
-            <li>Click "End Impersonation" when done</li>
-          </ol>
-          
-          <h3>Why Impersonate?</h3>
-          <ul>
-            <li>Test ACL configurations</li>
-            <li>Verify role-based access</li>
-            <li>Debug user-reported issues</li>
-            <li>Test notifications</li>
-            <li>Validate UI Policies for different roles</li>
-          </ul>
-          
-          <div class="warning-box">
-            <h4>⚠️ Impersonation Auditing</h4>
-            <p>All impersonation is logged! Never use impersonation to access data you shouldn't see. It's for testing, not snooping.</p>
-          </div>
-          
-          <h3>Debugging Tools</h3>
-          <ul>
-            <li><strong>Session Debug:</strong> Activate under user menu</li>
-            <li><strong>Script Debugger:</strong> Step through Business Rules</li>
-            <li><strong>System Logs:</strong> View errors and warnings</li>
-            <li><strong>Debug Security:</strong> See ACL evaluations</li>
-          </ul>
-        `
-      }
+      { id: "8.1", title: "Users, Groups & Roles", description: "User management fundamentals.", duration: "50 min", tags: ["Users", "Security"], content: `<h2>Users, Groups & Roles</h2><p>Security in ServiceNow is built on Users, Groups, and Roles.</p>` },
+      { id: "8.2", title: "Access Control Lists (ACLs)", description: "Control who can see and do what.", duration: "60 min", tags: ["ACLs", "Security"], content: `<h2>Access Control Lists (ACLs)</h2><p>ACLs define who can read, write, create, and delete records and fields.</p>` },
+      { id: "8.3", title: "Update Sets", description: "Package and deploy customizations between instances.", duration: "60 min", tags: ["Update Sets", "Deployment"], content: `<h2>Update Sets</h2><p>Update Sets capture customizations for migration between instances.</p>` },
+      { id: "8.4", title: "Impersonation & Debugging", description: "Test as different users and troubleshoot issues.", duration: "30 min", tags: ["Impersonation", "Testing"], content: `<h2>Impersonation & Debugging</h2><p>Impersonation lets admins see the system as another user.</p>` }
     ]
   }
 ];
@@ -2337,6 +1032,7 @@ PROD: Retrieved → Previewed → Committed
 // ==================== CSA CERTIFICATION FUNCTIONS ====================
 let completedTopics = JSON.parse(localStorage.getItem('csa_completed_topics') || '[]');
 let currentTopicId = null;
+let currentArticleId = null;
 
 function initCSA() {
   renderLearningPath();
@@ -2412,7 +1108,7 @@ function renderLearningPath() {
   container.innerHTML = html;
 }
 
-function toggleModule(moduleId) {
+function toggleModule(moduleId, skipUrlUpdate = false) {
   const content = document.getElementById(`content-${moduleId}`);
   const expand = document.getElementById(`expand-${moduleId}`);
   
@@ -2426,10 +1122,15 @@ function toggleModule(moduleId) {
     
     content.classList.add('active');
     expand.classList.add('rotated');
+    
+    // Update URL (unless we're loading from URL)
+    if (!skipUrlUpdate) {
+      Router.navigate('module', moduleId, true);
+    }
   }
 }
 
-function openTopic(topicId) {
+function openTopic(topicId, skipUrlUpdate = false) {
   currentTopicId = topicId;
   
   let topic = null;
@@ -2464,11 +1165,20 @@ function openTopic(topicId) {
   
   document.getElementById('topicModal').classList.add('active');
   document.body.style.overflow = 'hidden';
+  
+  // Update URL
+  if (!skipUrlUpdate) {
+    Router.navigate('topic', topicId, true);
+  }
 }
 
 function closeTopicModal() {
   document.getElementById('topicModal').classList.remove('active');
   document.body.style.overflow = '';
+  currentTopicId = null;
+  
+  // Update URL to just show CSA section
+  Router.navigate('section', 'csa', true);
 }
 
 function markTopicComplete() {
@@ -2483,7 +1193,7 @@ function markTopicComplete() {
   localStorage.setItem('csa_completed_topics', JSON.stringify(completedTopics));
   updateProgress();
   renderLearningPath();
-  openTopic(currentTopicId); // Refresh modal
+  openTopic(currentTopicId, true); // Refresh modal
 }
 
 function navigateTopic(direction) {
@@ -2516,7 +1226,7 @@ function updateProgress() {
   if (completedCount) completedCount.textContent = `${completed} of ${totalTopics} topics completed`;
 }
 
-// ==================== BLOG FUNCTIONS (EXISTING) ====================
+// ==================== BLOG FUNCTIONS ====================
 var JS_TUTORIAL_SERIES = [
   { id: 4, num: 1, title: "Introduction" },
   { id: 5, num: 2, title: "GlideRecord Basics" },
@@ -2576,19 +1286,17 @@ document.addEventListener('DOMContentLoaded', function () {
   bindMobileMenu();
   loadPostsAndRender();
   initCSA();
+  
+  // Initialize router after everything is set up
+  setTimeout(() => Router.init(), 100);
 });
 
 function bindMainTabs() {
   document.querySelectorAll('.main-tab').forEach(function(tab) {
     tab.addEventListener('click', function() {
-      // Update tabs
-      document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      
-      // Update sections
       const section = tab.dataset.section;
-      document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-      document.getElementById(section + 'Section').classList.add('active');
+      switchSection(section);
+      Router.navigate('section', section, true);
     });
   });
 }
@@ -2604,6 +1312,12 @@ async function loadPostsAndRender() {
     });
 
     renderBlog('all');
+    
+    // Check if there's a pending article to open
+    if (pendingArticleId) {
+      openArticle(pendingArticleId, true);
+      pendingArticleId = null;
+    }
   } catch (err) {
     console.error(err);
     document.getElementById('blogGrid').innerHTML = '';
@@ -2667,9 +1381,11 @@ function bindFilters() {
   });
 }
 
-function openArticle(id) {
+function openArticle(id, skipUrlUpdate = false) {
   var p = BLOG_POSTS.find(function (x) { return String(x.id) === String(id); });
   if (!p) return;
+  
+  currentArticleId = id;
 
   document.getElementById('modalTitle').textContent = p.title || '';
   document.getElementById('modalDate').innerHTML = '📅 ' + (p.date || '');
@@ -2687,11 +1403,20 @@ function openArticle(id) {
   document.getElementById('blogModal').classList.add('active');
   document.body.style.overflow = 'hidden';
   document.querySelector('.blog-modal').scrollTop = 0;
+  
+  // Update URL
+  if (!skipUrlUpdate) {
+    Router.navigate('article', id, true);
+  }
 }
 
 function closeModal() {
   document.getElementById('blogModal').classList.remove('active');
   document.body.style.overflow = '';
+  currentArticleId = null;
+  
+  // Update URL to just show blog section
+  Router.navigate('section', 'blog', true);
 }
 
 function bindModalEvents() {
