@@ -9,7 +9,7 @@
   <meta name="description" content="Deep ServiceNow interview pattern questions asked at Apple, Google, ServiceNow and other big tech companies with detailed answers.">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    :root{--blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000}
+    :root{--blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000;--green:#34c759}
     html{scroll-behavior:smooth}
     body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
     
@@ -45,6 +45,7 @@
     .interview-list{display:flex;flex-direction:column;gap:20px}
     .interview-card{background:var(--white);border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,0.06);overflow:hidden;opacity:0;transform:translateY(20px);transition:all 0.5s}
     .interview-card.animate{opacity:1;transform:translateY(0)}
+    .interview-card.highlighted{box-shadow:0 4px 24px rgba(0,102,204,0.2);border:2px solid var(--blue)}
     .interview-header{padding:28px 32px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;transition:background 0.3s}
     .interview-header:hover{background:rgba(0,0,0,0.02)}
     .interview-q{flex:1}
@@ -60,7 +61,7 @@
     .interview-card.open .interview-toggle{background:var(--blue)}
     .interview-card.open .interview-toggle svg{stroke:#fff;transform:rotate(180deg)}
     .interview-answer{max-height:0;overflow:hidden;transition:max-height 0.5s ease-out}
-    .interview-card.open .interview-answer{max-height:3000px}
+    .interview-card.open .interview-answer{max-height:5000px}
     .interview-answer-inner{padding:0 32px 32px;border-top:1px solid rgba(0,0,0,0.06)}
     .interview-answer-inner h4{font-size:16px;font-weight:600;margin:24px 0 12px;color:var(--text);display:flex;align-items:center;gap:8px}
     .interview-answer-inner h4::before{content:'';width:4px;height:16px;background:var(--blue);border-radius:2px}
@@ -70,7 +71,15 @@
     .interview-answer-inner pre{background:linear-gradient(135deg,#1d1d1f,#2d2d2f);color:#e5e5e5;padding:20px 24px;border-radius:12px;overflow-x:auto;font-size:13px;line-height:1.6;margin:18px 0;font-family:'SF Mono',Monaco,monospace;border:1px solid rgba(255,255,255,0.1)}
     .interview-answer-inner code{background:rgba(0,0,0,0.06);padding:2px 8px;border-radius:6px;font-size:14px;font-family:'SF Mono',Monaco,monospace}
     .interview-answer-inner pre code{background:none;padding:0}
-    .interview-date{font-size:12px;color:var(--gray);margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:6px}
+    .interview-footer{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,0,0,0.06);flex-wrap:wrap;gap:12px}
+    .interview-date{font-size:12px;color:var(--gray);display:flex;align-items:center;gap:6px}
+    
+    /* Share Actions */
+    .share-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .share-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border:1px solid rgba(0,0,0,0.1);border-radius:8px;background:var(--white);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;transition:all 0.2s}
+    .share-btn:hover{background:var(--blue);color:var(--white);border-color:var(--blue)}
+    .share-btn.copied{background:var(--green);color:var(--white);border-color:var(--green)}
+    .share-btn svg{width:14px;height:14px;fill:currentColor}
     
     .tip-box{background:linear-gradient(135deg,rgba(0,102,204,0.08),rgba(0,102,204,0.03));border:1px solid rgba(0,102,204,0.15);border-radius:12px;padding:16px 20px;margin:16px 0}
     .tip-box h5{font-size:13px;font-weight:600;color:var(--blue);margin-bottom:8px;display:flex;align-items:center;gap:6px}
@@ -78,6 +87,12 @@
     
     .empty-state{text-align:center;padding:80px 20px;color:var(--gray)}
     .empty-state h3{font-size:24px;margin-bottom:12px;color:var(--text)}
+    
+    /* Toast notification */
+    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--black);color:var(--white);padding:14px 28px;border-radius:12px;font-size:14px;font-weight:500;z-index:99999;opacity:0;transition:all 0.3s ease;display:flex;align-items:center;gap:10px;box-shadow:0 10px 40px rgba(0,0,0,0.3)}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    .toast.success{background:var(--green)}
+    .toast svg{width:18px;height:18px;fill:currentColor}
     
     footer{background:var(--white);padding:24px;text-align:center;border-top:1px solid rgba(0,0,0,0.06)}
     .footer-text{font-size:12px;color:var(--gray)}
@@ -91,6 +106,8 @@
       .interview-header{padding:20px 24px}
       .interview-answer-inner{padding:0 24px 24px}
       .header-stats{gap:24px}
+      .interview-footer{flex-direction:column;align-items:flex-start}
+      .share-actions{width:100%}
     }
   </style>
 </head>
@@ -140,9 +157,191 @@
     </div>
   </main>
 
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+    <span id="toastMessage">Link copied!</span>
+  </div>
+
   <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
 
   <script>
+    // ==================== URL ROUTING SYSTEM ====================
+    // URL Patterns:
+    //   #question/{id}     - Opens specific interview question
+    //   #category/{name}   - Filters by category
+
+    const Router = {
+      // Parse current URL hash
+      parse: function() {
+        const hash = window.location.hash.slice(1); // Remove #
+        if (!hash) return null;
+        
+        const [type, ...idParts] = hash.split('/');
+        const id = idParts.join('/');
+        
+        return { type, id };
+      },
+      
+      // Navigate to a route
+      navigate: function(type, id, replace = false) {
+        const newHash = id ? `#${type}/${id}` : `#${type}`;
+        
+        if (replace) {
+          history.replaceState(null, '', newHash);
+        } else {
+          history.pushState(null, '', newHash);
+        }
+        
+        this.handleRoute();
+      },
+      
+      // Handle the current route
+      handleRoute: function() {
+        const route = this.parse();
+        
+        if (!route) return;
+        
+        switch (route.type) {
+          case 'question':
+          case 'q':
+            // Wait for interviews to load, then open question
+            if (INTERVIEWS.length > 0) {
+              openQuestion(route.id, true);
+            } else {
+              pendingQuestionId = route.id;
+            }
+            break;
+            
+          case 'category':
+          case 'cat':
+            filterByCategory(route.id);
+            break;
+        }
+      },
+      
+      // Generate shareable URL
+      getShareUrl: function(type, id) {
+        const base = window.location.origin + window.location.pathname;
+        return `${base}#${type}/${id}`;
+      },
+      
+      // Initialize router
+      init: function() {
+        window.addEventListener('popstate', () => this.handleRoute());
+        this.handleRoute();
+      }
+    };
+
+    let pendingQuestionId = null;
+    let currentQuestionId = null;
+
+    // ==================== SHARE FUNCTIONS ====================
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      
+      toastMessage.textContent = message;
+      toast.className = 'toast show ' + type;
+      
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
+    }
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      
+      try {
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        return Promise.resolve();
+      } catch (err) {
+        document.body.removeChild(textarea);
+        return Promise.reject(err);
+      }
+    }
+
+    function copyQuestionLink(id, btnElement) {
+      const url = Router.getShareUrl('question', id);
+      copyToClipboard(url).then(() => {
+        btnElement.classList.add('copied');
+        btnElement.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!';
+        showToast('Link copied to clipboard!');
+        
+        setTimeout(() => {
+          btnElement.classList.remove('copied');
+          btnElement.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy Link';
+        }, 2000);
+      });
+    }
+
+    function shareToTwitter(id) {
+      const q = INTERVIEWS.find(x => String(x.id) === String(id));
+      if (!q) return;
+      
+      const url = Router.getShareUrl('question', id);
+      const text = `ServiceNow Interview Question (${q.company}, ${q.difficulty}): "${q.question.substring(0, 100)}..."`;
+      const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+      window.open(tweetUrl, '_blank', 'width=550,height=420');
+    }
+
+    function shareToLinkedIn(id) {
+      const url = Router.getShareUrl('question', id);
+      const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+      window.open(linkedInUrl, '_blank', 'width=550,height=420');
+    }
+
+    // ==================== QUESTION FUNCTIONS ====================
+    function openQuestion(id, skipUrlUpdate = false) {
+      const card = document.querySelector(`.interview-card[data-id="${id}"]`);
+      if (!card) return;
+      
+      currentQuestionId = id;
+      
+      // Close all others first
+      document.querySelectorAll('.interview-card.open').forEach(c => c.classList.remove('open'));
+      document.querySelectorAll('.interview-card.highlighted').forEach(c => c.classList.remove('highlighted'));
+      
+      // Open and highlight the target card
+      card.classList.add('open');
+      card.classList.add('highlighted');
+      
+      // Scroll to the card
+      setTimeout(() => {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+      
+      // Update URL
+      if (!skipUrlUpdate) {
+        Router.navigate('question', id, true);
+      }
+      
+      // Remove highlight after a few seconds
+      setTimeout(() => {
+        card.classList.remove('highlighted');
+      }, 3000);
+    }
+
+    function filterByCategory(category) {
+      // Update active filter button
+      document.querySelectorAll('[data-ifilter]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.ifilter === category);
+      });
+      
+      renderInterviews(category);
+    }
+
+    // ==================== DATA & RENDERING ====================
     var DEFAULT_INTERVIEWS=[
       {id:1,question:"Explain the difference between GlideRecord and GlideAggregate. When would you use one over the other, and what are the performance implications?",answer:"<p><strong>GlideRecord</strong> retrieves individual records and loads all fields into memory. <strong>GlideAggregate</strong> performs database-level aggregations (COUNT, SUM, AVG, MIN, MAX) without loading record data.</p><h4>Performance Implications</h4><ul><li><strong>GlideRecord COUNT anti-pattern:</strong> Using <code>gr.query(); while(gr.next()) count++;</code> loads every record into memory - O(n) memory complexity.</li><li><strong>GlideAggregate:</strong> Using <code>ga.addAggregate('COUNT'); ga.query();</code> executes a single SQL COUNT statement - O(1) memory complexity.</li></ul><h4>Code Example</h4><pre>// ❌ Bad - Loads 100K records into memory\nvar gr = new GlideRecord('incident');\ngr.query();\nvar count = gr.getRowCount();\n\n// ✅ Good - Single database operation\nvar ga = new GlideAggregate('incident');\nga.addAggregate('COUNT');\nga.query();\nvar count = ga.next() ? ga.getAggregate('COUNT') : 0;</pre><div class='tip-box'><h5>💡 Pro Tip</h5><p>GlideAggregate also supports grouping with <code>ga.groupBy('field')</code> - essential for building reports and dashboards efficiently.</p></div>",difficulty:"Senior",category:"Performance",company:"ServiceNow",date:"Dec 12, 2025"},
       {id:2,question:"A Business Rule and a Client Script both update the same field. Describe the exact execution order and how to prevent race conditions.",answer:"<p><strong>Execution Order (on form submit):</strong></p><ol><li><strong>Client Script (onSubmit)</strong> - Runs in browser BEFORE data is sent to server</li><li><strong>Business Rule (before)</strong> - Runs on server BEFORE database write</li><li><strong>Database Write</strong> - Actual INSERT/UPDATE operation</li><li><strong>Business Rule (after)</strong> - Runs AFTER database write completes</li><li><strong>Async Business Rule</strong> - Queued, runs independently on scheduler</li></ol><h4>Why Business Rule Always Wins</h4><p>The Business Rule executes after the Client Script and directly modifies the GlideRecord current object before the database write. Any Client Script changes can be overwritten.</p><h4>Prevention Strategy</h4><pre>// Business Rule - Check if user explicitly changed the field\nif (!current.priority.changes()) {\n  // Only auto-calculate if user didn't touch it\n  current.priority = calculatePriority();\n}</pre><div class='tip-box'><h5>💡 Pro Tip</h5><p>Use <code>current.priority.changes()</code> rather than comparing old/new values. It handles edge cases like empty-to-value changes correctly.</p></div>",difficulty:"Senior",category:"Architecture",company:"Apple",date:"Dec 12, 2025"},
@@ -153,56 +352,157 @@
       {id:7,question:"How would you implement row-level security in ServiceNow beyond basic ACLs?",answer:"<h4>Advanced Row-Level Security Approaches</h4><h4>1. Before Query Business Rules</h4><pre>// Automatically filters all queries on this table\n(function executeRule(current, previous) {\n  if (!gs.hasRole('admin')) {\n    current.addQuery('department', gs.getUser().getDepartmentID());\n  }\n})(current, previous);</pre><h4>2. Domain Separation</h4><p>For multi-tenant scenarios, domain separation provides complete data isolation at the platform level.</p><h4>3. Query Business Rules with Encoded Queries</h4><pre>// More complex filtering\nvar userGroups = gs.getUser().getMyGroups();\ncurrent.addEncodedQuery('assignment_groupIN' + userGroups.join(','));</pre><h4>4. Data Source Filtering</h4><p>For reports and dashboards, implement data source restrictions that filter based on user context.</p><h4>Performance Considerations</h4><ul><li>Before Query BRs run on EVERY query - keep them lightweight</li><li>Use indexed fields for filter conditions</li><li>Consider caching user's allowed records if checking is complex</li></ul><div class='tip-box'><h5>💡 Pro Tip</h5><p>Combine approaches: ACLs for UI security, Before Query BRs for API/integration security. This ensures security regardless of how data is accessed.</p></div>",difficulty:"Expert",category:"Security",company:"ServiceNow",date:"Dec 9, 2025"},
       {id:8,question:"Explain script includes vs. UI scripts. What are the scope and execution context differences?",answer:"<h4>Script Includes</h4><ul><li><strong>Execution:</strong> Server-side only</li><li><strong>Scope:</strong> Available to Business Rules, Scheduled Jobs, REST APIs, other Script Includes</li><li><strong>Loading:</strong> On-demand when called</li></ul><pre>// Script Include Definition\nvar IncidentUtils = Class.create();\nIncidentUtils.prototype = {\n  initialize: function() {},\n  \n  calculatePriority: function(impact, urgency) {\n    return impact * urgency;\n  },\n  \n  type: 'IncidentUtils'\n};</pre><h4>UI Scripts</h4><ul><li><strong>Execution:</strong> Client-side (browser)</li><li><strong>Scope:</strong> Available to Client Scripts, UI Policies, UI Actions (client-side)</li><li><strong>Loading:</strong> Loaded when form/page loads (adds to page weight)</li></ul><pre>// UI Script (Global)\nfunction showConfirmation(message) {\n  return confirm(message);\n}\n\nfunction formatCurrency(amount) {\n  return '$' + amount.toFixed(2);\n}</pre><h4>Key Differences</h4><table style='width:100%;border-collapse:collapse;margin:16px 0'><tr style='background:#f5f5f7'><td style='padding:12px;border:1px solid #ddd'><strong>Aspect</strong></td><td style='padding:12px;border:1px solid #ddd'><strong>Script Include</strong></td><td style='padding:12px;border:1px solid #ddd'><strong>UI Script</strong></td></tr><tr><td style='padding:12px;border:1px solid #ddd'>Database Access</td><td style='padding:12px;border:1px solid #ddd'>Direct GlideRecord</td><td style='padding:12px;border:1px solid #ddd'>GlideAjax required</td></tr><tr><td style='padding:12px;border:1px solid #ddd'>Performance</td><td style='padding:12px;border:1px solid #ddd'>No page impact</td><td style='padding:12px;border:1px solid #ddd'>Adds to page load</td></tr></table><div class='tip-box'><h5>💡 Pro Tip</h5><p>For shared client logic, consider Angular Services in Service Portal instead of UI Scripts - better modularization and testing support.</p></div>",difficulty:"Senior",category:"Scripting",company:"Apple",date:"Dec 8, 2025"}
     ];
-    var INTERVIEWS=DEFAULT_INTERVIEWS;
-    fetch('interviews.json').then(function(r){return r.json();}).then(function(data){INTERVIEWS=data;renderInterviews('all');updateStats();}).catch(function(){renderInterviews('all');updateStats();});
-
-    var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('animate');});},{threshold:0.1});
-
-    function updateStats(){
-      document.getElementById('totalQuestions').textContent=INTERVIEWS.length;
-      var companies=[...new Set(INTERVIEWS.map(function(q){return q.company;}))];
-      var categories=[...new Set(INTERVIEWS.map(function(q){return q.category;}))];
-      document.getElementById('totalCompanies').textContent=companies.length;
-      document.getElementById('totalCategories').textContent=categories.length;
-    }
-
-    function renderInterviews(filter){
-      var filtered=filter==='all'?INTERVIEWS:INTERVIEWS.filter(function(q){return q.category===filter;});
-      var list=document.getElementById('interviewList');
-      var empty=document.getElementById('emptyState');
-      
-      if(filtered.length===0){list.innerHTML='';empty.style.display='block';return;}
-      empty.style.display='none';
-      
-      var html='';
-      filtered.forEach(function(q,i){
-        var diffClass=q.difficulty==='Expert'?'expert':'';
-        html+='<div class="interview-card" data-animate-card style="transition-delay:'+(i*.08)+'s"><div class="interview-header" onclick="toggleInterview(this)"><div class="interview-q"><div class="interview-meta"><span class="interview-badge badge-company">'+q.company+'</span><span class="interview-badge badge-difficulty '+diffClass+'">'+q.difficulty+'</span><span class="interview-badge badge-category">'+q.category+'</span></div><p class="interview-question">'+q.question+'</p></div><div class="interview-toggle"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div></div><div class="interview-answer"><div class="interview-answer-inner">'+q.answer+'<p class="interview-date">📅 Added: '+q.date+'</p></div></div></div>';
+    
+    var INTERVIEWS = DEFAULT_INTERVIEWS;
+    
+    fetch('interviews.json')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        INTERVIEWS = data;
+        renderInterviews('all');
+        updateStats();
+        
+        // Handle pending question from URL
+        if (pendingQuestionId) {
+          setTimeout(() => {
+            openQuestion(pendingQuestionId, true);
+            pendingQuestionId = null;
+          }, 100);
+        }
+      })
+      .catch(function() {
+        renderInterviews('all');
+        updateStats();
+        
+        // Handle pending question from URL with default data
+        if (pendingQuestionId) {
+          setTimeout(() => {
+            openQuestion(pendingQuestionId, true);
+            pendingQuestionId = null;
+          }, 100);
+        }
       });
-      list.innerHTML=html;
-      document.querySelectorAll('.interview-card').forEach(function(el){observer.observe(el);});
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) e.target.classList.add('animate');
+      });
+    }, { threshold: 0.1 });
+
+    function updateStats() {
+      document.getElementById('totalQuestions').textContent = INTERVIEWS.length;
+      var companies = [...new Set(INTERVIEWS.map(function(q) { return q.company; }))];
+      var categories = [...new Set(INTERVIEWS.map(function(q) { return q.category; }))];
+      document.getElementById('totalCompanies').textContent = companies.length;
+      document.getElementById('totalCategories').textContent = categories.length;
     }
 
-    function toggleInterview(el){
-      var card=el.parentElement;
-      var wasOpen=card.classList.contains('open');
+    function renderInterviews(filter) {
+      var filtered = filter === 'all' ? INTERVIEWS : INTERVIEWS.filter(function(q) { return q.category === filter; });
+      var list = document.getElementById('interviewList');
+      var empty = document.getElementById('emptyState');
+      
+      if (filtered.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      
+      var html = '';
+      filtered.forEach(function(q, i) {
+        var diffClass = q.difficulty === 'Expert' ? 'expert' : '';
+        html += `
+          <div class="interview-card" data-id="${q.id}" style="transition-delay:${i * 0.08}s">
+            <div class="interview-header" onclick="toggleInterview(this)">
+              <div class="interview-q">
+                <div class="interview-meta">
+                  <span class="interview-badge badge-company">${q.company}</span>
+                  <span class="interview-badge badge-difficulty ${diffClass}">${q.difficulty}</span>
+                  <span class="interview-badge badge-category">${q.category}</span>
+                </div>
+                <p class="interview-question">${q.question}</p>
+              </div>
+              <div class="interview-toggle">
+                <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+              </div>
+            </div>
+            <div class="interview-answer">
+              <div class="interview-answer-inner">
+                ${q.answer}
+                <div class="interview-footer">
+                  <span class="interview-date">📅 Added: ${q.date}</span>
+                  <div class="share-actions">
+                    <button class="share-btn" onclick="event.stopPropagation(); copyQuestionLink(${q.id}, this)">
+                      <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                      Copy Link
+                    </button>
+                    <button class="share-btn" onclick="event.stopPropagation(); shareToTwitter(${q.id})">
+                      <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                      Tweet
+                    </button>
+                    <button class="share-btn" onclick="event.stopPropagation(); shareToLinkedIn(${q.id})">
+                      <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                      LinkedIn
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      list.innerHTML = html;
+      document.querySelectorAll('.interview-card').forEach(function(el) { 
+        observer.observe(el); 
+      });
+    }
+
+    function toggleInterview(el) {
+      var card = el.parentElement;
+      var wasOpen = card.classList.contains('open');
+      var questionId = card.dataset.id;
+      
       // Close all others
-      document.querySelectorAll('.interview-card.open').forEach(function(c){c.classList.remove('open');});
+      document.querySelectorAll('.interview-card.open').forEach(function(c) { 
+        c.classList.remove('open'); 
+      });
+      
       // Toggle current
-      if(!wasOpen)card.classList.add('open');
+      if (!wasOpen) {
+        card.classList.add('open');
+        currentQuestionId = questionId;
+        // Update URL when opening
+        Router.navigate('question', questionId, true);
+      } else {
+        currentQuestionId = null;
+        // Clear URL hash when closing
+        history.replaceState(null, '', window.location.pathname);
+      }
     }
 
-    document.querySelectorAll('[data-ifilter]').forEach(function(btn){
-      btn.addEventListener('click',function(){
-        document.querySelectorAll('[data-ifilter]').forEach(function(b){b.classList.remove('active');});
+    // Filter buttons
+    document.querySelectorAll('[data-ifilter]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('[data-ifilter]').forEach(function(b) { b.classList.remove('active'); });
         this.classList.add('active');
         renderInterviews(this.dataset.ifilter);
       });
     });
 
     // Mobile menu
-    var menuToggle=document.querySelector('.menu-toggle'),mobileMenu=document.querySelector('.mobile-menu');
-    menuToggle.addEventListener('click',function(){this.classList.toggle('active');mobileMenu.classList.toggle('active');});
+    var menuToggle = document.querySelector('.menu-toggle');
+    var mobileMenu = document.querySelector('.mobile-menu');
+    menuToggle.addEventListener('click', function() {
+      this.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+    });
+
+    // Initialize router after DOM ready
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => Router.init(), 100);
+    });
   </script>
 </body>
 </html>
