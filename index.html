@@ -7,9 +7,9 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sumanth Bolle - ServiceNow Engineer | AI-Native Solutions</title>
-  <meta name="description" content="Sumanth Bolle - Full Stack ServiceNow Engineer with 5+ years experience building enterprise-scale AI-native solutions.">
-  <meta property="og:title" content="Sumanth Bolle - ServiceNow Engineer">
+  <title>Sumanth Bolle - AI + ServiceNow Engineer | Enterprise Automation</title>
+  <meta name="description" content="Sumanth Bolle - AI + ServiceNow Engineer building enterprise-scale intelligent automation solutions with GenAI, LLMs, and agentic workflows.">
+  <meta property="og:title" content="Sumanth Bolle - AI + ServiceNow Engineer">
   <meta property="og:description" content="Building the future of enterprise automation with GenAI and ServiceNow.">
   <meta property="og:image" content="https://sumanthbolle.github.io/profile.jpeg">
   <meta name="twitter:card" content="summary_large_image">
@@ -97,16 +97,35 @@
     .stat-item.animate{opacity:1;transform:scale(1)}
     .stat-num{font-size:48px;font-weight:600;color:var(--white)}
     .stat-label{font-size:14px;color:var(--gray);margin-top:8px}
+
+    /* EXPERIENCE GLIMPSE - NEW COMPACT DESIGN */
+    .exp-glimpse-section{padding:100px 0;background:var(--white)}
+    .exp-glimpse-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+    .exp-glimpse-content h3{font-size:32px;font-weight:600;margin-bottom:20px;line-height:1.3}
+    .exp-glimpse-content h3 span{background:linear-gradient(90deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .exp-glimpse-content p{font-size:17px;color:var(--gray);line-height:1.7;margin-bottom:24px}
+    .exp-highlights{display:flex;flex-direction:column;gap:16px}
+    .exp-highlight{display:flex;align-items:flex-start;gap:14px}
+    .exp-highlight-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .exp-highlight-icon.sn{background:linear-gradient(135deg,#81d742,#4a8f24)}
+    .exp-highlight-icon.ai{background:linear-gradient(135deg,#667eea,#764ba2)}
+    .exp-highlight-icon.global{background:linear-gradient(135deg,#11998e,#38ef7d)}
+    .exp-highlight-icon.secure{background:linear-gradient(135deg,#ff9500,#ff5e3a)}
+    .exp-highlight-text h4{font-size:15px;font-weight:600;margin-bottom:4px}
+    .exp-highlight-text p{font-size:14px;color:var(--gray);line-height:1.5}
     
-    .exp-list{max-width:800px;margin:0 auto}
-    .exp-item{display:grid;grid-template-columns:180px 1fr;gap:40px;padding:36px 0;border-bottom:1px solid rgba(0,0,0,.08);opacity:0;transform:translateX(-30px);transition:all 0.6s}
-    .exp-item.animate{opacity:1;transform:translateX(0)}
-    .exp-item:last-child{border-bottom:none}
-    .exp-date{font-size:15px;color:var(--gray)}
-    .exp-content h3{font-size:24px;font-weight:600;margin-bottom:4px}
-    .exp-company{font-size:16px;color:var(--blue);margin-bottom:12px}
-    .exp-desc{font-size:16px;color:var(--gray);line-height:1.6}
-    
+    .exp-companies{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .exp-company-card{background:var(--bg);border-radius:16px;padding:24px;text-align:center;opacity:0;transform:translateY(20px);transition:all 0.5s}
+    .exp-company-card.animate{opacity:1;transform:translateY(0)}
+    .exp-company-card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,0.1)}
+    .exp-company-logo{width:48px;height:48px;border-radius:12px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+    .exp-company-logo.temus{background:linear-gradient(135deg,#0066CC,#00a8ff)}
+    .exp-company-logo.servicenow{background:linear-gradient(135deg,#81d742,#4a8f24)}
+    .exp-company-logo.softwareone{background:linear-gradient(135deg,#ff5722,#ff9800)}
+    .exp-company-logo.lti{background:linear-gradient(135deg,#1e88e5,#64b5f6)}
+    .exp-company-name{font-size:15px;font-weight:600;margin-bottom:4px}
+    .exp-company-role{font-size:12px;color:var(--gray)}
+
     .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
     .skill-tile{background:var(--white);border-radius:18px;padding:36px 28px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.04);opacity:0;transform:translateY(30px);transition:all 0.5s}
     .skill-tile.animate{opacity:1;transform:translateY(0)}
@@ -350,7 +369,8 @@
       .about-grid,.skills-grid{grid-template-columns:1fr}
       .about-card.large{grid-column:span 1}
       .stats-row{grid-template-columns:repeat(2,1fr)}
-      .exp-item{grid-template-columns:1fr;gap:8px}
+      .exp-glimpse-grid{grid-template-columns:1fr}
+      .exp-companies{grid-template-columns:1fr}
       .preview-grid{grid-template-columns:1fr}
       .integration-showcase{grid-template-columns:1fr}
       .integration-types{grid-template-columns:repeat(2,1fr)}
@@ -369,7 +389,7 @@
       <a href="#" class="nav-logo">Sumanth Bolle</a>
       <ul class="nav-links">
         <li><a href="#about">About</a></li>
-        <li><a href="#experience">Experience</a></li>
+        <li><a href="#expertise">Expertise</a></li>
         <li><a href="#skills">Skills</a></li>
         <li><a href="blog.html">Blog</a></li>
         <li><a href="interviews.html">Interviews</a></li>
@@ -380,13 +400,13 @@
       <button class="menu-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu">
-      <a href="#about">About</a><a href="#experience">Experience</a><a href="#skills">Skills</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><a href="quiz.html">Quiz</a><a href="#integrations">Integrations</a><a href="#contact">Contact</a>
+      <a href="#about">About</a><a href="#expertise">Expertise</a><a href="#skills">Skills</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><a href="quiz.html">Quiz</a><a href="#integrations">Integrations</a><a href="#contact">Contact</a>
     </div>
   </nav>
 
   <main id="main">
     <section class="hero">
-      <p class="hero-eye">Full Stack ServiceNow Engineer</p>
+      <p class="hero-eye">AI + ServiceNow Engineer</p>
       <h1 class="hero-title"><span class="typewriter">Sumanth Bolle</span></h1>
       <div class="hero-sub"><span class="flash-text-1">AI-Native Solutions.</span><br><span class="flash-text-2">Agentic Workflows.</span></div>
       <p class="hero-desc">Building the future of enterprise automation with Generative AI, LLMs, and intelligent agentic workflows on ServiceNow.</p>
@@ -401,7 +421,7 @@
         <div class="section-h">
           <p class="section-eye" data-animate>About</p>
           <h2 class="section-title" data-animate>Expertise that delivers.</h2>
-          <p class="section-sub" data-animate>Over 5 years of experience building enterprise-scale solutions.</p>
+          <p class="section-sub" data-animate>Bridging AI innovation with enterprise platform engineering.</p>
         </div>
         <div class="about-grid" id="aboutGrid"></div>
       </div>
@@ -411,13 +431,71 @@
       <div class="section-c"><div class="stats-row" id="statsRow"></div></div>
     </section>
 
-    <section class="section" id="experience">
+    <!-- NEW: EXPERIENCE GLIMPSE SECTION (replaces detailed career timeline) -->
+    <section class="exp-glimpse-section" id="expertise">
       <div class="section-c">
         <div class="section-h">
-          <p class="section-eye" data-animate>Experience</p>
-          <h2 class="section-title" data-animate>A career of innovation.</h2>
+          <p class="section-eye" data-animate>Background</p>
+          <h2 class="section-title" data-animate>Where AI meets Enterprise.</h2>
         </div>
-        <div class="exp-list" id="expList"></div>
+        <div class="exp-glimpse-grid">
+          <div class="exp-glimpse-content">
+            <h3>Seasoned <span>AI + ServiceNow</span> professional delivering enterprise-scale solutions</h3>
+            <p>From global entertainment giants to government agencies, I've architected and delivered intelligent automation solutions that transform how enterprises operate. My work sits at the intersection of cutting-edge AI and robust enterprise platforms.</p>
+            <div class="exp-highlights">
+              <div class="exp-highlight">
+                <div class="exp-highlight-icon sn">🔧</div>
+                <div class="exp-highlight-text">
+                  <h4>Platform Engineering</h4>
+                  <p>ITSM, ITOM, SecOps, GRC, CSM — deep expertise across the ServiceNow ecosystem with Architecture Excellence certification.</p>
+                </div>
+              </div>
+              <div class="exp-highlight">
+                <div class="exp-highlight-icon ai">🤖</div>
+                <div class="exp-highlight-text">
+                  <h4>AI Integration</h4>
+                  <p>GenAI, LLMs, AI Agents, RAG architectures — building intelligent automation that augments human capabilities.</p>
+                </div>
+              </div>
+              <div class="exp-highlight">
+                <div class="exp-highlight-icon global">🌏</div>
+                <div class="exp-highlight-text">
+                  <h4>Global Delivery</h4>
+                  <p>Solutions deployed across global organizations, from media & entertainment to public sector institutions.</p>
+                </div>
+              </div>
+              <div class="exp-highlight">
+                <div class="exp-highlight-icon secure">🔒</div>
+                <div class="exp-highlight-text">
+                  <h4>Secure & Scalable</h4>
+                  <p>Air-gapped AI deployments, enterprise security compliance, and solutions handling millions of transactions.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="exp-companies">
+            <div class="exp-company-card" data-animate-card>
+              <div class="exp-company-logo temus">🏛️</div>
+              <div class="exp-company-name">Temus</div>
+              <div class="exp-company-role">Senior Software Engineer</div>
+            </div>
+            <div class="exp-company-card" data-animate-card style="transition-delay:0.1s">
+              <div class="exp-company-logo servicenow">✨</div>
+              <div class="exp-company-name">ServiceNow</div>
+              <div class="exp-company-role">Product Engineering</div>
+            </div>
+            <div class="exp-company-card" data-animate-card style="transition-delay:0.2s">
+              <div class="exp-company-logo softwareone">💼</div>
+              <div class="exp-company-name">SoftwareONE</div>
+              <div class="exp-company-role">Senior Developer</div>
+            </div>
+            <div class="exp-company-card" data-animate-card style="transition-delay:0.3s">
+              <div class="exp-company-logo lti">🎬</div>
+              <div class="exp-company-name">LTIMindtree</div>
+              <div class="exp-company-role">Walt Disney Worldwide</div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -469,20 +547,19 @@
       </div>
     </section>
 
-
     <!-- QUIZ PREVIEW SECTION -->
-<section class="section preview-section" id="quiz-preview">
-  <div class="section-c">
-    <div class="section-h">
-      <p class="section-eye" data-animate>Quiz</p>
-      <h2 class="section-title" data-animate>Test Your Knowledge</h2>
-      <p class="section-sub" data-animate>Challenge yourself with ServiceNow quizzes.</p>
-    </div>
-    <div class="view-all-container">
-      <a href="quiz.html" class="view-all-btn">Take a Quiz →</a>
-    </div>
-  </div>
-</section>
+    <section class="section preview-section section-gray" id="quiz-preview">
+      <div class="section-c">
+        <div class="section-h">
+          <p class="section-eye" data-animate>Quiz</p>
+          <h2 class="section-title" data-animate>Test Your Knowledge</h2>
+          <p class="section-sub" data-animate>Challenge yourself with ServiceNow quizzes.</p>
+        </div>
+        <div class="view-all-container">
+          <a href="quiz.html" class="view-all-btn">Take a Quiz →</a>
+        </div>
+      </div>
+    </section>
 
     <!-- INTEGRATION SECTION -->
     <section class="integration-section" id="integrations">
@@ -611,7 +688,7 @@
         <div class="contact-profile-fallback">SB</div>
       </div>
       <h2 class="contact-name">Sumanth Bolle</h2>
-      <p class="contact-role">Full Stack ServiceNow Engineer • Singapore</p>
+      <p class="contact-role">AI + ServiceNow Engineer • Singapore</p>
       <div class="contact-buttons">
         <a href="https://www.linkedin.com/in/sumanthbolle/" target="_blank" rel="noopener noreferrer" class="btn btn-p">Connect on LinkedIn</a>
         <a href="mailto:sumanthbolle312@gmail.com" class="btn btn-s">Send Email</a>
@@ -629,7 +706,7 @@
   <script>
     var ICONS={bolt:'<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',gear:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',rocket:'<svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09zM12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/></svg>',cloud:'<svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>',code:'<svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',database:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',tool:'<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',shield:'<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',trophy:'<svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6M18 9h1.5a2.5 2.5 0 000-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 1012 0V2z"/></svg>',target:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',layers:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',brain:'<svg viewBox="0 0 24 24"><path d="M12 4.5a2.5 2.5 0 00-4.96-.46 2.5 2.5 0 00-1.98 3 2.5 2.5 0 00-1.32 4.24 3 3 0 00.34 5.58 2.5 2.5 0 002.96 3.08A2.5 2.5 0 0012 19.5M12 4.5a2.5 2.5 0 014.96-.46 2.5 2.5 0 011.98 3 2.5 2.5 0 011.32 4.24 3 3 0 01-.34 5.58 2.5 2.5 0 01-2.96 3.08A2.5 2.5 0 0112 19.5"/></svg>',server:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>',link:'<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>',refresh:'<svg viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>'};
     
-    var DATA={about:[{icon:'bolt',cls:'icon-bolt',title:'AI-Native Development',desc:'Expert in integrating Generative AI, LLMs, and AI Agents to automate complex processes.',large:true},{icon:'gear',cls:'icon-gear',title:'ServiceNow Mastery',desc:'Strong expertise across ITSM, ITOM, SecOps, GRC, and custom apps.'},{icon:'rocket',cls:'icon-rocket',title:'Enterprise Scale',desc:'Delivering solutions for global organizations including Walt Disney.'}],stats:[{num:'5+',label:'Years Experience'},{num:'10+',label:'Certifications'},{num:'60%',label:'Manual Work Reduced'},{num:'40%',label:'Faster Completion'}],experience:[{date:'Oct 2025 – Present',role:'Senior Software Engineer',company:'Temus',desc:'Designing agentic workflows for PSU clients with secure LLM hosting.'},{date:'Feb 2024 – Oct 2025',role:'Senior Software Engineer',company:'ServiceNow',desc:'Configured AI Control Tower. Developed AI-powered Risk Workspace.'},{date:'Feb 2023 – Feb 2024',role:'Senior Software Developer',company:'SoftwareONE India',desc:'Platform development for ITSM, CSM. Integrated SailPoint IdentityNow.'},{date:'Nov 2020 – Jan 2023',role:'Senior Engineer',company:'LTIMindtree (Walt Disney)',desc:'ITSM & ITOM development for Walt Disney worldwide.'}],skills:[{icon:'bolt',cls:'icon-bolt',title:'ServiceNow',tags:['ITSM','ITOM','SecOps','GRC','CMDB']},{icon:'brain',cls:'icon-ai',title:'AI & ML',tags:['GenAI','LLMs','TensorFlow','NLP']},{icon:'code',cls:'icon-code',title:'Development',tags:['JavaScript','Python','React','REST']},{icon:'cloud',cls:'icon-cloud',title:'Cloud',tags:['GCP','AWS','Azure']},{icon:'database',cls:'icon-data',title:'Data',tags:['SQL','JSON','XML','SOAP']},{icon:'tool',cls:'icon-tools',title:'Tools',tags:['GlideRecord','Flow Designer','ATF']}],certs:[{icon:'trophy',cls:'icon-trophy',name:'Architecture Excellence',issuer:'ServiceNow • Jul 2025'},{icon:'target',cls:'icon-target',name:'Application Developer',issuer:'ServiceNow • Nov 2023'},{icon:'layers',cls:'icon-layers',name:'Implementation Specialist ITSM',issuer:'ServiceNow • Apr 2024'},{icon:'shield',cls:'icon-shield',name:'Implementation Specialist TPRM',issuer:'ServiceNow • Apr 2024'},{icon:'cloud',cls:'icon-cloud',name:'Associate Cloud Engineer',issuer:'Google Cloud • Oct 2022'},{icon:'brain',cls:'icon-ai',name:'Azure AI Certification',issuer:'Microsoft • Jun 2021'}],integrationTypes:[{icon:'refresh',cls:'icon-cloud',title:'REST API',desc:'Bi-directional sync'},{icon:'server',cls:'icon-server',title:'SOAP Services',desc:'Legacy integrations'},{icon:'link',cls:'icon-link',title:'Integration Hub',desc:'Pre-built spokes'},{icon:'bolt',cls:'icon-bolt',title:'Flow Designer',desc:'Automated workflows'}],projects:[{num:'01',cat:'Computer Vision',title:'Helmet Detection & License Plate Recognition',desc:'Real-time system using OpenCV for traffic safety.',problem:'Manual identification is inefficient.',solution:'Built detection with 97% accuracy.',tech:['OpenCV','Python','SVM','OCR'],stats:[{val:'97%',lbl:'Accuracy'},{val:'30fps',lbl:'Real-time'},{val:'<100ms',lbl:'Detection'}]},{num:'02',cat:'NLP & Voice AI',title:'Instantaneous Informant Chatterbot',desc:'Voice-enabled campus assistant.',problem:'Students waste time searching.',solution:'Multilingual voice chatbot.',tech:['Python','NLP','gTTS','Node.js'],stats:[{val:'Multi',lbl:'Language'},{val:'Voice',lbl:'Enabled'},{val:'<2s',lbl:'Response'}]}],apis:[{method:'POST',endpoint:'/api/now/table/incident',status:'201'},{method:'GET',endpoint:'/api/now/cmdb/instance',status:'200'},{method:'PUT',endpoint:'/api/now/table/change',status:'200'},{method:'GET',endpoint:'/api/now/table/sys_user',status:'200'}]};
+    var DATA={about:[{icon:'bolt',cls:'icon-bolt',title:'AI-Native Development',desc:'Expert in integrating Generative AI, LLMs, and AI Agents to automate complex processes.',large:true},{icon:'gear',cls:'icon-gear',title:'ServiceNow Mastery',desc:'Strong expertise across ITSM, ITOM, SecOps, GRC, and custom apps.'},{icon:'rocket',cls:'icon-rocket',title:'Enterprise Scale',desc:'Delivering solutions for global organizations including Walt Disney.'}],stats:[{num:'10+',label:'Certifications'},{num:'60%',label:'Manual Work Reduced'},{num:'40%',label:'Faster Completion'},{num:'99.9%',label:'Platform Uptime'}],skills:[{icon:'bolt',cls:'icon-bolt',title:'ServiceNow',tags:['ITSM','ITOM','SecOps','GRC','CMDB']},{icon:'brain',cls:'icon-ai',title:'AI & ML',tags:['GenAI','LLMs','TensorFlow','NLP']},{icon:'code',cls:'icon-code',title:'Development',tags:['JavaScript','Python','React','REST']},{icon:'cloud',cls:'icon-cloud',title:'Cloud',tags:['GCP','AWS','Azure']},{icon:'database',cls:'icon-data',title:'Data',tags:['SQL','JSON','XML','SOAP']},{icon:'tool',cls:'icon-tools',title:'Tools',tags:['GlideRecord','Flow Designer','ATF']}],certs:[{icon:'trophy',cls:'icon-trophy',name:'Architecture Excellence',issuer:'ServiceNow'},{icon:'target',cls:'icon-target',name:'Application Developer',issuer:'ServiceNow'},{icon:'layers',cls:'icon-layers',name:'CIS-ITSM',issuer:'ServiceNow'},{icon:'shield',cls:'icon-shield',name:'CIS-TPRM',issuer:'ServiceNow'},{icon:'cloud',cls:'icon-cloud',name:'Associate Cloud Engineer',issuer:'Google Cloud'},{icon:'brain',cls:'icon-ai',name:'Azure AI',issuer:'Microsoft'}],integrationTypes:[{icon:'refresh',cls:'icon-cloud',title:'REST API',desc:'Bi-directional sync'},{icon:'server',cls:'icon-server',title:'SOAP Services',desc:'Legacy integrations'},{icon:'link',cls:'icon-link',title:'Integration Hub',desc:'Pre-built spokes'},{icon:'bolt',cls:'icon-bolt',title:'Flow Designer',desc:'Automated workflows'}],projects:[{num:'01',cat:'Computer Vision',title:'Helmet Detection & License Plate Recognition',desc:'Real-time system using OpenCV for traffic safety.',problem:'Manual identification is inefficient.',solution:'Built detection with 97% accuracy.',tech:['OpenCV','Python','SVM','OCR'],stats:[{val:'97%',lbl:'Accuracy'},{val:'30fps',lbl:'Real-time'},{val:'<100ms',lbl:'Detection'}]},{num:'02',cat:'NLP & Voice AI',title:'Instantaneous Informant Chatterbot',desc:'Voice-enabled campus assistant.',problem:'Students waste time searching.',solution:'Multilingual voice chatbot.',tech:['Python','NLP','gTTS','Node.js'],stats:[{val:'Multi',lbl:'Language'},{val:'Voice',lbl:'Enabled'},{val:'<2s',lbl:'Response'}]}],apis:[{method:'POST',endpoint:'/api/now/table/incident',status:'201'},{method:'GET',endpoint:'/api/now/cmdb/instance',status:'200'},{method:'PUT',endpoint:'/api/now/table/change',status:'200'},{method:'GET',endpoint:'/api/now/table/sys_user',status:'200'}]};
     
     // Preview data for blog and interviews
     var BLOG_PREVIEW=[{id:1,title:"Building AI Agents in ServiceNow",excerpt:"Learn how to create intelligent AI agents that automate complex workflows.",category:"servicenow",date:"Dec 10, 2025",readTime:"8 min"},{id:2,title:"GenAI Summarization for Risk Management",excerpt:"How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace.",category:"ai",date:"Dec 5, 2025",readTime:"6 min"},{id:3,title:"Flow Designer Best Practices",excerpt:"Essential patterns when building flows that handle thousands of executions daily.",category:"tutorial",date:"Nov 28, 2025",readTime:"10 min"}];
@@ -643,7 +720,6 @@
     // Render sections
     var h='';DATA.about.forEach(function(a,i){h+='<div class="about-card'+(a.large?' large':'')+'" data-animate-card style="transition-delay:'+(i*.15)+'s">'+icon(a.icon,a.cls)+'<h3>'+a.title+'</h3><p>'+a.desc+'</p></div>';});document.getElementById('aboutGrid').innerHTML=h;
     h='';DATA.stats.forEach(function(s,i){h+='<div class="stat-item" data-animate-card style="transition-delay:'+(i*.1)+'s"><div class="stat-num">'+s.num+'</div><div class="stat-label">'+s.label+'</div></div>';});document.getElementById('statsRow').innerHTML=h;
-    h='';DATA.experience.forEach(function(e,i){h+='<div class="exp-item" data-animate-card style="transition-delay:'+(i*.15)+'s"><div class="exp-date">'+e.date+'</div><div class="exp-content"><h3>'+e.role+'</h3><p class="exp-company">'+e.company+'</p><p class="exp-desc">'+e.desc+'</p></div></div>';});document.getElementById('expList').innerHTML=h;
     h='';DATA.skills.forEach(function(s,i){var t='';s.tags.forEach(function(x){t+='<span class="skill-tag">'+x+'</span>';});h+='<div class="skill-tile" data-animate-card style="transition-delay:'+(i*.1)+'s">'+icon(s.icon,s.cls)+'<h4>'+s.title+'</h4><div class="skill-tags">'+t+'</div></div>';});document.getElementById('skillsGrid').innerHTML=h;
     h='';DATA.certs.forEach(function(c,i){h+='<div class="cert-card" data-animate-card style="transition-delay:'+(i*.1)+'s">'+icon(c.icon,c.cls)+'<h4>'+c.name+'</h4><p class="cert-issuer">'+c.issuer+'</p></div>';});document.getElementById('certScroll').innerHTML=h;
     h='';DATA.integrationTypes.forEach(function(t,i){h+='<div class="int-type" data-animate-card style="transition-delay:'+(i*.1)+'s">'+icon(t.icon,t.cls)+'<h4>'+t.title+'</h4><p>'+t.desc+'</p></div>';});document.getElementById('intTypes').innerHTML=h;
