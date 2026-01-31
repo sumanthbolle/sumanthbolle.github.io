@@ -791,6 +791,11 @@ modeButtons.forEach(btn => {
     const count = btn.dataset.count;
     startBtn.textContent = `Start Quiz (${count} Questions)`;
     startBtn.classList.add('active');
+    
+    // Auto-scroll to start button
+    setTimeout(() => {
+      startBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
   });
 });
 
