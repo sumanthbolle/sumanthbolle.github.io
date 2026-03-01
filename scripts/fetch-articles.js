@@ -31,7 +31,7 @@ const { execSync } = require('child_process');
 // CONFIGURATION
 // =============================================================================
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_API_KEY = 'AIzaSyCftnpK9anmBxXWs9KOXZWpyUNoYXRNe18';    //process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = 'gemini-2.5-pro'; // Options: 'gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.0-flash'
 
 const POSTS_FILE = 'posts.json';
