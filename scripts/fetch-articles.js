@@ -1,6 +1,6 @@
 // scripts/fetch-articles.js
 // =============================================================================
-// SERVICENOW LEARNING CONTENT GENERATOR v3.1 (Gemini Pro)
+// SERVICENOW LEARNING CONTENT GENERATOR v3.1 (OpenAI)
 // =============================================================================
 // Target: sumanthbolle.com - The definitive ServiceNow learning resource
 //
@@ -16,11 +16,11 @@
 // - Dynamic prompt composition creates unique, relevant articles
 //
 // MIGRATION NOTE (v3.1):
-// - Switched from Perplexity sonar-pro to Google Gemini Pro
-// - Google Search grounding replaces Perplexity's built-in search
-// - Auth: x-goog-api-key header (was Authorization: Bearer)
-// - Request: contents + systemInstruction (was messages array)
-// - Response: candidates[0].content.parts (was choices[0].message.content)
+// - Switched from Perplexity sonar-pro to OpenAI GPT-4o
+// - Auth: Authorization: Bearer header (same pattern as Perplexity)
+// - Request: messages array with system/user roles (same as Perplexity)
+// - Response: choices[0].message.content (same as Perplexity)
+// - Hostname: api.openai.com (was api.perplexity.ai)
 // =============================================================================
 
 const fs = require('fs');
@@ -31,8 +31,8 @@ const { execSync } = require('child_process');
 // CONFIGURATION
 // =============================================================================
 
-const GEMINI_API_KEY = 'AIzaSyCftnpK9anmBxXWs9KOXZWpyUNoYXRNe18';    //process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = 'gemini-2.5-pro'; // Options: 'gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.0-flash'
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_MODEL = 'gpt-4o'; // Options: 'gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'gpt-4.1-mini', 'o3-mini'
 
 const POSTS_FILE = 'posts.json';
 const INTERVIEWS_FILE = 'interviews.json';
@@ -890,7 +890,7 @@ function parseJsonFromResponse(cleaned) {
   return JSON.parse(jsonStr);
 }
 
-// Strip citation markers (safety net - Gemini rarely produces these but just in case)
+// Strip citation markers (safety net - keeps content clean)
 function stripCitations(text) {
   if (!text) return text;
   // Preserve code blocks, strip citations only from prose
@@ -909,44 +909,31 @@ function stripCitations(text) {
 }
 
 // =============================================================================
-// GEMINI API (replaces Perplexity)
+// OPENAI API (replaces Perplexity)
 // =============================================================================
 
-function callGemini(prompt, systemPrompt, { useGrounding = false, maxTokens = 5000, temperature = 0.75 } = {}) {
+function callOpenAI(prompt, systemPrompt, { maxTokens = 5000, temperature = 0.75 } = {}) {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('API timeout (120s)')), 120000);
 
-    const requestBody = {
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: prompt }],
-        },
+    const data = JSON.stringify({
+      model: OPENAI_MODEL,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: prompt },
       ],
-      systemInstruction: {
-        parts: [{ text: systemPrompt }],
-      },
-      generationConfig: {
-        maxOutputTokens: maxTokens,
-        temperature: temperature,
-      },
-    };
-
-    // Enable Google Search grounding (replaces Perplexity's built-in search)
-    if (useGrounding) {
-      requestBody.tools = [{ google_search: {} }];
-    }
-
-    const data = JSON.stringify(requestBody);
+      max_tokens: maxTokens,
+      temperature: temperature,
+    });
 
     const req = https.request(
       {
-        hostname: 'generativelanguage.googleapis.com',
-        path: `/v1beta/models/${GEMINI_MODEL}:generateContent`,
+        hostname: 'api.openai.com',
+        path: '/v1/chat/completions',
         method: 'POST',
         headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
           'Content-Type': 'application/json',
-          'x-goog-api-key': GEMINI_API_KEY,
           'Content-Length': Buffer.byteLength(data),
         },
       },
@@ -957,32 +944,12 @@ function callGemini(prompt, systemPrompt, { useGrounding = false, maxTokens = 50
           clearTimeout(timeout);
           try {
             if (res.statusCode !== 200) {
-              reject(new Error(`Gemini API ${res.statusCode}: ${body.substring(0, 300)}`));
+              reject(new Error(`OpenAI API ${res.statusCode}: ${body.substring(0, 300)}`));
               return;
             }
 
-            const parsed = JSON.parse(body);
-
-            // Check for safety blocks
-            if (parsed.candidates?.[0]?.finishReason === 'SAFETY') {
-              reject(new Error('Response blocked by Gemini safety filters'));
-              return;
-            }
-
-            // Extract text from potentially multiple parts
-            const parts = parsed.candidates?.[0]?.content?.parts;
-            if (!parts || parts.length === 0) {
-              reject(new Error('Empty response from Gemini'));
-              return;
-            }
-
-            // Combine all text parts
-            const content = parts
-              .filter((p) => p.text)
-              .map((p) => p.text)
-              .join('');
-
-            content ? resolve(content) : reject(new Error('No text in Gemini response'));
+            const content = JSON.parse(body).choices?.[0]?.message?.content;
+            content ? resolve(content) : reject(new Error('No content in OpenAI response'));
           } catch (e) {
             reject(e);
           }
@@ -1002,11 +969,11 @@ function callGemini(prompt, systemPrompt, { useGrounding = false, maxTokens = 50
 async function callWithRetry(prompt, systemPrompt, maxRetries = 3, options = {}) {
   for (let i = 1; i <= maxRetries; i++) {
     try {
-      return await callGemini(prompt, systemPrompt, options);
+      return await callOpenAI(prompt, systemPrompt, options);
     } catch (e) {
       console.log(`  Attempt ${i} failed: ${e.message}`);
       if (i === maxRetries) throw e;
-      // Slightly longer backoff for Gemini rate limits
+      // Backoff between retries
       await new Promise((r) => setTimeout(r, 5000 * i));
     }
   }
@@ -1017,8 +984,8 @@ async function callWithRetry(prompt, systemPrompt, maxRetries = 3, options = {})
 // =============================================================================
 
 async function main() {
-  if (!GEMINI_API_KEY) {
-    console.error('❌ GEMINI_API_KEY not set');
+  if (!OPENAI_API_KEY) {
+    console.error('❌ OPENAI_API_KEY not set');
     process.exit(1);
   }
 
@@ -1027,11 +994,11 @@ async function main() {
 
   console.log(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║  🚀 ServiceNow Content Generator v3.1 (Gemini Pro)                          ║
+║  🚀 ServiceNow Content Generator v3.1 (OpenAI)                              ║
 ║  Dynamic Topic Engine • AI-First Strategy • Enterprise Professional Focus    ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
-║  🤖 Model: ${GEMINI_MODEL.padEnd(66)}║
-║  🔑 API Key: ${(GEMINI_API_KEY.substring(0, 8) + '...' + GEMINI_API_KEY.slice(-4)).padEnd(64)}║
+║  🤖 Model: ${OPENAI_MODEL.padEnd(66)}║
+║  🔑 API Key: ${(OPENAI_API_KEY.substring(0, 8) + '...' + OPENAI_API_KEY.slice(-4)).padEnd(64)}║
 ║  📅 Date: ${today.padEnd(67)}║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 `);
@@ -1052,7 +1019,7 @@ async function main() {
   let newArticle = null;
   for (let attempt = 1; attempt <= 2 && !newArticle; attempt++) {
     try {
-      const raw = await callWithRetry(topic.query, ARTICLE_PROMPT, 3, { useGrounding: true });
+      const raw = await callWithRetry(topic.query, ARTICLE_PROMPT, 3);
       const data = parseJsonFromResponse(cleanResponseToLikelyJson(raw));
       if (data?.title && data?.content && !isDuplicateByPrefix(posts, data.title)) {
         newArticle = {
@@ -1096,8 +1063,8 @@ async function main() {
 
   let newInterview = null;
   try {
-    // Interviews are scenario-based - no web search needed
-    const raw = await callWithRetry(intTopic.query, INTERVIEW_PROMPT, 3, { useGrounding: false });
+    // Interviews are scenario-based - generative content
+    const raw = await callWithRetry(intTopic.query, INTERVIEW_PROMPT, 3);
     const data = parseJsonFromResponse(cleanResponseToLikelyJson(raw));
 
     if (data?.question && data?.answer) {
