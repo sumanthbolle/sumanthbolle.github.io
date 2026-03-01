@@ -1,9 +1,9 @@
 // scripts/fetch-articles.js
 // =============================================================================
-// SERVICENOW LEARNING CONTENT GENERATOR v3.0
+// SERVICENOW LEARNING CONTENT GENERATOR v3.1 (Gemini Pro)
 // =============================================================================
 // Target: sumanthbolle.com - The definitive ServiceNow learning resource
-// 
+//
 // PHILOSOPHY:
 // - Dynamic content generation for ANY tech professional transitioning to ServiceNow
 // - AI-first approach: ServiceNow + AI solving real enterprise problems
@@ -14,17 +14,60 @@
 // - Domain templates (not hardcoded topics) enable infinite scalability
 // - AI content pillars address real organizational transformation
 // - Dynamic prompt composition creates unique, relevant articles
+//
+// MIGRATION NOTE (v3.1):
+// - Switched from Perplexity sonar-pro to Google Gemini Pro
+// - Google Search grounding replaces Perplexity's built-in search
+// - Auth: x-goog-api-key header (was Authorization: Bearer)
+// - Request: contents + systemInstruction (was messages array)
+// - Response: candidates[0].content.parts (was choices[0].message.content)
 // =============================================================================
 
 const fs = require('fs');
 const https = require('https');
 const { execSync } = require('child_process');
 
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_MODEL = 'gemini-2.5-pro'; // Options: 'gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.0-flash'
+
 const POSTS_FILE = 'posts.json';
 const INTERVIEWS_FILE = 'interviews.json';
 const MAX_POSTS = 30;
 const MAX_INTERVIEWS = 20;
+
+// =============================================================================
+// SERVICENOW KNOWLEDGE BASE - Core Concepts for Translation
+// =============================================================================
+
+const SN_CONCEPTS = {
+  architecture: {
+    core: ['Tables', 'Records', 'sys_id', 'Dictionary', 'ACLs', 'Scoped Applications'],
+    data: ['GlideRecord', 'GlideAggregate', 'Reference fields', 'Dot-walking', 'Encoded queries'],
+    automation: ['Business Rules', 'Flow Designer', 'Scheduled Jobs', 'Events', 'Script Includes'],
+    integration: ['REST API', 'Integration Hub', 'MID Server', 'Import Sets', 'Transform Maps'],
+    ui: ['Service Portal', 'Now Experience', 'UI Builder', 'Workspaces', 'Mobile'],
+  },
+
+  modules: {
+    itsm: { name: 'IT Service Management', tables: ['incident', 'change_request', 'problem', 'sc_request'] },
+    itom: { name: 'IT Operations Management', tables: ['em_alert', 'cmdb_ci', 'sa_metric'] },
+    hrsd: { name: 'HR Service Delivery', tables: ['sn_hr_core_case', 'sn_hr_core_profile'] },
+    csm: { name: 'Customer Service Management', tables: ['sn_customerservice_case', 'customer_account'] },
+    secops: { name: 'Security Operations', tables: ['sn_si_incident', 'sn_vul_vulnerability'] },
+    spm: { name: 'Strategic Portfolio Management', tables: ['pm_project', 'dmn_demand'] },
+  },
+
+  careers: {
+    admin: { cert: 'CSA', focus: 'Configuration, user management, basic automation' },
+    developer: { cert: 'CAD', focus: 'Scripting, integration, custom applications' },
+    implementer: { cert: 'CIS-*', focus: 'Module-specific deep expertise' },
+    architect: { cert: 'CTA', focus: 'Enterprise strategy, performance, governance' },
+  },
+};
 
 // =============================================================================
 // DYNAMIC DOMAIN SYSTEM - Scales to Any Tech Background
@@ -33,7 +76,7 @@ const MAX_INTERVIEWS = 20;
 const DOMAIN_CATEGORIES = {
   // HOT DOMAINS - Current high-demand transitions
   hot: {
-    weight: 3, // Higher weight = more likely to be selected
+    weight: 3,
     domains: [
       {
         name: 'Cloud & Infrastructure',
@@ -43,46 +86,46 @@ const DOMAIN_CATEGORIES = {
         businessValue: 'unified infrastructure visibility and automated remediation',
       },
       {
-        name: 'Modern Development',
-        sources: ['React', 'Angular', 'Vue', 'Node.js', 'TypeScript', 'Next.js'],
-        snTarget: ['Now Experience', 'UI Builder', 'Service Portal', 'Workspaces'],
-        skills: ['Component architecture', 'State management', 'API integration', 'Responsive design'],
-        businessValue: 'modern employee and customer experiences on enterprise platform',
+        name: 'Modern Frontend',
+        sources: ['React', 'Angular', 'Vue.js', 'Next.js', 'TypeScript', 'Svelte'],
+        snTarget: ['Service Portal', 'UI Builder', 'Now Experience', 'Workspaces'],
+        skills: ['Component architecture', 'State management', 'Responsive design', 'API consumption'],
+        businessValue: 'modern employee experiences on enterprise platform',
       },
       {
-        name: 'Data & Analytics',
-        sources: ['Python', 'Spark', 'Airflow', 'Snowflake', 'dbt', 'Pandas'],
-        snTarget: ['Performance Analytics', 'Reporting', 'Integration Hub', 'CMDB'],
-        skills: ['ETL pipelines', 'Data modeling', 'Analytics', 'Data governance'],
-        businessValue: 'operational intelligence and data-driven decision making',
+        name: 'Data Engineering',
+        sources: ['Spark', 'Airflow', 'Snowflake', 'dbt', 'Kafka', 'BigQuery'],
+        snTarget: ['CMDB', 'Performance Analytics', 'Integration Hub', 'Reporting'],
+        skills: ['ETL pipelines', 'Data modeling', 'Stream processing', 'Data quality'],
+        businessValue: 'enterprise data architecture with operational intelligence',
       },
       {
         name: 'DevOps & SRE',
-        sources: ['Jenkins', 'GitLab CI', 'GitHub Actions', 'ArgoCD', 'Prometheus', 'Grafana'],
-        snTarget: ['DevOps Change Velocity', 'Event Management', 'Service Mapping', 'AIOps'],
-        skills: ['CI/CD pipelines', 'Observability', 'Incident response', 'SLO management'],
-        businessValue: 'automated change management with compliance and velocity',
+        sources: ['Jenkins', 'GitLab CI', 'ArgoCD', 'Prometheus', 'Grafana', 'Ansible'],
+        snTarget: ['DevOps Change Velocity', 'Event Management', 'Service Mapping', 'ATF'],
+        skills: ['CI/CD pipelines', 'Monitoring', 'Incident response', 'Automation'],
+        businessValue: 'enterprise DevOps with change risk intelligence',
       },
       {
         name: 'AI & Machine Learning',
-        sources: ['TensorFlow', 'PyTorch', 'LangChain', 'OpenAI', 'Hugging Face', 'MLflow'],
-        snTarget: ['Now Assist', 'Predictive Intelligence', 'Virtual Agent', 'Document Intelligence'],
-        skills: ['Model training', 'RAG architecture', 'Prompt engineering', 'MLOps'],
-        businessValue: 'intelligent automation and AI-powered service delivery',
+        sources: ['PyTorch', 'TensorFlow', 'Hugging Face', 'LangChain', 'OpenAI API', 'scikit-learn'],
+        snTarget: ['Now Assist', 'Predictive Intelligence', 'Virtual Agent', 'AI Search'],
+        skills: ['Model training', 'NLP', 'RAG architecture', 'ML pipelines', 'Prompt engineering'],
+        businessValue: 'enterprise AI with governance and security built in',
       },
       {
-        name: 'Full Stack Engineering',
-        sources: ['MERN', 'MEAN', 'Django', 'FastAPI', 'GraphQL', 'Microservices'],
-        snTarget: ['Scripted REST APIs', 'Integration Hub', 'Flow Designer', 'App Engine'],
-        skills: ['API design', 'Database management', 'Authentication', 'Scalable architecture'],
-        businessValue: 'enterprise application development on governed platform',
+        name: 'Full Stack Development',
+        sources: ['Node.js', 'Python', 'Ruby on Rails', 'Django', 'Express', 'MongoDB'],
+        snTarget: ['App Engine', 'Scripted REST', 'Script Includes', 'Flow Designer'],
+        skills: ['API development', 'Database design', 'Authentication', 'Full-stack architecture'],
+        businessValue: 'rapid enterprise application development with built-in governance',
       },
       {
         name: 'CRM & Customer Platforms',
-        sources: ['Salesforce', 'HubSpot', 'Dynamics 365', 'Zendesk', 'Freshdesk'],
-        snTarget: ['CSM', 'FSM', 'Service Portal', 'Customer Workflows'],
-        skills: ['Customer data management', 'Case management', 'Workflow automation', 'Portal development'],
-        businessValue: 'unified customer service on single enterprise platform',
+        sources: ['Salesforce', 'HubSpot', 'Zendesk', 'Dynamics 365', 'Freshdesk'],
+        snTarget: ['CSM', 'Customer Workflows', 'Agent Workspace', 'Case Management'],
+        skills: ['Customer journey mapping', 'Case management', 'SLA management', 'Omnichannel support'],
+        businessValue: 'unified customer service across IT and business',
       },
       {
         name: 'Security & Compliance',
@@ -93,7 +136,7 @@ const DOMAIN_CATEGORIES = {
       },
     ],
   },
-  
+
   // LEGACY DOMAINS - Still valuable, platforms declining
   legacy: {
     weight: 2,
@@ -149,7 +192,7 @@ const DOMAIN_CATEGORIES = {
       },
     ],
   },
-  
+
   // EMERGING DOMAINS - Future-forward transitions
   emerging: {
     weight: 2,
@@ -184,7 +227,6 @@ const DOMAIN_CATEGORIES = {
 // =============================================================================
 
 const AI_PILLARS = {
-  // Core AI Capabilities
   capabilities: [
     {
       name: 'Now Assist',
@@ -242,8 +284,7 @@ const AI_PILLARS = {
       outcomes: ['3x improvement in search relevance', '50% reduction in duplicate tickets', 'Cross-silo knowledge access'],
     },
   ],
-  
-  // Enterprise AI Strategies
+
   strategies: [
     {
       name: 'AI-First Service Desk',
@@ -276,8 +317,7 @@ const AI_PILLARS = {
       metrics: ['Automation Rate', 'Development Velocity', 'Process Efficiency'],
     },
   ],
-  
-  // AI Implementation Challenges
+
   challenges: [
     { name: 'Data Quality', solution: 'Foundation before AI: clean data, consistent categorization' },
     { name: 'Change Management', solution: 'Human-in-the-loop, gradual automation, trust building' },
@@ -289,36 +329,6 @@ const AI_PILLARS = {
 };
 
 // =============================================================================
-// SERVICENOW KNOWLEDGE BASE - Core Concepts for Translation
-// =============================================================================
-
-const SN_CONCEPTS = {
-  architecture: {
-    core: ['Tables', 'Records', 'sys_id', 'Dictionary', 'ACLs', 'Scoped Applications'],
-    data: ['GlideRecord', 'GlideAggregate', 'Reference fields', 'Dot-walking', 'Encoded queries'],
-    automation: ['Business Rules', 'Flow Designer', 'Scheduled Jobs', 'Events', 'Script Includes'],
-    integration: ['REST API', 'Integration Hub', 'MID Server', 'Import Sets', 'Transform Maps'],
-    ui: ['Service Portal', 'Now Experience', 'UI Builder', 'Workspaces', 'Mobile'],
-  },
-  
-  modules: {
-    itsm: { name: 'IT Service Management', tables: ['incident', 'change_request', 'problem', 'sc_request'] },
-    itom: { name: 'IT Operations Management', tables: ['em_alert', 'cmdb_ci', 'sa_metric'] },
-    hrsd: { name: 'HR Service Delivery', tables: ['sn_hr_core_case', 'sn_hr_core_profile'] },
-    csm: { name: 'Customer Service Management', tables: ['sn_customerservice_case', 'customer_account'] },
-    secops: { name: 'Security Operations', tables: ['sn_si_incident', 'sn_vul_vulnerability'] },
-    spm: { name: 'Strategic Portfolio Management', tables: ['pm_project', 'dmn_demand'] },
-  },
-  
-  careers: {
-    admin: { cert: 'CSA', focus: 'Configuration, user management, basic automation' },
-    developer: { cert: 'CAD', focus: 'Scripting, integration, custom applications' },
-    implementer: { cert: 'CIS-*', focus: 'Module-specific deep expertise' },
-    architect: { cert: 'CTA', focus: 'Enterprise strategy, performance, governance' },
-  },
-};
-
-// =============================================================================
 // DYNAMIC TOPIC GENERATORS
 // =============================================================================
 
@@ -326,7 +336,7 @@ function generateDomainTransitionTopic(domain, category) {
   const source = domain.sources[Math.floor(Math.random() * domain.sources.length)];
   const target = domain.snTarget[Math.floor(Math.random() * domain.snTarget.length)];
   const skill = domain.skills[Math.floor(Math.random() * domain.skills.length)];
-  
+
   const templates = [
     {
       titlePattern: `From ${source} to ServiceNow: A Senior Engineer's Translation Guide`,
@@ -365,16 +375,16 @@ function generateDomainTransitionTopic(domain, category) {
       ],
     },
   ];
-  
+
   const template = templates[Math.floor(Math.random() * templates.length)];
-  
+
   return {
     query: `Write an educational article: "${template.titlePattern}"
 
 SCENARIO: ${template.scenario}
 
 QUESTIONS TO ANSWER:
-${template.questions.map(q => `- Q: ${q}`).join('\n')}
+${template.questions.map((q) => `- Q: ${q}`).join('\n')}
 
 KEY CONTEXT:
 - Source expertise: ${domain.sources.join(', ')}
@@ -383,7 +393,7 @@ KEY CONTEXT:
 - Business value: ${domain.businessValue}
 
 Write for a senior professional who doesn't need basic concepts explained, but needs the translation map to their new environment. Include specific analogies, honest trade-offs, and production-learned insights.`,
-    category: category === 'hot' ? 'career' : 'career',
+    category: 'career',
     learningPath: 'career',
     difficulty: category === 'hot' ? 'Intermediate' : 'Beginner',
     forPersona: [domain.name, 'Career Changers'],
@@ -394,11 +404,11 @@ Write for a senior professional who doesn't need basic concepts explained, but n
 function generateAITopic() {
   const pillarTypes = ['capability', 'strategy', 'challenge', 'implementation'];
   const pillarType = pillarTypes[Math.floor(Math.random() * pillarTypes.length)];
-  
+
   if (pillarType === 'capability') {
     const capability = AI_PILLARS.capabilities[Math.floor(Math.random() * AI_PILLARS.capabilities.length)];
     const problem = capability.businessProblems[Math.floor(Math.random() * capability.businessProblems.length)];
-    
+
     return {
       query: `Write an educational article: "Solving '${problem}' with ServiceNow ${capability.name}"
 
@@ -420,10 +430,10 @@ Focus on ${capability.focus}. Include technical architecture for architects and 
       uniqueId: `ai-${capability.name.toLowerCase().replace(/\s+/g, '-')}-${problem.slice(0, 20).toLowerCase().replace(/\s+/g, '-')}`,
     };
   }
-  
+
   if (pillarType === 'strategy') {
     const strategy = AI_PILLARS.strategies[Math.floor(Math.random() * AI_PILLARS.strategies.length)];
-    
+
     return {
       query: `Write an educational article: "${strategy.name}: A Complete Implementation Blueprint"
 
@@ -447,10 +457,10 @@ Write for a senior IT leader who will present this to the board. Include executi
       uniqueId: `ai-strategy-${strategy.name.toLowerCase().replace(/\s+/g, '-')}`,
     };
   }
-  
+
   if (pillarType === 'challenge') {
     const challenge = AI_PILLARS.challenges[Math.floor(Math.random() * AI_PILLARS.challenges.length)];
-    
+
     return {
       query: `Write an educational article: "Conquering ${challenge.name} in ServiceNow AI Implementation"
 
@@ -472,10 +482,10 @@ Be practical and honest. Include real examples, anti-patterns, and recovery stra
       uniqueId: `ai-challenge-${challenge.name.toLowerCase().replace(/\s+/g, '-')}`,
     };
   }
-  
+
   // Implementation deep-dive
   const capability = AI_PILLARS.capabilities[Math.floor(Math.random() * AI_PILLARS.capabilities.length)];
-  
+
   return {
     query: `Write an educational article: "Hands-On: Building Production-Ready ${capability.name} Solutions"
 
@@ -489,7 +499,7 @@ QUESTIONS TO ANSWER:
 - Q: How do I monitor and improve over time?
 - Q: What production issues should I anticipate?
 
-Include working code examples, configuration screenshots (describe them), and troubleshooting guides. Focus on what the official documentation doesn't tell you.`,
+Include working code examples, configuration details, and troubleshooting guides. Focus on what the official documentation doesn't tell you.`,
     category: 'ai',
     learningPath: 'ai',
     difficulty: 'Advanced',
@@ -561,14 +571,14 @@ function generateCoreTechnicalTopic() {
       concepts: ['CI identification', 'Reconciliation', 'Discovery patterns', 'Data quality metrics'],
     },
   ];
-  
+
   const selected = areas[Math.floor(Math.random() * areas.length)];
   const scenario = selected.scenarios[Math.floor(Math.random() * selected.scenarios.length)];
-  
+
   return {
     query: `Write an educational article: "Mastering ${selected.area}: ${scenario.split(' ').slice(0, 4).join(' ')}..."
 
-SCENARIO: ${scenario}. The senior developer/architect asks: "What's the systematic approach to solve this? What do experts do differently?"
+SCENARIO: ${scenario}. The team has tried basic fixes but nothing works. A senior architect is brought in. They ask: "What do experts do differently?"
 
 QUESTIONS TO ANSWER:
 - Q: What's the root cause diagnosis approach?
@@ -592,46 +602,43 @@ Include production-tested code examples, before/after comparisons, and real metr
 // =============================================================================
 
 function selectTopic(existingPosts) {
-  // Calculate what we have
   const categoryCounts = {};
   const uniqueIds = new Set();
-  
+
   for (const post of existingPosts) {
     const cat = post.category || 'other';
     categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
     if (post.uniqueId) uniqueIds.add(post.uniqueId);
   }
-  
+
   console.log(`  📊 Current distribution:`, JSON.stringify(categoryCounts));
-  
-  // Determine content type based on distribution and randomness
+
   const aiCount = categoryCounts['ai'] || 0;
   const careerCount = categoryCounts['career'] || 0;
   const techCount = (categoryCounts['architecture'] || 0) + (categoryCounts['development'] || 0);
-  
+
   // Weighted random selection favoring underrepresented categories
   // Target: ~40% AI, ~35% Career, ~25% Technical
   const aiWeight = Math.max(1, 12 - aiCount);
   const careerWeight = Math.max(1, 10 - careerCount);
   const techWeight = Math.max(1, 8 - techCount);
   const totalWeight = aiWeight + careerWeight + techWeight;
-  
+
   const rand = Math.random() * totalWeight;
-  
+
   let topic;
   if (rand < aiWeight) {
     console.log(`  🎯 Generating AI topic...`);
     topic = generateAITopic();
   } else if (rand < aiWeight + careerWeight) {
     console.log(`  🎯 Generating career transition topic...`);
-    // Select domain category with weights
     const categories = Object.entries(DOMAIN_CATEGORIES);
     const totalDomainWeight = categories.reduce((sum, [_, cat]) => sum + cat.weight, 0);
     let domainRand = Math.random() * totalDomainWeight;
-    
-    let selectedCategory = 'hot';
+
     let selectedDomains = DOMAIN_CATEGORIES.hot.domains;
-    
+    let selectedCategory = 'hot';
+
     for (const [catName, cat] of categories) {
       if (domainRand < cat.weight) {
         selectedCategory = catName;
@@ -640,26 +647,30 @@ function selectTopic(existingPosts) {
       }
       domainRand -= cat.weight;
     }
-    
+
     const domain = selectedDomains[Math.floor(Math.random() * selectedDomains.length)];
     topic = generateDomainTransitionTopic(domain, selectedCategory);
   } else {
     console.log(`  🎯 Generating technical topic...`);
     topic = generateCoreTechnicalTopic();
   }
-  
+
   // Check for duplicate uniqueId (regenerate if needed)
   let attempts = 0;
   while (uniqueIds.has(topic.uniqueId) && attempts < 5) {
     console.log(`  ⚠️ Duplicate uniqueId, regenerating...`);
-    topic = rand < aiWeight ? generateAITopic() : 
-            rand < aiWeight + careerWeight ? generateDomainTransitionTopic(
-              DOMAIN_CATEGORIES.hot.domains[Math.floor(Math.random() * DOMAIN_CATEGORIES.hot.domains.length)], 
+    topic =
+      rand < aiWeight
+        ? generateAITopic()
+        : rand < aiWeight + careerWeight
+          ? generateDomainTransitionTopic(
+              DOMAIN_CATEGORIES.hot.domains[Math.floor(Math.random() * DOMAIN_CATEGORIES.hot.domains.length)],
               'hot'
-            ) : generateCoreTechnicalTopic();
+            )
+          : generateCoreTechnicalTopic();
     attempts++;
   }
-  
+
   return topic;
 }
 
@@ -715,10 +726,10 @@ function generateInterviewTopic() {
       ],
     },
   ];
-  
+
   const selected = categories[Math.floor(Math.random() * categories.length)];
   const scenario = selected.scenarios[Math.floor(Math.random() * selected.scenarios.length)];
-  
+
   return {
     query: `Create ONE senior ServiceNow interview question.
 
@@ -736,69 +747,62 @@ Include 8-12 line code example showing problem AND solution. Focus on "why" not 
 }
 
 // =============================================================================
-// PROMPTS
+// PROMPTS - Scenario-Question-Answer Format
 // =============================================================================
 
 const ARTICLE_PROMPT = `You are a senior ServiceNow architect writing for sumanthbolle.com - the definitive ServiceNow learning resource serving as a SINGLE INTERFACE for ALL tech professionals in the enterprise era.
 
 TARGET AUDIENCE:
-- Senior tech professionals (10-25 years) from ANY technology background
-- Full-stack developers, AI engineers, cloud architects, DBAs, DevOps engineers
-- They have DEEP expertise in their domain - respect that
-- They want TRANSLATION, not beginner tutorials
-- They value honest trade-offs over marketing speak
+- Senior IT professionals (10-25 years experience) transitioning from other platforms to ServiceNow
+- They have deep expertise in their domain (Java, .NET, SAP, Oracle, Salesforce, AWS, Remedy, mainframe, etc.)
+- They want "WHY" not just "HOW"
+- They learn through scenarios connecting to problems they already understand
 
-WRITING PHILOSOPHY:
-- Peer-to-peer: Senior professional to senior professional
-- Bridge builder: Show how their skills translate, don't dismiss them
-- Honest: Acknowledge limitations, trade-offs, learning curves
-- Practical: Production patterns, not theory
-- Business-aware: Connect technical to business value
+WRITING STYLE:
+- Mentor-like: friendly, expert, never condescending
+- Use analogies to concepts they know (SQL→GlideRecord, Git→Update Sets)
+- Every section answers a specific QUESTION
+- Include "I've seen this in production" examples
+- Be honest about trade-offs
 
-UNIQUE TITLE REQUIREMENT:
-Generate a SPECIFIC, UNIQUE title that no other article would have.
-BAD: "Introduction to ServiceNow for Developers" (generic)
-GOOD: "From Kubernetes to ServiceNow: Why Container Orchestrators Love Service Mapping"
-GOOD: "The RAG Architecture Behind Now Assist: What AI Engineers Need to Know"
-
-STRUCTURE:
+REQUIRED STRUCTURE (Scenario-Question-Answer):
 
 <h2>The Scenario</h2>
-<p>3-4 sentences painting a realistic problem from their perspective.</p>
+<p>3-4 sentences painting a realistic problem.</p>
 
 <h2>Key Questions Answered</h2>
-<h3>Q: [Question they'd actually ask]?</h3>
-<p><strong>A:</strong> Direct answer with their terminology, analogies to what they know...</p>
-(4-6 questions total)
+<h3>Q: [First specific question they'd ask]?</h3>
+<p><strong>A:</strong> Detailed answer with explanation...</p>
 
-<h2>The Translation Map</h2>
-<p>Explicit mapping of their concepts to ServiceNow equivalents. Use tables or clear comparisons.</p>
+<h3>Q: [Second question]?</h3>
+<p><strong>A:</strong> Answer...</p>
+(Continue for 4-6 questions)
 
-<h2>Hands-On: See It Work</h2>
-<pre>// 10-15 lines of working code
-// Real table names, real APIs
-// Comments showing equivalent in their world</pre>
-<p>Walk through what the code does and why.</p>
+<h2>Hands-On Example</h2>
+<pre>// 8-15 lines of working code with comments
+// Use real table names (incident, sys_user, etc.)
+// Complete logic, NOT stubs</pre>
+<p>Explanation of the code...</p>
 
-<h2>What Transfers vs What's Different</h2>
-<p>Honest assessment of skills that apply directly vs require new learning.</p>
+<h2>Common Mistakes to Avoid</h2>
+<ul>
+<li><strong>Mistake:</strong> Description. <strong>Fix:</strong> Solution.</li>
+</ul>
 
-<h2>The Business Impact</h2>
-<p>Why this matters to the organization - connect technical to business value.</p>
-
-<h2>Common Traps to Avoid</h2>
-<ul><li><strong>Trap:</strong> Description. <strong>Solution:</strong> Fix.</li></ul>
-
-<h2>Your Next Steps</h2>
-<ul><li>Concrete action 1</li><li>Concrete action 2</li><li>Concrete action 3</li></ul>
+<h2>Key Takeaways</h2>
+<ul>
+<li>Main point 1</li>
+<li>Main point 2</li>
+<li>Main point 3</li>
+</ul>
 
 RULES:
-1. Return ONLY valid JSON
+1. Return ONLY valid JSON - no markdown, no text before/after
 2. Content: 1200-1600 words
-3. Use HTML only: <h2>, <h3>, <p>, <ul>, <li>, <pre>, <strong>, <em>
-4. Code must be complete and working
-5. No citations [1], no **markdown**
-6. End with complete sentence
+3. End with complete sentence and closing tag
+4. Use HTML only: <h2>, <h3>, <p>, <ul>, <li>, <pre>, <strong>, <em>
+5. Code must be complete and working (8-15 lines, real tables)
+6. No citations [1], no **markdown**
 
 JSON FORMAT:
 {"title":"Unique Specific Title","excerpt":"2-3 sentences: scenario + outcome.","readTime":"12 min read","content":"<h2>The Scenario</h2><p>...</p>..."}`;
@@ -816,20 +820,20 @@ QUESTION STYLE:
 - Include what separates good from great answers
 - Cover edge cases and failure modes
 
-FORMAT:
-- Scenario: Specific situation with real numbers/context
-- Expected answer: Structured response with code
-- What makes it a "great" answer: Senior considerations
-
 RULES:
-1. Return ONLY valid JSON
+1. Return ONLY valid JSON - no markdown, no text before/after
 2. Answer: 500-700 words
-3. Use HTML: <p>, <h4>, <ul>, <li>, <pre>, <strong>
-4. Code: 8-12 lines, working, no stubs
-5. No citations, no markdown
+3. End with complete sentence and closing tag
+4. Use HTML: <p>, <h4>, <ul>, <li>, <pre>, <strong>
+5. Code MUST be 8-12 lines with REAL working logic:
+   - Include variable declarations with real table names
+   - Include actual query conditions (addQuery/addEncodedQuery)
+   - Include processing logic inside loops
+   - NO stubs, NO placeholders, NO "// your code here"
+6. No citations, no markdown
 
 JSON FORMAT:
-{"question":"Scenario-based question?","answer":"<h4>Understanding the Problem</h4><p>...</p><h4>The Solution</h4><pre>// code</pre><h4>Senior Considerations</h4><ul><li>...</li></ul>","difficulty":"Senior","company":"ServiceNow"}`;
+{"question":"Scenario-based question?","answer":"<h4>Understanding the Problem</h4><p>...</p><h4>The Solution</h4><pre>// complete working code</pre><h4>Senior Considerations</h4><ul><li>...</li></ul>","difficulty":"Senior","company":"ServiceNow"}`;
 
 // =============================================================================
 // HELPERS
@@ -843,11 +847,12 @@ function loadJson(file) {
 }
 
 function nextId(items) {
-  return items.reduce((m, x) => Math.max(m, Number(x.id) || 0), 0) + 1;
+  const max = items.reduce((m, x) => Math.max(m, Number(x.id) || 0), 0);
+  return max + 1;
 }
 
 function formatDate(d = new Date()) {
-  const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return `${m[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
@@ -855,89 +860,153 @@ function nowISO() {
   return new Date().toISOString();
 }
 
-function isDuplicateTitle(existing, newTitle) {
-  if (!newTitle) return true;
-  const normalize = (s) => (s || '').toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
-  const newNorm = normalize(newTitle);
-  
-  for (const post of existing) {
-    const existNorm = normalize(post.title);
-    if (newNorm === existNorm) return true;
-    if (newNorm.includes(existNorm) || existNorm.includes(newNorm)) {
-      if (Math.min(newNorm.length, existNorm.length) > 40) return true;
-    }
-  }
-  return false;
+function isDuplicateByPrefix(existing, title, len = 60) {
+  const normalize = (s) =>
+    (s || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '')
+      .substring(0, len);
+  const t = normalize(title);
+  return existing.some((p) => normalize(p.title) === t);
 }
 
 function cleanResponseToLikelyJson(text) {
-  return (text || '').replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+  return (text || '')
+    .replace(/```json\s*/gi, '')
+    .replace(/```\s*/g, '')
+    .trim();
 }
 
 function parseJsonFromResponse(cleaned) {
   const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
   if (!jsonMatch) return null;
+
   let jsonStr = jsonMatch[0].replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
-  jsonStr = jsonStr.replace(/"([^"]*(?:\\.[^"]*)*)"/g, (m, content) => {
+
+  // Normalize raw newlines inside JSON string literals
+  jsonStr = jsonStr.replace(/"([^"]*(?:\\.)*([^"]*)*)"/g, (m, content) => {
     return `"${content.replace(/[\r\n]+/g, '\\n').replace(/\t/g, '\\t')}"`;
   });
   return JSON.parse(jsonStr);
 }
 
+// Strip citation markers (safety net - Gemini rarely produces these but just in case)
+function stripCitations(text) {
+  if (!text) return text;
+  // Preserve code blocks, strip citations only from prose
+  const codeBlocks = [];
+  let preserved = text.replace(/<pre>([\s\S]*?)<\/pre>/gi, (match) => {
+    codeBlocks.push(match);
+    return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
+  });
+  // Remove [1], [2][3], [1,2], [1-3] style citations
+  preserved = preserved.replace(/\s*\[\d+(?:[,\-]\d+)*\](?:\[\d+(?:[,\-]\d+)*\])*/g, '');
+  // Restore code blocks
+  codeBlocks.forEach((block, i) => {
+    preserved = preserved.replace(`__CODE_BLOCK_${i}__`, block);
+  });
+  return preserved;
+}
+
 // =============================================================================
-// API
+// GEMINI API (replaces Perplexity)
 // =============================================================================
 
-function callPerplexity(prompt, systemPrompt) {
+function callGemini(prompt, systemPrompt, { useGrounding = false, maxTokens = 5000, temperature = 0.75 } = {}) {
   return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => reject(new Error('API timeout')), 120000);
-    const data = JSON.stringify({
-      model: 'sonar-pro',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt },
-      ],
-      max_tokens: 5000,
-      temperature: 0.75,
-    });
+    const timeout = setTimeout(() => reject(new Error('API timeout (120s)')), 120000);
 
-    const req = https.request({
-      hostname: 'api.perplexity.ai',
-      path: '/chat/completions',
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(data),
+    const requestBody = {
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: prompt }],
+        },
+      ],
+      systemInstruction: {
+        parts: [{ text: systemPrompt }],
       },
-    }, (res) => {
-      let body = '';
-      res.on('data', (chunk) => (body += chunk));
-      res.on('end', () => {
-        clearTimeout(timeout);
-        try {
-          if (res.statusCode !== 200) {
-            reject(new Error(`API ${res.statusCode}: ${body.substring(0, 200)}`));
-            return;
+      generationConfig: {
+        maxOutputTokens: maxTokens,
+        temperature: temperature,
+      },
+    };
+
+    // Enable Google Search grounding (replaces Perplexity's built-in search)
+    if (useGrounding) {
+      requestBody.tools = [{ google_search: {} }];
+    }
+
+    const data = JSON.stringify(requestBody);
+
+    const req = https.request(
+      {
+        hostname: 'generativelanguage.googleapis.com',
+        path: `/v1beta/models/${GEMINI_MODEL}:generateContent`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': GEMINI_API_KEY,
+          'Content-Length': Buffer.byteLength(data),
+        },
+      },
+      (res) => {
+        let body = '';
+        res.on('data', (chunk) => (body += chunk));
+        res.on('end', () => {
+          clearTimeout(timeout);
+          try {
+            if (res.statusCode !== 200) {
+              reject(new Error(`Gemini API ${res.statusCode}: ${body.substring(0, 300)}`));
+              return;
+            }
+
+            const parsed = JSON.parse(body);
+
+            // Check for safety blocks
+            if (parsed.candidates?.[0]?.finishReason === 'SAFETY') {
+              reject(new Error('Response blocked by Gemini safety filters'));
+              return;
+            }
+
+            // Extract text from potentially multiple parts
+            const parts = parsed.candidates?.[0]?.content?.parts;
+            if (!parts || parts.length === 0) {
+              reject(new Error('Empty response from Gemini'));
+              return;
+            }
+
+            // Combine all text parts
+            const content = parts
+              .filter((p) => p.text)
+              .map((p) => p.text)
+              .join('');
+
+            content ? resolve(content) : reject(new Error('No text in Gemini response'));
+          } catch (e) {
+            reject(e);
           }
-          const content = JSON.parse(body).choices?.[0]?.message?.content;
-          content ? resolve(content) : reject(new Error('Invalid response'));
-        } catch (e) { reject(e); }
-      });
+        });
+      }
+    );
+
+    req.on('error', (e) => {
+      clearTimeout(timeout);
+      reject(e);
     });
-    req.on('error', (e) => { clearTimeout(timeout); reject(e); });
     req.write(data);
     req.end();
   });
 }
 
-async function callWithRetry(prompt, systemPrompt, maxRetries = 3) {
+async function callWithRetry(prompt, systemPrompt, maxRetries = 3, options = {}) {
   for (let i = 1; i <= maxRetries; i++) {
     try {
-      return await callPerplexity(prompt, systemPrompt);
+      return await callGemini(prompt, systemPrompt, options);
     } catch (e) {
       console.log(`  Attempt ${i} failed: ${e.message}`);
       if (i === maxRetries) throw e;
+      // Slightly longer backoff for Gemini rate limits
       await new Promise((r) => setTimeout(r, 5000 * i));
     }
   }
@@ -948,8 +1017,8 @@ async function callWithRetry(prompt, systemPrompt, maxRetries = 3) {
 // =============================================================================
 
 async function main() {
-  if (!PERPLEXITY_API_KEY) {
-    console.error('❌ PERPLEXITY_API_KEY not set');
+  if (!GEMINI_API_KEY) {
+    console.error('❌ GEMINI_API_KEY not set');
     process.exit(1);
   }
 
@@ -958,76 +1027,55 @@ async function main() {
 
   console.log(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║  🚀 ServiceNow Content Generator v3.0                                        ║
+║  🚀 ServiceNow Content Generator v3.1 (Gemini Pro)                          ║
 ║  Dynamic Topic Engine • AI-First Strategy • Enterprise Professional Focus    ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
-║  Date: ${today.padEnd(68)}║
-║  Domain Categories: ${Object.keys(DOMAIN_CATEGORIES).length} (${Object.values(DOMAIN_CATEGORIES).reduce((s, c) => s + c.domains.length, 0)} domains)                                              ║
-║  AI Pillars: ${AI_PILLARS.capabilities.length} capabilities, ${AI_PILLARS.strategies.length} strategies                                 ║
-╚══════════════════════════════════════════════════════════════════════════════╝`);
+║  🤖 Model: ${GEMINI_MODEL.padEnd(66)}║
+║  🔑 API Key: ${(GEMINI_API_KEY.substring(0, 8) + '...' + GEMINI_API_KEY.slice(-4)).padEnd(64)}║
+║  📅 Date: ${today.padEnd(67)}║
+╚══════════════════════════════════════════════════════════════════════════════╝
+`);
 
   // =========================================================================
   // ARTICLE GENERATION
   // =========================================================================
   const posts = loadJson(POSTS_FILE);
-  console.log(`\n📚 ARTICLE GENERATION`);
+  console.log(`📚 ARTICLE GENERATION`);
   console.log(`   Existing posts: ${posts.length}/${MAX_POSTS}`);
-  
+
   const topic = selectTopic(posts);
+  console.log(`   Learning Path: ${topic.learningPath}`);
   console.log(`   Category: ${topic.category}`);
-  console.log(`   Learning path: ${topic.learningPath}`);
-  console.log(`   Target: ${topic.forPersona?.join(', ') || 'All professionals'}`);
-  console.log(`   UniqueId: ${topic.uniqueId}`);
+  console.log(`   Difficulty: ${topic.difficulty || 'N/A'}`);
+  console.log(`   Query preview: ${topic.query.substring(0, 80)}...`);
 
   let newArticle = null;
-  let skipReason = null;
-  
-  for (let attempt = 1; attempt <= 3 && !newArticle; attempt++) {
-    console.log(`\n   🔄 Attempt ${attempt}/3...`);
+  for (let attempt = 1; attempt <= 2 && !newArticle; attempt++) {
     try {
-      const raw = await callWithRetry(topic.query, ARTICLE_PROMPT);
+      const raw = await callWithRetry(topic.query, ARTICLE_PROMPT, 3, { useGrounding: true });
       const data = parseJsonFromResponse(cleanResponseToLikelyJson(raw));
-      
-      if (!data?.title) {
-        skipReason = 'No title in response';
-        continue;
+      if (data?.title && data?.content && !isDuplicateByPrefix(posts, data.title)) {
+        newArticle = {
+          id: nextId(posts),
+          title: data.title,
+          excerpt: stripCitations(data.excerpt || ''),
+          readTime: data.readTime || '12 min read',
+          content: stripCitations(data.content),
+          category: topic.category,
+          learningPath: topic.learningPath,
+          difficulty: topic.difficulty,
+          forPersona: topic.forPersona,
+          uniqueId: topic.uniqueId,
+          date: today,
+          dateISO: iso,
+        };
+        console.log(`   ✅ ${data.title.substring(0, 60)}...`);
+      } else if (data?.title) {
+        console.log(`   ⚠️ Duplicate title detected`);
       }
-      if (!data?.content) {
-        skipReason = 'No content in response';
-        continue;
-      }
-      
-      console.log(`   📝 "${data.title.substring(0, 65)}..."`);
-      
-      if (isDuplicateTitle(posts, data.title)) {
-        skipReason = 'Duplicate title';
-        continue;
-      }
-      
-      newArticle = {
-        id: nextId(posts),
-        title: data.title,
-        excerpt: data.excerpt || '',
-        readTime: data.readTime || '12 min read',
-        content: data.content,
-        category: topic.category,
-        learningPath: topic.learningPath,
-        difficulty: topic.difficulty,
-        forPersona: topic.forPersona,
-        uniqueId: topic.uniqueId,
-        date: today,
-        dateISO: iso,
-      };
-      console.log(`   ✅ Created: ID ${newArticle.id}`);
-      
     } catch (e) {
-      skipReason = e.message;
-      console.log(`   ❌ ${e.message}`);
+      console.error(`   ❌ Attempt ${attempt}: ${e.message}`);
     }
-  }
-
-  if (!newArticle) {
-    console.log(`\n   ⚠️ NO ARTICLE GENERATED: ${skipReason}`);
   }
 
   const allPosts = (newArticle ? [newArticle, ...posts] : posts).slice(0, MAX_POSTS);
@@ -1042,25 +1090,26 @@ async function main() {
   const interviews = loadJson(INTERVIEWS_FILE);
   console.log(`\n🎯 INTERVIEW GENERATION`);
   console.log(`   Existing: ${interviews.length}/${MAX_INTERVIEWS}`);
-  
+
   const intTopic = generateInterviewTopic();
   console.log(`   Category: ${intTopic.category}`);
 
   let newInterview = null;
   try {
-    const raw = await callWithRetry(intTopic.query, INTERVIEW_PROMPT);
+    // Interviews are scenario-based - no web search needed
+    const raw = await callWithRetry(intTopic.query, INTERVIEW_PROMPT, 3, { useGrounding: false });
     const data = parseJsonFromResponse(cleanResponseToLikelyJson(raw));
-    
+
     if (data?.question && data?.answer) {
-      const isDupe = interviews.some(q => 
-        (q.question || '').substring(0, 50).toLowerCase() === data.question.substring(0, 50).toLowerCase()
+      const isDupe = interviews.some(
+        (q) => (q.question || '').substring(0, 50).toLowerCase() === data.question.substring(0, 50).toLowerCase()
       );
-      
+
       if (!isDupe) {
         newInterview = {
           id: nextId(interviews),
           question: data.question,
-          answer: data.answer,
+          answer: stripCitations(data.answer),
           difficulty: data.difficulty || 'Senior',
           company: 'ServiceNow',
           category: intTopic.category,
@@ -1078,7 +1127,7 @@ async function main() {
 
   const allInterviews = (newInterview ? [newInterview, ...interviews] : interviews).slice(0, MAX_INTERVIEWS);
   fs.writeFileSync(INTERVIEWS_FILE, JSON.stringify(allInterviews, null, 2));
-  console.log(`   💾 Saved ${interviews.length} interviews`);
+  console.log(`   💾 Saved ${allInterviews.length} interviews`);
 
   // =========================================================================
   // SUMMARY
