@@ -55,6 +55,10 @@
     .badge-difficulty{background:linear-gradient(135deg,rgba(255,149,0,0.15),rgba(255,149,0,0.08));color:#ff9500;border:1px solid rgba(255,149,0,0.2)}
     .badge-difficulty.expert{background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(239,68,68,0.08));color:#ef4444;border:1px solid rgba(239,68,68,0.2)}
     .badge-category{background:linear-gradient(135deg,rgba(52,199,89,0.15),rgba(52,199,89,0.08));color:#22c55e;border:1px solid rgba(52,199,89,0.2)}
+    .badge-difficulty.foundation{background:linear-gradient(135deg,rgba(0,102,204,0.15),rgba(0,102,204,0.08));color:var(--blue);border:1px solid rgba(0,102,204,0.2)}
+    .filter-core{background:linear-gradient(135deg,#0066CC,#0055aa);color:#fff;border-color:#0066CC}
+    .filter-core:hover{background:linear-gradient(135deg,#0055aa,#004499)}
+    .filter-core.active{background:linear-gradient(135deg,#0055aa,#003388);border-color:#003388}
     .interview-question{font-size:18px;font-weight:600;line-height:1.5;color:var(--text)}
     .interview-toggle{width:40px;height:40px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.3s}
     .interview-toggle svg{width:20px;height:20px;stroke:var(--gray);fill:none;stroke-width:2;transition:transform 0.3s}
@@ -88,6 +92,49 @@
     .empty-state{text-align:center;padding:80px 20px;color:var(--gray)}
     .empty-state h3{font-size:24px;margin-bottom:12px;color:var(--text)}
     
+    /* Quick Quiz Section */
+    .quiz-section{max-width:900px;margin:0 auto;padding:20px 22px 80px}
+    .quiz-card{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f0f1a 100%);border-radius:24px;padding:48px 40px;color:#fff;position:relative;overflow:hidden}
+    .quiz-card::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,rgba(0,102,204,0.15) 0%,transparent 70%);pointer-events:none}
+    .quiz-header{text-align:center;margin-bottom:36px}
+    .quiz-header h2{font-size:28px;font-weight:700;margin-bottom:8px}
+    .quiz-header p{color:rgba(255,255,255,0.6);font-size:15px}
+    .quiz-progress{display:flex;gap:6px;justify-content:center;margin-bottom:32px}
+    .quiz-dot{width:32px;height:4px;border-radius:2px;background:rgba(255,255,255,0.15);transition:all 0.3s}
+    .quiz-dot.active{background:var(--blue)}
+    .quiz-dot.correct{background:var(--green)}
+    .quiz-dot.wrong{background:#ef4444}
+    .quiz-question-text{font-size:20px;font-weight:600;line-height:1.6;margin-bottom:28px;min-height:80px}
+    .quiz-options{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+    .quiz-option{padding:16px 20px;border:1px solid rgba(255,255,255,0.12);border-radius:14px;cursor:pointer;transition:all 0.2s;font-size:15px;line-height:1.5;background:rgba(255,255,255,0.04);position:relative;display:flex;align-items:flex-start;gap:12px}
+    .quiz-option:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.25)}
+    .quiz-option.selected{background:rgba(0,102,204,0.2);border-color:var(--blue)}
+    .quiz-option.correct-answer{background:rgba(52,199,89,0.2);border-color:var(--green)}
+    .quiz-option.wrong-answer{background:rgba(239,68,68,0.2);border-color:#ef4444}
+    .quiz-option-letter{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;transition:all 0.2s}
+    .quiz-option.selected .quiz-option-letter{background:var(--blue);color:#fff}
+    .quiz-option.correct-answer .quiz-option-letter{background:var(--green);color:#fff}
+    .quiz-option.wrong-answer .quiz-option-letter{background:#ef4444;color:#fff}
+    .quiz-option-text{flex:1;padding-top:3px}
+    .quiz-explanation{padding:20px;background:rgba(0,102,204,0.1);border:1px solid rgba(0,102,204,0.2);border-radius:14px;margin-bottom:24px;display:none;font-size:14px;line-height:1.7;color:rgba(255,255,255,0.85)}
+    .quiz-explanation.show{display:block;animation:fadeSlide 0.3s ease}
+    .quiz-explanation strong{color:var(--blue)}
+    .quiz-explanation .dotnet-ref{color:rgba(255,255,255,0.5);font-style:italic;display:block;margin-top:8px;font-size:13px}
+    .quiz-actions{display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .quiz-btn{padding:14px 32px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none}
+    .quiz-btn-primary{background:var(--blue);color:#fff}
+    .quiz-btn-primary:hover{background:#0055aa;transform:translateY(-1px)}
+    .quiz-btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+    .quiz-btn-secondary{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15)}
+    .quiz-btn-secondary:hover{background:rgba(255,255,255,0.12)}
+    .quiz-score{text-align:center;font-size:14px;color:rgba(255,255,255,0.6)}
+    .quiz-score span{color:var(--green);font-weight:700;font-size:16px}
+    .quiz-result{text-align:center;padding:20px 0}
+    .quiz-result h3{font-size:32px;margin-bottom:8px}
+    .quiz-result p{color:rgba(255,255,255,0.6);font-size:16px;margin-bottom:24px}
+    .quiz-result .score-big{font-size:64px;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:16px 0}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    
     /* Toast notification */
     .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--black);color:var(--white);padding:14px 28px;border-radius:12px;font-size:14px;font-weight:500;z-index:99999;opacity:0;transition:all 0.3s ease;display:flex;align-items:center;gap:10px;box-shadow:0 10px 40px rgba(0,0,0,0.3)}
     .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
@@ -108,6 +155,13 @@
       .header-stats{gap:24px}
       .interview-footer{flex-direction:column;align-items:flex-start}
       .share-actions{width:100%}
+      .quiz-card{padding:28px 20px}
+      .quiz-question-text{font-size:17px;min-height:60px}
+      .quiz-option{padding:14px 16px}
+      .quiz-actions{flex-direction:column;gap:12px}
+      .quiz-result .score-big{font-size:48px}
+      .interview-filters{gap:8px}
+      .filter-btn{padding:6px 14px;font-size:13px}
     }
   </style>
 </head>
@@ -145,10 +199,13 @@
   <main class="interview-container">
     <div class="interview-filters">
       <button class="filter-btn active" data-ifilter="all">All Questions</button>
+      <button class="filter-btn filter-core" data-ifilter="Core Concepts">Core Concepts</button>
       <button class="filter-btn" data-ifilter="Performance">Performance</button>
       <button class="filter-btn" data-ifilter="Architecture">Architecture</button>
       <button class="filter-btn" data-ifilter="Security">Security</button>
       <button class="filter-btn" data-ifilter="Scripting">Scripting</button>
+      <button class="filter-btn" data-ifilter="Integration">Integration</button>
+      <button class="filter-btn" data-ifilter="AI Implementation">AI</button>
     </div>
     <div class="interview-list" id="interviewList"></div>
     <div class="empty-state" id="emptyState" style="display:none">
@@ -156,6 +213,35 @@
       <p>Try selecting a different category.</p>
     </div>
   </main>
+
+  <!-- Quick Quiz Section -->
+  <section class="quiz-section" id="quizSection">
+    <div class="quiz-card">
+      <div class="quiz-header">
+        <h2>Quick-Fire Quiz</h2>
+        <p>10 randomized questions · Answers change every round · Mapped to .NET concepts</p>
+      </div>
+      <div class="quiz-progress" id="quizProgress"></div>
+      <div id="quizBody">
+        <div class="quiz-question-text" id="quizQuestion"></div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-explanation" id="quizExplanation"></div>
+        <div class="quiz-actions">
+          <div class="quiz-score">Score: <span id="quizScore">0</span> / <span id="quizTotal">10</span></div>
+          <div style="display:flex;gap:10px">
+            <button class="quiz-btn quiz-btn-secondary" id="quizSkip" onclick="quizNext()">Skip</button>
+            <button class="quiz-btn quiz-btn-primary" id="quizCheck" onclick="quizCheck()" disabled>Check Answer</button>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-result" id="quizResult" style="display:none">
+        <h3>Round Complete!</h3>
+        <div class="score-big" id="quizFinalScore">0%</div>
+        <p id="quizFinalMessage"></p>
+        <button class="quiz-btn quiz-btn-primary" onclick="quizRestart()" style="margin:0 auto;display:block">New Round — Fresh Questions</button>
+      </div>
+    </div>
+  </section>
 
   <!-- Toast Notification -->
   <div class="toast" id="toast">
@@ -411,7 +497,7 @@
       
       var html = '';
       filtered.forEach(function(q, i) {
-        var diffClass = q.difficulty === 'Expert' ? 'expert' : '';
+        var diffClass = q.difficulty === 'Expert' ? 'expert' : q.difficulty === 'Foundation' ? 'foundation' : '';
         html += `
           <div class="interview-card" data-id="${q.id}" style="transition-delay:${i * 0.08}s">
             <div class="interview-header" onclick="toggleInterview(this)">
@@ -502,7 +588,190 @@
     // Initialize router after DOM ready
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => Router.init(), 100);
+      quizInit();
     });
+
+    // ==================== MINI QUIZ ENGINE ====================
+    var QUIZ_BANK = [
+      {q:"In .NET, you use DbContext to query a database. What is the ServiceNow equivalent for querying records from a table?",opts:["GlideRecord","GlideSystem","GlideAjax","GlideForm"],correct:0,explain:"GlideRecord is ServiceNow's server-side API for database CRUD operations — think of it as your DbContext + LINQ queries combined into one class.",dotnet:"Like DbContext.Set<Incident>().Where(...) in Entity Framework."},
+      {q:"Which ServiceNow API would you use from a Client Script to call a server-side Script Include?",opts:["GlideRecord","g_form","GlideAjax","RESTMessageV2"],correct:2,explain:"GlideAjax is the client-to-server bridge. It calls Script Includes that extend AbstractAjaxProcessor from the browser asynchronously.",dotnet:"Like using fetch('/api/controller/action') from your JavaScript frontend."},
+      {q:"A Business Rule with 'When: before' fires at which point in the record lifecycle?",opts:["After the database write completes","Before the record is saved to the database","When the form loads in the browser","After the user clicks the Save button but before the server receives it"],correct:1,explain:"A 'before' Business Rule runs on the server after the form data arrives but BEFORE the database INSERT/UPDATE. You can modify field values or abort the save.",dotnet:"Like an Entity Framework SaveChanges interceptor or an ASP.NET Action Filter (OnActionExecuting)."},
+      {q:"What does gr.getValue('caller_id') return for a reference field?",opts:["The display name (e.g., 'John Smith')","The sys_id (32-char GUID) of the referenced record","The entire referenced record object","The field label text"],correct:1,explain:"getValue() always returns the raw database value. For reference fields, that's the sys_id (a 32-character GUID). Use getDisplayValue('caller_id') to get the human-readable name.",dotnet:"Like getting the foreign key ID vs the navigation property in Entity Framework."},
+      {q:"Which ServiceNow concept is most equivalent to .NET Data Annotations like [Required] and [MaxLength]?",opts:["Business Rules","Client Scripts","UI Policies","Script Includes"],correct:2,explain:"UI Policies are declarative, no-code rules that make fields mandatory, read-only, or visible based on conditions — just like Data Annotations auto-enforce validation rules.",dotnet:"Like decorating a model property with [Required] and having the framework enforce it."},
+      {q:"How do you move customizations from a Dev instance to a Prod instance in ServiceNow?",opts:["Git push to production branch","FTP the files to the server","Export and import Update Sets","Docker container deployment"],correct:2,explain:"Update Sets capture configuration changes made on an instance. You complete, export (XML), then import and commit on the target instance. There's no server access or file deployment.",dotnet:"Like a database migration script that packages schema + seed data changes for deployment."},
+      {q:"In ServiceNow's table inheritance, the 'incident' table extends which base table?",opts:["cmdb_ci","sys_metadata","task","sys_db_object"],correct:2,explain:"Incident extends the 'task' table, which is the base for many work-tracking records (change_request, problem, sc_req_item, etc.). This is single-table inheritance.",dotnet:"Like Entity Framework's Table-Per-Hierarchy (TPH) where Incident : Task : BaseEntity share one database table with a Discriminator column."},
+      {q:"A Client Script runs on which side of the architecture?",opts:["Server-side, within the database transaction","Client-side, in the user's browser","Both client and server simultaneously","On the MID Server"],correct:1,explain:"Client Scripts execute in the user's browser (JavaScript). They manipulate the form using the g_form API. They CANNOT directly access GlideRecord — that requires GlideAjax.",dotnet:"Like JavaScript event handlers in an ASP.NET MVC view — they run in the browser, not on the server."},
+      {q:"What is the sys_id in ServiceNow?",opts:["A sequential auto-increment integer","A 32-character globally unique identifier","The record's display number (e.g., INC0010001)","The table's primary key name"],correct:1,explain:"Every record in ServiceNow has a sys_id — a 32-character GUID that uniquely identifies it across all tables. It's the universal primary key.",dotnet:"Like Guid.NewGuid() in C# — a UNIQUEIDENTIFIER column in SQL Server."},
+      {q:"ACLs in ServiceNow follow which evaluation logic when multiple ACLs match a request?",opts:["OR — any matching ACL grants access","AND — ALL matching ACLs must return true","First match wins, like firewall rules","Most specific ACL overrides all others"],correct:1,explain:"When multiple ACLs match, ALL of them must pass (AND logic). This means adding more ACLs can only restrict access, never loosen it — a common source of confusion.",dotnet:"Like stacking multiple [Authorize] attributes on a controller — the user must satisfy ALL of them."},
+      {q:"What is the purpose of the 'coalesce' field in an Import Set Transform Map?",opts:["It defines the display value format","It determines insert vs update (upsert matching key)","It encrypts the field during import","It sets the default value for null records"],correct:1,explain:"The coalesce field is the match key for upsert logic. If a target record with this value exists, it UPDATE. If not, INSERT. Like SQL Server's MERGE...ON clause.",dotnet:"Like the match condition in a SQL MERGE statement or EF's AddOrUpdate() method."},
+      {q:"Which ServiceNow tool lets you test scripts interactively on the server, similar to LINQPad or a C# REPL?",opts:["Script Debugger","REST API Explorer","Background Script","Client Script Editor"],correct:2,explain:"Background Script (System Definition → Scripts - Background) lets you execute server-side JavaScript directly on the instance. It's your REPL for testing GlideRecord queries, Script Includes, etc.",dotnet:"Like LINQPad for C# or the Immediate Window in Visual Studio — run code snippets against the live environment."},
+      {q:"Flow Designer in ServiceNow is most comparable to which .NET/Azure technology?",opts:["Visual Studio debugger","Azure Logic Apps / Power Automate","NuGet Package Manager","Entity Framework Migrations"],correct:1,explain:"Flow Designer is a low-code automation engine with triggers, conditions, and actions. Like Logic Apps, you build workflows visually without writing code for standard scenarios.",dotnet:"Like Azure Logic Apps where you configure: When HTTP request → Condition → Send email → Update database — all drag-and-drop."},
+      {q:"What happens when you write a Business Rule on the 'task' table?",opts:["It only fires on records in the task table itself","It fires on task and ALL tables that extend task (incident, change_request, etc.)","It fires only on incident records","It creates an error because task is a base table"],correct:1,explain:"Due to table inheritance, a Business Rule on 'task' fires for every child table — incident, change_request, problem, sc_req_item, and more. This is a common production mistake.",dotnet:"Like putting a virtual method on a base class — it applies to all derived classes unless overridden."},
+      {q:"Script Includes that extend AbstractAjaxProcessor can be called from where?",opts:["Only from other Script Includes","Only from Business Rules","From Client Scripts via GlideAjax","Only from scheduled jobs"],correct:2,explain:"Extending AbstractAjaxProcessor makes a Script Include callable from the client-side using GlideAjax. Methods marked in the sysparm_name parameter are invoked remotely.",dotnet:"Like creating an API Controller action — it exposes server-side logic as an endpoint callable from the frontend via AJAX."},
+      {q:"ServiceNow's 'Scoped Application' is most similar to which .NET concept?",opts:["A NuGet package with its own namespace and isolation","A static class with global methods","A connection string in appsettings.json","A unit test project"],correct:0,explain:"Scoped Applications provide namespace isolation, controlled cross-scope access, and independent versioning — exactly like a NuGet package or a separate .NET project/assembly.",dotnet:"Like creating a Class Library project with internal classes — other projects must explicitly reference it."},
+      {q:"You need to count 100,000 incident records. Which approach is correct?",opts:["var gr = new GlideRecord('incident'); gr.query(); var count = gr.getRowCount();","var ga = new GlideAggregate('incident'); ga.addAggregate('COUNT'); ga.query();","var count = 0; var gr = new GlideRecord('incident'); gr.query(); while(gr.next()) count++;","gs.tableRecordCount('incident');"],correct:1,explain:"GlideAggregate runs a SQL COUNT at the database level — O(1) memory. GlideRecord loads records into memory. getRowCount() and manual counting are performance anti-patterns for large tables.",dotnet:"Like using DbContext.Incidents.Count() (SQL COUNT) vs DbContext.Incidents.ToList().Count (loads everything into memory first)."},
+      {q:"What does g_form refer to in a Client Script?",opts:["The GlideRecord object for the current table","The current user's session","The form API for manipulating fields, visibility, and values on the current form","The browser's Document Object Model"],correct:2,explain:"g_form is ServiceNow's client-side API for the current form. It provides methods like setValue(), setMandatory(), setVisible(), addErrorMessage() — all without touching the DOM directly.",dotnet:"Like a ViewModel binding in WPF/MVVM, or a FormGroup in Angular Reactive Forms — an abstraction over raw DOM manipulation."},
+      {q:"ATF (Automated Test Framework) in ServiceNow is best compared to:",opts:["Unit testing with xUnit/NUnit","Integration testing with Selenium + xUnit","Load testing with JMeter","Static code analysis with SonarQube"],correct:1,explain:"ATF tests platform behavior — form loads, workflow execution, security rules, and UI interactions. It's closer to integration/E2E testing than pure unit testing since it hits real tables.",dotnet:"Like Selenium WebDriver tests combined with integration tests that verify middleware, authorization, and database behavior."},
+      {q:"A 'Display' Business Rule fires when:",opts:["A record is displayed on a list view","A record's form is loaded for viewing/editing","A field's display value changes","The display name of a user is updated"],correct:1,explain:"Display Business Rules fire when a form loads (not on list views). They're used to populate calculated fields, set scratchpad values for client scripts, or dynamically modify what the user sees.",dotnet:"Like an OnGet() method in Razor Pages that prepares ViewModel data before the page renders."},
+      {q:"What is dot-walking in ServiceNow?",opts:["A debugging technique for stepping through code","Traversing reference field relationships using dot notation (e.g., caller_id.department.name)","A method of walking through array elements","Navigating the module menu hierarchy"],correct:1,explain:"Dot-walking lets you traverse reference fields: incident.caller_id.department.name resolves the chain: incident → user → department → name in a single expression.",dotnet:"Like Entity Framework's Include().ThenInclude() or navigation properties: incident.Caller.Department.Name."},
+      {q:"Which is TRUE about ServiceNow's Table API?",opts:["You must create a REST controller for each table","Every table automatically gets CRUD endpoints with zero code","It only works for custom tables, not OOB tables","It requires OAuth configuration before first use"],correct:1,explain:"The Table API auto-generates RESTful CRUD endpoints for every table in the instance — no code needed. Access is controlled by ACLs based on the requesting user's roles.",dotnet:"Like OData auto-exposure in ASP.NET or Entity Framework scaffolded controllers — instant REST endpoints over your data model."},
+      {q:"What is an Update Set in ServiceNow?",opts:["A SQL UPDATE statement batch","A container that captures configuration changes for migration between instances","A scheduled job that updates records in bulk","A version of the ServiceNow platform release"],correct:1,explain:"Update Sets track configuration changes (Business Rules, UI Policies, etc.) made on an instance and package them as XML for migration to other instances.",dotnet:"Like EF Migrations that capture schema changes — but for all platform configurations, not just database schema."},
+      {q:"In ServiceNow, where does GlideRecord execute?",opts:["In the user's browser","On the ServiceNow server (server-side only)","On both client and server","On the MID Server"],correct:1,explain:"GlideRecord is strictly a server-side API. It runs on the ServiceNow application server and executes database queries directly. Client Scripts must use GlideAjax to access server-side data.",dotnet:"Like Entity Framework's DbContext — it only runs server-side. You wouldn't execute LINQ-to-SQL queries in the browser."},
+      {q:"What happens if no ACL rule matches a data access request in ServiceNow?",opts:["Access is granted by default (open by default)","Access is denied (deny by default)","The system prompts the user for elevated credentials","An error is logged but access is granted"],correct:1,explain:"ServiceNow follows a 'deny by default' model. If no ACL explicitly grants access, the request is denied. This is the opposite of many frameworks where no auth = open access.",dotnet:"Like Azure AD conditional access with 'block by default' — resources are locked unless a policy explicitly allows access."},
+      {q:"Which ServiceNow feature auto-discovers and populates hardware/software data into the CMDB?",opts:["Import Sets","Discovery","Event Management","Transform Maps"],correct:1,explain:"Discovery is an automated scanning tool that finds servers, applications, and network devices on your network and populates/updates their Configuration Items (CIs) in the CMDB.",dotnet:"Like an Azure Resource Graph query that auto-inventories all your cloud resources — but for physical and virtual infrastructure alike."}
+    ];
+
+    var quizState = {questions:[], current:0, score:0, selected:-1, answered:false, total:10};
+
+    function shuffleArray(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function quizInit() {
+      var shuffled = shuffleArray(QUIZ_BANK);
+      quizState.questions = shuffled.slice(0, quizState.total).map(function(q) {
+        // Shuffle options while tracking correct answer
+        var indices = [0,1,2,3];
+        var shuffledIndices = shuffleArray(indices);
+        var newOpts = shuffledIndices.map(function(i) { return q.opts[i]; });
+        var newCorrect = shuffledIndices.indexOf(q.correct);
+        return {q:q.q, opts:newOpts, correct:newCorrect, explain:q.explain, dotnet:q.dotnet};
+      });
+      quizState.current = 0;
+      quizState.score = 0;
+      quizState.selected = -1;
+      quizState.answered = false;
+      renderQuizProgress();
+      renderQuizQuestion();
+      document.getElementById('quizResult').style.display = 'none';
+      document.getElementById('quizBody').style.display = 'block';
+    }
+
+    function renderQuizProgress() {
+      var html = '';
+      for (var i = 0; i < quizState.total; i++) {
+        var cls = 'quiz-dot';
+        if (i === quizState.current && !quizState.answered) cls += ' active';
+        if (i < quizState.current || (i === quizState.current && quizState.answered)) {
+          if (quizState.questions[i] && quizState.questions[i]._result === 'correct') cls += ' correct';
+          else if (quizState.questions[i] && quizState.questions[i]._result === 'wrong') cls += ' wrong';
+          else if (i === quizState.current) cls += ' active';
+        }
+        html += '<div class="' + cls + '"></div>';
+      }
+      document.getElementById('quizProgress').innerHTML = html;
+    }
+
+    function renderQuizQuestion() {
+      var q = quizState.questions[quizState.current];
+      document.getElementById('quizQuestion').textContent = q.q;
+      var letters = ['A','B','C','D'];
+      var html = '';
+      q.opts.forEach(function(opt, i) {
+        html += '<div class="quiz-option" data-idx="' + i + '" onclick="quizSelect(' + i + ')">' +
+          '<div class="quiz-option-letter">' + letters[i] + '</div>' +
+          '<div class="quiz-option-text">' + opt + '</div></div>';
+      });
+      document.getElementById('quizOptions').innerHTML = html;
+      document.getElementById('quizExplanation').className = 'quiz-explanation';
+      document.getElementById('quizExplanation').innerHTML = '';
+      document.getElementById('quizCheck').disabled = true;
+      document.getElementById('quizCheck').textContent = 'Check Answer';
+      document.getElementById('quizCheck').onclick = quizCheck;
+      document.getElementById('quizSkip').textContent = 'Skip';
+      document.getElementById('quizSkip').onclick = quizNext;
+      document.getElementById('quizScore').textContent = quizState.score;
+      quizState.selected = -1;
+      quizState.answered = false;
+    }
+
+    function quizSelect(idx) {
+      if (quizState.answered) return;
+      quizState.selected = idx;
+      document.querySelectorAll('.quiz-option').forEach(function(el) { el.classList.remove('selected'); });
+      document.querySelector('.quiz-option[data-idx="' + idx + '"]').classList.add('selected');
+      document.getElementById('quizCheck').disabled = false;
+    }
+
+    function quizCheck() {
+      if (quizState.selected === -1 || quizState.answered) return;
+      quizState.answered = true;
+      var q = quizState.questions[quizState.current];
+      var isCorrect = quizState.selected === q.correct;
+      
+      if (isCorrect) {
+        quizState.score++;
+        q._result = 'correct';
+      } else {
+        q._result = 'wrong';
+      }
+
+      // Highlight correct/wrong
+      document.querySelectorAll('.quiz-option').forEach(function(el) {
+        var idx = parseInt(el.dataset.idx);
+        if (idx === q.correct) el.classList.add('correct-answer');
+        else if (idx === quizState.selected && !isCorrect) el.classList.add('wrong-answer');
+        el.style.cursor = 'default';
+      });
+
+      // Show explanation
+      var explainHtml = '<strong>' + (isCorrect ? '✓ Correct!' : '✗ Not quite.') + '</strong> ' + q.explain;
+      if (q.dotnet) explainHtml += '<span class="dotnet-ref">🔗 .NET parallel: ' + q.dotnet + '</span>';
+      document.getElementById('quizExplanation').innerHTML = explainHtml;
+      document.getElementById('quizExplanation').className = 'quiz-explanation show';
+
+      document.getElementById('quizScore').textContent = quizState.score;
+      
+      // Change button to Next
+      if (quizState.current < quizState.total - 1) {
+        document.getElementById('quizCheck').textContent = 'Next Question →';
+        document.getElementById('quizCheck').onclick = quizNext;
+        document.getElementById('quizCheck').disabled = false;
+        document.getElementById('quizSkip').style.display = 'none';
+      } else {
+        document.getElementById('quizCheck').textContent = 'See Results';
+        document.getElementById('quizCheck').onclick = quizShowResults;
+        document.getElementById('quizCheck').disabled = false;
+        document.getElementById('quizSkip').style.display = 'none';
+      }
+      renderQuizProgress();
+    }
+
+    function quizNext() {
+      if (quizState.current >= quizState.total - 1) {
+        quizShowResults();
+        return;
+      }
+      if (!quizState.answered) {
+        quizState.questions[quizState.current]._result = 'wrong';
+      }
+      quizState.current++;
+      document.getElementById('quizSkip').style.display = '';
+      renderQuizProgress();
+      renderQuizQuestion();
+    }
+
+    function quizShowResults() {
+      document.getElementById('quizBody').style.display = 'none';
+      document.getElementById('quizResult').style.display = 'block';
+      var pct = Math.round((quizState.score / quizState.total) * 100);
+      document.getElementById('quizFinalScore').textContent = pct + '%';
+      var msg = '';
+      if (pct >= 90) msg = 'Outstanding! Your .NET experience is translating perfectly to ServiceNow.';
+      else if (pct >= 70) msg = 'Strong foundation! A few more concepts and you\'ll be fully confident.';
+      else if (pct >= 50) msg = 'Good start! Review the Core Concepts questions above — they map every concept to .NET.';
+      else msg = 'No worries — every concept above maps to something you already know. Read through the Core Concepts section and try again!';
+      document.getElementById('quizFinalMessage').textContent = msg;
+    }
+
+    function quizRestart() {
+      quizInit();
+    }
   </script>
 </body>
 </html>
