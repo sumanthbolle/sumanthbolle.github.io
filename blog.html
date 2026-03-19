@@ -10,7 +10,7 @@
   <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
   <style>
     /* ============================================
        RESET & CUSTOM PROPERTIES
@@ -249,7 +249,7 @@
     /* ============================================
        BLOG SECTION
        ============================================ */
-    .blog-section { flex-direction: column; align-items: center }
+    .blog-section { display: flex; flex-direction: column; align-items: center; width: 100% }
     .blog-header {
       width: 100%; padding: 80px 24px 48px; text-align: center;
       background: var(--black); color: var(--white);
@@ -617,7 +617,7 @@
        CERT ROADMAP SECTION
        ============================================ */
     .cert-section {
-      flex-direction: column; align-items: center;
+      display: flex; flex-direction: column; align-items: center; width: 100%;
     }
     .cert-hero {
       width: 100%; padding: 60px 24px; text-align: center;
@@ -725,7 +725,7 @@
       .menu-toggle { display: block }
       .section-tab { padding: 12px 14px; font-size: 13px }
       .sidebar {
-        position: fixed; left: -var(--sidebar-w); top: 0;
+        position: fixed; left: calc(-1 * var(--sidebar-w)); top: 0;
         height: 100vh; z-index: 250;
         transition: left var(--transition);
         padding-top: calc(var(--nav-h) + 20px);
