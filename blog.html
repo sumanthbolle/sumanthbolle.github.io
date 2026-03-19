@@ -4,1445 +4,1724 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog - Sumanth Bolle | ServiceNow & AI Insights</title>
-  <meta name="description" content="ServiceNow tips, AI implementations, and tech explorations by Sumanth Bolle.">
+  <meta name="description" content="ServiceNow tips, AI implementations, certification guides, and tech explorations by Sumanth Bolle.">
+  <meta property="og:title" content="Blog - Sumanth Bolle">
+  <meta property="og:description" content="ServiceNow tips, AI implementations, and certification guides.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    /* ============================================
+       RESET & CUSTOM PROPERTIES
+       ============================================ */
     *{margin:0;padding:0;box-sizing:border-box}
-    :root{--blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000;--green:#34c759;--orange:#ff9500;--purple:#5856d6;--red:#ff3b30}
-    html{scroll-behavior:smooth}
-    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-    nav{position:fixed;top:0;width:100%;height:48px;background:rgba(251,251,253,0.8);backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid rgba(0,0,0,0.1)}
-    .nav-c{max-width:1080px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
-    .nav-logo{font-size:20px;font-weight:600;color:var(--text);text-decoration:none}
-    .nav-links{display:flex;gap:28px;list-style:none}
-    .nav-links a{color:var(--text);text-decoration:none;font-size:13px;opacity:.8;transition:opacity .3s}
-    .nav-links a:hover,.nav-links a.active{opacity:1;color:var(--blue)}
-    .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
-    .menu-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:0.3s}
-    .mobile-menu{display:none;position:fixed;top:48px;left:0;width:100%;background:rgba(251,251,253,0.98);backdrop-filter:blur(20px);padding:20px;border-bottom:1px solid rgba(0,0,0,0.1)}
-    .mobile-menu.active{display:block}
-    .mobile-menu a{display:block;padding:12px 0;color:var(--text);text-decoration:none;font-size:16px;border-bottom:1px solid rgba(0,0,0,0.05)}
-    .page-header{padding:120px 22px 60px;text-align:center;background:var(--black);color:var(--white)}
-    .page-header h1{font-size:clamp(36px,8vw,56px);font-weight:600;margin-bottom:12px}
-    .page-header p{font-size:19px;color:var(--gray);max-width:600px;margin:0 auto}
-    .breadcrumb{font-size:13px;color:var(--gray);margin-bottom:24px}
-    .breadcrumb a{color:var(--blue);text-decoration:none}
-    .breadcrumb a:hover{text-decoration:underline}
-    
-    /* Main Tab Navigation */
-    .main-tabs{display:flex;justify-content:center;gap:8px;padding:24px 22px;background:var(--white);border-bottom:1px solid rgba(0,0,0,0.1);position:sticky;top:48px;z-index:100}
-    .main-tab{padding:12px 28px;border:none;border-radius:24px;background:transparent;color:var(--text);font-size:15px;font-weight:500;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:8px}
-    .main-tab:hover{background:rgba(0,0,0,0.05)}
-    .main-tab.active{background:var(--blue);color:var(--white)}
-    .main-tab .tab-icon{font-size:18px}
-    .main-tab .tab-badge{background:var(--green);color:var(--white);font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
-    
-    /* Content Sections */
-    .content-section{display:none}
-    .content-section.active{display:block}
-    
-    /* Blog Section Styles (existing) */
-    .blog-container{max-width:1080px;margin:0 auto;padding:60px 22px}
-    .blog-filters{display:flex;gap:12px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
-    .filter-btn{padding:8px 20px;border:1px solid rgba(0,0,0,0.1);border-radius:20px;background:var(--white);color:var(--text);font-size:14px;cursor:pointer;transition:all 0.3s}
-    .filter-btn:hover,.filter-btn.active{background:var(--blue);color:var(--white);border-color:var(--blue)}
-    .blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:28px}
-    .blog-card{background:var(--white);border-radius:18px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);cursor:pointer;opacity:0;transform:translateY(30px);transition:all 0.5s}
-    .blog-card.animate{opacity:1;transform:translateY(0)}
-    .blog-card:hover{transform:translateY(-8px);box-shadow:0 16px 50px rgba(0,0,0,0.12)}
-    .blog-thumb{height:200px;position:relative;overflow:hidden}
-    .blog-thumb-bg{width:100%;height:100%;transition:transform 0.5s}
-    .blog-card:hover .blog-thumb-bg{transform:scale(1.05)}
-    .blog-thumb-bg.servicenow{background:linear-gradient(135deg,#81d742,#4a8f24)}
-    .blog-thumb-bg.ai{background:linear-gradient(135deg,#667eea,#764ba2)}
-    .blog-thumb-bg.tutorial{background:linear-gradient(135deg,#ff9500,#ff5e3a)}
-    .blog-thumb-bg.general{background:linear-gradient(135deg,#0a84ff,#5856d6)}
-    .blog-category{position:absolute;top:16px;left:16px;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
-    .cat-servicenow{background:rgba(129,215,66,0.95);color:#1d1d1f}
-    .cat-ai{background:rgba(88,86,214,0.95);color:#fff}
-    .cat-tutorial{background:rgba(255,149,0,0.95);color:#fff}
-    .cat-general{background:rgba(0,122,255,0.95);color:#fff}
-    .blog-content{padding:28px}
-    .blog-meta{display:flex;gap:16px;font-size:13px;color:var(--gray);margin-bottom:14px}
-    .blog-title{font-size:22px;font-weight:600;margin-bottom:14px;line-height:1.35}
-    .blog-excerpt{font-size:15px;color:var(--gray);line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-    .blog-footer{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,0,0,0.06)}
-    .read-more{font-size:14px;color:var(--blue);font-weight:500;display:flex;align-items:center;gap:6px}
-    .read-more svg{width:16px;height:16px;stroke:currentColor;fill:none;transition:transform 0.3s}
-    .blog-card:hover .read-more svg{transform:translateX(4px)}
-    
-    /* Certification Section Styles */
-    .cert-container{max-width:1200px;margin:0 auto;padding:40px 22px}
-    
-    /* Certification Hero */
-    .cert-hero{background:linear-gradient(135deg,#1a5a2e 0%,#2d8a4e 50%,#3da565 100%);border-radius:24px;padding:48px;margin-bottom:40px;color:var(--white);position:relative;overflow:hidden}
-    .cert-hero::before{content:'';position:absolute;top:-50%;right:-20%;width:80%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 60%);pointer-events:none}
-    .cert-hero-content{position:relative;z-index:1}
-    .cert-hero h2{font-size:clamp(28px,5vw,42px);font-weight:700;margin-bottom:16px}
-    .cert-hero p{font-size:18px;opacity:0.9;max-width:600px;line-height:1.6;margin-bottom:24px}
-    .cert-hero-stats{display:flex;gap:32px;flex-wrap:wrap}
-    .cert-stat{text-align:center}
-    .cert-stat-num{font-size:36px;font-weight:700}
-    .cert-stat-label{font-size:13px;opacity:0.8;text-transform:uppercase;letter-spacing:1px}
-    
-    /* Progress Tracker */
-    .progress-section{background:var(--white);border-radius:20px;padding:32px;margin-bottom:40px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
-    .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:16px}
-    .progress-title{font-size:20px;font-weight:600}
-    .progress-percent{font-size:32px;font-weight:700;color:var(--green)}
-    .progress-bar-container{background:rgba(0,0,0,0.08);border-radius:12px;height:12px;overflow:hidden;margin-bottom:16px}
-    .progress-bar{height:100%;background:linear-gradient(90deg,var(--green),#2ecc71);border-radius:12px;transition:width 0.5s ease}
-    .progress-modules{display:flex;justify-content:space-between;font-size:13px;color:var(--gray)}
-    
-    /* Learning Path */
-    .learning-path{display:grid;gap:24px}
-    
-    .path-module{background:var(--white);border-radius:20px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:all 0.3s}
-    .path-module:hover{box-shadow:0 8px 30px rgba(0,0,0,0.12)}
-    .path-module.locked{opacity:0.6}
-    .path-module.locked .module-header{cursor:not-allowed}
-    
-    .module-header{padding:24px 28px;display:flex;align-items:center;gap:20px;cursor:pointer;transition:background 0.3s}
-    .module-header:hover{background:rgba(0,0,0,0.02)}
-    
-    .module-number{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--white);flex-shrink:0}
-    .module-number.foundations{background:linear-gradient(135deg,#667eea,#764ba2)}
-    .module-number.platform{background:linear-gradient(135deg,#11998e,#38ef7d)}
-    .module-number.config{background:linear-gradient(135deg,#f093fb,#f5576c)}
-    .module-number.data{background:linear-gradient(135deg,#4facfe,#00f2fe)}
-    .module-number.selfservice{background:linear-gradient(135deg,#fa709a,#fee140)}
-    .module-number.admin{background:linear-gradient(135deg,#a8edea,#fed6e3)}
-    .module-number.reporting{background:linear-gradient(135deg,#ff9a9e,#fecfef)}
-    .module-number.exam{background:linear-gradient(135deg,#ffecd2,#fcb69f)}
-    
-    .module-info{flex:1}
-    .module-title{font-size:20px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:10px}
-    .module-title .badge{font-size:10px;padding:4px 10px;border-radius:10px;font-weight:600;text-transform:uppercase}
-    .badge-beginner{background:#e8f5e9;color:#2e7d32}
-    .badge-intermediate{background:#fff3e0;color:#ef6c00}
-    .badge-advanced{background:#fce4ec;color:#c2185b}
-    .badge-new{background:#e3f2fd;color:#1565c0}
-    .module-desc{font-size:14px;color:var(--gray);line-height:1.5}
-    
-    .module-meta{display:flex;gap:16px;align-items:center;flex-shrink:0}
-    .module-duration{font-size:13px;color:var(--gray);display:flex;align-items:center;gap:4px}
-    .module-status{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
-    .status-complete{background:#e8f5e9;color:var(--green)}
-    .status-progress{background:#fff3e0;color:var(--orange)}
-    .status-locked{background:#f5f5f5;color:var(--gray)}
-    
-    .module-expand{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;transition:transform 0.3s}
-    .module-expand.rotated{transform:rotate(180deg)}
-    
-    .module-content{display:none;padding:0 28px 28px;border-top:1px solid rgba(0,0,0,0.06)}
-    .module-content.active{display:block}
-    
-    /* Topics Grid */
-    .topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:24px}
-    
-    .topic-card{background:var(--bg);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.3s;border:2px solid transparent}
-    .topic-card:hover{background:var(--white);border-color:var(--blue);transform:translateY(-4px)}
-    .topic-card.completed{border-color:var(--green);background:rgba(52,199,89,0.05)}
-    
-    .topic-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-    .topic-num{font-size:12px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px}
-    .topic-check{width:24px;height:24px;border-radius:50%;border:2px solid rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.3s}
-    .topic-card.completed .topic-check{background:var(--green);border-color:var(--green);color:var(--white)}
-    
-    .topic-title{font-size:16px;font-weight:600;margin-bottom:8px;line-height:1.4}
-    .topic-desc{font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:12px}
-    .topic-tags{display:flex;gap:6px;flex-wrap:wrap}
-    .topic-tag{font-size:11px;padding:4px 10px;background:rgba(0,0,0,0.06);border-radius:6px;color:var(--gray)}
-    
-    /* Scenario Box */
-    .scenario-card{background:linear-gradient(135deg,#f8f9fa,#e9ecef);border-left:4px solid var(--blue);padding:24px;border-radius:0 14px 14px 0;margin-top:24px}
-    .scenario-card h4{font-size:16px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-    .scenario-card p{font-size:14px;color:#555;line-height:1.7}
-    .scenario-card pre{background:#1d1d1f;color:#e5e5e5;padding:16px;border-radius:10px;overflow-x:auto;margin-top:16px;font-size:13px;line-height:1.5}
-    
-    /* Resources Box */
-    .resources-box{background:var(--white);border:1px solid rgba(0,0,0,0.1);border-radius:14px;padding:20px;margin-top:24px}
-    .resources-box h4{font-size:14px;font-weight:600;margin-bottom:16px;color:var(--gray);text-transform:uppercase;letter-spacing:1px}
-    .resource-links{display:flex;flex-direction:column;gap:10px}
-    .resource-link{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:10px;text-decoration:none;color:var(--text);font-size:14px;transition:all 0.3s}
-    .resource-link:hover{background:var(--blue);color:var(--white)}
-    .resource-link span{font-size:18px}
-    
-    /* Exam Tips */
-    .exam-tips{background:linear-gradient(135deg,#667eea,#764ba2);border-radius:20px;padding:32px;margin-top:40px;color:var(--white)}
-    .exam-tips h3{font-size:24px;font-weight:600;margin-bottom:20px}
-    .tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-    .tip-item{background:rgba(255,255,255,0.15);border-radius:12px;padding:20px}
-    .tip-item h4{font-size:15px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-    .tip-item p{font-size:13px;opacity:0.9;line-height:1.6}
-    
-    /* Coming Soon Certs */
-    .coming-soon{margin-top:40px}
-    .coming-soon h3{font-size:20px;font-weight:600;margin-bottom:20px;text-align:center}
-    .cert-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-    .cert-card{background:var(--white);border-radius:16px;padding:24px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.06);opacity:0.7;transition:all 0.3s}
-    .cert-card:hover{opacity:1;transform:translateY(-4px)}
-    .cert-card-icon{font-size:40px;margin-bottom:12px}
-    .cert-card-name{font-size:16px;font-weight:600;margin-bottom:4px}
-    .cert-card-label{font-size:12px;color:var(--gray)}
-    
-    /* Blog Modal (existing) */
-    .blog-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10000;overflow-y:auto;padding:40px 20px}
-    .blog-modal.active{display:flex;justify-content:center;align-items:flex-start}
-    .blog-modal-content{background:var(--white);max-width:900px;width:100%;border-radius:24px;overflow:hidden;position:relative;margin:auto;animation:modalIn 0.4s ease}
-    @keyframes modalIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
-    .blog-modal-close{position:absolute;top:20px;right:20px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;z-index:10;transition:all 0.3s}
-    .blog-modal-close:hover{background:rgba(0,0,0,0.8);transform:scale(1.1)}
-    .blog-modal-header{height:200px;position:relative}
-    .blog-modal-header-bg{width:100%;height:100%}
-    .blog-modal-body{padding:48px}
-    .blog-modal-body h1{font-size:32px;font-weight:600;margin-bottom:20px;line-height:1.25}
-    .blog-modal-meta{display:flex;gap:24px;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid rgba(0,0,0,0.1);flex-wrap:wrap}
-    .blog-modal-meta span{font-size:14px;color:var(--gray);display:flex;align-items:center;gap:6px}
-    .blog-modal-article{font-size:17px;line-height:1.85;color:#333}
-    .blog-modal-article h2{font-size:24px;margin:36px 0 18px;font-weight:600;color:var(--text)}
-    .blog-modal-article h3{font-size:20px;margin:28px 0 14px;font-weight:600;color:var(--text)}
-    .blog-modal-article p{margin-bottom:20px}
-    .blog-modal-article pre{background:#1d1d1f;color:#e5e5e5;padding:24px;border-radius:14px;overflow-x:auto;margin:24px 0;font-size:14px;line-height:1.6;font-family:'SF Mono',Monaco,monospace}
-    .blog-modal-article ul,.blog-modal-article ol{margin:20px 0 20px 28px}
-    .blog-modal-article li{margin-bottom:10px}
-    .blog-modal-article code{background:rgba(0,0,0,0.06);padding:3px 8px;border-radius:6px;font-size:15px;font-family:'SF Mono',Monaco,monospace}
-    .blog-modal-article pre code{background:none;padding:0}
-    .blog-modal-article table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
-    .blog-modal-article th,.blog-modal-article td{border:1px solid rgba(0,0,0,0.1);padding:12px 16px;text-align:left}
-    .blog-modal-article th{background:var(--bg);font-weight:600}
-    .blog-modal-article .scenario-box{background:linear-gradient(135deg,#f8f9fa,#e9ecef);border-left:4px solid var(--blue);padding:24px;border-radius:0 12px 12px 0;margin:24px 0}
-    .blog-modal-article .tip-box{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-left:4px solid #4caf50;padding:20px;border-radius:0 12px 12px 0;margin:24px 0}
-    .blog-modal-article .warning-box{background:linear-gradient(135deg,#fff3e0,#ffe0b2);border-left:4px solid #ff9800;padding:20px;border-radius:0 12px 12px 0;margin:24px 0}
-    
-    .empty-state{text-align:center;padding:80px 20px;color:var(--gray)}
-    .empty-state h3{font-size:24px;margin-bottom:12px;color:var(--text)}
-    footer{background:var(--white);padding:24px;text-align:center;border-top:1px solid rgba(0,0,0,0.06)}
-    .footer-text{font-size:12px;color:var(--gray)}
-    
-    /* ==================== SHARE BUTTON STYLES ==================== */
-    .share-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .share-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:1px solid rgba(0,0,0,0.1);border-radius:10px;background:var(--white);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s}
-    .share-btn:hover{background:var(--blue);color:var(--white);border-color:var(--blue)}
-    .share-btn.copied{background:var(--green);color:var(--white);border-color:var(--green)}
-    .share-btn svg{width:16px;height:16px;fill:currentColor}
-    
-    /* Toast notification */
-    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--black);color:var(--white);padding:14px 28px;border-radius:12px;font-size:14px;font-weight:500;z-index:99999;opacity:0;transition:all 0.3s ease;display:flex;align-items:center;gap:10px;box-shadow:0 10px 40px rgba(0,0,0,0.3)}
-    .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-    .toast.success{background:var(--green)}
-    .toast svg{width:18px;height:18px;fill:currentColor}
-    
-    @media(max-width:768px){
-      .nav-links{display:none}
-      .menu-toggle{display:block}
-      .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
-      .menu-toggle.active span:nth-child(2){opacity:0}
-      .menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
-      .main-tabs{flex-wrap:wrap;gap:8px}
-      .main-tab{padding:10px 16px;font-size:13px}
-      .cert-hero{padding:32px 24px}
-      .cert-hero-stats{gap:20px}
-      .module-header{flex-wrap:wrap}
-      .module-meta{width:100%;justify-content:flex-start;margin-top:12px}
-      .blog-grid{grid-template-columns:1fr}
-      .topics-grid{grid-template-columns:1fr}
-      .tips-grid{grid-template-columns:1fr}
-      .blog-modal-body{padding:28px}
-      .blog-modal-body h1{font-size:24px}
-      .share-actions{width:100%;justify-content:flex-start}
+    :root {
+      --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+      --blue: #0071e3;
+      --blue-hover: #0077ED;
+      --blue-bg: #f0f7ff;
+      --text: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --text-tertiary: #aeaeb2;
+      --bg: #f5f5f7;
+      --white: #fff;
+      --black: #1d1d1f;
+      --border: rgba(0,0,0,0.08);
+      --border-strong: rgba(0,0,0,0.14);
+      --green: #34c759;
+      --green-bg: #f0faf3;
+      --orange: #ff9f0a;
+      --orange-bg: #fff8f0;
+      --red: #ff3b30;
+      --purple: #af52de;
+      --sidebar-w: 280px;
+      --nav-h: 52px;
+      --tab-h: 52px;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    html { scroll-behavior: smooth }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    /* ============================================
+       READING PROGRESS BAR
+       ============================================ */
+    .reading-progress {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: var(--blue);
+      z-index: 10001;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* ============================================
+       TOP NAV
+       ============================================ */
+    nav {
+      position: fixed; top: 0; width: 100%; height: var(--nav-h);
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      z-index: 9999;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1400px; margin: 0 auto; height: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+    }
+    .nav-logo {
+      font-size: 18px; font-weight: 700; color: var(--text);
+      text-decoration: none; letter-spacing: -0.3px;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none }
+    .nav-links a {
+      color: var(--text-secondary); text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      transition: color var(--transition);
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text) }
+    .menu-toggle {
+      display: none; background: none; border: none;
+      cursor: pointer; padding: 8px; position: relative;
+      width: 38px; height: 38px;
+    }
+    .menu-toggle span {
+      display: block; width: 20px; height: 1.5px;
+      background: var(--text); position: absolute; left: 9px;
+      transition: var(--transition);
+    }
+    .menu-toggle span:nth-child(1) { top: 12px }
+    .menu-toggle span:nth-child(2) { top: 18px }
+    .menu-toggle span:nth-child(3) { top: 24px }
+    .menu-toggle.active span:nth-child(1) { top: 18px; transform: rotate(45deg) }
+    .menu-toggle.active span:nth-child(2) { opacity: 0 }
+    .menu-toggle.active span:nth-child(3) { top: 18px; transform: rotate(-45deg) }
+    .mobile-menu {
+      display: none; position: fixed; top: var(--nav-h); left: 0; width: 100%;
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(20px);
+      padding: 8px 24px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.active { display: block }
+    .mobile-menu a {
+      display: block; padding: 14px 0;
+      color: var(--text); text-decoration: none;
+      font-size: 17px; font-weight: 500;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ============================================
+       SECTION TABS (Blog / CSA / Certs)
+       ============================================ */
+    .section-tabs {
+      position: sticky; top: var(--nav-h); z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: center; gap: 0;
+      padding: 0 24px;
+    }
+    .section-tab {
+      padding: 14px 24px; border: none; background: none;
+      color: var(--text-secondary); font-size: 14px; font-weight: 600;
+      cursor: pointer; position: relative;
+      font-family: var(--font-body);
+      transition: color var(--transition);
+    }
+    .section-tab:hover { color: var(--text) }
+    .section-tab.active { color: var(--blue) }
+    .section-tab.active::after {
+      content: ''; position: absolute; bottom: -1px; left: 12px; right: 12px;
+      height: 2px; background: var(--blue); border-radius: 1px;
+    }
+    .section-tab .tab-count {
+      display: inline-block; background: var(--bg); color: var(--text-secondary);
+      font-size: 11px; padding: 2px 7px; border-radius: 10px; margin-left: 6px;
+      font-weight: 600;
+    }
+    .section-tab.active .tab-count {
+      background: var(--blue-bg); color: var(--blue);
+    }
+
+    /* ============================================
+       MAIN LAYOUT
+       ============================================ */
+    .layout { display: flex; min-height: calc(100vh - var(--nav-h) - var(--tab-h)) }
+    .content-section { display: none; width: 100% }
+    .content-section.active { display: flex }
+
+    /* ============================================
+       SIDEBAR (CSA Section)
+       ============================================ */
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      height: calc(100vh - var(--nav-h) - var(--tab-h));
+      position: sticky; top: calc(var(--nav-h) + var(--tab-h));
+      overflow-y: auto; overflow-x: hidden;
+      padding: 20px 0;
+    }
+    .sidebar::-webkit-scrollbar { width: 6px }
+    .sidebar::-webkit-scrollbar-track { background: transparent }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px }
+    .sidebar-section { margin-bottom: 8px }
+    .sidebar-section-title {
+      padding: 8px 20px; font-size: 11px; font-weight: 700;
+      color: var(--text-tertiary); text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .sidebar-module {
+      padding: 10px 20px; cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; font-weight: 600; color: var(--text);
+      transition: background var(--transition);
+    }
+    .sidebar-module:hover { background: var(--bg) }
+    .sidebar-module .mod-arrow {
+      margin-left: auto; font-size: 10px; color: var(--text-tertiary);
+      transition: transform var(--transition);
+    }
+    .sidebar-module.expanded .mod-arrow { transform: rotate(90deg) }
+    .sidebar-module .mod-num {
+      width: 24px; height: 24px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--white);
+      flex-shrink: 0;
+    }
+    .sidebar-topics { display: none; padding: 2px 0 8px }
+    .sidebar-topics.expanded { display: block }
+    .sidebar-topic {
+      padding: 8px 20px 8px 54px; cursor: pointer;
+      font-size: 13px; color: var(--text-secondary);
+      display: flex; align-items: center; gap: 8px;
+      transition: all var(--transition);
+      border-left: 2px solid transparent;
+      line-height: 1.4;
+    }
+    .sidebar-topic:hover { color: var(--text); background: var(--bg) }
+    .sidebar-topic.active {
+      color: var(--blue); background: var(--blue-bg);
+      border-left-color: var(--blue); font-weight: 600;
+    }
+    .sidebar-topic .topic-check {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 1.5px solid var(--border-strong);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; flex-shrink: 0;
+      transition: all var(--transition);
+    }
+    .sidebar-topic.completed .topic-check {
+      background: var(--green); border-color: var(--green); color: var(--white);
+    }
+    .sidebar-progress {
+      margin: 16px 20px; padding: 14px 16px;
+      background: var(--bg); border-radius: var(--radius-sm);
+    }
+    .sidebar-progress-label {
+      font-size: 11px; font-weight: 600; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 8px; display: flex; justify-content: space-between;
+    }
+    .sidebar-progress-bar {
+      height: 4px; background: var(--border);
+      border-radius: 2px; overflow: hidden;
+    }
+    .sidebar-progress-fill {
+      height: 100%; background: var(--green);
+      border-radius: 2px; transition: width 0.5s ease;
+    }
+
+    /* ============================================
+       BLOG SECTION
+       ============================================ */
+    .blog-section { flex-direction: column; align-items: center }
+    .blog-header {
+      width: 100%; padding: 80px 24px 48px; text-align: center;
+      background: var(--black); color: var(--white);
+    }
+    .blog-header h1 {
+      font-size: clamp(32px, 6vw, 48px); font-weight: 700;
+      letter-spacing: -1px; margin-bottom: 8px;
+    }
+    .blog-header p { font-size: 17px; color: var(--text-tertiary); max-width: 520px; margin: 0 auto }
+    .blog-filters {
+      display: flex; gap: 8px; justify-content: center;
+      padding: 24px; flex-wrap: wrap; max-width: 800px;
+      margin: 0 auto;
+    }
+    .filter-btn {
+      padding: 7px 18px; border: 1px solid var(--border-strong);
+      border-radius: 20px; background: var(--white); color: var(--text-secondary);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      font-family: var(--font-body);
+      transition: all var(--transition);
+    }
+    .filter-btn:hover { border-color: var(--text-secondary); color: var(--text) }
+    .filter-btn.active { background: var(--text); color: var(--white); border-color: var(--text) }
+    .blog-grid {
+      max-width: 1100px; width: 100%;
+      padding: 0 24px 80px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .blog-card {
+      background: var(--white); border-radius: var(--radius);
+      overflow: hidden; cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition);
+      opacity: 0; transform: translateY(20px);
+      border: 1px solid var(--border);
+    }
+    .blog-card.visible { opacity: 1; transform: translateY(0) }
+    .blog-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px) }
+    .blog-card.visible:hover { transform: translateY(-4px) }
+    .card-accent {
+      height: 4px; width: 100%;
+    }
+    .card-accent.servicenow { background: linear-gradient(90deg, #4a8f24, #81d742) }
+    .card-accent.ai { background: linear-gradient(90deg, #5856d6, #af52de) }
+    .card-accent.tutorial { background: linear-gradient(90deg, #ff6723, #ff9500) }
+    .card-accent.general { background: linear-gradient(90deg, #007aff, #5ac8fa) }
+    .card-body { padding: 24px }
+    .card-meta {
+      display: flex; gap: 12px; font-size: 12px; color: var(--text-tertiary);
+      margin-bottom: 12px; font-weight: 500;
+    }
+    .card-cat {
+      text-transform: uppercase; letter-spacing: 0.8px;
+      font-weight: 700; font-size: 11px;
+    }
+    .card-cat.servicenow { color: #4a8f24 }
+    .card-cat.ai { color: #5856d6 }
+    .card-cat.tutorial { color: #ff6723 }
+    .card-cat.general { color: #007aff }
+    .card-title {
+      font-size: 19px; font-weight: 700; margin-bottom: 10px;
+      line-height: 1.35; letter-spacing: -0.2px;
+    }
+    .card-excerpt {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.6;
+      display: -webkit-box; -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 18px; padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .card-read-more {
+      font-size: 13px; color: var(--blue); font-weight: 600;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .card-read-more::after {
+      content: '→'; transition: transform var(--transition);
+    }
+    .blog-card:hover .card-read-more::after { transform: translateX(4px) }
+    .blog-empty {
+      text-align: center; padding: 80px 24px; color: var(--text-secondary);
+      grid-column: 1 / -1;
+    }
+    .blog-empty h3 { font-size: 20px; color: var(--text); margin-bottom: 8px }
+    .blog-error {
+      text-align: center; padding: 40px 24px; color: var(--red);
+      grid-column: 1 / -1; background: #fff5f5; border-radius: var(--radius);
+    }
+
+    /* ============================================
+       ARTICLE VIEW (Full Page for Blog + CSA)
+       ============================================ */
+    .article-view {
+      flex: 1; max-width: 900px;
+      padding: 48px 48px 80px;
+      margin: 0 auto;
+    }
+    .article-breadcrumb {
+      font-size: 13px; color: var(--text-tertiary); margin-bottom: 24px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .article-breadcrumb a {
+      color: var(--blue); text-decoration: none; font-weight: 500;
+    }
+    .article-breadcrumb a:hover { text-decoration: underline }
+    .article-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--blue); font-size: 14px; font-weight: 600;
+      text-decoration: none; margin-bottom: 24px;
+      transition: gap var(--transition);
+    }
+    .article-back:hover { gap: 8px }
+    .article-title {
+      font-size: clamp(28px, 5vw, 40px); font-weight: 700;
+      line-height: 1.2; letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+    .article-meta {
+      display: flex; gap: 20px; margin-bottom: 32px;
+      padding-bottom: 24px; border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .article-meta-item {
+      font-size: 13px; color: var(--text-secondary);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .article-share {
+      display: flex; gap: 8px; margin-left: auto;
+    }
+    .share-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 7px 14px; border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm); background: var(--white);
+      color: var(--text-secondary); font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: var(--font-body);
+      transition: all var(--transition);
+    }
+    .share-btn:hover { border-color: var(--blue); color: var(--blue) }
+    .share-btn.copied { background: var(--green); color: var(--white); border-color: var(--green) }
+    .share-btn svg { width: 14px; height: 14px; fill: currentColor }
+
+    /* Article Content Styling */
+    .article-content { font-size: 16px; line-height: 1.8; color: #333 }
+    .article-content h2 {
+      font-size: 26px; font-weight: 700; margin: 40px 0 16px;
+      letter-spacing: -0.3px; color: var(--text);
+    }
+    .article-content h3 {
+      font-size: 20px; font-weight: 700; margin: 32px 0 12px;
+      color: var(--text);
+    }
+    .article-content p { margin-bottom: 18px }
+    .article-content ul, .article-content ol { margin: 16px 0 16px 24px }
+    .article-content li { margin-bottom: 8px }
+    .article-content strong { font-weight: 600; color: var(--text) }
+    .article-content a { color: var(--blue); text-decoration: none; font-weight: 500 }
+    .article-content a:hover { text-decoration: underline }
+    .article-content table {
+      width: 100%; border-collapse: collapse; margin: 24px 0;
+      font-size: 14px; border-radius: var(--radius-sm); overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .article-content th, .article-content td {
+      padding: 12px 16px; text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .article-content th {
+      background: var(--bg); font-weight: 600;
+      font-size: 12px; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--text-secondary);
+    }
+    .article-content code {
+      font-family: var(--font-mono); font-size: 0.9em;
+      background: var(--bg); padding: 2px 7px; border-radius: 4px;
+      color: #c41a4a;
+    }
+    .article-content pre {
+      background: #1a1a2e; color: #e4e4e7;
+      padding: 20px 24px; border-radius: var(--radius);
+      overflow-x: auto; margin: 24px 0; font-size: 13px;
+      line-height: 1.65; font-family: var(--font-mono);
+      border: 1px solid rgba(255,255,255,0.06);
+      position: relative;
+    }
+    .article-content pre code {
+      background: none; padding: 0; color: inherit;
+      font-size: 13px;
+    }
+    /* Syntax Highlighting (manual) */
+    .article-content pre .kw { color: #c792ea }
+    .article-content pre .str { color: #c3e88d }
+    .article-content pre .fn { color: #82aaff }
+    .article-content pre .cm { color: #546e7a; font-style: italic }
+    .article-content pre .num { color: #f78c6c }
+    .article-content pre .op { color: #89ddff }
+
+    /* Callout Boxes */
+    .callout {
+      padding: 20px 24px; border-radius: var(--radius); margin: 24px 0;
+      border-left: 3px solid;
+    }
+    .callout h4 {
+      font-size: 14px; font-weight: 700; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .callout p { font-size: 14px; line-height: 1.65; margin-bottom: 0 }
+    .callout-info { background: var(--blue-bg); border-color: var(--blue) }
+    .callout-info h4 { color: var(--blue) }
+    .callout-tip { background: var(--green-bg); border-color: var(--green) }
+    .callout-tip h4 { color: #2d8a4e }
+    .callout-warn { background: var(--orange-bg); border-color: var(--orange) }
+    .callout-warn h4 { color: #cc7a00 }
+    .callout-scenario {
+      background: #f8f8fa; border-color: var(--text-tertiary);
+    }
+
+    /* ============================================
+       TRY IT YOURSELF EDITOR
+       ============================================ */
+    .try-it-container {
+      margin: 24px 0; border: 1px solid var(--border-strong);
+      border-radius: var(--radius); overflow: hidden;
+      background: var(--white);
+    }
+    .try-it-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px; background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .try-it-label {
+      font-size: 12px; font-weight: 700; color: var(--text-secondary);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .try-it-label::before {
+      content: ''; width: 8px; height: 8px;
+      background: var(--green); border-radius: 50%;
+    }
+    .try-it-actions { display: flex; gap: 8px }
+    .try-it-btn {
+      padding: 5px 14px; border-radius: 6px; border: none;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      font-family: var(--font-body);
+      transition: all var(--transition);
+    }
+    .try-it-run {
+      background: var(--blue); color: var(--white);
+    }
+    .try-it-run:hover { background: var(--blue-hover) }
+    .try-it-reset {
+      background: var(--bg); color: var(--text-secondary);
+      border: 1px solid var(--border-strong);
+    }
+    .try-it-reset:hover { background: var(--white) }
+    .try-it-editor {
+      position: relative; min-height: 120px;
+    }
+    .try-it-textarea {
+      width: 100%; min-height: 120px; padding: 16px 20px;
+      font-family: var(--font-mono); font-size: 13px;
+      line-height: 1.6; border: none; outline: none; resize: vertical;
+      background: #1a1a2e; color: #e4e4e7;
+      tab-size: 2;
+    }
+    .try-it-output {
+      border-top: 1px solid var(--border);
+      padding: 16px 20px; background: #f0faf3;
+      font-family: var(--font-mono); font-size: 13px;
+      line-height: 1.6; display: none;
+      white-space: pre-wrap; color: #1d1d1f;
+    }
+    .try-it-output.visible { display: block }
+    .try-it-output-label {
+      font-size: 11px; font-weight: 700; color: var(--green);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      margin-bottom: 8px;
+    }
+
+    /* Copy button on code blocks */
+    .code-copy {
+      position: absolute; top: 10px; right: 10px;
+      padding: 5px 10px; border-radius: 6px;
+      background: rgba(255,255,255,0.1); border: none;
+      color: rgba(255,255,255,0.6); font-size: 11px;
+      font-family: var(--font-body); font-weight: 600;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .code-copy:hover { background: rgba(255,255,255,0.2); color: #fff }
+
+    /* ============================================
+       CSA ARTICLE (Sidebar + Content)
+       ============================================ */
+    .csa-layout { display: flex; width: 100% }
+    .csa-content {
+      flex: 1; min-width: 0;
+      overflow-y: auto;
+    }
+    .csa-welcome {
+      max-width: 800px; margin: 0 auto; padding: 60px 48px;
+    }
+    .csa-welcome h2 {
+      font-size: 36px; font-weight: 700; margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+    .csa-welcome p {
+      font-size: 17px; color: var(--text-secondary); line-height: 1.7;
+      margin-bottom: 24px; max-width: 600px;
+    }
+    .csa-stats {
+      display: flex; gap: 32px; margin-bottom: 40px; flex-wrap: wrap;
+    }
+    .csa-stat-item { text-align: center }
+    .csa-stat-num {
+      font-size: 32px; font-weight: 700; color: var(--blue);
+    }
+    .csa-stat-label {
+      font-size: 12px; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600;
+    }
+    .csa-tips-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px; margin-top: 32px;
+    }
+    .csa-tip {
+      padding: 20px; background: var(--bg); border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .csa-tip h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px }
+    .csa-tip p { font-size: 13px; color: var(--text-secondary); line-height: 1.55 }
+
+    /* Article Navigation (Prev/Next) */
+    .article-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 48px; padding-top: 32px;
+      border-top: 1px solid var(--border);
+      gap: 16px; flex-wrap: wrap;
+    }
+    .article-nav-btn {
+      padding: 12px 20px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong); background: var(--white);
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      font-family: var(--font-body); color: var(--text);
+      transition: all var(--transition);
+    }
+    .article-nav-btn:hover { border-color: var(--blue); color: var(--blue) }
+    .article-nav-btn.primary {
+      background: var(--blue); color: var(--white); border-color: var(--blue);
+    }
+    .article-nav-btn.primary:hover { background: var(--blue-hover) }
+    .mark-complete-btn {
+      padding: 12px 24px; border: none; border-radius: var(--radius-sm);
+      background: var(--green); color: var(--white);
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      font-family: var(--font-body);
+      display: flex; align-items: center; gap: 8px;
+      transition: all var(--transition);
+    }
+    .mark-complete-btn:hover { background: #2db84e }
+    .mark-complete-btn.completed { background: var(--text-tertiary) }
+
+    /* ============================================
+       CERT ROADMAP SECTION
+       ============================================ */
+    .cert-section {
+      flex-direction: column; align-items: center;
+    }
+    .cert-hero {
+      width: 100%; padding: 60px 24px; text-align: center;
+      background: linear-gradient(135deg, #1d1d1f 0%, #3a3a3c 100%);
+      color: var(--white);
+    }
+    .cert-hero h2 {
+      font-size: clamp(28px, 5vw, 42px); font-weight: 700;
+      letter-spacing: -0.5px; margin-bottom: 8px;
+    }
+    .cert-hero p { font-size: 17px; color: var(--text-tertiary); max-width: 520px; margin: 0 auto }
+    .cert-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px; max-width: 900px; width: 100%;
+      padding: 40px 24px 80px;
+    }
+    .cert-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 28px 20px; text-align: center;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition);
+    }
+    .cert-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md) }
+    .cert-card.available { border-color: var(--green) }
+    .cert-card-icon { font-size: 36px; margin-bottom: 12px; display: block }
+    .cert-card-name { font-size: 18px; font-weight: 700; margin-bottom: 4px }
+    .cert-card-label { font-size: 12px; color: var(--text-tertiary); font-weight: 600 }
+    .cert-card.available .cert-card-label { color: var(--green) }
+
+    /* ============================================
+       FLOATING TOC (Right side for articles)
+       ============================================ */
+    .floating-toc {
+      position: sticky; top: calc(var(--nav-h) + var(--tab-h) + 48px);
+      width: 220px; flex-shrink: 0; padding: 0 20px;
+      max-height: calc(100vh - var(--nav-h) - var(--tab-h) - 96px);
+      overflow-y: auto; display: none;
+    }
+    .floating-toc.visible { display: block }
+    .floating-toc-title {
+      font-size: 11px; font-weight: 700; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .floating-toc a {
+      display: block; padding: 5px 0; font-size: 12px;
+      color: var(--text-tertiary); text-decoration: none;
+      border-left: 2px solid var(--border);
+      padding-left: 12px; transition: all var(--transition);
+      line-height: 1.5;
+    }
+    .floating-toc a:hover { color: var(--text) }
+    .floating-toc a.active { color: var(--blue); border-color: var(--blue) }
+
+    /* ============================================
+       TOAST
+       ============================================ */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--text); color: var(--white);
+      padding: 12px 24px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 600;
+      z-index: 99999; opacity: 0;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-lg);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1 }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    footer {
+      background: var(--white); padding: 20px;
+      text-align: center; border-top: 1px solid var(--border);
+    }
+    .footer-text { font-size: 12px; color: var(--text-tertiary) }
+
+    /* ============================================
+       MOBILE SIDEBAR OVERLAY
+       ============================================ */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); z-index: 200;
+    }
+    .sidebar-overlay.active { display: block }
+    .sidebar-toggle-mobile {
+      display: none; position: fixed;
+      bottom: 24px; right: 24px;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--blue); color: var(--white); border: none;
+      font-size: 20px; cursor: pointer; z-index: 150;
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 1100px) {
+      .floating-toc { display: none !important }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none }
+      .menu-toggle { display: block }
+      .section-tab { padding: 12px 14px; font-size: 13px }
+      .sidebar {
+        position: fixed; left: -var(--sidebar-w); top: 0;
+        height: 100vh; z-index: 250;
+        transition: left var(--transition);
+        padding-top: calc(var(--nav-h) + 20px);
+      }
+      .sidebar.mobile-open { left: 0 }
+      .sidebar-overlay.active { display: block }
+      .sidebar-toggle-mobile { display: flex; align-items: center; justify-content: center }
+      .article-view { padding: 32px 20px 60px }
+      .csa-welcome { padding: 40px 20px }
+      .blog-grid { grid-template-columns: 1fr; padding: 0 16px 60px }
+      .blog-header { padding: 60px 20px 36px }
+      .article-meta { flex-direction: column; gap: 10px }
+      .article-share { margin-left: 0 }
+      .csa-tips-grid { grid-template-columns: 1fr }
+      .cert-grid { grid-template-columns: repeat(2, 1fr); padding: 24px 16px 60px }
     }
   </style>
 </head>
 <body>
-  <nav>
-    <div class="nav-c">
-      <a href="index.html" class="nav-logo">Sumanth Bolle</a>
-      <ul class="nav-links">
-        <li><a href="index.html#about">About</a></li>
-        <li><a href="index.html#experience">Experience</a></li>
-        <li><a href="index.html#skills">Skills</a></li>
-        <li><a href="blog.html" class="active">Blog</a></li>
-        <li><a href="interviews.html">Interviews</a></li>
-        <li><a href="index.html#integrations">Integrations</a></li>
-        <li><a href="index.html#contact">Contact</a></li>
-      </ul>
-      <button class="menu-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
-    </div>
-    <div class="mobile-menu">
-      <a href="index.html">Home</a><a href="index.html#about">About</a><a href="index.html#experience">Experience</a><a href="blog.html" class="active">Blog</a><a href="interviews.html">Interviews</a><a href="index.html#contact">Contact</a>
-    </div>
-  </nav>
 
-  <header class="page-header">
-    <p class="breadcrumb"><a href="index.html">Home</a> / Blog</p>
-    <h1>Insights & Tutorials</h1>
-    <p>ServiceNow tips, AI implementations, certification guides, and tech explorations.</p>
-  </header>
+<!-- Reading Progress -->
+<div class="reading-progress" id="readingProgress"></div>
 
-  <!-- Main Tab Navigation -->
-  <div class="main-tabs">
-    <button class="main-tab active" data-section="blog">
-      <span class="tab-icon">📝</span> Blog Posts
-    </button>
-    <button class="main-tab" data-section="csa">
-      <span class="tab-icon">🎓</span> CSA Certification
-      <span class="tab-badge">New</span>
-    </button>
-    <button class="main-tab" data-section="certpath">
-      <span class="tab-icon">🚀</span> All Certifications
+<!-- Top Navigation -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">Sumanth Bolle</a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#experience">Experience</a></li>
+      <li><a href="index.html#skills">Skills</a></li>
+      <li><a href="blog.html" class="active">Blog</a></li>
+      <li><a href="interviews.html">Interviews</a></li>
+      <li><a href="quiz.html">Quiz</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
     </button>
   </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#experience">Experience</a>
+    <a href="blog.html" class="active">Blog</a>
+    <a href="interviews.html">Interviews</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+</nav>
 
-  <!-- Blog Section (existing) -->
-  <section class="content-section active" id="blogSection">
-    <main class="blog-container">
-      <div class="blog-filters">
-        <button class="filter-btn active" data-filter="all">All Posts</button>
-        <button class="filter-btn" data-filter="servicenow">ServiceNow</button>
-        <button class="filter-btn" data-filter="ai">AI & GenAI</button>
-        <button class="filter-btn" data-filter="tutorial">Tutorials</button>
-        <button class="filter-btn" data-filter="general">General</button>
-      </div>
-      <div class="blog-grid" id="blogGrid"></div>
-      <div class="empty-state" id="emptyState" style="display:none">
-        <h3>No posts found</h3>
-        <p>Try selecting a different category.</p>
-      </div>
-    </main>
-  </section>
+<!-- Section Tabs -->
+<div class="section-tabs" id="sectionTabs">
+  <button class="section-tab active" data-section="blog">
+    Blog Posts <span class="tab-count" id="blogCount">0</span>
+  </button>
+  <button class="section-tab" data-section="csa">
+    CSA Certification
+  </button>
+  <button class="section-tab" data-section="certpath">
+    All Certifications
+  </button>
+</div>
 
-  <!-- CSA Certification Section -->
-  <section class="content-section" id="csaSection">
-    <div class="cert-container">
-      <!-- Hero -->
-      <div class="cert-hero">
-        <div class="cert-hero-content">
-          <h2>🏆 ServiceNow Certified System Administrator</h2>
-          <p>Master the ServiceNow platform from zero to certified professional. This comprehensive learning path covers everything you need to pass the CSA exam and excel in real-world implementations.</p>
-          <div class="cert-hero-stats">
-            <div class="cert-stat">
-              <div class="cert-stat-num">8</div>
-              <div class="cert-stat-label">Modules</div>
-            </div>
-            <div class="cert-stat">
-              <div class="cert-stat-num">50+</div>
-              <div class="cert-stat-label">Topics</div>
-            </div>
-            <div class="cert-stat">
-              <div class="cert-stat-num">40+</div>
-              <div class="cert-stat-label">Hours</div>
-            </div>
-            <div class="cert-stat">
-              <div class="cert-stat-num">100%</div>
-              <div class="cert-stat-label">Exam Ready</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Progress Tracker -->
-      <div class="progress-section">
-        <div class="progress-header">
-          <div class="progress-title">📊 Your Learning Progress</div>
-          <div class="progress-percent" id="progressPercent">0%</div>
-        </div>
-        <div class="progress-bar-container">
-          <div class="progress-bar" id="progressBar" style="width: 0%"></div>
-        </div>
-        <div class="progress-modules">
-          <span id="completedCount">0 of 50 topics completed</span>
-          <span>Keep going! 💪</span>
-        </div>
-      </div>
-
-      <!-- Learning Path -->
-      <div class="learning-path" id="learningPath">
-        <!-- Modules will be rendered by JavaScript -->
-      </div>
-
-      <!-- Exam Tips -->
-      <div class="exam-tips">
-        <h3>💡 CSA Exam Pro Tips</h3>
-        <div class="tips-grid">
-          <div class="tip-item">
-            <h4>📚 Know the Fundamentals</h4>
-            <p>60% of questions test core concepts: tables, forms, lists, and basic administration. Master these first.</p>
-          </div>
-          <div class="tip-item">
-            <h4>🔧 Hands-On Practice</h4>
-            <p>Get a free PDI (Personal Developer Instance) and practice every concept. Theory alone won't pass the exam.</p>
-          </div>
-          <div class="tip-item">
-            <h4>⏱️ Time Management</h4>
-            <p>60 questions in 90 minutes = 1.5 min per question. Flag difficult ones and move on.</p>
-          </div>
-          <div class="tip-item">
-            <h4>🎯 Focus Areas</h4>
-            <p>UI Policies vs Client Scripts vs Business Rules — know when to use each. This is heavily tested.</p>
-          </div>
-          <div class="tip-item">
-            <h4>📖 Official Docs</h4>
-            <p>The exam references docs.servicenow.com. Familiarize yourself with navigation and terminology.</p>
-          </div>
-          <div class="tip-item">
-            <h4>🔄 Update Sets</h4>
-            <p>Understand the complete lifecycle: create, capture, transfer, preview, commit. Common exam topic.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Coming Soon -->
-      <div class="coming-soon">
-        <h3>🎯 Your Certification Journey</h3>
-        <div class="cert-cards">
-          <div class="cert-card" style="opacity:1;border:2px solid var(--green)">
-            <div class="cert-card-icon">✅</div>
-            <div class="cert-card-name">CSA</div>
-            <div class="cert-card-label">Current Focus</div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-card-icon">🔜</div>
-            <div class="cert-card-name">CAD</div>
-            <div class="cert-card-label">Coming Soon</div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-card-icon">🔜</div>
-            <div class="cert-card-name">CIS-ITSM</div>
-            <div class="cert-card-label">Coming Soon</div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-card-icon">🔜</div>
-            <div class="cert-card-name">CIS-HR</div>
-            <div class="cert-card-label">Coming Soon</div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-card-icon">🎯</div>
-            <div class="cert-card-name">CTA</div>
-            <div class="cert-card-label">Ultimate Goal</div>
-          </div>
-        </div>
-      </div>
+<!-- ===== BLOG SECTION ===== -->
+<section class="content-section active" id="blogSection">
+  <div class="blog-section">
+    <div class="blog-header">
+      <h1>Insights & Tutorials</h1>
+      <p>ServiceNow tips, AI implementations, and tech explorations.</p>
     </div>
-  </section>
-
-  <!-- All Certifications Section (placeholder) -->
-  <section class="content-section" id="certpathSection">
-    <div class="cert-container">
-      <div class="cert-hero" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)">
-        <div class="cert-hero-content">
-          <h2>🚀 ServiceNow Certification Roadmap</h2>
-          <p>Your complete journey from CSA to CTA. We're building comprehensive guides for every certification level.</p>
-        </div>
-      </div>
-      <div class="coming-soon" style="margin-top:40px">
-        <h3>📍 Certification Tracks</h3>
-        <div class="cert-cards">
-          <div class="cert-card" style="opacity:1">
-            <div class="cert-card-icon">🎓</div>
-            <div class="cert-card-name">CSA</div>
-            <div class="cert-card-label" style="color:var(--green)">Available Now</div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-card-icon">💻</div>
-            <div class="cert-card-name">CAD</div>
-            <div class="cert-card-label">Q2 2026</div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-card-icon">🎫</div>
-            <div class="cert-card-name">CIS-ITSM</div>
-            <div class="cert-card-label">Q2 2026</div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-card-icon">👥</div>
-            <div class="cert-card-name">CIS-HR</div>
-            <div class="cert-card-label">Q3 2026</div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-card-icon">🔒</div>
-            <div class="cert-card-name">CIS-SecOps</div>
-            <div class="cert-card-label">Q3 2026</div>
-          </div>
-          <div class="cert-card">
-            <div class="cert-card-icon">🏗️</div>
-            <div class="cert-card-name">CTA</div>
-            <div class="cert-card-label">Q4 2026</div>
-          </div>
-        </div>
-      </div>
+    <div class="blog-filters" id="blogFilters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="servicenow">ServiceNow</button>
+      <button class="filter-btn" data-filter="ai">AI & GenAI</button>
+      <button class="filter-btn" data-filter="tutorial">Tutorials</button>
+      <button class="filter-btn" data-filter="general">General</button>
     </div>
-  </section>
+    <div class="blog-grid" id="blogGrid"></div>
+  </div>
+</section>
 
-  <!-- Blog Modal -->
-  <div class="blog-modal" id="blogModal">
-    <div class="blog-modal-content">
-      <button class="blog-modal-close">&times;</button>
-      <div class="blog-modal-header"><div class="blog-modal-header-bg" id="modalHeaderBg"></div></div>
-      <div class="blog-modal-body">
-        <h1 id="modalTitle"></h1>
-        <div class="blog-modal-meta">
-          <span id="modalDate">📅 </span>
-          <span id="modalRead">⏱️ </span>
-          <span id="modalCat">🏷️ </span>
-          <div class="share-actions" id="articleShareActions">
-            <button class="share-btn" onclick="copyArticleLink()" id="copyArticleBtn">
-              <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-              Copy Link
-            </button>
-            <button class="share-btn" onclick="shareToTwitter('article')">
-              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              Tweet
-            </button>
-            <button class="share-btn" onclick="shareToLinkedIn('article')">
-              <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              LinkedIn
-            </button>
-          </div>
-        </div>
-        <article class="blog-modal-article" id="modalContent"></article>
-      </div>
+<!-- ===== BLOG ARTICLE VIEW ===== -->
+<section class="content-section" id="blogArticleSection">
+  <div style="display:flex;max-width:1200px;margin:0 auto;width:100%">
+    <div class="article-view" id="blogArticleView"></div>
+    <div class="floating-toc" id="blogArticleToc"></div>
+  </div>
+</section>
+
+<!-- ===== CSA SECTION ===== -->
+<section class="content-section" id="csaSection">
+  <div class="csa-layout">
+    <aside class="sidebar" id="csaSidebar"></aside>
+    <div class="csa-content" id="csaContent">
+      <!-- Welcome screen or topic content rendered here -->
     </div>
   </div>
+</section>
 
-  <!-- Topic Modal -->
-  <div class="blog-modal" id="topicModal">
-    <div class="blog-modal-content">
-      <button class="blog-modal-close" onclick="closeTopicModal()">&times;</button>
-      <div class="blog-modal-header"><div class="blog-modal-header-bg" id="topicModalHeaderBg" style="background:linear-gradient(135deg,#81d742,#4a8f24)"></div></div>
-      <div class="blog-modal-body">
-        <h1 id="topicModalTitle"></h1>
-        <div class="blog-modal-meta">
-          <span id="topicModalModule">📚 </span>
-          <span id="topicModalTime">⏱️ </span>
-          <span id="topicModalLevel">📊 </span>
-          <div class="share-actions" id="topicShareActions">
-            <button class="share-btn" onclick="copyTopicLink()" id="copyTopicBtn">
-              <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-              Copy Link
-            </button>
-            <button class="share-btn" onclick="shareToTwitter('topic')">
-              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              Tweet
-            </button>
-            <button class="share-btn" onclick="shareToLinkedIn('topic')">
-              <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              LinkedIn
-            </button>
-          </div>
-        </div>
-        <article class="blog-modal-article" id="topicModalContent"></article>
-        <div style="margin-top:32px;padding-top:24px;border-top:1px solid rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
-          <button onclick="markTopicComplete()" id="markCompleteBtn" style="padding:14px 28px;background:var(--green);color:white;border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px">
-            ✓ Mark as Complete
-          </button>
-          <div style="display:flex;gap:12px">
-            <button onclick="navigateTopic('prev')" id="prevTopicBtn" style="padding:12px 20px;background:var(--bg);border:1px solid rgba(0,0,0,0.1);border-radius:10px;cursor:pointer;font-size:14px">← Previous</button>
-            <button onclick="navigateTopic('next')" id="nextTopicBtn" style="padding:12px 20px;background:var(--blue);color:white;border:none;border-radius:10px;cursor:pointer;font-size:14px">Next →</button>
-          </div>
-        </div>
-      </div>
+<!-- ===== CERT ROADMAP SECTION ===== -->
+<section class="content-section" id="certpathSection">
+  <div class="cert-section">
+    <div class="cert-hero">
+      <h2>ServiceNow Certification Roadmap</h2>
+      <p>Your complete journey from CSA to CTA. Comprehensive guides for every level.</p>
     </div>
+    <div class="cert-grid" id="certGrid"></div>
   </div>
+</section>
 
-  <!-- Toast Notification -->
-  <div class="toast" id="toast">
-    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-    <span id="toastMessage">Link copied!</span>
-  </div>
+<!-- Sidebar mobile toggle + overlay -->
+<button class="sidebar-toggle-mobile" id="sidebarMobileToggle">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<footer><p class="footer-text">&copy; 2026 Sumanth Bolle. Designed with precision.</p></footer>
 
 <script>
-// ==================== URL ROUTING SYSTEM ====================
-// This system enables shareable URLs for all content types
-// URL Patterns:
-//   #article/{id}     - Blog articles
-//   #topic/{id}       - CSA certification topics  
-//   #section/{name}   - Main sections (blog, csa, certpath)
-//   #module/{id}      - CSA modules (expanded view)
+// ============================================================
+// STATE
+// ============================================================
+let BLOG_POSTS = [];
+let currentView = 'blog'; // blog | blogArticle | csa | csaTopic | certpath
+let currentArticleId = null;
+let currentTopicId = null;
+let completedTopics = JSON.parse(localStorage.getItem('csa_completed') || '[]');
 
-const Router = {
-  // Parse current URL hash
-  parse: function() {
-    const hash = window.location.hash.slice(1); // Remove #
-    if (!hash) return null;
-    
-    const [type, ...idParts] = hash.split('/');
-    const id = idParts.join('/'); // Rejoin in case ID has slashes
-    
-    return { type, id };
-  },
-  
-  // Navigate to a route (updates URL and triggers content)
-  navigate: function(type, id, replace = false) {
-    const newHash = id ? `#${type}/${id}` : `#${type}`;
-    
-    if (replace) {
-      history.replaceState(null, '', newHash);
-    } else {
-      history.pushState(null, '', newHash);
-    }
-    
-    this.handleRoute();
-  },
-  
-  // Handle the current route
-  handleRoute: function() {
-    const route = this.parse();
-    
-    if (!route) {
-      // No hash - show default (blog section)
-      switchSection('blog');
-      return;
-    }
-    
-    switch (route.type) {
-      case 'article':
-        switchSection('blog');
-        // Wait for posts to load, then open article
-        if (BLOG_POSTS.length > 0) {
-          openArticle(route.id, true); // true = don't update URL again
-        } else {
-          // Posts not loaded yet, wait for them
-          pendingArticleId = route.id;
-        }
-        break;
-        
-      case 'topic':
-        switchSection('csa');
-        setTimeout(() => openTopic(route.id, true), 100);
-        break;
-        
-      case 'section':
-        switchSection(route.id);
-        break;
-        
-      case 'module':
-        switchSection('csa');
-        setTimeout(() => {
-          toggleModule(parseInt(route.id), true);
-        }, 100);
-        break;
-        
-      default:
-        switchSection('blog');
-    }
-  },
-  
-  // Generate shareable URL for content
-  getShareUrl: function(type, id) {
-    const base = window.location.origin + window.location.pathname;
-    return `${base}#${type}/${id}`;
-  },
-  
-  // Initialize router
-  init: function() {
-    // Handle browser back/forward
-    window.addEventListener('popstate', () => this.handleRoute());
-    
-    // Handle initial load
-    this.handleRoute();
-  }
-};
-
-// Pending article to open after posts load
-let pendingArticleId = null;
-
-// ==================== SHARE FUNCTIONS ====================
-function showToast(message, type = 'success') {
-  const toast = document.getElementById('toast');
-  const toastMessage = document.getElementById('toastMessage');
-  
-  toastMessage.textContent = message;
-  toast.className = 'toast show ' + type;
-  
-  setTimeout(() => {
-    toast.className = 'toast';
-  }, 3000);
-}
-
-function copyToClipboard(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text);
-  }
-  
-  // Fallback for older browsers
-  const textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.style.position = 'fixed';
-  textarea.style.opacity = '0';
-  document.body.appendChild(textarea);
-  textarea.select();
-  
-  try {
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    return Promise.resolve();
-  } catch (err) {
-    document.body.removeChild(textarea);
-    return Promise.reject(err);
-  }
-}
-
-function copyArticleLink() {
-  if (!currentArticleId) return;
-  
-  const url = Router.getShareUrl('article', currentArticleId);
-  copyToClipboard(url).then(() => {
-    const btn = document.getElementById('copyArticleBtn');
-    btn.classList.add('copied');
-    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!';
-    showToast('Link copied to clipboard!');
-    
-    setTimeout(() => {
-      btn.classList.remove('copied');
-      btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy Link';
-    }, 2000);
-  });
-}
-
-function copyTopicLink() {
-  if (!currentTopicId) return;
-  
-  const url = Router.getShareUrl('topic', currentTopicId);
-  copyToClipboard(url).then(() => {
-    const btn = document.getElementById('copyTopicBtn');
-    btn.classList.add('copied');
-    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied!';
-    showToast('Link copied to clipboard!');
-    
-    setTimeout(() => {
-      btn.classList.remove('copied');
-      btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy Link';
-    }, 2000);
-  });
-}
-
-function shareToTwitter(type) {
-  let url, text;
-  
-  if (type === 'article' && currentArticleId) {
-    const post = BLOG_POSTS.find(p => String(p.id) === String(currentArticleId));
-    url = Router.getShareUrl('article', currentArticleId);
-    text = post ? `Check out "${post.title}" by @SumanthBolle` : 'Check out this article';
-  } else if (type === 'topic' && currentTopicId) {
-    const topic = findTopicById(currentTopicId);
-    url = Router.getShareUrl('topic', currentTopicId);
-    text = topic ? `Learning "${topic.title}" - ServiceNow CSA Certification` : 'ServiceNow CSA Topic';
-  }
-  
-  if (url) {
-    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-    window.open(tweetUrl, '_blank', 'width=550,height=420');
-  }
-}
-
-function shareToLinkedIn(type) {
-  let url;
-  
-  if (type === 'article' && currentArticleId) {
-    url = Router.getShareUrl('article', currentArticleId);
-  } else if (type === 'topic' && currentTopicId) {
-    url = Router.getShareUrl('topic', currentTopicId);
-  }
-  
-  if (url) {
-    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-    window.open(linkedInUrl, '_blank', 'width=550,height=420');
-  }
-}
-
-function findTopicById(topicId) {
-  for (const module of CSA_MODULES) {
-    const topic = module.topics.find(t => t.id === topicId);
-    if (topic) return topic;
-  }
-  return null;
-}
-
-// ==================== SECTION SWITCHING ====================
-function switchSection(sectionId) {
-  // Update tabs
-  document.querySelectorAll('.main-tab').forEach(tab => {
-    tab.classList.toggle('active', tab.dataset.section === sectionId);
-  });
-  
-  // Update sections
-  document.querySelectorAll('.content-section').forEach(section => {
-    section.classList.toggle('active', section.id === sectionId + 'Section');
-  });
-}
-
-// ==================== CSA CERTIFICATION DATA ====================
+// ============================================================
+// CSA MODULES DATA
+// ============================================================
 const CSA_MODULES = [
   {
-    id: 1,
-    number: "01",
-    title: "ServiceNow Foundations",
-    description: "Understand what ServiceNow is, its architecture, and why enterprises choose it over other platforms.",
-    duration: "4 hours",
-    level: "beginner",
-    colorClass: "foundations",
+    id: 1, title: "ServiceNow Foundations", color: "#5856d6",
     topics: [
-      {
-        id: "1.1",
-        title: "What is ServiceNow?",
-        description: "Platform overview, use cases, and how it differs from traditional tools.",
-        duration: "30 min",
-        tags: ["Platform", "Overview"],
-        content: `
-          <h2>What is ServiceNow?</h2>
-          <p>ServiceNow is a cloud-based platform that provides digital workflows for enterprise operations. Think of it as the central nervous system for your organization — connecting people, processes, and technology on a single platform.</p>
-          
-          <h3>Why ServiceNow Matters</h3>
-          <p>Before ServiceNow, organizations used dozens of disconnected tools:</p>
-          <ul>
-            <li><strong>IT used</strong> Remedy, HP Service Manager, or spreadsheets</li>
-            <li><strong>HR used</strong> Workday tickets or email</li>
-            <li><strong>Facilities used</strong> paper forms or SharePoint</li>
-            <li><strong>Security used</strong> separate SIEM tools</li>
-          </ul>
-          <p>ServiceNow unifies all these on ONE platform with ONE data model.</p>
-          
-          <div class="scenario-box">
-            <h4>🎯 Real-World Scenario</h4>
-            <p><strong>Before ServiceNow:</strong> Employee reports laptop issue via email → IT creates ticket in Remedy → If it needs replacement, procurement uses SAP → Asset team updates Excel → 5 systems, 3 days minimum.</p>
-            <p><strong>With ServiceNow:</strong> Employee reports via portal → Auto-creates incident → Workflow checks warranty → Auto-triggers procurement → Asset auto-updated → 1 system, same day resolution.</p>
-          </div>
-          
-          <h3>The Platform Approach</h3>
-          <p>ServiceNow isn't just an ITSM tool — it's a Platform-as-a-Service (PaaS) that can automate ANY business process:</p>
-          <table>
-            <tr><th>Module</th><th>Purpose</th><th>Example Use Case</th></tr>
-            <tr><td>ITSM</td><td>IT Service Management</td><td>Incident, Problem, Change management</td></tr>
-            <tr><td>HRSD</td><td>HR Service Delivery</td><td>Employee onboarding, case management</td></tr>
-            <tr><td>CSM</td><td>Customer Service</td><td>Customer cases, product support</td></tr>
-            <tr><td>SecOps</td><td>Security Operations</td><td>Vulnerability response, threat intelligence</td></tr>
-            <tr><td>ITOM</td><td>IT Operations</td><td>Discovery, Event Management, Cloud Management</td></tr>
-          </table>
-          
-          <div class="tip-box">
-            <h4>💡 For Clarity/Medallia Professionals</h4>
-            <p>If you're coming from Clarity PPM, think of ServiceNow as Clarity's project-centric approach applied to EVERYTHING — not just projects, but incidents, requests, HR cases, security alerts, and more. Every "thing" is a record flowing through workflows.</p>
-          </div>
-          
-          <h3>Key Differentiators</h3>
-          <ul>
-            <li><strong>Single Data Model:</strong> All modules share the same tables, relationships, and reporting</li>
-            <li><strong>Low-Code Platform:</strong> Business users can build apps without deep coding</li>
-            <li><strong>AI Built-In:</strong> Predictive Intelligence, Virtual Agent, Now Assist are native</li>
-            <li><strong>Always Current:</strong> Cloud-based with 2 releases per year (automatically updated)</li>
-          </ul>
-        `
-      },
-      {
-        id: "1.2",
-        title: "Platform Architecture",
-        description: "Multi-instance architecture, data centers, and the Now Platform components.",
-        duration: "45 min",
-        tags: ["Architecture", "Technical"],
-        content: `
-          <h2>Platform Architecture</h2>
-          <p>Understanding ServiceNow's architecture is crucial for the CSA exam and real-world troubleshooting.</p>
-          
-          <h3>Multi-Instance Architecture (MIA)</h3>
-          <p>Unlike multi-tenant SaaS where customers share infrastructure, ServiceNow gives each customer their own:</p>
-          <ul>
-            <li><strong>Dedicated instance</strong> (your own URL: yourcompany.service-now.com)</li>
-            <li><strong>Isolated database</strong> (your data never mixes with others)</li>
-            <li><strong>Separate application server</strong> (performance isolation)</li>
-          </ul>
-          
-          <div class="scenario-box">
-            <h4>🏢 Why This Matters</h4>
-            <p>A major bank can customize ServiceNow extensively without affecting a hospital's instance. If the bank's instance has issues, the hospital is unaffected. This isolation is critical for regulated industries.</p>
-          </div>
-          
-          <h3>Instance Types</h3>
-          <table>
-            <tr><th>Type</th><th>Purpose</th><th>Refresh Frequency</th></tr>
-            <tr><td>Production (PROD)</td><td>Live business operations</td><td>Never refreshed from another</td></tr>
-            <tr><td>Test (TEST)</td><td>UAT, integration testing</td><td>Weekly/Monthly from PROD</td></tr>
-            <tr><td>Development (DEV)</td><td>Building new features</td><td>As needed from PROD/TEST</td></tr>
-            <tr><td>Personal Developer (PDI)</td><td>Learning & experimentation</td><td>Free, resets after 10 days inactive</td></tr>
-          </table>
-          
-          <h3>The Now Platform Stack</h3>
-          <pre>
-┌─────────────────────────────────────────────────┐
-│           USER INTERFACES                        │
-│   Now Mobile | Service Portal | Workspaces      │
-├─────────────────────────────────────────────────┤
-│           APPLICATION LAYER                      │
-│   ITSM | HRSD | CSM | SecOps | Custom Apps      │
-├─────────────────────────────────────────────────┤
-│           NOW PLATFORM                           │
-│   Workflow Engine | AI/ML | Integration Hub     │
-├─────────────────────────────────────────────────┤
-│           DATA LAYER                             │
-│   Tables | CMDB | Knowledge | Attachments       │
-├─────────────────────────────────────────────────┤
-│           INFRASTRUCTURE                         │
-│   Servers | Storage | Network | Security        │
-└─────────────────────────────────────────────────┘
-          </pre>
-          
-          <h3>Key Components</h3>
-          <ul>
-            <li><strong>Application Server:</strong> Runs the platform code, handles requests</li>
-            <li><strong>Database:</strong> MariaDB (MySQL compatible) storing all records</li>
-            <li><strong>MID Server:</strong> On-premise component for integrations behind firewalls</li>
-            <li><strong>Edge Encryption:</strong> Encrypts sensitive data before it leaves your network</li>
-          </ul>
-          
-          <div class="warning-box">
-            <h4>⚠️ Exam Alert</h4>
-            <p>Know that ServiceNow uses a multi-instance (NOT multi-tenant) architecture. Each customer has dedicated resources. This is a common exam question!</p>
-          </div>
-        `
-      },
-      {
-        id: "1.3",
-        title: "Release Cycle & Versions",
-        description: "Understanding ServiceNow releases, naming conventions, and upgrade process.",
-        duration: "30 min",
-        tags: ["Releases", "Upgrades"],
-        content: `<h2>Release Cycle & Versions</h2><p>ServiceNow releases two major versions per year, following a city-based naming convention. Releases are named alphabetically after cities: Utah, Vancouver, Washington DC, Xanadu, Yokohama, Zurich (current).</p>`
-      },
-      {
-        id: "1.4",
-        title: "Getting Your Developer Instance",
-        description: "How to get a free PDI and set up your learning environment.",
-        duration: "20 min",
-        tags: ["Hands-On", "Setup"],
-        content: `<h2>Getting Your Developer Instance (PDI)</h2><p>A Personal Developer Instance is your free ServiceNow playground — essential for learning and exam prep. Go to developer.servicenow.com to get started.</p>`
-      },
-      {
-        id: "1.5",
-        title: "Navigating the Platform",
-        description: "Application Navigator, All Search, and keyboard shortcuts.",
-        duration: "45 min",
-        tags: ["Navigation", "UI"],
-        content: `<h2>Navigating the Platform</h2><p>Efficient navigation is key to productivity. Learn the Application Navigator, Global Search, and keyboard shortcuts to work 10x faster.</p>`
-      }
+      { id: "1.1", title: "What is ServiceNow?", duration: "30 min", level: "Beginner",
+        content: `<h2>What is ServiceNow?</h2>
+<p>ServiceNow is a cloud-based platform that provides digital workflows for enterprise operations. Think of it as the central nervous system for your organization — connecting people, processes, and technology on a single platform.</p>
+<h3>Why ServiceNow Matters</h3>
+<p>Before ServiceNow, organizations used dozens of disconnected tools:</p>
+<ul>
+<li><strong>IT used</strong> Remedy, HP Service Manager, or spreadsheets</li>
+<li><strong>HR used</strong> Workday tickets or email</li>
+<li><strong>Facilities used</strong> paper forms or SharePoint</li>
+<li><strong>Security used</strong> separate SIEM tools</li>
+</ul>
+<p>ServiceNow unifies all these on ONE platform with ONE data model.</p>
+<div class="callout callout-scenario">
+<h4>Real-World Scenario</h4>
+<p><strong>Before ServiceNow:</strong> Employee reports laptop issue via email → IT creates ticket in Remedy → If it needs replacement, procurement uses SAP → Asset team updates Excel → 5 systems, 3 days minimum.</p>
+<p style="margin-top:12px"><strong>With ServiceNow:</strong> Employee reports via portal → Auto-creates incident → Workflow checks warranty → Auto-triggers procurement → Asset auto-updated → 1 system, same day resolution.</p>
+</div>
+<h3>The Platform Approach</h3>
+<p>ServiceNow isn't just an ITSM tool — it's a Platform-as-a-Service (PaaS) that can automate ANY business process:</p>
+<table>
+<tr><th>Module</th><th>Purpose</th><th>Example Use Case</th></tr>
+<tr><td>ITSM</td><td>IT Service Management</td><td>Incident, Problem, Change management</td></tr>
+<tr><td>HRSD</td><td>HR Service Delivery</td><td>Employee onboarding, case management</td></tr>
+<tr><td>CSM</td><td>Customer Service</td><td>Customer cases, product support</td></tr>
+<tr><td>SecOps</td><td>Security Operations</td><td>Vulnerability response, threat intelligence</td></tr>
+<tr><td>ITOM</td><td>IT Operations</td><td>Discovery, Event Management, Cloud Management</td></tr>
+</table>
+<div class="callout callout-tip">
+<h4>For Clarity/Medallia Professionals</h4>
+<p>If you're coming from Clarity PPM, think of ServiceNow as Clarity's project-centric approach applied to EVERYTHING — not just projects, but incidents, requests, HR cases, security alerts, and more. Every "thing" is a record flowing through workflows.</p>
+</div>
+<h3>Key Differentiators</h3>
+<ul>
+<li><strong>Single Data Model:</strong> All modules share the same tables, relationships, and reporting</li>
+<li><strong>Low-Code Platform:</strong> Business users can build apps without deep coding</li>
+<li><strong>AI Built-In:</strong> Predictive Intelligence, Virtual Agent, Now Assist are native</li>
+<li><strong>Always Current:</strong> Cloud-based with 2 releases per year (automatically updated)</li>
+</ul>` },
+      { id: "1.2", title: "Platform Architecture", duration: "45 min", level: "Beginner",
+        content: `<h2>Platform Architecture</h2>
+<p>Understanding ServiceNow's architecture is crucial for the CSA exam and real-world troubleshooting.</p>
+<h3>Multi-Instance Architecture (MIA)</h3>
+<p>Unlike multi-tenant SaaS where customers share infrastructure, ServiceNow gives each customer their own:</p>
+<ul>
+<li><strong>Dedicated instance</strong> (your own URL: yourcompany.service-now.com)</li>
+<li><strong>Isolated database</strong> (your data never mixes with others)</li>
+<li><strong>Separate application server</strong> (performance isolation)</li>
+</ul>
+<div class="callout callout-scenario">
+<h4>Why This Matters</h4>
+<p>A major bank can customize ServiceNow extensively without affecting a hospital's instance. If the bank's instance has issues, the hospital is unaffected. This isolation is critical for regulated industries.</p>
+</div>
+<h3>Instance Types</h3>
+<table>
+<tr><th>Type</th><th>Purpose</th><th>Refresh Frequency</th></tr>
+<tr><td>Production (PROD)</td><td>Live business operations</td><td>Never refreshed from another</td></tr>
+<tr><td>Test (TEST)</td><td>UAT, integration testing</td><td>Weekly/Monthly from PROD</td></tr>
+<tr><td>Development (DEV)</td><td>Building new features</td><td>As needed from PROD/TEST</td></tr>
+<tr><td>Personal Developer (PDI)</td><td>Learning & experimentation</td><td>Free, resets after 10 days inactive</td></tr>
+</table>
+<h3>The Now Platform Stack</h3>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│  USER INTERFACES                                    │
+│  Now Mobile | Service Portal | Agent Workspace      │
+├─────────────────────────────────────────────────────┤
+│  APPLICATION LAYER                                  │
+│  ITSM | HRSD | CSM | SecOps | Custom Apps           │
+├─────────────────────────────────────────────────────┤
+│  NOW PLATFORM                                       │
+│  Workflow Engine | AI/ML | Integration Hub          │
+├─────────────────────────────────────────────────────┤
+│  DATA LAYER                                         │
+│  Tables | CMDB | Knowledge | Attachments            │
+├─────────────────────────────────────────────────────┤
+│  INFRASTRUCTURE                                     │
+│  Servers | Storage | Network | Security             │
+└─────────────────────────────────────────────────────┘</code></pre>
+<div class="callout callout-warn">
+<h4>Exam Alert</h4>
+<p>Know that ServiceNow uses a multi-instance (NOT multi-tenant) architecture. Each customer has dedicated resources. This is a common exam question!</p>
+</div>` },
+      { id: "1.3", title: "Release Cycle & Versions", duration: "30 min", level: "Beginner",
+        content: `<h2>Release Cycle & Versions</h2><p>ServiceNow releases two major versions per year, following a city-based naming convention. Releases are named alphabetically after cities: Utah, Vancouver, Washington DC, Xanadu, Yokohama, Zurich (current as of early 2026).</p><h3>Naming Convention</h3><p>Each release is named after a city starting with the next letter of the alphabet. When they reach Z, they'll likely start over with a new pattern. This makes it easy to know the relative age of any instance — if someone mentions "Vancouver," you know it's older than "Xanadu."</p><h3>Upgrade Process</h3><p>ServiceNow manages upgrades for you since it's cloud-hosted. However, you still need to test your customizations against each new release. This is why the DEV → TEST → PROD pipeline matters.</p>` },
+      { id: "1.4", title: "Getting Your Developer Instance", duration: "20 min", level: "Beginner",
+        content: `<h2>Getting Your Developer Instance (PDI)</h2><p>A Personal Developer Instance is your free ServiceNow playground — essential for learning and exam prep.</p><h3>How to Get One</h3><ol><li>Go to <strong>developer.servicenow.com</strong></li><li>Create a free account</li><li>Request an instance from your dashboard</li><li>You'll get a URL like <code>dev12345.service-now.com</code></li></ol><div class="callout callout-warn"><h4>Important</h4><p>Your PDI resets after 10 days of inactivity. Log in regularly to keep it alive. If it does reset, you can request a new one — but you'll lose your customizations.</p></div>` },
+      { id: "1.5", title: "Navigating the Platform", duration: "45 min", level: "Beginner",
+        content: `<h2>Navigating the Platform</h2><p>Efficient navigation is key to productivity. ServiceNow has several navigation methods you should master.</p><h3>Application Navigator</h3><p>The left sidebar (Application Navigator) is your primary navigation tool. Type in the filter to quickly find any module — for example, type "incident" to see all incident-related modules.</p><h3>Global Search</h3><p>The search bar at the top searches across ALL records in the system. Use it to find specific incidents, users, or any record by number or keyword.</p><h3>Keyboard Shortcuts</h3><p>Press <code>Ctrl+Shift+F</code> (or <code>Cmd+Shift+F</code> on Mac) to focus the Application Navigator filter. This alone saves minutes every day.</p>` }
     ]
   },
   {
-    id: 2,
-    number: "02",
-    title: "User Interface & Lists",
-    description: "Master lists, forms, filters, and personalization — the foundation of daily work.",
-    duration: "5 hours",
-    level: "beginner",
-    colorClass: "platform",
+    id: 2, title: "User Interface & Lists", color: "#34c759",
     topics: [
-      { id: "2.1", title: "Understanding Lists", description: "List anatomy, column configuration, and data display.", duration: "40 min", tags: ["Lists", "UI"], content: `<h2>Understanding Lists</h2><p>Lists are how you view multiple records at once. Master lists and you'll navigate ServiceNow like a pro.</p>` },
-      { id: "2.2", title: "Filtering & Searching", description: "Build powerful filters, use conditions, and save filter queries.", duration: "50 min", tags: ["Filters", "Search"], content: `<h2>Filtering & Searching</h2><p>Filters help you find exactly what you need among thousands of records.</p>` },
-      { id: "2.3", title: "Working with Forms", description: "Form layout, sections, fields, and the form lifecycle.", duration: "45 min", tags: ["Forms", "UI"], content: `<h2>Working with Forms</h2><p>Forms are where you view and edit individual records. Understanding form behavior is critical.</p>` },
-      { id: "2.4", title: "Related Lists & Activity", description: "Working with related records and the activity formatter.", duration: "35 min", tags: ["Related Lists", "Activity"], content: `<h2>Related Lists & Activity</h2><p>Related lists show connected records, while the activity formatter shows the communication history.</p>` },
-      { id: "2.5", title: "Views & Homepages", description: "Create and manage different views, homepages, and dashboards.", duration: "40 min", tags: ["Views", "Dashboards"], content: `<h2>Views & Homepages</h2><p>Customize how you see ServiceNow to match your workflow.</p>` }
+      { id: "2.1", title: "Understanding Lists", duration: "40 min", level: "Beginner", content: `<h2>Understanding Lists</h2><p>Lists are how you view multiple records at once. They're the most common view in ServiceNow — master lists and you'll navigate the platform like a pro.</p><h3>List Anatomy</h3><p>Every list has: a title bar showing the table name and record count, column headers you can click to sort, rows representing individual records, and a footer with pagination controls.</p><h3>Column Configuration</h3><p>Right-click any column header to access options like sorting, grouping, and adding/removing columns. You can also drag columns to reorder them.</p>` },
+      { id: "2.2", title: "Filtering & Searching", duration: "50 min", level: "Beginner", content: `<h2>Filtering & Searching</h2><p>Filters help you find exactly what you need among thousands of records. ServiceNow's condition builder is powerful once you understand it.</p><h3>The Condition Builder</h3><p>Click the filter icon (funnel) above any list to open the condition builder. You can chain multiple conditions with AND/OR logic.</p>` },
+      { id: "2.3", title: "Working with Forms", duration: "45 min", level: "Beginner", content: `<h2>Working with Forms</h2><p>Forms are where you view and edit individual records. Understanding form behavior is critical for both daily work and the CSA exam.</p>` },
+      { id: "2.4", title: "Related Lists & Activity", duration: "35 min", level: "Beginner", content: `<h2>Related Lists & Activity</h2><p>Related lists show connected records at the bottom of a form. The activity formatter shows communication history, work notes, and state changes in chronological order.</p>` },
+      { id: "2.5", title: "Views & Homepages", duration: "40 min", level: "Beginner", content: `<h2>Views & Homepages</h2><p>Customize how you see ServiceNow to match your workflow. Views let you create different form layouts for different user groups.</p>` }
     ]
   },
   {
-    id: 3,
-    number: "03",
-    title: "Database & Schema",
-    description: "Understand tables, fields, relationships, and the data model that powers everything.",
-    duration: "4 hours",
-    level: "intermediate",
-    colorClass: "config",
+    id: 3, title: "Database & Schema", color: "#ff375f",
     topics: [
-      { id: "3.1", title: "Tables & Records", description: "How ServiceNow stores data in tables and records.", duration: "45 min", tags: ["Tables", "Database"], content: `<h2>Tables & Records</h2><p>Everything in ServiceNow is a record in a table. Master this concept and you understand the platform.</p>` },
-      { id: "3.2", title: "Field Types Deep Dive", description: "Understanding all field types and when to use each.", duration: "50 min", tags: ["Fields", "Data Types"], content: `<h2>Field Types Deep Dive</h2><p>Choosing the right field type is crucial for data integrity and functionality.</p>` },
-      { id: "3.3", title: "Table Inheritance", description: "Base tables, extended tables, and the Task hierarchy.", duration: "40 min", tags: ["Inheritance", "Task"], content: `<h2>Table Inheritance</h2><p>ServiceNow uses object-oriented table inheritance — understanding this unlocks powerful design patterns.</p>` },
-      { id: "3.4", title: "Data Dictionary", description: "Using the Dictionary to understand and configure table schema.", duration: "35 min", tags: ["Dictionary", "Schema"], content: `<h2>Data Dictionary</h2><p>The Dictionary is where you define and manage table structure.</p>` }
+      { id: "3.1", title: "Tables & Records", duration: "45 min", level: "Intermediate", content: `<h2>Tables & Records</h2><p>Everything in ServiceNow is a record in a table. This is the fundamental concept that powers the entire platform.</p><h3>What is a Table?</h3><p>A table is like a spreadsheet — it has columns (fields) and rows (records). But unlike spreadsheets, ServiceNow tables have enforced data types, relationships, and business logic attached to them.</p>` },
+      { id: "3.2", title: "Field Types Deep Dive", duration: "50 min", level: "Intermediate",
+        content: `<h2>Field Types Deep Dive</h2><p>Choosing the right field type is crucial for data integrity and functionality. Here are the most important ones:</p>
+<table>
+<tr><th>Field Type</th><th>Use Case</th><th>Example</th></tr>
+<tr><td>String</td><td>Short text</td><td>Short description</td></tr>
+<tr><td>Integer</td><td>Whole numbers</td><td>Priority (1-5)</td></tr>
+<tr><td>Reference</td><td>Link to another table</td><td>Assigned to → sys_user</td></tr>
+<tr><td>Choice</td><td>Dropdown selection</td><td>State, Category</td></tr>
+<tr><td>True/False</td><td>Boolean flags</td><td>Active, VIP</td></tr>
+<tr><td>Journal</td><td>Append-only notes</td><td>Work notes, Comments</td></tr>
+<tr><td>Date/Time</td><td>Timestamps</td><td>Opened at, Resolved at</td></tr>
+</table>
+<div class="callout callout-tip"><h4>Pro Tip</h4><p>Reference fields are the backbone of ServiceNow's relational data model. When you create a reference field, you're creating a foreign key relationship between two tables.</p></div>` },
+      { id: "3.3", title: "Table Inheritance", duration: "40 min", level: "Intermediate", content: `<h2>Table Inheritance</h2><p>ServiceNow uses object-oriented table inheritance — understanding this unlocks powerful design patterns.</p><h3>The Task Table</h3><p>The <code>task</code> table is the parent of Incident, Problem, Change, and many others. Fields defined on Task are inherited by ALL child tables. This means a Business Rule on the Task table affects incidents, problems, changes, and every other task-based table.</p>` },
+      { id: "3.4", title: "Data Dictionary", duration: "35 min", level: "Intermediate", content: `<h2>Data Dictionary</h2><p>The Dictionary (<code>sys_dictionary</code>) is where you define and manage table structure. Every field in every table has an entry here.</p>` }
     ]
   },
   {
-    id: 4,
-    number: "04",
-    title: "Application Configuration",
-    description: "Configure applications without code — the CSA's primary toolkit.",
-    duration: "6 hours",
-    level: "intermediate",
-    colorClass: "data",
+    id: 4, title: "Application Configuration", color: "#ff9f0a",
     topics: [
-      { id: "4.1", title: "UI Policies", description: "Control form field behavior dynamically without scripting.", duration: "60 min", tags: ["UI Policy", "Forms", "No-Code"], content: `<h2>UI Policies</h2><p>UI Policies dynamically change form field behavior based on conditions — no scripting required!</p>` },
-      { id: "4.2", title: "Data Policies", description: "Enforce data rules on server side for all access methods.", duration: "40 min", tags: ["Data Policy", "Validation", "Server"], content: `<h2>Data Policies</h2><p>Data Policies enforce rules on the SERVER — they work even when data comes from APIs, imports, or workflows.</p>` },
-      { id: "4.3", title: "Business Rules Introduction", description: "Server-side scripts that run on database operations.", duration: "90 min", tags: ["Business Rules", "Server", "Scripting"], content: `<h2>Business Rules Introduction</h2><p>Business Rules are server-side scripts that execute when records are queried, inserted, updated, or deleted.</p>` },
-      { id: "4.4", title: "Client Scripts", description: "Browser-side scripts for form interactivity.", duration: "60 min", tags: ["Client Script", "JavaScript", "Forms"], content: `<h2>Client Scripts</h2><p>Client Scripts run in the user's browser, providing immediate interactivity on forms.</p>` },
-      { id: "4.5", title: "UI Actions", description: "Create custom buttons, links, and context menu items.", duration: "45 min", tags: ["UI Actions", "Buttons", "Custom"], content: `<h2>UI Actions</h2><p>UI Actions add custom buttons, links, and menu items to forms and lists.</p>` },
-      { id: "4.6", title: "Notifications", description: "Configure email notifications and triggers.", duration: "50 min", tags: ["Notifications", "Email"], content: `<h2>Notifications</h2><p>Notifications send emails based on record events or conditions.</p>` }
+      { id: "4.1", title: "UI Policies", duration: "60 min", level: "Intermediate",
+        content: `<h2>UI Policies</h2>
+<p>UI Policies dynamically change form field behavior based on conditions — no scripting required! They're your first tool for form customization.</p>
+<h3>What UI Policies Can Do</h3>
+<ul>
+<li><strong>Mandatory:</strong> Make a field required based on conditions</li>
+<li><strong>Read-only:</strong> Lock a field from editing</li>
+<li><strong>Visible:</strong> Show or hide fields dynamically</li>
+</ul>
+<h3>Example: Require Close Notes on Resolution</h3>
+<p>When an incident's state changes to "Resolved," you want to require close notes:</p>
+<div class="try-it-container">
+<div class="try-it-header">
+<span class="try-it-label">Try It Yourself — UI Policy Configuration</span>
+<div class="try-it-actions">
+<button class="try-it-btn try-it-run" onclick="runTryIt(this)">Run</button>
+<button class="try-it-btn try-it-reset" onclick="resetTryIt(this)">Reset</button>
+</div>
+</div>
+<div class="try-it-editor">
+<textarea class="try-it-textarea" spellcheck="false">// UI Policy: Require Close Notes on Resolution
+// Table: Incident [incident]
+// Condition: State = Resolved (6)
+
+// UI Policy Actions:
+// Field: close_notes
+// Mandatory: true
+// Read-only: false
+// Visible: true
+
+// What happens when you change state to Resolved?
+// → close_notes becomes mandatory
+// → User MUST fill it before saving
+
+// Try modifying: What if you also want to
+// make "close_code" mandatory?
+// Add another UI Policy Action for close_code</textarea>
+</div>
+<div class="try-it-output">
+<div class="try-it-output-label">Output</div>
+<span class="output-text">When State = Resolved:
+✓ close_notes → Mandatory: TRUE
+✓ Form enforces: user cannot save without close notes
+✓ This works on Portal, Mobile, and Classic UI
+
+Key insight: UI Policies run on the CLIENT (browser).
+They do NOT enforce rules on server-side operations
+like REST API calls or Import Sets.
+Use Data Policies for server-side enforcement.</span>
+</div>
+</div>
+<div class="callout callout-warn">
+<h4>Exam Alert: UI Policy vs Data Policy</h4>
+<p><strong>UI Policy</strong> = Client-side only. Works on forms. Does NOT protect against API/import bypasses.</p>
+<p style="margin-top:8px"><strong>Data Policy</strong> = Server-side. Works on ALL access methods including API, import sets, and workflows. Use when data integrity is critical.</p>
+</div>` },
+      { id: "4.2", title: "Data Policies", duration: "40 min", level: "Intermediate", content: `<h2>Data Policies</h2><p>Data Policies enforce rules on the SERVER — they work even when data comes from APIs, imports, or workflows. Think of them as the server-side counterpart to UI Policies.</p>` },
+      { id: "4.3", title: "Business Rules Introduction", duration: "90 min", level: "Intermediate",
+        content: `<h2>Business Rules</h2>
+<p>Business Rules are server-side scripts that execute when records are queried, inserted, updated, or deleted. They're the most powerful configuration tool in the CSA toolkit.</p>
+<h3>When Do They Run?</h3>
+<table>
+<tr><th>Timing</th><th>Use Case</th><th>Has Access To</th></tr>
+<tr><td>before</td><td>Validate/modify data before save</td><td>current, previous</td></tr>
+<tr><td>after</td><td>Trigger actions after save</td><td>current, previous</td></tr>
+<tr><td>async</td><td>Long-running tasks</td><td>current (snapshot)</td></tr>
+<tr><td>display</td><td>Modify form display data</td><td>current (read-only)</td></tr>
+</table>
+<h3>Your First Business Rule</h3>
+<div class="try-it-container">
+<div class="try-it-header">
+<span class="try-it-label">Try It Yourself — Business Rule</span>
+<div class="try-it-actions">
+<button class="try-it-btn try-it-run" onclick="runTryIt(this)">Run</button>
+<button class="try-it-btn try-it-reset" onclick="resetTryIt(this)">Reset</button>
+</div>
+</div>
+<div class="try-it-editor">
+<textarea class="try-it-textarea" spellcheck="false">// Business Rule: Auto-set Priority
+// Table: Incident
+// When: before insert
+// Condition: Priority is empty
+
+(function executeRule(current, previous) {
+    
+    // If impact is 1 (High) and urgency is 1 (High)
+    if (current.impact == 1 && current.urgency == 1) {
+        current.priority = 1; // Critical
+    }
+    
+    // Auto-assign to VIP queue if caller is VIP
+    if (current.caller_id.vip == true) {
+        current.assignment_group.setDisplayValue('VIP Support');
+    }
+    
+})(current, previous);</textarea>
+</div>
+<div class="try-it-output">
+<div class="try-it-output-label">Output</div>
+<span class="output-text">Execution trace:
+1. User creates new Incident (INSERT detected)
+2. Business Rule fires BEFORE insert
+3. Checks: impact=1, urgency=1 → Sets priority=1 (Critical)
+4. Checks: caller is VIP → Assigns to VIP Support group
+5. Record saves with modified values
+
+Key concepts:
+• "current" = the record being saved
+• "previous" = the record BEFORE changes (null on insert)
+• "before" rules can modify current directly
+• "after" rules cannot modify current (already saved)</span>
+</div>
+</div>
+<div class="callout callout-info">
+<h4>Debug Tip</h4>
+<p>Use <code>gs.info()</code> to log values during Business Rule execution. Check logs at System Logs → System Log → All. Never use <code>gs.print()</code> in production — it writes to the screen, not the log.</p>
+</div>` },
+      { id: "4.4", title: "Client Scripts", duration: "60 min", level: "Intermediate",
+        content: `<h2>Client Scripts</h2>
+<p>Client Scripts run in the user's browser, providing immediate interactivity on forms. They're written in JavaScript and have access to the GlideForm API.</p>
+<h3>Types of Client Scripts</h3>
+<table>
+<tr><th>Type</th><th>Fires When</th><th>Use Case</th></tr>
+<tr><td>onLoad</td><td>Form loads</td><td>Set defaults, show messages</td></tr>
+<tr><td>onChange</td><td>Field value changes</td><td>React to user input</td></tr>
+<tr><td>onSubmit</td><td>Form is submitted</td><td>Validate before save</td></tr>
+<tr><td>onCellEdit</td><td>List cell is edited</td><td>Inline editing validation</td></tr>
+</table>
+<h3>GlideForm (g_form) API</h3>
+<div class="try-it-container">
+<div class="try-it-header">
+<span class="try-it-label">Try It Yourself — Client Script</span>
+<div class="try-it-actions">
+<button class="try-it-btn try-it-run" onclick="runTryIt(this)">Run</button>
+<button class="try-it-btn try-it-reset" onclick="resetTryIt(this)">Reset</button>
+</div>
+</div>
+<div class="try-it-editor">
+<textarea class="try-it-textarea" spellcheck="false">// Client Script: onChange - Category drives Subcategory
+// Table: Incident
+// Type: onChange
+// Field: category
+
+function onChange(control, oldValue, newValue, isLoading) {
+    if (isLoading) return; // Don't run on form load
+    
+    // Clear subcategory when category changes
+    g_form.setValue('subcategory', '');
+    
+    // Show info message to user
+    g_form.addInfoMessage(
+        'Category changed to: ' + newValue + 
+        '. Please select a subcategory.'
+    );
+    
+    // Make subcategory mandatory if category is set
+    if (newValue !== '') {
+        g_form.setMandatory('subcategory', true);
+    } else {
+        g_form.setMandatory('subcategory', false);
+    }
+}</textarea>
+</div>
+<div class="try-it-output">
+<div class="try-it-output-label">Output</div>
+<span class="output-text">User changes Category from "Network" to "Hardware":
+1. onChange fires (isLoading = false, so we proceed)
+2. subcategory is cleared (reset dependent field)
+3. Info banner appears: "Category changed to: Hardware..."
+4. subcategory becomes mandatory (yellow background)
+
+g_form API methods used:
+• setValue(field, value) — Sets field value
+• addInfoMessage(msg) — Shows blue info banner
+• setMandatory(field, bool) — Toggle mandatory
+
+Common mistake: Forgetting "if (isLoading) return;"
+Without this, the script fires on every form load,
+resetting subcategory even on existing records!</span>
+</div>
+</div>` },
+      { id: "4.5", title: "UI Actions", duration: "45 min", level: "Intermediate", content: `<h2>UI Actions</h2><p>UI Actions add custom buttons, links, and context menu items to forms and lists. They bridge the gap between the UI and server-side logic.</p>` },
+      { id: "4.6", title: "Notifications", duration: "50 min", level: "Intermediate", content: `<h2>Notifications</h2><p>Notifications send emails based on record events or conditions. Configuring them correctly ensures the right people get the right information at the right time.</p>` }
     ]
   },
   {
-    id: 5,
-    number: "05",
-    title: "Import & Integration",
-    description: "Bring data into ServiceNow using Import Sets and Transform Maps.",
-    duration: "4 hours",
-    level: "intermediate",
-    colorClass: "selfservice",
+    id: 5, title: "Import & Integration", color: "#30b0c7",
     topics: [
-      { id: "5.1", title: "Import Sets Overview", description: "Understanding the import architecture and staging tables.", duration: "40 min", tags: ["Import", "Data"], content: `<h2>Import Sets Overview</h2><p>Import Sets are ServiceNow's ETL mechanism for bringing external data into the platform.</p>` },
-      { id: "5.2", title: "Transform Maps", description: "Map source fields to target tables and handle data conversion.", duration: "60 min", tags: ["Transform", "Mapping"], content: `<h2>Transform Maps</h2><p>Transform Maps define how import set data becomes records in target tables.</p>` }
+      { id: "5.1", title: "Import Sets Overview", duration: "40 min", level: "Intermediate", content: `<h2>Import Sets Overview</h2><p>Import Sets are ServiceNow's ETL (Extract, Transform, Load) mechanism for bringing external data into the platform. Data flows through: Data Source → Import Set Table (staging) → Transform Map → Target Table.</p>` },
+      { id: "5.2", title: "Transform Maps", duration: "60 min", level: "Intermediate", content: `<h2>Transform Maps</h2><p>Transform Maps define how import set data maps to target table fields. They handle field mapping, data coercion, and conditional logic during the import process.</p>` }
     ]
   },
   {
-    id: 6,
-    number: "06",
-    title: "Service Catalog & Knowledge",
-    description: "Build self-service experiences for users.",
-    duration: "5 hours",
-    level: "intermediate",
-    colorClass: "admin",
+    id: 6, title: "Service Catalog & Knowledge", color: "#ff6482",
     topics: [
-      { id: "6.1", title: "Service Catalog Basics", description: "Understand catalog structure: categories, items, and variables.", duration: "50 min", tags: ["Catalog", "Self-Service"], content: `<h2>Service Catalog Basics</h2><p>The Service Catalog lets users request services through a self-service portal.</p>` },
-      { id: "6.2", title: "Knowledge Management", description: "Create and organize knowledge articles for self-service.", duration: "40 min", tags: ["Knowledge", "KB"], content: `<h2>Knowledge Management</h2><p>Knowledge articles reduce ticket volume by helping users solve problems themselves.</p>` }
+      { id: "6.1", title: "Service Catalog Basics", duration: "50 min", level: "Intermediate", content: `<h2>Service Catalog Basics</h2><p>The Service Catalog lets users request services through a self-service portal — from IT equipment to HR requests to facilities maintenance.</p>` },
+      { id: "6.2", title: "Knowledge Management", duration: "40 min", level: "Intermediate", content: `<h2>Knowledge Management</h2><p>Knowledge articles reduce ticket volume by helping users solve problems themselves. A well-maintained knowledge base is one of the highest-ROI investments in ServiceNow.</p>` }
     ]
   },
   {
-    id: 7,
-    number: "07",
-    title: "Flow Designer & Automation",
-    description: "Build automated workflows with low-code Flow Designer.",
-    duration: "4 hours",
-    level: "intermediate",
-    colorClass: "reporting",
+    id: 7, title: "Workflow & Flow Designer", color: "#af52de",
     topics: [
-      { id: "7.1", title: "Flow Designer Introduction", description: "Build automated workflows without code.", duration: "60 min", tags: ["Flow Designer", "Automation", "Low-Code"], content: `<h2>Flow Designer Introduction</h2><p>Flow Designer is ServiceNow's low-code automation tool — build complex workflows without scripting.</p>` }
+      { id: "7.1", title: "Workflow Editor", duration: "60 min", level: "Advanced", content: `<h2>Workflow Editor</h2><p>The legacy Workflow Editor uses a drag-and-drop canvas to create automated processes. While Flow Designer is the modern replacement, many existing implementations still use workflows.</p>` },
+      { id: "7.2", title: "Flow Designer", duration: "60 min", level: "Advanced", content: `<h2>Flow Designer</h2><p>Flow Designer is the modern, no-code automation engine in ServiceNow. It replaces the legacy Workflow Editor with a more intuitive interface and better integration capabilities.</p>` }
     ]
   },
   {
-    id: 8,
-    number: "08",
-    title: "Security & Administration",
-    description: "Manage users, roles, ACLs, and update sets — the admin essentials.",
-    duration: "5 hours",
-    level: "advanced",
-    colorClass: "exam",
+    id: 8, title: "Reporting & Security", color: "#ff9f0a",
     topics: [
-      { id: "8.1", title: "Users, Groups & Roles", description: "User management fundamentals.", duration: "50 min", tags: ["Users", "Security"], content: `<h2>Users, Groups & Roles</h2><p>Security in ServiceNow is built on Users, Groups, and Roles.</p>` },
-      { id: "8.2", title: "Access Control Lists (ACLs)", description: "Control who can see and do what.", duration: "60 min", tags: ["ACLs", "Security"], content: `<h2>Access Control Lists (ACLs)</h2><p>ACLs define who can read, write, create, and delete records and fields.</p>` },
-      { id: "8.3", title: "Update Sets", description: "Package and deploy customizations between instances.", duration: "60 min", tags: ["Update Sets", "Deployment"], content: `<h2>Update Sets</h2><p>Update Sets capture customizations for migration between instances.</p>` },
-      { id: "8.4", title: "Impersonation & Debugging", description: "Test as different users and troubleshoot issues.", duration: "30 min", tags: ["Impersonation", "Testing"], content: `<h2>Impersonation & Debugging</h2><p>Impersonation lets admins see the system as another user.</p>` }
+      { id: "8.1", title: "Reporting Basics", duration: "45 min", level: "Intermediate", content: `<h2>Reporting Basics</h2><p>ServiceNow's reporting engine lets you create bar charts, pie charts, time series, and more — all from the data already in your tables. No external BI tools needed for most use cases.</p>` },
+      { id: "8.2", title: "Access Control Lists (ACLs)", duration: "60 min", level: "Advanced", content: `<h2>Access Control Lists (ACLs)</h2><p>ACLs determine who can read, write, create, and delete records. They're evaluated in order of specificity — the most specific rule wins.</p>` },
+      { id: "8.3", title: "Update Sets", duration: "45 min", level: "Intermediate", content: `<h2>Update Sets</h2><p>Update Sets are ServiceNow's mechanism for capturing and migrating configuration changes between instances (DEV → TEST → PROD).</p>` }
     ]
   }
 ];
 
-// ==================== CSA CERTIFICATION FUNCTIONS ====================
-let completedTopics = JSON.parse(localStorage.getItem('csa_completed_topics') || '[]');
-let currentTopicId = null;
-let currentArticleId = null;
-
-function initCSA() {
-  renderLearningPath();
-  updateProgress();
-}
-
-function renderLearningPath() {
-  const container = document.getElementById('learningPath');
-  if (!container) return;
-  
-  let html = '';
-  CSA_MODULES.forEach((module, idx) => {
-    const completedCount = module.topics.filter(t => completedTopics.includes(t.id)).length;
-    const isComplete = completedCount === module.topics.length;
-    const inProgress = completedCount > 0 && !isComplete;
-    
-    html += `
-      <div class="path-module" data-module-id="${module.id}">
-        <div class="module-header" onclick="toggleModule(${module.id})">
-          <div class="module-number ${module.colorClass}">${module.number}</div>
-          <div class="module-info">
-            <div class="module-title">
-              ${module.title}
-              <span class="badge badge-${module.level}">${module.level}</span>
-            </div>
-            <div class="module-desc">${module.description}</div>
-          </div>
-          <div class="module-meta">
-            <span class="module-duration">⏱️ ${module.duration}</span>
-            <span class="module-status ${isComplete ? 'status-complete' : inProgress ? 'status-progress' : 'status-locked'}">
-              ${isComplete ? '✓' : inProgress ? '◔' : '○'}
-            </span>
-            <div class="module-expand" id="expand-${module.id}">▼</div>
-          </div>
-        </div>
-        <div class="module-content" id="content-${module.id}">
-          <div class="topics-grid">
-            ${module.topics.map(topic => `
-              <div class="topic-card ${completedTopics.includes(topic.id) ? 'completed' : ''}" onclick="openTopic('${topic.id}')">
-                <div class="topic-header">
-                  <span class="topic-num">Topic ${topic.id}</span>
-                  <span class="topic-check">${completedTopics.includes(topic.id) ? '✓' : ''}</span>
-                </div>
-                <div class="topic-title">${topic.title}</div>
-                <div class="topic-desc">${topic.description}</div>
-                <div class="topic-tags">
-                  ${topic.tags.map(tag => `<span class="topic-tag">${tag}</span>`).join('')}
-                  <span class="topic-tag">⏱️ ${topic.duration}</span>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-          
-          <div class="resources-box">
-            <h4>📚 Module Resources</h4>
-            <div class="resource-links">
-              <a href="https://docs.servicenow.com" target="_blank" class="resource-link">
-                <span>📖</span> Official Documentation
-              </a>
-              <a href="https://developer.servicenow.com" target="_blank" class="resource-link">
-                <span>💻</span> Developer Instance
-              </a>
-              <a href="https://nowlearning.servicenow.com" target="_blank" class="resource-link">
-                <span>🎓</span> Now Learning
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  });
-  
-  container.innerHTML = html;
-}
-
-function toggleModule(moduleId, skipUrlUpdate = false) {
-  const content = document.getElementById(`content-${moduleId}`);
-  const expand = document.getElementById(`expand-${moduleId}`);
-  
-  if (content.classList.contains('active')) {
-    content.classList.remove('active');
-    expand.classList.remove('rotated');
-  } else {
-    // Close others
-    document.querySelectorAll('.module-content').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('.module-expand').forEach(e => e.classList.remove('rotated'));
-    
-    content.classList.add('active');
-    expand.classList.add('rotated');
-    
-    // Update URL (unless we're loading from URL)
-    if (!skipUrlUpdate) {
-      Router.navigate('module', moduleId, true);
-    }
-  }
-}
-
-function openTopic(topicId, skipUrlUpdate = false) {
-  currentTopicId = topicId;
-  
-  let topic = null;
-  let moduleName = '';
-  
-  for (const module of CSA_MODULES) {
-    const found = module.topics.find(t => t.id === topicId);
-    if (found) {
-      topic = found;
-      moduleName = module.title;
-      break;
-    }
-  }
-  
-  if (!topic) return;
-  
-  document.getElementById('topicModalTitle').textContent = topic.title;
-  document.getElementById('topicModalModule').innerHTML = '📚 ' + moduleName;
-  document.getElementById('topicModalTime').innerHTML = '⏱️ ' + topic.duration;
-  document.getElementById('topicModalLevel').innerHTML = '📊 ' + topic.tags.join(', ');
-  document.getElementById('topicModalContent').innerHTML = topic.content;
-  
-  // Update mark complete button
-  const btn = document.getElementById('markCompleteBtn');
-  if (completedTopics.includes(topicId)) {
-    btn.innerHTML = '✓ Completed';
-    btn.style.background = '#666';
-  } else {
-    btn.innerHTML = '✓ Mark as Complete';
-    btn.style.background = 'var(--green)';
-  }
-  
-  document.getElementById('topicModal').classList.add('active');
-  document.body.style.overflow = 'hidden';
-  
-  // Update URL
-  if (!skipUrlUpdate) {
-    Router.navigate('topic', topicId, true);
-  }
-}
-
-function closeTopicModal() {
-  document.getElementById('topicModal').classList.remove('active');
-  document.body.style.overflow = '';
-  currentTopicId = null;
-  
-  // Update URL to just show CSA section
-  Router.navigate('section', 'csa', true);
-}
-
-function markTopicComplete() {
-  if (!currentTopicId) return;
-  
-  if (!completedTopics.includes(currentTopicId)) {
-    completedTopics.push(currentTopicId);
-  } else {
-    completedTopics = completedTopics.filter(id => id !== currentTopicId);
-  }
-  
-  localStorage.setItem('csa_completed_topics', JSON.stringify(completedTopics));
-  updateProgress();
-  renderLearningPath();
-  openTopic(currentTopicId, true); // Refresh modal
-}
-
-function navigateTopic(direction) {
-  let allTopics = [];
-  CSA_MODULES.forEach(m => {
-    m.topics.forEach(t => allTopics.push(t.id));
-  });
-  
-  const currentIdx = allTopics.indexOf(currentTopicId);
-  let newIdx = direction === 'next' ? currentIdx + 1 : currentIdx - 1;
-  
-  if (newIdx >= 0 && newIdx < allTopics.length) {
-    openTopic(allTopics[newIdx]);
-  }
-}
-
-function updateProgress() {
-  let totalTopics = 0;
-  CSA_MODULES.forEach(m => totalTopics += m.topics.length);
-  
-  const completed = completedTopics.length;
-  const percent = Math.round((completed / totalTopics) * 100);
-  
-  const progressBar = document.getElementById('progressBar');
-  const progressPercent = document.getElementById('progressPercent');
-  const completedCount = document.getElementById('completedCount');
-  
-  if (progressBar) progressBar.style.width = percent + '%';
-  if (progressPercent) progressPercent.textContent = percent + '%';
-  if (completedCount) completedCount.textContent = `${completed} of ${totalTopics} topics completed`;
-}
-
-// ==================== BLOG FUNCTIONS ====================
-var JS_TUTORIAL_SERIES = [
-  { id: 4, num: 1, title: "Introduction" },
-  { id: 5, num: 2, title: "GlideRecord Basics" },
-  { id: 6, num: 3, title: "Business Rules" },
-  { id: 7, num: 4, title: "Script Includes" },
-  { id: 8, num: 5, title: "GlideAjax" },
-  { id: 9, num: 6, title: "Advanced Patterns" }
+const CERT_ROADMAP = [
+  { name: "CSA", icon: "🎓", label: "Available Now", available: true },
+  { name: "CAD", icon: "💻", label: "Q2 2026" },
+  { name: "CIS-ITSM", icon: "🎫", label: "Q2 2026" },
+  { name: "CIS-HR", icon: "👥", label: "Q3 2026" },
+  { name: "CIS-SecOps", icon: "🔒", label: "Q3 2026" },
+  { name: "CIS-CSM", icon: "🤝", label: "Completed", available: true },
+  { name: "CTA", icon: "🏗️", label: "Q4 2026" }
 ];
 
-function getSeriesNav(currentId) {
-  var html = '<div class="series-nav">';
-  JS_TUTORIAL_SERIES.forEach(function (item) {
-    var cls = item.id == currentId ? 'current' : '';
-    html += '<a class="' + cls + '" onclick="openArticle(' + item.id + ')">' + item.num + '. ' + item.title + '</a>';
-  });
-  html += '</div>';
-  return html;
-}
-
-function getChapterNav(currentId) {
-  var idx = JS_TUTORIAL_SERIES.findIndex(function (x) { return x.id == currentId; });
-  var prev = idx > 0 ? JS_TUTORIAL_SERIES[idx - 1] : null;
-  var next = idx < JS_TUTORIAL_SERIES.length - 1 ? JS_TUTORIAL_SERIES[idx + 1] : null;
-
-  var html = '<div class="chapter-nav">';
-  if (prev) {
-    html += '<button class="chapter-btn prev" onclick="openArticle(' + prev.id + ')">← ' + prev.num + '. ' + prev.title + '</button>';
-  } else {
-    html += '<span></span>';
+// ============================================================
+// ROUTER
+// ============================================================
+const Router = {
+  parse() {
+    const hash = window.location.hash.slice(1);
+    if (!hash) return null;
+    const [type, ...rest] = hash.split('/');
+    return { type, id: rest.join('/') };
+  },
+  navigate(type, id, replace = false) {
+    const h = id ? `#${type}/${id}` : `#${type}`;
+    replace ? history.replaceState(null, '', h) : history.pushState(null, '', h);
+    this.handle();
+  },
+  getUrl(type, id) {
+    return `${location.origin}${location.pathname}#${type}/${id}`;
+  },
+  handle() {
+    const r = this.parse();
+    if (!r) { showSection('blog'); return }
+    switch (r.type) {
+      case 'article':
+        if (BLOG_POSTS.length > 0) openBlogArticle(r.id, true);
+        else pendingArticleId = r.id;
+        break;
+      case 'topic':
+        showSection('csa');
+        setTimeout(() => openCsaTopic(r.id, true), 50);
+        break;
+      case 'section':
+        showSection(r.id);
+        break;
+      default:
+        showSection('blog');
+    }
+  },
+  init() {
+    window.addEventListener('popstate', () => this.handle());
+    this.handle();
   }
-  if (next) {
-    html += '<button class="chapter-btn next" onclick="openArticle(' + next.id + ')">Next: ' + next.num + '. ' + next.title + ' →</button>';
-  } else {
-    html += '<span class="chapter-btn disabled">Series Complete ✓</span>';
-  }
-  html += '</div>';
-  return html;
+};
+let pendingArticleId = null;
+
+// ============================================================
+// SECTION SWITCHING
+// ============================================================
+function showSection(id) {
+  currentView = id;
+  document.querySelectorAll('.section-tab').forEach(t => t.classList.toggle('active', t.dataset.section === id));
+  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id + 'Section');
+  if (target) target.classList.add('active');
+  // Show/hide mobile sidebar toggle
+  const mobileSidebarBtn = document.getElementById('sidebarMobileToggle');
+  if (mobileSidebarBtn) mobileSidebarBtn.style.display = id === 'csa' ? '' : 'none';
 }
 
-function escapePreBlocks(html) {
-  return (html || '').replace(/<pre>([\s\S]*?)<\/pre>/g, function (_, code) {
-    return '<pre>' + code.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>';
-  });
-}
-
-var BLOG_POSTS = [];
-var observer = new IntersectionObserver(function (entries) {
-  entries.forEach(function (e) {
-    if (e.isIntersecting) e.target.classList.add('animate');
-  });
-}, { threshold: 0.1 });
-
-document.addEventListener('DOMContentLoaded', function () {
-  bindMainTabs();
-  bindFilters();
-  bindModalEvents();
-  bindMobileMenu();
-  loadPostsAndRender();
-  initCSA();
-  
-  // Initialize router after everything is set up
-  setTimeout(() => Router.init(), 100);
-});
-
-function bindMainTabs() {
-  document.querySelectorAll('.main-tab').forEach(function(tab) {
-    tab.addEventListener('click', function() {
-      const section = tab.dataset.section;
-      switchSection(section);
-      Router.navigate('section', section, true);
-    });
-  });
-}
-
-async function loadPostsAndRender() {
+// ============================================================
+// BLOG POSTS
+// ============================================================
+async function loadBlogPosts() {
+  const grid = document.getElementById('blogGrid');
   try {
-    var res = await fetch('/posts.json?v=' + Date.now(), { cache: 'no-store' });
-    if (!res.ok) throw new Error('posts.json fetch failed: ' + res.status);
-
+    const res = await fetch('posts.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     BLOG_POSTS = await res.json();
-    BLOG_POSTS.sort(function (a, b) {
-      return (b.dateISO || '').localeCompare(a.dateISO || '');
-    });
-
-    renderBlog('all');
-    
-    // Check if there's a pending article to open
+    document.getElementById('blogCount').textContent = BLOG_POSTS.length;
+    renderBlogGrid('all');
     if (pendingArticleId) {
-      openArticle(pendingArticleId, true);
+      openBlogArticle(pendingArticleId, true);
       pendingArticleId = null;
     }
-  } catch (err) {
-    console.error(err);
-    document.getElementById('blogGrid').innerHTML = '';
-    var empty = document.getElementById('emptyState');
-    empty.style.display = 'block';
-    empty.querySelector('h3').textContent = 'Posts failed to load';
-    empty.querySelector('p').textContent = 'Check that posts.json exists at the site root.';
+  } catch (e) {
+    grid.innerHTML = `<div class="blog-error"><h3>Could not load posts</h3><p>Check that posts.json is accessible. (${e.message})</p></div>`;
   }
 }
 
-function renderBlog(filter) {
-  var filtered = filter === 'all'
-    ? BLOG_POSTS
-    : BLOG_POSTS.filter(function (p) { return p.category === filter; });
-
-  var grid = document.getElementById('blogGrid');
-  var empty = document.getElementById('emptyState');
-
-  if (!filtered.length) {
-    grid.innerHTML = '';
-    empty.style.display = 'block';
+function renderBlogGrid(filter) {
+  const grid = document.getElementById('blogGrid');
+  const posts = filter === 'all' ? BLOG_POSTS : BLOG_POSTS.filter(p => p.category === filter);
+  if (posts.length === 0) {
+    grid.innerHTML = `<div class="blog-empty"><h3>No posts found</h3><p>Try selecting a different category.</p></div>`;
     return;
   }
-
-  empty.style.display = 'none';
-
-  var html = '';
-  filtered.forEach(function (p, i) {
-    html += ''
-      + '<article class="blog-card" style="transition-delay:' + (i * 0.08) + 's" data-id="' + p.id + '">'
-      + '  <div class="blog-thumb">'
-      + '    <div class="blog-thumb-bg ' + (p.category || 'general') + '"></div>'
-      + '    <span class="blog-category cat-' + (p.category || 'general') + '">' + (p.category || 'general') + '</span>'
-      + '  </div>'
-      + '  <div class="blog-content">'
-      + '    <div class="blog-meta"><span>' + (p.date || '') + '</span><span>' + (p.readTime || '') + '</span></div>'
-      + '    <h3 class="blog-title">' + (p.title || '') + '</h3>'
-      + '    <p class="blog-excerpt">' + (p.excerpt || '') + '</p>'
-      + '    <div class="blog-footer">'
-      + '      <span class="read-more">Read article <svg viewBox="0 0 24 24" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>'
-      + '    </div>'
-      + '  </div>'
-      + '</article>';
-  });
-
-  grid.innerHTML = html;
-
-  document.querySelectorAll('.blog-card').forEach(function (el) {
-    observer.observe(el);
-    el.addEventListener('click', function () { openArticle(this.dataset.id); });
-  });
-}
-
-function bindFilters() {
-  document.querySelectorAll('.filter-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      renderBlog(btn.dataset.filter);
+  grid.innerHTML = posts.map((p, i) => `
+    <div class="blog-card" data-id="${p.id}" data-cat="${p.category}" style="transition-delay:${i * 0.06}s" onclick="openBlogArticle('${p.id}')">
+      <div class="card-accent ${p.category}"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-cat ${p.category}">${p.category}</span>
+          <span>${p.date || ''}</span>
+          <span>${p.readTime || '5 min read'}</span>
+        </div>
+        <div class="card-title">${p.title}</div>
+        <div class="card-excerpt">${p.excerpt || ''}</div>
+        <div class="card-footer">
+          <span class="card-read-more">Read more</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  // Animate cards in
+  requestAnimationFrame(() => {
+    grid.querySelectorAll('.blog-card').forEach((c, i) => {
+      setTimeout(() => c.classList.add('visible'), i * 60);
     });
   });
 }
 
-function openArticle(id, skipUrlUpdate = false) {
-  var p = BLOG_POSTS.find(function (x) { return String(x.id) === String(id); });
-  if (!p) return;
-  
+function openBlogArticle(id, fromRouter = false) {
+  const post = BLOG_POSTS.find(p => String(p.id) === String(id));
+  if (!post) return;
   currentArticleId = id;
+  if (!fromRouter) Router.navigate('article', id);
 
-  document.getElementById('modalTitle').textContent = p.title || '';
-  document.getElementById('modalDate').innerHTML = '📅 ' + (p.date || '');
-  document.getElementById('modalRead').innerHTML = '⏱️ ' + (p.readTime || '');
-  document.getElementById('modalCat').innerHTML = '🏷️ ' + ((p.category || '').charAt(0).toUpperCase() + (p.category || '').slice(1));
+  showSection('blogArticle');
+  // Make blogArticle section visible (it's not in tabs)
+  document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('blogArticleSection').classList.add('active');
+  document.querySelectorAll('.content-section').forEach(s => {
+    if (s.id !== 'blogArticleSection') s.classList.remove('active');
+  });
 
-  var content = escapePreBlocks(p.content || '');
-  if (p.series === 'js-tutorial') {
-    content = getSeriesNav(p.id) + content + getChapterNav(p.id);
-  }
-
-  document.getElementById('modalContent').innerHTML = content;
-  document.getElementById('modalHeaderBg').className = 'blog-modal-header-bg blog-thumb-bg ' + (p.category || 'general');
-
-  document.getElementById('blogModal').classList.add('active');
-  document.body.style.overflow = 'hidden';
-  document.querySelector('.blog-modal').scrollTop = 0;
-  
-  // Update URL
-  if (!skipUrlUpdate) {
-    Router.navigate('article', id, true);
-  }
+  const view = document.getElementById('blogArticleView');
+  view.innerHTML = `
+    <a href="#" class="article-back" onclick="goBackToBlog(event)">← Back to Blog</a>
+    <h1 class="article-title">${post.title}</h1>
+    <div class="article-meta">
+      <span class="article-meta-item">${post.date || ''}</span>
+      <span class="article-meta-item">${post.readTime || '5 min read'}</span>
+      <span class="article-meta-item" style="text-transform:capitalize">${post.category}</span>
+      <div class="article-share">
+        <button class="share-btn" onclick="copyLink('article')">
+          <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          Copy Link
+        </button>
+        <button class="share-btn" onclick="shareLinkedIn('article')">
+          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </button>
+      </div>
+    </div>
+    <div class="article-content">${post.content || '<p>Full article content loading...</p>'}</div>
+  `;
+  buildFloatingToc('blogArticleToc', view);
+  window.scrollTo(0, 0);
 }
 
-function closeModal() {
-  document.getElementById('blogModal').classList.remove('active');
-  document.body.style.overflow = '';
+function goBackToBlog(e) {
+  e.preventDefault();
   currentArticleId = null;
-  
-  // Update URL to just show blog section
-  Router.navigate('section', 'blog', true);
+  history.pushState(null, '', location.pathname);
+  showSection('blog');
+  document.querySelector('[data-section="blog"]').classList.add('active');
+  document.getElementById('blogSection').classList.add('active');
 }
 
-function bindModalEvents() {
-  document.querySelector('.blog-modal-close').addEventListener('click', closeModal);
-  document.getElementById('blogModal').addEventListener('click', function (e) {
-    if (e.target === this) closeModal();
+// ============================================================
+// CSA SIDEBAR + CONTENT
+// ============================================================
+function renderCSASidebar() {
+  const sb = document.getElementById('csaSidebar');
+  const totalTopics = CSA_MODULES.reduce((a, m) => a + m.topics.length, 0);
+  const completedCount = completedTopics.length;
+  const pct = totalTopics > 0 ? Math.round((completedCount / totalTopics) * 100) : 0;
+
+  let html = `
+    <div class="sidebar-progress">
+      <div class="sidebar-progress-label">
+        <span>Progress</span><span>${pct}%</span>
+      </div>
+      <div class="sidebar-progress-bar">
+        <div class="sidebar-progress-fill" style="width:${pct}%"></div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Modules</div>
+  `;
+  CSA_MODULES.forEach(m => {
+    html += `
+      <div class="sidebar-module" data-mod="${m.id}" onclick="toggleSidebarModule(${m.id})">
+        <span class="mod-num" style="background:${m.color}">${m.id}</span>
+        <span>${m.title}</span>
+        <span class="mod-arrow">▶</span>
+      </div>
+      <div class="sidebar-topics" data-mod-topics="${m.id}">
+    `;
+    m.topics.forEach(t => {
+      const done = completedTopics.includes(t.id);
+      html += `
+        <div class="sidebar-topic ${done ? 'completed' : ''} ${currentTopicId === t.id ? 'active' : ''}" 
+             data-topic="${t.id}" onclick="openCsaTopic('${t.id}')">
+          <span class="topic-check">${done ? '✓' : ''}</span>
+          ${t.title}
+        </div>
+      `;
+    });
+    html += `</div>`;
   });
-  document.getElementById('topicModal').addEventListener('click', function (e) {
-    if (e.target === this) closeTopicModal();
+  html += `</div>`;
+  sb.innerHTML = html;
+}
+
+function toggleSidebarModule(id) {
+  const mod = document.querySelector(`.sidebar-module[data-mod="${id}"]`);
+  const topics = document.querySelector(`.sidebar-topics[data-mod-topics="${id}"]`);
+  if (!mod || !topics) return;
+  const isExpanded = mod.classList.contains('expanded');
+  mod.classList.toggle('expanded', !isExpanded);
+  topics.classList.toggle('expanded', !isExpanded);
+}
+
+function renderCSAWelcome() {
+  const totalTopics = CSA_MODULES.reduce((a, m) => a + m.topics.length, 0);
+  document.getElementById('csaContent').innerHTML = `
+    <div class="csa-welcome">
+      <h2>ServiceNow CSA Certification</h2>
+      <p>Master the ServiceNow platform from zero to certified professional. Select a topic from the sidebar to begin learning.</p>
+      <div class="csa-stats">
+        <div class="csa-stat-item"><div class="csa-stat-num">${CSA_MODULES.length}</div><div class="csa-stat-label">Modules</div></div>
+        <div class="csa-stat-item"><div class="csa-stat-num">${totalTopics}</div><div class="csa-stat-label">Topics</div></div>
+        <div class="csa-stat-item"><div class="csa-stat-num">${completedTopics.length}</div><div class="csa-stat-label">Completed</div></div>
+      </div>
+      <h3 style="font-size:18px;margin-bottom:16px">Exam Pro Tips</h3>
+      <div class="csa-tips-grid">
+        <div class="csa-tip"><h4>Know the Fundamentals</h4><p>60% of questions test core concepts: tables, forms, lists, and basic administration.</p></div>
+        <div class="csa-tip"><h4>Hands-On Practice</h4><p>Get a free PDI and practice every concept. Theory alone won't pass the exam.</p></div>
+        <div class="csa-tip"><h4>Time Management</h4><p>60 questions in 90 minutes. Flag difficult ones and come back.</p></div>
+        <div class="csa-tip"><h4>UI Policy vs Client Script vs Business Rule</h4><p>Know when to use each. This distinction is heavily tested.</p></div>
+        <div class="csa-tip"><h4>Update Sets Lifecycle</h4><p>Create, capture, transfer, preview, commit. Understand the complete flow.</p></div>
+        <div class="csa-tip"><h4>Official Documentation</h4><p>The exam references docs.servicenow.com. Familiarize yourself with it.</p></div>
+      </div>
+    </div>
+  `;
+}
+
+function openCsaTopic(topicId, fromRouter = false) {
+  let topic = null, parentModule = null, topicIndex = -1;
+  for (const m of CSA_MODULES) {
+    const idx = m.topics.findIndex(t => t.id === topicId);
+    if (idx !== -1) { topic = m.topics[idx]; parentModule = m; topicIndex = idx; break; }
+  }
+  if (!topic) return;
+  currentTopicId = topicId;
+  if (!fromRouter) Router.navigate('topic', topicId);
+
+  // Expand parent module in sidebar
+  const mod = document.querySelector(`.sidebar-module[data-mod="${parentModule.id}"]`);
+  const topics = document.querySelector(`.sidebar-topics[data-mod-topics="${parentModule.id}"]`);
+  if (mod) mod.classList.add('expanded');
+  if (topics) topics.classList.add('expanded');
+
+  // Highlight active topic
+  document.querySelectorAll('.sidebar-topic').forEach(t => t.classList.remove('active'));
+  const activeTopic = document.querySelector(`.sidebar-topic[data-topic="${topicId}"]`);
+  if (activeTopic) {
+    activeTopic.classList.add('active');
+    activeTopic.scrollIntoView({ block: 'nearest' });
+  }
+
+  const isDone = completedTopics.includes(topicId);
+
+  // Get prev/next
+  const allTopics = CSA_MODULES.flatMap(m => m.topics);
+  const globalIdx = allTopics.findIndex(t => t.id === topicId);
+  const prev = globalIdx > 0 ? allTopics[globalIdx - 1] : null;
+  const next = globalIdx < allTopics.length - 1 ? allTopics[globalIdx + 1] : null;
+
+  document.getElementById('csaContent').innerHTML = `
+    <div class="article-view">
+      <div class="article-breadcrumb">
+        <a href="#" onclick="showCsaWelcome(event)">CSA</a>
+        <span>›</span>
+        <a href="#" onclick="showCsaWelcome(event)">${parentModule.title}</a>
+        <span>›</span>
+        <span>${topic.title}</span>
+      </div>
+      <h1 class="article-title">${topic.title}</h1>
+      <div class="article-meta">
+        <span class="article-meta-item">${parentModule.title}</span>
+        <span class="article-meta-item">${topic.duration}</span>
+        <span class="article-meta-item">${topic.level}</span>
+        <div class="article-share">
+          <button class="share-btn" onclick="copyLink('topic')">
+            <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+            Copy Link
+          </button>
+          <button class="share-btn" onclick="shareLinkedIn('topic')">
+            <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </button>
+        </div>
+      </div>
+      <div class="article-content" id="csaArticleContent">${topic.content}</div>
+      <div class="article-nav">
+        <div>
+          ${prev ? `<button class="article-nav-btn" onclick="openCsaTopic('${prev.id}')">← ${prev.title}</button>` : '<span></span>'}
+        </div>
+        <button class="mark-complete-btn ${isDone ? 'completed' : ''}" onclick="toggleTopicComplete('${topicId}')">
+          ${isDone ? '✓ Completed' : '✓ Mark Complete'}
+        </button>
+        <div>
+          ${next ? `<button class="article-nav-btn primary" onclick="openCsaTopic('${next.id}')">${next.title} →</button>` : '<span></span>'}
+        </div>
+      </div>
+    </div>
+  `;
+  window.scrollTo(0, 0);
+  addCodeCopyButtons();
+}
+
+function showCsaWelcome(e) {
+  if (e) e.preventDefault();
+  currentTopicId = null;
+  history.pushState(null, '', location.pathname + '#section/csa');
+  renderCSAWelcome();
+}
+
+function toggleTopicComplete(topicId) {
+  const idx = completedTopics.indexOf(topicId);
+  if (idx === -1) completedTopics.push(topicId);
+  else completedTopics.splice(idx, 1);
+  localStorage.setItem('csa_completed', JSON.stringify(completedTopics));
+  renderCSASidebar();
+  // Re-open to refresh the complete button
+  openCsaTopic(topicId, true);
+  showToast(idx === -1 ? 'Topic marked complete!' : 'Topic unmarked');
+}
+
+// ============================================================
+// CERT ROADMAP
+// ============================================================
+function renderCertRoadmap() {
+  document.getElementById('certGrid').innerHTML = CERT_ROADMAP.map(c => `
+    <div class="cert-card ${c.available ? 'available' : ''}">
+      <span class="cert-card-icon">${c.icon}</span>
+      <div class="cert-card-name">${c.name}</div>
+      <div class="cert-card-label">${c.label}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// FLOATING TOC
+// ============================================================
+function buildFloatingToc(tocId, contentEl) {
+  const toc = document.getElementById(tocId);
+  if (!toc) return;
+  const headings = contentEl.querySelectorAll('.article-content h2, .article-content h3');
+  if (headings.length < 2) { toc.classList.remove('visible'); return }
+  let html = '<div class="floating-toc-title">On this page</div>';
+  headings.forEach((h, i) => {
+    const id = 'heading-' + i;
+    h.id = id;
+    const indent = h.tagName === 'H3' ? 'padding-left:24px;' : '';
+    html += `<a href="#${id}" style="${indent}">${h.textContent}</a>`;
   });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-      closeModal();
-      closeTopicModal();
-    }
+  toc.innerHTML = html;
+  toc.classList.add('visible');
+}
+
+// ============================================================
+// TRY IT YOURSELF
+// ============================================================
+function runTryIt(btn) {
+  const container = btn.closest('.try-it-container');
+  const output = container.querySelector('.try-it-output');
+  output.classList.add('visible');
+  btn.textContent = 'Running...';
+  setTimeout(() => { btn.textContent = 'Run' }, 600);
+}
+
+function resetTryIt(btn) {
+  const container = btn.closest('.try-it-container');
+  const textarea = container.querySelector('.try-it-textarea');
+  const output = container.querySelector('.try-it-output');
+  output.classList.remove('visible');
+  textarea.value = textarea.defaultValue;
+}
+
+// ============================================================
+// CODE COPY BUTTONS
+// ============================================================
+function addCodeCopyButtons() {
+  document.querySelectorAll('.article-content pre').forEach(pre => {
+    if (pre.querySelector('.code-copy')) return;
+    const btn = document.createElement('button');
+    btn.className = 'code-copy';
+    btn.textContent = 'Copy';
+    btn.onclick = function() {
+      const code = pre.querySelector('code') || pre;
+      copyToClipboard(code.textContent).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 1500);
+      });
+    };
+    pre.style.position = 'relative';
+    pre.appendChild(btn);
   });
 }
 
-function bindMobileMenu() {
-  var menuToggle = document.querySelector('.menu-toggle');
-  var mobileMenu = document.querySelector('.mobile-menu');
-  menuToggle.addEventListener('click', function () {
+// ============================================================
+// SHARE FUNCTIONS
+// ============================================================
+function copyToClipboard(text) {
+  if (navigator.clipboard) return navigator.clipboard.writeText(text);
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); return Promise.resolve() }
+  finally { document.body.removeChild(ta) }
+}
+
+function copyLink(type) {
+  let url;
+  if (type === 'article' && currentArticleId) url = Router.getUrl('article', currentArticleId);
+  else if (type === 'topic' && currentTopicId) url = Router.getUrl('topic', currentTopicId);
+  if (!url) return;
+  copyToClipboard(url).then(() => showToast('Link copied to clipboard!'));
+}
+
+function shareLinkedIn(type) {
+  let url;
+  if (type === 'article' && currentArticleId) url = Router.getUrl('article', currentArticleId);
+  else if (type === 'topic' && currentTopicId) url = Router.getUrl('topic', currentTopicId);
+  if (url) window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank', 'width=550,height=420');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// READING PROGRESS
+// ============================================================
+function updateReadingProgress() {
+  const bar = document.getElementById('readingProgress');
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Load blog posts
+  loadBlogPosts();
+
+  // Render CSA sidebar + welcome
+  renderCSASidebar();
+  renderCSAWelcome();
+  renderCertRoadmap();
+
+  // Tab switching
+  document.querySelectorAll('.section-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const section = tab.dataset.section;
+      Router.navigate('section', section, true);
+      showSection(section);
+      if (section === 'csa' && !currentTopicId) renderCSAWelcome();
+    });
+  });
+
+  // Blog filters
+  document.getElementById('blogFilters').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderBlogGrid(btn.dataset.filter);
+  });
+
+  // Mobile menu
+  document.getElementById('menuToggle').addEventListener('click', function() {
     this.classList.toggle('active');
-    mobileMenu.classList.toggle('active');
+    document.getElementById('mobileMenu').classList.toggle('active');
   });
-}
+  document.querySelectorAll('.mobile-menu a').forEach(a => {
+    a.addEventListener('click', () => {
+      document.getElementById('menuToggle').classList.remove('active');
+      document.getElementById('mobileMenu').classList.remove('active');
+    });
+  });
+
+  // Mobile sidebar
+  const sidebarToggle = document.getElementById('sidebarMobileToggle');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', () => {
+      document.getElementById('csaSidebar').classList.toggle('mobile-open');
+      sidebarOverlay.classList.toggle('active');
+    });
+  }
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', () => {
+      document.getElementById('csaSidebar').classList.remove('mobile-open');
+      sidebarOverlay.classList.remove('active');
+    });
+  }
+
+  // Reading progress
+  window.addEventListener('scroll', updateReadingProgress, { passive: true });
+
+  // Init router
+  Router.init();
+});
 </script>
 </body>
 </html>
