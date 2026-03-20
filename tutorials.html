@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ServiceNow Developer Tutorials - Sumanth Bolle</title>
+  <meta name="description" content="Zero to Hero ServiceNow Developer Guide. Master GlideRecord, Business Rules, Client Scripts, and platform internals with interactive code playgrounds.">
+  <meta property="og:title" content="ServiceNow Developer Tutorials - Sumanth Bolle">
+  <meta property="og:description" content="Interactive ServiceNow scripting tutorials with live code editor and mock APIs.">
+  <meta property="og:type" content="website">
+  <meta name="keywords" content="ServiceNow, GlideRecord, Business Rules, Client Scripts, Script Includes, GlideAjax, ServiceNow Developer, ServiceNow Tutorials">
+  <link rel="canonical" href="https://sumanthbolle.com/tutorials.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#000;--bg2:#0a0a0a;--card:#111;--card2:#161616;
+      --text:#e8e8e8;--text2:#999;--text3:#555;
+      --accent:#fff;--accent2:rgba(255,255,255,0.08);
+      --border:#1e1e1e;--border2:#2a2a2a;
+      --green:#22c55e;--yellow:#eab308;--red:#ef4444;--blue:#3b82f6;
+      --code-bg:#0c0c0c;--code-text:#d4d4d4;
+      --font:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.6}
+
+    /* ─── Nav (matches existing site) ─── */
+    nav{position:fixed;top:0;width:100%;height:52px;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid var(--border)}
+    .nav-c{max-width:1200px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+    .nav-logo{font-size:18px;font-weight:700;color:var(--text);text-decoration:none;letter-spacing:-0.5px}
+    .nav-logo span{color:var(--text3)}
+    .nav-links{display:flex;gap:28px;list-style:none}
+    .nav-links a{color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s;letter-spacing:0.3px}
+    .nav-links a:hover,.nav-links a.active{color:var(--text)}
+    .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
+    .menu-toggle span{display:block;width:20px;height:1.5px;background:var(--text);margin:5px 0;transition:0.3s}
+    .mobile-menu{display:none;position:fixed;top:52px;left:0;width:100%;background:rgba(0,0,0,0.95);backdrop-filter:blur(20px);padding:16px 24px;border-bottom:1px solid var(--border)}
+    .mobile-menu.active{display:block}
+    .mobile-menu a{display:block;padding:12px 0;color:var(--text2);text-decoration:none;font-size:15px;border-bottom:1px solid var(--border)}
+    .mobile-menu a:last-child{border:none}
+
+    /* ─── Layout ─── */
+    .app{display:flex;margin-top:52px;min-height:calc(100vh - 52px)}
+
+    /* ─── Sidebar ─── */
+    .sidebar{width:280px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg2);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;overflow-x:hidden;transition:transform .3s}
+    .sidebar::-webkit-scrollbar{width:4px}
+    .sidebar::-webkit-scrollbar-track{background:transparent}
+    .sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+    .sb-header{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+    .sb-title{font-size:14px;font-weight:700;letter-spacing:-0.3px}
+    .sb-sub{font-size:11px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:1.5px}
+    .sb-progress{margin-top:12px}
+    .sb-progress-bar{height:3px;border-radius:3px;background:var(--border);overflow:hidden}
+    .sb-progress-fill{height:100%;border-radius:3px;background:var(--text);transition:width .5s}
+    .sb-progress-text{font-size:10px;color:var(--text3);margin-top:6px;display:flex;justify-content:space-between}
+    .sb-cat{border-bottom:1px solid var(--border)}
+    .sb-cat-btn{width:100%;display:flex;align-items:center;gap:8px;padding:10px 16px;background:none;border:none;cursor:pointer;color:var(--text);font-family:var(--font);text-align:left;transition:background .15s}
+    .sb-cat-btn:hover{background:var(--accent2)}
+    .sb-cat-icon{width:16px;height:16px;opacity:0.5}
+    .sb-cat-title{flex:1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px}
+    .sb-cat-count{font-size:10px;color:var(--text3)}
+    .sb-cat-arrow{font-size:10px;color:var(--text3);transition:transform .2s}
+    .sb-cat-arrow.open{transform:rotate(90deg)}
+    .sb-topics{display:none;padding-bottom:4px}
+    .sb-topics.open{display:block}
+    .sb-topic{width:100%;display:flex;align-items:center;gap:8px;padding:6px 16px 6px 36px;background:none;border:none;border-left:2px solid transparent;cursor:pointer;color:var(--text2);font-family:var(--font);font-size:12px;text-align:left;transition:all .15s}
+    .sb-topic:hover{color:var(--text);background:var(--accent2)}
+    .sb-topic.active{color:var(--text);border-left-color:var(--text);background:var(--accent2);font-weight:600}
+    .sb-topic-dot{font-size:10px;flex-shrink:0}
+    .sb-topic-dot.done{color:var(--green)}
+    .sb-topic-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    /* ─── Main Content ─── */
+    .main{flex:1;min-width:0;padding:32px 40px 80px;max-width:860px}
+    .main-wide{max-width:none}
+
+    /* ─── Home Page ─── */
+    .home-hero{margin-bottom:48px}
+    .home-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--text3);margin-bottom:12px}
+    .home-title{font-size:clamp(28px,5vw,44px);font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:16px}
+    .home-desc{font-size:14px;color:var(--text2);max-width:560px;line-height:1.7}
+    .home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:40px}
+    .home-card{padding:20px;border:1px solid var(--border);border-radius:8px;background:var(--card);cursor:pointer;transition:all .2s}
+    .home-card:hover{border-color:var(--border2);background:var(--card2);transform:translateY(-1px)}
+    .home-card-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+    .home-card-icon{font-size:14px;opacity:0.5}
+    .home-card-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3)}
+    .home-card-topics{margin-bottom:12px}
+    .home-card-topic{font-size:11px;color:var(--text2);padding:2px 0;display:flex;align-items:center;gap:6px}
+    .home-card-topic .dot{font-size:9px}
+    .home-card-topic .dot.done{color:var(--green)}
+    .home-card-bar{height:2px;border-radius:2px;background:var(--border);overflow:hidden}
+    .home-card-bar-fill{height:100%;background:var(--text3);transition:width .5s}
+
+    /* ─── Tutorial Page ─── */
+    .tut-breadcrumb{font-size:11px;color:var(--text3);margin-bottom:20px}
+    .tut-breadcrumb a{color:var(--text3);text-decoration:none}
+    .tut-breadcrumb a:hover{color:var(--text)}
+    .tut-meta{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+    .tut-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px}
+    .tut-badge.beginner{background:#22c55e18;color:var(--green)}
+    .tut-badge.intermediate{background:#eab30818;color:var(--yellow)}
+    .tut-badge.advanced{background:#ef444418;color:var(--red)}
+    .tut-time{font-size:11px;color:var(--text3)}
+    .tut-title{font-size:clamp(22px,4vw,32px);font-weight:900;letter-spacing:-1px;margin-bottom:24px;line-height:1.15}
+    .tut-section{margin-bottom:32px}
+    .tut-h2{font-size:18px;font-weight:700;letter-spacing:-0.3px;margin-bottom:12px}
+    .tut-h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);margin-bottom:10px}
+    .tut-p{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:12px}
+    .tut-p strong{color:var(--text);font-weight:600}
+    .tut-p code{font-family:var(--mono);font-size:11.5px;background:var(--card);padding:2px 6px;border-radius:3px;color:var(--green)}
+
+    /* ─── Table ─── */
+    .tut-table{width:100%;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px;font-size:12px}
+    .tut-table th{background:var(--card);text-align:left;padding:10px 14px;font-weight:600;border-bottom:1px solid var(--border);color:var(--text)}
+    .tut-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
+    .tut-table tr:last-child td{border-bottom:none}
+    .tut-table tr:nth-child(even) td{background:rgba(255,255,255,0.01)}
+
+    /* ─── Code Playground ─── */
+    .playground{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px;background:var(--code-bg)}
+    .pg-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--card);border-bottom:1px solid var(--border)}
+    .pg-title{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3)}
+    .pg-actions{display:flex;gap:4px}
+    .pg-btn{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:4px;color:var(--text3);font-size:11px;transition:all .15s;display:flex;align-items:center;gap:4px;font-family:var(--font)}
+    .pg-btn:hover{color:var(--text);background:var(--accent2)}
+    .pg-btn-run{background:var(--text);color:var(--bg);font-weight:600;padding:4px 12px;border-radius:4px}
+    .pg-btn-run:hover{opacity:0.85}
+    .pg-editor-wrap{display:flex;position:relative}
+    .pg-lines{padding:10px 0;min-width:36px;text-align:right;padding-right:8px;user-select:none;font-family:var(--mono);font-size:12px;line-height:1.65;color:var(--text3);background:var(--bg)}
+    .pg-editor{width:100%;min-height:100px;padding:10px 14px;background:transparent;border:none;outline:none;resize:none;font-family:var(--mono);font-size:12px;line-height:1.65;color:var(--code-text);tab-size:4;-moz-tab-size:4}
+    .pg-output{border-top:1px solid var(--border);background:var(--bg)}
+    .pg-output-header{padding:6px 14px;font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);border-bottom:1px solid var(--border)}
+    .pg-output-body{padding:12px 14px;max-height:260px;overflow-y:auto;font-family:var(--mono);font-size:11px;line-height:1.7}
+    .pg-output-line{color:var(--code-text)}
+    .pg-output-line.warn{color:var(--yellow)}
+    .pg-output-line.error{color:var(--red)}
+    .pg-output-line.debug{color:var(--blue)}
+    .pg-hint{padding:4px 14px 6px;font-size:10px;color:var(--text3);border-top:1px solid var(--border)}
+
+    /* ─── Quiz ─── */
+    .quiz{border:1px solid var(--border);border-radius:8px;padding:20px;background:var(--card)}
+    .quiz-head{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+    .quiz-icon{font-size:14px}
+    .quiz-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3)}
+    .quiz-q{margin-bottom:20px}
+    .quiz-q:last-of-type{margin-bottom:0}
+    .quiz-q-text{font-size:13px;font-weight:600;margin-bottom:10px}
+    .quiz-opt{width:100%;display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:4px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;text-align:left;font-family:var(--font);font-size:12px;color:var(--text2);transition:all .15s}
+    .quiz-opt:hover{border-color:var(--border2);background:var(--accent2)}
+    .quiz-opt.selected{border-color:var(--text3);background:var(--accent2)}
+    .quiz-opt.correct{border-color:var(--green);background:#22c55e10}
+    .quiz-opt.wrong{border-color:var(--red);background:#ef444410}
+    .quiz-opt-letter{width:20px;height:20px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+    .quiz-opt.selected .quiz-opt-letter{border-color:var(--text);background:var(--text);color:var(--bg)}
+    .quiz-explain{font-size:11px;padding:8px 12px;border-radius:6px;margin-top:6px;line-height:1.6}
+    .quiz-explain.right{background:#22c55e10;color:var(--green)}
+    .quiz-explain.wrong{background:#ef444410;color:var(--red)}
+    .quiz-submit{margin-top:16px;padding:8px 20px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text2);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+    .quiz-submit.ready{background:var(--text);color:var(--bg);border-color:var(--text)}
+    .quiz-submit.ready:hover{opacity:0.85}
+    .quiz-score{font-size:13px;font-weight:600;margin-top:12px}
+    .quiz-retry{font-size:11px;color:var(--text3);cursor:pointer;text-decoration:underline;margin-left:12px}
+
+    /* ─── Navigation Arrows ─── */
+    .tut-nav{display:flex;justify-content:space-between;margin-top:40px;padding-top:24px;border-top:1px solid var(--border)}
+    .tut-nav-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:500;color:var(--text3);transition:color .15s}
+    .tut-nav-btn:hover{color:var(--text)}
+    .tut-nav-btn.next{color:var(--text2)}
+
+    /* ─── Complete Button ─── */
+    .tut-complete{margin-top:24px;padding:10px 20px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text3);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+    .tut-complete:hover{border-color:var(--border2)}
+    .tut-complete.done{border-color:var(--green);color:var(--green);background:#22c55e10}
+
+    /* ─── Search Modal ─── */
+    .search-overlay{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);justify-content:center;padding-top:120px}
+    .search-overlay.active{display:flex}
+    .search-box{width:90%;max-width:500px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;max-height:420px;display:flex;flex-direction:column}
+    .search-input-wrap{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
+    .search-input-wrap svg{flex-shrink:0;opacity:0.4}
+    .search-input{flex:1;background:none;border:none;outline:none;font-family:var(--font);font-size:14px;color:var(--text)}
+    .search-kbd{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--border);color:var(--text3);font-family:var(--mono)}
+    .search-results{overflow-y:auto;flex:1}
+    .search-result{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;transition:background .1s}
+    .search-result:hover{background:var(--accent2)}
+    .search-result-title{font-size:13px;font-weight:600}
+    .search-result-meta{font-size:10px;color:var(--text3)}
+
+    /* ─── Back to Top ─── */
+    .back-top{display:none;position:fixed;bottom:24px;right:24px;width:36px;height:36px;border-radius:50%;background:var(--text);color:var(--bg);border:none;cursor:pointer;font-size:16px;z-index:100;transition:opacity .2s;align-items:center;justify-content:center}
+    .back-top.show{display:flex}
+
+    /* ─── Responsive ─── */
+    @media(max-width:768px){
+      .sidebar{position:fixed;top:52px;left:0;z-index:500;width:280px;transform:translateX(-100%)}
+      .sidebar.open{transform:translateX(0)}
+      .sidebar-overlay{display:none;position:fixed;inset:0;top:52px;z-index:499;background:rgba(0,0,0,0.5)}
+      .sidebar-overlay.active{display:block}
+      .menu-toggle{display:block}
+      .nav-links{display:none}
+      .main{padding:24px 16px 60px}
+      .pg-editor{font-size:11px}
+      .tut-table{font-size:11px;display:block;overflow-x:auto}
+      .home-title{font-size:28px}
+    }
+    @media(min-width:769px){
+      .menu-toggle{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Nav (consistent with existing site) ─── -->
+<nav>
+  <div class="nav-c">
+    <a href="index.html" class="nav-logo">Sumanth <span>Bolle</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="interviews.html">Interviews</a></li>
+      <li><a href="tutorials.html" class="active">Tutorials</a></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="blog.html">Blog</a>
+  <a href="interviews.html">Interviews</a>
+  <a href="tutorials.html" style="color:var(--text)">Tutorials</a>
+</div>
+
+<!-- ─── Sidebar Overlay (mobile) ─── -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ─── App Shell ─── -->
+<div class="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="mainContent"></main>
+</div>
+
+<!-- ─── Search Modal ─── -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search tutorials...">
+      <span class="search-kbd">ESC</span>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<!-- ─── Back to Top ─── -->
+<button class="back-top" id="backTop" aria-label="Back to top">↑</button>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// ServiceNow Mock Engine
+// ═══════════════════════════════════════════════════════════════════════════════
+var MOCK_DATA = {
+  incident: [
+    {sys_id:"a1b2c3d4e5f6",number:"INC0010001",short_description:"Email not working",priority:"1",state:"1",active:"true",caller_id:"u001",assigned_to:"u002",category:"network",assignment_group:"ag001",description:"User unable to send or receive emails since morning"},
+    {sys_id:"b2c3d4e5f6g7",number:"INC0010002",short_description:"VPN connectivity issue",priority:"2",state:"2",active:"true",caller_id:"u003",assigned_to:"u002",category:"network",assignment_group:"ag001",description:"VPN drops every 10 minutes"},
+    {sys_id:"c3d4e5f6g7h8",number:"INC0010003",short_description:"Password reset request",priority:"3",state:"3",active:"true",caller_id:"u004",assigned_to:"",category:"inquiry",assignment_group:"ag002",description:"Need password reset for SAP system"},
+    {sys_id:"d4e5f6g7h8i9",number:"INC0010004",short_description:"Laptop overheating",priority:"2",state:"6",active:"false",caller_id:"u001",assigned_to:"u005",category:"hardware",assignment_group:"ag003",description:"Laptop shuts down due to overheating after 30 mins"},
+    {sys_id:"e5f6g7h8i9j0",number:"INC0010005",short_description:"Application crash on login",priority:"1",state:"1",active:"true",caller_id:"u006",assigned_to:"u002",category:"software",assignment_group:"ag001",description:"CRM application crashes immediately on login"}
+  ],
+  sys_user: [
+    {sys_id:"u001",user_name:"john.doe",first_name:"John",last_name:"Doe",email:"john.doe@example.com",active:"true",vip:"true",department:"d001",title:"VP Engineering"},
+    {sys_id:"u002",user_name:"jane.smith",first_name:"Jane",last_name:"Smith",email:"jane.smith@example.com",active:"true",vip:"false",department:"d002",title:"IT Support Lead"},
+    {sys_id:"u003",user_name:"bob.wilson",first_name:"Bob",last_name:"Wilson",email:"bob.wilson@example.com",active:"true",vip:"false",department:"d001",title:"Developer"},
+    {sys_id:"u004",user_name:"alice.chen",first_name:"Alice",last_name:"Chen",email:"alice.chen@example.com",active:"true",vip:"true",department:"d003",title:"Finance Director"},
+    {sys_id:"u005",user_name:"mike.brown",first_name:"Mike",last_name:"Brown",email:"mike.brown@example.com",active:"false",vip:"false",department:"d002",title:"Hardware Technician"},
+    {sys_id:"u006",user_name:"sara.jones",first_name:"Sara",last_name:"Jones",email:"sara.jones@example.com",active:"true",vip:"false",department:"d001",title:"Product Manager"}
+  ],
+  cmdb_ci:[
+    {sys_id:"ci001",name:"Web Server 01",sys_class_name:"cmdb_ci_server",ip_address:"10.0.1.10",operational_status:"1"},
+    {sys_id:"ci002",name:"DB Server 01",sys_class_name:"cmdb_ci_server",ip_address:"10.0.1.20",operational_status:"1"}
+  ],
+  problem:[{sys_id:"p001",number:"PRB0040001",short_description:"Recurring network drops",priority:"2",state:"2",active:"true"}],
+  change_request:[{sys_id:"cr001",number:"CHG0030001",short_description:"Upgrade firewall firmware",priority:"3",state:"1",active:"true",type:"normal"}]
+};
+
+function buildSandbox(userCode) {
+  return '(function(){var __o=[],__e=[];var gs={info:function(m){__o.push({t:"info",m:String(m)})},warn:function(m){__o.push({t:"warn",m:String(m)})},error:function(m){__o.push({t:"error",m:String(m)})},debug:function(m){__o.push({t:"debug",m:String(m)})},log:function(m){__o.push({t:"info",m:String(m)})},print:function(m){__o.push({t:"info",m:String(m)})},getUserID:function(){return"u001"},getUserName:function(){return"john.doe"},getUser:function(){return{getID:function(){return"u001"},getName:function(){return"john.doe"},getFirstName:function(){return"John"},getLastName:function(){return"Doe"}}},hasRole:function(r){return r==="admin"||r==="itil"},nil:function(v){return v===null||v===undefined||v===""},now:function(){return new Date().toISOString().split("T")[0]},nowDateTime:function(){return new Date().toISOString().replace("T"," ").split(".")[0]},getProperty:function(p){return p==="glide.servlet.uri"?"https://dev12345.service-now.com/":""},addInfoMessage:function(m){__o.push({t:"info",m:"[UI] "+m})},addErrorMessage:function(m){__o.push({t:"error",m:"[UI] "+m})},eventQueue:function(n,r,p1,p2){__o.push({t:"info",m:"[Event] "+n+" | parm1="+(p1||"")+" | parm2="+(p2||"")})},generateGUID:function(){return"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c==="x"?r:(r&3|8)).toString(16)})},include:function(n){__o.push({t:"debug",m:"[Include] "+n})}};var MD='+JSON.stringify(MOCK_DATA)+';function GlideRecord(t){this._t=t;this._r=JSON.parse(JSON.stringify(MD[t]||[]));this._f=[];this._i=-1;this._lim=-1;this._ob=null;this._od="a";this._c=null;this._new=false;this._nd={}}GlideRecord.prototype.addQuery=function(f,o,v){if(v===undefined){v=o;o="="}this._f.push({f:f,o:o,v:v});var self=this;return{addOrCondition:function(f2,o2,v2){if(v2===undefined){v2=o2;o2="="}self._f.push({f:f2,o:o2,v:v2})}}};GlideRecord.prototype.addEncodedQuery=function(eq){var ps=eq.split("^");for(var i=0;i<ps.length;i++){var m=ps[i].match(/^(\\w+)(=|!=|>|<|>=|<=|CONTAINS|STARTSWITH|IN|ISNOTEMPTY|ISEMPTY)(.*)$/);if(m){if(m[2]==="ISNOTEMPTY")this._f.push({f:m[1],o:"!=",v:""});else if(m[2]==="ISEMPTY")this._f.push({f:m[1],o:"=",v:""});else this._f.push({f:m[1],o:m[2],v:m[3]})}}};GlideRecord.prototype.addNotNullQuery=function(f){this._f.push({f:f,o:"!=",v:""})};GlideRecord.prototype.addNullQuery=function(f){this._f.push({f:f,o:"=",v:""})};GlideRecord.prototype.orderBy=function(f){this._ob=f;this._od="a"};GlideRecord.prototype.orderByDesc=function(f){this._ob=f;this._od="d"};GlideRecord.prototype.setLimit=function(n){this._lim=n};GlideRecord.prototype._match=function(r){for(var i=0;i<this._f.length;i++){var fl=this._f[i],v=r[fl.f]||"",t=String(fl.v),ok=false;switch(fl.o){case"=":ok=String(v)===t;break;case"!=":ok=String(v)!==t;break;case">":ok=Number(v)>Number(t);break;case"<":ok=Number(v)<Number(t);break;case">=":ok=Number(v)>=Number(t);break;case"<=":ok=Number(v)<=Number(t);break;case"CONTAINS":ok=String(v).indexOf(t)!==-1;break;case"STARTSWITH":ok=String(v).indexOf(t)===0;break;case"IN":ok=t.split(",").indexOf(String(v))!==-1;break;default:ok=String(v)===t}if(!ok)return false}return true};GlideRecord.prototype.query=function(){if(this._f.length>0)this._r=this._r.filter(this._match.bind(this));if(this._ob){var d=this._od,f=this._ob;this._r.sort(function(a,b){return d==="a"?String(a[f]||"").localeCompare(String(b[f]||"")):String(b[f]||"").localeCompare(String(a[f]||""))})}if(this._lim>0)this._r=this._r.slice(0,this._lim);this._i=-1};GlideRecord.prototype.next=function(){this._i++;if(this._i<this._r.length){this._c=this._r[this._i];var s=this;Object.keys(this._c).forEach(function(k){s[k]=s._c[k]});return true}return false};GlideRecord.prototype.hasNext=function(){return this._i+1<this._r.length};GlideRecord.prototype.get=function(a,b){if(b!==undefined)this.addQuery(a,b);else this.addQuery("sys_id",a);this.query();return this.next()};GlideRecord.prototype.getValue=function(f){return this._c?String(this._c[f]||""):""};GlideRecord.prototype.setValue=function(f,v){if(this._c)this._c[f]=v;if(this._new)this._nd[f]=v};GlideRecord.prototype.getDisplayValue=function(f){return this.getValue(f)};GlideRecord.prototype.getRowCount=function(){return this._r.length};GlideRecord.prototype.getUniqueValue=function(){return this._c?this._c.sys_id:""};GlideRecord.prototype.getTableName=function(){return this._t};GlideRecord.prototype.initialize=function(){this._new=true;this._c={};this._nd={}};GlideRecord.prototype.insert=function(){var id=gs.generateGUID().replace(/-/g,"").substring(0,12);this._nd.sys_id=id;__o.push({t:"info",m:"[INSERT] "+this._t+" → sys_id: "+id});return id};GlideRecord.prototype.update=function(){if(this._c&&this._c.sys_id){__o.push({t:"info",m:"[UPDATE] "+this._t+" → sys_id: "+this._c.sys_id});return this._c.sys_id}return null};GlideRecord.prototype.deleteRecord=function(){if(this._c&&this._c.sys_id){__o.push({t:"info",m:"[DELETE] "+this._t+" → sys_id: "+this._c.sys_id});return true}return false};GlideRecord.prototype.isValidRecord=function(){return this._c!==null};GlideRecord.prototype.setWorkflow=function(){};GlideRecord.prototype.autoSysFields=function(){};GlideRecord.prototype.setAbortAction=function(){__o.push({t:"warn",m:"[ABORT] Transaction aborted"})};GlideRecord.prototype.chooseWindow=function(a,b){this._r=this._r.slice(a,b)};GlideRecord.prototype.toString=function(){return this._c?(this._c.number||this._c.name||this._c.sys_id||""):""};function GlideAggregate(t){GlideRecord.call(this,t);this._aggs=[]}GlideAggregate.prototype=Object.create(GlideRecord.prototype);GlideAggregate.prototype.addAggregate=function(t,f){this._aggs.push({t:t,f:f})};GlideAggregate.prototype.groupBy=function(){};GlideAggregate.prototype.getAggregate=function(t,f){var r=this._r;if(t==="COUNT")return String(r.length);if(t==="SUM"&&f)return String(r.reduce(function(s,x){return s+Number(x[f]||0)},0));return"0"};var current=new GlideRecord("incident");current.get("a1b2c3d4e5f6");var previous=new GlideRecord("incident");previous.get("a1b2c3d4e5f6");try{'+userCode+'}catch(e){__e.push(e.message||String(e))}return{o:__o,e:__e}})()';
+}
+
+function runCode(code) {
+  try { var fn = new Function(buildSandbox(code)); return fn(); }
+  catch(e) { return {o:[], e:[e.message||String(e)]}; }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Content Database (same tutorials from the React version)
+// ═══════════════════════════════════════════════════════════════════════════════
+var CATEGORIES = [
+  {id:"foundations",title:"Foundations",icon:"⬡",children:[
+    {id:"platform-architecture",title:"Platform Architecture",difficulty:"beginner",time:"20 min",sections:[
+      {type:"theory",title:"Multi-Instance Architecture",content:"ServiceNow uses a <strong>multi-instance</strong> architecture — each customer gets a dedicated instance with its own database, application server, and runtime resources.\n\nEvery instance comprises four layers working together to process requests:"},
+      {type:"table",title:"Platform Layers",headers:["Layer","Components"],rows:[["UI Layer","Now Experience Framework (Web Components + GraphQL), Classic UI (Jelly + AngularJS 1.x)"],["Application Layer","Java, JavaScript, Glide scripting engine, Rhino JS engine"],["Platform Logic","Business Rules, ACLs, Flow Designer, Workflow engine, Event engine"],["Data Layer","MariaDB (OLTP), RaptorDB (PostgreSQL-based HTAP for analytics)"]]},
+      {type:"theory",title:"Request Flow",content:"When a user interacts with ServiceNow:\n\n<strong>Client → Web Server → Application Server → Glide Engine → Business Rules / ACLs → Database → Response</strong>\n\nThe Glide engine is the core abstraction layer — it wraps database operations in JavaScript-friendly APIs like GlideRecord, GlideSystem, and GlideForm. You never write raw SQL."},
+      {type:"theory",title:"MID Server",content:"The <strong>MID Server</strong> (Management, Instrumentation, and Discovery) is a Java application installed on your local network. It bridges your ServiceNow cloud instance and on-premise resources.\n\nCommunication flows through the <strong>ECC Queue</strong> — the MID Server polls for outbound work and writes results back. Only outbound HTTPS is needed."},
+      {type:"code",title:"Verify Instance Info",code:"// Check your instance details using GlideSystem\ngs.info('Instance URL: ' + gs.getProperty('glide.servlet.uri'));\ngs.info('Current User: ' + gs.getUserName());\ngs.info('User ID (sys_id): ' + gs.getUserID());\ngs.info('Current Date/Time: ' + gs.nowDateTime());\ngs.info('Has admin role: ' + gs.hasRole('admin'));\ngs.info('Has itil role: ' + gs.hasRole('itil'));"},
+      {type:"quiz",questions:[{q:"What type of architecture does ServiceNow use?",opts:["Multi-tenant","Multi-instance","Serverless","Peer-to-peer"],ans:1,exp:"ServiceNow uses multi-instance architecture where each customer gets a dedicated instance."},{q:"What does the Glide engine do?",opts:["Renders the UI","Translates JS API calls to SQL queries","Manages network traffic","Handles authentication only"],ans:1,exp:"The Glide engine wraps database operations into JavaScript-friendly APIs like GlideRecord."}]}
+    ]},
+    {id:"javascript-rhino",title:"JavaScript & Rhino Engine",difficulty:"beginner",time:"25 min",sections:[
+      {type:"theory",title:"The Rhino Engine",content:"ServiceNow's server-side JavaScript runs on <strong>Mozilla Rhino</strong> — a Java-based JS engine. Your server scripts are compiled to Java bytecode at runtime.\n\nRhino doesn't support modern ES6+ natively. Newer releases have progressively added support:"},
+      {type:"table",title:"Rhino by Release",headers:["Release","Rhino","Key Additions"],rows:[["Pre-Washington","~1.7R5","ES5 only (var, function, prototype)"],["Washington DC","1.7.12","Arrow functions, Array.includes()"],["Xanadu","1.7.14","Template literals"],["Tokyo+ (ES12)","Transpilation","let/const, class, optional chaining (scoped apps only)"]]},
+      {type:"theory",title:"The #1 Gotcha: GlideElement vs String",content:"<code>gr.field</code> returns a <strong>GlideElement</strong> (Java→JS pointer), NOT a string. It changes when the cursor moves.\n\n<strong>Always use <code>getValue()</code> to extract actual values.</strong>\n\nPushing <code>gr.field</code> into an array inside <code>while(gr.next())</code> fills the entire array with the LAST record's values."},
+      {type:"code",title:"GlideElement Gotcha Demo",code:"// ❌ WRONG — the classic GlideElement trap\nvar badArray = [];\nvar gr = new GlideRecord('incident');\ngr.addQuery('active', 'true');\ngr.setLimit(3);\ngr.query();\nwhile (gr.next()) {\n    badArray.push(gr.number); // pointer, not value!\n}\ngs.info('BAD array (all same): ' + badArray.join(', '));\n\n// ✅ CORRECT — use getValue()\nvar goodArray = [];\ngr = new GlideRecord('incident');\ngr.addQuery('active', 'true');\ngr.setLimit(3);\ngr.query();\nwhile (gr.next()) {\n    goodArray.push(gr.getValue('number'));\n}\ngs.info('GOOD array (actual): ' + goodArray.join(', '));"},
+      {type:"code",title:"Safe Patterns in ServiceNow",code:"// Array methods work great in Rhino\nvar gr = new GlideRecord('incident');\ngr.addQuery('active', 'true');\ngr.query();\n\nvar incidents = [];\nwhile (gr.next()) {\n    incidents.push({\n        number: gr.getValue('number'),\n        desc: gr.getValue('short_description'),\n        priority: gr.getValue('priority')\n    });\n}\n\nvar critical = incidents.filter(function(inc) {\n    return inc.priority === '1';\n});\n\ngs.info('Total active: ' + incidents.length);\ngs.info('Critical (P1): ' + critical.length);\n\nvar numbers = critical.map(function(inc) { return inc.number; });\ngs.info('P1 Numbers: ' + numbers.join(', '));\n\ngs.info('JSON:\\n' + JSON.stringify(critical, null, 2));"},
+      {type:"quiz",questions:[{q:"What does gr.field return?",opts:["A String","A Number","A GlideElement (Java→JS pointer)","An Object"],ans:2,exp:"gr.field returns a GlideElement. Always use getValue() for the actual string."},{q:"Which keyword for server-side variables?",opts:["let","const","var","auto"],ans:2,exp:"Use 'var' for server-side. let/const only available in scoped apps with ES12 mode."}]}
+    ]},
+    {id:"data-model",title:"Data Model & Tables",difficulty:"beginner",time:"15 min",sections:[
+      {type:"theory",title:"Table Inheritance",content:"The <code>task</code> table is the foundation — <code>incident</code>, <code>problem</code>, <code>change_request</code> all <strong>extend</strong> it, inheriting every parent field.\n\nA query on <code>task</code> returns ALL child records. A query on <code>incident</code> returns only incidents."},
+      {type:"theory",title:"sys_id: The Universal Key",content:"Every record has a <strong>sys_id</strong> — a 32-character GUID primary key.\n\n<strong>Never dot-walk to sys_id.</strong> The reference field already stores it — use <code>gr.getValue('caller_id')</code> instead of <code>gr.caller_id.sys_id</code>."},
+      {type:"code",title:"Table Inheritance & Dot-Walking",code:"var gr = new GlideRecord('incident');\ngr.get('a1b2c3d4e5f6');\ngs.info('Incident: ' + gr.getValue('number'));\n\n// ✅ RIGHT - reference field stores sys_id\nvar callerId = gr.getValue('caller_id');\ngs.info('Caller ID (efficient): ' + callerId);\n\nvar user = new GlideRecord('sys_user');\nif (user.get(callerId)) {\n    gs.info('Name: ' + user.getValue('first_name') + ' ' + user.getValue('last_name'));\n    gs.info('Email: ' + user.getValue('email'));\n    gs.info('VIP: ' + user.getValue('vip'));\n}"},
+      {type:"quiz",questions:[{q:"Which table do incident, problem, change_request extend?",opts:["cmdb","sys_metadata","task","core_company"],ans:2,exp:"The task table is the base table. Incident, problem, and change_request extend it."}]}
+    ]}
+  ]},
+  {id:"client-side",title:"Client-Side",icon:"◧",children:[
+    {id:"client-scripts",title:"Client Scripts",difficulty:"intermediate",time:"30 min",sections:[
+      {type:"theory",title:"The Four Types",content:"Client Scripts run in the browser and manipulate form behavior:"},
+      {type:"table",title:"Client Script Types",headers:["Type","Signature","Fires When","Key Gotcha"],rows:[["onLoad","function onLoad() { }","Form loads","Order unpredictable across scripts"],["onChange","onChange(ctrl, old, new, isLoading, isTemplate)","Field change + initial load","Must check isLoading"],["onSubmit","function onSubmit() { }","Form save/submit","Return false to block"],["onCellEdit","onCellEdit(sysIDs, table, old, new, cb)","List cell edits","Not a security mechanism"]]},
+      {type:"theory",title:"Execution Order",content:"On form load: UI Policies FIRST → Client Scripts (onLoad) AFTER\n\nOn field change: Client Scripts (onChange) FIRST → UI Policies AFTER\n\n<strong>UI Policy wins on conflicts</strong> because it executes last."},
+      {type:"code",title:"onChange with Guard Clause",code:"function onChange(control, oldValue, newValue, isLoading, isTemplate) {\n    // ⚡ CRITICAL guard clause\n    if (isLoading || newValue === '') return;\n\n    if (newValue === '1') {\n        gs.info('[onChange] Priority set to P1 (Critical)');\n        gs.info('  → Setting description as mandatory');\n        gs.info('  → Setting assignment_group as mandatory');\n    } else {\n        gs.info('[onChange] Priority set to P' + newValue);\n        gs.info('  → Removing mandatory from description');\n    }\n}\n\ngs.info('--- Simulating priority → P1 ---');\nonChange('priority', '3', '1', false, false);\n\ngs.info('');\ngs.info('--- Simulating form load (should skip) ---');\nonChange('priority', '', '2', true, false);"},
+      {type:"quiz",questions:[{q:"Execution order on form load?",opts:["Client Scripts first","UI Policies first","Simultaneous","Depends on order field"],ans:1,exp:"UI Policies execute FIRST, then Client Scripts (onLoad)."},{q:"Why check isLoading in onChange?",opts:["Performance","onChange fires on form load too","Prevent infinite loops","Security"],ans:1,exp:"onChange fires during initial form load. isLoading check prevents logic from running during load."}]}
+    ]},
+    {id:"glide-ajax",title:"GlideAjax Pattern",difficulty:"advanced",time:"25 min",sections:[
+      {type:"theory",title:"Client-to-Server Communication",content:"<strong>GlideAjax</strong> bridges client and server code. The pattern requires TWO components:\n\n1. <strong>Client Script</strong>: Creates GlideAjax instance, sets parameters, calls getXMLAnswer\n2. <strong>Script Include</strong>: Extends AbstractAjaxProcessor, returns data\n\nFar more efficient than synchronous GlideRecord calls from the client."},
+      {type:"code",title:"Complete GlideAjax Flow",code:"// === SERVER SIDE: Script Include ===\nvar IncidentUtils = {\n    getCallerInfo: function(userId) {\n        var gr = new GlideRecord('sys_user');\n        if (gr.get(userId)) {\n            return JSON.stringify({\n                name: gr.getValue('first_name') + ' ' + gr.getValue('last_name'),\n                email: gr.getValue('email'),\n                vip: gr.getValue('vip'),\n                title: gr.getValue('title')\n            });\n        }\n        return JSON.stringify({ error: 'User not found' });\n    }\n};\n\ngs.info('=== GlideAjax Flow Simulation ===');\ngs.info('');\ngs.info('1. [CLIENT] GlideAjax(\"IncidentUtils\")');\ngs.info('   → sysparm_name: \"getCallerInfo\"');\ngs.info('   → sysparm_user_id: \"u001\"');\n\nvar response = IncidentUtils.getCallerInfo('u001');\ngs.info('');\ngs.info('2. [SERVER] Executing...');\ngs.info('   → Result: ' + response);\n\nvar data = JSON.parse(response);\ngs.info('');\ngs.info('3. [CLIENT] Callback received:');\ngs.info('   → Name: ' + data.name);\ngs.info('   → VIP: ' + data.vip);\n\nif (data.vip === 'true') {\n    gs.info('   → Auto-setting priority to P1');\n}"},
+      {type:"quiz",questions:[{q:"What must a Script Include extend for GlideAjax?",opts:["GlideRecord","AbstractAjaxProcessor","ScriptInclude","ClientCallable"],ans:1,exp:"Must extend AbstractAjaxProcessor and have 'Client callable' checked."}]}
+    ]},
+    {id:"glide-form",title:"GlideForm (g_form) API",difficulty:"intermediate",time:"20 min",sections:[{type:"theory",title:"Complete g_form Reference",content:"<strong>g_form</strong> manipulates forms in Client Scripts and UI Actions:\n\n<strong>Field Values</strong>: getValue, setValue, clearValue, getDisplayValue\n<strong>Field Display</strong>: setVisible, setDisplay, setReadOnly, setMandatory, setLabel\n<strong>Choice Options</strong>: addOption, removeOption, clearOptions\n<strong>References</strong>: getReference (always async callback!)\n<strong>Messaging</strong>: showFieldMsg, addInfoMessage, addErrorMessage\n<strong>Utilities</strong>: isNewRecord, save, submit, getTableName, getUniqueValue"},{type:"theory",title:"The setValue Gotcha",content:"<strong>Critical</strong>: <code>setValue()</code> on a <strong>reference field</strong> without the display value (3rd param) triggers a <strong>synchronous server call</strong> that freezes the UI.\n\n<code>g_form.setValue('caller_id', 'a1b2c3d4')</code> ← ❌ BAD\n<code>g_form.setValue('caller_id', 'a1b2c3d4', 'John Doe')</code> ← ✅ GOOD"}]},
+    {id:"ui-policies",title:"UI Policies",difficulty:"beginner",time:"15 min",sections:[{type:"theory",title:"Coming Soon",content:"Declarative show/hide/mandatory/read-only, reverse-if-false, and when to use vs Client Scripts."}]},
+    {id:"service-portal",title:"Service Portal Widgets",difficulty:"advanced",time:"35 min",sections:[{type:"theory",title:"Coming Soon",content:"Widget structure, AngularJS bindings, server-client data flow, and the portal g_form subset."}]}
+  ]},
+  {id:"server-side",title:"Server-Side",icon:"⬢",children:[
+    {id:"business-rules",title:"Business Rules",difficulty:"intermediate",time:"35 min",sections:[
+      {type:"theory",title:"The Five Types",content:"Business Rules are server-side scripts that execute when records are displayed, inserted, updated, or deleted."},
+      {type:"table",title:"Business Rule Types",headers:["Type","When","Use For","Constraint"],rows:[["Before","Before DB write","Modify current, validation","current writable; previous available"],["After","After DB write","Events, update related records","current read-only intent"],["Async","Queued after commit","Long operations, API calls","previous is NULL"],["Display","On form load","Populate g_scratchpad","Only existing records"],["Before Query","Before DB query","Restrict visible records","No security message"]]},
+      {type:"theory",title:"Order & Weight",content:"<strong>order</strong> field (default 100, lower = first) determines sequence. <strong>weight</strong> (0–3) is secondary.\n\nCritical threshold: <strong>order 1000</strong> — Approval Engine, Assignment Rules, Data Policies, and Workflow triggers fire here."},
+      {type:"code",title:"Before BR: Auto-Assign VIP Incidents",code:"gs.info('=== Before BR: Auto-Assign VIP ===');\n\nvar callerId = current.getValue('caller_id');\nvar caller = new GlideRecord('sys_user');\n\nif (caller.get(callerId)) {\n    gs.info('Caller: ' + caller.getValue('first_name') + ' ' + caller.getValue('last_name'));\n    gs.info('VIP Status: ' + caller.getValue('vip'));\n    \n    if (caller.getValue('vip') === 'true') {\n        gs.info('');\n        gs.info('⚡ VIP detected — auto-escalation:');\n        current.setValue('priority', '1');\n        gs.info('  → Priority: 1 - Critical');\n        current.setValue('assigned_to', 'u002');\n        gs.info('  → Assigned to: Jane Smith');\n        gs.eventQueue('incident.vip.created', current,\n            caller.getValue('email'),\n            current.getValue('number'));\n    } else {\n        gs.info('Standard caller — no escalation');\n    }\n}"},
+      {type:"code",title:"Preventing Infinite Loops",code:"gs.info('=== Anti-Recursion Patterns ===');\n\n// Pattern 1: Check if value actually changed\nvar curState = current.getValue('state');\nvar prevState = previous.getValue('state');\ngs.info('Current: ' + curState + ' | Previous: ' + prevState);\n\nif (curState !== prevState) {\n    gs.info('✓ State changed — safe to proceed');\n} else {\n    gs.info('✗ Unchanged — SKIP to prevent recursion');\n}\n\ngs.info('');\n\n// Pattern 2: setWorkflow(false)\ngs.info('Pattern 2: setWorkflow(false)');\nvar gr = new GlideRecord('incident');\ngr.get('a1b2c3d4e5f6');\ngr.setValue('description', 'Updated by automation');\ngr.setWorkflow(false);  // No BRs fire\ngr.autoSysFields(false); // No sys_updated changes\ngr.update();\ngs.info('Updated silently — no BRs triggered');"},
+      {type:"quiz",questions:[{q:"Value of 'previous' in Async BR?",opts:["Previous record version","null","Same as current","Empty GlideRecord"],ans:1,exp:"In Async BRs, 'previous' is NULL because execution happens after the transaction commits."},{q:"At what order do engines fire?",opts:["100","500","1000","After all BRs"],ans:2,exp:"Engines fire at order 1000. BRs < 1000 run before engines; ≥ 1000 run after."}]}
+    ]},
+    {id:"script-includes",title:"Script Includes",difficulty:"intermediate",time:"25 min",sections:[
+      {type:"theory",title:"Three Patterns",content:"Script Includes load <strong>on-demand</strong> (only when called):\n\n1. <strong>Standard Class</strong>: Class.create() with prototype for reusable server logic\n2. <strong>AbstractAjaxProcessor</strong>: Client-callable (used with GlideAjax)\n3. <strong>Classless Function</strong>: Single function for conditions"},
+      {type:"code",title:"Standard Class Pattern",code:"var IncidentHelper = {\n    getActiveP1Count: function() {\n        var ga = new GlideAggregate('incident');\n        ga.addQuery('active', 'true');\n        ga.addQuery('priority', '1');\n        ga.addAggregate('COUNT');\n        ga.query();\n        if (ga.next()) return parseInt(ga.getAggregate('COUNT'));\n        return 0;\n    },\n    getAssignedIncidents: function(userId) {\n        var results = [];\n        var gr = new GlideRecord('incident');\n        gr.addQuery('assigned_to', userId);\n        gr.addQuery('active', 'true');\n        gr.orderBy('priority');\n        gr.query();\n        while (gr.next()) {\n            results.push({\n                number: gr.getValue('number'),\n                priority: 'P' + gr.getValue('priority'),\n                desc: gr.getValue('short_description')\n            });\n        }\n        return results;\n    }\n};\n\ngs.info('Active P1: ' + IncidentHelper.getActiveP1Count());\n\nvar list = IncidentHelper.getAssignedIncidents('u002');\ngs.info('\\nJane\\'s incidents:');\nlist.forEach(function(inc) {\n    gs.info('  ' + inc.number + ' [' + inc.priority + '] ' + inc.desc);\n});"}
+    ]},
+    {id:"gliderecord-deep",title:"GlideRecord Deep Dive",difficulty:"intermediate",time:"40 min",sections:[
+      {type:"theory",title:"Under the Hood",content:"GlideRecord translates to SQL: <code>addQuery('active', true)</code> → <code>WHERE active = 1</code>.\n\nDot-walking generates implicit JOINs. Invalid field names are <strong>silently ignored</strong>, returning the ENTIRE table."},
+      {type:"code",title:"Complete CRUD",code:"gs.info('=== READ: Active P1/P2 ===');\nvar gr = new GlideRecord('incident');\ngr.addQuery('active', 'true');\ngr.addQuery('priority', '<=', '2');\ngr.orderBy('priority');\ngr.query();\nwhile (gr.next()) {\n    gs.info(gr.getValue('number') + ' [P' + gr.getValue('priority') + '] ' + gr.getValue('short_description'));\n}\n\ngs.info('');\ngs.info('=== CREATE ===');\nvar n = new GlideRecord('incident');\nn.initialize();\nn.setValue('short_description', 'Printer not responding');\nn.setValue('category', 'hardware');\nn.setValue('priority', '3');\nvar id = n.insert();\ngs.info('Created: ' + id);\n\ngs.info('');\ngs.info('=== AGGREGATE ===');\nvar ga = new GlideAggregate('incident');\nga.addQuery('active', 'true');\nga.addAggregate('COUNT');\nga.query();\nif (ga.next()) gs.info('Active count: ' + ga.getAggregate('COUNT'));"},
+      {type:"code",title:"Performance Anti-Patterns",code:"// ❌ ANTI-PATTERN: Nested GlideRecords\ngs.info('=== ❌ Nested GlideRecords ===');\nvar gr = new GlideRecord('incident');\ngr.addQuery('active', 'true');\ngr.query();\nvar qCount = 0;\nwhile (gr.next()) {\n    var u = new GlideRecord('sys_user');\n    u.get(gr.getValue('caller_id'));\n    qCount++;\n}\ngs.info('Queries: 1 + ' + qCount + ' = ' + (qCount+1) + ' total');\ngs.warn('10K incidents = 10,001 queries!');\n\ngs.info('');\n\n// ✅ PATTERN: Array Flattening\ngs.info('=== ✅ Array Flattening ===');\nvar incs = [], ids = [];\ngr = new GlideRecord('incident');\ngr.addQuery('active', 'true');\ngr.query();\nwhile (gr.next()) {\n    var cid = gr.getValue('caller_id');\n    incs.push({num: gr.getValue('number'), cid: cid});\n    if (ids.indexOf(cid) === -1 && cid) ids.push(cid);\n}\n\nvar map = {};\nvar ug = new GlideRecord('sys_user');\nug.addQuery('sys_id', 'IN', ids.join(','));\nug.query();\nwhile (ug.next()) {\n    map[ug.getValue('sys_id')] = ug.getValue('first_name') + ' ' + ug.getValue('last_name');\n}\n\ngs.info('Queries: 2 total (regardless of volume)');\nincs.forEach(function(i) {\n    gs.info('  ' + i.num + ' → ' + (map[i.cid]||'Unknown'));\n});"},
+      {type:"quiz",questions:[{q:"What happens with invalid field names in addQuery?",opts:["Error thrown","No records returned","Silently ignored — ALL records return","Query times out"],ans:2,exp:"Invalid fields are silently ignored, returning the ENTIRE table."},{q:"Efficient way to count records?",opts:["getRowCount()","GlideAggregate COUNT","Loop with counter","getTableSize()"],ans:1,exp:"GlideAggregate counts at database level. getRowCount() loads all records first."}]}
+    ]},
+    {id:"events-queue",title:"Events & Event Queue",difficulty:"advanced",time:"25 min",sections:[{type:"theory",title:"Coming Soon",content:"Event Registry, gs.eventQueue, Script Actions, notification triggers, and custom queue processing."}]},
+    {id:"acls",title:"ACLs with Scripting",difficulty:"advanced",time:"25 min",sections:[{type:"theory",title:"Coming Soon",content:"Table/field/row-level evaluation, specificity ordering, scripted ACLs, and debugging."}]}
+  ]},
+  {id:"advanced",title:"Advanced Topics",icon:"◆",children:[
+    {id:"scoped-apps",title:"Scoped Applications",difficulty:"advanced",time:"30 min",sections:[{type:"theory",title:"Coming Soon",content:"Scope isolation, cross-scope access, Application Access Settings, and GlideRecordSecure."}]},
+    {id:"rest-apis",title:"REST APIs",difficulty:"advanced",time:"35 min",sections:[{type:"theory",title:"Coming Soon",content:"Table API, Scripted REST APIs, RESTMessageV2, OAuth 2.0, and API security."}]},
+    {id:"performance",title:"Performance Optimization",difficulty:"advanced",time:"25 min",sections:[{type:"theory",title:"Coming Soon",content:"Nested GlideRecord elimination, indexed queries, GlideAggregate patterns."}]},
+    {id:"debugging",title:"Debugging Strategies",difficulty:"intermediate",time:"20 min",sections:[{type:"theory",title:"Coming Soon",content:"Script Debugger, session debug modules, gs.log levels, DevTools, XPlore."}]}
+  ]},
+  {id:"internals",title:"Platform Internals",icon:"◎",children:[
+    {id:"execution-order",title:"Complete Execution Order",difficulty:"advanced",time:"30 min",sections:[
+      {type:"theory",title:"The Full Picture",content:"Understanding execution order is the most important internals knowledge for a ServiceNow developer."},
+      {type:"theory",title:"On Form Load",content:"1. <strong>Before Query Business Rules</strong>\n2. <strong>Database read</strong>\n3. <strong>Display Business Rules</strong> (populate g_scratchpad)\n4. <strong>ACL evaluation</strong>\n5. <strong>Form rendered to browser</strong>\n6. <strong>UI Policies (onLoad)</strong> — first client-side\n7. <strong>Client Scripts (onLoad)</strong> — after UI Policies"},
+      {type:"theory",title:"On Form Submit",content:"1. <strong>Client Scripts (onSubmit)</strong> — can abort\n2. <strong>UI Policy validations</strong>\n3. <strong>Form data → server</strong>\n4. <strong>Before BRs</strong> (order < 1000)\n5. <strong>Before Engines</strong> (Approval, Assignment)\n6. <strong>Data Policies</strong> at BR order 1000\n7. <strong>Before BRs</strong> (order ≥ 1000)\n8. <strong>DATABASE OPERATION</strong>\n9. <strong>After BRs</strong> (order < 1000)\n10. <strong>After Engines</strong> (Email, SLA)\n11. <strong>After BRs</strong> (order ≥ 1000)\n12. <strong>Async BRs</strong> (queued)\n13. <strong>Flow Designer</strong> (AFTER commit)"},
+      {type:"quiz",questions:[{q:"What fires FIRST on submit?",opts:["Before BRs","Data Policies","Client Scripts (onSubmit)","ACLs"],ans:2,exp:"Client Scripts (onSubmit) fire first on the client side and can abort."},{q:"When do Flows trigger vs BRs?",opts:["Before all BRs","At order 1000","After all After BRs","Simultaneously"],ans:2,exp:"Flow Designer triggers AFTER commit, which is after all After BRs complete."}]}
+    ]},
+    {id:"acl-evaluation",title:"How ACLs Evaluate",difficulty:"advanced",time:"20 min",sections:[{type:"theory",title:"Coming Soon",content:"Specificity hierarchy, GRANT vs DENY, OR within / AND between ACLs, debugging."}]}
+  ]},
+  {id:"practice",title:"Practice & Interview",icon:"★",children:[
+    {id:"beginner-challenges",title:"Beginner Challenges",difficulty:"beginner",time:"45 min",sections:[{type:"theory",title:"Coming Soon",content:"5 hands-on challenges: Query, create records, onChange, UI Policies, bulk ops."}]},
+    {id:"interview-questions",title:"Interview Questions",difficulty:"intermediate",time:"40 min",sections:[{type:"theory",title:"Coming Soon",content:"40+ curated questions covering platform, client-side, server-side, security, integration."}]},
+    {id:"anti-patterns",title:"Patterns & Anti-Patterns",difficulty:"intermediate",time:"25 min",sections:[{type:"theory",title:"Coming Soon",content:"Critical do's/don'ts: nested GlideRecords, GlideElement traps, sync calls, hardcoded sys_ids."}]}
+  ]}
+];
+
+// Flatten topics
+var ALL_TOPICS = [];
+CATEGORIES.forEach(function(cat) {
+  cat.children.forEach(function(t) { ALL_TOPICS.push({id:t.id,title:t.title,difficulty:t.difficulty,time:t.time,sections:t.sections,catId:cat.id,catTitle:cat.title}); });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════════════════════════════════════════
+var progress = [];
+try { progress = JSON.parse(localStorage.getItem('sn-progress') || '[]'); } catch(e) { progress = []; }
+function saveProgress() { localStorage.setItem('sn-progress', JSON.stringify(progress)); }
+var expandedCats = {};
+var quizStates = {};
+var playgroundCodes = {};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Router (hash-based, matching existing site pattern)
+// ═══════════════════════════════════════════════════════════════════════════════
+function getRoute() {
+  var h = window.location.hash.replace('#','');
+  if (h.indexOf('topic/') === 0) return { page:'topic', id: h.split('/')[1] };
+  return { page:'home' };
+}
+
+function navigate(topicId) {
+  if (topicId) window.location.hash = '#topic/' + topicId;
+  else { history.replaceState(null, '', window.location.pathname); render(); }
+}
+
+window.addEventListener('hashchange', render);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Renderers
+// ═══════════════════════════════════════════════════════════════════════════════
+function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function renderSidebar(activeId) {
+  var total = ALL_TOPICS.length, done = progress.length;
+  var pct = Math.round((done/total)*100);
+  
+  if (activeId) {
+    var topic = ALL_TOPICS.find(function(t){return t.id===activeId});
+    if (topic) expandedCats[topic.catId] = true;
+  }
+
+  var html = '<div class="sb-header"><div class="sb-title">ServiceNow</div><div class="sb-sub">Developer Guide</div>';
+  html += '<div class="sb-progress"><div class="sb-progress-bar"><div class="sb-progress-fill" style="width:'+pct+'%"></div></div>';
+  html += '<div class="sb-progress-text"><span>'+done+'/'+total+' tutorials</span><span>'+pct+'%</span></div></div></div>';
+
+  CATEGORIES.forEach(function(cat) {
+    var isOpen = expandedCats[cat.id];
+    var catDone = cat.children.filter(function(t){return progress.indexOf(t.id)!==-1}).length;
+    html += '<div class="sb-cat">';
+    html += '<button class="sb-cat-btn" onclick="toggleCat(\''+cat.id+'\')"><span class="sb-cat-icon">'+cat.icon+'</span><span class="sb-cat-title">'+esc(cat.title)+'</span><span class="sb-cat-count">'+catDone+'/'+cat.children.length+'</span><span class="sb-cat-arrow'+(isOpen?' open':'')+'">▸</span></button>';
+    html += '<div class="sb-topics'+(isOpen?' open':'')+'">';
+    cat.children.forEach(function(t) {
+      var isActive = t.id === activeId;
+      var isDone = progress.indexOf(t.id) !== -1;
+      html += '<button class="sb-topic'+(isActive?' active':'')+'" onclick="navigate(\''+t.id+'\');closeSidebar()"><span class="sb-topic-dot'+(isDone?' done':'')+'">'+(isDone?'✓':'○')+'</span><span class="sb-topic-name">'+esc(t.title)+'</span></button>';
+    });
+    html += '</div></div>';
+  });
+
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+function toggleCat(id) { expandedCats[id] = !expandedCats[id]; renderSidebar(getRoute().id); }
+
+function renderHome() {
+  var html = '<div class="home-hero"><div class="home-tag">Zero to Hero</div><h1 class="home-title">ServiceNow Developer Guide</h1><p class="home-desc">Master ServiceNow scripting from platform architecture to advanced integrations. Every concept includes runnable code with a built-in mock engine.</p></div>';
+  html += '<div class="home-grid">';
+  CATEGORIES.forEach(function(cat) {
+    var done = cat.children.filter(function(t){return progress.indexOf(t.id)!==-1}).length;
+    var pct = Math.round((done/cat.children.length)*100);
+    html += '<div class="home-card" onclick="navigate(\''+cat.children[0].id+'\')">';
+    html += '<div class="home-card-head"><span class="home-card-icon">'+cat.icon+'</span><span class="home-card-label">'+esc(cat.title)+'</span></div>';
+    html += '<div class="home-card-topics">';
+    cat.children.slice(0,4).forEach(function(t) {
+      var d = progress.indexOf(t.id)!==-1;
+      html += '<div class="home-card-topic"><span class="dot'+(d?' done':'')+'">'+(d?'✓':'○')+'</span>'+esc(t.title)+'</div>';
+    });
+    if (cat.children.length > 4) html += '<div class="home-card-topic" style="color:var(--text3)">+' + (cat.children.length-4) + ' more</div>';
+    html += '</div><div class="home-card-bar"><div class="home-card-bar-fill" style="width:'+pct+'%"></div></div></div>';
+  });
+  html += '</div>';
+
+  // Quick start playground
+  html += '<div style="border:1px solid var(--border);border-radius:8px;padding:24px;background:var(--card);margin-top:16px">';
+  html += '<h2 style="font-size:16px;font-weight:700;margin-bottom:8px">Built-In Script Editor</h2>';
+  html += '<p style="font-size:12px;color:var(--text2);margin-bottom:16px">Every tutorial includes a live playground with mock ServiceNow APIs. Try it:</p>';
+  html += buildPlayground('home-demo', 'Quick Start', "// Available: GlideRecord, GlideAggregate, gs\n// Tables: incident, sys_user, cmdb_ci, problem, change_request\n\nvar gr = new GlideRecord('incident');\ngr.addQuery('priority', '1');\ngr.addQuery('active', 'true');\ngr.query();\n\ngs.info('=== Critical Active Incidents ===');\nwhile (gr.next()) {\n    gs.info(gr.getValue('number') + ' — ' + gr.getValue('short_description'));\n}\ngs.info('\\nTotal P1: ' + gr.getRowCount());");
+  html += '</div>';
+
+  return html;
+}
+
+function renderTutorial(topicId) {
+  var t = ALL_TOPICS.find(function(x){return x.id===topicId});
+  if (!t) return '<p>Tutorial not found.</p>';
+
+  var idx = ALL_TOPICS.indexOf(t);
+  var prev = idx > 0 ? ALL_TOPICS[idx-1] : null;
+  var next = idx < ALL_TOPICS.length-1 ? ALL_TOPICS[idx+1] : null;
+  var isDone = progress.indexOf(t.id) !== -1;
+  var isComingSoon = t.sections.length === 1 && (t.sections[0].content||'').indexOf('Coming Soon') !== -1;
+
+  var html = '<div class="tut-breadcrumb"><a href="#" onclick="navigate();return false">Home</a> / <a href="#" onclick="navigate(\''+t.id+'\');return false">'+esc(t.catTitle)+'</a> / '+esc(t.title)+'</div>';
+  html += '<div class="tut-meta"><span class="tut-badge '+t.difficulty+'">'+t.difficulty+'</span><span class="tut-time">'+t.time+'</span></div>';
+  html += '<h1 class="tut-title">'+esc(t.title)+'</h1>';
+
+  t.sections.forEach(function(sec, si) {
+    html += '<div class="tut-section">';
+    if (sec.type === 'theory') {
+      if (sec.title) html += '<h2 class="tut-h2">'+esc(sec.title)+'</h2>';
+      var lines = (sec.content||'').split('\n');
+      lines.forEach(function(line) {
+        if (line.trim()) html += '<p class="tut-p">' + line + '</p>';
+      });
+    }
+    if (sec.type === 'table') {
+      if (sec.title) html += '<h3 class="tut-h3">'+esc(sec.title)+'</h3>';
+      html += '<div style="overflow-x:auto"><table class="tut-table"><thead><tr>';
+      sec.headers.forEach(function(h){html+='<th>'+esc(h)+'</th>'});
+      html += '</tr></thead><tbody>';
+      sec.rows.forEach(function(row){html+='<tr>';row.forEach(function(c){html+='<td>'+esc(c)+'</td>'});html+='</tr>'});
+      html += '</tbody></table></div>';
+    }
+    if (sec.type === 'code') {
+      html += buildPlayground(topicId+'-'+si, sec.title, sec.code);
+    }
+    if (sec.type === 'quiz') {
+      html += buildQuiz(topicId+'-'+si, sec.questions);
+    }
+    html += '</div>';
+  });
+
+  if (!isComingSoon) {
+    html += '<button class="tut-complete'+(isDone?' done':'')+'" onclick="toggleComplete(\''+t.id+'\')">'+(isDone?'✓ Completed':'Mark as Complete')+'</button>';
+  }
+
+  html += '<div class="tut-nav">';
+  if (prev) html += '<button class="tut-nav-btn" onclick="navigate(\''+prev.id+'\')">← '+esc(prev.title)+'</button>';
+  else html += '<span></span>';
+  if (next) html += '<button class="tut-nav-btn next" onclick="navigate(\''+next.id+'\')">'+esc(next.title)+' →</button>';
+  else html += '<span></span>';
+  html += '</div>';
+
+  return html;
+}
+
+function buildPlayground(id, title, defaultCode) {
+  if (!playgroundCodes[id]) playgroundCodes[id] = defaultCode;
+  var code = playgroundCodes[id];
+  var lines = code.split('\n');
+  var lineNums = lines.map(function(_,i){return i+1}).join('<br>');
+  var h = Math.min(Math.max(lines.length * 20, 100), 480);
+
+  var html = '<div class="playground" id="pg-'+id+'">';
+  html += '<div class="pg-header"><span class="pg-title">'+(title||'Script Editor')+'</span>';
+  html += '<div class="pg-actions"><button class="pg-btn" onclick="resetPlayground(\''+id+'\')">↺</button><button class="pg-btn" onclick="copyPlayground(\''+id+'\')">Copy</button><button class="pg-btn pg-btn-run" onclick="runPlayground(\''+id+'\')">▶ Run</button></div></div>';
+  html += '<div class="pg-editor-wrap"><div class="pg-lines" id="pg-lines-'+id+'">'+lineNums+'</div>';
+  html += '<textarea class="pg-editor" id="pg-code-'+id+'" spellcheck="false" style="height:'+h+'px" onkeydown="pgKeyDown(event,\''+id+'\')" oninput="pgInput(\''+id+'\')">'+esc(code)+'</textarea></div>';
+  html += '<div class="pg-output" id="pg-out-'+id+'" style="display:none"><div class="pg-output-header">Output</div><div class="pg-output-body" id="pg-outbody-'+id+'"></div></div>';
+  html += '<div class="pg-hint">Ctrl+Enter to run · Tab for indent · Mock APIs: GlideRecord, GlideAggregate, gs</div>';
+  html += '</div>';
+  return html;
+}
+
+function pgInput(id) {
+  var code = document.getElementById('pg-code-'+id).value;
+  playgroundCodes[id] = code;
+  var lines = code.split('\n');
+  document.getElementById('pg-lines-'+id).innerHTML = lines.map(function(_,i){return i+1}).join('<br>');
+}
+
+function pgKeyDown(e, id) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    var ta = document.getElementById('pg-code-'+id);
+    var s = ta.selectionStart, en = ta.selectionEnd;
+    ta.value = ta.value.substring(0,s) + '    ' + ta.value.substring(en);
+    ta.selectionStart = ta.selectionEnd = s + 4;
+    pgInput(id);
+  }
+  if ((e.ctrlKey||e.metaKey) && e.key === 'Enter') { e.preventDefault(); runPlayground(id); }
+}
+
+function runPlayground(id) {
+  var code = document.getElementById('pg-code-'+id).value;
+  var result = runCode(code);
+  var outDiv = document.getElementById('pg-out-'+id);
+  var body = document.getElementById('pg-outbody-'+id);
+  outDiv.style.display = 'block';
+  var html = '';
+  result.o.forEach(function(l) {
+    var cls = l.t !== 'info' ? ' ' + l.t : '';
+    html += '<div class="pg-output-line'+cls+'">' + (l.t!=='info'?'['+l.t.toUpperCase()+'] ':'') + esc(l.m) + '</div>';
+  });
+  result.e.forEach(function(e) {
+    html += '<div class="pg-output-line error">Error: '+esc(e)+'</div>';
+  });
+  if (!result.o.length && !result.e.length) html = '<div class="pg-output-line" style="color:var(--text3)">No output. Use gs.info() to log.</div>';
+  body.innerHTML = html;
+}
+
+function resetPlayground(id) {
+  // Find the original code from content
+  var origCode = null;
+  CATEGORIES.forEach(function(cat){cat.children.forEach(function(t){t.sections.forEach(function(s,si){if(s.type==='code'&&(t.id+'-'+si)===id)origCode=s.code;})})});
+  if (id === 'home-demo') origCode = "// Available: GlideRecord, GlideAggregate, gs\n// Tables: incident, sys_user, cmdb_ci, problem, change_request\n\nvar gr = new GlideRecord('incident');\ngr.addQuery('priority', '1');\ngr.addQuery('active', 'true');\ngr.query();\n\ngs.info('=== Critical Active Incidents ===');\nwhile (gr.next()) {\n    gs.info(gr.getValue('number') + ' — ' + gr.getValue('short_description'));\n}\ngs.info('\\nTotal P1: ' + gr.getRowCount());";
+  if (origCode) {
+    playgroundCodes[id] = origCode;
+    document.getElementById('pg-code-'+id).value = origCode;
+    pgInput(id);
+    var outDiv = document.getElementById('pg-out-'+id);
+    if (outDiv) outDiv.style.display = 'none';
+  }
+}
+
+function copyPlayground(id) {
+  var code = document.getElementById('pg-code-'+id).value;
+  navigator.clipboard.writeText(code);
+}
+
+function buildQuiz(id, questions) {
+  if (!quizStates[id]) quizStates[id] = { answers:{}, submitted:false };
+  var st = quizStates[id];
+  var html = '<div class="quiz" id="quiz-'+id+'"><div class="quiz-head"><span class="quiz-icon">◈</span><span class="quiz-label">Knowledge Check</span></div>';
+
+  questions.forEach(function(q, qi) {
+    html += '<div class="quiz-q"><div class="quiz-q-text">'+(qi+1)+'. '+esc(q.q)+'</div>';
+    q.opts.forEach(function(opt, oi) {
+      var sel = st.answers[qi] === oi;
+      var correct = st.submitted && oi === q.ans;
+      var wrong = st.submitted && sel && oi !== q.ans;
+      var cls = 'quiz-opt';
+      if (correct) cls += ' correct';
+      else if (wrong) cls += ' wrong';
+      else if (sel) cls += ' selected';
+      html += '<button class="'+cls+'" onclick="quizSelect(\''+id+'\','+qi+','+oi+')">';
+      html += '<span class="quiz-opt-letter">'+String.fromCharCode(65+oi)+'</span>'+esc(opt)+'</button>';
+    });
+    if (st.submitted) {
+      var isRight = st.answers[qi] === q.ans;
+      html += '<div class="quiz-explain '+(isRight?'right':'wrong')+'">'+esc(q.exp)+'</div>';
+    }
+    html += '</div>';
+  });
+
+  var allAnswered = Object.keys(st.answers).length === questions.length;
+  if (!st.submitted) {
+    html += '<button class="quiz-submit'+(allAnswered?' ready':'')+'" onclick="quizSubmit(\''+id+'\','+questions.length+')">Check Answers ('+Object.keys(st.answers).length+'/'+questions.length+')</button>';
+  } else {
+    var score = questions.filter(function(q,i){return st.answers[i]===q.ans}).length;
+    html += '<div class="quiz-score">Score: '+score+'/'+questions.length+(score===questions.length?' — Perfect!':'')+' <span class="quiz-retry" onclick="quizRetry(\''+id+'\')">Retry</span></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function quizSelect(id, qi, oi) {
+  var st = quizStates[id];
+  if (st.submitted) return;
+  st.answers[qi] = oi;
+  render();
+}
+function quizSubmit(id, total) {
+  var st = quizStates[id];
+  if (Object.keys(st.answers).length === total) { st.submitted = true; render(); }
+}
+function quizRetry(id) {
+  quizStates[id] = {answers:{},submitted:false};
+  render();
+}
+
+function toggleComplete(id) {
+  var idx = progress.indexOf(id);
+  if (idx === -1) progress.push(id); else progress.splice(idx, 1);
+  saveProgress();
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Main Render
+// ═══════════════════════════════════════════════════════════════════════════════
+function render() {
+  var route = getRoute();
+  var main = document.getElementById('mainContent');
+  if (route.page === 'topic') {
+    main.innerHTML = renderTutorial(route.id);
+    renderSidebar(route.id);
+    main.scrollTop = 0;
+    document.title = (ALL_TOPICS.find(function(t){return t.id===route.id})||{}).title + ' — ServiceNow Tutorials';
+  } else {
+    main.innerHTML = renderHome();
+    renderSidebar(null);
+    document.title = 'ServiceNow Developer Tutorials — Sumanth Bolle';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Search
+// ═══════════════════════════════════════════════════════════════════════════════
+function openSearch() { document.getElementById('searchOverlay').classList.add('active'); document.getElementById('searchInput').focus(); renderSearchResults(''); }
+function closeSearch() { document.getElementById('searchOverlay').classList.remove('active'); document.getElementById('searchInput').value = ''; }
+
+document.getElementById('searchInput').addEventListener('input', function() { renderSearchResults(this.value); });
+document.getElementById('searchOverlay').addEventListener('click', function(e) { if (e.target === this) closeSearch(); });
+
+function renderSearchResults(q) {
+  var results = q.trim() ? ALL_TOPICS.filter(function(t) {
+    var s = q.toLowerCase();
+    return t.title.toLowerCase().indexOf(s)!==-1 || t.id.indexOf(s)!==-1 || (t.difficulty||'').indexOf(s)!==-1 || t.catTitle.toLowerCase().indexOf(s)!==-1;
+  }) : ALL_TOPICS.slice(0, 8);
+  
+  var html = '';
+  if (!results.length) html = '<div style="padding:24px;text-align:center;font-size:13px;color:var(--text3)">No tutorials found</div>';
+  results.forEach(function(t) {
+    html += '<div class="search-result" onclick="navigate(\''+t.id+'\');closeSearch()"><div><div class="search-result-title">'+esc(t.title)+'</div><div class="search-result-meta">'+esc(t.catTitle)+' · '+t.difficulty+' · '+t.time+'</div></div></div>';
+  });
+  document.getElementById('searchResults').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Mobile / UI
+// ═══════════════════════════════════════════════════════════════════════════════
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('active'); }
+
+document.getElementById('menuToggle').addEventListener('click', function() {
+  var mm = document.getElementById('mobileMenu');
+  mm.classList.toggle('active');
+  this.classList.toggle('active');
+});
+
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+// Sidebar toggle for mobile - clicking hamburger opens sidebar instead of mobile menu on tutorial pages
+document.getElementById('menuToggle').addEventListener('click', function(e) {
+  if (getRoute().page === 'topic') {
+    e.stopPropagation();
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
+    document.getElementById('mobileMenu').classList.remove('active');
+  }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+  if (e.key === 'Escape') closeSearch();
+});
+
+// Back to top
+var mainEl = document.querySelector('.main');
+if (mainEl) {
+  window.addEventListener('scroll', function() {
+    var btn = document.getElementById('backTop');
+    if (window.scrollY > 300) btn.classList.add('show');
+    else btn.classList.remove('show');
+  }, {passive:true});
+}
+document.getElementById('backTop').addEventListener('click', function() { window.scrollTo({top:0,behavior:'smooth'}); });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Init
+// ═══════════════════════════════════════════════════════════════════════════════
+render();
+</script>
+</body>
+</html>
