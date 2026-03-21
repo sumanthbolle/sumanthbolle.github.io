@@ -633,16 +633,20 @@ function selectCategory(key) {
   
   cat.modes.forEach(mode => {
     const questions = QUESTIONS[key] || [];
+    const availableCount = questions.length;
     let count = mode.count;
-    if (count === 'all') count = questions.length;
+    if (count === 'all') count = availableCount;
     else if (count === 'code') count = questions.filter(q => q.type !== 'mcq').length;
     else if (count === 'hard') count = questions.filter(q => q.difficulty === 'hard').length;
+    
+    const insufficient = typeof mode.count === 'number' && availableCount < mode.count;
+    const displayCount = typeof mode.count === 'number' ? Math.min(mode.count, availableCount) : count;
     
     const div = document.createElement('div');
     div.className = 'mode-card';
     div.innerHTML = `
-      <div><h4>${mode.name}</h4><p>${mode.desc}</p></div>
-      <div class="mode-meta">${count} Q${mode.timer ? ` · ${mode.timer}s/Q` : ''}</div>
+      <div><h4>${mode.name}</h4><p>${mode.desc}${insufficient ? ` <span style="color:var(--yellow);font-size:12px">(only ${availableCount} available)</span>` : ''}</p></div>
+      <div class="mode-meta">${displayCount} Q${mode.timer ? ` · ${mode.timer}s/Q` : ''}</div>
     `;
     div.addEventListener('click', () => startQuiz(key, mode));
     modeOpts.appendChild(div);
@@ -667,11 +671,15 @@ function startQuiz(catKey, mode) {
     questions = questions.filter(q => q.difficulty === 'hard');
   }
   
-  // Shuffle
-  questions = questions.sort(() => Math.random() - 0.5);
+  // Shuffle using Fisher-Yates
+  questions = shuffleArray(questions);
   
-  // Limit count
+  // Limit count — warn if fewer questions available than requested
   let count = mode.count;
+  if (typeof count === 'number' && questions.length < count) {
+    const proceed = confirm(`This mode requires ${count} questions but only ${questions.length} are available in this category. Start with ${questions.length} questions instead?`);
+    if (!proceed) return;
+  }
   if (typeof count === 'number') {
     questions = questions.slice(0, count);
   }
@@ -778,7 +786,20 @@ function updateTimerText() {
   document.getElementById('timerText').textContent = m + ':' + (s < 10 ? '0' : '') + s;
 }
 
+// ── SHUFFLE UTILITY (Fisher-Yates) ──
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 // ── MCQ RENDERING ──
+// currentShuffleMap: maps display index → original index
+let currentShuffleMap = [];
+
 function renderMCQ(q) {
   const multiCount = q.multi || (q.correct.length > 1 ? q.correct.length : 0);
   const multiHint = document.getElementById('multiHint');
@@ -793,16 +814,21 @@ function renderMCQ(q) {
   list.innerHTML = '';
   const letters = 'ABCDEFGH';
   
-  q.options.forEach((opt, i) => {
+  // Build shuffled options with original index tracking
+  const indexed = q.options.map((opt, i) => ({ text: opt, origIdx: i }));
+  const shuffled = shuffleArray(indexed);
+  currentShuffleMap = shuffled.map(s => s.origIdx);
+  
+  shuffled.forEach((item, displayIdx) => {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
-    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
-    btn.addEventListener('click', () => handleOptionClick(i, q));
+    btn.innerHTML = `<span class="option-letter">${letters[displayIdx]}</span><span>${item.text}</span>`;
+    btn.addEventListener('click', () => handleOptionClick(displayIdx, q));
     list.appendChild(btn);
   });
 }
 
-function handleOptionClick(index, q) {
+function handleOptionClick(displayIndex, q) {
   if (answered) return;
   
   const multiCount = q.multi || (q.correct.length > 1 ? q.correct.length : 0);
@@ -810,13 +836,13 @@ function handleOptionClick(index, q) {
   
   if (multiCount > 1) {
     // Multi-select toggle
-    if (selectedOptions.has(index)) {
-      selectedOptions.delete(index);
-      buttons[index].classList.remove('selected');
+    if (selectedOptions.has(displayIndex)) {
+      selectedOptions.delete(displayIndex);
+      buttons[displayIndex].classList.remove('selected');
     } else {
       if (selectedOptions.size < multiCount) {
-        selectedOptions.add(index);
-        buttons[index].classList.add('selected');
+        selectedOptions.add(displayIndex);
+        buttons[displayIndex].classList.add('selected');
       }
     }
     // Auto-submit when enough selected
@@ -825,8 +851,8 @@ function handleOptionClick(index, q) {
     }
   } else {
     // Single select — immediate submit
-    selectedOptions.add(index);
-    buttons[index].classList.add('selected');
+    selectedOptions.add(displayIndex);
+    buttons[displayIndex].classList.add('selected');
     setTimeout(() => submitMCQ(q), 200);
   }
 }
@@ -837,19 +863,21 @@ function submitMCQ(q) {
   clearInterval(timerInterval);
   
   const buttons = document.querySelectorAll('#optionsList .option-btn');
-  const selected = [...selectedOptions];
+  // Map selected display indices → original indices
+  const selectedOriginal = [...selectedOptions].map(di => currentShuffleMap[di]);
   const correctSet = new Set(q.correct);
-  const isCorrect = selected.length === q.correct.length && selected.every(s => correctSet.has(s));
+  const isCorrect = selectedOriginal.length === q.correct.length && selectedOriginal.every(s => correctSet.has(s));
   
   if (isCorrect) score++;
   SessionProgress.markAnswered(q.id, isCorrect);
   
-  // Mark buttons
-  buttons.forEach((btn, i) => {
+  // Mark buttons using display index → original index mapping
+  buttons.forEach((btn, displayIdx) => {
+    const origIdx = currentShuffleMap[displayIdx];
     btn.classList.add('disabled');
-    if (correctSet.has(i)) btn.classList.add('show-correct');
-    if (selectedOptions.has(i) && !correctSet.has(i)) btn.classList.add('incorrect');
-    if (selectedOptions.has(i) && correctSet.has(i)) {
+    if (correctSet.has(origIdx)) btn.classList.add('show-correct');
+    if (selectedOptions.has(displayIdx) && !correctSet.has(origIdx)) btn.classList.add('incorrect');
+    if (selectedOptions.has(displayIdx) && correctSet.has(origIdx)) {
       btn.classList.remove('show-correct');
       btn.classList.add('correct');
     }
@@ -938,9 +966,10 @@ function autoSubmit() {
       answered = true;
       SessionProgress.markAnswered(q.id, false);
       const buttons = document.querySelectorAll('#optionsList .option-btn');
-      buttons.forEach((btn, i) => {
+      buttons.forEach((btn, displayIdx) => {
+        const origIdx = currentShuffleMap[displayIdx];
         btn.classList.add('disabled');
-        if (q.correct.includes(i)) btn.classList.add('show-correct');
+        if (q.correct.includes(origIdx)) btn.classList.add('show-correct');
       });
       if (q.explanation) {
         document.getElementById('explanationText').innerHTML = q.explanation;
