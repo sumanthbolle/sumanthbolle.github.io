@@ -1,0 +1,1198 @@
+{
+  "architecture": [
+    {
+      "id": "arch-e1",
+      "q": "What is the execution order of Business Rules when a record is inserted?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "before → after → async → display",
+        "display → before → after → async",
+        "before → display → after → async",
+        "async → before → after → display"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Business Rules execute in the order: before → after → async → display when a record is inserted."
+    },
+    {
+      "id": "arch-e2",
+      "q": "Which table stores all configuration items in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "cmdb_ci",
+        "sys_ci",
+        "cmdb",
+        "configuration_item"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The cmdb_ci table is the base table for all Configuration Items in the CMDB."
+    },
+    {
+      "id": "arch-e3",
+      "q": "What is the purpose of a dictionary override?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "To override field attributes on an extended table without changing the parent",
+        "To create new fields on a table",
+        "To delete fields from a parent table",
+        "To copy a table schema"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Dictionary overrides allow you to change field attributes (like mandatory, read-only, default value) on a child table without affecting the parent table definition."
+    },
+    {
+      "id": "arch-e4",
+      "q": "What does ACL stand for in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Access Control List",
+        "Application Control Layer",
+        "Account Configuration Logic",
+        "Automated Control Ledger"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ACL stands for Access Control List. It defines who can access what data and operations in ServiceNow."
+    },
+    {
+      "id": "arch-e5",
+      "q": "Which server-side scripting runs before the database operation?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Before Business Rule",
+        "After Business Rule",
+        "Async Business Rule",
+        "Display Business Rule"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Before Business Rules execute before the database operation (insert/update/delete), allowing you to modify the record before it is saved."
+    },
+    {
+      "id": "arch-m1",
+      "q": "In a domain-separated instance, what determines the visibility of records across domains?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The domain field on the record and the user's domain",
+        "The user's role assignment only",
+        "The table's ACL configuration only",
+        "The sys_properties table settings"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Domain separation uses the domain field on records combined with the user's assigned domain to control visibility. Records are only visible to users in the same domain or higher in the domain hierarchy."
+    },
+    {
+      "id": "arch-m2",
+      "q": "What happens when a Before Business Rule sets current.setAbortAction(true)?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The database operation is cancelled and no further Business Rules of any type execute",
+        "The database operation is cancelled but After rules still execute",
+        "Only the current Business Rule is skipped",
+        "The record is saved but marked as inactive"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "setAbortAction(true) in a Before BR aborts the database operation entirely. No subsequent Business Rules (after/async/display) will execute since the operation is cancelled."
+    },
+    {
+      "id": "arch-m3",
+      "q": "An ATF test is failing intermittently in production but passes consistently in sub-prod. Which factor is MOST likely the cause?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Data-dependent conditions like different record states or ACL evaluations",
+        "Different ServiceNow build versions",
+        "ATF runner configuration differences",
+        "Browser cache differences"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Intermittent ATF failures between environments typically stem from data-dependent conditions — records in different states, ACLs evaluating differently due to different users/roles, or Business Rules behaving differently based on existing data."
+    },
+    {
+      "id": "arch-m4",
+      "q": "What is the key difference between GlideRecord and GlideAggregate?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "GlideAggregate performs database-level aggregation without loading individual records into memory",
+        "GlideAggregate is a client-side only API",
+        "GlideRecord cannot perform queries with conditions",
+        "GlideAggregate loads all records then aggregates in the application layer"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "GlideAggregate pushes aggregation (COUNT, SUM, AVG, etc.) down to the database level, making it far more efficient than loading records via GlideRecord and aggregating in script."
+    },
+    {
+      "id": "arch-m5",
+      "q": "Which approach correctly prevents recursive Business Rules?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Use current.update() with setWorkflow(false) or use a recursion guard via gs.getSession()",
+        "Always use after Business Rules instead of before",
+        "Set the Business Rule to run only once using a sys_property",
+        "Use gr.insert() instead of current.update()"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "To prevent recursion, use current.update() with setWorkflow(false) to skip BR re-execution, or implement a recursion guard using session-level flags via gs.getSession().putClientData()."
+    },
+    {
+      "id": "arch-h1",
+      "q": "A customer's instance has 50+ Business Rules on the Incident table causing slow form loads. The rules include before, after, and async types with overlapping conditions. How would you architect a refactoring strategy?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Consolidate overlapping Before BRs into a single Script Include with a dispatcher pattern, convert sequential After BRs to a Flow Designer subflow, and profile each rule's execution time with the BR debug log",
+        "Convert all Business Rules to client scripts for faster execution",
+        "Move all logic into a single Before Business Rule to reduce rule evaluations",
+        "Replace all Business Rules with scheduled jobs"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The dispatcher pattern consolidates logic into a maintainable Script Include called from fewer BRs. Flow Designer handles complex post-operation logic with better error handling. BR profiling identifies the actual bottlenecks before optimizing."
+    },
+    {
+      "id": "arch-h2",
+      "q": "In a multi-scope application architecture, Application A (scoped) needs to call a Script Include in Application B (scoped). What is the correct cross-scope access pattern?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Application B must explicitly grant cross-scope access to the Script Include via the Application Access settings, and Application A calls it using the full scope prefix",
+        "Application A can call any Script Include in any scope without restrictions",
+        "You must copy the Script Include into Application A's scope",
+        "Cross-scope calls require an Integration Hub spoke"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Scoped applications require explicit cross-scope privileges. App B must enable 'Accessible from' for the Script Include, and App A must reference it with the scope prefix: new global.AppBScriptInclude() or sn_appb.ScriptIncludeName."
+    },
+    {
+      "id": "arch-h3",
+      "q": "A healthcare customer requires PHI data to be encrypted at rest AND in transit, with field-level encryption on specific CMDB fields. Describe the architectural approach.",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use Edge Encryption for field-level encryption, ensure TLS 1.2+ for transit encryption, implement column-level encryption for the specific CMDB fields, and use encryption contexts to manage keys",
+        "Enable HTTPS on the instance and use password2 field types for everything",
+        "Store PHI data in attachment records with encryption enabled",
+        "Use a mid server to proxy all CMDB queries through an encrypted tunnel"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Edge Encryption provides true field-level encryption where data is encrypted before leaving the customer's network. Column-level encryption handles at-rest requirements. Encryption contexts manage key rotation and access control for compliance."
+    },
+    {
+      "id": "arch-h4",
+      "q": "You discover that a customer's CMDB has 2 million orphaned CIs with no relationships, 500K duplicate CIs, and identification rules that conflict. What is the remediation architecture?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Implement CMDB Health audit using CSDM compliance dashboards, create reconciliation rules to merge duplicates using IRE, establish identification rules with proper precedence, then run a phased cleanup with rollback capabilities",
+        "Delete all orphaned CIs immediately and reimport from Discovery",
+        "Manually review each CI record and fix relationships",
+        "Disable all identification rules and start from scratch"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CMDB remediation requires a systematic approach: audit first using Health dashboards, reconcile duplicates through IRE (Identification and Reconciliation Engine), fix identification rules with proper independent/dependent attributes, then execute phased cleanup with rollback safety nets."
+    }
+  ],
+  "scripting": [
+    {
+      "id": "scr-e1",
+      "q": "Which API is used to query records in a server-side script?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "GlideRecord",
+        "GlideForm",
+        "GlideAjax",
+        "GlideUser"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "GlideRecord is the primary server-side API for querying, inserting, updating, and deleting records."
+    },
+    {
+      "id": "scr-e2",
+      "q": "What does g_form.setValue('field','value') do?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Sets the value of a field on the currently displayed form",
+        "Updates a record in the database",
+        "Creates a new record",
+        "Sets a system property value"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "g_form.setValue() is a client-side GlideForm API that sets the display value of a field on the current form without a server round-trip."
+    },
+    {
+      "id": "scr-e3",
+      "q": "In a Business Rule, what object represents the current record being processed?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "current",
+        "record",
+        "gr",
+        "this"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The 'current' object in a Business Rule represents the GlideRecord of the record being inserted, updated, or deleted."
+    },
+    {
+      "id": "scr-e4",
+      "q": "Which method adds an encoded query to a GlideRecord?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "addEncodedQuery()",
+        "setEncodedQuery()",
+        "addQuery()",
+        "setFilter()"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "addEncodedQuery() allows you to pass an encoded query string to filter GlideRecord results. This is useful for complex queries."
+    },
+    {
+      "id": "scr-e5",
+      "q": "What is the correct way to get the sys_id of the current user in a server script?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "gs.getUserID()",
+        "current.sys_id",
+        "g_user.userID",
+        "session.user_id"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "gs.getUserID() returns the sys_id of the currently logged-in user in server-side scripts."
+    },
+    {
+      "id": "scr-m1",
+      "q": "What is the critical difference between current.update() and current.setAbortAction(true) when used in a Before Business Rule?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "current.update() triggers a new database operation (potentially causing recursion), while setAbortAction(true) cancels the pending operation entirely",
+        "They are functionally identical",
+        "current.update() is client-side only",
+        "setAbortAction() only works in After Business Rules"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "current.update() in a Before BR initiates a NEW update operation (risk of infinite loop). setAbortAction(true) cancels the original pending operation entirely — no record is saved."
+    },
+    {
+      "id": "scr-m2",
+      "q": "Why should you avoid using getRowCount() on large tables?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It loads every record from the query into memory to count them, causing performance issues",
+        "It only works on tables with fewer than 1000 records",
+        "It returns an inaccurate count",
+        "It requires admin privileges"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "getRowCount() iterates through the entire result set to count records. On large tables, use GlideAggregate with COUNT instead — it performs the count at the database level."
+    },
+    {
+      "id": "scr-m3",
+      "q": "In a GlideAjax call, what must be true about the Script Include being called?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It must extend AbstractAjaxProcessor and the function must be prefixed with 'ajax' or the client accessible checkbox must be enabled",
+        "It only needs to exist in the global scope",
+        "It must be a classless script",
+        "It requires the 'web_service_admin' role"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "For GlideAjax to call a Script Include, the SI must extend AbstractAjaxProcessor (or be marked Client Callable) and callable functions should follow naming conventions to be accessible."
+    },
+    {
+      "id": "scr-m4",
+      "q": "Write a Business Rule script that prevents closing an Incident if it has open child tasks. Query the 'task' table for active children and abort with a message if any exist.",
+      "type": "scripting",
+      "difficulty": "medium",
+      "code": "// Before Business Rule on Incident table\n// Condition: current.state changes to 'Closed'\n\n",
+      "checks": [
+        {
+          "pattern": "GlideRecord\\s*\\(\\s*['\"]task['\"]\\s*\\)",
+          "msg": "✓ Queries the task table",
+          "required": true,
+          "failMsg": "✗ Must query the 'task' table using GlideRecord",
+          "flags": "i"
+        },
+        {
+          "pattern": "addQuery\\s*\\(\\s*['\"]parent['\"]",
+          "msg": "✓ Filters by parent field",
+          "required": true,
+          "failMsg": "✗ Must filter by parent field to find child tasks",
+          "flags": "i"
+        },
+        {
+          "pattern": "addQuery\\s*\\(\\s*['\"]active['\"]\\s*,\\s*true\\s*\\)",
+          "msg": "✓ Checks for active tasks",
+          "required": true,
+          "failMsg": "✗ Must check for active=true to find open tasks",
+          "flags": "i"
+        },
+        {
+          "pattern": "\\.query\\s*\\(\\s*\\)",
+          "msg": "✓ Executes the query",
+          "required": true,
+          "failMsg": "✗ Must call .query() to execute",
+          "flags": ""
+        },
+        {
+          "pattern": "hasNext\\s*\\(\\s*\\)|next\\s*\\(\\s*\\)|getRowCount\\s*\\(\\s*\\)",
+          "msg": "✓ Checks if results exist",
+          "required": true,
+          "failMsg": "✗ Must check if any matching records exist (hasNext/next/getRowCount)",
+          "flags": ""
+        },
+        {
+          "pattern": "setAbortAction\\s*\\(\\s*true\\s*\\)",
+          "msg": "✓ Aborts the operation",
+          "required": true,
+          "failMsg": "✗ Must call current.setAbortAction(true) to prevent closing",
+          "flags": ""
+        },
+        {
+          "pattern": "addErrorMessage|addInfoMessage",
+          "msg": "✓ Displays user message",
+          "required": false,
+          "failMsg": "⚠ Consider adding gs.addErrorMessage() to inform the user",
+          "flags": ""
+        }
+      ],
+      "modelAnswer": "var childTasks = new GlideRecord('task');\nchildTasks.addQuery('parent', current.sys_id);\nchildTasks.addQuery('active', true);\nchildTasks.query();\n\nif (childTasks.hasNext()) {\n    current.setAbortAction(true);\n    gs.addErrorMessage('Cannot close: there are ' + childTasks.getRowCount() + ' open child tasks.');\n}",
+      "explanation": "This Before BR queries active child tasks linked via the parent field. If any exist, it aborts the close operation and notifies the user."
+    },
+    {
+      "id": "scr-m5",
+      "q": "Write a Script Include function that accepts a user sys_id and returns the count of incidents assigned to that user in the last 30 days. Use GlideAggregate for efficiency.",
+      "type": "scripting",
+      "difficulty": "medium",
+      "code": "var IncidentUtils = Class.create();\nIncidentUtils.prototype = {\n    initialize: function() {},\n\n    getRecentIncidentCount: function(userSysId) {\n        // Your code here\n\n    },\n\n    type: 'IncidentUtils'\n};\n",
+      "checks": [
+        {
+          "pattern": "GlideAggregate\\s*\\(\\s*['\"]incident['\"]\\s*\\)",
+          "msg": "✓ Uses GlideAggregate on incident table",
+          "required": true,
+          "failMsg": "✗ Must use GlideAggregate (not GlideRecord) for counting",
+          "flags": "i"
+        },
+        {
+          "pattern": "addQuery\\s*\\(\\s*['\"]assigned_to['\"]",
+          "msg": "✓ Filters by assigned_to",
+          "required": true,
+          "failMsg": "✗ Must filter by assigned_to field",
+          "flags": "i"
+        },
+        {
+          "pattern": "addAggregate\\s*\\(\\s*['\"]COUNT['\"]\\s*\\)",
+          "msg": "✓ Adds COUNT aggregate",
+          "required": true,
+          "failMsg": "✗ Must call addAggregate('COUNT')",
+          "flags": "i"
+        },
+        {
+          "pattern": "addEncodedQuery|addQuery.*opened_at|addQuery.*sys_created_on|javascript:gs\\.daysAgoStart",
+          "msg": "✓ Applies date filter for last 30 days",
+          "required": true,
+          "failMsg": "✗ Must filter for last 30 days (use gs.daysAgoStart(30) or equivalent)",
+          "flags": "i"
+        },
+        {
+          "pattern": "\\.query\\s*\\(\\s*\\)",
+          "msg": "✓ Executes the query",
+          "required": true,
+          "failMsg": "✗ Must call .query()",
+          "flags": ""
+        },
+        {
+          "pattern": "getAggregate\\s*\\(\\s*['\"]COUNT['\"]\\s*\\)",
+          "msg": "✓ Retrieves the count",
+          "required": true,
+          "failMsg": "✗ Must call getAggregate('COUNT') to get the result",
+          "flags": "i"
+        },
+        {
+          "pattern": "return",
+          "msg": "✓ Returns a value",
+          "required": true,
+          "failMsg": "✗ Must return the count value",
+          "flags": ""
+        }
+      ],
+      "modelAnswer": "getRecentIncidentCount: function(userSysId) {\n    var ga = new GlideAggregate('incident');\n    ga.addQuery('assigned_to', userSysId);\n    ga.addQuery('opened_at', '>=', gs.daysAgoStart(30));\n    ga.addAggregate('COUNT');\n    ga.query();\n    if (ga.next()) {\n        return parseInt(ga.getAggregate('COUNT'), 10);\n    }\n    return 0;\n}",
+      "explanation": "GlideAggregate performs the COUNT at the database level — much more efficient than loading records with GlideRecord. The date filter uses gs.daysAgoStart(30) to get the start of the day 30 days ago."
+    },
+    {
+      "id": "scr-h1",
+      "q": "A developer reports that their Before Business Rule on the incident table works in the global scope but breaks when moved to a scoped app. The rule accesses current.caller_id.email. What is the most likely cause?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Dot-walking across reference fields in scoped apps requires explicit access to the target table; the scope may lack read access to sys_user",
+        "Scoped apps cannot use Before Business Rules",
+        "The current object is not available in scoped apps",
+        "Email fields are encrypted in scoped apps"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "In scoped applications, cross-table access via dot-walking (current.caller_id.email) requires that the scoped app has explicit read access to the target table (sys_user). Without it, the dot-walk returns null."
+    },
+    {
+      "id": "scr-h2",
+      "q": "You need to update 50,000 incident records in a production instance without impacting performance. What is the safest approach?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use GlideRecord with setLimit() in batches, wrapped in a Scheduled Job, with setWorkflow(false) and autoSysFields(false) to minimize side effects",
+        "Use a single GlideRecord query with no limit and call updateMultiple()",
+        "Export to Excel, modify, and reimport",
+        "Use a Fix Script that runs synchronously during business hours"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Batch processing with setLimit() prevents memory issues. setWorkflow(false) skips Business Rules on each update. autoSysFields(false) preserves sys_updated_by/on. Running via Scheduled Job allows off-hours execution."
+    },
+    {
+      "id": "scr-h3",
+      "q": "Write a GlideAjax-compatible Script Include that: (1) Accepts a table name and encoded query from the client, (2) Returns a JSON object with the record count AND the first 5 matching sys_ids, (3) Includes input validation to prevent injection.",
+      "type": "scripting",
+      "difficulty": "hard",
+      "code": "var SafeQueryAjax = Class.create();\nSafeQueryAjax.prototype = Object.extendsObject(AbstractAjaxProcessor, {\n\n    getFilteredResults: function() {\n        // Your code here\n\n    },\n\n    type: 'SafeQueryAjax'\n});\n",
+      "checks": [
+        {
+          "pattern": "getParameter\\s*\\(\\s*['\"]sysparm_",
+          "msg": "✓ Reads client parameters via getParameter",
+          "required": true,
+          "failMsg": "✗ Must use this.getParameter('sysparm_...') to read client params",
+          "flags": "i"
+        },
+        {
+          "pattern": "GlideRecord|GlideAggregate",
+          "msg": "✓ Uses server-side record API",
+          "required": true,
+          "failMsg": "✗ Must use GlideRecord or GlideAggregate to query records",
+          "flags": "i"
+        },
+        {
+          "pattern": "addEncodedQuery",
+          "msg": "✓ Uses encoded query for filtering",
+          "required": true,
+          "failMsg": "✗ Must use addEncodedQuery() to apply the client's filter",
+          "flags": "i"
+        },
+        {
+          "pattern": "setLimit\\s*\\(\\s*5\\s*\\)",
+          "msg": "✓ Limits results to 5",
+          "required": true,
+          "failMsg": "✗ Must setLimit(5) to return only first 5 results",
+          "flags": "i"
+        },
+        {
+          "pattern": "JSON\\.stringify|json",
+          "msg": "✓ Returns JSON response",
+          "required": true,
+          "failMsg": "✗ Must return a JSON-formatted response",
+          "flags": "i"
+        },
+        {
+          "pattern": "!.*table|table\\s*==|typeof|validate|whitelist|indexOf|includes|GlideTableDescriptor|tableExists",
+          "msg": "✓ Validates input",
+          "required": true,
+          "failMsg": "✗ Must validate table name input to prevent injection",
+          "flags": "i"
+        },
+        {
+          "pattern": "\\.query\\s*\\(\\s*\\)",
+          "msg": "✓ Executes query",
+          "required": true,
+          "failMsg": "✗ Must call .query()",
+          "flags": ""
+        }
+      ],
+      "modelAnswer": "getFilteredResults: function() {\n    var tableName = this.getParameter('sysparm_table');\n    var encodedQuery = this.getParameter('sysparm_query') || '';\n\n    // Validate table exists\n    if (!tableName || !new GlideRecord(tableName).isValid()) {\n        return JSON.stringify({error: 'Invalid table', count: 0, sysIds: []});\n    }\n\n    // Get count via GlideAggregate\n    var ga = new GlideAggregate(tableName);\n    ga.addEncodedQuery(encodedQuery);\n    ga.addAggregate('COUNT');\n    ga.query();\n    var count = 0;\n    if (ga.next()) count = parseInt(ga.getAggregate('COUNT'), 10);\n\n    // Get first 5 sys_ids\n    var sysIds = [];\n    var gr = new GlideRecord(tableName);\n    gr.addEncodedQuery(encodedQuery);\n    gr.setLimit(5);\n    gr.query();\n    while (gr.next()) sysIds.push(gr.getUniqueValue());\n\n    return JSON.stringify({count: count, sysIds: sysIds});\n}",
+      "explanation": "This pattern separates counting (GlideAggregate for performance) from data retrieval (GlideRecord with setLimit). Input validation using isValid() on GlideRecord prevents querying non-existent or unauthorized tables."
+    },
+    {
+      "id": "scr-h4",
+      "q": "SCENARIO: A customer reports that their Assignment Rule for Incident isn't firing. They say the rule worked last week. The rule assigns incidents to a specific group when the Category is 'Network'. Debug this: Write a diagnostic script that checks all Assignment Rules on the Incident table, logs their conditions and order, and identifies potential conflicts.",
+      "type": "scenario",
+      "difficulty": "hard",
+      "code": "// Diagnostic Script — Run in Scripts Background\n// Goal: Find all Assignment Rules on Incident,\n// log their order and conditions, flag conflicts\n\n",
+      "checks": [
+        {
+          "pattern": "GlideRecord\\s*\\(\\s*['\"]sysrule_assignment['\"]\\s*\\)",
+          "msg": "✓ Queries the Assignment Rule table (sysrule_assignment)",
+          "required": true,
+          "failMsg": "✗ Must query 'sysrule_assignment' to find assignment rules",
+          "flags": "i"
+        },
+        {
+          "pattern": "addQuery\\s*\\(\\s*['\"]table['\"].*['\"]incident['\"]\\s*\\)",
+          "msg": "✓ Filters for Incident table rules",
+          "required": true,
+          "failMsg": "✗ Must filter for rules on the 'incident' table",
+          "flags": "i"
+        },
+        {
+          "pattern": "order|Order|orderBy",
+          "msg": "✓ Considers rule execution order",
+          "required": true,
+          "failMsg": "✗ Must examine the order field — rule precedence matters for conflicts",
+          "flags": "i"
+        },
+        {
+          "pattern": "condition|script|filter",
+          "msg": "✓ Examines rule conditions",
+          "required": true,
+          "failMsg": "✗ Must log or examine the condition/script/filter of each rule",
+          "flags": "i"
+        },
+        {
+          "pattern": "active",
+          "msg": "✓ Checks active status",
+          "required": true,
+          "failMsg": "✗ Must check if rules are active — an inactive rule could explain the failure",
+          "flags": "i"
+        },
+        {
+          "pattern": "gs\\.log|gs\\.info|gs\\.print|gs\\.debug|console",
+          "msg": "✓ Logs diagnostic output",
+          "required": true,
+          "failMsg": "✗ Must log findings for analysis",
+          "flags": "i"
+        }
+      ],
+      "modelAnswer": "var gr = new GlideRecord('sysrule_assignment');\ngr.addQuery('table', 'incident');\ngr.orderBy('order');\ngr.query();\n\nvar ruleCount = 0;\nvar networkRules = [];\n\nwhile (gr.next()) {\n    ruleCount++;\n    var info = 'Rule: ' + gr.name + ' | Order: ' + gr.order + \n               ' | Active: ' + gr.active + \n               ' | Group: ' + gr.assignment_group.getDisplayValue() + \n               ' | Condition: ' + gr.condition;\n    gs.info(info);\n    \n    if (gr.condition.indexOf('Network') > -1 || \n        gr.script.indexOf('Network') > -1) {\n        networkRules.push(gr.name + ' (order: ' + gr.order + ', active: ' + gr.active + ')');\n    }\n}\n\ngs.info('=== SUMMARY ===');\ngs.info('Total rules on Incident: ' + ruleCount);\ngs.info('Network-related rules: ' + networkRules.join(', '));\nif (networkRules.length > 1) {\n    gs.info('⚠ CONFLICT: Multiple rules match Network category — check order precedence');\n}",
+      "explanation": "This diagnostic approach systematically reveals: which rules exist, their execution order, which are active, and whether multiple rules compete for 'Network' category incidents. The most common cause of 'stopped working' is a new rule with higher priority overriding the existing one."
+    },
+    {
+      "id": "scr-m6",
+      "q": "SCENARIO: A user clicks a UI Action button 'Escalate' on an Incident form. Write the server-side script for the UI Action that: (1) Changes priority to 1-Critical, (2) Adds a work note documenting the escalation with the current user's name and timestamp, (3) Triggers an event for notification.",
+      "type": "scenario",
+      "difficulty": "medium",
+      "code": "// UI Action — Server-side script\n// Runs when user clicks 'Escalate' button on Incident form\n\n",
+      "checks": [
+        {
+          "pattern": "current\\.priority\\s*=\\s*['\"]?1['\"]?",
+          "msg": "✓ Sets priority to Critical (1)",
+          "required": true,
+          "failMsg": "✗ Must set current.priority = 1 (Critical)",
+          "flags": "i"
+        },
+        {
+          "pattern": "work_notes|comments",
+          "msg": "✓ Adds a work note",
+          "required": true,
+          "failMsg": "✗ Must add a work note documenting the escalation",
+          "flags": "i"
+        },
+        {
+          "pattern": "gs\\.getUserDisplayName\\(\\)|gs\\.getUser\\(\\)|user_name",
+          "msg": "✓ Captures current user info",
+          "required": true,
+          "failMsg": "✗ Should include the current user's name in the work note",
+          "flags": "i"
+        },
+        {
+          "pattern": "current\\.update\\(\\)",
+          "msg": "✓ Updates the record",
+          "required": true,
+          "failMsg": "✗ Must call current.update() to save changes",
+          "flags": "i"
+        },
+        {
+          "pattern": "gs\\.eventQueue|eventQueue",
+          "msg": "✓ Fires an event for notifications",
+          "required": true,
+          "failMsg": "✗ Must use gs.eventQueue() to trigger a notification event",
+          "flags": "i"
+        }
+      ],
+      "modelAnswer": "current.priority = 1;\ncurrent.work_notes = 'Incident escalated to Critical by ' + gs.getUserDisplayName() + ' on ' + new GlideDateTime().getDisplayValue();\ncurrent.update();\n\ngs.eventQueue('incident.escalated', current, gs.getUserID(), gs.getUserDisplayName());",
+      "explanation": "The UI Action sets priority, documents the action via work_notes (not comments — work notes are internal), and fires a custom event. The event can be mapped to a Notification or Flow Designer trigger."
+    }
+  ],
+  "modules": [
+    {
+      "id": "mod-e1",
+      "q": "What is the primary purpose of the Service Catalog in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "To provide a self-service portal for users to request services and items",
+        "To store CMDB configuration items",
+        "To manage incidents and problems",
+        "To configure email notifications"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Service Catalog provides a self-service storefront where users can browse and request services, hardware, software, and other items."
+    },
+    {
+      "id": "mod-e2",
+      "q": "Which module is used to track and manage known errors and root causes?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Problem Management",
+        "Incident Management",
+        "Change Management",
+        "Knowledge Management"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Problem Management tracks the root causes of incidents. Known Errors are documented as Problem records with workarounds."
+    },
+    {
+      "id": "mod-e3",
+      "q": "What does ITOM stand for?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "IT Operations Management",
+        "IT Order Management",
+        "IT Onboarding Module",
+        "IT Optimization Management"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ITOM (IT Operations Management) includes Discovery, Event Management, Service Mapping, and Cloud Management."
+    },
+    {
+      "id": "mod-m1",
+      "q": "In ITSM, what is the relationship between Incident, Problem, and Change?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Incidents reveal symptoms, Problems identify root causes, and Changes implement fixes — they link via related records",
+        "They are three names for the same process",
+        "Incidents create Changes which create Problems",
+        "Problems are a subset of the Incident table"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ITIL workflow: Incidents identify disruptions → Problem Management finds root causes → Change Management implements permanent fixes. They are separate processes linked through record relationships."
+    },
+    {
+      "id": "mod-m2",
+      "q": "What is the difference between a Standard Change and a Normal Change?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Standard Changes are pre-approved low-risk changes with documented procedures; Normal Changes require CAB approval and risk assessment",
+        "Standard Changes are only for hardware; Normal Changes are for software",
+        "Standard Changes don't require documentation",
+        "Normal Changes are emergency only"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Standard Changes are repeatable, low-risk, and pre-authorized (e.g., password resets, standard software installs). Normal Changes follow the full approval workflow including CAB review."
+    },
+    {
+      "id": "mod-m3",
+      "q": "How does Service Mapping differ from Discovery?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Discovery finds individual CIs; Service Mapping discovers the relationships and dependencies between CIs to build a service model",
+        "They are the same module with different names",
+        "Service Mapping only works for cloud services",
+        "Discovery builds service models automatically"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Discovery identifies individual CIs (servers, applications, etc.). Service Mapping traces connections between CIs to build end-to-end service maps showing how components support business services."
+    },
+    {
+      "id": "mod-h1",
+      "q": "A customer has 200 catalog items with inconsistent variable naming, no variable sets, and each item has its own unique workflow. How would you rationalize this into a scalable architecture?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Create standardized variable sets for common fields, implement a catalog item taxonomy, consolidate workflows into parameterized Flow Designer flows, and use catalog client scripts at the variable set level",
+        "Delete all items and start over",
+        "Convert all catalog items to record producers",
+        "Merge all items into a single catalog item with conditional fields"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Variable sets eliminate duplication (address fields, approval fields, etc.). Flow Designer flows with input variables replace per-item workflows. A taxonomy (categories, subcategories) enables governance at scale."
+    },
+    {
+      "id": "mod-h2",
+      "q": "Your ITOM Event Management is generating 50,000 alerts per day but only 2% create incidents. How do you optimize the signal-to-noise ratio?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Implement alert aggregation rules, configure alert correlation to group related alerts, tune severity mapping with the operations team, set up alert suppression for known maintenance windows, and establish event transform maps to normalize source data",
+        "Disable all alerts and only use manual incident creation",
+        "Set all alerts to the same severity level",
+        "Create a Business Rule to auto-close all alerts"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Event Management optimization requires: alert aggregation (grouping duplicates), correlation (linking related events), severity tuning (working with ops to define what matters), maintenance window suppression, and source normalization."
+    }
+  ],
+  "fundamentals": [
+    {
+      "id": "fun-e1",
+      "q": "What is a table in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A structured collection of records, similar to a database table, that stores specific types of data",
+        "A visual form layout",
+        "A dashboard component",
+        "A scripting engine"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Tables in ServiceNow store records (rows) with fields (columns). They are the backbone of the platform — every module is built on tables."
+    },
+    {
+      "id": "fun-e2",
+      "q": "What is the difference between a UI Policy and a Client Script?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "UI Policies are no-code/low-code for form field behavior; Client Scripts require JavaScript for more complex client-side logic",
+        "They are identical in function",
+        "UI Policies run on the server",
+        "Client Scripts cannot modify form fields"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "UI Policies provide a no-code way to set fields mandatory/visible/read-only based on conditions. Client Scripts use JavaScript for complex logic like GlideAjax calls and dynamic behavior."
+    },
+    {
+      "id": "fun-e3",
+      "q": "What is a sys_id?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A 32-character unique identifier assigned to every record in ServiceNow",
+        "The login ID for system administrators",
+        "A script identifier",
+        "A table name prefix"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Every record in ServiceNow has a sys_id — a 32-character GUID that uniquely identifies it across the platform."
+    },
+    {
+      "id": "fun-m1",
+      "q": "What is the evaluation order of client-side mechanisms when a form loads?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Client Scripts (onLoad) → UI Policies → Data Policies (if run on client) → ACLs (field-level)",
+        "UI Policies → Client Scripts → ACLs → Data Policies",
+        "ACLs → Data Policies → UI Policies → Client Scripts",
+        "All execute simultaneously"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "On form load: onLoad Client Scripts fire first, then UI Policies evaluate their conditions. Data Policies with 'Use as UI Policy on client' apply next. ACLs control field-level read/write access throughout."
+    },
+    {
+      "id": "fun-m2",
+      "q": "What is the difference between addQuery() and addEncodedQuery() in GlideRecord?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "addQuery() adds a single condition; addEncodedQuery() accepts a full query string supporting complex AND/OR logic and operators",
+        "addEncodedQuery() is faster than addQuery()",
+        "addQuery() works server-side only; addEncodedQuery() works client-side only",
+        "They produce different database queries"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "addQuery() is used for simple conditions (field, operator, value). addEncodedQuery() accepts the string format visible in the list filter URL, supporting complex nested AND/OR groups."
+    },
+    {
+      "id": "fun-h1",
+      "q": "Explain the complete server-side execution order when a user submits a form to update an Incident record. Include all mechanisms that fire.",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "ACL check → Data Policy validation → Before Business Rules → Database operation → After Business Rules → Async Business Rules → Workflow/Flow trigger → Notifications → Display Business Rules (on next load)",
+        "Before BR → Database → After BR → Done",
+        "Client Script → Server Script → Database → Done",
+        "The order is random and depends on server load"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The full server-side chain: ACLs verify write access → Data Policies validate field requirements → Before BRs execute (can modify/abort) → Database UPDATE occurs → After BRs execute → Async BRs queue → Workflows/Flows trigger → Notification rules evaluate → Display BRs fire on the next form load."
+    },
+    {
+      "id": "fun-h2",
+      "q": "A customer reports that a field set to mandatory by a UI Policy can still be submitted as empty. What are ALL possible causes?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "The submit was triggered by a server-side operation (skipping client logic), a Client Script is overriding the UI Policy, or the browser's developer tools were used to bypass the mandatory check — Data Policies should enforce server-side",
+        "UI Policies are always enforced and this cannot happen",
+        "The user must have the admin role",
+        "The mandatory setting was probably not saved"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "UI Policies are client-side only — they can be bypassed by direct API calls, web services, Business Rules calling update(), or browser manipulation. Data Policies with the 'Apply to import sets' option enforce server-side. A matching Client Script running after the UI Policy could also clear the mandatory flag."
+    }
+  ],
+  "csa": [
+    {
+      "id": "csa-e1",
+      "q": "Which base system role provides access to create and modify records in most tables?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "itil",
+        "admin",
+        "snc_internal",
+        "user_admin"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The 'itil' role is the base role for IT Service Management that grants access to create and modify records in ITSM tables."
+    },
+    {
+      "id": "csa-e2",
+      "q": "What is the purpose of an Update Set in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "To capture and transport customizations between instances",
+        "To update records in bulk",
+        "To set field update rules",
+        "To schedule system updates"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Update Sets track configuration changes (not data) made in an instance, allowing you to move customizations from dev → test → prod."
+    },
+    {
+      "id": "csa-e3",
+      "q": "How do you make a field mandatory using a UI Policy?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Create a UI Policy with the condition, then add a UI Policy Action setting the field to Mandatory = true",
+        "Write a Client Script with g_form.setMandatory()",
+        "Modify the dictionary entry directly",
+        "Use a Business Rule to set the field"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "UI Policies are the no-code approach: set a condition (e.g., Priority = 1), then add an Action setting the target field's Mandatory attribute to true."
+    },
+    {
+      "id": "csa-m1",
+      "q": "What is the difference between a Catalog Client Script and a regular Client Script?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Catalog Client Scripts run on Service Catalog item forms and use g_form to interact with catalog variables; regular Client Scripts run on standard platform forms",
+        "Catalog Client Scripts run on the server",
+        "Regular Client Scripts cannot access form fields",
+        "They are identical but stored in different tables"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Catalog Client Scripts execute in the Service Catalog context — they interact with catalog variables (not table fields) using the same g_form API but target variable names instead of column names."
+    },
+    {
+      "id": "csa-m2",
+      "q": "When would you use a Scheduled Job vs a Flow Designer Scheduled Flow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Scheduled Jobs are for script-based recurring tasks; Scheduled Flows are no-code/low-code and integrate with Flow Designer actions, approvals, and subflows",
+        "Scheduled Jobs are deprecated",
+        "Flow Designer cannot schedule executions",
+        "They are identical in capability"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Scheduled Jobs require scripting and are best for data maintenance scripts. Scheduled Flows leverage Flow Designer's visual builder with built-in actions, error handling, and integration capabilities."
+    },
+    {
+      "id": "csa-m3",
+      "q": "Write a Client Script (onChange) that shows a confirmation dialog when a user changes the Priority to '1 - Critical'. If the user cancels, revert the Priority to its previous value.",
+      "type": "scripting",
+      "difficulty": "medium",
+      "code": "// Client Script — onChange\n// Field: priority\n// Table: incident\n\nfunction onChange(control, oldValue, newValue, isLoading) {\n    if (isLoading || newValue === '') return;\n\n    // Your code here\n\n}\n",
+      "checks": [
+        {
+          "pattern": "newValue\\s*==\\s*['\"]1['\"]",
+          "msg": "✓ Checks if new value is Critical (1)",
+          "required": true,
+          "failMsg": "✗ Must check if newValue equals '1' (Critical priority)",
+          "flags": "i"
+        },
+        {
+          "pattern": "confirm\\s*\\(",
+          "msg": "✓ Shows confirmation dialog",
+          "required": true,
+          "failMsg": "✗ Must use confirm() to ask the user to verify the change",
+          "flags": "i"
+        },
+        {
+          "pattern": "g_form\\.setValue\\s*\\(\\s*['\"]priority['\"]",
+          "msg": "✓ Reverts value using g_form.setValue",
+          "required": true,
+          "failMsg": "✗ Must use g_form.setValue('priority', oldValue) to revert on cancel",
+          "flags": "i"
+        },
+        {
+          "pattern": "oldValue",
+          "msg": "✓ Uses oldValue for reverting",
+          "required": true,
+          "failMsg": "✗ Must reference oldValue to restore the previous priority",
+          "flags": ""
+        }
+      ],
+      "modelAnswer": "function onChange(control, oldValue, newValue, isLoading) {\n    if (isLoading || newValue === '') return;\n\n    if (newValue == '1') {\n        var confirmed = confirm('You are setting this incident to Critical priority. This will trigger escalation notifications. Continue?');\n        if (!confirmed) {\n            g_form.setValue('priority', oldValue);\n        }\n    }\n}",
+      "explanation": "The onChange script fires when Priority changes. We check if the new value is '1' (Critical), show a confirm dialog, and revert to oldValue if the user cancels. The isLoading guard prevents the dialog from firing on form load."
+    },
+    {
+      "id": "csa-h1",
+      "q": "A customer needs to migrate 500 customizations across 3 instances (dev → test → prod) with strict change control. Some customizations span multiple update sets and have dependencies. What is the recommended migration strategy?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use Update Set batching to group related update sets with dependency ordering, implement a merge update set for cross-set dependencies, preview in test first to identify collisions, and establish a backout plan with update set reversion",
+        "Move each update set individually in random order",
+        "Export all customizations as XML and import manually",
+        "Use direct database replication between instances"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Update Set batching groups related sets with explicit ordering. Merge update sets resolve cross-set dependencies. Preview identifies collisions (same-name records modified in multiple sets). Backout plans use update set backing out for rollback safety."
+    }
+  ],
+  "csm": [
+    {
+      "id": "csm-e1",
+      "q": "What is the primary purpose of Customer Service Management (CSM) in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "To manage customer interactions, cases, and service experiences across multiple channels",
+        "To manage internal IT incidents only",
+        "To handle employee onboarding",
+        "To manage software licenses"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSM provides a platform for managing customer-facing service operations including case management, self-service portals, and multi-channel communication."
+    },
+    {
+      "id": "csm-e2",
+      "q": "What is an Account in CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A record representing a company or organization that is a customer",
+        "A user login credential",
+        "A financial billing record",
+        "A type of service catalog item"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "In CSM, an Account (customer_account table) represents an external organization that your company provides services to."
+    },
+    {
+      "id": "csm-m1",
+      "q": "Explain the relationship between Account, Contact, Consumer, and Case in CSM.",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "An Account is the organization; Contacts are people at that organization; Consumers are B2C individuals; Cases track service requests linked to any of these",
+        "They are all the same table with different views",
+        "Contacts and Consumers are identical",
+        "Cases can only be linked to Accounts, not individuals"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSM data model: Accounts (B2B organizations) have Contacts (people at those orgs). Consumers are B2C individuals. Cases can be opened by/for any of these, with relationships tracked through the case record."
+    },
+    {
+      "id": "csm-m2",
+      "q": "What is Major Issue Management in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A process for managing widespread service issues affecting multiple customers by linking child cases to a parent case for coordinated resolution and communication",
+        "A tool for managing P1 incidents only",
+        "A separate application from CSM",
+        "A reporting dashboard for escalated cases"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Major Issue Management creates a parent case for a widespread issue and links affected customer cases as children. Updates and resolutions flow from parent to child cases, ensuring consistent communication."
+    },
+    {
+      "id": "csm-h1",
+      "q": "A CSM customer wants to implement proactive customer service that automatically creates cases when monitoring detects an issue affecting their service BEFORE the customer reports it. What is the architecture?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Integrate Event Management with CSM using event-to-case mapping rules, leverage Service Mapping to identify affected customers, and auto-create cases with proactive messaging via the customer portal and email notifications",
+        "Wait for customers to report issues and then create cases",
+        "Create a scheduled job to check for issues daily",
+        "Use a chatbot to ask customers if they have issues"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Proactive CSM architecture: Event Management detects infrastructure issues → Service Mapping identifies affected business services and linked customers → Automated case creation with customer-specific impact details → Proactive notifications via portal, email, and SMS before the customer is impacted."
+    }
+  ],
+  "grc": [
+    {
+      "id": "grc-e1",
+      "q": "What does GRC stand for in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Governance, Risk, and Compliance",
+        "General Record Configuration",
+        "Global Resource Center",
+        "Group Role Control"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "GRC stands for Governance, Risk, and Compliance — a suite of applications for managing organizational risks, policies, and regulatory compliance."
+    },
+    {
+      "id": "grc-e2",
+      "q": "What is a Policy in ServiceNow GRC?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A formal statement of rules that an organization must follow, tracked as records with acknowledgment and compliance status",
+        "A Business Rule configuration",
+        "A system property",
+        "A type of ACL"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "GRC Policies are formal organizational rules tracked in ServiceNow. They include lifecycle management, acknowledgment tracking, and compliance verification."
+    },
+    {
+      "id": "grc-m1",
+      "q": "What is the Unified Compliance Framework (UCF) in ServiceNow GRC?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A library of mapped controls across regulatory frameworks (SOX, HIPAA, GDPR, etc.) that enables control harmonization and reduces redundant compliance activities",
+        "A single compliance policy",
+        "A type of risk scoring model",
+        "An integration tool for third-party compliance systems"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "UCF provides a pre-built library of common controls mapped across multiple regulatory frameworks. This allows organizations to implement one control that satisfies requirements from multiple regulations simultaneously."
+    },
+    {
+      "id": "grc-h1",
+      "q": "A financial services company needs to implement continuous control monitoring with automated evidence collection across 5 regulatory frameworks. How would you architect this in ServiceNow GRC?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Map controls across frameworks using UCF for harmonization, implement control tests with automated data collection via Integration Hub, set up continuous monitoring with scheduled test runs, configure automated evidence attachment and scoring, and build regulatory-specific dashboards with PA",
+        "Manually test each control quarterly",
+        "Create separate GRC implementations for each framework",
+        "Use spreadsheets for evidence collection and import monthly"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Continuous monitoring architecture: UCF harmonizes controls across frameworks (one control, multiple regulations). Integration Hub automates evidence collection. Scheduled test execution provides continuous assessment. Automated scoring highlights gaps. Performance Analytics dashboards give regulatory-specific views."
+    }
+  ]
+}
