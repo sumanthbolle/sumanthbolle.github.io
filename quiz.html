@@ -840,7 +840,9 @@ function selectCategory(key) {
   modeOpts.innerHTML = '';
   
   cat.modes.forEach(mode => {
-    const questions = QUESTIONS[key] || [];
+    const questions = difficultyFilter === 'all'
+      ? (QUESTIONS[key] || [])
+      : (QUESTIONS[key] || []).filter(q => q.difficulty === difficultyFilter);
     const availableCount = questions.length;
     let count = mode.count;
     if (count === 'all') count = availableCount;
