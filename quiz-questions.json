@@ -2,51 +2,51 @@
   "architecture": [
     {
       "id": "arch-e1",
-      "q": "What is the execution order of Business Rules when a record is inserted?",
+      "q": "What is a ServiceNow instance?",
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "before → after → async → display",
-        "display → before → after → async",
-        "before → display → after → async",
-        "async → before → after → display"
+        "A dedicated environment with its own database, application server, and URL",
+        "A shared server with multiple tenants",
+        "A browser plugin for accessing ServiceNow",
+        "A mobile application installed locally"
       ],
       "correct": [
         0
       ],
-      "explanation": "Business Rules execute in the order: before → after → async → display when a record is inserted."
+      "explanation": "Each ServiceNow instance is a completely isolated environment with its own database, application logic, and unique URL (e.g., company.service-now.com)."
     },
     {
       "id": "arch-e2",
-      "q": "Which table stores all configuration items in ServiceNow?",
+      "q": "What is the CMDB in ServiceNow?",
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "cmdb_ci",
-        "sys_ci",
-        "cmdb",
-        "configuration_item"
+        "Configuration Management Database \u2014 stores information about IT assets and their relationships",
+        "Customer Management Database \u2014 stores customer records",
+        "Change Management Database \u2014 tracks all changes",
+        "Code Management Database \u2014 version control for scripts"
       ],
       "correct": [
         0
       ],
-      "explanation": "The cmdb_ci table is the base table for all Configuration Items in the CMDB."
+      "explanation": "The CMDB (Configuration Management Database) stores Configuration Items (CIs) and the relationships between them, forming the foundation for ITSM processes."
     },
     {
       "id": "arch-e3",
-      "q": "What is the purpose of a dictionary override?",
+      "q": "What is the purpose of the MID Server?",
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "To override field attributes on an extended table without changing the parent",
-        "To create new fields on a table",
-        "To delete fields from a parent table",
-        "To copy a table schema"
+        "To facilitate communication between the ServiceNow instance and resources on internal networks",
+        "To host the ServiceNow application",
+        "To store database backups",
+        "To serve as a load balancer"
       ],
       "correct": [
         0
       ],
-      "explanation": "Dictionary overrides allow you to change field attributes (like mandatory, read-only, default value) on a child table without affecting the parent table definition."
+      "explanation": "The MID Server is a Java application on the local network that acts as a proxy between ServiceNow cloud and on-premise infrastructure for Discovery, Orchestration, and integrations."
     },
     {
       "id": "arch-e4",
@@ -126,7 +126,7 @@
       "correct": [
         0
       ],
-      "explanation": "Intermittent ATF failures between environments typically stem from data-dependent conditions — records in different states, ACLs evaluating differently due to different users/roles, or Business Rules behaving differently based on existing data."
+      "explanation": "Intermittent ATF failures between environments typically stem from data-dependent conditions \u2014 records in different states, ACLs evaluating differently due to different users/roles, or Business Rules behaving differently based on existing data."
     },
     {
       "id": "arch-m4",
@@ -159,6 +159,38 @@
         0
       ],
       "explanation": "To prevent recursion, use current.update() with setWorkflow(false) to skip BR re-execution, or implement a recursion guard using session-level flags via gs.getSession().putClientData()."
+    },
+    {
+      "id": "arch-m6",
+      "q": "What is the difference between a Scoped Application and a Global Application?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Scoped apps have their own namespace and restricted access to global APIs; global apps share the global namespace with full API access",
+        "Scoped apps run faster than global apps",
+        "Global apps cannot use Script Includes",
+        "Scoped apps are only for the Service Catalog"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Scoped applications run in an isolated namespace with controlled access to tables and APIs outside their scope. Global applications share the global namespace and have unrestricted access to all platform APIs."
+    },
+    {
+      "id": "arch-m7",
+      "q": "What is the ECC Queue used for?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Communication channel between the ServiceNow instance and MID Servers via input/output records",
+        "A message queue for email notifications",
+        "A task prioritization system",
+        "A debugging log for script execution"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The External Communication Channel (ECC) Queue manages bidirectional communication between the instance and MID Servers. Output records are commands sent to the MID Server; input records are responses."
     },
     {
       "id": "arch-h1",
@@ -223,6 +255,22 @@
         0
       ],
       "explanation": "CMDB remediation requires a systematic approach: audit first using Health dashboards, reconcile duplicates through IRE (Identification and Reconciliation Engine), fix identification rules with proper independent/dependent attributes, then execute phased cleanup with rollback safety nets."
+    },
+    {
+      "id": "arch-h5",
+      "q": "A global enterprise with 40,000 users reports that list view queries on the incident table (8M+ records) are timing out. What is the performance remediation architecture?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Implement table rotation/archiving to reduce active table size, add database indexes on frequently queried columns, optimize ACL evaluation by reducing complex script-based ACLs, and enable query business rules to enforce mandatory filters",
+        "Increase the instance hardware allocation",
+        "Delete old incident records directly from the database",
+        "Disable all Business Rules on the incident table"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Table archiving moves historical data to archive tables. Database indexes accelerate query performance. Script-based ACLs evaluate per-row and are expensive at scale \u2014 converting to condition-based ACLs improves performance. Query Business Rules can enforce base filters to reduce result set sizes."
     }
   ],
   "scripting": [
@@ -307,6 +355,22 @@
       "explanation": "gs.getUserID() returns the sys_id of the currently logged-in user in server-side scripts."
     },
     {
+      "id": "scr-e6",
+      "q": "Which object provides access to the current user's information on the client side?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "g_user",
+        "gs",
+        "current",
+        "g_form"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "g_user is the client-side GlideUser object that provides access to the current user's name, roles, and sys_id."
+    },
+    {
       "id": "scr-m1",
       "q": "What is the critical difference between current.update() and current.setAbortAction(true) when used in a Before Business Rule?",
       "type": "mcq",
@@ -320,7 +384,7 @@
       "correct": [
         0
       ],
-      "explanation": "current.update() in a Before BR initiates a NEW update operation (risk of infinite loop). setAbortAction(true) cancels the original pending operation entirely — no record is saved."
+      "explanation": "current.update() in a Before BR initiates a NEW update operation (risk of infinite loop). setAbortAction(true) cancels the original pending operation entirely \u2014 no record is saved."
     },
     {
       "id": "scr-m2",
@@ -336,7 +400,7 @@
       "correct": [
         0
       ],
-      "explanation": "getRowCount() iterates through the entire result set to count records. On large tables, use GlideAggregate with COUNT instead — it performs the count at the database level."
+      "explanation": "getRowCount() iterates through the entire result set to count records. On large tables, use GlideAggregate with COUNT instead \u2014 it performs the count at the database level."
     },
     {
       "id": "scr-m3",
@@ -355,124 +419,52 @@
       "explanation": "For GlideAjax to call a Script Include, the SI must extend AbstractAjaxProcessor (or be marked Client Callable) and callable functions should follow naming conventions to be accessible."
     },
     {
-      "id": "scr-m4",
-      "q": "Write a Business Rule script that prevents closing an Incident if it has open child tasks. Query the 'task' table for active children and abort with a message if any exist.",
-      "type": "scripting",
+      "id": "scr-m7",
+      "q": "What is the difference between getValue() and getDisplayValue() on a reference field?",
+      "type": "mcq",
       "difficulty": "medium",
-      "code": "// Before Business Rule on Incident table\n// Condition: current.state changes to 'Closed'\n\n",
-      "checks": [
-        {
-          "pattern": "GlideRecord\\s*\\(\\s*['\"]task['\"]\\s*\\)",
-          "msg": "✓ Queries the task table",
-          "required": true,
-          "failMsg": "✗ Must query the 'task' table using GlideRecord",
-          "flags": "i"
-        },
-        {
-          "pattern": "addQuery\\s*\\(\\s*['\"]parent['\"]",
-          "msg": "✓ Filters by parent field",
-          "required": true,
-          "failMsg": "✗ Must filter by parent field to find child tasks",
-          "flags": "i"
-        },
-        {
-          "pattern": "addQuery\\s*\\(\\s*['\"]active['\"]\\s*,\\s*true\\s*\\)",
-          "msg": "✓ Checks for active tasks",
-          "required": true,
-          "failMsg": "✗ Must check for active=true to find open tasks",
-          "flags": "i"
-        },
-        {
-          "pattern": "\\.query\\s*\\(\\s*\\)",
-          "msg": "✓ Executes the query",
-          "required": true,
-          "failMsg": "✗ Must call .query() to execute",
-          "flags": ""
-        },
-        {
-          "pattern": "hasNext\\s*\\(\\s*\\)|next\\s*\\(\\s*\\)|getRowCount\\s*\\(\\s*\\)",
-          "msg": "✓ Checks if results exist",
-          "required": true,
-          "failMsg": "✗ Must check if any matching records exist (hasNext/next/getRowCount)",
-          "flags": ""
-        },
-        {
-          "pattern": "setAbortAction\\s*\\(\\s*true\\s*\\)",
-          "msg": "✓ Aborts the operation",
-          "required": true,
-          "failMsg": "✗ Must call current.setAbortAction(true) to prevent closing",
-          "flags": ""
-        },
-        {
-          "pattern": "addErrorMessage|addInfoMessage",
-          "msg": "✓ Displays user message",
-          "required": false,
-          "failMsg": "⚠ Consider adding gs.addErrorMessage() to inform the user",
-          "flags": ""
-        }
+      "options": [
+        "getValue() returns the sys_id of the referenced record; getDisplayValue() returns the human-readable display value",
+        "getValue() is faster but less accurate",
+        "getDisplayValue() always triggers a database query",
+        "They return the same value for reference fields"
       ],
-      "modelAnswer": "var childTasks = new GlideRecord('task');\nchildTasks.addQuery('parent', current.sys_id);\nchildTasks.addQuery('active', true);\nchildTasks.query();\n\nif (childTasks.hasNext()) {\n    current.setAbortAction(true);\n    gs.addErrorMessage('Cannot close: there are ' + childTasks.getRowCount() + ' open child tasks.');\n}",
-      "explanation": "This Before BR queries active child tasks linked via the parent field. If any exist, it aborts the close operation and notifies the user."
+      "correct": [
+        0
+      ],
+      "explanation": "On a reference field, getValue() returns the raw sys_id stored in the field. getDisplayValue() returns the display value (e.g., the user's name instead of their sys_id)."
     },
     {
-      "id": "scr-m5",
-      "q": "Write a Script Include function that accepts a user sys_id and returns the count of incidents assigned to that user in the last 30 days. Use GlideAggregate for efficiency.",
-      "type": "scripting",
+      "id": "scr-m8",
+      "q": "When should you use gr.get() vs gr.addQuery() followed by gr.query()?",
+      "type": "mcq",
       "difficulty": "medium",
-      "code": "var IncidentUtils = Class.create();\nIncidentUtils.prototype = {\n    initialize: function() {},\n\n    getRecentIncidentCount: function(userSysId) {\n        // Your code here\n\n    },\n\n    type: 'IncidentUtils'\n};\n",
-      "checks": [
-        {
-          "pattern": "GlideAggregate\\s*\\(\\s*['\"]incident['\"]\\s*\\)",
-          "msg": "✓ Uses GlideAggregate on incident table",
-          "required": true,
-          "failMsg": "✗ Must use GlideAggregate (not GlideRecord) for counting",
-          "flags": "i"
-        },
-        {
-          "pattern": "addQuery\\s*\\(\\s*['\"]assigned_to['\"]",
-          "msg": "✓ Filters by assigned_to",
-          "required": true,
-          "failMsg": "✗ Must filter by assigned_to field",
-          "flags": "i"
-        },
-        {
-          "pattern": "addAggregate\\s*\\(\\s*['\"]COUNT['\"]\\s*\\)",
-          "msg": "✓ Adds COUNT aggregate",
-          "required": true,
-          "failMsg": "✗ Must call addAggregate('COUNT')",
-          "flags": "i"
-        },
-        {
-          "pattern": "addEncodedQuery|addQuery.*opened_at|addQuery.*sys_created_on|javascript:gs\\.daysAgoStart",
-          "msg": "✓ Applies date filter for last 30 days",
-          "required": true,
-          "failMsg": "✗ Must filter for last 30 days (use gs.daysAgoStart(30) or equivalent)",
-          "flags": "i"
-        },
-        {
-          "pattern": "\\.query\\s*\\(\\s*\\)",
-          "msg": "✓ Executes the query",
-          "required": true,
-          "failMsg": "✗ Must call .query()",
-          "flags": ""
-        },
-        {
-          "pattern": "getAggregate\\s*\\(\\s*['\"]COUNT['\"]\\s*\\)",
-          "msg": "✓ Retrieves the count",
-          "required": true,
-          "failMsg": "✗ Must call getAggregate('COUNT') to get the result",
-          "flags": "i"
-        },
-        {
-          "pattern": "return",
-          "msg": "✓ Returns a value",
-          "required": true,
-          "failMsg": "✗ Must return the count value",
-          "flags": ""
-        }
+      "options": [
+        "gr.get() is a shortcut for querying by sys_id or a single field value and returns only one record; addQuery/query supports complex multi-condition queries",
+        "gr.get() is deprecated and should never be used",
+        "addQuery/query can only return one record",
+        "gr.get() performs better on large result sets"
       ],
-      "modelAnswer": "getRecentIncidentCount: function(userSysId) {\n    var ga = new GlideAggregate('incident');\n    ga.addQuery('assigned_to', userSysId);\n    ga.addQuery('opened_at', '>=', gs.daysAgoStart(30));\n    ga.addAggregate('COUNT');\n    ga.query();\n    if (ga.next()) {\n        return parseInt(ga.getAggregate('COUNT'), 10);\n    }\n    return 0;\n}",
-      "explanation": "GlideAggregate performs the COUNT at the database level — much more efficient than loading records with GlideRecord. The date filter uses gs.daysAgoStart(30) to get the start of the day 30 days ago."
+      "correct": [
+        0
+      ],
+      "explanation": "gr.get(sysId) or gr.get('field', 'value') is a convenience method that queries and moves to the first matching record. Use addQuery/query when you need multiple conditions, encoded queries, or iteration over results."
+    },
+    {
+      "id": "scr-m9",
+      "q": "What does setWorkflow(false) do when called on a GlideRecord before update()?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Prevents Business Rules, workflows, and notifications from firing during the database operation",
+        "Disables the record from appearing in workflows permanently",
+        "Prevents the record from being included in update sets",
+        "Stops all client-side scripts from executing"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "setWorkflow(false) suppresses Business Rules, workflow activities, and notifications for that specific database operation. It's commonly used in data migration scripts and batch updates to avoid side effects."
     },
     {
       "id": "scr-h1",
@@ -507,163 +499,20 @@
       "explanation": "Batch processing with setLimit() prevents memory issues. setWorkflow(false) skips Business Rules on each update. autoSysFields(false) preserves sys_updated_by/on. Running via Scheduled Job allows off-hours execution."
     },
     {
-      "id": "scr-h3",
-      "q": "Write a GlideAjax-compatible Script Include that: (1) Accepts a table name and encoded query from the client, (2) Returns a JSON object with the record count AND the first 5 matching sys_ids, (3) Includes input validation to prevent injection.",
-      "type": "scripting",
+      "id": "scr-h5",
+      "q": "A Script Include uses gs.sleep(5000) inside a loop to throttle API calls. In production, this causes transaction timeouts. What is the correct pattern?",
+      "type": "mcq",
       "difficulty": "hard",
-      "code": "var SafeQueryAjax = Class.create();\nSafeQueryAjax.prototype = Object.extendsObject(AbstractAjaxProcessor, {\n\n    getFilteredResults: function() {\n        // Your code here\n\n    },\n\n    type: 'SafeQueryAjax'\n});\n",
-      "checks": [
-        {
-          "pattern": "getParameter\\s*\\(\\s*['\"]sysparm_",
-          "msg": "✓ Reads client parameters via getParameter",
-          "required": true,
-          "failMsg": "✗ Must use this.getParameter('sysparm_...') to read client params",
-          "flags": "i"
-        },
-        {
-          "pattern": "GlideRecord|GlideAggregate",
-          "msg": "✓ Uses server-side record API",
-          "required": true,
-          "failMsg": "✗ Must use GlideRecord or GlideAggregate to query records",
-          "flags": "i"
-        },
-        {
-          "pattern": "addEncodedQuery",
-          "msg": "✓ Uses encoded query for filtering",
-          "required": true,
-          "failMsg": "✗ Must use addEncodedQuery() to apply the client's filter",
-          "flags": "i"
-        },
-        {
-          "pattern": "setLimit\\s*\\(\\s*5\\s*\\)",
-          "msg": "✓ Limits results to 5",
-          "required": true,
-          "failMsg": "✗ Must setLimit(5) to return only first 5 results",
-          "flags": "i"
-        },
-        {
-          "pattern": "JSON\\.stringify|json",
-          "msg": "✓ Returns JSON response",
-          "required": true,
-          "failMsg": "✗ Must return a JSON-formatted response",
-          "flags": "i"
-        },
-        {
-          "pattern": "!.*table|table\\s*==|typeof|validate|whitelist|indexOf|includes|GlideTableDescriptor|tableExists",
-          "msg": "✓ Validates input",
-          "required": true,
-          "failMsg": "✗ Must validate table name input to prevent injection",
-          "flags": "i"
-        },
-        {
-          "pattern": "\\.query\\s*\\(\\s*\\)",
-          "msg": "✓ Executes query",
-          "required": true,
-          "failMsg": "✗ Must call .query()",
-          "flags": ""
-        }
+      "options": [
+        "Replace synchronous processing with a scheduled job that processes records in batches, or use Flow Designer with paced actions and retry logic",
+        "Increase the transaction timeout in sys_properties",
+        "Move the gs.sleep() to a client script",
+        "Use a shorter sleep duration of 100ms"
       ],
-      "modelAnswer": "getFilteredResults: function() {\n    var tableName = this.getParameter('sysparm_table');\n    var encodedQuery = this.getParameter('sysparm_query') || '';\n\n    // Validate table exists\n    if (!tableName || !new GlideRecord(tableName).isValid()) {\n        return JSON.stringify({error: 'Invalid table', count: 0, sysIds: []});\n    }\n\n    // Get count via GlideAggregate\n    var ga = new GlideAggregate(tableName);\n    ga.addEncodedQuery(encodedQuery);\n    ga.addAggregate('COUNT');\n    ga.query();\n    var count = 0;\n    if (ga.next()) count = parseInt(ga.getAggregate('COUNT'), 10);\n\n    // Get first 5 sys_ids\n    var sysIds = [];\n    var gr = new GlideRecord(tableName);\n    gr.addEncodedQuery(encodedQuery);\n    gr.setLimit(5);\n    gr.query();\n    while (gr.next()) sysIds.push(gr.getUniqueValue());\n\n    return JSON.stringify({count: count, sysIds: sysIds});\n}",
-      "explanation": "This pattern separates counting (GlideAggregate for performance) from data retrieval (GlideRecord with setLimit). Input validation using isValid() on GlideRecord prevents querying non-existent or unauthorized tables."
-    },
-    {
-      "id": "scr-h4",
-      "q": "SCENARIO: A customer reports that their Assignment Rule for Incident isn't firing. They say the rule worked last week. The rule assigns incidents to a specific group when the Category is 'Network'. Debug this: Write a diagnostic script that checks all Assignment Rules on the Incident table, logs their conditions and order, and identifies potential conflicts.",
-      "type": "scenario",
-      "difficulty": "hard",
-      "code": "// Diagnostic Script — Run in Scripts Background\n// Goal: Find all Assignment Rules on Incident,\n// log their order and conditions, flag conflicts\n\n",
-      "checks": [
-        {
-          "pattern": "GlideRecord\\s*\\(\\s*['\"]sysrule_assignment['\"]\\s*\\)",
-          "msg": "✓ Queries the Assignment Rule table (sysrule_assignment)",
-          "required": true,
-          "failMsg": "✗ Must query 'sysrule_assignment' to find assignment rules",
-          "flags": "i"
-        },
-        {
-          "pattern": "addQuery\\s*\\(\\s*['\"]table['\"].*['\"]incident['\"]\\s*\\)",
-          "msg": "✓ Filters for Incident table rules",
-          "required": true,
-          "failMsg": "✗ Must filter for rules on the 'incident' table",
-          "flags": "i"
-        },
-        {
-          "pattern": "order|Order|orderBy",
-          "msg": "✓ Considers rule execution order",
-          "required": true,
-          "failMsg": "✗ Must examine the order field — rule precedence matters for conflicts",
-          "flags": "i"
-        },
-        {
-          "pattern": "condition|script|filter",
-          "msg": "✓ Examines rule conditions",
-          "required": true,
-          "failMsg": "✗ Must log or examine the condition/script/filter of each rule",
-          "flags": "i"
-        },
-        {
-          "pattern": "active",
-          "msg": "✓ Checks active status",
-          "required": true,
-          "failMsg": "✗ Must check if rules are active — an inactive rule could explain the failure",
-          "flags": "i"
-        },
-        {
-          "pattern": "gs\\.log|gs\\.info|gs\\.print|gs\\.debug|console",
-          "msg": "✓ Logs diagnostic output",
-          "required": true,
-          "failMsg": "✗ Must log findings for analysis",
-          "flags": "i"
-        }
+      "correct": [
+        0
       ],
-      "modelAnswer": "var gr = new GlideRecord('sysrule_assignment');\ngr.addQuery('table', 'incident');\ngr.orderBy('order');\ngr.query();\n\nvar ruleCount = 0;\nvar networkRules = [];\n\nwhile (gr.next()) {\n    ruleCount++;\n    var info = 'Rule: ' + gr.name + ' | Order: ' + gr.order + \n               ' | Active: ' + gr.active + \n               ' | Group: ' + gr.assignment_group.getDisplayValue() + \n               ' | Condition: ' + gr.condition;\n    gs.info(info);\n    \n    if (gr.condition.indexOf('Network') > -1 || \n        gr.script.indexOf('Network') > -1) {\n        networkRules.push(gr.name + ' (order: ' + gr.order + ', active: ' + gr.active + ')');\n    }\n}\n\ngs.info('=== SUMMARY ===');\ngs.info('Total rules on Incident: ' + ruleCount);\ngs.info('Network-related rules: ' + networkRules.join(', '));\nif (networkRules.length > 1) {\n    gs.info('⚠ CONFLICT: Multiple rules match Network category — check order precedence');\n}",
-      "explanation": "This diagnostic approach systematically reveals: which rules exist, their execution order, which are active, and whether multiple rules compete for 'Network' category incidents. The most common cause of 'stopped working' is a new rule with higher priority overriding the existing one."
-    },
-    {
-      "id": "scr-m6",
-      "q": "SCENARIO: A user clicks a UI Action button 'Escalate' on an Incident form. Write the server-side script for the UI Action that: (1) Changes priority to 1-Critical, (2) Adds a work note documenting the escalation with the current user's name and timestamp, (3) Triggers an event for notification.",
-      "type": "scenario",
-      "difficulty": "medium",
-      "code": "// UI Action — Server-side script\n// Runs when user clicks 'Escalate' button on Incident form\n\n",
-      "checks": [
-        {
-          "pattern": "current\\.priority\\s*=\\s*['\"]?1['\"]?",
-          "msg": "✓ Sets priority to Critical (1)",
-          "required": true,
-          "failMsg": "✗ Must set current.priority = 1 (Critical)",
-          "flags": "i"
-        },
-        {
-          "pattern": "work_notes|comments",
-          "msg": "✓ Adds a work note",
-          "required": true,
-          "failMsg": "✗ Must add a work note documenting the escalation",
-          "flags": "i"
-        },
-        {
-          "pattern": "gs\\.getUserDisplayName\\(\\)|gs\\.getUser\\(\\)|user_name",
-          "msg": "✓ Captures current user info",
-          "required": true,
-          "failMsg": "✗ Should include the current user's name in the work note",
-          "flags": "i"
-        },
-        {
-          "pattern": "current\\.update\\(\\)",
-          "msg": "✓ Updates the record",
-          "required": true,
-          "failMsg": "✗ Must call current.update() to save changes",
-          "flags": "i"
-        },
-        {
-          "pattern": "gs\\.eventQueue|eventQueue",
-          "msg": "✓ Fires an event for notifications",
-          "required": true,
-          "failMsg": "✗ Must use gs.eventQueue() to trigger a notification event",
-          "flags": "i"
-        }
-      ],
-      "modelAnswer": "current.priority = 1;\ncurrent.work_notes = 'Incident escalated to Critical by ' + gs.getUserDisplayName() + ' on ' + new GlideDateTime().getDisplayValue();\ncurrent.update();\n\ngs.eventQueue('incident.escalated', current, gs.getUserID(), gs.getUserDisplayName());",
-      "explanation": "The UI Action sets priority, documents the action via work_notes (not comments — work notes are internal), and fires a custom event. The event can be mapped to a Notification or Flow Designer trigger."
+      "explanation": "gs.sleep() blocks the transaction thread and counts toward the 300-second transaction timeout. Batch processing via Scheduled Jobs or Flow Designer pacing separates each batch into its own transaction, avoiding timeout issues."
     }
   ],
   "modules": [
@@ -716,12 +565,28 @@
       "explanation": "ITOM (IT Operations Management) includes Discovery, Event Management, Service Mapping, and Cloud Management."
     },
     {
+      "id": "mod-e4",
+      "q": "What is the purpose of the Knowledge Base in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "To store articles that help users resolve issues through self-service",
+        "To store backup copies of the database",
+        "To manage user access credentials",
+        "To configure system properties"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Knowledge Management provides a repository of articles for self-service resolution, reducing incident volume by enabling users to find answers independently."
+    },
+    {
       "id": "mod-m1",
       "q": "In ITSM, what is the relationship between Incident, Problem, and Change?",
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Incidents reveal symptoms, Problems identify root causes, and Changes implement fixes — they link via related records",
+        "Incidents reveal symptoms, Problems identify root causes, and Changes implement fixes \u2014 they link via related records",
         "They are three names for the same process",
         "Incidents create Changes which create Problems",
         "Problems are a subset of the Incident table"
@@ -729,7 +594,7 @@
       "correct": [
         0
       ],
-      "explanation": "ITIL workflow: Incidents identify disruptions → Problem Management finds root causes → Change Management implements permanent fixes. They are separate processes linked through record relationships."
+      "explanation": "ITIL workflow: Incidents identify disruptions \u2192 Problem Management finds root causes \u2192 Change Management implements permanent fixes. They are separate processes linked through record relationships."
     },
     {
       "id": "mod-m2",
@@ -764,6 +629,38 @@
       "explanation": "Discovery identifies individual CIs (servers, applications, etc.). Service Mapping traces connections between CIs to build end-to-end service maps showing how components support business services."
     },
     {
+      "id": "mod-m4",
+      "q": "What is the role of an SLA (Service Level Agreement) in ServiceNow ITSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It defines the expected response and resolution time for tasks based on priority and other conditions, tracking compliance automatically",
+        "It stores salary information for IT staff",
+        "It defines which users can access the Service Catalog",
+        "It manages software license agreements"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "SLAs define time-based commitments (response time, resolution time) and automatically attach to qualifying records. The platform tracks elapsed time against the target, triggering alerts and escalations."
+    },
+    {
+      "id": "mod-m5",
+      "q": "What is the purpose of the CSDM (Common Service Data Model)?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A framework that standardizes how service-related data is organized across CMDB tables, defining relationships between business services, technical services, and infrastructure",
+        "A data migration tool for moving between instances",
+        "A custom scripting development methodology",
+        "A security model for controlling CMDB access"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSDM provides a standardized framework for organizing CMDB data into layers: Business Services, Technical Services, Service Offerings, and supporting infrastructure CIs, ensuring consistent service modeling."
+    },
+    {
       "id": "mod-h1",
       "q": "A customer has 200 catalog items with inconsistent variable naming, no variable sets, and each item has its own unique workflow. How would you rationalize this into a scalable architecture?",
       "type": "mcq",
@@ -794,6 +691,22 @@
         0
       ],
       "explanation": "Event Management optimization requires: alert aggregation (grouping duplicates), correlation (linking related events), severity tuning (working with ops to define what matters), maintenance window suppression, and source normalization."
+    },
+    {
+      "id": "mod-h3",
+      "q": "A customer wants to implement a multi-level approval process for Change Requests where approval requirements differ by risk level, change type, and impacted business service. How do you architect this?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use Flow Designer with decision tables for dynamic approval routing, implement Group Approval activities with conditional logic per risk/type combination, and leverage CMDB service relationships to auto-identify impacted service owners as approvers",
+        "Create a separate Change workflow for every possible combination",
+        "Use a single approval group for all changes",
+        "Hard-code approver lists in a Business Rule"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Flow Designer with decision tables provides maintainable approval routing logic. Dynamic approval groups based on CMDB relationships ensure the right service owners approve relevant changes. This scales without creating N\u00d7M workflow variants."
     }
   ],
   "fundamentals": [
@@ -811,7 +724,7 @@
       "correct": [
         0
       ],
-      "explanation": "Tables in ServiceNow store records (rows) with fields (columns). They are the backbone of the platform — every module is built on tables."
+      "explanation": "Tables in ServiceNow store records (rows) with fields (columns). They are the backbone of the platform \u2014 every module is built on tables."
     },
     {
       "id": "fun-e2",
@@ -843,7 +756,39 @@
       "correct": [
         0
       ],
-      "explanation": "Every record in ServiceNow has a sys_id — a 32-character GUID that uniquely identifies it across the platform."
+      "explanation": "Every record in ServiceNow has a sys_id \u2014 a 32-character GUID that uniquely identifies it across the platform."
+    },
+    {
+      "id": "fun-e4",
+      "q": "What is the difference between a List view and a Form view?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "List view shows multiple records in a table format; Form view shows a single record's details",
+        "List view is read-only; Form view allows editing",
+        "List view is for admins; Form view is for end users",
+        "They display the same data in the same format"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "List view displays multiple records in rows and columns for browsing and filtering. Form view shows all fields of a single record for viewing and editing."
+    },
+    {
+      "id": "fun-e5",
+      "q": "What does the 'active' field control on most ServiceNow records?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Whether the record is considered current and included in active queries \u2014 inactive records are effectively soft-deleted",
+        "Whether the record is locked from editing",
+        "Whether the record appears in reports",
+        "Whether Business Rules fire on the record"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The active field (true/false) is a soft-delete mechanism. Active=false records are excluded from most default queries but remain in the database for historical reference."
     },
     {
       "id": "fun-m1",
@@ -851,9 +796,9 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Client Scripts (onLoad) → UI Policies → Data Policies (if run on client) → ACLs (field-level)",
-        "UI Policies → Client Scripts → ACLs → Data Policies",
-        "ACLs → Data Policies → UI Policies → Client Scripts",
+        "Client Scripts (onLoad) \u2192 UI Policies \u2192 Data Policies (if run on client) \u2192 ACLs (field-level)",
+        "UI Policies \u2192 Client Scripts \u2192 ACLs \u2192 Data Policies",
+        "ACLs \u2192 Data Policies \u2192 UI Policies \u2192 Client Scripts",
         "All execute simultaneously"
       ],
       "correct": [
@@ -878,20 +823,52 @@
       "explanation": "addQuery() is used for simple conditions (field, operator, value). addEncodedQuery() accepts the string format visible in the list filter URL, supporting complex nested AND/OR groups."
     },
     {
+      "id": "fun-m3",
+      "q": "What is table inheritance and why does it matter?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Child tables inherit fields and configurations from parent tables \u2014 e.g., incident extends task, so all task fields exist on incident",
+        "Tables cannot inherit from other tables",
+        "Inheritance only applies to ACLs, not fields",
+        "Child tables are copies of parent tables with no ongoing relationship"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Table inheritance means child tables (incident, change_request, problem) automatically have all fields from their parent (task). Business Rules, ACLs, and configurations on the parent can also apply to children."
+    },
+    {
+      "id": "fun-m4",
+      "q": "What is the difference between a Display Business Rule and an After Business Rule?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Display BRs run when a form is loaded for viewing (not on insert/update/delete); After BRs run after a database insert/update/delete operation completes",
+        "Display BRs are deprecated; After BRs replace them",
+        "Display BRs run on the client; After BRs run on the server",
+        "They execute at the same time in the same order"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Display Business Rules fire when a record is loaded for display (GET operation). They can modify field values shown on the form. After Business Rules fire after successful INSERT, UPDATE, or DELETE database operations."
+    },
+    {
       "id": "fun-h1",
       "q": "Explain the complete server-side execution order when a user submits a form to update an Incident record. Include all mechanisms that fire.",
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "ACL check → Data Policy validation → Before Business Rules → Database operation → After Business Rules → Async Business Rules → Workflow/Flow trigger → Notifications → Display Business Rules (on next load)",
-        "Before BR → Database → After BR → Done",
-        "Client Script → Server Script → Database → Done",
+        "ACL check \u2192 Data Policy validation \u2192 Before Business Rules \u2192 Database operation \u2192 After Business Rules \u2192 Async Business Rules \u2192 Workflow/Flow trigger \u2192 Notifications \u2192 Display Business Rules (on next load)",
+        "Before BR \u2192 Database \u2192 After BR \u2192 Done",
+        "Client Script \u2192 Server Script \u2192 Database \u2192 Done",
         "The order is random and depends on server load"
       ],
       "correct": [
         0
       ],
-      "explanation": "The full server-side chain: ACLs verify write access → Data Policies validate field requirements → Before BRs execute (can modify/abort) → Database UPDATE occurs → After BRs execute → Async BRs queue → Workflows/Flows trigger → Notification rules evaluate → Display BRs fire on the next form load."
+      "explanation": "The full server-side chain: ACLs verify write access \u2192 Data Policies validate field requirements \u2192 Before BRs execute (can modify/abort) \u2192 Database UPDATE occurs \u2192 After BRs execute \u2192 Async BRs queue \u2192 Workflows/Flows trigger \u2192 Notification rules evaluate \u2192 Display BRs fire on the next form load."
     },
     {
       "id": "fun-h2",
@@ -899,7 +876,7 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "The submit was triggered by a server-side operation (skipping client logic), a Client Script is overriding the UI Policy, or the browser's developer tools were used to bypass the mandatory check — Data Policies should enforce server-side",
+        "The submit was triggered by a server-side operation (skipping client logic), a Client Script is overriding the UI Policy, or the browser's developer tools were used to bypass the mandatory check \u2014 Data Policies should enforce server-side",
         "UI Policies are always enforced and this cannot happen",
         "The user must have the admin role",
         "The mandatory setting was probably not saved"
@@ -907,13 +884,29 @@
       "correct": [
         0
       ],
-      "explanation": "UI Policies are client-side only — they can be bypassed by direct API calls, web services, Business Rules calling update(), or browser manipulation. Data Policies with the 'Apply to import sets' option enforce server-side. A matching Client Script running after the UI Policy could also clear the mandatory flag."
+      "explanation": "UI Policies are client-side only \u2014 they can be bypassed by direct API calls, web services, Business Rules calling update(), or browser manipulation. Data Policies with the 'Apply to import sets' option enforce server-side."
+    },
+    {
+      "id": "fun-h3",
+      "q": "A Before Business Rule on the incident table modifies current.short_description. An After Business Rule on the same table reads current.short_description. Will the After BR see the modified value?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Yes \u2014 the current object persists across the Business Rule chain for the same transaction, so changes made in Before BRs are visible to After BRs",
+        "No \u2014 After BRs re-query the database and get the original value",
+        "It depends on the execution order setting",
+        "The current object is reset between Before and After BRs"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The current object maintains state across the entire Business Rule execution chain within a single transaction. Changes made by Before BRs are reflected in the current object read by After BRs, even though the After BR runs after the database write."
     }
   ],
   "csa": [
     {
       "id": "csa-e1",
-      "q": "Which base system role provides access to create and modify records in most tables?",
+      "q": "Which base system role provides access to create and modify records in most ITSM tables?",
       "type": "mcq",
       "difficulty": "easy",
       "options": [
@@ -941,7 +934,7 @@
       "correct": [
         0
       ],
-      "explanation": "Update Sets track configuration changes (not data) made in an instance, allowing you to move customizations from dev → test → prod."
+      "explanation": "Update Sets track configuration changes (not data) made in an instance, allowing you to move customizations from dev \u2192 test \u2192 prod."
     },
     {
       "id": "csa-e3",
@@ -960,6 +953,118 @@
       "explanation": "UI Policies are the no-code approach: set a condition (e.g., Priority = 1), then add an Action setting the target field's Mandatory attribute to true."
     },
     {
+      "id": "csa-e4",
+      "q": "What is the Application Navigator used for?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "To browse and search for modules and applications in the left sidebar",
+        "To navigate between different ServiceNow instances",
+        "To configure application settings",
+        "To manage application scopes"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Application Navigator (left sidebar) provides access to all modules organized by application. Users can search, pin favorites, and browse the application hierarchy."
+    },
+    {
+      "id": "csa-e5",
+      "q": "Which field type is used to store a reference to another table's record?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Reference",
+        "String",
+        "Choice",
+        "Lookup"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A Reference field stores a foreign key (sys_id) pointing to a record on another table. It displays the display value but stores the sys_id."
+    },
+    {
+      "id": "csa-e6",
+      "q": "What is the role of the System Administrator in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Configure and manage the platform, including users, groups, roles, tables, and system settings",
+        "Only manage user accounts",
+        "Only write server-side scripts",
+        "Only manage the CMDB"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "System Administrators handle platform configuration including user/group management, table administration, workflows, security, and system properties."
+    },
+    {
+      "id": "csa-e7",
+      "q": "What is a Record Producer?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A Service Catalog item that creates a record on a specified table when submitted",
+        "A tool for mass-producing test records",
+        "A report that generates record statistics",
+        "A workflow that auto-creates records on a schedule"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A Record Producer is a catalog-style form that, when submitted, creates a task or record on a specific table. It acts as an alternative front-end to standard forms."
+    },
+    {
+      "id": "csa-e8",
+      "q": "What is the difference between a Group and a Role in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Groups organize users (e.g., 'Network Team'); Roles define permissions and access (e.g., 'itil'). Roles are assigned to groups, and group members inherit those roles",
+        "Groups and Roles are the same thing",
+        "Groups are for ITSM; Roles are for CSM",
+        "Roles can only be assigned to individual users, not groups"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Groups are collections of users (organizational). Roles define what users can do (permissions). Assigning a role to a group means all group members inherit that role."
+    },
+    {
+      "id": "csa-e9",
+      "q": "What does the Filter Navigator do?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Lets you type to quickly search and filter modules in the Application Navigator",
+        "Filters list view results",
+        "Manages network traffic filters",
+        "Configures email filter rules"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Filter Navigator is the search box at the top of the Application Navigator. Type any term (e.g., 'incident') to quickly find and jump to related modules."
+    },
+    {
+      "id": "csa-e10",
+      "q": "What is a Dictionary entry in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A record that defines a table field's attributes including type, length, default value, and reference",
+        "A Knowledge Base article",
+        "A translation record",
+        "A system log entry"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Dictionary entries (sys_dictionary) define field metadata: column type, max length, default values, reference targets, mandatory settings, and other attributes for each field on a table."
+    },
+    {
       "id": "csa-m1",
       "q": "What is the difference between a Catalog Client Script and a regular Client Script?",
       "type": "mcq",
@@ -973,7 +1078,7 @@
       "correct": [
         0
       ],
-      "explanation": "Catalog Client Scripts execute in the Service Catalog context — they interact with catalog variables (not table fields) using the same g_form API but target variable names instead of column names."
+      "explanation": "Catalog Client Scripts execute in the Service Catalog context \u2014 they interact with catalog variables (not table fields) using the same g_form API but target variable names instead of column names."
     },
     {
       "id": "csa-m2",
@@ -992,47 +1097,280 @@
       "explanation": "Scheduled Jobs require scripting and are best for data maintenance scripts. Scheduled Flows leverage Flow Designer's visual builder with built-in actions, error handling, and integration capabilities."
     },
     {
-      "id": "csa-m3",
-      "q": "Write a Client Script (onChange) that shows a confirmation dialog when a user changes the Priority to '1 - Critical'. If the user cancels, revert the Priority to its previous value.",
-      "type": "scripting",
+      "id": "csa-m4",
+      "q": "What is the difference between 'contains' and 'like' operators in a condition?",
+      "type": "mcq",
       "difficulty": "medium",
-      "code": "// Client Script — onChange\n// Field: priority\n// Table: incident\n\nfunction onChange(control, oldValue, newValue, isLoading) {\n    if (isLoading || newValue === '') return;\n\n    // Your code here\n\n}\n",
-      "checks": [
-        {
-          "pattern": "newValue\\s*==\\s*['\"]1['\"]",
-          "msg": "✓ Checks if new value is Critical (1)",
-          "required": true,
-          "failMsg": "✗ Must check if newValue equals '1' (Critical priority)",
-          "flags": "i"
-        },
-        {
-          "pattern": "confirm\\s*\\(",
-          "msg": "✓ Shows confirmation dialog",
-          "required": true,
-          "failMsg": "✗ Must use confirm() to ask the user to verify the change",
-          "flags": "i"
-        },
-        {
-          "pattern": "g_form\\.setValue\\s*\\(\\s*['\"]priority['\"]",
-          "msg": "✓ Reverts value using g_form.setValue",
-          "required": true,
-          "failMsg": "✗ Must use g_form.setValue('priority', oldValue) to revert on cancel",
-          "flags": "i"
-        },
-        {
-          "pattern": "oldValue",
-          "msg": "✓ Uses oldValue for reverting",
-          "required": true,
-          "failMsg": "✗ Must reference oldValue to restore the previous priority",
-          "flags": ""
-        }
+      "options": [
+        "'Contains' is case-insensitive and searches anywhere in the string; 'LIKE' is SQL-based and supports wildcard patterns with %",
+        "They are identical operators",
+        "'Contains' only searches from the start of the string",
+        "'LIKE' is case-sensitive and 'contains' is not"
       ],
-      "modelAnswer": "function onChange(control, oldValue, newValue, isLoading) {\n    if (isLoading || newValue === '') return;\n\n    if (newValue == '1') {\n        var confirmed = confirm('You are setting this incident to Critical priority. This will trigger escalation notifications. Continue?');\n        if (!confirmed) {\n            g_form.setValue('priority', oldValue);\n        }\n    }\n}",
-      "explanation": "The onChange script fires when Priority changes. We check if the new value is '1' (Critical), show a confirm dialog, and revert to oldValue if the user cancels. The isLoading guard prevents the dialog from firing on form load."
+      "correct": [
+        0
+      ],
+      "explanation": "'Contains' performs a case-insensitive substring search. 'LIKE' follows SQL LIKE syntax where % is a wildcard. In practice, 'contains' is most commonly used in the UI filter conditions."
+    },
+    {
+      "id": "csa-m5",
+      "q": "What are the four types of Client Scripts and when does each fire?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "onLoad (form loads), onChange (field value changes), onSubmit (form is submitted), onCellEdit (list cell is edited)",
+        "onCreate, onRead, onUpdate, onDelete",
+        "onBefore, onAfter, onAsync, onDisplay",
+        "onClick, onHover, onFocus, onBlur"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The four Client Script types: onLoad fires when a form loads, onChange fires when a specified field value changes, onSubmit fires when the form is submitted, and onCellEdit fires when a list cell is edited."
+    },
+    {
+      "id": "csa-m6",
+      "q": "What is the purpose of a Data Policy vs a UI Policy?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Data Policies enforce field mandatory/read-only rules on the server side (including API and import), while UI Policies only enforce on the client-side form",
+        "Data Policies are for data imports only",
+        "UI Policies work on both client and server",
+        "Data Policies are deprecated in favor of UI Policies"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Data Policies enforce rules server-side, covering all entry points (forms, APIs, import sets). UI Policies only work client-side on forms and can be bypassed. Use Data Policies for critical business rules that must always be enforced."
+    },
+    {
+      "id": "csa-m7",
+      "q": "An Import Set has 10,000 rows. After the import, only 6,000 records were created. What are possible explanations?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The Transform Map has coalesce fields that matched 4,000 existing records (updating instead of inserting), or rows were skipped by onBefore transform scripts",
+        "The import set table has a 6,000 row limit",
+        "ServiceNow randomly skips duplicate data",
+        "The remaining 4,000 rows had encoding errors"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Coalescing matches import rows against existing records using specified fields. Matching rows UPDATE existing records instead of inserting new ones. Transform scripts with ignore=true also skip rows."
+    },
+    {
+      "id": "csa-m8",
+      "q": "What is the difference between a Notification and an Event in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "An Event is a signal that something happened (e.g., incident.created); a Notification is the email/SMS action triggered by an event or condition",
+        "Events and Notifications are the same",
+        "Events only fire from Business Rules",
+        "Notifications can only be sent via email"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Events are recorded in the Event Queue when something occurs. Notifications subscribe to events or conditions to send emails/SMS. The separation allows one event to trigger multiple notifications to different recipients."
+    },
+    {
+      "id": "csa-m9",
+      "q": "How do you restrict which fields a user can see on a form based on their role?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Create field-level ACLs (type: read) with role conditions on the specific fields, or use UI Policies with role conditions to hide fields",
+        "Remove the fields from the form layout",
+        "Create a separate form view for each role",
+        "Fields cannot be restricted by role"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Field-level read ACLs control data access at the security level. UI Policies with role-based conditions can show/hide fields on the form. For complete security, use ACLs; for UX purposes, UI Policies work."
+    },
+    {
+      "id": "csa-m10",
+      "q": "What is the purpose of the 'Condition' field on a Business Rule?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It defines a filter condition that must be true for the Business Rule to execute \u2014 evaluated before the script runs",
+        "It specifies which table the Business Rule applies to",
+        "It determines the execution order",
+        "It sets the priority of the Business Rule"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Condition field is a pre-filter evaluated before the script. If the condition evaluates to false, the BR script is never executed. This improves performance by avoiding unnecessary script evaluation."
+    },
+    {
+      "id": "csa-m11",
+      "q": "What is Flow Designer and how does it relate to Workflows?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Flow Designer is the modern replacement for the legacy Workflow Editor, providing a visual no-code/low-code automation builder with reusable actions and subflows",
+        "Flow Designer is only for integration tasks",
+        "Workflows are more powerful and should always be preferred",
+        "Flow Designer cannot handle approvals"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Flow Designer replaces the legacy Workflow Editor with a more modern, scalable automation platform. It supports triggers, actions, subflows, error handling, and integrates with Integration Hub spokes."
+    },
+    {
+      "id": "csa-m12",
+      "q": "What is the difference between a View and a Form Layout?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A View is a named configuration that determines which fields appear and in what arrangement on the form; a table can have multiple views for different use cases",
+        "Views are for lists only; Form Layouts are for forms only",
+        "They are the same thing with different names",
+        "Views control data access; Form Layouts control appearance"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Views (e.g., 'Default', 'itil', 'ESS') determine form layout \u2014 which fields, their arrangement, sections, and related lists. Different users/roles can be directed to different views of the same table."
+    },
+    {
+      "id": "csa-m13",
+      "q": "You need to automatically assign incidents to groups based on the Category field. What is the best approach?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Create Assignment Rules on the Incident table with conditions matching each category to the appropriate assignment group",
+        "Write a Before Business Rule with hardcoded group sys_ids",
+        "Create a Client Script that sets the assignment group onChange",
+        "Manually train users to select the correct group"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Assignment Rules provide a no-code/low-code approach to automatic record assignment. They evaluate conditions and assign groups/users based on matching criteria, and can be reordered for priority."
+    },
+    {
+      "id": "csa-m14",
+      "q": "What happens when you 'Back Out' an Update Set that was committed to an instance?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "ServiceNow creates a new update set that reverts the changes by applying the previous versions of the modified records",
+        "The committed changes are permanently deleted",
+        "The update set is moved back to the source instance",
+        "Nothing \u2014 committed update sets cannot be reverted"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Backing out an Update Set creates a new update set containing the reverse of each change (restoring previous versions). This provides a safe rollback mechanism without permanently deleting anything."
+    },
+    {
+      "id": "csa-m15",
+      "q": "What is the purpose of the 'Insert and Stay' vs 'Submit' buttons on a form?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "'Submit' saves the record and returns to the previous page; 'Insert and Stay' saves and keeps you on the form to continue editing",
+        "'Insert and Stay' creates a draft; 'Submit' creates a final record",
+        "'Submit' requires approval; 'Insert and Stay' does not",
+        "They perform the same database operation"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Both perform the same database insert/update. The difference is navigation: Submit saves and redirects you away from the form, while Insert and Stay saves and keeps the form open for continued editing."
+    },
+    {
+      "id": "csa-m16",
+      "q": "What is the difference between a Scheduled Job and a Scheduled Script Execution?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Scheduled Jobs run a specific script on a defined schedule; Scheduled Script Executions run once at a specified time and are auto-deleted after execution",
+        "They are the same thing",
+        "Scheduled Jobs can only run daily",
+        "Scheduled Script Executions cannot run JavaScript"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Scheduled Jobs are persistent and run repeatedly on their defined schedule (daily, weekly, etc.). Scheduled Script Executions are one-time jobs that execute at a specific datetime and are cleaned up afterward."
+    },
+    {
+      "id": "csa-m17",
+      "q": "How does ServiceNow handle field-level security for reference fields?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "ACLs on the referenced table's record control whether the display value resolves \u2014 if the user cannot read the referenced record, they see the sys_id instead of the display value",
+        "Reference fields always show the display value regardless of ACLs",
+        "Reference field security is controlled only by the source table's ACLs",
+        "There is no field-level security for reference fields"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "When a user lacks read access to the referenced record (due to ACLs on the target table), the reference field shows the raw sys_id instead of the display value. This prevents data leakage through reference fields."
+    },
+    {
+      "id": "csa-m18",
+      "q": "What is the purpose of Access Control List (ACL) rules in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "To define who can read, write, create, and delete records and fields based on roles, conditions, and scripts",
+        "To control network access to the instance",
+        "To manage API rate limits",
+        "To define which applications are installed"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ACLs define granular security rules at the table, field, and record level. They specify which roles can perform which operations (read, write, create, delete) and can include conditions and scripts for dynamic evaluation."
+    },
+    {
+      "id": "csa-m19",
+      "q": "What is the Knowledge Base workflow and why is it important?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A review and approval process for Knowledge articles that ensures content quality before publication \u2014 articles move through Draft \u2192 Review \u2192 Published states",
+        "A workflow for creating incidents from KB articles",
+        "A process for automatically deleting outdated articles",
+        "A method for importing external documentation"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The KB workflow manages article lifecycle: authors create drafts, reviewers check quality and accuracy, and approved articles are published. This ensures knowledge quality and prevents incorrect information from reaching end users."
+    },
+    {
+      "id": "csa-m20",
+      "q": "How do you configure a Metric to track the time between Incident creation and first response?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Create a Metric Definition with start condition (state = New) and stop condition (work notes added or state = In Progress), then associate it with the Incident table",
+        "Use a Duration field directly on the Incident form",
+        "Write a Business Rule to calculate elapsed time",
+        "Use a Scheduled Job to check every hour"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Metric Definitions specify start/stop conditions and automatically calculate duration. For first response time, the metric starts when the incident is created and stops when a meaningful action occurs (work note, state change)."
     },
     {
       "id": "csa-h1",
-      "q": "A customer needs to migrate 500 customizations across 3 instances (dev → test → prod) with strict change control. Some customizations span multiple update sets and have dependencies. What is the recommended migration strategy?",
+      "q": "A customer needs to migrate 500 customizations across 3 instances (dev \u2192 test \u2192 prod) with strict change control. Some customizations span multiple update sets and have dependencies. What is the recommended migration strategy?",
       "type": "mcq",
       "difficulty": "hard",
       "options": [
@@ -1045,6 +1383,598 @@
         0
       ],
       "explanation": "Update Set batching groups related sets with explicit ordering. Merge update sets resolve cross-set dependencies. Preview identifies collisions (same-name records modified in multiple sets). Backout plans use update set backing out for rollback safety."
+    },
+    {
+      "id": "csa-h2",
+      "q": "A user has the 'itil' role and is in the 'Service Desk' group. They cannot see the 'Configuration' field on the Incident form. The field exists in the form layout. What are the possible causes and how do you debug?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "A field-level read ACL on the configuration field requires a role the user doesn't have. Debug by impersonating the user, checking ACL evaluation using the Security Debug module (session debug), and reviewing the ACL rules on incident.configuration",
+        "The field must be deleted from the dictionary",
+        "The user's browser is caching an old form layout",
+        "itil role users can never see configuration fields"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Field-level ACLs control visibility. Debug steps: enable session debug for ACLs (glide.security.debug), impersonate the user, load the form, and check the debug output to see which ACL is denying read access to the field."
+    },
+    {
+      "id": "csa-h3",
+      "q": "An organization wants to enforce that all incidents with Priority 1 must have a filled-in 'Business Impact' field, regardless of how the record is created (form, API, import, or workflow). What is the correct implementation?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Create a Data Policy with condition Priority=1 that sets Business Impact as mandatory, ensuring enforcement across all entry points including server-side operations",
+        "Create a UI Policy \u2014 it enforces on all channels",
+        "Write an onChange Client Script to check the field",
+        "Add a mandatory attribute in the Dictionary entry"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Data Policies enforce server-side across all channels (form, REST API, Import Sets, workflows, Business Rules). UI Policies only enforce on the form. Dictionary mandatory applies universally but cannot be conditional. Data Policy is the correct choice for conditional server-side enforcement."
+    },
+    {
+      "id": "csa-h4",
+      "q": "You need to build a complex approval process where: Level 1 = Manager Approval, Level 2 = Director Approval (only if amount > $10K), Level 3 = VP Approval (only if amount > $50K). How do you implement this?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use Flow Designer with sequential approval steps, each with conditional branching based on the amount field. Use 'Ask for Approval' actions with Group/User lookup from the user's management chain via the sys_user.manager field",
+        "Create three separate workflows and a Business Rule to pick which one to launch",
+        "Use a single approval step with all three approvers CC'd",
+        "Write a Script Include that sends email requests manually"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Flow Designer conditional branching evaluates the amount at each step, only requesting approval when the threshold is met. The management chain (sys_user.manager dot-walking) dynamically identifies the correct approver at each level."
+    },
+    {
+      "id": "csa-h5",
+      "q": "A ServiceNow instance has 15 ACL rules on the incident table at the table level and 40+ field-level ACLs. Users report extremely slow form loads. How do you optimize ACL performance?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Consolidate overlapping ACLs, replace script-based ACLs with condition-based ACLs where possible, use ACL debugging to identify expensive evaluations, and consider using before query Business Rules to pre-filter data instead of row-level ACLs",
+        "Delete all ACLs and rely on role-based access only",
+        "Increase server memory allocation",
+        "Disable ACL evaluation globally"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Script-based ACLs evaluate per-record and are the most expensive. Condition-based ACLs use database queries and are much faster. Consolidating overlapping ACLs reduces evaluation count. Before query BRs can pre-filter data before ACL evaluation begins."
+    },
+    {
+      "id": "csa-h6",
+      "q": "An organization has 5 development teams each making changes to the same instance. Update Sets frequently collide. How do you implement a governance model?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Implement a branching strategy with team-specific update sets, use an Update Set naming convention with team prefixes, establish a merge/preview process in a staging instance, and assign a release manager to coordinate commits to production",
+        "Let each team commit directly to production",
+        "Use a single shared update set for all teams",
+        "Disable update sets and make changes directly in production"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Multi-team governance requires: team-specific update sets with naming conventions, a staging/integration instance for merge testing, preview-before-commit to catch collisions, and a release manager role to coordinate deployments."
+    },
+    {
+      "id": "csa-h7",
+      "q": "You discover that a transform map's onBefore script is silently skipping records without logging. The import set shows all rows as 'Processed' but only half created records. How do you debug this?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Check if the onBefore script sets ignore=true conditionally, enable Import Set debug logging via sys_properties, examine the transform history for each row's action (insert/update/ignore), and add explicit gs.info logging to the transform scripts",
+        "Re-run the import \u2014 it was probably a timeout issue",
+        "Check the email notification logs",
+        "The transform map has a row limit"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The ignore=true flag in onBefore scripts silently skips rows. Transform history records show the action taken per row (insert/update/ignore). Enabling debug logging reveals the decision path. The 'Processed' status applies to all rows regardless of action."
+    },
+    {
+      "id": "csa-h8",
+      "q": "A customer wants their Service Portal to show different catalog categories based on the user's department and location. How do you implement this?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use Catalog Category user criteria to control visibility, create category-level ACLs, and implement Service Portal widget customization with scripted data sources that filter based on gs.getUser() attributes",
+        "Create separate Service Portals for each department",
+        "Duplicate every catalog item per department",
+        "Use Client Scripts to hide categories after page load"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "User Criteria on catalog categories filters visibility by department, location, role, or group. This is the supported, performant approach. Widget customization adds additional logic. ACLs provide security enforcement backing the UI filtering."
+    },
+    {
+      "id": "csa-m21",
+      "q": "What is a Business Rule 'when' condition and what are the options?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The 'when' field specifies the timing: before, after, async, or display \u2014 determining when the rule runs relative to the database operation",
+        "It specifies which day of the week the rule runs",
+        "It sets the condition that must be true",
+        "It determines the user who can trigger the rule"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The 'when' field controls timing: Before (pre-database, can modify/abort), After (post-database, for side effects), Async (post-database in background thread), Display (on form load for display manipulation)."
+    },
+    {
+      "id": "csa-m22",
+      "q": "What is the difference between dot-walking and a GlideRecord lookup?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Dot-walking (e.g., current.caller_id.department) auto-resolves reference chains inline; GlideRecord lookup requires explicit code to query the referenced table \u2014 dot-walking is convenient but can be slow for deep chains",
+        "They are the same mechanism",
+        "Dot-walking only works on the client side",
+        "GlideRecord lookups cannot traverse references"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Dot-walking is syntactic sugar that auto-resolves reference fields (each dot = a database join). It's convenient but each level adds a join. For deep chains or repeated access, a direct GlideRecord query can be more efficient."
+    },
+    {
+      "id": "csa-m23",
+      "q": "What is a Catalog Item variable and how does it differ from a table field?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Variables are dynamic form fields on catalog items stored in sc_item_option_mtom, not as table columns \u2014 they capture request-specific information that doesn't live on the target table",
+        "Variables and table fields are the same",
+        "Variables can only be text fields",
+        "Variables are stored on the incident table"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Catalog variables are request-specific inputs (e.g., laptop type, justification) stored in sc_item_option/sc_item_option_mtom. They don't create columns on the target table \u2014 they're accessed via current.variables in catalog workflows."
+    },
+    {
+      "id": "csa-m24",
+      "q": "How do you configure an SLA to pause when an Incident is in 'Awaiting Caller' state?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Configure the SLA Definition's 'Pause' condition to include state = Awaiting Caller, which stops the elapsed time clock while the condition is true",
+        "SLAs cannot be paused \u2014 they always count time",
+        "Create a Business Rule to manually freeze the SLA",
+        "Set the incident to inactive to stop the SLA"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "SLA Definitions support Pause conditions. When the pause condition evaluates to true (e.g., state = Awaiting Caller, Awaiting Vendor), the SLA clock stops. It resumes when the condition becomes false."
+    },
+    {
+      "id": "csa-m25",
+      "q": "What is an Inactivity Monitor and when would you use it?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A feature that triggers an action (notification, state change) when a record has not been updated for a specified duration \u2014 commonly used for stale incidents or unresolved problems",
+        "A tool that monitors inactive user accounts",
+        "A report showing unused applications",
+        "A server health check for idle instances"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Inactivity Monitors watch for records that haven't been updated within a time threshold. They're commonly used to escalate stale incidents, notify managers of aging problems, or auto-close resolved tickets after a waiting period."
+    },
+    {
+      "id": "csa-e11",
+      "q": "What is a UI Action in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A button, link, or context menu item on a form or list that executes client-side and/or server-side scripts when clicked",
+        "An animation effect on the UI",
+        "A report visualization action",
+        "A workflow activity"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "UI Actions create interactive elements (buttons, links, menu items) on forms and lists. They can run client-side JavaScript, server-side script, or both, and are used for common operations like 'Resolve', 'Escalate', etc."
+    },
+    {
+      "id": "csa-e12",
+      "q": "What is the 'Personalize Form' option used for?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Allows individual users to add or remove fields from their own form view without affecting other users",
+        "Changes the form layout for all users",
+        "Creates a new table",
+        "Modifies the color scheme of the form"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Personalize Form lets individual users customize their form layout (add/remove/reorder fields) without impacting other users. These personalizations are stored per-user and override the default form layout."
+    },
+    {
+      "id": "csa-e13",
+      "q": "What is a Homepage in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A configurable dashboard page consisting of widgets like reports, charts, and quick links that serves as a landing page",
+        "The Service Portal main page",
+        "The instance login page",
+        "The system properties page"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Homepages are configurable landing pages with drag-and-drop widgets including reports, charts, calendars, and custom content. Different homepages can be assigned to different roles."
+    },
+    {
+      "id": "csa-e14",
+      "q": "How do you add a new field to an existing table?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Use the Form Designer or configure the Table's dictionary by adding a new Dictionary entry with the field name, type, and attributes",
+        "Edit the database schema directly",
+        "Write a SQL ALTER TABLE command",
+        "Fields can only be added during initial table creation"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Fields are added via Form Designer (drag-and-drop), Table configuration, or the Dictionary (sys_dictionary). ServiceNow handles the underlying database column creation automatically."
+    },
+    {
+      "id": "csa-e15",
+      "q": "What is a Choice List field?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A field with predefined selectable values stored in the sys_choice table",
+        "A field that accepts free-form text input",
+        "A reference field pointing to another table",
+        "A checkbox field"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Choice List fields display a dropdown of predefined values. The choices are stored in sys_choice and can be administered through the choice list editor or dictionary attributes."
+    },
+    {
+      "id": "csa-h9",
+      "q": "A customer is implementing ServiceNow across 3 business units with different ITSM processes. BU1 wants a 5-state incident lifecycle, BU2 wants 7 states, and BU3 wants 4 states. How do you handle this on a single instance?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use a single incident table with the union of all states, implement UI Policies per assignment group/business unit to show/hide irrelevant states, and use Business Rules to enforce valid state transitions per BU \u2014 avoid table-per-BU duplication",
+        "Create three separate incident tables, one per BU",
+        "Force all BUs to use the same 5-state model",
+        "Use domain separation to give each BU a different instance"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A single incident table with the superset of states preserves reporting consistency. UI Policies conditionally show only relevant states per BU. Business Rules enforce valid transitions. This avoids maintaining separate tables while respecting each BU's process."
+    },
+    {
+      "id": "csa-h10",
+      "q": "An import of 100,000 user records is running and needs to update existing users if the employee_number matches, or create new users otherwise. The import is taking 6+ hours. How do you optimize it?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use employee_number as the coalesce field on the Transform Map, disable Business Rules via setWorkflow(false) in onBefore, increase the chunk size in import properties, and consider using the Table API with batch operations for better parallelism",
+        "Run the import during business hours for priority access",
+        "Remove the coalesce and create all records as new, then delete duplicates",
+        "Split into 100 separate import sets of 1,000 each"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Coalesce field (employee_number) handles the insert-or-update logic automatically. Disabling Business Rules prevents cascading updates per row. Chunk size optimization reduces transaction overhead. For extreme volumes, the Table API with batched payloads can be faster."
+    },
+    {
+      "id": "csa-m26",
+      "q": "What is a Contextual Search Source and when would you use it?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A configuration that searches specific knowledge bases and catalog items contextually based on the form and field values the user is working with",
+        "A tool for searching the application navigator",
+        "A full-text search of all instance data",
+        "A browser extension for searching ServiceNow"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Contextual Search Sources provide relevant search results based on the user's current context (e.g., showing KB articles related to the incident category being entered). They improve self-service deflection."
+    },
+    {
+      "id": "csa-m27",
+      "q": "What is the difference between 'Related Lists' and 'Embedded Lists' on a form?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Related Lists appear at the bottom of the form showing linked records from other tables; Embedded Lists are inline editable lists within the form body for child records",
+        "They are the same feature",
+        "Related Lists are read-only; Embedded Lists allow editing",
+        "Embedded Lists only work on the Service Catalog"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Related Lists display linked records at the form bottom (e.g., incidents related to a problem). Embedded Lists are positioned within the form body and allow inline editing of child records without leaving the parent form."
+    },
+    {
+      "id": "csa-m28",
+      "q": "What is the purpose of a Script Include in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A reusable server-side JavaScript class or function stored in sys_script_include that can be called from Business Rules, Scheduled Jobs, and other server scripts",
+        "A client-side script library",
+        "A type of Business Rule that runs on import",
+        "A debugging tool"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Script Includes are reusable server-side code stored as named classes/functions. They promote code reuse by centralizing logic that multiple Business Rules, Scheduled Jobs, or other scripts need to call."
+    },
+    {
+      "id": "csa-m29",
+      "q": "What is the purpose of a Transform Map in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "To define how data from an Import Set staging table maps to a target table, including field mappings and coalesce rules",
+        "To create a geographic map visualization",
+        "To transform scripts into compiled code",
+        "To map URLs to applications"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Transform Maps define field-by-field mappings from staging tables to target tables during data import. They include coalescing (insert vs. update logic), field transformations, and onBefore/onAfter scripts."
+    },
+    {
+      "id": "csa-m30",
+      "q": "What is the difference between a Gauge and a Report in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Gauge is a single-metric visual indicator (like a speedometer or score) displayed on dashboards; a Report is a full data visualization with multiple records and filtering",
+        "Gauges are for live data; Reports are for historical data",
+        "They are identical features",
+        "Gauges require scripting; Reports are no-code"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Gauges display single aggregate metrics (count, average, score) as visual indicators. Reports provide full data visualizations (bar charts, pie charts, lists) with filtering, grouping, and drill-down capabilities."
+    },
+    {
+      "id": "csa-m31",
+      "q": "How do you create a dependent dropdown (cascading choice list) in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Configure a dependent choice list by setting the \"Dependent on field\" attribute in the dictionary entry, then define choices that are only valid when specific parent values are selected",
+        "Write a Client Script to dynamically populate the choices",
+        "Create separate fields for each combination",
+        "Use a UI Policy to swap between different choice lists"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Dependent choice lists use the \"Dependent on field\" dictionary attribute. Child choices are associated with specific parent values. When the parent changes, only matching child choices appear in the dropdown."
+    },
+    {
+      "id": "csa-m32",
+      "q": "What is a Catalog Variable Set and why would you use one?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A reusable collection of catalog variables that can be shared across multiple catalog items \u2014 eliminating duplicate variable definitions and ensuring consistency",
+        "A set of variables used in Business Rules",
+        "A collection of system properties",
+        "A group of users who manage catalog items"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Variable Sets bundle commonly used variables (e.g., address fields, approval fields) into reusable groups. Attach a variable set to any catalog item to instantly add those variables, ensuring consistency and reducing maintenance."
+    },
+    {
+      "id": "csa-m33",
+      "q": "What is the purpose of the cmdb_ci_service table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It stores Business Service CIs that represent high-level services offered to the business \u2014 these are mapped to supporting infrastructure CIs via relationships",
+        "It stores CI security configurations",
+        "It is the main CMDB table for all CI types",
+        "It stores service catalog items"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "cmdb_ci_service holds Business Service records representing IT services visible to the business (e.g., Email Service, CRM Application). These services are linked to supporting infrastructure CIs through CMDB relationships."
+    },
+    {
+      "id": "csa-e16",
+      "q": "What is a Catalog Category in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A grouping mechanism that organizes catalog items into logical sections like Hardware, Software, and Services for easier browsing",
+        "A type of incident category",
+        "A role-based access category",
+        "A report classification"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Catalog Categories organize items in the Service Catalog into browsable sections. Categories can be nested (parent/child) and have user criteria to control who sees them."
+    },
+    {
+      "id": "csa-e17",
+      "q": "What does the \"Active\" checkbox do on a Business Rule?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Controls whether the Business Rule is currently enabled and will execute \u2014 unchecking it disables the rule without deleting it",
+        "Makes the Business Rule run only on active records",
+        "Sets the rule to run in real-time vs. batch",
+        "Determines if the rule can be edited"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Active checkbox is a simple on/off switch for the Business Rule. Deactivating a rule is the safest way to temporarily disable it during debugging without losing the configuration."
+    },
+    {
+      "id": "csa-e18",
+      "q": "What is the purpose of a Related List on a form?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Displays records from other tables that are related to the current record \u2014 e.g., showing all Incidents related to a Problem",
+        "Shows a list of related Knowledge articles",
+        "Displays the record history",
+        "Shows similar records for deduplication"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Related Lists appear at the bottom of a form showing linked records from other tables. The relationship is defined by a reference field pointing back to the current record (e.g., incidents where problem = current)."
+    },
+    {
+      "id": "csa-h11",
+      "q": "A customer wants to implement a self-service password reset capability in the Service Portal without calling the service desk. The solution must integrate with Active Directory. What is the architecture?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use the Password Reset application with MID Server integration to Active Directory, configure multi-factor verification (security questions + email/SMS), and deploy a Service Portal widget for the self-service flow",
+        "Give users direct access to Active Directory",
+        "Create a catalog item that emails the admin to reset the password",
+        "Deploy a third-party tool completely outside ServiceNow"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ServiceNow Password Reset integrates with AD via MID Server, supports MFA verification, and provides self-service widgets for the portal. The flow: user verifies identity \u2192 system resets AD password \u2192 confirms via the portal, all without agent involvement."
+    },
+    {
+      "id": "csa-h12",
+      "q": "An organization has 200 custom Business Rules across 15 tables. They are experiencing slow instance performance. How do you systematically identify and remediate the performance bottlenecks?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Enable Business Rule debug logging, analyze the Transaction Log for slow transactions, use the Script Execution History to identify expensive scripts, benchmark each rule with execution time tracking, and implement a remediation plan prioritizing the highest-impact rules",
+        "Disable all Business Rules and re-enable one at a time",
+        "Upgrade the instance to a higher tier",
+        "Move all Business Rules to client scripts"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Systematic approach: BR debug logs show execution time per rule. Transaction logs identify slow form loads. Script Execution History reveals expensive operations. Prioritize remediation by impact (frequency \u00d7 execution time). Common fixes: replace GlideRecord with GlideAggregate, add conditions to avoid unnecessary execution, consolidate overlapping rules."
+    },
+    {
+      "id": "csa-m34",
+      "q": "What is the purpose of the sys_properties table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Stores system-wide configuration properties that control platform behavior \u2014 administrators can customize instance settings without code changes",
+        "Stores table field definitions",
+        "Contains user preferences",
+        "Manages application licenses"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "System Properties (sys_properties) store instance-wide settings like email configurations, session timeouts, debug flags, and feature toggles. They provide a centralized, scriptable way to manage platform behavior."
+    },
+    {
+      "id": "csa-m35",
+      "q": "What is the difference between a Global UI Script and a Client Script?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Global UI Scripts load on every page across the instance and define reusable client-side functions; Client Scripts are form-specific and fire on particular table events",
+        "Global UI Scripts run on the server",
+        "Client Scripts load on every page",
+        "They are identical in scope and execution"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Global UI Scripts are JavaScript loaded on every page (or every non-mobile page) \u2014 useful for utility functions. Client Scripts are event-driven (onLoad, onChange, onSubmit) and scoped to a specific table and form."
+    },
+    {
+      "id": "csa-m36",
+      "q": "How do you configure email notifications in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Create Notification records that define the trigger (event or condition), recipients (users, groups, fields), and email template \u2014 the system sends emails when conditions are met",
+        "Write a Business Rule that calls gs.sendEmail()",
+        "Configure notifications in the email server settings",
+        "Use Client Scripts to trigger email sends"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Notifications are configured through the Notification module: define when to send (on event or condition), who receives (users, groups, field values like assigned_to), and what to send (email template with HTML and field substitution)."
+    },
+    {
+      "id": "csa-m37",
+      "q": "What is an Order Guide in the Service Catalog?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A wizard-like interface that bundles multiple catalog items into a single ordered request, guiding users through a sequence of selections \u2014 e.g., New Hire Onboarding bundling laptop + software + access",
+        "A documentation guide for placing orders",
+        "A sorting mechanism for catalog categories",
+        "A report showing order history"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Order Guides present a multi-step wizard that combines multiple catalog items into one request. Users are guided through selections (e.g., choose hardware \u2192 choose software \u2192 choose access), and all items are submitted as a single request."
+    },
+    {
+      "id": "csa-h13",
+      "q": "A developer accidentally committed an Update Set to production that broke a critical workflow. The CEO cannot submit expense reports. How do you handle this emergency?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Immediately back out the Update Set to restore the previous configuration, verify the workflow is functioning by testing with an impersonated user, implement a post-incident review to prevent recurrence, and update the deployment process to require peer review and UAT sign-off before production commits",
+        "Manually fix the workflow in production during business hours",
+        "Roll back the entire instance to yesterday backup",
+        "Tell the CEO to submit expenses via email until next release"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Emergency response: back out the Update Set (creates a reversal set), verify restoration, communicate resolution. Prevention: mandate UAT sign-off before production, require peer review of update sets, implement a change freeze window, and add ATF tests for critical workflows."
     }
   ],
   "csm": [
@@ -1081,6 +2011,134 @@
       "explanation": "In CSM, an Account (customer_account table) represents an external organization that your company provides services to."
     },
     {
+      "id": "csm-e3",
+      "q": "What table stores Cases in ServiceNow CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "sn_customerservice_case",
+        "incident",
+        "sc_request",
+        "task"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSM Cases are stored in the sn_customerservice_case table, which extends the task table. This is separate from the incident table used for internal IT incidents."
+    },
+    {
+      "id": "csm-e4",
+      "q": "What is a Contact in CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A person associated with a customer Account who can open and track cases",
+        "Any user in the system",
+        "A phone number record",
+        "A type of notification"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Contacts (customer_contact table) are individuals associated with a customer Account. They can log into the customer portal, create cases, and track their organization's cases."
+    },
+    {
+      "id": "csm-e5",
+      "q": "What is the difference between a Contact and a Consumer in CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Contacts are B2B (associated with an Account/organization); Consumers are B2C (individual customers not tied to an organization)",
+        "They are the same thing",
+        "Contacts can only call in; Consumers can only use the portal",
+        "Consumers have higher priority than Contacts"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Contacts represent people at business accounts (B2B). Consumers represent individual customers (B2C) who interact directly without an organizational relationship."
+    },
+    {
+      "id": "csm-e6",
+      "q": "What is the Customer Service Portal in CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A self-service web portal where customers can create cases, check case status, browse knowledge articles, and manage their account",
+        "An internal admin dashboard",
+        "A reporting tool for CSM metrics",
+        "A configuration page for CSM settings"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Customer Service Portal (built on Service Portal) provides a branded self-service experience for external customers to submit and track cases, access knowledge, and interact with the support team."
+    },
+    {
+      "id": "csm-e7",
+      "q": "What is a Case Type in CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A categorization that determines the case workflow, fields, and SLA \u2014 common types include Question, Issue, and Request",
+        "The font style used in case descriptions",
+        "The severity level of a case",
+        "The channel through which a case was created"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Case Types categorize cases and can drive different workflows, approval processes, field visibility, and SLA targets. Standard types include Question, Issue, and Request."
+    },
+    {
+      "id": "csm-e8",
+      "q": "What is Agent Workspace in CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A modern, configurable agent interface built on UI Builder that provides a unified view of customer cases, communications, and related information",
+        "A developer IDE for writing scripts",
+        "A physical office space requirement",
+        "A mobile app for field agents"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Agent Workspace (Configurable Workspace) provides agents with a streamlined interface showing case details, customer history, communications, and recommended actions in a single pane."
+    },
+    {
+      "id": "csm-e9",
+      "q": "What is an Entitlement in CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A record that defines what service or support level a customer is entitled to, including SLA targets and available channels",
+        "A user role permission",
+        "A type of case priority",
+        "A billing invoice"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Entitlements define service commitments for specific customers or products. They determine SLA targets, support hours, communication channels, and service scope based on the customer's contract."
+    },
+    {
+      "id": "csm-e10",
+      "q": "What channels does CSM support for customer communication?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Phone, Email, Portal, Chat, Social Media, Walk-in \u2014 all channels are tracked and can create/update cases",
+        "Email only",
+        "Phone and Email only",
+        "Portal only"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSM is omnichannel \u2014 customers can interact via phone, email, self-service portal, live chat, social media, and walk-in. All interactions are tracked against the case for a complete communication history."
+    },
+    {
       "id": "csm-m1",
       "q": "Explain the relationship between Account, Contact, Consumer, and Case in CSM.",
       "type": "mcq",
@@ -1113,6 +2171,262 @@
       "explanation": "Major Issue Management creates a parent case for a widespread issue and links affected customer cases as children. Updates and resolutions flow from parent to child cases, ensuring consistent communication."
     },
     {
+      "id": "csm-m3",
+      "q": "What is the purpose of the Product model in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "To track products and services sold to customers, linking them to accounts for entitlement verification and asset tracking",
+        "To manage software development sprints",
+        "To track internal product roadmaps",
+        "To store marketing materials"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Product model (sn_customerservice_product) tracks products/services associated with customer accounts. It enables product-specific SLAs, entitlements, and knowledge, and helps agents understand what the customer is using."
+    },
+    {
+      "id": "csm-m4",
+      "q": "What is the Assignment Workbench in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A visual tool for dispatchers to assign and reassign cases to agents based on skills, availability, and workload \u2014 showing a real-time queue view",
+        "A developer tool for assigning variables",
+        "A report builder for tracking assignments",
+        "A configuration page for assignment rules"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Assignment Workbench provides supervisors/dispatchers a real-time view of agent workloads and case queues. They can drag-and-drop assign cases, see agent availability, and balance workload."
+    },
+    {
+      "id": "csm-m5",
+      "q": "How does CSM handle SLAs differently from standard ITSM SLAs?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "CSM SLAs can be customer-specific using Entitlements \u2014 different customers can have different response/resolution targets for the same case type based on their service contract",
+        "CSM does not support SLAs",
+        "CSM uses the same SLA engine with no differences",
+        "CSM SLAs are always faster than ITSM SLAs"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSM SLAs integrate with Entitlements to provide customer-specific service levels. A premium customer might have a 1-hour response SLA while a standard customer has 4 hours, all managed through entitlement records linked to accounts."
+    },
+    {
+      "id": "csm-m6",
+      "q": "What is a Playbook in CSM and how does it guide agents?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A guided, step-by-step workflow that walks agents through a defined process for handling specific case types, ensuring consistency and capturing required information at each step",
+        "A Knowledge Base article written for agents",
+        "A training manual stored in the system",
+        "A script that auto-resolves cases"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Playbooks provide structured guidance through Process Automation Designer. They present agents with sequential steps, required fields, and decision points, ensuring consistent case handling across the team."
+    },
+    {
+      "id": "csm-m7",
+      "q": "What is the Special Handling Note feature in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Alerts that appear when an agent opens a case for a specific customer, displaying important information like VIP status, known issues, or special procedures",
+        "A field for internal notes on the case",
+        "A post-it note feature in the UI",
+        "A type of email template"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Special Handling Notes are proactive alerts tied to accounts, contacts, or consumers. When an agent works on a case for a flagged customer, the note prominently displays critical information (e.g., 'VIP Client \u2014 escalate immediately')."
+    },
+    {
+      "id": "csm-m8",
+      "q": "What is the difference between the CSM portal and the Service Portal used for ITSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The CSM portal is designed for external customers with branded experience, account-scoped visibility, and consumer-focused features; the ITSM Service Portal is for internal employees",
+        "They are identical portals",
+        "The CSM portal cannot display Knowledge articles",
+        "The ITSM portal supports multiple accounts"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The CSM portal is customer-facing with brand customization, account-level data scoping (customers only see their own cases), and external user authentication. The ITSM portal serves internal employees with different navigation and features."
+    },
+    {
+      "id": "csm-m9",
+      "q": "What is the role of the customer_contact table vs the sys_user table in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "customer_contact extends sys_user and adds CSM-specific fields like account, title, and partner \u2014 contacts are users with customer-specific attributes",
+        "They are completely separate tables with no relationship",
+        "customer_contact replaces sys_user for all CSM users",
+        "sys_user is for admins; customer_contact is for everyone else"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "customer_contact extends sys_user, inheriting all user fields while adding CSM-specific fields (account, contact type, partner flag). This means contacts are full platform users with additional customer context."
+    },
+    {
+      "id": "csm-m10",
+      "q": "How does Case categorization work in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Cases use a multi-level categorization (Category \u2192 Subcategory \u2192 Type) that can drive automatic assignment, SLA selection, and knowledge article suggestions",
+        "Cases can only have one category level",
+        "Categorization is purely cosmetic and has no impact on processing",
+        "Categories are assigned randomly by the system"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Multi-level categorization drives automation: assignment rules match categories to teams, SLA definitions can target specific categories, and knowledge suggestions filter by category for relevant article recommendations."
+    },
+    {
+      "id": "csm-m11",
+      "q": "What is Customer Project Management in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A feature that allows customer-facing teams to manage projects, tasks, and milestones related to customer engagements such as implementations or onboarding",
+        "An internal project management tool unrelated to CSM",
+        "A method for customers to manage their own internal projects",
+        "A reporting module for project metrics"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Customer Project Management extends CSM with project capabilities for customer engagements. It tracks implementation projects, onboarding milestones, and deliverables with customer visibility through the portal."
+    },
+    {
+      "id": "csm-m12",
+      "q": "How does Agent Assist / AI Search help CSM agents?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It uses AI to analyze the case context and proactively recommend relevant Knowledge articles, similar cases, and next best actions to the agent in the workspace",
+        "It automatically resolves cases without agent involvement",
+        "It replaces the agent's typing with AI-generated responses",
+        "It only works for email-based cases"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Agent Assist (powered by Now Assist) analyzes case content in real-time and surfaces relevant KB articles, similar resolved cases, and recommended actions in the agent workspace sidebar, reducing resolution time."
+    },
+    {
+      "id": "csm-m13",
+      "q": "What is the purpose of the Installed Product table in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Tracks specific product instances installed or provisioned for a customer, including version, serial number, and warranty status \u2014 used to link cases to specific assets",
+        "Tracks ServiceNow platform installations",
+        "Records software installed on agent workstations",
+        "Stores product catalog items"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Installed Product (sn_customerservice_installed_product) tracks what specific products a customer has, including versions and serial numbers. When a case is logged, agents can link it to the exact product instance experiencing the issue."
+    },
+    {
+      "id": "csm-m14",
+      "q": "What is the difference between a Case and a Case Task in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Case tracks the overall customer issue; Case Tasks are sub-tasks assigned to different teams or individuals to complete parts of the case resolution \u2014 both extend the task table",
+        "Case Tasks are auto-created for every case",
+        "Cases and Case Tasks are on the same table",
+        "Case Tasks can exist without a parent Case"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Cases represent the customer's overall issue. Case Tasks break down the resolution work into assignable sub-tasks (e.g., 'Investigate logs', 'Test fix', 'Update customer'). Multiple tasks can run in parallel or sequence."
+    },
+    {
+      "id": "csm-m15",
+      "q": "How do you configure omnichannel routing in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Use Advanced Work Assignment (AWA) to define queues, matching rules, and agent capacity for routing cases from different channels (chat, phone, email) to qualified available agents",
+        "Create a separate queue per channel manually",
+        "Use Business Rules to assign cases randomly",
+        "Agents manually pick up cases from a shared list"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Advanced Work Assignment provides intelligent routing across all channels. It considers agent skills, capacity, availability, and affinity (routing returning customers to the same agent) to optimize case distribution."
+    },
+    {
+      "id": "csm-m16",
+      "q": "What is a Service Contract in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A record that defines the terms, duration, and scope of service provided to a customer \u2014 it drives entitlements and SLA targets for cases from that account",
+        "A legal document stored as an attachment",
+        "A type of catalog item",
+        "An internal service agreement between IT teams"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Service Contracts define what service a customer has purchased, including duration, coverage hours, and service levels. Entitlements are derived from contracts to automatically apply the correct SLA when a case is created."
+    },
+    {
+      "id": "csm-m17",
+      "q": "What is the CSM Community feature?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "An online forum where customers can ask questions, share solutions, and interact with other customers and support staff \u2014 reducing case volume through peer support",
+        "An internal messaging system for agents",
+        "A social media integration",
+        "A team collaboration tool for CSM admins"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSM Community provides a customer-facing forum for peer-to-peer support. Customers can post questions, share solutions, and vote on answers. Common questions get resolved without creating cases, deflecting support volume."
+    },
+    {
+      "id": "csm-m18",
+      "q": "How does the Customer Central workspace differ from the standard CSM agent workspace?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Customer Central provides a 360-degree view of the customer \u2014 showing all cases, contracts, entitlements, products, and interactions for a single account in one unified workspace \u2014 while the standard workspace focuses on individual case handling",
+        "Customer Central is for customers; standard workspace is for agents",
+        "They are identical workspaces with different names",
+        "Customer Central only shows financial data"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Customer Central is an account-centric workspace giving agents a complete view of the customer relationship \u2014 all open cases, contract status, entitlements, installed products, and communication history \u2014 enabling more informed, contextual support."
+    },
+    {
       "id": "csm-h1",
       "q": "A CSM customer wants to implement proactive customer service that automatically creates cases when monitoring detects an issue affecting their service BEFORE the customer reports it. What is the architecture?",
       "type": "mcq",
@@ -1126,7 +2440,599 @@
       "correct": [
         0
       ],
-      "explanation": "Proactive CSM architecture: Event Management detects infrastructure issues → Service Mapping identifies affected business services and linked customers → Automated case creation with customer-specific impact details → Proactive notifications via portal, email, and SMS before the customer is impacted."
+      "explanation": "Proactive CSM architecture: Event Management detects infrastructure issues \u2192 Service Mapping identifies affected business services and linked customers \u2192 Automated case creation with customer-specific impact details \u2192 Proactive notifications via portal, email, and SMS before the customer is impacted."
+    },
+    {
+      "id": "csm-h2",
+      "q": "A customer with 500+ accounts wants customer-specific SLA targets. Some accounts have 1-hour response, others 4-hour, others 24-hour. How do you configure this without creating hundreds of SLA definitions?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use Entitlements linked to Service Contracts per account, where each entitlement specifies the SLA target duration. A single SLA Definition references the entitlement to dynamically determine the target for each case based on the customer's contract",
+        "Create a separate SLA Definition for each account",
+        "Use a Business Rule to calculate SLA targets per case",
+        "Hard-code account-specific timers in a Script Include"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Entitlement model scales: one SLA Definition can reference entitlement targets. Each account's contract creates an entitlement with the specific duration. When a case is created, the system matches the account's entitlement to determine the correct SLA target dynamically."
+    },
+    {
+      "id": "csm-h3",
+      "q": "A global enterprise customer needs CSM configured for 3 regions (Americas, EMEA, APAC) with different business hours, languages, and routing rules. How do you architect this on a single instance?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Configure Assignment Groups per region, implement Business Schedule records for each region's operating hours, set up regional SLAs that reference the correct schedules, use Advanced Work Assignment with location-based routing, and configure portal language support",
+        "Create separate instances per region",
+        "Use domain separation for each region",
+        "Create separate case tables per region"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Single instance, regional configuration: Business Schedules define hours per region. SLAs reference region-specific schedules. AWA routes cases based on customer location to regional teams. Portal supports multiple languages. This avoids instance sprawl while respecting regional differences."
+    },
+    {
+      "id": "csm-h4",
+      "q": "You need to implement a tiered support model in CSM: Tier 1 handles first contact, Tier 2 handles technical investigation, Tier 3 is engineering. Each tier has different SLA targets. How do you track SLA per tier?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use Case Tasks for each tier with task-level SLAs \u2014 when Tier 1 escalates to Tier 2, a new task is created with Tier 2's SLA. The parent case tracks overall resolution SLA while each task tracks per-tier targets",
+        "Apply a single SLA to the entire case regardless of tier",
+        "Manually track tier times in a comments field",
+        "Create separate case records for each tier"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Task-based tiered SLAs: the parent case has an overall resolution SLA. Each tier transition creates a case task with tier-specific SLA targets. This tracks per-tier performance (Tier 1 first response, Tier 2 investigation time, Tier 3 fix time) independently."
+    },
+    {
+      "id": "csm-h5",
+      "q": "A customer wants to measure Customer Effort Score (CES), CSAT, and NPS through their CSM portal. How do you implement this?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Configure Assessment and Survey framework with different survey types triggered at case closure, use Survey Designer for branded survey forms, link responses to cases for correlation analysis, and build Performance Analytics dashboards for trending",
+        "Use a third-party survey tool completely outside ServiceNow",
+        "Ask agents to manually record customer satisfaction scores",
+        "Only track CSAT and ignore CES and NPS"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ServiceNow's Survey framework supports multiple survey types. Configure triggers (case closure, portal interaction) to send surveys. Link responses back to cases and accounts for correlation. PA dashboards show trends, and agents see customer sentiment in the workspace."
+    },
+    {
+      "id": "csm-h6",
+      "q": "A B2B customer needs partner companies to also handle cases on behalf of their mutual customers. Partners should see only their assigned cases and the shared customer's account data. How do you configure this?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use the Partner model in CSM \u2014 create partner accounts, assign partner contacts with the sn_customerservice.partner role, configure ACLs to scope case visibility to partner-assigned cases, and set up partner portal with account-level data restrictions",
+        "Give partners full admin access to see everything",
+        "Create a separate instance for each partner",
+        "Email case updates to partners manually"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSM's Partner model supports multi-party service: Partner accounts and contacts with specific roles, ACLs scoping visibility to assigned cases and relevant account data, and partner portal access for case management \u2014 all without exposing unrelated customer data."
+    },
+    {
+      "id": "csm-h7",
+      "q": "A customer wants to implement self-service deflection that reduces case volume by 30%. What is the strategy using CSM capabilities?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Implement AI-powered Knowledge search on the portal with contextual suggestions, configure Virtual Agent for common inquiries, enable Community forums for peer support, use Service Catalog for standard requests, and track deflection rates with Performance Analytics",
+        "Hire more agents to handle cases faster",
+        "Remove the ability to create cases from the portal",
+        "Only accept cases via phone"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Multi-layer deflection: Knowledge (AI-powered search surfaces relevant articles before case creation), Virtual Agent (handles routine queries conversationally), Community (peer answers for common questions), Service Catalog (structured requests that don't need cases). PA tracks deflection at each layer."
+    },
+    {
+      "id": "csm-h8",
+      "q": "A customer experiences a major outage affecting 200 accounts. 500 cases flood in within 30 minutes. How do you handle this with Major Issue Management?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Create a Major Issue parent case, use automated case matching rules to link incoming cases as children, post a public status update on the customer portal, send proactive notifications to affected accounts, and provide a single resolution that cascades to all child cases",
+        "Ask agents to handle each case individually",
+        "Close all cases with a generic message",
+        "Wait until the issue is resolved then respond to all cases"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Major Issue Management: create parent case with the outage details, configure matching rules (category + time window) to auto-link incoming cases, post portal status page updates, send proactive comms to affected accounts, and resolve the parent to cascade resolution/communication to all 500 child cases."
+    },
+    {
+      "id": "csm-m19",
+      "q": "What is the Proactive Case feature in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A capability that automatically creates cases for customers before they report an issue, based on monitoring data or known issues affecting their products/services",
+        "A case created by the customer proactively",
+        "A case escalation mechanism",
+        "A case template for common issues"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Proactive Cases are created automatically when the system detects an issue that will impact a customer (via Event Management, monitoring integration, or manual trigger). The customer is notified before they even experience the problem."
+    },
+    {
+      "id": "csm-m20",
+      "q": "How does the 'Related Cases' feature help agents in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It shows cases from the same account, with similar categories, or affecting the same product \u2014 helping agents identify patterns and link related issues",
+        "It only shows cases assigned to the same agent",
+        "It displays cases from all customers",
+        "It shows cases created on the same date"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Related Cases surfaces contextually relevant cases based on account, category, product, and other criteria. This helps agents identify recurring issues, link related problems, and leverage previous resolutions."
+    },
+    {
+      "id": "csm-m21",
+      "q": "What is a Service-Aware Case in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A case linked to a specific business service and its underlying infrastructure via CMDB relationships, enabling impact analysis and targeted troubleshooting",
+        "A case with SLA tracking enabled",
+        "A case created from the Service Catalog",
+        "A case assigned to a service team"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Service-Aware Cases connect the customer issue to the affected business service and its CMDB infrastructure. Agents can see the service topology, identify the impacted CI, and understand upstream/downstream effects."
+    },
+    {
+      "id": "csm-m22",
+      "q": "What is the purpose of the CSM Targeted Communication feature?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Enables sending bulk communications to specific customer segments based on account, product, region, or other criteria \u2014 used for announcements, maintenance windows, and outage notifications",
+        "A one-on-one messaging feature between agent and customer",
+        "An internal agent communication tool",
+        "A marketing email system"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Targeted Communications allow support teams to send segmented messages to groups of customers (e.g., all customers on Product X, all accounts in APAC). This is used for proactive notifications about maintenance, known issues, or service changes."
+    },
+    {
+      "id": "csm-h9",
+      "q": "A customer wants CSM integrated with their Salesforce CRM so that when a Salesforce opportunity becomes a customer, an Account is auto-created in ServiceNow CSM with all contact data synced bidirectionally. What is the architecture?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use Integration Hub with the Salesforce spoke for bidirectional sync, implement transform maps for initial data migration, configure scheduled integration flows for ongoing sync, and establish conflict resolution rules for bidirectional updates",
+        "Manually re-enter data from Salesforce into ServiceNow",
+        "Export Salesforce data to CSV and import weekly",
+        "Use Salesforce for all customer management and skip CSM setup"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Integration Hub Salesforce spoke provides pre-built actions for CRUD operations. Bidirectional sync requires: initial migration via transform maps, ongoing scheduled flows for new/updated records, field mapping between CRM and CSM data models, and conflict resolution (last-write-wins or field-level rules)."
+    },
+    {
+      "id": "csm-h10",
+      "q": "A customer needs to implement AI-powered case classification that automatically sets category, priority, and assignment group based on the case description. How do you architect this?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Train a Predictive Intelligence model on historical case data, configure auto-classification to set category/subcategory, implement priority prediction based on description sentiment and keywords, and use the predicted values to drive assignment rules \u2014 with agent override capability",
+        "Use random assignment and let agents reclassify",
+        "Write regex-based Business Rules to match keywords",
+        "Require customers to select all fields manually"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Predictive Intelligence trains ML models on historical labeled cases. The model analyzes new case descriptions and predicts category, priority, and other fields. Auto-classification reduces agent triage time. Agent override ensures human judgment prevails when the model is uncertain."
+    },
+    {
+      "id": "csm-e11",
+      "q": "What is the sn_customerservice_case table?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "The primary table for CSM cases \u2014 it extends the task table and stores all customer service case records",
+        "The incident table used by CSM",
+        "A staging table for case imports",
+        "A reporting table for case metrics"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "sn_customerservice_case is the core CSM case table. It extends task, inheriting task fields (state, priority, assignment) while adding CSM-specific fields (account, contact, product, entitlement)."
+    },
+    {
+      "id": "csm-e12",
+      "q": "What is a Case Channel in CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "The method through which a case was created or received \u2014 such as phone, email, portal, chat, or social media",
+        "A TV channel about customer service",
+        "A communication template",
+        "A routing queue"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Channel field on a case records how the customer contacted support. This data drives channel-specific SLA targets, routing rules, and analytics about customer channel preferences."
+    },
+    {
+      "id": "csm-e13",
+      "q": "What is an Account Team in CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A designated group of people (account manager, technical lead, support lead) assigned to manage a specific customer account",
+        "All agents in the support department",
+        "The customer organization team",
+        "A team that creates new accounts"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Account Teams define the relationship between support staff and customer accounts. Roles like Account Manager, Technical Lead, and Support Lead can be assigned per account for relationship management."
+    },
+    {
+      "id": "csm-m23",
+      "q": "How does CSM handle case escalation?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Through configurable escalation rules based on SLA breach, priority, inactivity, or manual trigger \u2014 escalations can reassign cases, notify managers, and change priority automatically",
+        "Cases cannot be escalated in CSM",
+        "Only managers can manually escalate cases",
+        "Escalation requires a separate workflow application"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSM escalation uses SLA-driven rules (auto-escalate before breach), inactivity monitors (escalate stale cases), and manual escalation actions. Escalation can change assignment, priority, and trigger notifications to management."
+    },
+    {
+      "id": "csm-m24",
+      "q": "What is the relationship between Entitlements and SLAs in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Entitlements define customer-specific service levels that determine which SLA targets apply to their cases \u2014 a Gold entitlement might specify 1-hour response while Silver specifies 4 hours",
+        "Entitlements and SLAs are unrelated",
+        "Entitlements replace SLAs entirely",
+        "SLAs override Entitlements in all cases"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Entitlements specify per-customer (or per-product, per-contract) service commitments. SLA Definitions reference entitlement data to dynamically set targets. This allows one SLA definition to serve multiple customer tiers."
+    },
+    {
+      "id": "csm-m25",
+      "q": "What is the CSM Case Form Agent Assist panel?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A sidebar panel in the agent workspace that proactively suggests relevant Knowledge articles, similar cases, and recommended actions based on the current case context",
+        "A form for agents to request assistance from managers",
+        "A training module within the workspace",
+        "A customer-facing help panel"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Agent Assist panel uses contextual analysis to surface helpful information: KB articles matching the case description, previously resolved similar cases, and AI-recommended next actions \u2014 all without the agent needing to search manually."
+    },
+    {
+      "id": "csm-m26",
+      "q": "How does the Asset and Entitlement Verification work when a case is created?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "When an agent selects the customer and product, the system automatically checks if the customer has a valid entitlement (active contract) for that product \u2014 if not, the agent is alerted that the customer may not be eligible for support",
+        "Entitlements are never verified automatically",
+        "Agents must manually check contracts in a separate system",
+        "Verification only happens after the case is resolved"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Automatic entitlement verification checks: Is there an active contract for this account? Does it cover this product? Is the support window active? If verification fails, agents see a warning and can still create the case but with appropriate documentation."
+    },
+    {
+      "id": "csm-m27",
+      "q": "What is the purpose of the Communication Plan in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A configurable set of scheduled communications (email, portal updates) automatically sent to the customer at defined intervals during case processing \u2014 keeping customers informed without manual effort",
+        "A plan for migrating communication systems",
+        "An internal team meeting schedule",
+        "A document listing approved communication templates"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Communication Plans automate customer updates during case lifecycle. Configure triggers (e.g., every 24 hours while case is open, on state change, on approaching SLA breach) to send templated updates, reducing customer follow-up calls."
+    },
+    {
+      "id": "csm-m28",
+      "q": "What is the CSM Interaction record?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A record that captures each customer touchpoint (call, chat, email) including duration, channel, and notes \u2014 providing a complete timeline of all interactions for a case or account",
+        "A social media post",
+        "An internal agent note",
+        "A system log entry"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Interaction records log every customer touchpoint with metadata (channel, duration, agent, disposition). They build a complete communication timeline visible to agents, enabling context-aware support across channels."
+    },
+    {
+      "id": "csm-h11",
+      "q": "A customer wants to implement a customer health scoring system that predicts churn risk based on case history, SLA performance, survey scores, and product usage. How do you architect this in CSM?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Build a composite Health Score using Performance Analytics indicators from multiple data sources \u2014 case volume trends, SLA breach rates, CSAT scores, and product telemetry. Use Predictive Intelligence to identify churn patterns and trigger proactive outreach when scores drop below thresholds",
+        "Use a simple formula of open case count only",
+        "Manually assign health scores quarterly",
+        "Only track CSAT and ignore other signals"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Customer Health Score architecture: PA indicators aggregate signals (case trends, SLA breaches, survey sentiment, engagement metrics). Predictive Intelligence models identify churn patterns from historical data. Automated alerts trigger when scores decline, enabling proactive account management."
+    },
+    {
+      "id": "csm-h12",
+      "q": "A customer needs to support 10,000 B2B contacts and 500,000 B2C consumers on the same CSM instance. How do you handle the vastly different scale, authentication, and portal requirements?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Configure separate portals for B2B (account-scoped, SSO via SAML) and B2C (consumer-facing, social login). Use Contacts for B2B and Consumers for B2C with appropriate ACLs. Implement different case routing and SLA models per segment. Scale B2C with Virtual Agent for high-volume deflection",
+        "Force all users through the same portal",
+        "Create separate instances for B2B and B2C",
+        "Only support B2B and refer B2C to a call center"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Dual-model CSM: B2B portal with SAML SSO, account-scoped views, and dedicated account teams. B2C portal with consumer-friendly auth (social, email), self-service focus, and Virtual Agent for scale. Shared backend with segment-specific routing, SLAs, and entitlements."
+    },
+    {
+      "id": "csm-h13",
+      "q": "An airline wants to use CSM where a single flight delay event creates cases for 300 affected passengers, each needing rebooking and compensation calculations. How do you handle this volume efficiently?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use Major Issue Management to create a parent case for the flight delay, auto-generate child cases for affected passengers using a scheduled flow with passenger manifest data, implement playbooks for rebooking and compensation workflows, and use targeted communications for mass passenger notifications",
+        "Have agents manually create 300 cases",
+        "Create one case for the whole flight and email all passengers the same message",
+        "Wait for passengers to call in and create cases individually"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Mass event handling: Major Issue parent case tracks the flight delay. Flow Designer generates child cases from passenger manifest data. Playbooks guide agents through rebooking/compensation steps per passenger. Targeted Communications send bulk updates. Child case resolution cascades from parent when the issue is resolved."
+    },
+    {
+      "id": "csm-m29",
+      "q": "What is the role of the Customer Service Management (CSM) data model hierarchy?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The CSM data model follows a hierarchy: Account \u2192 Contact \u2192 Case \u2192 Case Task, with Products and Entitlements linking to Accounts, and Service Contracts defining the service terms",
+        "All CSM records are stored in a single flat table",
+        "The hierarchy is Account \u2192 Case only",
+        "Cases are not related to any account or contact"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The CSM data model is hierarchical: Accounts (customers) have Contacts (people), who create Cases (issues). Cases spawn Case Tasks (sub-work). Products, Entitlements, and Contracts link to Accounts to define what support is available."
+    },
+    {
+      "id": "csm-m30",
+      "q": "What is the difference between Quick Close and Full Resolution of a case?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Quick Close allows agents to resolve simple cases in one action with minimal fields; Full Resolution follows the complete state transition flow with required documentation and root cause analysis",
+        "Quick Close deletes the case; Full Resolution archives it",
+        "They are the same action with different names",
+        "Quick Close skips SLA tracking"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Quick Close is a streamlined action for simple, first-contact resolutions (e.g., answered a question). It sets resolution fields and closes in one click. Full Resolution follows the standard lifecycle with investigation, root cause, and detailed resolution notes."
+    },
+    {
+      "id": "csm-m31",
+      "q": "What is the \"Watched Cases\" feature in the CSM portal?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Allows contacts to follow cases they did not create \u2014 receiving updates when the case state changes, useful for managers monitoring their team cases",
+        "A security audit feature that tracks who viewed a case",
+        "A dashboard that shows trending case categories",
+        "An admin tool for monitoring agent performance"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Watched Cases let portal users subscribe to cases opened by other contacts at their account. They receive notifications on updates, enabling managers or project leads to stay informed without being the case opener."
+    },
+    {
+      "id": "csm-m32",
+      "q": "What is the difference between a Service Entitlement and a Product Entitlement?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Service Entitlements define support levels for a service contract (e.g., 24/7 Premium Support); Product Entitlements define support for a specific product (e.g., Product X warranty support)",
+        "They are the same thing",
+        "Service Entitlements are for internal use; Product Entitlements are for customers",
+        "Product Entitlements are always more restrictive"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Service Entitlements are tied to service contracts and define general support terms (hours, channels, response times). Product Entitlements are specific to products and may have different support terms based on warranty, subscription, or product tier."
+    },
+    {
+      "id": "csm-e14",
+      "q": "What happens when a customer submits a case through the CSM portal?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A case record is created on the sn_customerservice_case table, the customer receives a confirmation, and the case enters the assignment/routing workflow",
+        "An email is sent to a shared inbox for manual processing",
+        "A task is created on the task table with no assignment",
+        "Nothing happens until an agent reviews the submission"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Portal case submission creates a case record, triggers automated routing (Assignment Rules or AWA), sends confirmation to the customer, and optionally triggers SLA attachment and entitlement verification."
+    },
+    {
+      "id": "csm-m33",
+      "q": "How does Skill-Based Routing work in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Cases are matched to agents based on required skills (product expertise, language, certification) \u2014 the routing engine finds available agents with matching skill sets and appropriate capacity",
+        "Cases are routed alphabetically by agent name",
+        "Skills are used only for reporting, not routing",
+        "Agents manually claim cases from a general queue"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Skill-Based Routing in AWA matches case requirements (product, language, complexity) against agent skill profiles. The system considers skill proficiency, capacity, and availability to route to the best-qualified agent."
+    },
+    {
+      "id": "csm-h14",
+      "q": "A telecom company needs CSM to handle 50,000 cases per month across 3 support tiers, 5 product lines, and 4 languages. How do you design the assignment and routing architecture?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Implement AWA with multi-criteria routing: skill-based matching for product expertise and language, capacity management per agent, tier-based queues with automatic escalation, and affinity rules to maintain customer-agent continuity across interactions",
+        "Create one queue and let agents pick cases manually",
+        "Route all cases to Tier 1 and escalate via email",
+        "Assign cases round-robin regardless of skills or language"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "High-volume routing: AWA handles multi-criteria matching (product skill + language + tier). Capacity management prevents overload. Tier queues with auto-escalation SLAs move cases up. Agent affinity improves customer experience by routing returning customers to familiar agents."
+    },
+    {
+      "id": "csm-m34",
+      "q": "What is the purpose of the Customer Service Management (CSM) Dashboard?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A real-time visual dashboard showing KPIs like open case volume, SLA compliance rates, agent utilization, customer satisfaction scores, and case aging \u2014 used by supervisors and managers",
+        "A customer-facing dashboard on the portal",
+        "A configuration page for CSM settings",
+        "A debugging tool for CSM scripts"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSM Dashboards aggregate operational KPIs: case backlog, SLA performance, first contact resolution rate, CSAT, and agent metrics. Managers use them for real-time oversight and capacity planning."
+    },
+    {
+      "id": "csm-e15",
+      "q": "What is Case State in CSM?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "The current lifecycle stage of a case (e.g., New, In Progress, Awaiting Customer, Resolved, Closed) that drives workflow, SLA, and communication behavior",
+        "The geographic location where the case was created",
+        "The severity rating of the case",
+        "The customer account state"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Case State tracks lifecycle progression. State transitions can be configured to trigger actions (notifications, SLA events, task creation). Common states: New \u2192 In Progress \u2192 Awaiting Info \u2192 Resolved \u2192 Closed."
+    },
+    {
+      "id": "csm-m35",
+      "q": "What is the First Contact Resolution (FCR) metric in CSM?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The percentage of cases resolved during the first customer interaction without requiring follow-up, escalation, or callback \u2014 a key indicator of agent effectiveness and customer satisfaction",
+        "The time to first response on a case",
+        "The number of cases created per first-time customer",
+        "The rate at which first-tier agents resolve cases"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "FCR measures how often cases are resolved in the initial interaction. High FCR indicates effective agents, good knowledge tools, and proper training. It correlates strongly with customer satisfaction and operational efficiency."
+    },
+    {
+      "id": "csm-h15",
+      "q": "A customer wants to implement a Knowledge-Centered Service (KCS) methodology within CSM where agents create and improve Knowledge articles as part of case resolution. How do you configure this?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Enable Knowledge Management integration in CSM, configure article creation from case context (pre-populating fields from case data), implement a review workflow for agent-created articles, track article usage and linked case deflection metrics, and incentivize agents with KCS contribution tracking",
+        "Let only dedicated authors write KB articles separate from case work",
+        "Copy case resolution notes into KB articles manually after the fact",
+        "Use a third-party knowledge management tool"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "KCS in CSM: agents create/flag articles during case resolution (\"solve and evolve\"). Article templates pre-populate from case data. Peer review workflows ensure quality. Analytics track which articles deflect future cases. Agent contribution metrics incentivize participation."
+    },
+    {
+      "id": "csm-m36",
+      "q": "What is the purpose of the Disposition field on a CSM interaction record?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Records the outcome of the interaction \u2014 such as \"Resolved\", \"Transferred\", \"Follow-up Required\", \"Escalated\" \u2014 enabling reporting on interaction effectiveness",
+        "Sets the emotional tone of the interaction",
+        "Determines which agent handles the next interaction",
+        "Controls the display format of the interaction"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Disposition captures what happened during an interaction. It enables reporting on first-call resolution, transfer rates, and escalation frequency. Different dispositions can trigger different follow-up actions."
     }
   ],
   "grc": [
@@ -1144,7 +3050,7 @@
       "correct": [
         0
       ],
-      "explanation": "GRC stands for Governance, Risk, and Compliance — a suite of applications for managing organizational risks, policies, and regulatory compliance."
+      "explanation": "GRC stands for Governance, Risk, and Compliance \u2014 a suite of applications for managing organizational risks, policies, and regulatory compliance."
     },
     {
       "id": "grc-e2",
@@ -1163,6 +3069,54 @@
       "explanation": "GRC Policies are formal organizational rules tracked in ServiceNow. They include lifecycle management, acknowledgment tracking, and compliance verification."
     },
     {
+      "id": "grc-e3",
+      "q": "What is a Risk in ServiceNow GRC?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A potential threat or vulnerability that could negatively impact the organization, scored by likelihood and impact",
+        "A failed deployment",
+        "A system outage",
+        "A user complaint"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Risks in GRC are potential threats assessed by likelihood (probability) and impact (severity). They are linked to business processes, controls, and entities for structured risk management."
+    },
+    {
+      "id": "grc-e4",
+      "q": "What is a Control in GRC?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A measure or process implemented to mitigate a risk or ensure compliance with a policy \u2014 it defines what is done to manage a specific risk",
+        "A form field setting",
+        "A type of ACL rule",
+        "A workflow approval step"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Controls are the safeguards organizations implement to manage risks and meet compliance requirements. They can be preventive (stop issues), detective (find issues), or corrective (fix issues)."
+    },
+    {
+      "id": "grc-e5",
+      "q": "What is a Control Test in GRC?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "An assessment performed to verify that a control is operating effectively \u2014 it captures evidence and results to demonstrate compliance",
+        "A unit test for JavaScript code",
+        "A load test for the ServiceNow instance",
+        "A user acceptance test"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Control Tests validate that controls are functioning as designed. Testers collect evidence (screenshots, reports, data), record findings, and mark the control as effective or deficient."
+    },
+    {
       "id": "grc-m1",
       "q": "What is the Unified Compliance Framework (UCF) in ServiceNow GRC?",
       "type": "mcq",
@@ -1179,6 +3133,102 @@
       "explanation": "UCF provides a pre-built library of common controls mapped across multiple regulatory frameworks. This allows organizations to implement one control that satisfies requirements from multiple regulations simultaneously."
     },
     {
+      "id": "grc-m2",
+      "q": "How does Risk Scoring work in ServiceNow GRC?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Risks are scored using a matrix of Likelihood \u00d7 Impact, where each factor has configurable scales. The resulting score determines the risk rating (Critical, High, Medium, Low) and drives mitigation priorities",
+        "Risks are scored by the number of users affected",
+        "Risk scores are assigned randomly",
+        "Risks are only scored as Pass or Fail"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The risk scoring matrix multiplies Likelihood (1-5) by Impact (1-5) to produce a risk score. Thresholds determine risk ratings. Inherent risk (before controls) and residual risk (after controls) are tracked separately."
+    },
+    {
+      "id": "grc-m3",
+      "q": "What is the difference between an Issue and a Risk in GRC?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Risk is a potential future threat; an Issue is a realized problem or finding that requires remediation \u2014 issues often result from control test failures or audit findings",
+        "They are the same concept with different names",
+        "Issues are internal; Risks are external",
+        "Risks are more severe than Issues"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Risks represent potential threats (forward-looking). Issues represent actual findings or problems (current state) \u2014 often discovered through control testing, audits, or incident analysis. Issues require remediation plans with deadlines."
+    },
+    {
+      "id": "grc-m4",
+      "q": "What is Policy and Compliance Management in GRC?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A module that manages the full lifecycle of organizational policies including creation, review, approval, distribution, acknowledgment tracking, and compliance verification",
+        "A tool for writing Business Rules",
+        "A system for managing access policies",
+        "A notification management system"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Policy and Compliance Management handles policy lifecycle: draft \u2192 review \u2192 approve \u2192 publish \u2192 distribute. It tracks who has acknowledged policies, monitors compliance exceptions, and manages policy retirement."
+    },
+    {
+      "id": "grc-m5",
+      "q": "What is Vendor Risk Management in ServiceNow GRC?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A process for assessing, monitoring, and managing risks associated with third-party vendors including tiering, questionnaire-based assessments, and ongoing monitoring",
+        "A tool for managing vendor invoices",
+        "A procurement module",
+        "A vendor contact directory"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Vendor Risk Management assesses third-party risks through tiering (critical, high, medium, low vendors), risk questionnaires, due diligence evidence collection, and continuous monitoring of vendor risk posture."
+    },
+    {
+      "id": "grc-m6",
+      "q": "How does the Risk Heat Map work in GRC?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A visual matrix showing risks plotted by Likelihood (x-axis) vs Impact (y-axis), with color coding indicating severity \u2014 enabling quick identification of the highest-priority risks",
+        "A temperature monitoring dashboard",
+        "A map showing geographic risk distribution",
+        "A chart of risk scores over time"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Risk Heat Map is a 2D matrix visualization. Risks are plotted by their likelihood and impact scores. Colors (red/amber/yellow/green) indicate severity zones. This enables executives to quickly identify where the organization's greatest risks lie."
+    },
+    {
+      "id": "grc-m7",
+      "q": "What is an Authority Document in GRC?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A regulatory framework, standard, or law (e.g., SOX, HIPAA, ISO 27001) that the organization must comply with \u2014 it contains citations that map to controls",
+        "An internal knowledge base article",
+        "A user manual for the GRC application",
+        "A system administrator's documentation"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Authority Documents represent external regulations and standards (SOX, HIPAA, GDPR, ISO 27001, etc.). Citations within these documents map to specific control requirements, establishing the compliance framework."
+    },
+    {
       "id": "grc-h1",
       "q": "A financial services company needs to implement continuous control monitoring with automated evidence collection across 5 regulatory frameworks. How would you architect this in ServiceNow GRC?",
       "type": "mcq",
@@ -1193,6 +3243,134 @@
         0
       ],
       "explanation": "Continuous monitoring architecture: UCF harmonizes controls across frameworks (one control, multiple regulations). Integration Hub automates evidence collection. Scheduled test execution provides continuous assessment. Automated scoring highlights gaps. Performance Analytics dashboards give regulatory-specific views."
+    },
+    {
+      "id": "grc-h2",
+      "q": "An organization is preparing for a SOX audit and needs to demonstrate control effectiveness across 200+ controls. The audit is in 8 weeks. How do you prepare using ServiceNow GRC?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Run a gap assessment to identify controls without recent test evidence, prioritize testing of high-risk controls, execute batch control tests with automated evidence collection, remediate failed controls with tracked issues, and generate audit-ready reports with complete evidence trails",
+        "Test all 200 controls manually in the last week",
+        "Only test controls the auditor specifically asks about",
+        "Prepare a PowerPoint summarizing the control environment"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Audit prep: gap assessment identifies untested controls, risk-based prioritization focuses on what matters most, automated testing accelerates evidence collection, issue remediation addresses gaps before the auditor arrives, and audit-ready reports provide the complete evidence package."
+    },
+    {
+      "id": "grc-h3",
+      "q": "An organization needs to implement a Third-Party Risk Management program that assesses 500+ vendors annually. Manual questionnaire processing takes 6 months. How do you automate this?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Implement Vendor Risk Management with tiered assessment workflows \u2014 auto-classify vendors by criticality, use digital questionnaires with automated scoring, integrate with external risk intelligence feeds for continuous monitoring, and set up automated reassessment schedules based on tier and risk score",
+        "Send the same questionnaire to all 500 vendors simultaneously",
+        "Only assess vendors when a contract renewal is due",
+        "Outsource all vendor assessments to a third party"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Automated VRM: tier vendors by criticality (Tier 1 gets deep assessment, Tier 3 gets basic). Digital questionnaires with auto-scoring eliminate manual review. External risk feeds (security ratings, news monitoring) provide continuous assessment between formal reviews. Automated schedules ensure nothing falls through cracks."
+    },
+    {
+      "id": "grc-m8",
+      "q": "What is a Risk Framework in ServiceNow GRC?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A structured approach that defines how risks are identified, assessed, categorized, and managed \u2014 it includes risk appetite, scoring methodology, and escalation thresholds",
+        "A JavaScript framework used in GRC development",
+        "A data import framework",
+        "A reporting framework"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Risk Frameworks define the organizational approach to risk management: how risks are categorized (operational, financial, compliance), how they are scored (qualitative, quantitative), risk appetite definitions, and escalation rules."
+    },
+    {
+      "id": "grc-m9",
+      "q": "What is a Risk Appetite statement in GRC?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A formal declaration of the level of risk an organization is willing to accept in pursuit of its objectives \u2014 it sets thresholds that trigger escalation when exceeded",
+        "A document about food safety risks",
+        "A vendor selection criterion",
+        "A user access policy"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Risk Appetite defines acceptable risk levels. If a risk score exceeds the appetite threshold, it requires escalation and mitigation. Different business areas may have different risk appetites (e.g., lower for compliance, higher for innovation)."
+    },
+    {
+      "id": "grc-m10",
+      "q": "How does GRC integrate with ITSM in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "GRC can link risks and controls to ITSM processes \u2014 e.g., control test failures can auto-create incidents, risk events can trigger changes, and ITSM data feeds into risk indicators for continuous monitoring",
+        "GRC and ITSM are completely separate applications with no integration",
+        "GRC replaces ITSM entirely",
+        "Integration requires third-party middleware"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "GRC-ITSM integration: control failures create incidents for remediation, risk events trigger change requests, incident trends feed risk indicators, and CMDB data enriches risk assessments. This closed-loop approach connects compliance with operations."
+    },
+    {
+      "id": "grc-e6",
+      "q": "What is a Risk Register?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A comprehensive list of all identified risks in the organization, including their assessments, owners, and mitigation status",
+        "A system log file",
+        "A user registration form",
+        "A list of registered IT assets"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Risk Register is the central repository of all identified risks. It tracks each risk description, assessment (likelihood \u00d7 impact), owner, mitigation plan, status, and review dates."
+    },
+    {
+      "id": "grc-e7",
+      "q": "What does \"residual risk\" mean in GRC?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "The level of risk remaining after controls and mitigation measures have been applied \u2014 it represents the actual current risk exposure",
+        "The first risk identified",
+        "A risk that has been fully eliminated",
+        "A risk that only affects the IT department"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Residual risk = Inherent risk - Control effectiveness. After applying all controls and mitigations, the remaining risk exposure is the residual risk. If residual risk exceeds risk appetite, additional controls are needed."
+    },
+    {
+      "id": "grc-h4",
+      "q": "A multinational company needs to comply with GDPR, SOX, HIPAA, and ISO 27001 simultaneously. Many controls overlap across frameworks. How do you minimize duplicated effort while maintaining framework-specific evidence?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Map all framework requirements using UCF to identify common controls, implement harmonized controls that satisfy multiple frameworks with a single test, maintain framework-specific test attestations and evidence metadata, and generate separate compliance reports per framework from the unified control set",
+        "Implement each framework completely independently",
+        "Only comply with the strictest framework and assume others are covered",
+        "Hire separate compliance teams per framework"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Control harmonization through UCF: identify where frameworks share requirements (e.g., access control appears in all four). Implement once, test once, but tag evidence with framework-specific metadata. Reporting filters by framework to produce auditor-ready packages per regulation."
     }
   ]
 }
