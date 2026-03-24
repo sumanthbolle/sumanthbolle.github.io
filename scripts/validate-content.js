@@ -6,9 +6,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const { POSTS_FILE, INTERVIEWS_FILE } = require('./content-paths');
 
-const POSTS_FILE = 'posts.json';
-const INTERVIEWS_FILE = 'interviews.json';
 const REPORT_FILE = 'validation-report.json';
 
 // Consider "new" content as content generated recently

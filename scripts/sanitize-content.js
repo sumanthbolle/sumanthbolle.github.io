@@ -3,9 +3,7 @@
 // Run this to fix existing content or add to your fetch pipeline
 
 const fs = require('fs');
-
-const POSTS_FILE = 'posts.json';
-const INTERVIEWS_FILE = 'interviews.json';
+const { POSTS_FILE, INTERVIEWS_FILE } = require('./content-paths');
 
 // Characters to remove (control characters that cause validation failures)
 const INVALID_CHARS_REGEX = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g;

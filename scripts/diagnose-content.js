@@ -4,8 +4,7 @@
 // Run: node scripts/diagnose-content.js
 
 const fs = require('fs');
-
-const POSTS_FILE = 'posts.json';
+const { POSTS_FILE } = require('./content-paths');
 
 console.log('🔍 CONTENT DIAGNOSTIC TOOL');
 console.log('══════════════════════════════════════════════════════════════\n');

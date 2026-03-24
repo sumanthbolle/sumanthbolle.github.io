@@ -391,8 +391,8 @@ let QUESTIONS = {};
 let CATEGORIES = {};
 
 const QUIZ_DATA_FILES = {
-  categories: 'quiz-categories.json',
-  questions: 'quiz-questions.json'
+  categories: ['data/quiz/categories.json', 'quiz-categories.json'],
+  questions: ['data/quiz/questions.json', 'quiz-questions.json']
 };
 
 function inflateQuestionChecks(questionsByCategory) {
@@ -415,17 +415,28 @@ function inflateQuestionChecks(questionsByCategory) {
   });
 }
 
+async function fetchJsonWithFallback(paths, label) {
+  let lastError = null;
+  for (const p of paths) {
+    try {
+      const res = await fetch(p);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } catch (e) {
+      lastError = e;
+    }
+  }
+  throw new Error('Failed to load ' + label + ': ' + (lastError ? lastError.message : 'unknown error'));
+}
+
 async function loadQuizData() {
-  const [categoriesRes, questionsRes] = await Promise.all([
-    fetch(QUIZ_DATA_FILES.categories),
-    fetch(QUIZ_DATA_FILES.questions)
+  const [categoriesData, questionsData] = await Promise.all([
+    fetchJsonWithFallback(QUIZ_DATA_FILES.categories, 'categories'),
+    fetchJsonWithFallback(QUIZ_DATA_FILES.questions, 'questions')
   ]);
 
-  if (!categoriesRes.ok) throw new Error('Failed to load categories: HTTP ' + categoriesRes.status);
-  if (!questionsRes.ok) throw new Error('Failed to load questions: HTTP ' + questionsRes.status);
-
-  CATEGORIES = await categoriesRes.json();
-  QUESTIONS = await questionsRes.json();
+  CATEGORIES = categoriesData;
+  QUESTIONS = questionsData;
 
   inflateQuestionChecks(QUESTIONS);
 }

@@ -442,8 +442,17 @@
     
     var INTERVIEWS = DEFAULT_INTERVIEWS;
     
-    fetch('interviews.json')
-      .then(function(r) { return r.json(); })
+    function fetchInterviewsData() {
+      return fetch('data/interviews.json').then(function(r) {
+        if (r.ok) return r.json();
+        return fetch('interviews.json').then(function(r2) {
+          if (!r2.ok) throw new Error('HTTP ' + r2.status);
+          return r2.json();
+        });
+      });
+    }
+
+    fetchInterviewsData()
       .then(function(data) {
         INTERVIEWS = data;
         renderInterviews('all');

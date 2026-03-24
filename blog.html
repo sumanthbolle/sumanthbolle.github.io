@@ -374,13 +374,19 @@ function showSection(id){
 
 async function loadBlogPosts(){
   var grid=document.getElementById('blogGrid');
-  try{
-    var res=await fetch('posts.json');if(!res.ok)throw new Error('HTTP '+res.status);
-    BLOG_POSTS=await res.json();
-    document.getElementById('blogCount').textContent=BLOG_POSTS.length;
-    renderBlogGrid('all');
-    if(pendingArticleId){openBlogArticle(pendingArticleId,true);pendingArticleId=null}
-  }catch(e){grid.innerHTML='<div class="blog-error"><h3>Could not load posts</h3><p>'+e.message+'</p></div>'}
+  var sources=['data/posts.json','posts.json'];
+  var lastErr;
+  for(var i=0;i<sources.length;i++){
+    try{
+      var res=await fetch(sources[i]);if(!res.ok)throw new Error('HTTP '+res.status+' ('+sources[i]+')');
+      BLOG_POSTS=await res.json();
+      document.getElementById('blogCount').textContent=BLOG_POSTS.length;
+      renderBlogGrid('all');
+      if(pendingArticleId){openBlogArticle(pendingArticleId,true);pendingArticleId=null}
+      return;
+    }catch(e){lastErr=e;}
+  }
+  grid.innerHTML='<div class="blog-error"><h3>Could not load posts</h3><p>'+(lastErr?lastErr.message:'Unknown error')+'</p></div>';
 }
 
 function renderBlogGrid(filter){
