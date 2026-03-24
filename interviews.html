@@ -587,14 +587,6 @@
       });
     });
 
-    // Mobile menu
-    var menuToggle = document.querySelector('.menu-toggle');
-    var mobileMenu = document.querySelector('.mobile-menu');
-    menuToggle.addEventListener('click', function() {
-      this.classList.toggle('active');
-      mobileMenu.classList.toggle('active');
-    });
-
     // Initialize router after DOM ready
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => Router.init(), 100);
@@ -782,6 +774,10 @@
     function quizRestart() {
       quizInit();
     }
+  </script>
+  <script src="assets/js/shared/nav-theme.js"></script>
+  <script>
+    window.SBShared && window.SBShared.initNavMenu();
   </script>
 </body>
 </html>

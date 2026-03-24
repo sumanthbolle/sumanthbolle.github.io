@@ -288,6 +288,7 @@
 <div class="toast" id="toast"></div>
 <footer><p class="footer-text">&copy; 2026 Sumanth Bolle. Designed with precision.</p></footer>
 
+<script src="assets/js/shared/nav-theme.js"></script>
 <script>
 let BLOG_POSTS=[],currentArticleId=null,currentTopicId=null,completedTopics=JSON.parse(localStorage.getItem('csa_completed')||'[]'),pendingArticleId=null;
 
@@ -489,8 +490,7 @@ document.addEventListener('DOMContentLoaded',function(){
     tab.addEventListener('click',function(){var s=tab.dataset.section;Router.navigate('section',s,true);showSection(s);if(s==='csa'&&!currentTopicId)renderCSAWelcome()});
   });
   document.getElementById('blogFilters').addEventListener('click',function(e){var btn=e.target.closest('.filter-btn');if(!btn)return;document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});btn.classList.add('active');renderBlogGrid(btn.dataset.filter)});
-  document.querySelector('.menu-toggle').addEventListener('click',function(){this.classList.toggle('active');document.querySelector('.mobile-menu').classList.toggle('active')});
-  document.querySelectorAll('.mobile-menu a').forEach(function(a){a.addEventListener('click',function(){document.querySelector('.menu-toggle').classList.remove('active');document.querySelector('.mobile-menu').classList.remove('active')})});
+  if(window.SBShared&&window.SBShared.initNavMenu)window.SBShared.initNavMenu();
   document.getElementById('sidebarMobToggle').addEventListener('click',function(){document.getElementById('csaSidebar').classList.toggle('mobile-open');document.getElementById('sidebarOverlay').classList.toggle('active')});
   document.getElementById('sidebarOverlay').addEventListener('click',function(){document.getElementById('csaSidebar').classList.remove('mobile-open');document.getElementById('sidebarOverlay').classList.remove('active')});
   window.addEventListener('scroll',updateProgress,{passive:true});

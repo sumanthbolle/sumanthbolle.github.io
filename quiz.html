@@ -1122,20 +1122,18 @@ document.getElementById('sessionResetBtn').addEventListener('click', () => {
 });
 
 // ── THEME TOGGLE ──
-document.getElementById('themeToggle').addEventListener('click', () => {
-  const html = document.documentElement;
-  const current = html.getAttribute('data-theme');
-  html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
-  localStorage.setItem('theme', html.getAttribute('data-theme'));
+window.SBShared && window.SBShared.initThemeToggle({
+  toggleSelector: '#themeToggle',
+  storageKey: 'theme',
+  darkValue: 'dark',
+  lightValue: 'light'
 });
-(function() {
-  const saved = localStorage.getItem('theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
-})();
 
-// ── MOBILE MENU ──
-document.getElementById('menuToggle').addEventListener('click', () => {
-  document.getElementById('mobileMenu').classList.toggle('open');
+window.SBShared && window.SBShared.initNavMenu({
+  toggleSelector: '#menuToggle',
+  menuSelector: '#mobileMenu',
+  menuOpenClass: 'open',
+  toggleActiveClass: ''
 });
 
 // ── INIT ──
