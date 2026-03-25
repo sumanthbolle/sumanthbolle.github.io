@@ -73,6 +73,11 @@
     .category-icon{width:48px;height:48px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;background:var(--surface2)}
     .card-content h3{font-size:16px;font-weight:600;margin-bottom:6px;letter-spacing:-0.01em}
     .card-content p{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:12px}
+    .card-actions{display:flex;gap:8px;margin-top:10px}
+    .card-action-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:var(--radius-sm);padding:6px 10px;font-size:11px;cursor:pointer;transition:all .2s;font-family:var(--font)}
+    .card-action-btn:hover{border-color:var(--text2);color:var(--text)}
+    .quick-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;opacity:0;pointer-events:none;transition:all .2s;z-index:300}
+    .quick-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     .card-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
     .badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
     .badge-count{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
@@ -376,6 +381,9 @@
     </div>
   </div>
 
+  <div class="quick-toast" id="quickToast">Link copied</div>
+
+  <script src="assets/js/shared/nav-theme.js"></script>
   <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
 
 <script>
@@ -572,6 +580,74 @@ let quizStartTime = null;
 let selectedOptions = new Set();
 let difficultyFilter = 'all';
 
+function getCategoryShareUrl(categoryKey) {
+  return window.location.origin + window.location.pathname + '#category/' + encodeURIComponent(categoryKey);
+}
+
+function showCertificationLinkToast(message) {
+  var toast = document.getElementById('quickToast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(function() {
+    toast.classList.remove('show');
+  }, 1600);
+}
+
+function setCategoryHash(categoryKey) {
+  var hash = '#category/' + encodeURIComponent(categoryKey);
+  if (window.history && window.history.replaceState) {
+    window.history.replaceState(null, '', hash);
+  } else {
+    window.location.hash = hash;
+  }
+}
+
+function clearCategoryHash() {
+  if (window.history && window.history.replaceState) {
+    window.history.replaceState(null, '', window.location.pathname);
+  } else {
+    window.location.hash = '';
+  }
+}
+
+function copyCertificationLink(categoryKey, evt) {
+  if (evt) evt.stopPropagation();
+  var url = getCategoryShareUrl(categoryKey);
+  var done = function() { showCertificationLinkToast('Certification link copied'); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(done).catch(function() {});
+    return;
+  }
+  var ta = document.createElement('textarea');
+  ta.value = url;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); done(); } finally { document.body.removeChild(ta); }
+}
+
+function shareCertificationLink(categoryKey, evt) {
+  if (evt) evt.stopPropagation();
+  var url = getCategoryShareUrl(categoryKey);
+  if (navigator.share) {
+    navigator.share({ title: 'ServiceNow Certification Quiz', text: 'Try this certification quiz', url: url }).catch(function() {});
+    return;
+  }
+  window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url), '_blank', 'width=550,height=420');
+}
+
+function handleInitialCategoryFromHash() {
+  var hash = window.location.hash || '';
+  var match = hash.match(/^#category\/(.+)$/);
+  if (!match) return;
+  var key = decodeURIComponent(match[1]);
+  if (CATEGORIES[key]) {
+    selectCategory(key);
+  }
+}
+
 function showScreen(id) {
   document.querySelectorAll('.quiz-screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -610,6 +686,10 @@ function buildCategoryGrid() {
           ${diffCounts.hard > 0 ? `<span class="badge badge-difficulty badge-hard">${diffCounts.hard} hard</span>` : ''}
           ${diffCounts.medium > 0 ? `<span class="badge badge-difficulty badge-medium">${diffCounts.medium} med</span>` : ''}
         </div>
+        <div class="card-actions">
+          <button class="card-action-btn" type="button" data-action="copy-cert-link">Copy link</button>
+          <button class="card-action-btn" type="button" data-action="share-cert-link">Share</button>
+        </div>
         <div class="card-progress">
           <div class="card-progress-bar"><div class="card-progress-fill" style="width:${pct}%"></div></div>
           <span class="card-progress-text">${prog.answered}/${prog.total} done</span>
@@ -617,6 +697,10 @@ function buildCategoryGrid() {
       </div>
     `;
     card.addEventListener('click', () => selectCategory(key));
+    var copyBtn = card.querySelector('[data-action=\"copy-cert-link\"]');
+    var shareBtn = card.querySelector('[data-action=\"share-cert-link\"]');
+    if (copyBtn) copyBtn.addEventListener('click', function(evt) { copyCertificationLink(key, evt); });
+    if (shareBtn) shareBtn.addEventListener('click', function(evt) { shareCertificationLink(key, evt); });
     grid.appendChild(card);
   });
 }
@@ -633,6 +717,7 @@ document.getElementById('difficultyFilter').addEventListener('click', e => {
 // ── CATEGORY SELECT ──
 function selectCategory(key) {
   currentCategory = key;
+  setCategoryHash(key);
   const cat = CATEGORIES[key];
   const modeTitle = document.getElementById('modeTitle');
   const modeSub = document.getElementById('modeSubtitle');
@@ -1087,6 +1172,7 @@ document.getElementById('retryBtn').addEventListener('click', () => {
   selectCategory(currentCategory);
 });
 document.getElementById('homeBtn').addEventListener('click', () => {
+  clearCategoryHash();
   buildCategoryGrid();
   showScreen('categoryScreen');
   SessionProgress.updateUI();
@@ -1094,6 +1180,7 @@ document.getElementById('homeBtn').addEventListener('click', () => {
 
 // ── MODE BACK ──
 document.getElementById('modeBackBtn').addEventListener('click', () => {
+  clearCategoryHash();
   buildCategoryGrid();
   showScreen('categoryScreen');
 });
@@ -1106,6 +1193,7 @@ document.getElementById('modalCancel').addEventListener('click', () => {
   document.getElementById('warningModal').classList.remove('open');
 });
 document.getElementById('modalConfirm').addEventListener('click', () => {
+  clearCategoryHash();
   document.getElementById('warningModal').classList.remove('open');
   clearInterval(timerInterval);
   buildCategoryGrid();
@@ -1142,6 +1230,7 @@ async function initQuiz() {
     await loadQuizData();
     buildCategoryGrid();
     SessionProgress.updateUI();
+    handleInitialCategoryFromHash();
   } catch (error) {
     console.error('Quiz data load failed:', error);
     const grid = document.getElementById('categoryGrid');
