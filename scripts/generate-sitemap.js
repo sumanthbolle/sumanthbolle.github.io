@@ -2,11 +2,11 @@
 // Generates sitemap.xml from posts.json and interviews.json
 
 const fs = require('fs');
+const path = require('path');
+const { POSTS_FILE, INTERVIEWS_FILE } = require('./content-paths');
 
 const SITE_URL = 'https://sumanthbolle.com';
-const POSTS_FILE = 'posts.json';
-const INTERVIEWS_FILE = 'interviews.json';
-const SITEMAP_FILE = 'sitemap.xml';
+const SITEMAP_FILE = path.join(process.cwd(), 'sitemap.xml');
 
 // Static pages on your site
 const STATIC_PAGES = [

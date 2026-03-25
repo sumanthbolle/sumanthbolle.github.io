@@ -26,6 +26,7 @@
 const fs = require('fs');
 const https = require('https');
 const { execSync } = require('child_process');
+const { POSTS_FILE, INTERVIEWS_FILE } = require('./content-paths');
 
 // =============================================================================
 // CONFIGURATION
@@ -34,8 +35,6 @@ const { execSync } = require('child_process');
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = 'gpt-4o'; // Options: 'gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'gpt-4.1-mini', 'o3-mini'
 
-const POSTS_FILE = 'posts.json';
-const INTERVIEWS_FILE = 'interviews.json';
 const MAX_POSTS = 30;
 const MAX_INTERVIEWS = 20;
 

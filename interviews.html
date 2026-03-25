@@ -442,8 +442,17 @@
     
     var INTERVIEWS = DEFAULT_INTERVIEWS;
     
-    fetch('interviews.json')
-      .then(function(r) { return r.json(); })
+    function fetchInterviewsData() {
+      return fetch('data/interviews.json').then(function(r) {
+        if (r.ok) return r.json();
+        return fetch('interviews.json').then(function(r2) {
+          if (!r2.ok) throw new Error('HTTP ' + r2.status);
+          return r2.json();
+        });
+      });
+    }
+
+    fetchInterviewsData()
       .then(function(data) {
         INTERVIEWS = data;
         renderInterviews('all');
@@ -576,14 +585,6 @@
         this.classList.add('active');
         renderInterviews(this.dataset.ifilter);
       });
-    });
-
-    // Mobile menu
-    var menuToggle = document.querySelector('.menu-toggle');
-    var mobileMenu = document.querySelector('.mobile-menu');
-    menuToggle.addEventListener('click', function() {
-      this.classList.toggle('active');
-      mobileMenu.classList.toggle('active');
     });
 
     // Initialize router after DOM ready
@@ -773,6 +774,10 @@
     function quizRestart() {
       quizInit();
     }
+  </script>
+  <script src="assets/js/shared/nav-theme.js"></script>
+  <script>
+    window.SBShared && window.SBShared.initNavMenu();
   </script>
 </body>
 </html>
