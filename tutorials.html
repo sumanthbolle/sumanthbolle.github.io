@@ -187,6 +187,8 @@
     .compiler-btn{border:1px solid var(--border);background:transparent;color:var(--text2);padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font)}
     .compiler-btn:hover{border-color:var(--border2);color:var(--text)}
     .compiler-btn.run{background:var(--text);color:var(--bg);border-color:var(--text)}
+    .compiler-mode{border:1px solid var(--border);background:var(--bg);color:var(--text2);padding:5px 8px;border-radius:6px;font-size:11px;font-weight:600;font-family:var(--font)}
+    .compiler-mode:focus{outline:none;border-color:var(--border2);color:var(--text)}
     .compiler-editor-wrap{display:flex;background:var(--code-bg);border-bottom:1px solid var(--border)}
     .compiler-lines{padding:10px 0;min-width:36px;text-align:right;padding-right:8px;user-select:none;font-family:var(--mono);font-size:12px;line-height:1.65;color:var(--text3);background:var(--bg)}
     .compiler-editor{width:100%;min-height:180px;padding:10px 14px;background:transparent;border:none;outline:none;resize:vertical;font-family:var(--mono);font-size:12px;line-height:1.65;color:var(--code-text);tab-size:4}
@@ -1197,13 +1199,21 @@ function copyPlayground(id) {
   navigator.clipboard.writeText(code);
 }
 
+function compilerModeLabel(mode) {
+  if (mode === 'beginner') return 'Beginner';
+  if (mode === 'production') return 'Production';
+  return 'Interview';
+}
+
 function buildTBPCompiler(id, title, starterCode) {
   if (!compilerStates[id]) {
-    compilerStates[id] = { code: starterCode || '', findings: [], summary: 'Run compile to get TBP diagnostics.', score: null };
+    compilerStates[id] = { code: starterCode || '', findings: [], summary: 'Run compile to get TBP diagnostics.', score: null, mode: 'interview' };
   }
 
   var st = compilerStates[id];
   if (typeof st.code !== 'string') st.code = '';
+  if (!st.mode) st.mode = 'interview';
+
   var lines = st.code.split('\n');
   var lineNums = lines.map(function(_, i){ return i + 1; }).join('<br>');
 
@@ -1216,6 +1226,11 @@ function buildTBPCompiler(id, title, starterCode) {
   var html = '<div class="compiler" id="compiler-'+id+'">';
   html += '<div class="compiler-head"><span class="compiler-title">'+esc(title || 'TBP Compiler')+'</span>';
   html += '<div class="compiler-actions">';
+  html += '<select class="compiler-mode" onchange="setCompilerMode(\''+id+'\', this.value)" aria-label="Compiler mode">';
+  html += '<option value="beginner"'+(st.mode==='beginner'?' selected':'')+'>Beginner</option>';
+  html += '<option value="interview"'+(st.mode==='interview'?' selected':'')+'>Interview</option>';
+  html += '<option value="production"'+(st.mode==='production'?' selected':'')+'>Production</option>';
+  html += '</select>';
   html += '<button class="compiler-btn" onclick="resetCompiler(\''+id+'\')">Reset</button>';
   html += '<button class="compiler-btn run" onclick="runTBPCompiler(\''+id+'\')">Compile</button>';
   html += '</div></div>';
@@ -1225,7 +1240,7 @@ function buildTBPCompiler(id, title, starterCode) {
   html += '</div>';
 
   var scoreLabel = st.score === null ? 'N/A' : String(st.score);
-  html += '<div class="compiler-summary">TBP Score: <span class="compiler-score '+scoreClass+'">'+scoreLabel+'</span> · '+esc(st.summary || '')+'</div>';
+  html += '<div class="compiler-summary">Mode: <strong>'+esc(compilerModeLabel(st.mode))+'</strong> · TBP Score: <span class="compiler-score '+scoreClass+'">'+scoreLabel+'</span> · '+esc(st.summary || '')+'</div>';
   html += '<div class="compiler-findings">';
 
   if (!st.findings.length) {
@@ -1252,7 +1267,7 @@ function compilerInput(id) {
   var ta = document.getElementById('compiler-code-'+id);
   if (!ta) return;
   var code = ta.value;
-  if (!compilerStates[id]) compilerStates[id] = { code: '', findings: [], summary: '', score: null };
+  if (!compilerStates[id]) compilerStates[id] = { code: '', findings: [], summary: '', score: null, mode: 'interview' };
   compilerStates[id].code = code;
   var lines = code.split('\n');
   var ln = document.getElementById('compiler-lines-'+id);
@@ -1275,8 +1290,19 @@ function compilerKeyDown(e, id) {
   }
 }
 
+function setCompilerMode(id, mode) {
+  if (!compilerStates[id]) compilerStates[id] = { code: '', findings: [], summary: 'Run compile to get TBP diagnostics.', score: null, mode: 'interview' };
+  compilerStates[id].mode = mode || 'interview';
+  var report = evaluateTBPCode(compilerStates[id].code || '', compilerStates[id].mode);
+  compilerStates[id].findings = report.findings;
+  compilerStates[id].summary = report.summary;
+  compilerStates[id].score = report.score;
+  render();
+}
+
 function resetCompiler(id) {
   var starter = '';
+  var mode = (compilerStates[id] && compilerStates[id].mode) ? compilerStates[id].mode : 'interview';
   CATEGORIES.forEach(function(cat) {
     cat.children.forEach(function(topic) {
       topic.sections.forEach(function(sec, si) {
@@ -1284,91 +1310,129 @@ function resetCompiler(id) {
       });
     });
   });
-  compilerStates[id] = { code: starter, findings: [], summary: 'Run compile to get TBP diagnostics.', score: null };
+  compilerStates[id] = { code: starter, findings: [], summary: 'Run compile to get TBP diagnostics.', score: null, mode: mode };
   render();
 }
 
 function runTBPCompiler(id) {
   var ta = document.getElementById('compiler-code-'+id);
   if (!ta) return;
-  var report = evaluateTBPCode(ta.value || '');
+  var mode = (compilerStates[id] && compilerStates[id].mode) ? compilerStates[id].mode : 'interview';
+  var report = evaluateTBPCode(ta.value || '', mode);
   compilerStates[id] = {
     code: ta.value || '',
     findings: report.findings,
     summary: report.summary,
-    score: report.score
+    score: report.score,
+    mode: mode
   };
   render();
 }
 
-function evaluateTBPCode(code) {
+function evaluateTBPCode(code, mode) {
+  mode = mode || 'interview';
+
+  if (!code || !code.trim()) {
+    return { score: null, summary: 'Paste script and click Compile to generate diagnostics.', findings: [], mode: mode };
+  }
+
   var findings = [];
   var severityRank = { error: 0, warn: 1, info: 2 };
+
+  var modeProfiles = {
+    beginner: { penalties: { error: 8, warn: 4, info: 1 } },
+    interview: { penalties: { error: 12, warn: 6, info: 2 } },
+    production: { penalties: { error: 16, warn: 10, info: 4 } }
+  };
+
+  var profile = modeProfiles[mode] || modeProfiles.interview;
+  var criticalInBeginner = {
+    eval_usage: true,
+    gs_sleep: true,
+    client_gliderecord: true
+  };
+
+  function normalizeSeverity(ruleId, baseSeverity) {
+    if (mode === 'beginner') {
+      if (baseSeverity === 'error' && !criticalInBeginner[ruleId]) return 'warn';
+      if (baseSeverity === 'warn' && (ruleId === 'query_or_chain' || ruleId === 'missing_iife')) return 'info';
+      return baseSeverity;
+    }
+
+    if (mode === 'production') {
+      if (baseSeverity === 'warn') return 'error';
+      if (baseSeverity === 'info') return 'warn';
+      return baseSeverity;
+    }
+
+    return baseSeverity;
+  }
 
   function lineFromIndex(idx) {
     return code.slice(0, idx).split('\n').length;
   }
 
-  function addFinding(severity, rule, idx, message, fix) {
+  function addFinding(ruleId, baseSeverity, rule, idx, message, fix) {
+    var severity = normalizeSeverity(ruleId, baseSeverity);
     findings.push({ severity: severity, rule: rule, line: lineFromIndex(idx), message: message, fix: fix || '' });
   }
 
-  function addRegexFindings(regex, severity, rule, message, fix) {
+  function addRegexFindings(regex, ruleId, baseSeverity, rule, message, fix) {
     var source = regex.source;
     var flags = regex.flags.indexOf('g') === -1 ? regex.flags + 'g' : regex.flags;
     var rgx = new RegExp(source, flags);
     var m;
     while ((m = rgx.exec(code)) !== null) {
-      addFinding(severity, rule, m.index, message, fix);
+      addFinding(ruleId, baseSeverity, rule, m.index, message, fix);
       if (m.index === rgx.lastIndex) rgx.lastIndex++;
     }
   }
 
-  addRegexFindings(/\beval\s*\(/i, 'error', 'Avoid eval()', 'Dynamic eval introduces injection risk and weak debuggability.', 'Replace with explicit logic or strongly controlled parser functions.');
-  addRegexFindings(/\bGlideEvaluator\.evaluateString\s*\(/i, 'warn', 'Avoid dynamic string evaluation', 'Dynamic string execution can behave like eval and is difficult to secure.', 'Refactor to direct API calls and conditionals.');
-  addRegexFindings(/\bgs\.sleep\s*\(/i, 'error', 'Avoid gs.sleep()', 'gs.sleep() blocks worker threads and can starve transactions.', 'Use event-driven async patterns (events + Script Actions).');
-  addRegexFindings(/\bcurrent\.update\s*\(/i, 'error', 'No current.update() in BR', 'current.update() inside BR commonly causes recursion/re-entry cycles.', 'In Before BR, set fields on current and let platform save automatically.');
-  addRegexFindings(/['"][0-9a-f]{32}['"]/ig, 'warn', 'Hard-coded sys_id', 'Hard-coded sys_ids break across instances and promotions.', 'Use properties, lookups, or configurable references.');
-  addRegexFindings(/\.[a-zA-Z0-9_]+\.sys_id\b/g, 'warn', 'Dot-walking to sys_id', 'Reference fields already store sys_id; dot-walking adds unnecessary lookup.', 'Use getValue(reference_field) directly.');
-  addRegexFindings(/\bgetRowCount\s*\(\s*\)/g, 'warn', 'Use GlideAggregate for counts', 'getRowCount scales poorly on large tables.', 'Use GlideAggregate COUNT.');
-  addRegexFindings(/\bgetReference\(\s*['"][^'"]+['"]\s*\)/g, 'warn', 'Synchronous getReference', 'Synchronous getReference can block the browser.', 'Use getReference(field, callback) async pattern.');
+  addRegexFindings(/\beval\s*\(/i, 'eval_usage', 'error', 'Avoid eval()', 'Dynamic eval introduces injection risk and weak debuggability.', 'Replace with explicit logic or strongly controlled parser functions.');
+  addRegexFindings(/\bGlideEvaluator\.evaluateString\s*\(/i, 'dynamic_string_eval', 'warn', 'Avoid dynamic string evaluation', 'Dynamic string execution can behave like eval and is difficult to secure.', 'Refactor to direct API calls and conditionals.');
+  addRegexFindings(/\bgs\.sleep\s*\(/i, 'gs_sleep', 'error', 'Avoid gs.sleep()', 'gs.sleep() blocks worker threads and can starve transactions.', 'Use event-driven async patterns (events + Script Actions).');
+  addRegexFindings(/\bcurrent\.update\s*\(/i, 'current_update', 'error', 'No current.update() in BR', 'current.update() inside BR commonly causes recursion/re-entry cycles.', 'In Before BR, set fields on current and let platform save automatically.');
+  addRegexFindings(/['"][0-9a-f]{32}['"]/ig, 'hardcoded_sysid', 'warn', 'Hard-coded sys_id', 'Hard-coded sys_ids break across instances and promotions.', 'Use properties, lookups, or configurable references.');
+  addRegexFindings(/\.[a-zA-Z0-9_]+\.sys_id\b/g, 'dotwalk_sysid', 'warn', 'Dot-walking to sys_id', 'Reference fields already store sys_id; dot-walking adds unnecessary lookup.', 'Use getValue(reference_field) directly.');
+  addRegexFindings(/\bgetRowCount\s*\(\s*\)/g, 'rowcount_counting', 'warn', 'Use GlideAggregate for counts', 'getRowCount scales poorly on large tables.', 'Use GlideAggregate COUNT.');
+  addRegexFindings(/\bgetReference\(\s*['"][^'"]+['"]\s*\)/g, 'sync_getReference', 'warn', 'Synchronous getReference', 'Synchronous getReference can block the browser.', 'Use getReference(field, callback) async pattern.');
 
   var onChangeMatch = code.match(/function\s+onChange\s*\(([^)]*)\)\s*\{/);
   if (onChangeMatch) {
     var fnIdx = onChangeMatch.index || 0;
-    if (!/\bisLoading\b/.test(code)) addFinding('warn', 'Missing isLoading guard', fnIdx, 'onChange should guard form-load execution.', 'Add: if (isLoading) return;');
-    if (!/newValue\s*===\s*['"]{2}/.test(code)) addFinding('warn', 'Missing empty newValue guard', fnIdx, 'onChange should skip clear/reset transitions.', "Add: if (newValue === '') return;");
-    if (!/newValue\s*===\s*oldValue/.test(code)) addFinding('warn', 'Missing no-change guard', fnIdx, 'onChange should skip idempotent resets.', 'Add: if (newValue === oldValue) return;');
+    if (!/\bisLoading\b/.test(code)) addFinding('missing_isLoading', 'warn', 'Missing isLoading guard', fnIdx, 'onChange should guard form-load execution.', 'Add: if (isLoading) return;');
+    if (!/newValue\s*===\s*['"]{2}/.test(code)) addFinding('missing_empty_guard', 'warn', 'Missing empty newValue guard', fnIdx, 'onChange should skip clear/reset transitions.', "Add: if (newValue === '') return;");
+    if (!/newValue\s*===\s*oldValue/.test(code)) addFinding('missing_oldValue_guard', 'warn', 'Missing no-change guard', fnIdx, 'onChange should skip idempotent resets.', 'Add: if (newValue === oldValue) return;');
   }
 
   var clientFn = /function\s+on(Change|Load|Submit)\s*\(/.test(code);
   if (clientFn && /new\s+GlideRecord\s*\(/.test(code)) {
     var idx = code.search(/new\s+GlideRecord\s*\(/);
-    addFinding('error', 'Client-side GlideRecord', idx, 'Client scripts should avoid GlideRecord due to synchronous server calls.', 'Move lookup to GlideAjax and callback processing.');
+    addFinding('client_gliderecord', 'error', 'Client-side GlideRecord', idx, 'Client scripts should avoid GlideRecord due to synchronous server calls.', 'Move lookup to GlideAjax and callback processing.');
   }
 
   var addOrCount = (code.match(/\.addOrCondition\s*\(/g) || []).length;
   if (addOrCount >= 3) {
     var idxOr = code.search(/\.addOrCondition\s*\(/);
-    addFinding('info', 'Complex query readability', idxOr, 'Multiple addOrCondition chains are hard to maintain.', 'Generate filter, then use addEncodedQuery().');
+    addFinding('query_or_chain', 'info', 'Complex query readability', idxOr, 'Multiple addOrCondition chains are hard to maintain.', 'Generate filter, then use addEncodedQuery().');
   }
 
   var hasHasNext = /\.hasNext\s*\(\s*\)/.test(code);
   var hasSetLimit = /\.setLimit\s*\(\s*\d+\s*\)/.test(code);
   if (hasHasNext && !hasSetLimit) {
     var idxHas = code.search(/\.hasNext\s*\(\s*\)/);
-    addFinding('info', 'Let DB do less work', idxHas, 'hasNext checks can benefit from setLimit(1) to reduce record retrieval.', 'Call setLimit(1) before query when checking existence only.');
+    addFinding('hasnext_without_limit', 'info', 'Let DB do less work', idxHas, 'hasNext checks can benefit from setLimit(1) to reduce record retrieval.', 'Call setLimit(1) before query when checking existence only.');
   }
 
   var nestedPattern = /while\s*\([^)]*\.next\s*\(\s*\)\s*\)\s*\{[\s\S]{0,350}?new\s+GlideRecord\s*\(/g;
   var nestedMatch = nestedPattern.exec(code);
   if (nestedMatch) {
-    addFinding('warn', 'Potential nested GlideRecord (N+1)', nestedMatch.index, 'Query inside loop can explode DB calls at scale.', 'Use array flattening + IN query strategy.');
+    addFinding('nested_gliderecord', 'warn', 'Potential nested GlideRecord (N+1)', nestedMatch.index, 'Query inside loop can explode DB calls at scale.', 'Use array flattening + IN query strategy.');
   }
 
   var wrapped = /^\s*\(function\s+[a-zA-Z0-9_]*\s*\([^)]*\)\s*\{[\s\S]*\}\)\s*\(\s*\)\s*;?\s*$/.test(code.trim());
   if (!wrapped) {
-    addFinding('info', 'Not self-executing wrapped', 0, 'Single-context scripts are safer in self-executing wrappers.', 'Wrap with (function executeRule(){ ... })();');
+    addFinding('missing_iife', 'info', 'Not self-executing wrapped', 0, 'Single-context scripts are safer in self-executing wrappers.', 'Wrap with (function executeRule(){ ... })();');
   }
 
   findings.sort(function(a, b) {
@@ -1376,18 +1440,18 @@ function evaluateTBPCode(code) {
     return a.line - b.line;
   });
 
-  var penalties = { error: 12, warn: 6, info: 2 };
   var score = 100;
-  findings.forEach(function(f) { score -= penalties[f.severity] || 0; });
+  findings.forEach(function(f) { score -= profile.penalties[f.severity] || 0; });
   if (score < 0) score = 0;
 
   var ec = findings.filter(function(f){return f.severity === 'error';}).length;
   var wc = findings.filter(function(f){return f.severity === 'warn';}).length;
   var ic = findings.filter(function(f){return f.severity === 'info';}).length;
-  var summary = ec + ' errors, ' + wc + ' warnings, ' + ic + ' infos';
-  if (!findings.length) summary = 'No TBP violations detected.';
 
-  return { score: score, summary: summary, findings: findings };
+  var summary = ec + ' errors, ' + wc + ' warnings, ' + ic + ' infos (' + compilerModeLabel(mode) + ' mode)';
+  if (!findings.length) summary = 'No TBP violations detected in ' + compilerModeLabel(mode) + ' mode.';
+
+  return { score: score, summary: summary, findings: findings, mode: mode };
 }
 
 function buildQuiz(id, questions) {
