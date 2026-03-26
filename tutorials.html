@@ -189,6 +189,9 @@
     .compiler-btn.run{background:var(--text);color:var(--bg);border-color:var(--text)}
     .compiler-mode{border:1px solid var(--border);background:var(--bg);color:var(--text2);padding:5px 8px;border-radius:6px;font-size:11px;font-weight:600;font-family:var(--font)}
     .compiler-mode:focus{outline:none;border-color:var(--border2);color:var(--text)}
+    .compiler-mode-toggle{display:flex;align-items:center;gap:6px;color:var(--text3);font-size:10px;font-weight:600;letter-spacing:0.2px;padding:0 2px}
+    .compiler-mode-toggle input{accent-color:#999}
+    .compiler-delta{margin-top:6px;padding:6px 8px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px dashed var(--border);font-size:10px;color:var(--text3);line-height:1.5}
     .compiler-editor-wrap{display:flex;background:var(--code-bg);border-bottom:1px solid var(--border)}
     .compiler-lines{padding:10px 0;min-width:36px;text-align:right;padding-right:8px;user-select:none;font-family:var(--mono);font-size:12px;line-height:1.65;color:var(--text3);background:var(--bg)}
     .compiler-editor{width:100%;min-height:180px;padding:10px 14px;background:transparent;border:none;outline:none;resize:vertical;font-family:var(--mono);font-size:12px;line-height:1.65;color:var(--code-text);tab-size:4}
@@ -1207,12 +1210,20 @@ function compilerModeLabel(mode) {
 
 function buildTBPCompiler(id, title, starterCode) {
   if (!compilerStates[id]) {
-    compilerStates[id] = { code: starterCode || '', findings: [], summary: 'Run compile to get TBP diagnostics.', score: null, mode: 'interview' };
+    compilerStates[id] = {
+      code: starterCode || '',
+      findings: [],
+      summary: 'Run compile to get TBP diagnostics.',
+      score: null,
+      mode: 'interview',
+      showModeDelta: false
+    };
   }
 
   var st = compilerStates[id];
   if (typeof st.code !== 'string') st.code = '';
   if (!st.mode) st.mode = 'interview';
+  if (typeof st.showModeDelta !== 'boolean') st.showModeDelta = false;
 
   var lines = st.code.split('\n');
   var lineNums = lines.map(function(_, i){ return i + 1; }).join('<br>');
@@ -1231,6 +1242,10 @@ function buildTBPCompiler(id, title, starterCode) {
   html += '<option value="interview"'+(st.mode==='interview'?' selected':'')+'>Interview</option>';
   html += '<option value="production"'+(st.mode==='production'?' selected':'')+'>Production</option>';
   html += '</select>';
+  html += '<label class="compiler-mode-toggle" title="Show how severity changed by selected mode">';
+  html += '<input type="checkbox" '+(st.showModeDelta?'checked':'')+' onchange="toggleCompilerModeDelta(\''+id+'\', this.checked)">';
+  html += 'Explain mode deltas';
+  html += '</label>';
   html += '<button class="compiler-btn" onclick="resetCompiler(\''+id+'\')">Reset</button>';
   html += '<button class="compiler-btn run" onclick="runTBPCompiler(\''+id+'\')">Compile</button>';
   html += '</div></div>';
@@ -1255,6 +1270,12 @@ function buildTBPCompiler(id, title, starterCode) {
       html += '</div>';
       html += '<div class="compiler-msg">'+esc(f.message)+'</div>';
       if (f.fix) html += '<div class="compiler-fix">Fix: '+esc(f.fix)+'</div>';
+      if (st.showModeDelta && f.modeDelta) {
+        html += '<div class="compiler-delta">';
+        html += 'Base severity: <strong>'+esc(String(f.baseSeverity || '').toUpperCase())+'</strong> → Mode severity: <strong>'+esc(String(f.severity || '').toUpperCase())+'</strong><br>';
+        html += esc(f.modeDelta.reason || 'Severity unchanged by mode policy.');
+        html += '</div>';
+      }
       html += '</article>';
     });
   }
@@ -1267,7 +1288,11 @@ function compilerInput(id) {
   var ta = document.getElementById('compiler-code-'+id);
   if (!ta) return;
   var code = ta.value;
-  if (!compilerStates[id]) compilerStates[id] = { code: '', findings: [], summary: '', score: null, mode: 'interview' };
+  if (!compilerStates[id]) {
+    compilerStates[id] = {
+      code: '', findings: [], summary: '', score: null, mode: 'interview', showModeDelta: false
+    };
+  }
   compilerStates[id].code = code;
   var lines = code.split('\n');
   var ln = document.getElementById('compiler-lines-'+id);
@@ -1290,8 +1315,22 @@ function compilerKeyDown(e, id) {
   }
 }
 
+function toggleCompilerModeDelta(id, checked) {
+  if (!compilerStates[id]) {
+    compilerStates[id] = {
+      code: '', findings: [], summary: 'Run compile to get TBP diagnostics.', score: null, mode: 'interview', showModeDelta: false
+    };
+  }
+  compilerStates[id].showModeDelta = !!checked;
+  render();
+}
+
 function setCompilerMode(id, mode) {
-  if (!compilerStates[id]) compilerStates[id] = { code: '', findings: [], summary: 'Run compile to get TBP diagnostics.', score: null, mode: 'interview' };
+  if (!compilerStates[id]) {
+    compilerStates[id] = {
+      code: '', findings: [], summary: 'Run compile to get TBP diagnostics.', score: null, mode: 'interview', showModeDelta: false
+    };
+  }
   compilerStates[id].mode = mode || 'interview';
   var report = evaluateTBPCode(compilerStates[id].code || '', compilerStates[id].mode);
   compilerStates[id].findings = report.findings;
@@ -1303,6 +1342,8 @@ function setCompilerMode(id, mode) {
 function resetCompiler(id) {
   var starter = '';
   var mode = (compilerStates[id] && compilerStates[id].mode) ? compilerStates[id].mode : 'interview';
+  var showModeDelta = (compilerStates[id] && typeof compilerStates[id].showModeDelta === 'boolean') ? compilerStates[id].showModeDelta : false;
+
   CATEGORIES.forEach(function(cat) {
     cat.children.forEach(function(topic) {
       topic.sections.forEach(function(sec, si) {
@@ -1310,7 +1351,15 @@ function resetCompiler(id) {
       });
     });
   });
-  compilerStates[id] = { code: starter, findings: [], summary: 'Run compile to get TBP diagnostics.', score: null, mode: mode };
+
+  compilerStates[id] = {
+    code: starter,
+    findings: [],
+    summary: 'Run compile to get TBP diagnostics.',
+    score: null,
+    mode: mode,
+    showModeDelta: showModeDelta
+  };
   render();
 }
 
@@ -1318,13 +1367,16 @@ function runTBPCompiler(id) {
   var ta = document.getElementById('compiler-code-'+id);
   if (!ta) return;
   var mode = (compilerStates[id] && compilerStates[id].mode) ? compilerStates[id].mode : 'interview';
+  var showModeDelta = (compilerStates[id] && typeof compilerStates[id].showModeDelta === 'boolean') ? compilerStates[id].showModeDelta : false;
   var report = evaluateTBPCode(ta.value || '', mode);
+
   compilerStates[id] = {
     code: ta.value || '',
     findings: report.findings,
     summary: report.summary,
     score: report.score,
-    mode: mode
+    mode: mode,
+    showModeDelta: showModeDelta
   };
   render();
 }
@@ -1368,13 +1420,40 @@ function evaluateTBPCode(code, mode) {
     return baseSeverity;
   }
 
+  function modeDeltaReason(ruleId, baseSeverity, finalSeverity) {
+    if (baseSeverity === finalSeverity) return 'No severity adjustment for this mode.';
+
+    if (mode === 'beginner') {
+      if (baseSeverity === 'error' && finalSeverity === 'warn') return 'Beginner mode softens non-critical errors to reduce early noise.';
+      if (baseSeverity === 'warn' && finalSeverity === 'info') return 'Beginner mode demotes style-level warnings to informational guidance.';
+    }
+
+    if (mode === 'production') {
+      if (baseSeverity === 'warn' && finalSeverity === 'error') return 'Production mode escalates warnings to enforce stricter release gates.';
+      if (baseSeverity === 'info' && finalSeverity === 'warn') return 'Production mode treats advisory items as warnings for operational rigor.';
+    }
+
+    return 'Severity adjusted by mode profile policy.';
+  }
+
   function lineFromIndex(idx) {
     return code.slice(0, idx).split('\n').length;
   }
 
   function addFinding(ruleId, baseSeverity, rule, idx, message, fix) {
     var severity = normalizeSeverity(ruleId, baseSeverity);
-    findings.push({ severity: severity, rule: rule, line: lineFromIndex(idx), message: message, fix: fix || '' });
+    findings.push({
+      severity: severity,
+      baseSeverity: baseSeverity,
+      rule: rule,
+      line: lineFromIndex(idx),
+      message: message,
+      fix: fix || '',
+      modeDelta: {
+        changed: severity !== baseSeverity,
+        reason: modeDeltaReason(ruleId, baseSeverity, severity)
+      }
+    });
   }
 
   function addRegexFindings(regex, ruleId, baseSeverity, rule, message, fix) {
