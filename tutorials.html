@@ -166,6 +166,19 @@
     .quiz-score{font-size:13px;font-weight:600;margin-top:12px}
     .quiz-retry{font-size:11px;color:var(--text3);cursor:pointer;text-decoration:underline;margin-left:12px}
 
+    /* ─── Glossary Memory Deck ─── */
+    .memory-deck{display:flex;flex-direction:column;gap:14px}
+    .memory-group{border:1px solid var(--border);border-radius:10px;padding:16px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))}
+    .memory-group-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .memory-group-title{font-size:14px;font-weight:700;letter-spacing:-0.2px}
+    .memory-group-mnemonic{font-size:11px;color:var(--text3);margin-top:2px}
+    .memory-group-tag{font-family:var(--mono);font-size:10px;color:var(--text3);padding:3px 8px;border:1px solid var(--border);border-radius:999px;background:var(--bg)}
+    .memory-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+    .memory-card{border:1px solid var(--border);border-radius:8px;padding:12px;background:var(--card)}
+    .memory-term{font-size:12px;font-weight:700;margin-bottom:6px;line-height:1.4}
+    .memory-meaning{font-size:11px;color:var(--text2);line-height:1.65;margin-bottom:8px}
+    .memory-hook{font-size:10px;color:var(--green);letter-spacing:0.2px}
+
     /* ─── Navigation Arrows ─── */
     .tut-nav{display:flex;justify-content:space-between;margin-top:40px;padding-top:24px;border-top:1px solid var(--border)}
     .tut-nav-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:500;color:var(--text3);transition:color .15s}
@@ -327,6 +340,46 @@ var CATEGORIES = [
       {type:"theory",title:"sys_id: The Universal Key",content:"Every record has a <strong>sys_id</strong> — a 32-character GUID primary key.\n\n<strong>Never dot-walk to sys_id.</strong> The reference field already stores it — use <code>gr.getValue('caller_id')</code> instead of <code>gr.caller_id.sys_id</code>."},
       {type:"code",title:"Table Inheritance & Dot-Walking",code:"var gr = new GlideRecord('incident');\ngr.get('a1b2c3d4e5f6');\ngs.info('Incident: ' + gr.getValue('number'));\n\n// ✅ Reference field stores sys_id directly\nvar callerId = gr.getValue('caller_id');\ngs.info('Caller ID (efficient): ' + callerId);\n\nvar user = new GlideRecord('sys_user');\nif (user.get(callerId)) {\n    gs.info('Name: ' + user.getValue('first_name') + ' ' + user.getValue('last_name'));\n    gs.info('Email: ' + user.getValue('email'));\n    gs.info('VIP: ' + user.getValue('vip'));\n}"},
       {type:"quiz",questions:[{q:"Which table do incident, problem, change_request extend?",opts:["cmdb","sys_metadata","task","core_company"],ans:2,exp:"The task table is the base table. Incident, problem, and change_request extend it."}]}
+    ]},
+    {id:"developer-glossary-memory",title:"Developer Glossary Memory Deck",difficulty:"beginner",time:"35 min",sections:[
+      {type:"theory",title:"ServiceNow Developer Glossary (Stylish + Sticky)",content:"This module converts the official ServiceNow Developer Glossary into a memory-friendly deck. Instead of memorizing alphabetically, you will learn by concept clusters and recall hooks.\n\nSource: <a href=\"https://developer.servicenow.com/dev.do#!/guides/zurich/now-platform/glossary/developer-glossary\" target=\"_blank\" rel=\"noopener noreferrer\">ServiceNow Developer Glossary</a>"},
+      {type:"theory",title:"3-Pass Memorization Loop",content:"Pass 1 (2 mins): Read only the term names in each mnemonic cluster.\n\nPass 2 (6 mins): Read term + meaning and say the recall cue aloud once.\n\nPass 3 (3 mins): Hide the meaning and try defining each term from the cue. If missed, mark and revisit only misses later."},
+      {type:"memory",title:"Mnemonic Deck: Cluster First, Recall Faster",groups:[
+        {tag:"A.C.C.E.S.S",name:"Access & Scope",mnemonic:"A.C.C.E.S.S = ACL, Control rule, Cross-scope, Execution scope, Separation, Structure",cards:[
+          {term:"Access Control List (ACL)",meaning:"A group of Access Control rules applied to a resource.",hook:"Gate for read/write/create/delete access."},
+          {term:"Access Control rule",meaning:"Controls what data users can access and which operations are allowed.",hook:"Condition + Script + Roles."},
+          {term:"application scope",meaning:"A unique namespace and permissions boundary for app files and data.",hook:"Fence around your app."},
+          {term:"cross-scope privilege",meaning:"Specifies whether access is allowed to resources in another scope.",hook:"Bridge between fenced apps."},
+          {term:"domain separation",meaning:"Separates data, processes, and UI into logical domains within one instance.",hook:"One instance, many tenants."},
+          {term:"domain hierarchy",meaning:"Parent-child structure between domains controlling visibility.",hook:"Visibility flows down hierarchy."}
+        ]},
+        {tag:"B.U.I.L.D",name:"Build & Automate",mnemonic:"B.U.I.L.D = Business rule, UI flow actions, Integration, Logic, Designer",cards:[
+          {term:"business rule",meaning:"Server-side logic that runs when records are queried, inserted, updated, or deleted.",hook:"Before/After/Async/Display/Query."},
+          {term:"Flow Designer",meaning:"Design environment to automate processes with triggers and actions.",hook:"Low-code automation control room."},
+          {term:"action [Flow Designer]",meaning:"Reusable operation used in flows or subflows.",hook:"One Lego block in a flow."},
+          {term:"event",meaning:"Configured marker in scripts that triggers notifications or script actions.",hook:"Fire signal for async handlers."},
+          {term:"event registry",meaning:"Table of events that ServiceNow processes can respond to.",hook:"Catalog of event names."},
+          {term:"scheduled job",meaning:"Automated task that runs on a schedule in background.",hook:"Platform alarm clock."}
+        ]},
+        {tag:"D.A.T.A",name:"Data & Integration",mnemonic:"D.A.T.A = Data source, Aggregate flow, Transform map, API path",cards:[
+          {term:"data source",meaning:"Source location for imports such as file, JDBC, HTTP, or SCP.",hook:"Where data enters first."},
+          {term:"import set",meaning:"Temporary table where imported data lands before mapping.",hook:"Staging area before target table."},
+          {term:"transform map",meaning:"Rules that map import set fields to destination table fields.",hook:"Translator from raw to platform data."},
+          {term:"coalesce",meaning:"Matching method that decides update existing vs insert new records.",hook:"If match exists -> update."},
+          {term:"Integration Hub",meaning:"Framework for interacting with third-party platforms.",hook:"Connector layer for external systems."},
+          {term:"connection & credential alias",meaning:"Pointer to connection and credential records used in Integration Hub steps.",hook:"Reusable auth shortcut."}
+        ]},
+        {tag:"U.I.R",name:"UI & Runtime APIs",mnemonic:"U.I.R = UI controls, Interaction scripts, Runtime APIs",cards:[
+          {term:"client script",meaning:"Client-side JavaScript that runs in browser events like onLoad/onChange/onSubmit.",hook:"Browser behavior controller."},
+          {term:"UI Policy",meaning:"Declarative rule to control field visibility, mandatory, and read-only behavior.",hook:"No-code field logic."},
+          {term:"GlideForm (g_form)",meaning:"Client API class used to customize and control forms.",hook:"Form API on the client."},
+          {term:"GlideRecord",meaning:"JavaScript class for interacting with ServiceNow tables from scripts.",hook:"Primary server data API."},
+          {term:"Script Include",meaning:"Reusable server-side class/function library loaded on demand.",hook:"Shared backend toolkit."},
+          {term:"UI Builder",meaning:"Tool for configuring modern Now Experience pages and components.",hook:"Workspace page composer."}
+        ]}
+      ]},
+      {type:"table",title:"Rapid Recall Sheet (15-second definitions)",headers:["Term","Say this in interviews"],rows:[["ACL","Resource access gate made of access rules"],["application scope","Namespace plus permission boundary"],["cross-scope privilege","Allowed bridge across app scopes"],["business rule","Server logic on DB operations"],["Flow Designer","Low-code process automation engine"],["event","Async trigger for handlers/notifications"],["import set","Temporary staging table for imports"],["transform map","Mapping rules from staging to target"],["coalesce","Update-vs-insert matching key"],["Integration Hub","Third-party integration framework"],["client script","Browser-side form behavior logic"],["UI Policy","Declarative field behavior rule"],["g_form","Client API for form manipulation"],["GlideRecord","Server API for CRUD/query"],["Script Include","Reusable on-demand server code"]]},
+      {type:"quiz",questions:[{q:"What does coalesce control in Transform Maps?",opts:["Whether imports run async","Whether to update existing or insert new records","How to encrypt import data","Which role can run imports"],ans:1,exp:"Coalesce defines the match key so ServiceNow knows if a row updates an existing record or inserts a new one."},{q:"Which term defines the app namespace and permission boundary?",opts:["domain separation","application scope","event registry","data source"],ans:1,exp:"Application scope is the namespace and permissions boundary for an app's files and data."},{q:"Which pair is correct for client-side form behavior?",opts:["business rule + GlideRecord","UI Policy + client script","transform map + import set","event registry + scheduled job"],ans:1,exp:"UI Policies and Client Scripts both drive form behavior in the browser."},{q:"What is the best one-line definition of Flow Designer?",opts:["A reporting engine","A source control branch manager","A design environment for process automation using triggers and actions","A SQL builder for tables"],ans:2,exp:"Flow Designer is ServiceNow's automation design environment for triggers, actions, and reusable flow logic."},{q:"Which glossary term is a reusable server-side code library loaded on demand?",opts:["Script Include","UI Policy","GlideForm","event log"],ans:0,exp:"Script Includes package reusable server-side logic and load only when called."},{q:"How should you remember ACL quickly?",opts:["As a UI theme setting","As a data import stage","As the gate controlling resource access operations","As a source control merge strategy"],ans:2,exp:"ACL is the access gate protecting resources and operations like read/write/create/delete."}]}
     ]}
   ]},
 
@@ -782,6 +835,29 @@ function renderHome() {
   return html;
 }
 
+function renderMemoryDeck(title, groups) {
+  var html = '<div class="memory-deck">';
+  if (title) html += '<h3 class="tut-h3">'+esc(title)+'</h3>';
+  groups.forEach(function(group) {
+    html += '<div class="memory-group">';
+    html += '<div class="memory-group-head">';
+    html += '<div><div class="memory-group-title">'+esc(group.name||'Memory Group')+'</div><div class="memory-group-mnemonic">'+esc(group.mnemonic||'')+'</div></div>';
+    html += '<span class="memory-group-tag">'+esc(group.tag||'MEMORY')+'</span>';
+    html += '</div>';
+    html += '<div class="memory-grid">';
+    (group.cards || []).forEach(function(card) {
+      html += '<article class="memory-card">';
+      html += '<div class="memory-term">'+esc(card.term||'')+'</div>';
+      html += '<div class="memory-meaning">'+esc(card.meaning||'')+'</div>';
+      html += '<div class="memory-hook">Recall cue: '+esc(card.hook||'')+'</div>';
+      html += '</article>';
+    });
+    html += '</div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
 function renderTutorial(topicId) {
   var t = ALL_TOPICS.find(function(x){return x.id===topicId});
   if (!t) return '<p>Tutorial not found.</p>';
@@ -815,6 +891,9 @@ function renderTutorial(topicId) {
     }
     if (sec.type === 'code') {
       html += buildPlayground(topicId+'-'+si, sec.title, sec.code);
+    }
+    if (sec.type === 'memory') {
+      html += renderMemoryDeck(sec.title, sec.groups || []);
     }
     if (sec.type === 'quiz') {
       html += buildQuiz(topicId+'-'+si, sec.questions);
