@@ -294,7 +294,7 @@
           <span>Double opt-in recommended</span>
           <span>Provider-ready: Buttondown (editable)</span>
         </div>
-        <div class="subscribe-status" id="subscribeStatus" role="status" aria-live="polite"></div>
+        <div class="subscribe-status" id="subscribeStatus" data-subscribe-status role="status" aria-live="polite"></div>
       </div>
     </section>
   </main>
@@ -327,13 +327,17 @@
 <footer><p class="footer-text">&copy; 2026 Sumanth Bolle. Designed with precision.</p></footer>
 
 <script src="assets/js/shared/nav-theme.js"></script>
+<script src="assets/js/shared/subscribe.js"></script>
 <script>
 let BLOG_POSTS=[],currentArticleId=null,currentTopicId=null,completedTopics=JSON.parse(localStorage.getItem('csa_completed')||'[]'),pendingArticleId=null;
 
-const SUBSCRIBE_CONFIG={
+window.SB_SUBSCRIBE_CONFIG={
   provider:'buttondown',
   buttondownUser:'REPLACE_WITH_YOUR_BUTTONDOWN_USERNAME'
 };
+const SUBSCRIBE_CONFIG=window.SB_SUBSCRIBE_CONFIG;
+const ARTICLE_CTA_SEEN_KEY='sb_blog_article_cta_seen_v1';
+let articleCtaSeenMap=loadArticleCtaSeen();
 
 const CSA_MODULES=[
 {id:1,title:"ServiceNow Foundations",color:"#5856d6",topics:[
@@ -449,7 +453,7 @@ function openBlogArticle(id,fromRouter){
   document.getElementById('blogArticleSection').classList.add('active');
   var v=document.getElementById('blogArticleView');
   v.innerHTML='<a href="#" class="article-back" onclick="goBackBlog(event)">\u2190 Back to Blog</a><h1 class="article-title">'+post.title+'</h1><div class="article-meta"><span>'+(post.date||'')+'</span><span>'+(post.readTime||'5 min')+'</span><span style="text-transform:capitalize">'+post.category+'</span><div class="article-share"><button class="share-btn" onclick="copyLink(\'article\')"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy Link</button><button class="share-btn" onclick="shareLI(\'article\')"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> LinkedIn</button></div></div><div class="article-content">'+(post.content||'<p>Content loading...</p>')+'</div>';
-  buildToc('blogArticleToc',v);addCodeCopy();window.scrollTo(0,0);
+  buildToc('blogArticleToc',v);addCodeCopy();resetArticleProgressCta(String(id));window.scrollTo(0,0);
 }
 
 function goBackBlog(e){e.preventDefault();currentArticleId=null;history.pushState(null,'',location.pathname);showSection('blog')}
@@ -525,7 +529,54 @@ function shareLI(type){var url;if(type==='article'&&currentArticleId)url=Router.
 
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2500)}
 
-function updateProgress(){var h=document.documentElement.scrollHeight-window.innerHeight;document.getElementById('readingProgress').style.width=h>0?(window.scrollY/h*100)+'%':'0%'}
+function loadArticleCtaSeen(){
+  try{
+    var raw=localStorage.getItem(ARTICLE_CTA_SEEN_KEY);
+    if(!raw)return {};
+    var parsed=JSON.parse(raw);
+    if(parsed&&typeof parsed==='object')return parsed;
+  }catch(e){}
+  return {};
+}
+
+function saveArticleCtaSeen(){
+  try{localStorage.setItem(ARTICLE_CTA_SEEN_KEY,JSON.stringify(articleCtaSeenMap||{}));}catch(e){}
+}
+
+function markArticleCtaSeen(id){
+  if(!id)return;
+  articleCtaSeenMap[String(id)]=true;
+  saveArticleCtaSeen();
+}
+
+function openArticleSubscribeModal(){
+  if(!window.SBSubscribe||!window.SBSubscribe.openModal)return;
+  markArticleCtaSeen(currentArticleId);
+  window.SBSubscribe.openModal({
+    title:'Enjoyed this read?',
+    description:'Subscribe and I will send fresh ServiceNow, AI, and certification articles directly to your inbox.'
+  });
+}
+
+function maybeOpenArticleSubscribeModal(progress){
+  if(!currentArticleId)return;
+  if(!document.getElementById('blogArticleSection').classList.contains('active'))return;
+  if(articleCtaSeenMap[String(currentArticleId)])return;
+  if(progress<70)return;
+  openArticleSubscribeModal();
+}
+
+function resetArticleProgressCta(id){
+  if(!id)return;
+  if(articleCtaSeenMap[String(id)])return;
+}
+
+function updateProgress(){
+  var h=document.documentElement.scrollHeight-window.innerHeight;
+  var p=h>0?(window.scrollY/h*100):0;
+  document.getElementById('readingProgress').style.width=p+'%';
+  maybeOpenArticleSubscribeModal(p);
+}
 
 function setSubscribeStatus(type,msg){
   var el=document.getElementById('subscribeStatus');
@@ -538,30 +589,15 @@ function initSubscribeForm(){
   var form=document.getElementById('subscribeForm');
   if(!form)return;
 
-  if(SUBSCRIBE_CONFIG.provider==='buttondown' && SUBSCRIBE_CONFIG.buttondownUser && SUBSCRIBE_CONFIG.buttondownUser!=='REPLACE_WITH_YOUR_BUTTONDOWN_USERNAME'){
-    form.action='https://buttondown.email/api/emails/embed-subscribe/'+encodeURIComponent(SUBSCRIBE_CONFIG.buttondownUser);
+  if(window.SBSubscribe&&window.SBSubscribe.bindForm){
+    window.SBSubscribe.bindForm(form,{
+      config:SUBSCRIBE_CONFIG,
+      emailInput:document.getElementById('subscribeEmail'),
+      statusEl:document.getElementById('subscribeStatus')
+    });
+    return;
   }
-
-  form.addEventListener('submit',function(e){
-    var emailEl=document.getElementById('subscribeEmail');
-    var email=(emailEl&&emailEl.value?emailEl.value.trim():'');
-
-    if(!email||!/^\S+@\S+\.\S+$/.test(email)){
-      e.preventDefault();
-      setSubscribeStatus('error','Please enter a valid email address.');
-      return;
-    }
-
-    if(form.action.indexOf('REPLACE_WITH_YOUR_BUTTONDOWN_USERNAME')!==-1){
-      e.preventDefault();
-      setSubscribeStatus('error','Set your Buttondown username in SUBSCRIBE_CONFIG before going live.');
-      return;
-    }
-
-    var newsletterUrl='https://buttondown.email/'+encodeURIComponent(SUBSCRIBE_CONFIG.buttondownUser||'');
-    window.open(newsletterUrl,'popupwindow','scrollbars=yes,width=540,height=640');
-    setSubscribeStatus('success','Almost done. Please complete confirmation in the popup window.');
-  });
+  form.addEventListener('submit',function(){setSubscribeStatus('error','Subscribe module failed to load. Refresh and try again.')});
 }
 
 document.addEventListener('DOMContentLoaded',function(){
