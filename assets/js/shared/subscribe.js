@@ -24,6 +24,11 @@
     return "https://buttondown.email/" + encodeURIComponent(config.buttondownUser || "");
   }
 
+  function hasUsableAction(form) {
+    var action = (form.getAttribute("action") || "").trim();
+    return !!action && action.indexOf("REPLACE_WITH_YOUR_BUTTONDOWN_USERNAME") === -1;
+  }
+
   function setStatus(el, type, message) {
     if (!el) return;
     el.className = "sb-subscribe-status show " + (type || "");
@@ -53,13 +58,14 @@
         return;
       }
 
-      if (!isConfigured(config)) {
+      if (!isConfigured(config) && !hasUsableAction(form)) {
         event.preventDefault();
-        setStatus(statusEl, "error", "Set your Buttondown username in SB_SUBSCRIBE_CONFIG before going live.");
+        setStatus(statusEl, "error", "Subscriptions are not live yet. Please check back shortly.");
         return;
       }
 
-      window.open(getLandingUrl(config), "sbSubscribePopup", "scrollbars=yes,width=540,height=640");
+      var popupUrl = isConfigured(config) ? getLandingUrl(config) : form.action;
+      if (popupUrl) window.open(popupUrl, "sbSubscribePopup", "scrollbars=yes,width=540,height=640");
       setStatus(statusEl, "success", "Almost done. Please complete confirmation in the popup window.");
     });
 
@@ -91,6 +97,11 @@
       ".sb-subscribe-modal-close{position:absolute;top:10px;right:10px;width:34px;height:34px;border:1px solid rgba(0,0,0,.12);background:#fff;border-radius:999px;cursor:pointer;font-size:18px;line-height:1}" +
       ".sb-subscribe-modal-title{font-size:25px;font-weight:700;line-height:1.2;margin-bottom:8px}" +
       ".sb-subscribe-modal-desc{font-size:14px;line-height:1.65;color:#555;margin-bottom:14px}" +
+      ".sb-subscribe-modal .sb-subscribe-kicker{color:#667085}" +
+      ".sb-subscribe-modal .sb-subscribe-input{background:#f5f7fb;border:1px solid rgba(0,0,0,.14);color:#1d1d1f}" +
+      ".sb-subscribe-modal .sb-subscribe-input::placeholder{color:#6b7280}" +
+      ".sb-subscribe-modal .sb-subscribe-status.success{color:#15803d}" +
+      ".sb-subscribe-modal .sb-subscribe-status.error{color:#b91c1c}" +
       "@media (max-width:768px){.sb-subscribe-widget{padding:0 16px}.sb-subscribe-title{font-size:20px}.sb-subscribe-modal-card{padding:20px}}";
     document.head.appendChild(style);
   }
