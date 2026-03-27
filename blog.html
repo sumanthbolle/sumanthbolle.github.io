@@ -67,6 +67,23 @@
     .blog-empty{text-align:center;padding:80px 20px;color:var(--gray)}
     .blog-empty h3{font-size:24px;margin-bottom:12px;color:var(--text)}
     .blog-error{text-align:center;padding:40px;color:var(--red);background:#fff5f5;border-radius:18px}
+    .subscribe-wrap{margin-top:44px}
+    .subscribe-card{background:linear-gradient(135deg,#111 0%,#1a1a2e 100%);color:var(--white);border-radius:18px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,0.14)}
+    .subscribe-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+    .subscribe-title{font-size:24px;font-weight:600;line-height:1.2}
+    .subscribe-kicker{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#9ca3af}
+    .subscribe-desc{font-size:14px;color:#c7cad1;line-height:1.7;max-width:720px;margin-bottom:16px}
+    .subscribe-form{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .subscribe-input{flex:1;min-width:240px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.08);color:var(--white);font-size:14px;font-family:inherit;outline:none}
+    .subscribe-input::placeholder{color:#b7bcc8}
+    .subscribe-input:focus{border-color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.12)}
+    .subscribe-btn{padding:12px 18px;border:none;border-radius:10px;background:var(--blue);color:var(--white);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.2s}
+    .subscribe-btn:hover{background:#0055aa}
+    .subscribe-meta{margin-top:10px;font-size:12px;color:#aab1bc;display:flex;flex-wrap:wrap;gap:12px}
+    .subscribe-status{margin-top:12px;font-size:13px;display:none}
+    .subscribe-status.show{display:block}
+    .subscribe-status.success{color:#86efac}
+    .subscribe-status.error{color:#fda4af}
     .csa-layout{display:flex;min-height:calc(100vh - 48px - 72px)}
     .sidebar{width:280px;flex-shrink:0;background:var(--white);border-right:1px solid rgba(0,0,0,0.1);height:calc(100vh - 48px - 72px);position:sticky;top:calc(48px + 72px);overflow-y:auto;padding:20px 0}
     .sidebar::-webkit-scrollbar{width:5px}
@@ -259,6 +276,27 @@
       <button class="filter-btn" data-filter="general">General</button>
     </div>
     <div class="blog-grid" id="blogGrid"></div>
+
+    <section class="subscribe-wrap" aria-labelledby="subscribeTitle">
+      <div class="subscribe-card">
+        <div class="subscribe-kicker">Stay Updated</div>
+        <div class="subscribe-head">
+          <h2 class="subscribe-title" id="subscribeTitle">Subscribe for latest blog updates</h2>
+        </div>
+        <p class="subscribe-desc">Get notified when I publish new ServiceNow, AI, and certification posts. No spam. Unsubscribe anytime.</p>
+
+        <form class="subscribe-form" id="subscribeForm" action="https://buttondown.email/api/emails/embed-subscribe/REPLACE_WITH_YOUR_BUTTONDOWN_USERNAME" method="post" target="popupwindow" novalidate>
+          <input class="subscribe-input" id="subscribeEmail" type="email" name="email" placeholder="Enter your email" required aria-label="Email address">
+          <button class="subscribe-btn" type="submit">Subscribe</button>
+        </form>
+
+        <div class="subscribe-meta">
+          <span>Double opt-in recommended</span>
+          <span>Provider-ready: Buttondown (editable)</span>
+        </div>
+        <div class="subscribe-status" id="subscribeStatus" role="status" aria-live="polite"></div>
+      </div>
+    </section>
   </main>
 </section>
 
@@ -291,6 +329,11 @@
 <script src="assets/js/shared/nav-theme.js"></script>
 <script>
 let BLOG_POSTS=[],currentArticleId=null,currentTopicId=null,completedTopics=JSON.parse(localStorage.getItem('csa_completed')||'[]'),pendingArticleId=null;
+
+const SUBSCRIBE_CONFIG={
+  provider:'buttondown',
+  buttondownUser:'REPLACE_WITH_YOUR_BUTTONDOWN_USERNAME'
+};
 
 const CSA_MODULES=[
 {id:1,title:"ServiceNow Foundations",color:"#5856d6",topics:[
@@ -484,8 +527,45 @@ function showToast(msg){var t=document.getElementById('toast');t.textContent=msg
 
 function updateProgress(){var h=document.documentElement.scrollHeight-window.innerHeight;document.getElementById('readingProgress').style.width=h>0?(window.scrollY/h*100)+'%':'0%'}
 
+function setSubscribeStatus(type,msg){
+  var el=document.getElementById('subscribeStatus');
+  if(!el)return;
+  el.className='subscribe-status show '+(type||'');
+  el.textContent=msg||'';
+}
+
+function initSubscribeForm(){
+  var form=document.getElementById('subscribeForm');
+  if(!form)return;
+
+  if(SUBSCRIBE_CONFIG.provider==='buttondown' && SUBSCRIBE_CONFIG.buttondownUser && SUBSCRIBE_CONFIG.buttondownUser!=='REPLACE_WITH_YOUR_BUTTONDOWN_USERNAME'){
+    form.action='https://buttondown.email/api/emails/embed-subscribe/'+encodeURIComponent(SUBSCRIBE_CONFIG.buttondownUser);
+  }
+
+  form.addEventListener('submit',function(e){
+    var emailEl=document.getElementById('subscribeEmail');
+    var email=(emailEl&&emailEl.value?emailEl.value.trim():'');
+
+    if(!email||!/^\S+@\S+\.\S+$/.test(email)){
+      e.preventDefault();
+      setSubscribeStatus('error','Please enter a valid email address.');
+      return;
+    }
+
+    if(form.action.indexOf('REPLACE_WITH_YOUR_BUTTONDOWN_USERNAME')!==-1){
+      e.preventDefault();
+      setSubscribeStatus('error','Set your Buttondown username in SUBSCRIBE_CONFIG before going live.');
+      return;
+    }
+
+    var newsletterUrl='https://buttondown.email/'+encodeURIComponent(SUBSCRIBE_CONFIG.buttondownUser||'');
+    window.open(newsletterUrl,'popupwindow','scrollbars=yes,width=540,height=640');
+    setSubscribeStatus('success','Almost done. Please complete confirmation in the popup window.');
+  });
+}
+
 document.addEventListener('DOMContentLoaded',function(){
-  loadBlogPosts();renderSidebar();renderCSAWelcome();renderCerts();
+  loadBlogPosts();renderSidebar();renderCSAWelcome();renderCerts();initSubscribeForm();
   document.querySelectorAll('.main-tab[data-section]').forEach(function(tab){
     tab.addEventListener('click',function(){var s=tab.dataset.section;Router.navigate('section',s,true);showSection(s);if(s==='csa'&&!currentTopicId)renderCSAWelcome()});
   });
