@@ -179,6 +179,39 @@
     .memory-meaning{font-size:11px;color:var(--text2);line-height:1.65;margin-bottom:8px}
     .memory-hook{font-size:10px;color:var(--green);letter-spacing:0.2px}
 
+    /* ─── TBP Compiler ─── */
+    .compiler{border:1px solid var(--border);border-radius:10px;background:var(--card);overflow:hidden}
+    .compiler-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2)}
+    .compiler-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3)}
+    .compiler-actions{display:flex;gap:6px}
+    .compiler-btn{border:1px solid var(--border);background:transparent;color:var(--text2);padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font)}
+    .compiler-btn:hover{border-color:var(--border2);color:var(--text)}
+    .compiler-btn.run{background:var(--text);color:var(--bg);border-color:var(--text)}
+    .compiler-mode{border:1px solid var(--border);background:var(--bg);color:var(--text2);padding:5px 8px;border-radius:6px;font-size:11px;font-weight:600;font-family:var(--font)}
+    .compiler-mode:focus{outline:none;border-color:var(--border2);color:var(--text)}
+    .compiler-mode-toggle{display:flex;align-items:center;gap:6px;color:var(--text3);font-size:10px;font-weight:600;letter-spacing:0.2px;padding:0 2px}
+    .compiler-mode-toggle input{accent-color:#999}
+    .compiler-delta{margin-top:6px;padding:6px 8px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px dashed var(--border);font-size:10px;color:var(--text3);line-height:1.5}
+    .compiler-editor-wrap{display:flex;background:var(--code-bg);border-bottom:1px solid var(--border)}
+    .compiler-lines{padding:10px 0;min-width:36px;text-align:right;padding-right:8px;user-select:none;font-family:var(--mono);font-size:12px;line-height:1.65;color:var(--text3);background:var(--bg)}
+    .compiler-editor{width:100%;min-height:180px;padding:10px 14px;background:transparent;border:none;outline:none;resize:vertical;font-family:var(--mono);font-size:12px;line-height:1.65;color:var(--code-text);tab-size:4}
+    .compiler-summary{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2)}
+    .compiler-score{font-weight:700;color:var(--text)}
+    .compiler-score.good{color:var(--green)}
+    .compiler-score.mid{color:var(--yellow)}
+    .compiler-score.bad{color:var(--red)}
+    .compiler-findings{padding:10px 14px 14px;display:flex;flex-direction:column;gap:8px}
+    .compiler-finding{border:1px solid var(--border);border-radius:8px;padding:10px;background:var(--bg2)}
+    .compiler-finding-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+    .compiler-sev{font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:999px;border:1px solid var(--border)}
+    .compiler-sev.error{color:var(--red);border-color:#ef444450;background:#ef444412}
+    .compiler-sev.warn{color:var(--yellow);border-color:#eab30850;background:#eab30812}
+    .compiler-sev.info{color:var(--blue);border-color:#3b82f650;background:#3b82f612}
+    .compiler-line{font-family:var(--mono);font-size:10px;color:var(--text3)}
+    .compiler-rule{font-size:12px;font-weight:700}
+    .compiler-msg{font-size:11px;color:var(--text2);line-height:1.6}
+    .compiler-fix{font-size:11px;color:var(--green);margin-top:4px}
+
     /* ─── Navigation Arrows ─── */
     .tut-nav{display:flex;justify-content:space-between;margin-top:40px;padding-top:24px;border-top:1px solid var(--border)}
     .tut-nav-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:500;color:var(--text3);transition:color .15s}
@@ -207,6 +240,9 @@
     /* ─── Back to Top ─── */
     .back-top{display:none;position:fixed;bottom:24px;right:24px;width:36px;height:36px;border-radius:50%;background:var(--text);color:var(--bg);border:none;cursor:pointer;font-size:16px;z-index:100;transition:opacity .2s;align-items:center;justify-content:center}
     .back-top.show{display:flex}
+
+    footer{padding:24px;text-align:center;border-top:1px solid var(--border);background:var(--bg2)}
+    .footer-text{font-size:12px;color:var(--text3)}
 
     /* ─── Responsive ─── */
     @media(max-width:768px){
@@ -274,6 +310,7 @@
 <!-- ─── Back to Top ─── -->
 <button class="back-top" id="backTop" aria-label="Back to top">↑</button>
 
+<footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -721,20 +758,195 @@ var CATEGORIES = [
       {type:"code",title:"Essential Patterns Library",code:"// === Pattern 1: Defensive GlideRecord ===\ngs.info('=== Pattern 1: Defensive Query ===');\nvar gr = new GlideRecord('incident');\ngr.addQuery('active', 'true');\ngr.addQuery('priority', '1');\ngr.setLimit(100); // Always limit!\ngr.orderByDesc('sys_created_on');\ngr.query();\n\nvar results = [];\nwhile (gr.next()) {\n    results.push(gr.getValue('number')); // getValue, not gr.field\n}\ngs.info('Found: ' + results.length);\n\n// === Pattern 2: Silent Update ===\ngs.info('');\ngs.info('=== Pattern 2: Silent Update ===');\nvar update = new GlideRecord('incident');\nif (update.get('b2c3d4e5f6g7')) {\n    update.setValue('state', '2');\n    update.setWorkflow(false);    // No BRs\n    update.autoSysFields(false);  // No sys_updated_on change\n    update.update();\n    gs.info('Updated without triggering BRs');\n}\n\n// === Pattern 3: Event-Based Decoupling ===\ngs.info('');\ngs.info('=== Pattern 3: Event Decoupling ===');\ngs.info('Instead of heavy logic in After BR:');\ngs.info('  gs.eventQueue(\"incident.escalated\", current, p1, p2)');\ngs.info('Then handle in Script Action (async, non-blocking)');\n\n// === Pattern 4: Check Before Act ===\ngs.info('');\ngs.info('=== Pattern 4: Change Detection ===');\nvar curr = current.getValue('state');\nvar prev = previous.getValue('state');\nif (curr !== prev) {\n    gs.info('State changed: ' + prev + ' → ' + curr);\n    gs.info('Safe to proceed with post-change logic');\n} else {\n    gs.info('No change — skipping (prevents recursion)');\n}"},
       {type:"quiz",questions:[{q:"Why never use current.update() in a Before BR?",opts:["It's deprecated","It triggers another Business Rule cycle","It doesn't save","It skips ACLs"],ans:1,exp:"current.update() in a Before BR triggers another round of Business Rules, causing potential infinite loops."},{q:"Why avoid global Client Scripts?",opts:["They don't work","They load on EVERY form in the system","They can't access g_form","They run on the server"],ans:1,exp:"Global Client Scripts load on every form in the system, degrading performance for all users."}]}
     ]},
-    {id:"official-tbp",title:"Official Best Practices (TBP)",difficulty:"intermediate",time:"35 min",sections:[
-      {type:"theory",title:"ServiceNow's Technical Best Practices",content:"This topic consolidates ServiceNow's <strong>official Scripting Technical Best Practices</strong> from the Developer Portal (<code>developer.servicenow.com</code> → Guides → Scripting TBP).\n\nOrganized into six areas: General Scripting, Client-Side, Business Rules, Debugging, Logs & Queues, and Update Sets. Each includes the official recommendation plus runnable examples."},
-      {type:"theory",title:"1. General Scripting TBP",content:"<strong>Make code easy to read</strong>\n• Add comments explaining WHY, not WHAT\n• Use meaningful variable names (<code>grIncident</code> not <code>gr</code>, <code>grCaller</code> not <code>x</code>)\n• Write simple if/else instead of ternary — less experienced developers will maintain your code\n\n<strong>Create small, modular components</strong>\n• Break logic into specialized functions\n• Store function results in variables instead of calling the same function multiple times\n• Put reusable logic in Script Includes (loaded on-demand), never in global Business Rules (loaded every page)\n\n<strong>Naming conventions</strong>\n• <code>gr</code> prefix for GlideRecord: <code>var grUser = new GlideRecord('sys_user')</code>\n• <code>ga</code> prefix for GlideAggregate: <code>var gaCount = new GlideAggregate('incident')</code>\n• <code>PascalCase</code> for Script Include names\n• <code>snake_case</code> for catalog variable names\n• Never use bare <code>gr</code> — it collides with other scripts in the same scope"},
-      {type:"code",title:"TBP: Naming & Modularity",code:"// ❌ BAD: Everything the TBP says NOT to do\nvar gr = new GlideRecord('incident');\ngr.addQuery('active', true);\ngr.query();\nvar x = 0;\nwhile (gr.next()) {\n    var gr2 = new GlideRecord('sys_user');\n    gr2.get(gr.caller_id); // GlideElement, not getValue!\n    x++;\n}\ngs.info('Bad code counted: ' + x);\n\ngs.info('');\n\n// ✅ GOOD: Following every TBP guideline\n// Descriptive names, modular function, efficient pattern\nfunction getActiveCallerEmails(priority) {\n    // Collect unique caller IDs (flat query pattern)\n    var callerIds = [];\n    var grIncident = new GlideRecord('incident');\n    grIncident.addQuery('active', 'true');\n    grIncident.addQuery('priority', priority);\n    grIncident.setLimit(100); // TBP: always limit\n    grIncident.query();\n\n    while (grIncident.next()) {\n        var callerId = grIncident.getValue('caller_id'); // TBP: getValue!\n        if (callerId && callerIds.indexOf(callerId) === -1) {\n            callerIds.push(callerId);\n        }\n    }\n\n    // Single query for all users (TBP: avoid nested GlideRecords)\n    var emails = [];\n    if (callerIds.length > 0) {\n        var grCaller = new GlideRecord('sys_user');\n        grCaller.addQuery('sys_id', 'IN', callerIds.join(','));\n        grCaller.query();\n        while (grCaller.next()) {\n            emails.push(grCaller.getValue('email'));\n        }\n    }\n    return emails;\n}\n\nvar p1Emails = getActiveCallerEmails('1');\ngs.info('P1 caller emails: ' + p1Emails.join(', '));\ngs.info('Total queries: 2 (always, regardless of volume)');"},
-      {type:"theory",title:"2. Client-Side TBP",content:"<strong>Never use GlideRecord on the client</strong>\n• Client-side GlideRecord makes synchronous server calls that freeze the browser\n• Always use GlideAjax for server lookups from client scripts\n\n<strong>Minimize server calls</strong>\n• Use <code>g_scratchpad</code> (populated by Display BRs) to pass data to the client\n• Use <code>g_user.getClientData()</code> for session-level data\n• Call <code>setValue(field, value, displayValue)</code> with 3 params on reference fields\n\n<strong>Don't use global Client Scripts</strong>\n• They load on EVERY form in the system\n• Use table-specific scripts, or UI Scripts for truly global functions\n\n<strong>Don't manipulate the DOM</strong>\n• ServiceNow changes DOM structure between releases\n• Use g_form API methods instead of document.getElementById()\n• DOM changes break in Service Portal and mobile\n\n<strong>onChange: Three guard checks</strong>\n• <code>if (isLoading) return;</code> — skip form load\n• <code>if (newValue === '') return;</code> — skip field clear\n• <code>if (newValue === oldValue) return;</code> — skip if no real change"},
-      {type:"code",title:"TBP: Client-Side Patterns",code:"// === g_scratchpad: Server → Client without GlideAjax ===\ngs.info('=== Display BR → g_scratchpad ===');\ngs.info('');\ngs.info('// Display Business Rule (server-side):');\ngs.info('(function executeRule(current, previous) {');\n\n// Simulate a Display BR populating g_scratchpad\nvar callerGr = new GlideRecord('sys_user');\nif (callerGr.get(current.getValue('caller_id'))) {\n    gs.info('  g_scratchpad.caller_vip = \"' + callerGr.getValue('vip') + '\";');\n    gs.info('  g_scratchpad.caller_email = \"' + callerGr.getValue('email') + '\";');\n    gs.info('  g_scratchpad.caller_title = \"' + callerGr.getValue('title') + '\";');\n}\ngs.info('})(current, previous);');\n\ngs.info('');\ngs.info('// Client Script onLoad (browser):');\ngs.info('if (g_scratchpad.caller_vip === \"true\") {');\ngs.info('    g_form.addInfoMessage(\"VIP Caller: \" + g_scratchpad.caller_title);');\ngs.info('    g_form.setMandatory(\"assignment_group\", true);');\ngs.info('}');\ngs.info('');\ngs.info('// Result: ZERO server calls from client!');\ngs.info('// vs GlideAjax which needs a round-trip');\n\ngs.info('');\ngs.info('=== onChange: Complete TBP Guard Clause ===');\ngs.info('function onChange(control, oldValue, newValue, isLoading, isTemplate) {');\ngs.info('    if (isLoading) return;              // Guard 1: form load');\ngs.info('    if (newValue === \\'\\') return;          // Guard 2: field cleared');\ngs.info('    if (newValue === oldValue) return;   // Guard 3: no real change');\ngs.info('    // ... your logic here');\ngs.info('}');"},
-      {type:"theory",title:"3. Business Rules TBP",content:"<strong>Always use the Condition field</strong>\n• Conditions evaluate BEFORE the script loads\n• If condition fails → script never executes → saves memory and CPU\n• A BR with no condition on no table = global BR (avoid!)\n\n<strong>Enclose code in functions</strong>\n• Default advanced BR wraps code in a function — keep it that way\n• Unwrapped code leaks variables into global server scope\n• Other scripts in the same transaction may see your variables\n\n<strong>Never use current.update() in a Business Rule</strong>\n• In Before BRs: just set values on <code>current</code> — they save automatically\n• <code>current.update()</code> triggers the entire BR chain again → recursion\n• ServiceNow detects this and stops it, but logs errors\n\n<strong>Avoid update-other-tables in Before BRs</strong>\n• Before BRs block the user's browser while executing\n• Move cross-table updates to After or Async BRs\n• Use events for truly decoupled async processing"},
-      {type:"code",title:"TBP: Business Rule Patterns",code:"// === TBP: Before BR with proper structure ===\ngs.info('=== TBP-Compliant Before Business Rule ===');\ngs.info('');\n\n// RULE: Use condition field, not script-only conditions\n// Condition: current.priority.changesTo(1)\n// This evaluates BEFORE script loads — efficient!\n\n(function executeRule(current, previous) {\n    // TBP: Code wrapped in function (prevents variable leaking)\n    \n    // TBP: Check for actual changes\n    var curPriority = current.getValue('priority');\n    var prevPriority = previous.getValue('priority');\n    \n    if (curPriority === prevPriority) {\n        gs.info('Priority unchanged — skipping (TBP: change check)');\n        return;\n    }\n    \n    gs.info('Priority changed: P' + prevPriority + ' → P' + curPriority);\n    \n    // TBP: In Before BR, just set values on current\n    // Do NOT call current.update()!\n    if (curPriority === '1') {\n        current.setValue('urgency', '1');\n        current.setValue('impact', '1');\n        gs.info('Set urgency/impact to 1 (auto-escalation)');\n        // TBP: Auto-saves with the transaction — no update() needed\n    }\n    \n    // TBP: Do NOT update other tables in Before BR\n    // Move cross-table updates to After BR or event\n    gs.info('');\n    gs.info('// ❌ BAD in Before BR:');\n    gs.info('// var grTask = new GlideRecord(\"task\"); grTask.get(...); grTask.update();');\n    gs.info('');\n    gs.info('// ✅ GOOD: Fire event for async processing');\n    gs.info('// gs.eventQueue(\"incident.priority.changed\", current, curPriority, prevPriority);');\n    \n})(current, previous);"},
-      {type:"theory",title:"4. Debugging TBP",content:"<strong>Use session debug modules</strong>\n• <strong>Debug Business Rule</strong>: shows which BRs fire, timing, skip reasons\n• <strong>Debug Security Rules</strong>: ACL evaluation for every field access\n• <strong>Debug SQL</strong>: raw SQL from GlideRecord queries\n• <strong>Debug Log</strong>: all gs.info/warn/error output\n\n<strong>Use proper log levels</strong>\n• <code>gs.info()</code> for normal flow\n• <code>gs.warn()</code> for unexpected but handled situations\n• <code>gs.error()</code> for failures\n• <code>gs.debug()</code> for verbose tracing (only shows when debug enabled)\n• <code>gs.log()</code> is <strong>deprecated</strong> — don't use\n\n<strong>Never use gs.sleep()</strong>\n• Freezes the executing thread completely\n• Common misuse: waiting for async processes to complete\n• Use events and Script Actions instead for async coordination"},
-      {type:"theory",title:"5. Logs & Queues TBP",content:"<strong>Monitor these regularly:</strong>\n\n• <strong>System Log</strong> (<code>syslog</code>): All script output, errors, warnings\n• <strong>Email Queue</strong> (<code>sys_email</code>): Pending and failed notifications\n• <strong>ECC Queue</strong> (<code>ecc_queue</code>): MID Server communication — stale entries indicate MID issues\n• <strong>Event Log</strong> (<code>sysevent</code>): All fired events and their processing status\n• <strong>Slow Queries</strong>: System Diagnostics → Slow Query Log\n• <strong>Transaction Log</strong>: System Diagnostics → Transaction Log for performance data"},
-      {type:"theory",title:"6. Update Set TBP",content:"<strong>One Update Set per feature/story</strong>\n• Name: <code>[PROJECT]-[NUMBER] [Description]</code> (e.g., <code>HR-456 Onboarding Workflow</code>)\n• Never use catch-all sets like <code>My Changes March 2026</code>\n\n<strong>Review before completing</strong>\n• Check for accidental captures (UI preference changes, personal list layouts)\n• Remove test data and debug scripts\n• Verify all dependencies are in the same Update Set\n\n<strong>Preview before committing</strong>\n• Always Preview in the target instance first\n• Review every conflict — never blindly accept\n• <code>Accept remote</code> = keep incoming change, <code>Skip remote</code> = keep target version\n\n<strong>Never batch unrelated changes</strong>\n• Separate Update Sets can be merged — splitting is impossible\n• If one feature has issues, you can back out its Update Set without affecting others"},
-      {type:"code",title:"TBP Compliance Checklist",code:"// === Run this checklist before every code review ===\ngs.info('╔════════════════════════════════════════════════╗');\ngs.info('║  SERVICENOW TBP COMPLIANCE CHECKLIST          ║');\ngs.info('╚════════════════════════════════════════════════╝');\n\nvar checks = [\n    // General\n    { cat: 'GENERAL', rule: 'Descriptive variable names (grUser, not gr)', status: '?' },\n    { cat: 'GENERAL', rule: 'Code comments explain WHY, not WHAT', status: '?' },\n    { cat: 'GENERAL', rule: 'Reusable logic in Script Includes', status: '?' },\n    { cat: 'GENERAL', rule: 'No hardcoded sys_ids', status: '?' },\n    { cat: 'GENERAL', rule: 'Error handling with try/catch', status: '?' },\n    \n    // Client\n    { cat: 'CLIENT', rule: 'No client-side GlideRecord', status: '?' },\n    { cat: 'CLIENT', rule: 'GlideAjax for server lookups', status: '?' },\n    { cat: 'CLIENT', rule: 'setValue with displayValue on refs', status: '?' },\n    { cat: 'CLIENT', rule: 'onChange has 3 guard checks', status: '?' },\n    { cat: 'CLIENT', rule: 'No DOM manipulation', status: '?' },\n    { cat: 'CLIENT', rule: 'No global Client Scripts', status: '?' },\n    \n    // Server\n    { cat: 'SERVER', rule: 'BR has Condition field set', status: '?' },\n    { cat: 'SERVER', rule: 'BR code wrapped in function', status: '?' },\n    { cat: 'SERVER', rule: 'No current.update() in Before BR', status: '?' },\n    { cat: 'SERVER', rule: 'No cross-table updates in Before BR', status: '?' },\n    { cat: 'SERVER', rule: 'getValue() not gr.field', status: '?' },\n    { cat: 'SERVER', rule: 'GlideAggregate for counting', status: '?' },\n    { cat: 'SERVER', rule: 'setLimit() on all queries', status: '?' },\n    { cat: 'SERVER', rule: 'No nested GlideRecords', status: '?' },\n    { cat: 'SERVER', rule: 'No gs.sleep()', status: '?' },\n    \n    // Deployment\n    { cat: 'DEPLOY', rule: 'One Update Set per feature', status: '?' },\n    { cat: 'DEPLOY', rule: 'Descriptive Update Set name', status: '?' },\n    { cat: 'DEPLOY', rule: 'Previewed before commit', status: '?' },\n];\n\nvar lastCat = '';\nchecks.forEach(function(c) {\n    if (c.cat !== lastCat) {\n        gs.info('');\n        gs.info('── ' + c.cat + ' ──');\n        lastCat = c.cat;\n    }\n    gs.info('  [ ] ' + c.rule);\n});\n\ngs.info('');\ngs.info('Total checks: ' + checks.length);\ngs.info('Source: developer.servicenow.com → Guides → Scripting TBP');\ngs.info('Print this and use it for every code review!');"},
-      {type:"quiz",questions:[{q:"Why should BR code be wrapped in a function?",opts:["Performance optimization","Prevents variable leaking to global scope","Required by ServiceNow compiler","Makes debugging easier"],ans:1,exp:"Unwrapped code leaks variables into the global server scope, potentially colliding with other scripts in the same transaction."},{q:"Why use Condition field instead of script-only conditions?",opts:["Looks cleaner","Conditions evaluate BEFORE script loads, saving resources","Required for After BRs","Enables debugging"],ans:1,exp:"The Condition field evaluates before the script loads. If it fails, the script never executes — saving memory and CPU."},{q:"What's wrong with gs.sleep()?",opts:["It's deprecated","It freezes the executing thread entirely","It only works in Before BRs","It causes infinite loops"],ans:1,exp:"gs.sleep() freezes the executing thread. Other scheduled work and users sharing that thread are blocked."},{q:"How many guard checks does the TBP require in onChange?",opts:["1 (isLoading)","2 (isLoading + empty)","3 (isLoading + empty + oldValue)","4 (isLoading + empty + oldValue + isTemplate)"],ans:2,exp:"Three checks: isLoading (skip form load), empty newValue (skip field clear), and newValue === oldValue (skip no-change)."}]}
-    ]}
+        {
+      "id": "official-tbp",
+      "title": "Official Best Practices (TBP + Compiler)",
+      "difficulty": "advanced",
+      "time": "55 min",
+      "sections": [
+        {
+          "type": "theory",
+          "title": "Zurich Scripting TBP - Nested Map",
+          "content": "This tutorial mirrors the official Zurich Scripting Technical Best Practices structure, including nested subsections, then adds a compiler-style static analyzer for practice.\n\nSource: <a href=\"https://developer.servicenow.com/dev.do#!/guides/zurich/now-platform/tpb-guide/scripting_technical_best_practices\" target=\"_blank\" rel=\"noopener noreferrer\">ServiceNow Scripting Technical Best Practices</a>"
+        },
+        {
+          "type": "table",
+          "title": "Top-Level Structure (Official)",
+          "headers": [
+            "Area",
+            "Nested sections"
+          ],
+          "rows": [
+            [
+              "Make Code Easy to Read",
+              "Comment Your Code - Use White Space - Write Simple Statements"
+            ],
+            [
+              "Create Small, Modular Components",
+              "Construct Reusable Functions"
+            ],
+            [
+              "Variables",
+              "Descriptive names - Store function results - Verify values - Return values - Avoid dynamic JEXL in evaluate - Avoid eval()"
+            ],
+            [
+              "Interacting with the Database",
+              "Avoid complex GlideRecord queries - GlideAggregate for counts - Avoid complex queries on large datasets - Let DB do the work"
+            ],
+            [
+              "Use Self-Executing Functions",
+              "IIFE wrappers for single-context scripts"
+            ],
+            [
+              "Avoid Coding Pitfalls",
+              "Sandbox experiments - Stage coding - No hard-coded values - Avoid dot-walking to sys_id - Use getDisplayValue effectively"
+            ],
+            [
+              "Client Scripting TBP",
+              "Client considerations - Run only necessary scripts - Enclose code in functions - Minimize server lookups - Practices to avoid"
+            ]
+          ]
+        },
+        {
+          "type": "theory",
+          "title": "1) Make Code Easy to Read",
+          "content": "<strong>Comment Your Code</strong>\n- Explain intent and assumptions, not obvious syntax.\n- Keep comments accurate as code changes.\n\n<strong>Use White Space</strong>\n- Group logical blocks with blank lines.\n- Keep spacing around operators and function parameters.\n\n<strong>Write Simple Statements</strong>\n- Prefer clarity over terse tricks.\n- Example: explicit if/else can be clearer than nested ternaries in shared codebases."
+        },
+        {
+          "type": "theory",
+          "title": "2) Create Small, Modular Components",
+          "content": "<strong>Construct Reusable Functions</strong>\n- Extract repeated logic into Script Include methods.\n- Design small functions with explicit inputs and outputs.\n- Test both valid and invalid paths."
+        },
+        {
+          "type": "theory",
+          "title": "3) Variables",
+          "content": "<strong>Use Descriptive Names</strong>\n- Name by business intent, not short placeholders.\n\n<strong>Store Function Results</strong>\n- Avoid repeated function calls for the same value.\n\n<strong>Verify Values Exist</strong>\n- Check for nil/undefined before dereferencing.\n\n<strong>Return Values</strong>\n- Return meaningful status/object values to callers.\n\n<strong>Avoid Dynamic JEXL in evaluate</strong>\n- In Jelly, prefer <code>jelly=\"true\"</code> and <code>jelly.var</code>.\n\n<strong>Avoid eval()</strong>\n- eval-like execution increases security/debugging risk."
+        },
+        {
+          "type": "theory",
+          "title": "4) Interacting with the Database",
+          "content": "<strong>Avoid Complex GlideRecord Chains</strong>\n- Prefer maintainable filters + <code>addEncodedQuery()</code> for complex logic.\n\n<strong>Use GlideAggregate for Counting</strong>\n- <code>getRowCount()</code> pulls rows; <code>GlideAggregate COUNT</code> scales better.\n\n<strong>Avoid Expensive Queries on Large Datasets</strong>\n- Precompute relationship data when possible.\n\n<strong>Let Database Do Work</strong>\n- Use <code>setLimit(1)</code> for existence checks before <code>hasNext()</code>."
+        },
+        {
+          "type": "theory",
+          "title": "5) Self-Executing Functions",
+          "content": "Wrap single-context scripts with an IIFE to avoid polluting global scope and variable collisions:\n\n<code>(function executeRule(){ /* logic */ })();</code>"
+        },
+        {
+          "type": "theory",
+          "title": "6) Avoid Coding Pitfalls",
+          "content": "<strong>Experiment in Sandbox</strong> before development update sets.\n<strong>Code in Stages</strong> and test incrementally.\n<strong>No Hard-Coded Values</strong> (especially sys_ids).\n<strong>Avoid dot-walking to .sys_id</strong> for reference fields.\n<strong>Use getDisplayValue()</strong> when display fields can change."
+        },
+        {
+          "type": "theory",
+          "title": "7) Client Scripting TBP (Nested)",
+          "content": "<strong>Client Scripting Considerations</strong>\n- Use Client Scripts for validation and feedback.\n- Set script order when multiple scripts exist.\n- Handle list editing separately (onCellEdit, BR, ACL, Data Policy).\n\n<strong>Run Only Necessary Scripts</strong>\n- Keep <code>isLoading</code> guard in onChange.\n- Keep empty <code>newValue</code> guard.\n- Add <code>newValue != oldValue</code> guard.\n- Move server lookups to async GlideAjax callbacks.\n\n<strong>Enclose Code in Functions</strong>\n- Avoid leaking global variables on client side too.\n\n<strong>Minimize Server Lookups</strong>\n- Prefer g_scratchpad for preload context.\n\n<strong>Practices to Avoid</strong>\n- Avoid synchronous lookup patterns and global heavy scripts."
+        },
+        {
+          "type": "compiler",
+          "title": "TBP Compiler (Static Analyzer)",
+          "starter": "// Paste your ServiceNow script and click Compile\n// Intentionally bad sample to test diagnostics\n\nfunction onChange(control, oldValue, newValue, isLoading) {\n    var gr = new GlideRecord('incident');\n    gr.addQuery('active', true);\n    gr.query();\n    if (gr.hasNext()) gs.info('found one');\n\n    var id = current.caller_id.sys_id;\n    var hard = '26c811f06075388068d07268c841dcd0';\n\n    while (gr.next()) {\n        var user = new GlideRecord('sys_user');\n        user.get(gr.caller_id);\n    }\n\n    current.update();\n    eval(\"gs.info('debug')\");\n}"
+        },
+        {
+          "type": "theory",
+          "title": "How to Use the TBP Compiler",
+          "content": "The compiler performs static checks and returns line-specific findings with severity, rule name, and suggested fix.\n\nScoring: starts at 100 and deducts by severity (errors > warnings > info). Use this as a training aid before peer review."
+        },
+        {
+          "type": "quiz",
+          "questions": [
+            {
+              "q": "An onChange script includes isLoading and empty newValue checks, but not newValue===oldValue. Which hidden regression is most likely?",
+              "opts": [
+                "GlideAjax callbacks stop firing",
+                "Idempotent field resets still execute logic and can trigger redundant server calls",
+                "UI Policies stop evaluating",
+                "Reference display values fail to resolve"
+              ],
+              "ans": 1,
+              "exp": "Without the third guard, repeated setValue operations to the same value can still run expensive logic unexpectedly."
+            },
+            {
+              "q": "You only need to know whether at least one active incident exists. Which query pattern is most TBP-aligned under large volume?",
+              "opts": [
+                "query() + while(next()) break",
+                "query() + getRowCount() > 0",
+                "setLimit(1) + query() + hasNext()",
+                "addAggregate('COUNT') + while(next())"
+              ],
+              "ans": 2,
+              "exp": "For existence checks, setLimit(1) minimizes retrieval and avoids loading unnecessary rows."
+            },
+            {
+              "q": "Which Jelly evaluate usage best avoids dynamic JEXL memory pitfalls while still passing variables?",
+              "opts": [
+                "<g:evaluate> inc.addQuery('x','${jvar}'); </g:evaluate>",
+                "<g:evaluate jelly='true'> inc.addQuery('x', jelly.jvar); </g:evaluate>",
+                "<g:evaluate> inc.addQuery('x', eval(jvar)); </g:evaluate>",
+                "<g:evaluate jelly='dynamic'> inc.addQuery('x','$[jvar]'); </g:evaluate>"
+              ],
+              "ans": 1,
+              "exp": "TBP recommends jelly=\"true\" and jelly-prefixed variables rather than dynamic expression interpolation in evaluate."
+            },
+            {
+              "q": "In a Before Business Rule, which option is subtly dangerous even when it 'works' in testing?",
+              "opts": [
+                "Setting current.priority='1'",
+                "Calling current.update() after setting current fields",
+                "Using a descriptive variable like grIncident",
+                "Returning a boolean from helper functions"
+              ],
+              "ans": 1,
+              "exp": "current.update() in BR introduces re-entry/recursion risk and can create difficult side effects."
+            },
+            {
+              "q": "Which refactor most directly addresses both readability and long-term maintainability for deeply chained addOrCondition logic?",
+              "opts": [
+                "Inline more comments around each addOrCondition",
+                "Switch all conditions into ternary operators",
+                "Generate and validate filter logic, then use addEncodedQuery",
+                "Use gs.log() after each addOrCondition"
+              ],
+              "ans": 2,
+              "exp": "Complex OR chains are easier to maintain as encoded queries generated from list filters."
+            },
+            {
+              "q": "A script does current.caller_id.sys_id to pass caller identity. Why is this non-ideal per TBP?",
+              "opts": [
+                "sys_id is encrypted in scoped apps",
+                "Dot-walking forces additional lookup; reference field already stores sys_id",
+                "It only fails on mobile clients",
+                "It returns display value instead of sys_id"
+              ],
+              "ans": 1,
+              "exp": "Reference fields already store sys_id; dot-walking to sys_id can add unnecessary overhead."
+            },
+            {
+              "q": "Which option is the most deceptive anti-pattern in client scripting despite appearing concise?",
+              "opts": [
+                "g_form.getReference('caller_id') used synchronously in onChange",
+                "Async GlideAjax callback that sets assignment_group",
+                "Checking isLoading at top of onChange",
+                "Using g_scratchpad for preloaded context"
+              ],
+              "ans": 0,
+              "exp": "Synchronous getReference is a hidden UI-blocking call pattern and should be replaced with callback/GlideAjax approaches."
+            },
+            {
+              "q": "You need to preserve flexibility if a table's display field changes later. Which expression is most future-proof?",
+              "opts": [
+                "current.cmdb_ci.name",
+                "current.cmdb_ci.number",
+                "current.cmdb_ci.getDisplayValue()",
+                "current.getValue('cmdb_ci.name')"
+              ],
+              "ans": 2,
+              "exp": "getDisplayValue() respects dictionary display field changes without code rewrite."
+            }
+          ]
+        }
+      ]
+    }
   ]}
 ];
 
@@ -753,6 +965,7 @@ function saveProgress() { localStorage.setItem('sn-progress', JSON.stringify(pro
 var expandedCats = {};
 var quizStates = {};
 var playgroundCodes = {};
+var compilerStates = {};
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Router (hash-based, matching existing site pattern)
@@ -895,6 +1108,9 @@ function renderTutorial(topicId) {
     if (sec.type === 'memory') {
       html += renderMemoryDeck(sec.title, sec.groups || []);
     }
+    if (sec.type === 'compiler') {
+      html += buildTBPCompiler(topicId+'-'+si, sec.title, sec.starter || '');
+    }
     if (sec.type === 'quiz') {
       html += buildQuiz(topicId+'-'+si, sec.questions);
     }
@@ -988,6 +1204,337 @@ function resetPlayground(id) {
 function copyPlayground(id) {
   var code = document.getElementById('pg-code-'+id).value;
   navigator.clipboard.writeText(code);
+}
+
+function compilerModeLabel(mode) {
+  if (mode === 'beginner') return 'Beginner';
+  if (mode === 'production') return 'Production';
+  return 'Interview';
+}
+
+function buildTBPCompiler(id, title, starterCode) {
+  if (!compilerStates[id]) {
+    compilerStates[id] = {
+      code: starterCode || '',
+      findings: [],
+      summary: 'Run compile to get TBP diagnostics.',
+      score: null,
+      mode: 'interview',
+      showModeDelta: false
+    };
+  }
+
+  var st = compilerStates[id];
+  if (typeof st.code !== 'string') st.code = '';
+  if (!st.mode) st.mode = 'interview';
+  if (typeof st.showModeDelta !== 'boolean') st.showModeDelta = false;
+
+  var lines = st.code.split('\n');
+  var lineNums = lines.map(function(_, i){ return i + 1; }).join('<br>');
+
+  var scoreClass = 'mid';
+  if (st.score !== null) {
+    if (st.score >= 85) scoreClass = 'good';
+    else if (st.score < 60) scoreClass = 'bad';
+  }
+
+  var html = '<div class="compiler" id="compiler-'+id+'">';
+  html += '<div class="compiler-head"><span class="compiler-title">'+esc(title || 'TBP Compiler')+'</span>';
+  html += '<div class="compiler-actions">';
+  html += '<select class="compiler-mode" onchange="setCompilerMode(\''+id+'\', this.value)" aria-label="Compiler mode">';
+  html += '<option value="beginner"'+(st.mode==='beginner'?' selected':'')+'>Beginner</option>';
+  html += '<option value="interview"'+(st.mode==='interview'?' selected':'')+'>Interview</option>';
+  html += '<option value="production"'+(st.mode==='production'?' selected':'')+'>Production</option>';
+  html += '</select>';
+  html += '<label class="compiler-mode-toggle" title="Show how severity changed by selected mode">';
+  html += '<input type="checkbox" '+(st.showModeDelta?'checked':'')+' onchange="toggleCompilerModeDelta(\''+id+'\', this.checked)">';
+  html += 'Explain mode deltas';
+  html += '</label>';
+  html += '<button class="compiler-btn" onclick="resetCompiler(\''+id+'\')">Reset</button>';
+  html += '<button class="compiler-btn run" onclick="runTBPCompiler(\''+id+'\')">Compile</button>';
+  html += '</div></div>';
+  html += '<div class="compiler-editor-wrap">';
+  html += '<div class="compiler-lines" id="compiler-lines-'+id+'">'+lineNums+'</div>';
+  html += '<textarea class="compiler-editor" id="compiler-code-'+id+'" spellcheck="false" oninput="compilerInput(\''+id+'\')" onkeydown="compilerKeyDown(event,\''+id+'\')">'+esc(st.code)+'</textarea>';
+  html += '</div>';
+
+  var scoreLabel = st.score === null ? 'N/A' : String(st.score);
+  html += '<div class="compiler-summary">Mode: <strong>'+esc(compilerModeLabel(st.mode))+'</strong> · TBP Score: <span class="compiler-score '+scoreClass+'">'+scoreLabel+'</span> · '+esc(st.summary || '')+'</div>';
+  html += '<div class="compiler-findings">';
+
+  if (!st.findings.length) {
+    html += '<div class="compiler-finding"><div class="compiler-msg">No findings yet. Paste script and click <strong>Compile</strong>. Shortcut: Ctrl+Enter.</div></div>';
+  } else {
+    st.findings.forEach(function(f) {
+      html += '<article class="compiler-finding">';
+      html += '<div class="compiler-finding-head">';
+      html += '<span class="compiler-sev '+esc(f.severity)+'">'+esc(f.severity.toUpperCase())+'</span>';
+      html += '<span class="compiler-line">Line '+esc(String(f.line))+'</span>';
+      html += '<span class="compiler-rule">'+esc(f.rule)+'</span>';
+      html += '</div>';
+      html += '<div class="compiler-msg">'+esc(f.message)+'</div>';
+      if (f.fix) html += '<div class="compiler-fix">Fix: '+esc(f.fix)+'</div>';
+      if (st.showModeDelta && f.modeDelta) {
+        html += '<div class="compiler-delta">';
+        html += 'Base severity: <strong>'+esc(String(f.baseSeverity || '').toUpperCase())+'</strong> → Mode severity: <strong>'+esc(String(f.severity || '').toUpperCase())+'</strong><br>';
+        html += esc(f.modeDelta.reason || 'Severity unchanged by mode policy.');
+        html += '</div>';
+      }
+      html += '</article>';
+    });
+  }
+
+  html += '</div></div>';
+  return html;
+}
+
+function compilerInput(id) {
+  var ta = document.getElementById('compiler-code-'+id);
+  if (!ta) return;
+  var code = ta.value;
+  if (!compilerStates[id]) {
+    compilerStates[id] = {
+      code: '', findings: [], summary: '', score: null, mode: 'interview', showModeDelta: false
+    };
+  }
+  compilerStates[id].code = code;
+  var lines = code.split('\n');
+  var ln = document.getElementById('compiler-lines-'+id);
+  if (ln) ln.innerHTML = lines.map(function(_, i){ return i + 1; }).join('<br>');
+}
+
+function compilerKeyDown(e, id) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    var ta = document.getElementById('compiler-code-'+id);
+    if (!ta) return;
+    var s = ta.selectionStart, en = ta.selectionEnd;
+    ta.value = ta.value.substring(0, s) + '    ' + ta.value.substring(en);
+    ta.selectionStart = ta.selectionEnd = s + 4;
+    compilerInput(id);
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    runTBPCompiler(id);
+  }
+}
+
+function toggleCompilerModeDelta(id, checked) {
+  if (!compilerStates[id]) {
+    compilerStates[id] = {
+      code: '', findings: [], summary: 'Run compile to get TBP diagnostics.', score: null, mode: 'interview', showModeDelta: false
+    };
+  }
+  compilerStates[id].showModeDelta = !!checked;
+  render();
+}
+
+function setCompilerMode(id, mode) {
+  if (!compilerStates[id]) {
+    compilerStates[id] = {
+      code: '', findings: [], summary: 'Run compile to get TBP diagnostics.', score: null, mode: 'interview', showModeDelta: false
+    };
+  }
+  compilerStates[id].mode = mode || 'interview';
+  var report = evaluateTBPCode(compilerStates[id].code || '', compilerStates[id].mode);
+  compilerStates[id].findings = report.findings;
+  compilerStates[id].summary = report.summary;
+  compilerStates[id].score = report.score;
+  render();
+}
+
+function resetCompiler(id) {
+  var starter = '';
+  var mode = (compilerStates[id] && compilerStates[id].mode) ? compilerStates[id].mode : 'interview';
+  var showModeDelta = (compilerStates[id] && typeof compilerStates[id].showModeDelta === 'boolean') ? compilerStates[id].showModeDelta : false;
+
+  CATEGORIES.forEach(function(cat) {
+    cat.children.forEach(function(topic) {
+      topic.sections.forEach(function(sec, si) {
+        if (sec.type === 'compiler' && (topic.id + '-' + si) === id) starter = sec.starter || '';
+      });
+    });
+  });
+
+  compilerStates[id] = {
+    code: starter,
+    findings: [],
+    summary: 'Run compile to get TBP diagnostics.',
+    score: null,
+    mode: mode,
+    showModeDelta: showModeDelta
+  };
+  render();
+}
+
+function runTBPCompiler(id) {
+  var ta = document.getElementById('compiler-code-'+id);
+  if (!ta) return;
+  var mode = (compilerStates[id] && compilerStates[id].mode) ? compilerStates[id].mode : 'interview';
+  var showModeDelta = (compilerStates[id] && typeof compilerStates[id].showModeDelta === 'boolean') ? compilerStates[id].showModeDelta : false;
+  var report = evaluateTBPCode(ta.value || '', mode);
+
+  compilerStates[id] = {
+    code: ta.value || '',
+    findings: report.findings,
+    summary: report.summary,
+    score: report.score,
+    mode: mode,
+    showModeDelta: showModeDelta
+  };
+  render();
+}
+
+function evaluateTBPCode(code, mode) {
+  mode = mode || 'interview';
+
+  if (!code || !code.trim()) {
+    return { score: null, summary: 'Paste script and click Compile to generate diagnostics.', findings: [], mode: mode };
+  }
+
+  var findings = [];
+  var severityRank = { error: 0, warn: 1, info: 2 };
+
+  var modeProfiles = {
+    beginner: { penalties: { error: 8, warn: 4, info: 1 } },
+    interview: { penalties: { error: 12, warn: 6, info: 2 } },
+    production: { penalties: { error: 16, warn: 10, info: 4 } }
+  };
+
+  var profile = modeProfiles[mode] || modeProfiles.interview;
+  var criticalInBeginner = {
+    eval_usage: true,
+    gs_sleep: true,
+    client_gliderecord: true
+  };
+
+  function normalizeSeverity(ruleId, baseSeverity) {
+    if (mode === 'beginner') {
+      if (baseSeverity === 'error' && !criticalInBeginner[ruleId]) return 'warn';
+      if (baseSeverity === 'warn' && (ruleId === 'query_or_chain' || ruleId === 'missing_iife')) return 'info';
+      return baseSeverity;
+    }
+
+    if (mode === 'production') {
+      if (baseSeverity === 'warn') return 'error';
+      if (baseSeverity === 'info') return 'warn';
+      return baseSeverity;
+    }
+
+    return baseSeverity;
+  }
+
+  function modeDeltaReason(ruleId, baseSeverity, finalSeverity) {
+    if (baseSeverity === finalSeverity) return 'No severity adjustment for this mode.';
+
+    if (mode === 'beginner') {
+      if (baseSeverity === 'error' && finalSeverity === 'warn') return 'Beginner mode softens non-critical errors to reduce early noise.';
+      if (baseSeverity === 'warn' && finalSeverity === 'info') return 'Beginner mode demotes style-level warnings to informational guidance.';
+    }
+
+    if (mode === 'production') {
+      if (baseSeverity === 'warn' && finalSeverity === 'error') return 'Production mode escalates warnings to enforce stricter release gates.';
+      if (baseSeverity === 'info' && finalSeverity === 'warn') return 'Production mode treats advisory items as warnings for operational rigor.';
+    }
+
+    return 'Severity adjusted by mode profile policy.';
+  }
+
+  function lineFromIndex(idx) {
+    return code.slice(0, idx).split('\n').length;
+  }
+
+  function addFinding(ruleId, baseSeverity, rule, idx, message, fix) {
+    var severity = normalizeSeverity(ruleId, baseSeverity);
+    findings.push({
+      severity: severity,
+      baseSeverity: baseSeverity,
+      rule: rule,
+      line: lineFromIndex(idx),
+      message: message,
+      fix: fix || '',
+      modeDelta: {
+        changed: severity !== baseSeverity,
+        reason: modeDeltaReason(ruleId, baseSeverity, severity)
+      }
+    });
+  }
+
+  function addRegexFindings(regex, ruleId, baseSeverity, rule, message, fix) {
+    var source = regex.source;
+    var flags = regex.flags.indexOf('g') === -1 ? regex.flags + 'g' : regex.flags;
+    var rgx = new RegExp(source, flags);
+    var m;
+    while ((m = rgx.exec(code)) !== null) {
+      addFinding(ruleId, baseSeverity, rule, m.index, message, fix);
+      if (m.index === rgx.lastIndex) rgx.lastIndex++;
+    }
+  }
+
+  addRegexFindings(/\beval\s*\(/i, 'eval_usage', 'error', 'Avoid eval()', 'Dynamic eval introduces injection risk and weak debuggability.', 'Replace with explicit logic or strongly controlled parser functions.');
+  addRegexFindings(/\bGlideEvaluator\.evaluateString\s*\(/i, 'dynamic_string_eval', 'warn', 'Avoid dynamic string evaluation', 'Dynamic string execution can behave like eval and is difficult to secure.', 'Refactor to direct API calls and conditionals.');
+  addRegexFindings(/\bgs\.sleep\s*\(/i, 'gs_sleep', 'error', 'Avoid gs.sleep()', 'gs.sleep() blocks worker threads and can starve transactions.', 'Use event-driven async patterns (events + Script Actions).');
+  addRegexFindings(/\bcurrent\.update\s*\(/i, 'current_update', 'error', 'No current.update() in BR', 'current.update() inside BR commonly causes recursion/re-entry cycles.', 'In Before BR, set fields on current and let platform save automatically.');
+  addRegexFindings(/['"][0-9a-f]{32}['"]/ig, 'hardcoded_sysid', 'warn', 'Hard-coded sys_id', 'Hard-coded sys_ids break across instances and promotions.', 'Use properties, lookups, or configurable references.');
+  addRegexFindings(/\.[a-zA-Z0-9_]+\.sys_id\b/g, 'dotwalk_sysid', 'warn', 'Dot-walking to sys_id', 'Reference fields already store sys_id; dot-walking adds unnecessary lookup.', 'Use getValue(reference_field) directly.');
+  addRegexFindings(/\bgetRowCount\s*\(\s*\)/g, 'rowcount_counting', 'warn', 'Use GlideAggregate for counts', 'getRowCount scales poorly on large tables.', 'Use GlideAggregate COUNT.');
+  addRegexFindings(/\bgetReference\(\s*['"][^'"]+['"]\s*\)/g, 'sync_getReference', 'warn', 'Synchronous getReference', 'Synchronous getReference can block the browser.', 'Use getReference(field, callback) async pattern.');
+
+  var onChangeMatch = code.match(/function\s+onChange\s*\(([^)]*)\)\s*\{/);
+  if (onChangeMatch) {
+    var fnIdx = onChangeMatch.index || 0;
+    if (!/\bisLoading\b/.test(code)) addFinding('missing_isLoading', 'warn', 'Missing isLoading guard', fnIdx, 'onChange should guard form-load execution.', 'Add: if (isLoading) return;');
+    if (!/newValue\s*===\s*['"]{2}/.test(code)) addFinding('missing_empty_guard', 'warn', 'Missing empty newValue guard', fnIdx, 'onChange should skip clear/reset transitions.', "Add: if (newValue === '') return;");
+    if (!/newValue\s*===\s*oldValue/.test(code)) addFinding('missing_oldValue_guard', 'warn', 'Missing no-change guard', fnIdx, 'onChange should skip idempotent resets.', 'Add: if (newValue === oldValue) return;');
+  }
+
+  var clientFn = /function\s+on(Change|Load|Submit)\s*\(/.test(code);
+  if (clientFn && /new\s+GlideRecord\s*\(/.test(code)) {
+    var idx = code.search(/new\s+GlideRecord\s*\(/);
+    addFinding('client_gliderecord', 'error', 'Client-side GlideRecord', idx, 'Client scripts should avoid GlideRecord due to synchronous server calls.', 'Move lookup to GlideAjax and callback processing.');
+  }
+
+  var addOrCount = (code.match(/\.addOrCondition\s*\(/g) || []).length;
+  if (addOrCount >= 3) {
+    var idxOr = code.search(/\.addOrCondition\s*\(/);
+    addFinding('query_or_chain', 'info', 'Complex query readability', idxOr, 'Multiple addOrCondition chains are hard to maintain.', 'Generate filter, then use addEncodedQuery().');
+  }
+
+  var hasHasNext = /\.hasNext\s*\(\s*\)/.test(code);
+  var hasSetLimit = /\.setLimit\s*\(\s*\d+\s*\)/.test(code);
+  if (hasHasNext && !hasSetLimit) {
+    var idxHas = code.search(/\.hasNext\s*\(\s*\)/);
+    addFinding('hasnext_without_limit', 'info', 'Let DB do less work', idxHas, 'hasNext checks can benefit from setLimit(1) to reduce record retrieval.', 'Call setLimit(1) before query when checking existence only.');
+  }
+
+  var nestedPattern = /while\s*\([^)]*\.next\s*\(\s*\)\s*\)\s*\{[\s\S]{0,350}?new\s+GlideRecord\s*\(/g;
+  var nestedMatch = nestedPattern.exec(code);
+  if (nestedMatch) {
+    addFinding('nested_gliderecord', 'warn', 'Potential nested GlideRecord (N+1)', nestedMatch.index, 'Query inside loop can explode DB calls at scale.', 'Use array flattening + IN query strategy.');
+  }
+
+  var wrapped = /^\s*\(function\s+[a-zA-Z0-9_]*\s*\([^)]*\)\s*\{[\s\S]*\}\)\s*\(\s*\)\s*;?\s*$/.test(code.trim());
+  if (!wrapped) {
+    addFinding('missing_iife', 'info', 'Not self-executing wrapped', 0, 'Single-context scripts are safer in self-executing wrappers.', 'Wrap with (function executeRule(){ ... })();');
+  }
+
+  findings.sort(function(a, b) {
+    if (severityRank[a.severity] !== severityRank[b.severity]) return severityRank[a.severity] - severityRank[b.severity];
+    return a.line - b.line;
+  });
+
+  var score = 100;
+  findings.forEach(function(f) { score -= profile.penalties[f.severity] || 0; });
+  if (score < 0) score = 0;
+
+  var ec = findings.filter(function(f){return f.severity === 'error';}).length;
+  var wc = findings.filter(function(f){return f.severity === 'warn';}).length;
+  var ic = findings.filter(function(f){return f.severity === 'info';}).length;
+
+  var summary = ec + ' errors, ' + wc + ' warnings, ' + ic + ' infos (' + compilerModeLabel(mode) + ' mode)';
+  if (!findings.length) summary = 'No TBP violations detected in ' + compilerModeLabel(mode) + ' mode.';
+
+  return { score: score, summary: summary, findings: findings, mode: mode };
 }
 
 function buildQuiz(id, questions) {
@@ -1134,5 +1681,6 @@ document.getElementById('backTop').addEventListener('click', function() { window
 // ═══════════════════════════════════════════════════════════════════════════════
 render();
 </script>
+<script src="assets/js/shared/subscribe.js"></script>
 </body>
 </html>
