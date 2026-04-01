@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technical Terms Interview Quiz | Sumanth Bolle</title>
+  <meta name="description" content="Standalone deep technical interview quiz on key ServiceNow terms. From basics to confusing interview traps with rotating randomized questions and detailed explanations.">
+  <style>
+    :root{--bg:#0a0a0a;--surface:#111;--surface2:#1a1a1a;--surface3:#232323;--border:#2b2b2b;--text:#ececec;--text2:#a0a0a0;--text3:#6f6f6f;--accent:#fff;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--blue:#3b82f6;--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;--radius:12px}
+    [data-theme="light"]{--bg:#f7f7f8;--surface:#fff;--surface2:#f2f3f5;--surface3:#eceef0;--border:#dfdfdf;--text:#1c1c1d;--text2:#5f6167;--text3:#8e9198;--accent:#000}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+    nav{position:fixed;top:0;left:0;right:0;height:56px;z-index:200;background:var(--bg);border-bottom:1px solid var(--border)}
+    .nav-c{max-width:1180px;height:100%;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{font-size:16px;font-weight:700;text-decoration:none;color:var(--text)}
+    .nav-links{display:flex;list-style:none;gap:24px;align-items:center}
+    .nav-links a{color:var(--text2);font-size:14px;text-decoration:none}
+    .nav-links a.active,.nav-links a:hover{color:var(--text)}
+    .menu-toggle{display:none;background:none;border:none;cursor:pointer}
+    .menu-toggle span{display:block;width:20px;height:2px;background:var(--text);margin:4px 0}
+    .mobile-menu{display:none;position:absolute;top:56px;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px}
+    .mobile-menu.open{display:flex;flex-direction:column;gap:10px}
+    .mobile-menu a{color:var(--text2);text-decoration:none;padding:6px 0}
+    .wrap{max-width:1100px;margin:0 auto;padding:84px 20px 60px}
+    .hero{text-align:center;margin-bottom:26px}
+    .hero h1{font-size:clamp(28px,5vw,42px);letter-spacing:-.03em;margin-bottom:10px}
+    .hero p{color:var(--text2);line-height:1.6;max-width:760px;margin:0 auto}
+    .stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:8px 14px;font-size:12px;color:var(--text2)}
+    .filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:18px 0 24px}
+    .chip{border:1px solid var(--border);background:transparent;color:var(--text2);padding:7px 13px;border-radius:999px;font-size:12px;cursor:pointer}
+    .chip.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+    .screen{display:none}
+    .screen.active{display:block}
+    .mode-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+    .mode-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer}
+    .mode-card:hover{border-color:var(--text3)}
+    .mode-title{font-weight:700;margin-bottom:6px}
+    .mode-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:10px}
+    .mode-meta{font-size:12px;color:var(--text3)}
+    .play-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+    .progress{font-size:14px;color:var(--text2)}
+    .timer{font-size:13px;color:var(--text2)}
+    .timer.warn{color:var(--yellow)}
+    .timer.danger{color:var(--red)}
+    .bar{height:4px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:18px}
+    .bar-fill{height:100%;background:var(--accent);transition:width .3s}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px}
+    .meta{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+    .badge{font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);color:var(--text2)}
+    .b-foundation{border-color:#3b82f655;color:#60a5fa;background:#3b82f615}
+    .b-core{border-color:#22c55e55;color:#4ade80;background:#22c55e15}
+    .b-advanced{border-color:#eab30855;color:#facc15;background:#eab30815}
+    .b-confusing{border-color:#ef444455;color:#f87171;background:#ef444415}
+    .q{font-size:17px;line-height:1.65;margin-bottom:16px}
+    .opts{display:flex;flex-direction:column;gap:8px}
+    .opt{width:100%;text-align:left;border:1px solid var(--border);background:var(--surface2);color:var(--text);border-radius:10px;padding:12px 14px;display:flex;gap:10px;cursor:pointer;font-size:14px;line-height:1.45}
+    .opt:hover:not(.disabled){border-color:var(--text3);background:var(--surface3)}
+    .opt.disabled{cursor:default;opacity:.72}
+    .letter{width:22px;height:22px;border-radius:999px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;flex:0 0 22px}
+    .opt.correct{border-color:#22c55e;background:#22c55e15;opacity:1}
+    .opt.correct .letter{border-color:#22c55e;background:#22c55e;color:#fff}
+    .opt.incorrect{border-color:#ef4444;background:#ef444415;opacity:1}
+    .opt.incorrect .letter{border-color:#ef4444;background:#ef4444;color:#fff}
+    .exp{display:none;margin-top:14px;padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--surface2);font-size:14px;line-height:1.6;color:var(--text2)}
+    .exp.show{display:block}
+    .actions{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+    .btn{border-radius:10px;padding:10px 16px;font-size:13px;cursor:pointer}
+    .btn-ghost{background:none;border:1px solid var(--border);color:var(--text2)}
+    .btn-pri{background:var(--accent);color:var(--bg);border:none;font-weight:700}
+    .results{max-width:760px;margin:0 auto}
+    .r-head{text-align:center;margin-bottom:18px}
+    .r-head h2{font-size:30px;letter-spacing:-.02em}
+    .r-head p{color:var(--text2);margin-top:6px}
+    .review{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+    .review-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px}
+    .review-item.ok{border-left:3px solid var(--green)}
+    .review-item.bad{border-left:3px solid var(--red)}
+    .review-q{font-size:13px;line-height:1.5}
+    .review-a{font-size:12px;color:var(--text2);margin-top:6px}
+    footer{margin-top:34px;border-top:1px solid var(--border);padding-top:18px;text-align:center;color:var(--text3);font-size:12px}
+    @media(max-width:900px){.nav-links{display:none}.menu-toggle{display:block}}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-c">
+      <a href="index.html" class="nav-logo">Sumanth Bolle</a>
+      <ul class="nav-links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="interviews.html">Interviews</a></li>
+        <li><a href="quiz.html">Quiz</a></li>
+        <li><a href="technical-terms-quiz.html" class="active">Terms Quiz</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Blog</a>
+      <a href="interviews.html">Interviews</a>
+      <a href="quiz.html">Quiz</a>
+      <a href="technical-terms-quiz.html" style="color:var(--text)">Terms Quiz</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Interview Technical Terms — Standalone Quiz</h1>
+      <p>Deep technical question bank focused on interview vocabulary and subtle concept boundaries: from fundamentals to deliberately confusing edge-case distinctions.</p>
+      <div class="stats">
+        <span class="stat"><strong id="totalTerms">0</strong> terms/questions</span>
+        <span class="stat">Rotating randomized subsets</span>
+        <span class="stat">Detailed explanation per answer</span>
+      </div>
+    </section>
+
+    <section class="screen active" id="modeScreen">
+      <div class="filters" id="levelFilter">
+        <button class="chip active" data-level="all">All Levels</button>
+        <button class="chip" data-level="foundation">Foundation</button>
+        <button class="chip" data-level="core">Core</button>
+        <button class="chip" data-level="advanced">Advanced</button>
+        <button class="chip" data-level="confusing">Confusing</button>
+      </div>
+      <div class="mode-grid" id="modeGrid"></div>
+    </section>
+
+    <section class="screen" id="playScreen">
+      <div class="play-top">
+        <div class="progress"><span id="qIdx">1</span> / <span id="qTotal">1</span></div>
+        <div class="timer" id="timerBox">No timer</div>
+      </div>
+      <div class="bar"><div class="bar-fill" id="progressFill"></div></div>
+      <article class="card">
+        <div class="meta" id="meta"></div>
+        <h2 class="q" id="questionText"></h2>
+        <div class="opts" id="options"></div>
+        <div class="exp" id="explanation"></div>
+        <div class="actions">
+          <button class="btn btn-ghost" id="quitBtn">Quit</button>
+          <button class="btn btn-pri" id="nextBtn">Next</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="screen" id="resultScreen">
+      <div class="results">
+        <div class="r-head">
+          <h2 id="scoreHead">Score 0%</h2>
+          <p id="scoreSub"></p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-ghost" id="retryBtn">Retry mode</button>
+          <button class="btn btn-pri" id="homeBtn">Choose another mode</button>
+        </div>
+        <div class="review" id="review"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>&copy; 2026 Sumanth Bolle · Interview Technical Terms Quiz</footer>
+
+  <script src="assets/js/shared/nav-theme.js"></script>
+  <script src="assets/js/shared/subscribe.js"></script>
+  <script>
+    const QUESTIONS = [
+      {id:'t01',term:'sys_id',level:'foundation',q:'Which statement most accurately defines sys_id behavior in ServiceNow data modeling?',options:['It is the immutable primary identifier stored for each record and used in reference relationships.','It is the user-facing display value that changes whenever naming conventions are updated.','It is generated per session to prevent stale references when records are edited concurrently.','It is a scoped identifier that is unique only within one application table extension chain.'],correct:[0],ex:'sys_id is the stable internal identifier (GUID-like) persisted per record and commonly used as foreign-key references.'},
+      {id:'t02',term:'Display Value',level:'foundation',q:'In interview terms, what is the practical distinction between a reference field value and its display value?',options:['The value stores sys_id, while display value is the resolved human-readable label for UI rendering.','The value stores display text, while display value is a hashed lookup token for ACL checks.','Both are always identical except when dictionary override is enabled on child tables.','The display value is available only in list views, not in form or API contexts.'],correct:[0],ex:'Reference fields persist sys_id internally; the platform resolves display value for user-friendly presentation.'},
+      {id:'t03',term:'Table Extension',level:'foundation',q:'Which explanation best captures table extension in ServiceNow?',options:['A child table inherits parent fields/behavior and can add specialized fields specific to its use case.','A child table copies parent fields once and then detaches permanently from parent schema evolution.','Table extension is a UI-only grouping feature and does not affect dictionary or storage behavior.','Extension is valid only for task-derived tables and not for custom application tables.'],correct:[0],ex:'Extension implies inheritance of schema/behavior with additive customization.'},
+      {id:'t04',term:'UI Policy vs Data Policy',level:'foundation',q:'If asked in interviews how to enforce mandatory logic across UI and APIs, what is the strongest answer?',options:['Use server-side enforcement (for example Data Policy/BR) for channel-wide integrity, with UI Policy for form UX guidance.','Use only UI Policy because all update channels evaluate form policy before save commit.','Use only onChange Client Script because it catches the state transition earlier than server checks.','Use display Business Rule because it executes before both insert and update operations are finalized.'],correct:[0],ex:'Client/UI logic can be bypassed by non-UI channels; server-side validation is required for universal enforcement.'},
+      {id:'t05',term:'Coalesce',level:'core',q:'What does coalesce primarily control in import/transform processing?',options:['Whether incoming rows update existing targets versus inserting new records, based on selected matching fields.','Whether transform scripts run synchronously or asynchronously against destination tables.','Whether the import set table is truncated after each successful transform run.','Whether IRE is bypassed and reconciliation always prefers source payload values.'],correct:[0],ex:'Coalesce defines upsert matching criteria for transform behavior.'},
+      {id:'t06',term:'IRE',level:'advanced',q:'How should an interview candidate distinguish IRE from a plain transform map upsert?',options:['IRE applies identification/reconciliation rules to CMDB CI updates, while transform map coalesce is generic row matching.','IRE is a UI policy plugin that forces CMDB fields to remain mandatory during discovery imports.','Transform maps always run through IRE automatically for every non-CMDB table import.','IRE replaces import sets entirely and writes directly from source connectors to production tables.'],correct:[0],ex:'IRE is CMDB-specific governance for identifying and reconciling CIs; transform maps are broader ingestion mechanics.'},
+      {id:'t07',term:'Before vs After BR',level:'core',q:'Which interview-grade statement is most accurate about Before and After Business Rules?',options:['Before runs prior to DB write and can modify/abort current; After runs post-commit for follow-up actions.','After runs first to validate data integrity, then Before runs only if commit succeeded.','Both run pre-commit, but After has higher priority when order values are equal.','Before cannot change current fields, but After can overwrite values before final persistence.'],correct:[0],ex:'Before is for pre-commit mutation/validation. After is post-write orchestration.'},
+      {id:'t08',term:'Async Business Rule',level:'core',q:'When interviewers ask why async BR exists, what is the strongest framing?',options:['To offload non-critical post-transaction work and reduce user-facing response latency on commit paths.','To guarantee execution before ACL checks for performance-sensitive updates.','To replace scheduled jobs in all background execution scenarios.','To allow client scripts to call server code without GlideAjax.'],correct:[0],ex:'Async BR reduces synchronous transaction cost by deferring work.'},
+      {id:'t09',term:'Query Business Rule',level:'advanced',q:'What is the key risk/benefit tradeoff of Query Business Rules?',options:['They can enforce row-level query constraints globally, but can also introduce hidden filtering and performance side effects.','They are evaluated only in list views and never affect script/API GlideRecord queries.','They are safer than ACLs for security because they execute before role evaluation.','They always improve query performance by automatically adding indexed clauses.'],correct:[0],ex:'Query BRs alter result sets broadly; powerful but potentially opaque and costly if misused.'},
+      {id:'t10',term:'ACL Evaluation',level:'advanced',q:'What nuanced ACL answer demonstrates strong interview understanding?',options:['Access is operation-specific and conditional; role possession may contribute but does not bypass ACL logic requirements.','Any one passing ACL grants full CRUD access for that table and all child tables.','Field ACL checks are skipped whenever table ACL check returns true for read operation.','ACLs are evaluated only for UI access, while server scripts bypass them by default.'],correct:[0],ex:'ACL decisions are operation/context-aware; role is one part of policy satisfaction.'},
+      {id:'t11',term:'Script Include Client Callable',level:'core',q:'What must be true for a Script Include method to be callable from GlideAjax?',options:['Script Include must be marked client callable and expose callable methods in the expected prototype/class pattern.','Script Include must be global-scoped and named exactly the same as the table it updates.','Any Script Include method is callable if user has admin role in current session.','Client-callable methods require display Business Rule wrapper for transport serialization.'],correct:[0],ex:'Client-callable flag and proper class/method exposure are required for GlideAjax invocation.'},
+      {id:'t12',term:'GlideAjax Async',level:'core',q:'Why is asynchronous GlideAjax preferred in interview best-practice discussions?',options:['It avoids UI thread blocking and improves perceived responsiveness during server round-trip operations.','It guarantees lower server CPU cost than synchronous calls regardless of payload complexity.','It bypasses ACL checks so client interactions complete faster under heavy load.','It can execute even when network connectivity is unavailable due to client-side caching.'],correct:[0],ex:'Async prevents blocking UX while waiting for server responses.'},
+      {id:'t13',term:'GlideRecord vs GlideAggregate',level:'core',q:'Which distinction is technically accurate and interview-relevant?',options:['GlideRecord retrieves rows; GlideAggregate performs DB-level aggregations (COUNT/SUM/etc.) without row iteration.','GlideAggregate is a client-side wrapper around GlideRecord with equivalent row-fetch semantics.','GlideRecord cannot query indexed fields while GlideAggregate can.','Both are deprecated in favor of Flow Designer Data Stream actions.'],correct:[0],ex:'Use GlideAggregate for aggregate metrics to avoid full row traversal overhead.'},
+      {id:'t14',term:'getRowCount',level:'advanced',q:'Why is getRowCount often challenged in interviews on large datasets?',options:['It can require iterating result sets, while aggregate counting is typically more efficient at the database level.','It is inaccurate under ACL rules and should never be used in production scripts.','It always locks the table until count completes across all matching partitions.','It returns only visible rows in list view context and not script-query context.'],correct:[0],ex:'Aggregate counting usually scales better than row traversal-based counting approaches.'},
+      {id:'t15',term:'Encoded Query',level:'core',q:'What is the most precise technical description of an encoded query?',options:['A serialized query condition string format used by platform APIs to represent compound filter logic.','A cryptographically signed query token required for cross-scope data access.','A cache key generated from list view interactions for query plan reuse.','A transport format used only by REST Table API and not by server-side scripts.'],correct:[0],ex:'Encoded queries are compact serialized condition expressions widely used in scripts and APIs.'},
+      {id:'t16',term:'setWorkflow(false)',level:'advanced',q:'In script-heavy interviews, what does setWorkflow(false) primarily influence?',options:['It suppresses business-rule/workflow-style engines on that GlideRecord operation to reduce side-effect execution.','It disables ACL checks for the current update call when run by non-admin users.','It converts update into async queue processing to protect transaction latency.','It forces journal field auditing even when autoSysFields is disabled.'],correct:[0],ex:'setWorkflow(false) suppresses workflow/BR engines for targeted operations; use carefully.'},
+      {id:'t17',term:'autoSysFields(false)',level:'advanced',q:'What does autoSysFields(false) do in update scripts?',options:['It prevents automatic sys field updates (for example updated_on/by) for that operation context.','It disables dictionary-level mandatory checks on system fields for bulk updates.','It blocks updates to all audit fields and journal fields permanently for the record.','It refreshes sys_mod_count asynchronously after commit to avoid write contention.'],correct:[0],ex:'autoSysFields(false) suppresses automatic maintenance of certain sys metadata fields.'},
+      {id:'t18',term:'eventQueue',level:'core',q:'How should gs.eventQueue be explained in an interview?',options:['It publishes named events with record context for decoupled downstream processing like notifications or handlers.','It directly sends outbound emails and cannot be consumed by script actions.','It is equivalent to async Business Rule and should replace all event-driven integrations.','It can enqueue events only from Flow Designer, not from server scripts.'],correct:[0],ex:'eventQueue decouples trigger from handler execution through event-driven patterns.'},
+      {id:'t19',term:'Scoped App',level:'foundation',q:'What is the strongest interview definition of application scope?',options:['A logical namespace and boundary that controls artifact ownership, API visibility, and cross-app interaction rules.','A deployment ring that determines whether update sets can be promoted to production.','A data partitioning feature equivalent to domain separation for all tables by default.','A branding mechanism that only changes menu grouping and has no security/visibility impact.'],correct:[0],ex:'Scope governs artifact namespace and access boundaries between applications.'},
+      {id:'t20',term:'Cross-scope Access',level:'advanced',q:'What interview answer best captures cross-scope access controls?',options:['Cross-scope interactions require explicit application-access allowances; scope isolation is deny-by-default for many operations.','Any script in global scope can modify scoped artifacts without explicit grants.','Cross-scope access is determined solely by user role and not by application metadata settings.','Setting protection policy to read-only automatically enables cross-scope method invocation.'],correct:[0],ex:'Application access settings define permissible cross-scope interactions.'},
+      {id:'t21',term:'Update Set vs App Repo',level:'core',q:'How do senior interviewers expect you to distinguish Update Sets from App Repository?',options:['Update Sets move instance-level config deltas; App Repo versions packaged application artifacts for app lifecycle distribution.','Both are identical transport mechanisms, but App Repo is only for production hotfixes.','Update Sets include data records by default, while App Repo excludes scripts and dictionaries.','App Repo is required before any scoped app can be tested in non-dev instances.'],correct:[0],ex:'They serve different promotion/versioning models: delta config transport vs app package lifecycle.'},
+      {id:'t22',term:'Dictionary Override',level:'advanced',q:'What does a dictionary override actually do in extended-table designs?',options:['It lets child tables alter inherited field attributes (within constraints) without redefining parent schema from scratch.','It duplicates parent field physically in child table so each child has independent storage values.','It can change data type incompatibly on child tables as long as display value remains valid.','It bypasses ACL inheritance and grants child table write access by default.'],correct:[0],ex:'Overrides tune inherited field behavior per child table without full schema fork.'},
+      {id:'t23',term:'Reference Qualifier',level:'core',q:'How should a reference qualifier be described in technical interviews?',options:['A dynamic/static filter constraint that limits selectable reference records in field lookup context.','A server-side ACL replacement specifically for reference fields in forms and lists.','A dictionary encryption mode that obfuscates reference targets per role.','A query-optimization index hint attached to reference columns for list performance.'],correct:[0],ex:'Reference qualifiers narrow candidate records presented in reference pickers.'},
+      {id:'t24',term:'Order Guide',level:'foundation',q:'What is the key architectural purpose of an Order Guide?',options:['To orchestrate multi-item request capture as a guided bundle, often for repeatable service onboarding patterns.','To replace catalog items by converting all requests into record producers automatically.','To enforce approval workflows independently of requested item definitions.','To route requests directly to assignment groups without creating RITM records.'],correct:[0],ex:'Order Guides package multiple catalog requests into guided user flows.'},
+      {id:'t25',term:'Record Producer',level:'foundation',q:'What interview distinction best separates a Record Producer from a catalog item?',options:['Record Producer creates a target-table record through producer form logic; catalog item typically drives request/fulfillment workflow.','Record Producer is only a UI skin over catalog items and cannot create non-task records.','Catalog items always write directly to arbitrary tables without request artifacts.','Both are deprecated in favor of flow-trigger forms in modern releases.'],correct:[0],ex:'Record Producer writes directly to table records; catalog items center request lifecycle.'},
+      {id:'t26',term:'Flow Action vs Subflow',level:'core',q:'Which statement is technically strongest?',options:['Actions are reusable atomic steps; Subflows orchestrate multiple steps and can be invoked as higher-level reusable units.','Subflows can run only in background scripts, while actions run only in scheduled jobs.','Actions are legacy workflow artifacts; subflows are client-only orchestration constructs.','Subflows cannot accept inputs/outputs and are intended only for visual grouping.'],correct:[0],ex:'Actions are building blocks; subflows compose larger reusable process segments.'},
+      {id:'t27',term:'Domain Separation',level:'advanced',q:'How should domain separation be framed in architecture interviews?',options:['A data/process segregation strategy in one instance for tenant-like isolation with controlled shared-service patterns.','A mandatory feature for any scoped application requiring production deployment.','A replacement for ACLs where domain automatically grants full cross-domain reporting rights.','An ETL partitioning method used only by CMDB discovery and service mapping pipelines.'],correct:[0],ex:'Domain separation isolates data/process per domain while allowing designed shared components.'},
+      {id:'t28',term:'Delegated Development',level:'core',q:'What does delegated development primarily provide?',options:['Controlled non-admin development capability inside defined app boundaries with governance constraints.','Temporary admin impersonation for business users during sprint demonstration windows.','Automatic promotion rights from dev to prod for app owners without change review.','Table-level bypass permissions so developers can ignore ACLs while testing.'],correct:[0],ex:'Delegated development grants scoped build capabilities without full admin privileges.'},
+      {id:'t29',term:'MID Server + ECC Queue',level:'advanced',q:'What interview answer best explains MID Server architecture?',options:['MID Server executes local-network operations and exchanges work/results through ECC Queue with the instance.','MID Server stores CMDB permanently on-prem and syncs only dashboards to the instance.','ECC Queue is optional and used only for notification delivery fallback.','MID Server can run client scripts remotely to accelerate portal rendering for users.'],correct:[0],ex:'MID performs behind-firewall execution, coordinated via ECC queue messaging.'},
+      {id:'t30',term:'ATF',level:'core',q:'What is a realistic ATF explanation in interview context?',options:['ATF provides automated test steps for server/client scenarios, but still requires curated data and coverage strategy.','ATF replaces all UAT activities and guarantees production-readiness once tests pass.','ATF runs only on cloned production data and cannot execute against development instances.','ATF validates ACL security posture automatically without any explicit security tests.'],correct:[0],ex:'ATF is powerful but not a complete substitute for broader quality strategy.'},
+      {id:'t31',term:'Protection Policy',level:'confusing',q:'How should protection policy be interpreted for scoped app artifacts?',options:['It governs how app artifacts are exposed/modifiable in downstream instances, impacting extensibility and IP protection.','It controls runtime memory protection for script execution threads under high load.','It defines data-at-rest encryption rules for all tables owned by the scope.','It replaces app access settings for all cross-scope invocation permissions.'],correct:[0],ex:'Protection policy concerns distribution-time artifact openness/protection semantics.'},
+      {id:'t32',term:'Impersonation',level:'confusing',q:'What is the interview-grade caveat about impersonation?',options:['It is useful for role/UX validation, but does not perfectly emulate every integration/execution context nuance.','It bypasses ACL and business rules to mirror system-admin troubleshooting behavior.','It reproduces external identity-provider claims exactly for SSO troubleshooting in every case.','It can be used to test MID Server credential flows from the browser session directly.'],correct:[0],ex:'Impersonation is valuable yet not equivalent to every channel/context (for example integrations).'},
+      {id:'t33',term:'sys_properties',level:'core',q:'What is the key technical concern when using sys_properties for behavior toggles?',options:['Property-driven behavior is flexible, but should be governed to avoid hidden runtime coupling and config drift.','Properties are compile-time constants and require instance restart for every read operation.','Properties bypass scope boundaries and should replace application access controls.','Property values are user-specific by default and unsuitable for environment-level feature flags.'],correct:[0],ex:'Properties are powerful runtime controls; unmanaged use can create opaque behavior dependencies.'},
+      {id:'t34',term:'CMDB Identification vs Reconciliation',level:'advanced',q:'Which distinction is most precise?',options:['Identification determines which CI a payload maps to; reconciliation decides whether incoming source can update specific fields.','Reconciliation identifies CI uniqueness and identification enforces source priority during updates.','Both are synonyms; platform uses whichever rule executes first in transform sequence.','Identification applies only to hardware CIs, while reconciliation applies only to software CIs.'],correct:[0],ex:'Identification finds target CI; reconciliation controls field-level update authority.'},
+      {id:'t35',term:'Flow Context Cancellation',level:'confusing',q:'In flow troubleshooting interviews, what is a nuanced understanding of cancelling a flow context?',options:['Cancellation stops in-flight execution path but does not retroactively roll back already committed side effects.','Cancellation rewinds all actions and guarantees transactional rollback of every prior operation.','Cancellation is equivalent to setting flow inactive and affects future trigger definitions only.','Cancellation can be executed only before the first action starts; otherwise context is immutable.'],correct:[0],ex:'Flow cancellation is not universal rollback; already committed actions may persist.'},
+      {id:'t36',term:'Inbound Email Action',level:'advanced',q:'How should inbound email actions be described to avoid hand-wavy interview answers?',options:['They parse inbound mail and map conditions to scripted create/update behavior, with ordering/conditions determining match execution.','They are notification responses only and cannot create or update task records directly.','They bypass ACL checks and always execute as sender identity in runtime context.','They replace all REST integrations for external ticket creation once mailbox is configured.'],correct:[0],ex:'Inbound actions are condition/script driven routing handlers for received mail.'},
+      {id:'t37',term:'Condition vs Script (BR)',level:'core',q:'What is the best-practice distinction between using BR condition field and script-level if checks?',options:['Condition field prevents unnecessary script execution early; script checks provide deeper branching once rule runs.','Script checks are always faster than condition evaluation because they compile once per table.','Condition field supports only display rules, while script checks support before/after/async rules.','Using both causes undefined order and should be avoided in production rules.'],correct:[0],ex:'Condition short-circuits execution path; script handles deeper logic.'},
+      {id:'t38',term:'Catalog Variable vs Table Field',level:'foundation',q:'What technical distinction is most accurate?',options:['Catalog variables live in request-item context and are not identical to native table dictionary columns by default.','Catalog variables are direct aliases for target table fields and inherit dictionary attributes automatically.','Table fields exist only after workflow completion, while variables exist only at submit time.','Variables bypass ACL because they are stored in encrypted transient browser state.'],correct:[0],ex:'Variables are request-context data constructs; mapping/persistence behavior differs from direct table fields.'},
+      {id:'t39',term:'Data Model Anti-pattern',level:'confusing',q:'Which option best describes a common interview anti-pattern in ServiceNow data modeling?',options:['Encoding business logic solely in naming conventions and free-text fields instead of explicit relational structure/governance.','Using reference fields with display values for human readability in form layouts.','Extending task for service management process records requiring shared lifecycle semantics.','Adding indexes for frequently filtered columns in high-volume transactional tables.'],correct:[0],ex:'Overloading free-text and naming patterns instead of structured schema is a classic anti-pattern.'},
+      {id:'t40',term:'Long-running Transaction',level:'advanced',q:'What is the strongest interview response to long-running synchronous server transactions?',options:['Reduce synchronous scope, externalize non-critical tasks asynchronously, and profile expensive query/script hotspots.','Increase client-side retries so users can continue interacting while transaction completes on server.','Disable audit and ACL globally during peak windows to shorten transaction durations.','Force all business rules to async and re-enable them after traffic stabilizes.'],correct:[0],ex:'Performance strategy should reduce sync path work while preserving governance/security.'},
+      {id:'t41',term:'API Idempotency',level:'confusing',q:'How does idempotency matter in ServiceNow integration interview discussions?',options:['Idempotent design prevents duplicate side effects when retries occur, often by stable keys and upsert-safe handling.','Idempotency means every API call must create a new record so retries remain traceable.','Idempotency is relevant only for GET requests and not for import/update operations.','Idempotency guarantees transaction rollback automatically if downstream action fails.'],correct:[0],ex:'Retry-safe integration design is crucial in distributed systems and platform integrations.'},
+      {id:'t42',term:'IntegrationHub vs Custom REST',level:'core',q:'What balanced interview answer distinguishes IntegrationHub from custom scripted REST integrations?',options:['IntegrationHub accelerates standardized orchestration with spokes/actions; custom REST offers finer-grained control at higher maintenance cost.','IntegrationHub is only for inbound calls, while custom REST is only for outbound calls.','Custom REST always performs better and should replace IntegrationHub in enterprise deployments.','IntegrationHub cannot participate in approvals, subflows, or error handling logic.'],correct:[0],ex:'Tradeoff is speed/governance/reuse versus custom flexibility and ownership.'},
+      {id:'t43',term:'CMDB Health',level:'advanced',q:'When interviewers ask “what does CMDB health actually mean?”, which answer is strongest?',options:['Health combines completeness, correctness, and compliance dimensions, not just record volume or freshness alone.','Health means all CI classes have equal record count distribution across business services.','Health is measured primarily by number of Discovery schedules and MID servers deployed.','Health is equivalent to whether all CI records have non-empty short description values.'],correct:[0],ex:'CMDB health is multi-dimensional quality/governance, not a single metric.'},
+      {id:'t44',term:'Technical Debt in Platform Config',level:'confusing',q:'Which is the most interview-credible definition of ServiceNow technical debt?',options:['Accumulated short-term configuration/script shortcuts that raise long-term maintenance risk, fragility, and delivery cost.','Any custom artifact not shipped by baseline plugins is technical debt by default.','Technical debt refers only to deprecated APIs and excludes process/design shortcuts.','Technical debt is resolved automatically after each family upgrade if update sets are clean.'],correct:[0],ex:'Debt is about maintainability/complexity burden from expedient but fragile choices.'}
+    ];
+
+    const MODES = [
+      {id:'warmup',name:'Warm-up 15',desc:'Foundation + Core only, no timer.',count:15,timer:0,levels:['foundation','core']},
+      {id:'interview',name:'Interview 30',desc:'Mixed difficulty, 75 sec/question.',count:30,timer:75,levels:['foundation','core','advanced','confusing']},
+      {id:'deep',name:'Deep Technical 40',desc:'Advanced-heavy with explanations, 70 sec/question.',count:40,timer:70,levels:['core','advanced','confusing']},
+      {id:'confusion',name:'Confusion Gauntlet 20',desc:'Only confusing distinctions, 65 sec/question.',count:20,timer:65,levels:['confusing','advanced']},
+      {id:'marathon',name:'Marathon (All)',desc:'All available after filter, no timer.',count:'all',timer:0,levels:['foundation','core','advanced','confusing']}
+    ];
+
+    const ROTATION_KEY = 'terms_quiz_rotation_v1';
+    let filterLevel = 'all';
+    let sessionQuestions = [];
+    let answers = [];
+    let idx = 0;
+    let score = 0;
+    let answered = false;
+    let timerMax = 0;
+    let timerNow = 0;
+    let timer = null;
+    let chosenMode = null;
+    let currentShuffle = [];
+
+    function hash(text){
+      let h = 2166136261;
+      for(let i=0;i<text.length;i++){
+        h ^= text.charCodeAt(i);
+        h += (h<<1) + (h<<4) + (h<<7) + (h<<8) + (h<<24);
+      }
+      return (h>>>0).toString(36);
+    }
+    function shuffle(a){
+      const b=[...a];
+      for(let i=b.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [b[i],b[j]]=[b[j],b[i]];
+      }
+      return b;
+    }
+    function loadRot(){ try{return JSON.parse(localStorage.getItem(ROTATION_KEY)||'{}')||{}}catch(_){return{}} }
+    function saveRot(s){ try{localStorage.setItem(ROTATION_KEY,JSON.stringify(s||{}))}catch(_){ } }
+
+    function selectRotatingSubset(pool,count,keyCtx){
+      if(count==='all' || count>=pool.length) return shuffle(pool);
+      const byId={}; const ids=[];
+      pool.forEach(q=>{byId[q.id]=q;ids.push(q.id)});
+      const sig = hash(ids.join('|'));
+      const key = [keyCtx.mode,keyCtx.level,sig].join('::');
+      const st = loadRot();
+      let entry = st[key];
+      if(!entry || !Array.isArray(entry.remaining)) entry={remaining:shuffle(ids)};
+      const valid = new Set(ids);
+      entry.remaining = entry.remaining.filter(id=>valid.has(id));
+      if(entry.remaining.length===0) entry.remaining = shuffle(ids);
+      const picked=[];
+      while(picked.length<count){
+        if(entry.remaining.length===0){
+          const already = new Set(picked);
+          const refill = ids.filter(id=>!already.has(id));
+          entry.remaining = shuffle(refill.length?refill:ids);
+        }
+        const next = entry.remaining.shift();
+        if(next && !picked.includes(next) && byId[next]) picked.push(next);
+      }
+      st[key]=entry; saveRot(st);
+      return shuffle(picked.map(id=>byId[id]));
+    }
+
+    const BALANCE_FRAGS = [
+      'under baseline enterprise governance assumptions',
+      'for this interview scenario and implementation context',
+      'when evaluated against common platform constraints',
+      'for most production-grade operating models',
+      'under typical maintainability and auditability expectations'
+    ];
+    function balanceOptions(q){
+      const options=(q.options||[]).map(o=>String(o||'').trim());
+      if(options.length<2) return options;
+      const len=options.map(x=>x.length);
+      const max=Math.max(...len), min=Math.min(...len), spread=max-min;
+      if(spread<=4) return options;
+      let target=max, passes=1;
+      if(spread>=28){target=Math.max(Math.floor(max*0.86),max-22);passes=2;}
+      else if(spread>=14){target=Math.max(Math.floor(max*0.78),max-14);}
+      else{target=Math.max(Math.floor(max*0.72),max-8);}
+      return options.map((opt,i)=>{
+        let out=opt, p=0;
+        while(out.length<target && p<passes){
+          const frag = BALANCE_FRAGS[parseInt(hash((q.id||'q')+'|'+i+'|'+p),36)%BALANCE_FRAGS.length];
+          out += out.endsWith('.') ? ' '+frag+'.' : '; '+frag;
+          p++;
+        }
+        return out;
+      });
+    }
+    function longestIncorrectBias(opts,q){
+      const out=[...opts];
+      if(!q || !Array.isArray(q.correct) || q.correct.length!==1 || out.length<4) return out;
+      const c=q.correct[0]; if(c<0||c>=out.length) return out;
+      const lens=out.map(o=>o.length);
+      const longest=Math.max(...lens), shortest=Math.min(...lens);
+      const longestIdx=lens.indexOf(longest);
+      const apply=(longest-shortest)>=12 && (parseInt(hash((q.id||'q')+'|li'),36)%100)<55;
+      if(!apply) return out;
+      if(longestIdx===c){
+        const wrong=[0,1,2,3].filter(i=>i!==c).sort((a,b)=>lens[b]-lens[a])[0];
+        const need=Math.max(10,(longest-lens[wrong])+2);
+        let add='; '+BALANCE_FRAGS[parseInt(hash((q.id||'q')+'|w'),36)%BALANCE_FRAGS.length];
+        while(add.length<need) add += ' '+BALANCE_FRAGS[0]+'.';
+        out[wrong]+=add;
+      }
+      return out;
+    }
+
+    function show(screen){
+      ['modeScreen','playScreen','resultScreen'].forEach(id=>document.getElementById(id).classList.remove('active'));
+      document.getElementById(screen).classList.add('active');
+    }
+
+    function filteredPoolForMode(mode){
+      let pool = QUESTIONS.filter(q=>mode.levels.includes(q.level));
+      if(filterLevel!=='all') pool = pool.filter(q=>q.level===filterLevel);
+      return pool;
+    }
+
+    function renderModes(){
+      const grid=document.getElementById('modeGrid');
+      grid.innerHTML='';
+      MODES.forEach(mode=>{
+        const pool = filteredPoolForMode(mode);
+        const max = pool.length;
+        const count = mode.count==='all'?max:Math.min(mode.count,max);
+        if(count===0) return;
+        const card=document.createElement('button');
+        card.type='button';
+        card.className='mode-card';
+        card.innerHTML=`<div class="mode-title">${mode.name}</div><div class="mode-desc">${mode.desc}</div><div class="mode-meta">${count} questions${mode.timer?` · ${mode.timer}s/question`:''}</div>`;
+        card.onclick=()=>startMode(mode,pool,count);
+        grid.appendChild(card);
+      });
+    }
+
+    function levelClass(l){
+      if(l==='foundation') return 'b-foundation';
+      if(l==='core') return 'b-core';
+      if(l==='advanced') return 'b-advanced';
+      return 'b-confusing';
+    }
+
+    function startMode(mode,pool,count){
+      chosenMode=mode;
+      sessionQuestions = mode.count==='all' ? shuffle(pool) : selectRotatingSubset(pool,count,{mode:mode.id,level:filterLevel});
+      answers = new Array(sessionQuestions.length).fill(null);
+      idx=0; score=0; answered=false;
+      timerMax=mode.timer||0;
+      show('playScreen');
+      renderQuestion();
+    }
+
+    function renderQuestion(){
+      const q=sessionQuestions[idx];
+      answered=false;
+      document.getElementById('qIdx').textContent=idx+1;
+      document.getElementById('qTotal').textContent=sessionQuestions.length;
+      document.getElementById('progressFill').style.width=((idx/sessionQuestions.length)*100)+'%';
+      document.getElementById('questionText').textContent=q.q;
+      document.getElementById('meta').innerHTML=`<span class="badge ${levelClass(q.level)}">${q.level}</span><span class="badge">${q.term}</span>`;
+      const e=document.getElementById('explanation');
+      e.classList.remove('show');
+      e.textContent='';
+
+      clearInterval(timer);
+      const t=document.getElementById('timerBox');
+      if(timerMax>0){
+        timerNow=timerMax;
+        t.className='timer';
+        t.textContent=`${Math.floor(timerNow/60)}:${String(timerNow%60).padStart(2,'0')}`;
+        timer=setInterval(()=>{
+          timerNow--;
+          t.textContent=`${Math.floor(timerNow/60)}:${String(timerNow%60).padStart(2,'0')}`;
+          if(timerNow<=30) t.className='timer warn';
+          if(timerNow<=10) t.className='timer danger';
+          if(timerNow<=0){
+            clearInterval(timer);
+            if(!answered) autoWrong();
+          }
+        },1000);
+      }else{
+        t.className='timer';
+        t.textContent='No timer';
+      }
+
+      const optsWrap=document.getElementById('options');
+      optsWrap.innerHTML='';
+      let opts = balanceOptions(q);
+      opts = longestIncorrectBias(opts,q);
+      const indexed = opts.map((text,i)=>({text,orig:i}));
+      const shuffled = shuffle(indexed);
+      currentShuffle = shuffled.map(x=>x.orig);
+      const letters='ABCDEFGH';
+      shuffled.forEach((x,di)=>{
+        const btn=document.createElement('button');
+        btn.className='opt';
+        btn.innerHTML=`<span class="letter">${letters[di]}</span><span>${x.text}</span>`;
+        btn.onclick=()=>submit(di);
+        optsWrap.appendChild(btn);
+      });
+      document.getElementById('nextBtn').textContent = idx===sessionQuestions.length-1?'Finish':'Next';
+    }
+
+    function submit(displayIdx){
+      if(answered) return;
+      answered=true;
+      clearInterval(timer);
+      const q=sessionQuestions[idx];
+      const picked=currentShuffle[displayIdx];
+      const ok=q.correct.includes(picked);
+      answers[idx]={ok,picked,correct:q.correct[0],id:q.id};
+      if(ok) score++;
+      const buttons=[...document.querySelectorAll('#options .opt')];
+      buttons.forEach((b,di)=>{
+        const oi=currentShuffle[di];
+        b.classList.add('disabled');
+        if(q.correct.includes(oi)) b.classList.add('correct');
+        if(di===displayIdx && !ok) b.classList.add('incorrect');
+      });
+      const ex=document.getElementById('explanation');
+      ex.textContent=q.ex;
+      ex.classList.add('show');
+    }
+
+    function autoWrong(){
+      answers[idx]={ok:false,picked:null,correct:sessionQuestions[idx].correct[0],id:sessionQuestions[idx].id};
+      const q=sessionQuestions[idx];
+      const buttons=[...document.querySelectorAll('#options .opt')];
+      buttons.forEach((b,di)=>{
+        const oi=currentShuffle[di];
+        b.classList.add('disabled');
+        if(q.correct.includes(oi)) b.classList.add('correct');
+      });
+      const ex=document.getElementById('explanation');
+      ex.textContent='Time expired. '+q.ex;
+      ex.classList.add('show');
+      answered=true;
+    }
+
+    function next(){
+      if(!answered) autoWrong();
+      idx++;
+      if(idx>=sessionQuestions.length) return showResults();
+      renderQuestion();
+    }
+
+    function showResults(){
+      show('resultScreen');
+      const pct=Math.round((score/sessionQuestions.length)*100);
+      document.getElementById('scoreHead').textContent=`Score ${pct}%`;
+      document.getElementById('scoreSub').textContent = pct>=85?'Interview ready — sharp conceptual control.':pct>=70?'Strong base — revisit subtle boundaries.':'Good attempt — drill explanations and rerun.';
+      const review=document.getElementById('review');
+      review.innerHTML='';
+      sessionQuestions.forEach((q,i)=>{
+        const r=answers[i]||{ok:false,picked:null,correct:q.correct[0]};
+        const card=document.createElement('div');
+        card.className='review-item '+(r.ok?'ok':'bad');
+        const pickedTxt=r.picked===null?'No answer':q.options[r.picked];
+        const correctTxt=q.options[r.correct];
+        card.innerHTML=`<div class="review-q"><strong>Q${i+1} · ${q.term}</strong> — ${q.q}</div><div class="review-a">Your answer: ${pickedTxt}<br>Correct: ${correctTxt}</div>`;
+        review.appendChild(card);
+      });
+    }
+
+    document.getElementById('nextBtn').addEventListener('click',next);
+    document.getElementById('quitBtn').addEventListener('click',()=>{clearInterval(timer);show('modeScreen');});
+    document.getElementById('retryBtn').addEventListener('click',()=>{
+      if(chosenMode){const pool=filteredPoolForMode(chosenMode);const count=chosenMode.count==='all'?pool.length:Math.min(chosenMode.count,pool.length);startMode(chosenMode,pool,count);}
+    });
+    document.getElementById('homeBtn').addEventListener('click',()=>show('modeScreen'));
+
+    document.getElementById('levelFilter').addEventListener('click',e=>{
+      const chip=e.target.closest('.chip'); if(!chip) return;
+      document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      filterLevel=chip.dataset.level;
+      renderModes();
+    });
+
+    document.getElementById('totalTerms').textContent=QUESTIONS.length;
+    if(window.SBShared&&window.SBShared.initNavMenu){
+      window.SBShared.initNavMenu({toggleSelector:'#menuToggle',menuSelector:'#mobileMenu',menuOpenClass:'open',toggleActiveClass:''});
+    }
+    renderModes();
+  </script>
+</body>
+</html>
