@@ -22,10 +22,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "Configuration Management Database — stores information about IT assets and their relationships",
-        "Customer Management Database — stores customer records",
-        "Change Management Database — tracks all changes",
-        "Code Management Database — version control for scripts"
+        "Configuration Management Database \u2014 stores information about IT assets and their relationships",
+        "Customer Management Database \u2014 stores customer records",
+        "Change Management Database \u2014 tracks all changes",
+        "Code Management Database \u2014 version control for scripts"
       ],
       "correct": [
         0
@@ -126,7 +126,7 @@
       "correct": [
         0
       ],
-      "explanation": "Intermittent ATF failures between environments typically stem from data-dependent conditions — records in different states, ACLs evaluating differently due to different users/roles, or Business Rules behaving differently based on existing data."
+      "explanation": "Intermittent ATF failures between environments typically stem from data-dependent conditions \u2014 records in different states, ACLs evaluating differently due to different users/roles, or Business Rules behaving differently based on existing data."
     },
     {
       "id": "arch-m4",
@@ -270,7 +270,7 @@
       "correct": [
         0
       ],
-      "explanation": "Table archiving moves historical data to archive tables. Database indexes accelerate query performance. Script-based ACLs evaluate per-row and are expensive at scale — converting to condition-based ACLs improves performance. Query Business Rules can enforce base filters to reduce result set sizes."
+      "explanation": "Table archiving moves historical data to archive tables. Database indexes accelerate query performance. Script-based ACLs evaluate per-row and are expensive at scale \u2014 converting to condition-based ACLs improves performance. Query Business Rules can enforce base filters to reduce result set sizes."
     }
   ],
   "scripting": [
@@ -384,7 +384,7 @@
       "correct": [
         0
       ],
-      "explanation": "current.update() in a Before BR initiates a NEW update operation (risk of infinite loop). setAbortAction(true) cancels the original pending operation entirely — no record is saved."
+      "explanation": "current.update() in a Before BR initiates a NEW update operation (risk of infinite loop). setAbortAction(true) cancels the original pending operation entirely \u2014 no record is saved."
     },
     {
       "id": "scr-m2",
@@ -400,7 +400,7 @@
       "correct": [
         0
       ],
-      "explanation": "getRowCount() iterates through the entire result set to count records. On large tables, use GlideAggregate with COUNT instead — it performs the count at the database level."
+      "explanation": "getRowCount() iterates through the entire result set to count records. On large tables, use GlideAggregate with COUNT instead \u2014 it performs the count at the database level."
     },
     {
       "id": "scr-m3",
@@ -586,7 +586,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Incidents reveal symptoms, Problems identify root causes, and Changes implement fixes — they link via related records",
+        "Incidents reveal symptoms, Problems identify root causes, and Changes implement fixes \u2014 they link via related records",
         "They are three names for the same process",
         "Incidents create Changes which create Problems",
         "Problems are a subset of the Incident table"
@@ -594,7 +594,7 @@
       "correct": [
         0
       ],
-      "explanation": "ITIL workflow: Incidents identify disruptions → Problem Management finds root causes → Change Management implements permanent fixes. They are separate processes linked through record relationships."
+      "explanation": "ITIL workflow: Incidents identify disruptions \u2192 Problem Management finds root causes \u2192 Change Management implements permanent fixes. They are separate processes linked through record relationships."
     },
     {
       "id": "mod-m2",
@@ -706,7 +706,7 @@
       "correct": [
         0
       ],
-      "explanation": "Flow Designer with decision tables provides maintainable approval routing logic. Dynamic approval groups based on CMDB relationships ensure the right service owners approve relevant changes. This scales without creating N×M workflow variants."
+      "explanation": "Flow Designer with decision tables provides maintainable approval routing logic. Dynamic approval groups based on CMDB relationships ensure the right service owners approve relevant changes. This scales without creating N\u00d7M workflow variants."
     }
   ],
   "fundamentals": [
@@ -724,7 +724,7 @@
       "correct": [
         0
       ],
-      "explanation": "Tables in ServiceNow store records (rows) with fields (columns). They are the backbone of the platform — every module is built on tables."
+      "explanation": "Tables in ServiceNow store records (rows) with fields (columns). They are the backbone of the platform \u2014 every module is built on tables."
     },
     {
       "id": "fun-e2",
@@ -756,7 +756,7 @@
       "correct": [
         0
       ],
-      "explanation": "Every record in ServiceNow has a sys_id — a 32-character GUID that uniquely identifies it across the platform."
+      "explanation": "Every record in ServiceNow has a sys_id \u2014 a 32-character GUID that uniquely identifies it across the platform."
     },
     {
       "id": "fun-e4",
@@ -780,7 +780,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "Whether the record is considered current and included in active queries — inactive records are effectively soft-deleted",
+        "Whether the record is considered current and included in active queries \u2014 inactive records are effectively soft-deleted",
         "Whether the record is locked from editing",
         "Whether the record appears in reports",
         "Whether Business Rules fire on the record"
@@ -796,9 +796,9 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Client Scripts (onLoad) → UI Policies → Data Policies (if run on client) → ACLs (field-level)",
-        "UI Policies → Client Scripts → ACLs → Data Policies",
-        "ACLs → Data Policies → UI Policies → Client Scripts",
+        "Client Scripts (onLoad) \u2192 UI Policies \u2192 Data Policies (if run on client) \u2192 ACLs (field-level)",
+        "UI Policies \u2192 Client Scripts \u2192 ACLs \u2192 Data Policies",
+        "ACLs \u2192 Data Policies \u2192 UI Policies \u2192 Client Scripts",
         "All execute simultaneously"
       ],
       "correct": [
@@ -828,7 +828,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Child tables inherit fields and configurations from parent tables — e.g., incident extends task, so all task fields exist on incident",
+        "Child tables inherit fields and configurations from parent tables \u2014 e.g., incident extends task, so all task fields exist on incident",
         "Tables cannot inherit from other tables",
         "Inheritance only applies to ACLs, not fields",
         "Child tables are copies of parent tables with no ongoing relationship"
@@ -860,15 +860,15 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "ACL check → Data Policy validation → Before Business Rules → Database operation → After Business Rules → Async Business Rules → Workflow/Flow trigger → Notifications → Display Business Rules (on next load)",
-        "Before BR → Database → After BR → Done",
-        "Client Script → Server Script → Database → Done",
+        "ACL check \u2192 Data Policy validation \u2192 Before Business Rules \u2192 Database operation \u2192 After Business Rules \u2192 Async Business Rules \u2192 Workflow/Flow trigger \u2192 Notifications \u2192 Display Business Rules (on next load)",
+        "Before BR \u2192 Database \u2192 After BR \u2192 Done",
+        "Client Script \u2192 Server Script \u2192 Database \u2192 Done",
         "The order is random and depends on server load"
       ],
       "correct": [
         0
       ],
-      "explanation": "The full server-side chain: ACLs verify write access → Data Policies validate field requirements → Before BRs execute (can modify/abort) → Database UPDATE occurs → After BRs execute → Async BRs queue → Workflows/Flows trigger → Notification rules evaluate → Display BRs fire on the next form load."
+      "explanation": "The full server-side chain: ACLs verify write access \u2192 Data Policies validate field requirements \u2192 Before BRs execute (can modify/abort) \u2192 Database UPDATE occurs \u2192 After BRs execute \u2192 Async BRs queue \u2192 Workflows/Flows trigger \u2192 Notification rules evaluate \u2192 Display BRs fire on the next form load."
     },
     {
       "id": "fun-h2",
@@ -876,7 +876,7 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "The submit was triggered by a server-side operation (skipping client logic), a Client Script is overriding the UI Policy, or the browser's developer tools were used to bypass the mandatory check — Data Policies should enforce server-side",
+        "The submit was triggered by a server-side operation (skipping client logic), a Client Script is overriding the UI Policy, or the browser's developer tools were used to bypass the mandatory check \u2014 Data Policies should enforce server-side",
         "UI Policies are always enforced and this cannot happen",
         "The user must have the admin role",
         "The mandatory setting was probably not saved"
@@ -884,7 +884,7 @@
       "correct": [
         0
       ],
-      "explanation": "UI Policies are client-side only — they can be bypassed by direct API calls, web services, Business Rules calling update(), or browser manipulation. Data Policies with the 'Apply to import sets' option enforce server-side."
+      "explanation": "UI Policies are client-side only \u2014 they can be bypassed by direct API calls, web services, Business Rules calling update(), or browser manipulation. Data Policies with the 'Apply to import sets' option enforce server-side."
     },
     {
       "id": "fun-h3",
@@ -892,8 +892,8 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Yes — the current object persists across the Business Rule chain for the same transaction, so changes made in Before BRs are visible to After BRs",
-        "No — After BRs re-query the database and get the original value",
+        "Yes \u2014 the current object persists across the Business Rule chain for the same transaction, so changes made in Before BRs are visible to After BRs",
+        "No \u2014 After BRs re-query the database and get the original value",
         "It depends on the execution order setting",
         "The current object is reset between Before and After BRs"
       ],
@@ -934,7 +934,7 @@
       "correct": [
         0
       ],
-      "explanation": "Update Sets track configuration changes (not data) made in an instance, allowing you to move customizations from dev → test → prod."
+      "explanation": "Update Sets track configuration changes (not data) made in an instance, allowing you to move customizations from dev \u2192 test \u2192 prod."
     },
     {
       "id": "csa-e3",
@@ -1078,7 +1078,7 @@
       "correct": [
         0
       ],
-      "explanation": "Catalog Client Scripts execute in the Service Catalog context — they interact with catalog variables (not table fields) using the same g_form API but target variable names instead of column names."
+      "explanation": "Catalog Client Scripts execute in the Service Catalog context \u2014 they interact with catalog variables (not table fields) using the same g_form API but target variable names instead of column names."
     },
     {
       "id": "csa-m2",
@@ -1198,7 +1198,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "It defines a filter condition that must be true for the Business Rule to execute — evaluated before the script runs",
+        "It defines a filter condition that must be true for the Business Rule to execute \u2014 evaluated before the script runs",
         "It specifies which table the Business Rule applies to",
         "It determines the execution order",
         "It sets the priority of the Business Rule"
@@ -1238,7 +1238,7 @@
       "correct": [
         0
       ],
-      "explanation": "Views (e.g., 'Default', 'itil', 'ESS') determine form layout — which fields, their arrangement, sections, and related lists. Different users/roles can be directed to different views of the same table."
+      "explanation": "Views (e.g., 'Default', 'itil', 'ESS') determine form layout \u2014 which fields, their arrangement, sections, and related lists. Different users/roles can be directed to different views of the same table."
     },
     {
       "id": "csa-m13",
@@ -1265,7 +1265,7 @@
         "ServiceNow creates a new update set that reverts the changes by applying the previous versions of the modified records",
         "The committed changes are permanently deleted",
         "The update set is moved back to the source instance",
-        "Nothing — committed update sets cannot be reverted"
+        "Nothing \u2014 committed update sets cannot be reverted"
       ],
       "correct": [
         0
@@ -1310,7 +1310,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "ACLs on the referenced table's record control whether the display value resolves — if the user cannot read the referenced record, they see the sys_id instead of the display value",
+        "ACLs on the referenced table's record control whether the display value resolves \u2014 if the user cannot read the referenced record, they see the sys_id instead of the display value",
         "Reference fields always show the display value regardless of ACLs",
         "Reference field security is controlled only by the source table's ACLs",
         "There is no field-level security for reference fields"
@@ -1342,7 +1342,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A review and approval process for Knowledge articles that ensures content quality before publication — articles move through Draft → Review → Published states",
+        "A review and approval process for Knowledge articles that ensures content quality before publication \u2014 articles move through Draft \u2192 Review \u2192 Published states",
         "A workflow for creating incidents from KB articles",
         "A process for automatically deleting outdated articles",
         "A method for importing external documentation"
@@ -1370,14 +1370,14 @@
     },
     {
       "id": "csa-h1",
-      "q": "A customer needs to migrate 500 customizations across 3 instances (dev → test → prod) with strict change control. Some customizations span multiple update sets and have dependencies. What is the recommended migration strategy?",
+      "q": "A customer needs to migrate 500 customizations across 3 instances (dev \u2192 test \u2192 prod) with strict change control. Some customizations span multiple update sets and have dependencies. What is the recommended migration strategy?",
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Update Set batching to group related update sets with dependency ordering, implement a merge update set for cross-set dependencies, preview in test first to identify collisions, and establish a backout plan with update set reversion",
-        "Move each update set individually in random order",
-        "Export all customizations as XML and import manually",
-        "Use direct database replication between instances"
+        "Promote as one scoped release set via Dev -> Test -> Prod, preview for collisions, then commit with backout readiness.",
+        "Commit directly to Prod to preserve object references, then retrofit approvals in the next sprint.",
+        "Export customized records as XML and import to each instance to avoid update set dependency handling.",
+        "Clone Prod into Dev, rebuild changes there, and use compare reports as the deployment mechanism."
       ],
       "correct": [
         0
@@ -1390,10 +1390,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "A field-level read ACL on the configuration field requires a role the user doesn't have. Debug by impersonating the user, checking ACL evaluation using the Security Debug module (session debug), and reviewing the ACL rules on incident.configuration",
-        "The field must be deleted from the dictionary",
-        "The user's browser is caching an old form layout",
-        "itil role users can never see configuration fields"
+        "Check role inheritance plus module role requirements; validate ACL table and field conditions under impersonation.",
+        "Re-index text search and clear browser cache because navigator visibility is not role-dependent.",
+        "Grant admin temporarily, open the module once, then remove admin so role map refreshes automatically.",
+        "Replace all field ACLs with one table ACL so module links resolve consistently for every itil user."
       ],
       "correct": [
         0
@@ -1406,10 +1406,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Create a Data Policy with condition Priority=1 that sets Business Impact as mandatory, ensuring enforcement across all entry points including server-side operations",
-        "Create a UI Policy — it enforces on all channels",
-        "Write an onChange Client Script to check the field",
-        "Add a mandatory attribute in the Dictionary entry"
+        "Enforce requirement server-side using Data Policy or Before BR, while keeping UI Policy for user guidance.",
+        "Use only onChange client script and block save with addErrorMessage for all channels including imports.",
+        "Mark the field dictionary-mandatory globally and bypass for non-P1 through display business rule logic.",
+        "Rely on incident form mandatory flag because integrations honor form-level constraints by default."
       ],
       "correct": [
         0
@@ -1422,10 +1422,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Flow Designer with sequential approval steps, each with conditional branching based on the amount field. Use 'Ask for Approval' actions with Group/User lookup from the user's management chain via the sys_user.manager field",
-        "Create three separate workflows and a Business Rule to pick which one to launch",
-        "Use a single approval step with all three approvers CC'd",
-        "Write a Script Include that sends email requests manually"
+        "Model in Flow Designer with staged approvals and branching, then version and test transitions in subflow modules.",
+        "Encode approvals entirely in one UI Action so approvers can override stage transitions at runtime.",
+        "Use a display Business Rule chain to set approval states before every form render for deterministic routing.",
+        "Attach approval script to dictionary attributes so workflow engine reads approval tiers directly from fields."
       ],
       "correct": [
         0
@@ -1438,10 +1438,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Consolidate overlapping ACLs, replace script-based ACLs with condition-based ACLs where possible, use ACL debugging to identify expensive evaluations, and consider using before query Business Rules to pre-filter data instead of row-level ACLs",
-        "Delete all ACLs and rely on role-based access only",
-        "Increase server memory allocation",
-        "Disable ACL evaluation globally"
+        "Consolidate where possible, favor condition/role ACLs over scripted checks, and remove redundant field-level ACL overlap.",
+        "Convert all ACLs to scripted ACLs so logic is centralized and easier to maintain in one script include.",
+        "Move access logic from ACLs into client scripts to reduce server-side evaluation for list and form reads.",
+        "Grant broad table-read and enforce sensitive fields with UI Policy visibility rules to improve performance."
       ],
       "correct": [
         0
@@ -1454,10 +1454,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement a branching strategy with team-specific update sets, use an Update Set naming convention with team prefixes, establish a merge/preview process in a staging instance, and assign a release manager to coordinate commits to production",
-        "Let each team commit directly to production",
-        "Use a single shared update set for all teams",
-        "Disable update sets and make changes directly in production"
+        "Adopt disciplined update-set ownership and promotion order, with collision preview and peer validation before commit.",
+        "Allow freeform parallel commits in Prod and reconcile conflicts later using clone compare reports.",
+        "Disable customer updates table-wide during sprint close and apply all update sets after release freeze.",
+        "Merge all team work into one monolithic update set to ensure no dependency can be missed in promotion."
       ],
       "correct": [
         0
@@ -1470,10 +1470,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Check if the onBefore script sets ignore=true conditionally, enable Import Set debug logging via sys_properties, examine the transform history for each row's action (insert/update/ignore), and add explicit gs.info logging to the transform scripts",
-        "Re-run the import — it was probably a timeout issue",
-        "Check the email notification logs",
-        "The transform map has a row limit"
+        "Instrument transform scripts, capture skip reasons in logs, and set explicit reject/error paths for failed validations.",
+        "Disable onBefore script and rely on transform map coalesce to report every rejected row automatically.",
+        "Move validation to client script on import set form so analysts can fix data before transform execution.",
+        "Re-run import in chunks of 1,000 because silent skips are usually caused by transaction batch size only."
       ],
       "correct": [
         0
@@ -1486,10 +1486,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Catalog Category user criteria to control visibility, create category-level ACLs, and implement Service Portal widget customization with scripted data sources that filter based on gs.getUser() attributes",
-        "Create separate Service Portals for each department",
-        "Duplicate every catalog item per department",
-        "Use Client Scripts to hide categories after page load"
+        "Drive visibility by user criteria/entitlement context and validate portal audience mappings across role combinations.",
+        "Clone separate portals per role and hardcode category IDs in widget options to avoid entitlement ambiguity.",
+        "Use UI policy on sc_cat_item to hide categories since portal category rendering respects form policy states.",
+        "Expose all categories and filter client-side with scripted CSS classes for each user role at page load."
       ],
       "correct": [
         0
@@ -1502,7 +1502,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "The 'when' field specifies the timing: before, after, async, or display — determining when the rule runs relative to the database operation",
+        "The 'when' field specifies the timing: before, after, async, or display \u2014 determining when the rule runs relative to the database operation",
         "It specifies which day of the week the rule runs",
         "It sets the condition that must be true",
         "It determines the user who can trigger the rule"
@@ -1518,7 +1518,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Dot-walking (e.g., current.caller_id.department) auto-resolves reference chains inline; GlideRecord lookup requires explicit code to query the referenced table — dot-walking is convenient but can be slow for deep chains",
+        "Dot-walking (e.g., current.caller_id.department) auto-resolves reference chains inline; GlideRecord lookup requires explicit code to query the referenced table \u2014 dot-walking is convenient but can be slow for deep chains",
         "They are the same mechanism",
         "Dot-walking only works on the client side",
         "GlideRecord lookups cannot traverse references"
@@ -1534,7 +1534,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Variables are dynamic form fields on catalog items stored in sc_item_option_mtom, not as table columns — they capture request-specific information that doesn't live on the target table",
+        "Variables are dynamic form fields on catalog items stored in sc_item_option_mtom, not as table columns \u2014 they capture request-specific information that doesn't live on the target table",
         "Variables and table fields are the same",
         "Variables can only be text fields",
         "Variables are stored on the incident table"
@@ -1542,7 +1542,7 @@
       "correct": [
         0
       ],
-      "explanation": "Catalog variables are request-specific inputs (e.g., laptop type, justification) stored in sc_item_option/sc_item_option_mtom. They don't create columns on the target table — they're accessed via current.variables in catalog workflows."
+      "explanation": "Catalog variables are request-specific inputs (e.g., laptop type, justification) stored in sc_item_option/sc_item_option_mtom. They don't create columns on the target table \u2014 they're accessed via current.variables in catalog workflows."
     },
     {
       "id": "csa-m24",
@@ -1551,7 +1551,7 @@
       "difficulty": "medium",
       "options": [
         "Configure the SLA Definition's 'Pause' condition to include state = Awaiting Caller, which stops the elapsed time clock while the condition is true",
-        "SLAs cannot be paused — they always count time",
+        "SLAs cannot be paused \u2014 they always count time",
         "Create a Business Rule to manually freeze the SLA",
         "Set the incident to inactive to stop the SLA"
       ],
@@ -1566,7 +1566,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A feature that triggers an action (notification, state change) when a record has not been updated for a specified duration — commonly used for stale incidents or unresolved problems",
+        "A feature that triggers an action (notification, state change) when a record has not been updated for a specified duration \u2014 commonly used for stale incidents or unresolved problems",
         "A tool that monitors inactive user accounts",
         "A report showing unused applications",
         "A server health check for idle instances"
@@ -1662,10 +1662,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use a single incident table with the union of all states, implement UI Policies per assignment group/business unit to show/hide irrelevant states, and use Business Rules to enforce valid state transitions per BU — avoid table-per-BU duplication",
-        "Create three separate incident tables, one per BU",
-        "Force all BUs to use the same 5-state model",
-        "Use domain separation to give each BU a different instance"
+        "Use domain separation where strict data/process isolation is required, with shared services modeled intentionally.",
+        "Use one global domain and distinguish units only with assignment groups to minimize platform complexity.",
+        "Create three instances and synchronize data by nightly export/import to enforce governance boundaries.",
+        "Store business-unit routing in dictionary attributes and keep all records in global for reporting simplicity."
       ],
       "correct": [
         0
@@ -1678,10 +1678,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use employee_number as the coalesce field on the Transform Map, disable Business Rules via setWorkflow(false) in onBefore, increase the chunk size in import properties, and consider using the Table API with batch operations for better parallelism",
-        "Run the import during business hours for priority access",
-        "Remove the coalesce and create all records as new, then delete duplicates",
-        "Split into 100 separate import sets of 1,000 each"
+        "Use coalesce on stable keys, optimize map scripts, and avoid expensive per-row lookups inside transform events.",
+        "Disable coalesce and insert all rows first, then run duplicate cleanup scripts for performance recovery.",
+        "Process via client scripts in import UI to reduce transform map server load before commit.",
+        "Split destination user table into per-letter partitions and map each partition in separate transform maps."
       ],
       "correct": [
         0
@@ -1790,7 +1790,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A reusable collection of catalog variables that can be shared across multiple catalog items — eliminating duplicate variable definitions and ensuring consistency",
+        "A reusable collection of catalog variables that can be shared across multiple catalog items \u2014 eliminating duplicate variable definitions and ensuring consistency",
         "A set of variables used in Business Rules",
         "A collection of system properties",
         "A group of users who manage catalog items"
@@ -1806,7 +1806,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "It stores Business Service CIs that represent high-level services offered to the business — these are mapped to supporting infrastructure CIs via relationships",
+        "It stores Business Service CIs that represent high-level services offered to the business \u2014 these are mapped to supporting infrastructure CIs via relationships",
         "It stores CI security configurations",
         "It is the main CMDB table for all CI types",
         "It stores service catalog items"
@@ -1838,7 +1838,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "Controls whether the Business Rule is currently enabled and will execute — unchecking it disables the rule without deleting it",
+        "Controls whether the Business Rule is currently enabled and will execute \u2014 unchecking it disables the rule without deleting it",
         "Makes the Business Rule run only on active records",
         "Sets the rule to run in real-time vs. batch",
         "Determines if the rule can be edited"
@@ -1854,7 +1854,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "Displays records from other tables that are related to the current record — e.g., showing all Incidents related to a Problem",
+        "Displays records from other tables that are related to the current record \u2014 e.g., showing all Incidents related to a Problem",
         "Shows a list of related Knowledge articles",
         "Displays the record history",
         "Shows similar records for deduplication"
@@ -1870,15 +1870,15 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use the Password Reset application with MID Server integration to Active Directory, configure multi-factor verification (security questions + email/SMS), and deploy a Service Portal widget for the self-service flow",
-        "Give users direct access to Active Directory",
-        "Create a catalog item that emails the admin to reset the password",
-        "Deploy a third-party tool completely outside ServiceNow"
+        "Use native reset flow with identity verification policy and audited notification templates across channels.",
+        "Implement reset via catalog item that writes directly to sys_user.password through business rule.",
+        "Expose admin-only password reset UI action to portal users through ACL exception for speed.",
+        "Handle reset in client script with GlideAjax returning encrypted password token to browser session."
       ],
       "correct": [
         0
       ],
-      "explanation": "ServiceNow Password Reset integrates with AD via MID Server, supports MFA verification, and provides self-service widgets for the portal. The flow: user verifies identity → system resets AD password → confirms via the portal, all without agent involvement."
+      "explanation": "ServiceNow Password Reset integrates with AD via MID Server, supports MFA verification, and provides self-service widgets for the portal. The flow: user verifies identity \u2192 system resets AD password \u2192 confirms via the portal, all without agent involvement."
     },
     {
       "id": "csa-h12",
@@ -1886,15 +1886,15 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Enable Business Rule debug logging, analyze the Transaction Log for slow transactions, use the Script Execution History to identify expensive scripts, benchmark each rule with execution time tracking, and implement a remediation plan prioritizing the highest-impact rules",
-        "Disable all Business Rules and re-enable one at a time",
-        "Upgrade the instance to a higher tier",
-        "Move all Business Rules to client scripts"
+        "Inventory rule purpose, retire duplicates, tune conditions/order, and shift heavy logic to reusable script includes.",
+        "Convert all rules to async so transaction latency drops regardless of side effects.",
+        "Move all business logic into display rules because they execute last and reduce data contention.",
+        "Prefix rules alphabetically and keep existing logic unchanged to avoid regression risk in production."
       ],
       "correct": [
         0
       ],
-      "explanation": "Systematic approach: BR debug logs show execution time per rule. Transaction logs identify slow form loads. Script Execution History reveals expensive operations. Prioritize remediation by impact (frequency × execution time). Common fixes: replace GlideRecord with GlideAggregate, add conditions to avoid unnecessary execution, consolidate overlapping rules."
+      "explanation": "Systematic approach: BR debug logs show execution time per rule. Transaction logs identify slow form loads. Script Execution History reveals expensive operations. Prioritize remediation by impact (frequency \u00d7 execution time). Common fixes: replace GlideRecord with GlideAggregate, add conditions to avoid unnecessary execution, consolidate overlapping rules."
     },
     {
       "id": "csa-m34",
@@ -1902,7 +1902,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Stores system-wide configuration properties that control platform behavior — administrators can customize instance settings without code changes",
+        "Stores system-wide configuration properties that control platform behavior \u2014 administrators can customize instance settings without code changes",
         "Stores table field definitions",
         "Contains user preferences",
         "Manages application licenses"
@@ -1926,7 +1926,7 @@
       "correct": [
         0
       ],
-      "explanation": "Global UI Scripts are JavaScript loaded on every page (or every non-mobile page) — useful for utility functions. Client Scripts are event-driven (onLoad, onChange, onSubmit) and scoped to a specific table and form."
+      "explanation": "Global UI Scripts are JavaScript loaded on every page (or every non-mobile page) \u2014 useful for utility functions. Client Scripts are event-driven (onLoad, onChange, onSubmit) and scoped to a specific table and form."
     },
     {
       "id": "csa-m36",
@@ -1934,7 +1934,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Create Notification records that define the trigger (event or condition), recipients (users, groups, fields), and email template — the system sends emails when conditions are met",
+        "Create Notification records that define the trigger (event or condition), recipients (users, groups, fields), and email template \u2014 the system sends emails when conditions are met",
         "Write a Business Rule that calls gs.sendEmail()",
         "Configure notifications in the email server settings",
         "Use Client Scripts to trigger email sends"
@@ -1950,7 +1950,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A wizard-like interface that bundles multiple catalog items into a single ordered request, guiding users through a sequence of selections — e.g., New Hire Onboarding bundling laptop + software + access",
+        "A wizard-like interface that bundles multiple catalog items into a single ordered request, guiding users through a sequence of selections \u2014 e.g., New Hire Onboarding bundling laptop + software + access",
         "A documentation guide for placing orders",
         "A sorting mechanism for catalog categories",
         "A report showing order history"
@@ -1958,7 +1958,7 @@
       "correct": [
         0
       ],
-      "explanation": "Order Guides present a multi-step wizard that combines multiple catalog items into one request. Users are guided through selections (e.g., choose hardware → choose software → choose access), and all items are submitted as a single request."
+      "explanation": "Order Guides present a multi-step wizard that combines multiple catalog items into one request. Users are guided through selections (e.g., choose hardware \u2192 choose software \u2192 choose access), and all items are submitted as a single request."
     },
     {
       "id": "csa-h13",
@@ -1966,10 +1966,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Immediately back out the Update Set to restore the previous configuration, verify the workflow is functioning by testing with an impersonated user, implement a post-incident review to prevent recurrence, and update the deployment process to require peer review and UAT sign-off before production commits",
-        "Manually fix the workflow in production during business hours",
-        "Roll back the entire instance to yesterday backup",
-        "Tell the CEO to submit expenses via email until next release"
+        "Back out the offending update set, validate critical path via impersonation, then run post-incident deployment controls.",
+        "Hotfix directly in production and delay root-cause analysis until next planned maintenance window.",
+        "Restore full instance backup to pre-release snapshot and re-enter same-day operational changes manually.",
+        "Disable expense workflow notifications so users can submit while the broken process remains in place."
       ],
       "correct": [
         0
@@ -1982,10 +1982,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Enforce with a Data Policy (for all channels) and optionally keep a UI Policy for immediate form guidance",
-        "Use only a UI Policy because it applies to all update channels and is easier to maintain",
-        "Use only an onChange Client Script because it catches state transitions in real time",
-        "Use a display Business Rule to block save when close notes are empty"
+        "Combine server-side enforcement with UI feedback: Data Policy (or Before BR) plus conditional UI Policy action.",
+        "Use UI Policy only; platform integrations evaluate form policy rules before database commit.",
+        "Use onChange client script with g_form mandatory logic because state transitions are always browser-initiated.",
+        "Use display BR validation because display lifecycle executes before every insert and update transaction."
       ],
       "correct": [
         0
@@ -1998,10 +1998,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "The user gets the union of roles from direct assignment and group inheritance",
-        "Directly assigned role overrides inherited roles, so only itil is active",
-        "Only inherited roles are evaluated by ACL engine at runtime",
-        "Role conflict resolution keeps whichever role was assigned first"
+        "Effective access is additive: direct assignments and inherited group roles both contribute to runtime permissions.",
+        "Direct user role assignment suppresses inherited group roles to prevent privilege overlap.",
+        "Inherited group roles are informational only and excluded from ACL checks during data access.",
+        "Role precedence is timestamp-based, so first granted role defines final permission profile."
       ],
       "correct": [
         0
@@ -2014,10 +2014,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Capture both changes in an Update Set, move to Test, preview/resolve, validate, then commit to Prod",
-        "Export the modified records as XML and import directly into Prod to avoid delays",
-        "Recreate both changes manually in Prod to avoid Update Set dependencies",
-        "Commit the Update Set directly to Prod first, then test in Test"
+        "Package both config changes in one controlled update set, preview in target, test, then commit through pipeline.",
+        "Export changed records to XML and import to Prod to avoid update set sequencing risks.",
+        "Apply form layout manually in Prod and migrate only business rule via update set for speed.",
+        "Commit directly to Prod first, then push same update set to Test for parity verification."
       ],
       "correct": [
         0
@@ -2030,10 +2030,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Client Scripts run only in browser form context; API updates bypass client logic",
-        "REST API ignores all table-level validations in ServiceNow",
-        "onSubmit scripts run only on insert, not update",
-        "REST updates always execute as admin and skip validation"
+        "Client scripts run in browser context only; REST updates bypass them and require server-side validation controls.",
+        "REST calls ignore table validations by design, so only workflow activities can enforce update constraints.",
+        "onSubmit scripts trigger only for inserts, while updates never evaluate client-side return conditions.",
+        "REST executes as system admin by default, which bypasses all validation except dictionary max length checks."
       ],
       "correct": [
         0
@@ -2046,10 +2046,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "The sys_id of the referenced record; display value is rendered for readability",
-        "A hashed display value used only for performance",
-        "The primary key from an external identity provider",
-        "The latest cached label from sys_choice"
+        "Reference fields store sys_id values, while the UI resolves and displays the referenced record display value.",
+        "Reference fields store a hashed display label for security and derive sys_id at query time.",
+        "Reference fields store external directory keys and map to sys_id only in reporting modules.",
+        "Reference fields store sys_choice labels and resolve target records through dictionary translation caches."
       ],
       "correct": [
         0
@@ -2062,10 +2062,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Child tables (like Incident) inherit parent fields from Task and can add their own fields",
-        "Parent fields are copied into child tables at creation and then become independent",
-        "Inheritance works only for dictionary labels, not actual columns",
-        "Changing a parent field never affects child table forms"
+        "Child tables inherit parent schema/behavior and can extend with table-specific fields and logic.",
+        "Inheritance copies parent fields once, then parent and child schemas diverge with no ongoing linkage.",
+        "Inheritance applies to labels and choices only; physical column availability remains child-table specific.",
+        "Parent field changes never surface on child forms unless each child dictionary entry is recreated manually."
       ],
       "correct": [
         0
@@ -2078,10 +2078,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "UI Policy with condition and UI Policy Action for mandatory state",
-        "Catalog Client Script using g_form.setMandatory() regardless of table",
-        "Dictionary-level mandatory=true with onLoad Client Script to undo it",
-        "After Business Rule that throws an error when field is empty"
+        "Use conditional UI Policy action for maintainable form behavior; pair server enforcement if channel-wide requirement exists.",
+        "Use catalog client script so the same mandatory logic automatically applies to standard table forms.",
+        "Set dictionary mandatory true and relax on load with script to preserve baseline data quality controls.",
+        "Use after BR to reject empty values, since post-commit validation provides consistent user feedback."
       ],
       "correct": [
         0
@@ -2094,10 +2094,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "It is clearer, easier to maintain, and semantically equivalent for multi-value matching",
-        "It forces index creation automatically on State",
-        "It evaluates only client-side and improves network performance",
-        "It bypasses ACL evaluation for list queries"
+        "It provides equivalent multi-value filtering with cleaner intent and easier maintenance than stacked OR clauses.",
+        "It forces optimizer index usage automatically, unlike OR clauses which always trigger full scans.",
+        "It executes client-side first and sends minimized query syntax to bypass server ACL processing.",
+        "It alters ACL order so list queries evaluate field ACLs only after table ACL success."
       ],
       "correct": [
         0
@@ -2110,10 +2110,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "ServiceNow resolves all recipient sources, de-duplicates addresses, then sends based on notification conditions/preferences",
-        "Only the first recipient source in the list receives email",
-        "Group recipients override all field-based recipients",
-        "Watch list users are ignored when Assigned to is present"
+        "Recipient sources are resolved and de-duplicated before send, then normal notification rules/preferences apply.",
+        "Only the first configured recipient source is honored to prevent duplicate outbound messages.",
+        "Group recipients supersede field recipients, so watch list values are skipped when group is present.",
+        "Watch list recipients are processed only if Assigned to is empty at notification evaluation time."
       ],
       "correct": [
         0
@@ -2126,10 +2126,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Verify module/application role requirements and whether user still inherits those roles via group membership",
-        "Clear browser cache; module visibility is purely client cache",
-        "Rebuild dictionary cache because modules are dictionary-driven",
-        "Run Fix Script to repopulate sys_ui_module records"
+        "Validate module role requirements and the user\u2019s effective role inheritance before troubleshooting UI-level causes.",
+        "Clear browser cache first because left-nav visibility is cached independently from role entitlements.",
+        "Rebuild dictionary caches first since module rendering depends on latest dictionary update timestamp.",
+        "Run module fix scripts to republish sys_ui_module records for all role maps after each role change."
       ],
       "correct": [
         0
@@ -2142,10 +2142,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Preview Update Set in target, resolve collisions, run UAT on affected flows, then commit",
-        "Commit directly and monitor system logs for failures",
-        "Export XML backups of changed records and skip preview",
-        "Use only ATF and skip human UAT because ATF covers all scenarios"
+        "Preview in target, resolve collisions, run focused UAT, then commit with rollback plan and release evidence.",
+        "Commit to production and validate with live users because UAT environments rarely mirror real behavior.",
+        "Skip preview when update set count is small; XML exports provide equivalent dependency assurance.",
+        "Rely exclusively on ATF and bypass UAT because automated checks cover functional and operational readiness."
       ],
       "correct": [
         0
@@ -2158,10 +2158,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Access is granted only when relevant ACL checks pass for the operation; role possession alone is not universally sufficient",
-        "Any one passing ACL grants full table access for all operations",
-        "Read ACL automatically grants write access on same table",
-        "If user has admin, ACLs are always ignored in every context"
+        "ACL checks are operation-specific; satisfying role conditions helps but does not universally guarantee access.",
+        "A single passing ACL grants full CRUD access on the table regardless of operation context.",
+        "Read ACL success implies write ACL success when both ACLs reference the same role requirement.",
+        "Admin role bypasses ACL behavior in every execution path including delegated and scoped contexts."
       ],
       "correct": [
         0
@@ -2174,10 +2174,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Personalized list layout/view preferences can differ by user even on same table",
-        "Dictionary entries are duplicated per user by default",
-        "List columns are always globally fixed unless cloned instance",
-        "Role inheritance forces unique columns per group"
+        "User-level personalization/view preferences can produce different list columns on the same table.",
+        "Dictionary metadata is duplicated per user, so each profile stores an independent column schema.",
+        "List columns are globally fixed and cannot differ unless the instance was recently cloned.",
+        "Group role inheritance enforces unique default list columns for each group membership path."
       ],
       "correct": [
         0
@@ -2288,7 +2288,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A categorization that determines the case workflow, fields, and SLA — common types include Question, Issue, and Request",
+        "A categorization that determines the case workflow, fields, and SLA \u2014 common types include Question, Issue, and Request",
         "The font style used in case descriptions",
         "The severity level of a case",
         "The channel through which a case was created"
@@ -2336,7 +2336,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "Phone, Email, Portal, Chat, Social Media, Walk-in — all channels are tracked and can create/update cases",
+        "Phone, Email, Portal, Chat, Social Media, Walk-in \u2014 all channels are tracked and can create/update cases",
         "Email only",
         "Phone and Email only",
         "Portal only"
@@ -2344,7 +2344,7 @@
       "correct": [
         0
       ],
-      "explanation": "CSM is omnichannel — customers can interact via phone, email, self-service portal, live chat, social media, and walk-in. All interactions are tracked against the case for a complete communication history."
+      "explanation": "CSM is omnichannel \u2014 customers can interact via phone, email, self-service portal, live chat, social media, and walk-in. All interactions are tracked against the case for a complete communication history."
     },
     {
       "id": "csm-m1",
@@ -2400,7 +2400,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A visual tool for dispatchers to assign and reassign cases to agents based on skills, availability, and workload — showing a real-time queue view",
+        "A visual tool for dispatchers to assign and reassign cases to agents based on skills, availability, and workload \u2014 showing a real-time queue view",
         "A developer tool for assigning variables",
         "A report builder for tracking assignments",
         "A configuration page for assignment rules"
@@ -2416,7 +2416,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "CSM SLAs can be customer-specific using Entitlements — different customers can have different response/resolution targets for the same case type based on their service contract",
+        "CSM SLAs can be customer-specific using Entitlements \u2014 different customers can have different response/resolution targets for the same case type based on their service contract",
         "CSM does not support SLAs",
         "CSM uses the same SLA engine with no differences",
         "CSM SLAs are always faster than ITSM SLAs"
@@ -2456,7 +2456,7 @@
       "correct": [
         0
       ],
-      "explanation": "Special Handling Notes are proactive alerts tied to accounts, contacts, or consumers. When an agent works on a case for a flagged customer, the note prominently displays critical information (e.g., 'VIP Client — escalate immediately')."
+      "explanation": "Special Handling Notes are proactive alerts tied to accounts, contacts, or consumers. When an agent works on a case for a flagged customer, the note prominently displays critical information (e.g., 'VIP Client \u2014 escalate immediately')."
     },
     {
       "id": "csm-m8",
@@ -2480,7 +2480,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "customer_contact extends sys_user and adds CSM-specific fields like account, title, and partner — contacts are users with customer-specific attributes",
+        "customer_contact extends sys_user and adds CSM-specific fields like account, title, and partner \u2014 contacts are users with customer-specific attributes",
         "They are completely separate tables with no relationship",
         "customer_contact replaces sys_user for all CSM users",
         "sys_user is for admins; customer_contact is for everyone else"
@@ -2496,7 +2496,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Cases use a multi-level categorization (Category → Subcategory → Type) that can drive automatic assignment, SLA selection, and knowledge article suggestions",
+        "Cases use a multi-level categorization (Category \u2192 Subcategory \u2192 Type) that can drive automatic assignment, SLA selection, and knowledge article suggestions",
         "Cases can only have one category level",
         "Categorization is purely cosmetic and has no impact on processing",
         "Categories are assigned randomly by the system"
@@ -2544,7 +2544,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Tracks specific product instances installed or provisioned for a customer, including version, serial number, and warranty status — used to link cases to specific assets",
+        "Tracks specific product instances installed or provisioned for a customer, including version, serial number, and warranty status \u2014 used to link cases to specific assets",
         "Tracks ServiceNow platform installations",
         "Records software installed on agent workstations",
         "Stores product catalog items"
@@ -2560,7 +2560,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A Case tracks the overall customer issue; Case Tasks are sub-tasks assigned to different teams or individuals to complete parts of the case resolution — both extend the task table",
+        "A Case tracks the overall customer issue; Case Tasks are sub-tasks assigned to different teams or individuals to complete parts of the case resolution \u2014 both extend the task table",
         "Case Tasks are auto-created for every case",
         "Cases and Case Tasks are on the same table",
         "Case Tasks can exist without a parent Case"
@@ -2592,7 +2592,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A record that defines the terms, duration, and scope of service provided to a customer — it drives entitlements and SLA targets for cases from that account",
+        "A record that defines the terms, duration, and scope of service provided to a customer \u2014 it drives entitlements and SLA targets for cases from that account",
         "A legal document stored as an attachment",
         "A type of catalog item",
         "An internal service agreement between IT teams"
@@ -2608,7 +2608,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "An online forum where customers can ask questions, share solutions, and interact with other customers and support staff — reducing case volume through peer support",
+        "An online forum where customers can ask questions, share solutions, and interact with other customers and support staff \u2014 reducing case volume through peer support",
         "An internal messaging system for agents",
         "A social media integration",
         "A team collaboration tool for CSM admins"
@@ -2624,7 +2624,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Customer Central provides a 360-degree view of the customer — showing all cases, contracts, entitlements, products, and interactions for a single account in one unified workspace — while the standard workspace focuses on individual case handling",
+        "Customer Central provides a 360-degree view of the customer \u2014 showing all cases, contracts, entitlements, products, and interactions for a single account in one unified workspace \u2014 while the standard workspace focuses on individual case handling",
         "Customer Central is for customers; standard workspace is for agents",
         "They are identical workspaces with different names",
         "Customer Central only shows financial data"
@@ -2632,7 +2632,7 @@
       "correct": [
         0
       ],
-      "explanation": "Customer Central is an account-centric workspace giving agents a complete view of the customer relationship — all open cases, contract status, entitlements, installed products, and communication history — enabling more informed, contextual support."
+      "explanation": "Customer Central is an account-centric workspace giving agents a complete view of the customer relationship \u2014 all open cases, contract status, entitlements, installed products, and communication history \u2014 enabling more informed, contextual support."
     },
     {
       "id": "csm-h1",
@@ -2648,7 +2648,7 @@
       "correct": [
         0
       ],
-      "explanation": "Proactive CSM architecture: Event Management detects infrastructure issues → Service Mapping identifies affected business services and linked customers → Automated case creation with customer-specific impact details → Proactive notifications via portal, email, and SMS before the customer is impacted."
+      "explanation": "Proactive CSM architecture: Event Management detects infrastructure issues \u2192 Service Mapping identifies affected business services and linked customers \u2192 Automated case creation with customer-specific impact details \u2192 Proactive notifications via portal, email, and SMS before the customer is impacted."
     },
     {
       "id": "csm-h2",
@@ -2688,7 +2688,7 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Case Tasks for each tier with task-level SLAs — when Tier 1 escalates to Tier 2, a new task is created with Tier 2's SLA. The parent case tracks overall resolution SLA while each task tracks per-tier targets",
+        "Use Case Tasks for each tier with task-level SLAs \u2014 when Tier 1 escalates to Tier 2, a new task is created with Tier 2's SLA. The parent case tracks overall resolution SLA while each task tracks per-tier targets",
         "Apply a single SLA to the entire case regardless of tier",
         "Manually track tier times in a comments field",
         "Create separate case records for each tier"
@@ -2720,7 +2720,7 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use the Partner model in CSM — create partner accounts, assign partner contacts with the sn_customerservice.partner role, configure ACLs to scope case visibility to partner-assigned cases, and set up partner portal with account-level data restrictions",
+        "Use the Partner model in CSM \u2014 create partner accounts, assign partner contacts with the sn_customerservice.partner role, configure ACLs to scope case visibility to partner-assigned cases, and set up partner portal with account-level data restrictions",
         "Give partners full admin access to see everything",
         "Create a separate instance for each partner",
         "Email case updates to partners manually"
@@ -2728,7 +2728,7 @@
       "correct": [
         0
       ],
-      "explanation": "CSM's Partner model supports multi-party service: Partner accounts and contacts with specific roles, ACLs scoping visibility to assigned cases and relevant account data, and partner portal access for case management — all without exposing unrelated customer data."
+      "explanation": "CSM's Partner model supports multi-party service: Partner accounts and contacts with specific roles, ACLs scoping visibility to assigned cases and relevant account data, and partner portal access for case management \u2014 all without exposing unrelated customer data."
     },
     {
       "id": "csm-h7",
@@ -2784,7 +2784,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "It shows cases from the same account, with similar categories, or affecting the same product — helping agents identify patterns and link related issues",
+        "It shows cases from the same account, with similar categories, or affecting the same product \u2014 helping agents identify patterns and link related issues",
         "It only shows cases assigned to the same agent",
         "It displays cases from all customers",
         "It shows cases created on the same date"
@@ -2816,7 +2816,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Enables sending bulk communications to specific customer segments based on account, product, region, or other criteria — used for announcements, maintenance windows, and outage notifications",
+        "Enables sending bulk communications to specific customer segments based on account, product, region, or other criteria \u2014 used for announcements, maintenance windows, and outage notifications",
         "A one-on-one messaging feature between agent and customer",
         "An internal agent communication tool",
         "A marketing email system"
@@ -2848,7 +2848,7 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Train a Predictive Intelligence model on historical case data, configure auto-classification to set category/subcategory, implement priority prediction based on description sentiment and keywords, and use the predicted values to drive assignment rules — with agent override capability",
+        "Train a Predictive Intelligence model on historical case data, configure auto-classification to set category/subcategory, implement priority prediction based on description sentiment and keywords, and use the predicted values to drive assignment rules \u2014 with agent override capability",
         "Use random assignment and let agents reclassify",
         "Write regex-based Business Rules to match keywords",
         "Require customers to select all fields manually"
@@ -2864,7 +2864,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "The primary table for CSM cases — it extends the task table and stores all customer service case records",
+        "The primary table for CSM cases \u2014 it extends the task table and stores all customer service case records",
         "The incident table used by CSM",
         "A staging table for case imports",
         "A reporting table for case metrics"
@@ -2880,7 +2880,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "The method through which a case was created or received — such as phone, email, portal, chat, or social media",
+        "The method through which a case was created or received \u2014 such as phone, email, portal, chat, or social media",
         "A TV channel about customer service",
         "A communication template",
         "A routing queue"
@@ -2912,7 +2912,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Through configurable escalation rules based on SLA breach, priority, inactivity, or manual trigger — escalations can reassign cases, notify managers, and change priority automatically",
+        "Through configurable escalation rules based on SLA breach, priority, inactivity, or manual trigger \u2014 escalations can reassign cases, notify managers, and change priority automatically",
         "Cases cannot be escalated in CSM",
         "Only managers can manually escalate cases",
         "Escalation requires a separate workflow application"
@@ -2928,7 +2928,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Entitlements define customer-specific service levels that determine which SLA targets apply to their cases — a Gold entitlement might specify 1-hour response while Silver specifies 4 hours",
+        "Entitlements define customer-specific service levels that determine which SLA targets apply to their cases \u2014 a Gold entitlement might specify 1-hour response while Silver specifies 4 hours",
         "Entitlements and SLAs are unrelated",
         "Entitlements replace SLAs entirely",
         "SLAs override Entitlements in all cases"
@@ -2952,7 +2952,7 @@
       "correct": [
         0
       ],
-      "explanation": "The Agent Assist panel uses contextual analysis to surface helpful information: KB articles matching the case description, previously resolved similar cases, and AI-recommended next actions — all without the agent needing to search manually."
+      "explanation": "The Agent Assist panel uses contextual analysis to surface helpful information: KB articles matching the case description, previously resolved similar cases, and AI-recommended next actions \u2014 all without the agent needing to search manually."
     },
     {
       "id": "csm-m26",
@@ -2960,7 +2960,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "When an agent selects the customer and product, the system automatically checks if the customer has a valid entitlement (active contract) for that product — if not, the agent is alerted that the customer may not be eligible for support",
+        "When an agent selects the customer and product, the system automatically checks if the customer has a valid entitlement (active contract) for that product \u2014 if not, the agent is alerted that the customer may not be eligible for support",
         "Entitlements are never verified automatically",
         "Agents must manually check contracts in a separate system",
         "Verification only happens after the case is resolved"
@@ -2976,7 +2976,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A configurable set of scheduled communications (email, portal updates) automatically sent to the customer at defined intervals during case processing — keeping customers informed without manual effort",
+        "A configurable set of scheduled communications (email, portal updates) automatically sent to the customer at defined intervals during case processing \u2014 keeping customers informed without manual effort",
         "A plan for migrating communication systems",
         "An internal team meeting schedule",
         "A document listing approved communication templates"
@@ -2992,7 +2992,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A record that captures each customer touchpoint (call, chat, email) including duration, channel, and notes — providing a complete timeline of all interactions for a case or account",
+        "A record that captures each customer touchpoint (call, chat, email) including duration, channel, and notes \u2014 providing a complete timeline of all interactions for a case or account",
         "A social media post",
         "An internal agent note",
         "A system log entry"
@@ -3008,7 +3008,7 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Build a composite Health Score using Performance Analytics indicators from multiple data sources — case volume trends, SLA breach rates, CSAT scores, and product telemetry. Use Predictive Intelligence to identify churn patterns and trigger proactive outreach when scores drop below thresholds",
+        "Build a composite Health Score using Performance Analytics indicators from multiple data sources \u2014 case volume trends, SLA breach rates, CSAT scores, and product telemetry. Use Predictive Intelligence to identify churn patterns and trigger proactive outreach when scores drop below thresholds",
         "Use a simple formula of open case count only",
         "Manually assign health scores quarterly",
         "Only track CSAT and ignore other signals"
@@ -3056,9 +3056,9 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "The CSM data model follows a hierarchy: Account → Contact → Case → Case Task, with Products and Entitlements linking to Accounts, and Service Contracts defining the service terms",
+        "The CSM data model follows a hierarchy: Account \u2192 Contact \u2192 Case \u2192 Case Task, with Products and Entitlements linking to Accounts, and Service Contracts defining the service terms",
         "All CSM records are stored in a single flat table",
-        "The hierarchy is Account → Case only",
+        "The hierarchy is Account \u2192 Case only",
         "Cases are not related to any account or contact"
       ],
       "correct": [
@@ -3088,7 +3088,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Allows contacts to follow cases they did not create — receiving updates when the case state changes, useful for managers monitoring their team cases",
+        "Allows contacts to follow cases they did not create \u2014 receiving updates when the case state changes, useful for managers monitoring their team cases",
         "A security audit feature that tracks who viewed a case",
         "A dashboard that shows trending case categories",
         "An admin tool for monitoring agent performance"
@@ -3136,7 +3136,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Cases are matched to agents based on required skills (product expertise, language, certification) — the routing engine finds available agents with matching skill sets and appropriate capacity",
+        "Cases are matched to agents based on required skills (product expertise, language, certification) \u2014 the routing engine finds available agents with matching skill sets and appropriate capacity",
         "Cases are routed alphabetically by agent name",
         "Skills are used only for reporting, not routing",
         "Agents manually claim cases from a general queue"
@@ -3168,7 +3168,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A real-time visual dashboard showing KPIs like open case volume, SLA compliance rates, agent utilization, customer satisfaction scores, and case aging — used by supervisors and managers",
+        "A real-time visual dashboard showing KPIs like open case volume, SLA compliance rates, agent utilization, customer satisfaction scores, and case aging \u2014 used by supervisors and managers",
         "A customer-facing dashboard on the portal",
         "A configuration page for CSM settings",
         "A debugging tool for CSM scripts"
@@ -3192,7 +3192,7 @@
       "correct": [
         0
       ],
-      "explanation": "Case State tracks lifecycle progression. State transitions can be configured to trigger actions (notifications, SLA events, task creation). Common states: New → In Progress → Awaiting Info → Resolved → Closed."
+      "explanation": "Case State tracks lifecycle progression. State transitions can be configured to trigger actions (notifications, SLA events, task creation). Common states: New \u2192 In Progress \u2192 Awaiting Info \u2192 Resolved \u2192 Closed."
     },
     {
       "id": "csm-m35",
@@ -3200,7 +3200,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "The percentage of cases resolved during the first customer interaction without requiring follow-up, escalation, or callback — a key indicator of agent effectiveness and customer satisfaction",
+        "The percentage of cases resolved during the first customer interaction without requiring follow-up, escalation, or callback \u2014 a key indicator of agent effectiveness and customer satisfaction",
         "The time to first response on a case",
         "The number of cases created per first-time customer",
         "The rate at which first-tier agents resolve cases"
@@ -3232,7 +3232,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Records the outcome of the interaction — such as \"Resolved\", \"Transferred\", \"Follow-up Required\", \"Escalated\" — enabling reporting on interaction effectiveness",
+        "Records the outcome of the interaction \u2014 such as \"Resolved\", \"Transferred\", \"Follow-up Required\", \"Escalated\" \u2014 enabling reporting on interaction effectiveness",
         "Sets the emotional tone of the interaction",
         "Determines which agent handles the next interaction",
         "Controls the display format of the interaction"
@@ -3258,7 +3258,7 @@
       "correct": [
         0
       ],
-      "explanation": "GRC stands for Governance, Risk, and Compliance — a suite of applications for managing organizational risks, policies, and regulatory compliance."
+      "explanation": "GRC stands for Governance, Risk, and Compliance \u2014 a suite of applications for managing organizational risks, policies, and regulatory compliance."
     },
     {
       "id": "grc-e2",
@@ -3298,7 +3298,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A measure or process implemented to mitigate a risk or ensure compliance with a policy — it defines what is done to manage a specific risk",
+        "A measure or process implemented to mitigate a risk or ensure compliance with a policy \u2014 it defines what is done to manage a specific risk",
         "A form field setting",
         "A type of ACL rule",
         "A workflow approval step"
@@ -3314,7 +3314,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "An assessment performed to verify that a control is operating effectively — it captures evidence and results to demonstrate compliance",
+        "An assessment performed to verify that a control is operating effectively \u2014 it captures evidence and results to demonstrate compliance",
         "A unit test for JavaScript code",
         "A load test for the ServiceNow instance",
         "A user acceptance test"
@@ -3346,7 +3346,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Risks are scored using a matrix of Likelihood × Impact, where each factor has configurable scales. The resulting score determines the risk rating (Critical, High, Medium, Low) and drives mitigation priorities",
+        "Risks are scored using a matrix of Likelihood \u00d7 Impact, where each factor has configurable scales. The resulting score determines the risk rating (Critical, High, Medium, Low) and drives mitigation priorities",
         "Risks are scored by the number of users affected",
         "Risk scores are assigned randomly",
         "Risks are only scored as Pass or Fail"
@@ -3362,7 +3362,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A Risk is a potential future threat; an Issue is a realized problem or finding that requires remediation — issues often result from control test failures or audit findings",
+        "A Risk is a potential future threat; an Issue is a realized problem or finding that requires remediation \u2014 issues often result from control test failures or audit findings",
         "They are the same concept with different names",
         "Issues are internal; Risks are external",
         "Risks are more severe than Issues"
@@ -3370,7 +3370,7 @@
       "correct": [
         0
       ],
-      "explanation": "Risks represent potential threats (forward-looking). Issues represent actual findings or problems (current state) — often discovered through control testing, audits, or incident analysis. Issues require remediation plans with deadlines."
+      "explanation": "Risks represent potential threats (forward-looking). Issues represent actual findings or problems (current state) \u2014 often discovered through control testing, audits, or incident analysis. Issues require remediation plans with deadlines."
     },
     {
       "id": "grc-m4",
@@ -3386,7 +3386,7 @@
       "correct": [
         0
       ],
-      "explanation": "Policy and Compliance Management handles policy lifecycle: draft → review → approve → publish → distribute. It tracks who has acknowledged policies, monitors compliance exceptions, and manages policy retirement."
+      "explanation": "Policy and Compliance Management handles policy lifecycle: draft \u2192 review \u2192 approve \u2192 publish \u2192 distribute. It tracks who has acknowledged policies, monitors compliance exceptions, and manages policy retirement."
     },
     {
       "id": "grc-m5",
@@ -3410,7 +3410,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A visual matrix showing risks plotted by Likelihood (x-axis) vs Impact (y-axis), with color coding indicating severity — enabling quick identification of the highest-priority risks",
+        "A visual matrix showing risks plotted by Likelihood (x-axis) vs Impact (y-axis), with color coding indicating severity \u2014 enabling quick identification of the highest-priority risks",
         "A temperature monitoring dashboard",
         "A map showing geographic risk distribution",
         "A chart of risk scores over time"
@@ -3426,7 +3426,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A regulatory framework, standard, or law (e.g., SOX, HIPAA, ISO 27001) that the organization must comply with — it contains citations that map to controls",
+        "A regulatory framework, standard, or law (e.g., SOX, HIPAA, ISO 27001) that the organization must comply with \u2014 it contains citations that map to controls",
         "An internal knowledge base article",
         "A user manual for the GRC application",
         "A system administrator's documentation"
@@ -3474,7 +3474,7 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement Vendor Risk Management with tiered assessment workflows — auto-classify vendors by criticality, use digital questionnaires with automated scoring, integrate with external risk intelligence feeds for continuous monitoring, and set up automated reassessment schedules based on tier and risk score",
+        "Implement Vendor Risk Management with tiered assessment workflows \u2014 auto-classify vendors by criticality, use digital questionnaires with automated scoring, integrate with external risk intelligence feeds for continuous monitoring, and set up automated reassessment schedules based on tier and risk score",
         "Send the same questionnaire to all 500 vendors simultaneously",
         "Only assess vendors when a contract renewal is due",
         "Outsource all vendor assessments to a third party"
@@ -3490,7 +3490,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A structured approach that defines how risks are identified, assessed, categorized, and managed — it includes risk appetite, scoring methodology, and escalation thresholds",
+        "A structured approach that defines how risks are identified, assessed, categorized, and managed \u2014 it includes risk appetite, scoring methodology, and escalation thresholds",
         "A JavaScript framework used in GRC development",
         "A data import framework",
         "A reporting framework"
@@ -3506,7 +3506,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A formal declaration of the level of risk an organization is willing to accept in pursuit of its objectives — it sets thresholds that trigger escalation when exceeded",
+        "A formal declaration of the level of risk an organization is willing to accept in pursuit of its objectives \u2014 it sets thresholds that trigger escalation when exceeded",
         "A document about food safety risks",
         "A vendor selection criterion",
         "A user access policy"
@@ -3522,7 +3522,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "GRC can link risks and controls to ITSM processes — e.g., control test failures can auto-create incidents, risk events can trigger changes, and ITSM data feeds into risk indicators for continuous monitoring",
+        "GRC can link risks and controls to ITSM processes \u2014 e.g., control test failures can auto-create incidents, risk events can trigger changes, and ITSM data feeds into risk indicators for continuous monitoring",
         "GRC and ITSM are completely separate applications with no integration",
         "GRC replaces ITSM entirely",
         "Integration requires third-party middleware"
@@ -3546,7 +3546,7 @@
       "correct": [
         0
       ],
-      "explanation": "The Risk Register is the central repository of all identified risks. It tracks each risk description, assessment (likelihood × impact), owner, mitigation plan, status, and review dates."
+      "explanation": "The Risk Register is the central repository of all identified risks. It tracks each risk description, assessment (likelihood \u00d7 impact), owner, mitigation plan, status, and review dates."
     },
     {
       "id": "grc-e7",
@@ -3554,7 +3554,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "The level of risk remaining after controls and mitigation measures have been applied — it represents the actual current risk exposure",
+        "The level of risk remaining after controls and mitigation measures have been applied \u2014 it represents the actual current risk exposure",
         "The first risk identified",
         "A risk that has been fully eliminated",
         "A risk that only affects the IT department"
@@ -4380,7 +4380,7 @@
         "Binding of alerts tospeciic Cis",
         "Correlationofaleris toknowledgebasearticles",
         "Mappedservicesprovide visibiltyto thebusinessimpactofan alert",
-        "Configurabion Manageris managing a CI class in the CMDB.The identicationrule（s）needs an update",
+        "Configurabion Manageris managing a CI class in the CMDB.The identicationrule\uff08s\uff09needs an update",
         "APl Integrations",
         "IRE Application",
         "Ci Class Manager",
