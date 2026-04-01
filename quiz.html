@@ -1025,6 +1025,44 @@ function balancedDisplayOptions(q) {
   });
 }
 
+function applyLongestIncorrectBias(displayOptions, q) {
+  const options = [...displayOptions];
+  if (!q || !Array.isArray(q.correct) || q.correct.length !== 1 || options.length < 4) return options;
+
+  const correctIdx = q.correct[0];
+  if (typeof correctIdx !== 'number' || correctIdx < 0 || correctIdx >= options.length) return options;
+
+  const lengths = options.map(opt => String(opt || '').length);
+  const sorted = [...lengths].sort((a, b) => b - a);
+  const longest = sorted[0];
+  const second = sorted[1];
+  const longestIdx = lengths.indexOf(longest);
+
+  // Apply only when the question is sufficiently variable and deterministically selected.
+  const spread = longest - Math.min(...lengths);
+  const shouldApply = spread >= 12 && (stableHash((q.id || 'q') + '|longest-bias') % 100) < 55;
+  if (!shouldApply) return options;
+
+  // If correct option is currently the longest, enrich a wrong option to become longest.
+  if (longestIdx === correctIdx) {
+    const wrongCandidates = options
+      .map((_, idx) => idx)
+      .filter(idx => idx !== correctIdx);
+    if (!wrongCandidates.length) return options;
+    wrongCandidates.sort((a, b) => lengths[b] - lengths[a]);
+    const targetWrongIdx = wrongCandidates[0];
+    const required = Math.max(10, (longest - lengths[targetWrongIdx]) + 2);
+    const frag = OPTION_BALANCE_FRAGMENTS[stableHash((q.id || 'q') + '|wrong-boost') % OPTION_BALANCE_FRAGMENTS.length];
+    let suffix = options[targetWrongIdx].endsWith('.') ? ` ${frag}.` : `; ${frag}`;
+    while (suffix.length < required) suffix += ` ${frag}.`;
+    options[targetWrongIdx] = options[targetWrongIdx] + suffix;
+  } else {
+    // If a wrong option is already longest by a clear margin, leave it as-is.
+    if (longest - second >= 2) return options;
+  }
+  return options;
+}
+
 // ── MCQ RENDERING ──
 // currentShuffleMap: maps display index → original index
 let currentShuffleMap = [];
@@ -1042,7 +1080,8 @@ function renderMCQ(q) {
   const list = document.getElementById('optionsList');
   list.innerHTML = '';
   const letters = 'ABCDEFGH';
-  const displayOptions = balancedDisplayOptions(q);
+  const balanced = balancedDisplayOptions(q);
+  const displayOptions = applyLongestIncorrectBias(balanced, q);
   
   // Build shuffled options with original index tracking
   const indexed = displayOptions.map((opt, i) => ({ text: opt, origIdx: i }));
