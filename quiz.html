@@ -996,13 +996,25 @@ function balancedDisplayOptions(q) {
   const maxLen = Math.max(...lengths);
   const minLen = Math.min(...lengths);
   const spread = maxLen - minLen;
-  if (spread < 28) return options;
+  if (spread <= 4) return options;
 
-  const targetLen = Math.max(Math.floor(maxLen * 0.86), maxLen - 22);
+  // Apply normalization to *all* MCQs (mild on low-spread, stronger on high-spread)
+  // so users cannot rely on visual length cues to infer correctness.
+  let targetLen = maxLen;
+  let maxPasses = 1;
+  if (spread >= 28) {
+    targetLen = Math.max(Math.floor(maxLen * 0.86), maxLen - 22);
+    maxPasses = 2;
+  } else if (spread >= 14) {
+    targetLen = Math.max(Math.floor(maxLen * 0.78), maxLen - 14);
+  } else {
+    targetLen = Math.max(Math.floor(maxLen * 0.72), maxLen - 8);
+  }
+
   return options.map((opt, idx) => {
     let out = opt;
     let passes = 0;
-    while (out.length < targetLen && passes < 2) {
+    while (out.length < targetLen && passes < maxPasses) {
       const seed = `${q.id || 'q'}|${idx}|${passes}|${out.length}`;
       const frag = OPTION_BALANCE_FRAGMENTS[stableHash(seed) % OPTION_BALANCE_FRAGMENTS.length];
       const suffix = out.endsWith('.') ? ` ${frag}.` : `; ${frag}`;
