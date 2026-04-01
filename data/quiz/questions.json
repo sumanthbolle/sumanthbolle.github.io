@@ -1975,6 +1975,214 @@
         0
       ],
       "explanation": "Emergency response: back out the Update Set (creates a reversal set), verify restoration, communicate resolution. Prevention: mandate UAT sign-off before production, require peer review of update sets, implement a change freeze window, and add ATF tests for critical workflows."
+    },
+    {
+      "id": "csa-h14",
+      "q": "A form should require Close notes when State changes to Resolved, regardless of whether updates come from UI, import set, or REST API. Which design best satisfies this requirement?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Enforce with a Data Policy (for all channels) and optionally keep a UI Policy for immediate form guidance",
+        "Use only a UI Policy because it applies to all update channels and is easier to maintain",
+        "Use only an onChange Client Script because it catches state transitions in real time",
+        "Use a display Business Rule to block save when close notes are empty"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "UI Policies and Client Scripts are client-side only. To enforce across UI and non-UI channels (imports, APIs), use server-side enforcement such as Data Policy (or BR). Pairing UI Policy with Data Policy gives both UX guidance and true enforcement."
+    },
+    {
+      "id": "csa-h15",
+      "q": "A user has role itil directly, and is also in a group with role change_manager. Which statement is correct about effective access?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "The user gets the union of roles from direct assignment and group inheritance",
+        "Directly assigned role overrides inherited roles, so only itil is active",
+        "Only inherited roles are evaluated by ACL engine at runtime",
+        "Role conflict resolution keeps whichever role was assigned first"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ServiceNow aggregates roles from all assignment paths. Effective access is cumulative (subject to ACL evaluation), not first-wins or direct-vs-inherited precedence."
+    },
+    {
+      "id": "csa-h16",
+      "q": "You need to move a configuration fix from Dev to Prod quickly. The fix includes one changed Business Rule and one modified form layout. Which is the safest sequence?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Capture both changes in an Update Set, move to Test, preview/resolve, validate, then commit to Prod",
+        "Export the modified records as XML and import directly into Prod to avoid delays",
+        "Recreate both changes manually in Prod to avoid Update Set dependencies",
+        "Commit the Update Set directly to Prod first, then test in Test"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The recommended path is Dev to Test to Prod with preview/resolution before commit. Direct XML/import or manual recreation increases drift/risk and bypasses promotion controls."
+    },
+    {
+      "id": "csa-h17",
+      "q": "An Incident onSubmit Client Script returns false based on a client-side condition. A user can still update the record via REST API. Why?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Client Scripts run only in browser form context; API updates bypass client logic",
+        "REST API ignores all table-level validations in ServiceNow",
+        "onSubmit scripts run only on insert, not update",
+        "REST updates always execute as admin and skip validation"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Client Scripts execute in UI browser sessions only. Non-UI channels require server-side validation (Data Policy, ACL/scripted logic, Business Rules)."
+    },
+    {
+      "id": "csa-h18",
+      "q": "A reference field displays user names but stores values like 6816f79cc0a8016401c5a33be04be441. What is stored and why?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "The sys_id of the referenced record; display value is rendered for readability",
+        "A hashed display value used only for performance",
+        "The primary key from an external identity provider",
+        "The latest cached label from sys_choice"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Reference fields persist the target record sys_id. The UI resolves and shows the display value, but the database stores the stable identifier."
+    },
+    {
+      "id": "csa-h19",
+      "q": "Which statement about table inheritance in Task hierarchy is accurate?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Child tables (like Incident) inherit parent fields from Task and can add their own fields",
+        "Parent fields are copied into child tables at creation and then become independent",
+        "Inheritance works only for dictionary labels, not actual columns",
+        "Changing a parent field never affects child table forms"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Task is a parent table. Child tables inherit shared fields and behavior while allowing table-specific extension. Parent-level changes typically propagate to children."
+    },
+    {
+      "id": "csa-h20",
+      "q": "You must make a field mandatory only when Assignment group is Network. Which approach is best for maintainability in CSA-level admin work?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "UI Policy with condition and UI Policy Action for mandatory state",
+        "Catalog Client Script using g_form.setMandatory() regardless of table",
+        "Dictionary-level mandatory=true with onLoad Client Script to undo it",
+        "After Business Rule that throws an error when field is empty"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "For conditional form behavior, UI Policies are the maintainable no/low-code approach. Dictionary mandatory is unconditional; BR-only approach gives poor UX."
+    },
+    {
+      "id": "csa-h21",
+      "q": "A filter condition uses State is one of New, In Progress. Why is this preferable to two separate OR clauses in many admin scenarios?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "It is clearer, easier to maintain, and semantically equivalent for multi-value matching",
+        "It forces index creation automatically on State",
+        "It evaluates only client-side and improves network performance",
+        "It bypasses ACL evaluation for list queries"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "is one of expresses multi-value criteria concisely and readably. It does not bypass ACLs or auto-create indexes."
+    },
+    {
+      "id": "csa-h22",
+      "q": "In a Notification, recipients are configured as Assigned to, Watch list users, and a Support group. Which best describes final delivery behavior?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "ServiceNow resolves all recipient sources, de-duplicates addresses, then sends based on notification conditions/preferences",
+        "Only the first recipient source in the list receives email",
+        "Group recipients override all field-based recipients",
+        "Watch list users are ignored when Assigned to is present"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Notification recipient sets are combined and deduplicated before send processing. Multiple sources can contribute recipients in one notification."
+    },
+    {
+      "id": "csa-h23",
+      "q": "A user reports that a module disappeared from left nav after role changes. What is the most accurate first check?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Verify module/application role requirements and whether user still inherits those roles via group membership",
+        "Clear browser cache; module visibility is purely client cache",
+        "Rebuild dictionary cache because modules are dictionary-driven",
+        "Run Fix Script to repopulate sys_ui_module records"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Module visibility is role-driven. First validate role requirements and current effective roles (including inherited group roles)."
+    },
+    {
+      "id": "csa-h24",
+      "q": "Which combination best represents a realistic pre-production validation gate for CSA admin changes?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Preview Update Set in target, resolve collisions, run UAT on affected flows, then commit",
+        "Commit directly and monitor system logs for failures",
+        "Export XML backups of changed records and skip preview",
+        "Use only ATF and skip human UAT because ATF covers all scenarios"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Best practice is preview plus conflict resolution plus UAT before commit to reduce regressions and environment drift."
+    },
+    {
+      "id": "csa-h25",
+      "q": "Which statement about ACL evaluation is most accurate for CSA exam expectations?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Access is granted only when relevant ACL checks pass for the operation; role possession alone is not universally sufficient",
+        "Any one passing ACL grants full table access for all operations",
+        "Read ACL automatically grants write access on same table",
+        "If user has admin, ACLs are always ignored in every context"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ACLs are operation-specific and evaluated for access decisions; role assignment helps satisfy ACL requirements but does not replace ACL logic semantics."
+    },
+    {
+      "id": "csa-h26",
+      "q": "A list layout shows columns differently for two users on the same table. What is the most likely explanation?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Personalized list layout/view preferences can differ by user even on same table",
+        "Dictionary entries are duplicated per user by default",
+        "List columns are always globally fixed unless cloned instance",
+        "Role inheritance forces unique columns per group"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ServiceNow supports user personalization for list/form layouts and view preferences, so UI can differ per user without schema differences."
     }
   ],
   "csm": [

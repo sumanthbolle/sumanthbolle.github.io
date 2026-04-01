@@ -580,6 +580,7 @@ let questionTimerMax = 0;
 let quizStartTime = null;
 let selectedOptions = new Set();
 let difficultyFilter = 'all';
+const QUIZ_ROTATION_KEY = 'sn_quiz_rotation_v1';
 
 function getCategoryShareUrl(categoryKey) {
   return window.location.origin + window.location.pathname + '#category/' + encodeURIComponent(categoryKey);
@@ -610,6 +611,74 @@ function clearCategoryHash() {
   } else {
     window.location.hash = '';
   }
+}
+
+function loadQuizRotationState() {
+  try {
+    return JSON.parse(localStorage.getItem(QUIZ_ROTATION_KEY) || '{}') || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveQuizRotationState(state) {
+  try {
+    localStorage.setItem(QUIZ_ROTATION_KEY, JSON.stringify(state || {}));
+  } catch (e) {
+    // Ignore storage quota/privacy mode write failures.
+  }
+}
+
+function hashQuestionIds(ids) {
+  let hash = 2166136261;
+  const key = ids.join('|');
+  for (let i = 0; i < key.length; i++) {
+    hash ^= key.charCodeAt(i);
+    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function selectRotatingSubset(pool, count, context) {
+  if (!Array.isArray(pool) || count >= pool.length) return shuffleArray(pool);
+
+  const byId = {};
+  const ids = [];
+  pool.forEach(q => {
+    if (!q || !q.id) return;
+    byId[q.id] = q;
+    ids.push(q.id);
+  });
+  if (count >= ids.length) return shuffleArray(pool);
+
+  const state = loadQuizRotationState();
+  const poolHash = hashQuestionIds(ids);
+  const key = [context.category, context.modeId || 'mode', context.diff || 'all', poolHash].join('::');
+  const validIdSet = new Set(ids);
+
+  let entry = state[key];
+  if (!entry || !Array.isArray(entry.remaining)) {
+    entry = { remaining: shuffleArray(ids) };
+  } else {
+    entry.remaining = entry.remaining.filter(id => validIdSet.has(id));
+    if (entry.remaining.length === 0) entry.remaining = shuffleArray(ids);
+  }
+
+  const selected = [];
+  while (selected.length < count) {
+    if (entry.remaining.length === 0) {
+      const already = new Set(selected);
+      const refillPool = ids.filter(id => !already.has(id));
+      entry.remaining = shuffleArray(refillPool.length ? refillPool : ids);
+    }
+    const next = entry.remaining.shift();
+    if (!next || selected.includes(next) || !byId[next]) continue;
+    selected.push(next);
+  }
+
+  state[key] = entry;
+  saveQuizRotationState(state);
+  return selected.map(id => byId[id]).filter(Boolean);
 }
 
 function copyCertificationLink(categoryKey, evt) {
@@ -768,9 +837,6 @@ function startQuiz(catKey, mode) {
     questions = questions.filter(q => q.difficulty === 'hard');
   }
   
-  // Shuffle using Fisher-Yates
-  questions = shuffleArray(questions);
-  
   // Limit count — warn if fewer questions available than requested
   let count = mode.count;
   if (typeof count === 'number' && questions.length < count) {
@@ -778,7 +844,14 @@ function startQuiz(catKey, mode) {
     if (!proceed) return;
   }
   if (typeof count === 'number') {
-    questions = questions.slice(0, count);
+    questions = selectRotatingSubset(questions, count, {
+      category: catKey,
+      modeId: mode.id || 'custom',
+      diff: difficultyFilter
+    });
+    questions = shuffleArray(questions);
+  } else {
+    questions = shuffleArray(questions);
   }
   
   if (questions.length === 0) {
