@@ -198,10 +198,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Consolidate overlapping Before BRs into a single Script Include with a dispatcher pattern, convert sequential After BRs to a Flow Designer subflow, and profile each rule's execution time with the BR debug log",
-        "Convert all Business Rules to client scripts for faster execution",
-        "Move all logic into a single Before Business Rule to reduce rule evaluations",
-        "Replace all Business Rules with scheduled jobs"
+        "Profile rule execution and query plans, retire redundant logic, and move heavy post-commit work to async paths.",
+        "Convert all rules to display rules so form load centralizes processing and removes update latency.",
+        "Increase node count first, then keep existing rule design because horizontal scale fixes script contention.",
+        "Disable ACL scripts temporarily so business rules can execute faster during high-traffic periods."
       ],
       "correct": [
         0
@@ -246,10 +246,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement CMDB Health audit using CSDM compliance dashboards, create reconciliation rules to merge duplicates using IRE, establish identification rules with proper precedence, then run a phased cleanup with rollback capabilities",
-        "Delete all orphaned CIs immediately and reimport from Discovery",
-        "Manually review each CI record and fix relationships",
-        "Disable all identification rules and start from scratch"
+        "Establish CI governance with ownership rules, dedupe/reconciliation tuning, and relationship completeness KPIs before migration.",
+        "Archive all orphaned CIs immediately, then rebuild relationships later from incident history references.",
+        "Clone production CMDB into a separate instance and manually merge trusted classes back after cleanup.",
+        "Replace reconciliation with import set transforms only, since IRE introduces unnecessary matching overhead."
       ],
       "correct": [
         0
@@ -262,10 +262,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement table rotation/archiving to reduce active table size, add database indexes on frequently queried columns, optimize ACL evaluation by reducing complex script-based ACLs, and enable query business rules to enforce mandatory filters",
-        "Increase the instance hardware allocation",
-        "Delete old incident records directly from the database",
-        "Disable all Business Rules on the incident table"
+        "Combine indexing strategy, query hygiene, and data lifecycle controls; validate gains with representative workload tests.",
+        "Turn off auditing and ACLs on large tables to reduce row read overhead before redesigning filters.",
+        "Move incident records to multiple custom tables by region so each list query scans fewer rows.",
+        "Force all users onto one saved list view so query plans stabilize automatically across sessions."
       ],
       "correct": [
         0
@@ -666,10 +666,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Create standardized variable sets for common fields, implement a catalog item taxonomy, consolidate workflows into parameterized Flow Designer flows, and use catalog client scripts at the variable set level",
-        "Delete all items and start over",
-        "Convert all catalog items to record producers",
-        "Merge all items into a single catalog item with conditional fields"
+        "Standardize variable sets/naming, enforce governance, and refactor catalog design into reusable request patterns.",
+        "Duplicate top items by department and hardcode variables so local teams can move faster independently.",
+        "Delete historical catalog items and recreate from scratch to avoid preserving inconsistent metadata.",
+        "Use one global catalog item with 200 variables and hide/show everything through client scripts."
       ],
       "correct": [
         0
@@ -682,10 +682,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement alert aggregation rules, configure alert correlation to group related alerts, tune severity mapping with the operations team, set up alert suppression for known maintenance windows, and establish event transform maps to normalize source data",
-        "Disable all alerts and only use manual incident creation",
-        "Set all alerts to the same severity level",
-        "Create a Business Rule to auto-close all alerts"
+        "Tune event rules and noise reduction first, then refine alert correlation into actionable incidents.",
+        "Route every alert to incident creation and rely on assignment groups to discard non-actionable tickets.",
+        "Disable event collection during peak hours and replay alerts overnight to control volume spikes.",
+        "Move all alert logic into flow designer without event normalization because flows are easier to monitor."
       ],
       "correct": [
         0
@@ -698,10 +698,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Flow Designer with decision tables for dynamic approval routing, implement Group Approval activities with conditional logic per risk/type combination, and leverage CMDB service relationships to auto-identify impacted service owners as approvers",
-        "Create a separate Change workflow for every possible combination",
-        "Use a single approval group for all changes",
-        "Hard-code approver lists in a Business Rule"
+        "Model approvals with staged flow logic and conditional branches tied to risk/service ownership.",
+        "Keep one linear approval list and let approvers skip downstream steps when priority is high.",
+        "Use UI action scripts to set approval outcomes directly on closed changes after implementation.",
+        "Create separate change tables per approval tier so each group owns an isolated lifecycle."
       ],
       "correct": [
         0
@@ -860,10 +860,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "ACL check \u2192 Data Policy validation \u2192 Before Business Rules \u2192 Database operation \u2192 After Business Rules \u2192 Async Business Rules \u2192 Workflow/Flow trigger \u2192 Notifications \u2192 Display Business Rules (on next load)",
-        "Before BR \u2192 Database \u2192 After BR \u2192 Done",
-        "Client Script \u2192 Server Script \u2192 Database \u2192 Done",
-        "The order is random and depends on server load"
+        "Understand ACL, policy, BR timing, DB write point, and post-commit processing boundaries for accurate debugging.",
+        "Focus on client script order first because server execution begins only after browser validation completes.",
+        "Assume after business rules can still modify current before commit if order is configured above 100.",
+        "Treat display business rules as part of update transaction because they execute before row write."
       ],
       "correct": [
         0
@@ -876,10 +876,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "The submit was triggered by a server-side operation (skipping client logic), a Client Script is overriding the UI Policy, or the browser's developer tools were used to bypass the mandatory check \u2014 Data Policies should enforce server-side",
-        "UI Policies are always enforced and this cannot happen",
-        "The user must have the admin role",
-        "The mandatory setting was probably not saved"
+        "Client-side mandatory checks can be bypassed; enforce critical rules server-side for non-UI channels.",
+        "UI policy mandatory is always enforced at database layer, so integrations cannot bypass it.",
+        "Form personalization by user role disables mandatory behavior until page cache is refreshed.",
+        "Mandatory enforcement depends solely on dictionary max length and not on policy evaluation timing."
       ],
       "correct": [
         0
@@ -2416,10 +2416,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "CSM SLAs can be customer-specific using Entitlements \u2014 different customers can have different response/resolution targets for the same case type based on their service contract",
-        "CSM does not support SLAs",
-        "CSM uses the same SLA engine with no differences",
-        "CSM SLAs are always faster than ITSM SLAs"
+        "CSM commonly binds entitlement/account context into SLA targeting, rather than treating all requests through one generic SLA policy.",
+        "CSM SLAs are always faster than ITSM SLAs because customer-facing timers bypass internal workflow pauses.",
+        "CSM does not support SLA definitions; only entitlement records determine response and resolution obligations.",
+        "CSM and ITSM SLA behavior is identical in all cases once case and incident share the same priority value."
       ],
       "correct": [
         0
@@ -2432,10 +2432,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A guided, step-by-step workflow that walks agents through a defined process for handling specific case types, ensuring consistency and capturing required information at each step",
-        "A Knowledge Base article written for agents",
-        "A training manual stored in the system",
-        "A script that auto-resolves cases"
+        "Playbooks orchestrate guided agent actions with context-aware tasks/decisions to standardize complex case handling.",
+        "Playbooks are static knowledge articles that agents open when no workflow automation is available.",
+        "Playbooks replace assignment rules by deciding which group owns a case at creation time.",
+        "Playbooks should execute only after case closure to document what actions were taken by agents."
       ],
       "correct": [
         0
@@ -2464,10 +2464,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "The CSM portal is designed for external customers with branded experience, account-scoped visibility, and consumer-focused features; the ITSM Service Portal is for internal employees",
-        "They are identical portals",
-        "The CSM portal cannot display Knowledge articles",
-        "The ITSM portal supports multiple accounts"
+        "CSM portal experiences are customer-service focused, while generic ITSM portals center internal employee service flows.",
+        "They are identical portals with different themes and no difference in data model or workflow intent.",
+        "CSM portal is for agents and ITSM portal is for external contacts in partner support programs.",
+        "ITSM portal supports entitlements natively, while CSM portal requires custom plugins for account context."
       ],
       "correct": [
         0
@@ -2624,10 +2624,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Customer Central provides a 360-degree view of the customer \u2014 showing all cases, contracts, entitlements, products, and interactions for a single account in one unified workspace \u2014 while the standard workspace focuses on individual case handling",
-        "Customer Central is for customers; standard workspace is for agents",
-        "They are identical workspaces with different names",
-        "Customer Central only shows financial data"
+        "Customer Central unifies account-level context and outcomes, while agent workspace optimizes case execution workflows.",
+        "They are the same interface with different branding applied by role and theme configuration.",
+        "Customer Central is deprecated and should be replaced entirely by legacy CSM workspace modules.",
+        "Agent workspace is for external customers; Customer Central is for internal case assignment groups."
       ],
       "correct": [
         0
@@ -2640,10 +2640,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Integrate Event Management with CSM using event-to-case mapping rules, leverage Service Mapping to identify affected customers, and auto-create cases with proactive messaging via the customer portal and email notifications",
-        "Wait for customers to report issues and then create cases",
-        "Create a scheduled job to check for issues daily",
-        "Use a chatbot to ask customers if they have issues"
+        "Use proactive service signals and account context to trigger cases/plays before customer-reported impact.",
+        "Open incidents for all telemetry anomalies and let account teams convert them to cases manually.",
+        "Create one weekly batch case per customer with all alerts to reduce case volume overhead.",
+        "Limit proactive service to VIP contacts because entitlement verification slows event-based automation."
       ],
       "correct": [
         0
@@ -2656,10 +2656,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Entitlements linked to Service Contracts per account, where each entitlement specifies the SLA target duration. A single SLA Definition references the entitlement to dynamically determine the target for each case based on the customer's contract",
-        "Create a separate SLA Definition for each account",
-        "Use a Business Rule to calculate SLA targets per case",
-        "Hard-code account-specific timers in a Script Include"
+        "Model account-aware SLA/entitlement rules with precedence strategy and transparent exception handling.",
+        "Duplicate case tables by SLA tier and route accounts to tables that match contracted response windows.",
+        "Keep one global SLA and apply account targets through client scripts at case form submit.",
+        "Store SLA logic in knowledge articles so agents can manually select the correct response target."
       ],
       "correct": [
         0
@@ -2672,10 +2672,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Configure Assignment Groups per region, implement Business Schedule records for each region's operating hours, set up regional SLAs that reference the correct schedules, use Advanced Work Assignment with location-based routing, and configure portal language support",
-        "Create separate instances per region",
-        "Use domain separation for each region",
-        "Create separate case tables per region"
+        "Combine domain strategy, assignment/routing policy, and account hierarchy controls for regional operating models.",
+        "Deploy one CSM instance per region and synchronize accounts nightly to keep global reporting centralized.",
+        "Use catalog variables to encode region and let agents manually enforce local process variations.",
+        "Apply one global process and handle all regional exceptions through ad-hoc case comments and tasks."
       ],
       "correct": [
         0
@@ -2688,10 +2688,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Case Tasks for each tier with task-level SLAs \u2014 when Tier 1 escalates to Tier 2, a new task is created with Tier 2's SLA. The parent case tracks overall resolution SLA while each task tracks per-tier targets",
-        "Apply a single SLA to the entire case regardless of tier",
-        "Manually track tier times in a comments field",
-        "Create separate case records for each tier"
+        "Implement tiered routing and escalation logic with ownership transitions and measurable handoff SLAs.",
+        "Assign all new cases to Tier 2, then downgrade simple issues to Tier 1 for closure speed.",
+        "Use one assignment group and model tiers only as case tags for simplified reporting.",
+        "Escalate all unresolved cases at fixed intervals regardless of severity or entitlement terms."
       ],
       "correct": [
         0
@@ -2704,10 +2704,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Configure Assessment and Survey framework with different survey types triggered at case closure, use Survey Designer for branded survey forms, link responses to cases for correlation analysis, and build Performance Analytics dashboards for trending",
-        "Use a third-party survey tool completely outside ServiceNow",
-        "Ask agents to manually record customer satisfaction scores",
-        "Only track CSAT and ignore CES and NPS"
+        "Use survey orchestration and metric governance so CES, CSAT, and NPS each serve distinct decision loops.",
+        "Capture only CSAT because CES and NPS overlap and add unnecessary survey fatigue.",
+        "Compute CES/NPS from case close duration and reopen rates instead of explicit customer responses.",
+        "Run one annual satisfaction survey and map all outputs to case-level feedback records."
       ],
       "correct": [
         0
@@ -2720,10 +2720,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use the Partner model in CSM \u2014 create partner accounts, assign partner contacts with the sn_customerservice.partner role, configure ACLs to scope case visibility to partner-assigned cases, and set up partner portal with account-level data restrictions",
-        "Give partners full admin access to see everything",
-        "Create a separate instance for each partner",
-        "Email case updates to partners manually"
+        "Model account-contact-partner relationships with delegated access controls and clear case ownership boundaries.",
+        "Allow all partner users full account visibility to avoid delays in collaborative case handling.",
+        "Create separate accounts for each partner to prevent cross-company entitlement rule conflicts.",
+        "Use watch lists only; delegated partner access is unnecessary when email updates are enabled."
       ],
       "correct": [
         0
@@ -2736,10 +2736,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement AI-powered Knowledge search on the portal with contextual suggestions, configure Virtual Agent for common inquiries, enable Community forums for peer support, use Service Catalog for standard requests, and track deflection rates with Performance Analytics",
-        "Hire more agents to handle cases faster",
-        "Remove the ability to create cases from the portal",
-        "Only accept cases via phone"
+        "Implement deflection via contextual knowledge, intent routing, and measurable containment funnels.",
+        "Hide live support entry points to force portal-only interactions and reduce inbound case count.",
+        "Publish static FAQs and disable search personalization to avoid exposing irrelevant articles.",
+        "Increase mandatory fields on case forms so customers self-solve before completing submission."
       ],
       "correct": [
         0
@@ -2752,10 +2752,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Create a Major Issue parent case, use automated case matching rules to link incoming cases as children, post a public status update on the customer portal, send proactive notifications to affected accounts, and provide a single resolution that cascades to all child cases",
-        "Ask agents to handle each case individually",
-        "Close all cases with a generic message",
-        "Wait until the issue is resolved then respond to all cases"
+        "Use major-incident style communication and parent-child case orchestration to contain surge volumes.",
+        "Merge all incoming cases into one record and close duplicates without customer notification.",
+        "Suspend SLA clocks on outage-related cases until root cause is confirmed by infrastructure teams.",
+        "Create ad-hoc task lists in spreadsheets and update case statuses in bulk at day end."
       ],
       "correct": [
         0
@@ -2816,10 +2816,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Enables sending bulk communications to specific customer segments based on account, product, region, or other criteria \u2014 used for announcements, maintenance windows, and outage notifications",
-        "A one-on-one messaging feature between agent and customer",
-        "An internal agent communication tool",
-        "A marketing email system"
+        "Targeted communication segments audiences by context and triggers relevant outreach at controlled lifecycle points.",
+        "It sends every service bulletin to all contacts so communication parity is preserved across accounts.",
+        "It replaces case comments by pushing one-way updates without relationship to case or account context.",
+        "It is limited to outbound email campaigns and cannot be tied to service events or incidents."
       ],
       "correct": [
         0
@@ -2832,10 +2832,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Integration Hub with the Salesforce spoke for bidirectional sync, implement transform maps for initial data migration, configure scheduled integration flows for ongoing sync, and establish conflict resolution rules for bidirectional updates",
-        "Manually re-enter data from Salesforce into ServiceNow",
-        "Export Salesforce data to CSV and import weekly",
-        "Use Salesforce for all customer management and skip CSM setup"
+        "Integrate lifecycle signals bi-directionally with governed field mappings and ownership across CRM/CSM boundaries.",
+        "Use one-way sync from CSM to CRM only, since opportunity context should not influence support workflows.",
+        "Store Salesforce IDs in free-text fields and rely on agents to cross-reference account context manually.",
+        "Replicate CRM account/contact tables in CSM and disable sync to avoid reconciliation conflicts."
       ],
       "correct": [
         0
@@ -2848,10 +2848,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Train a Predictive Intelligence model on historical case data, configure auto-classification to set category/subcategory, implement priority prediction based on description sentiment and keywords, and use the predicted values to drive assignment rules \u2014 with agent override capability",
-        "Use random assignment and let agents reclassify",
-        "Write regex-based Business Rules to match keywords",
-        "Require customers to select all fields manually"
+        "Use model governance, confidence thresholds, and fallback routing to keep AI classification reliable in production.",
+        "Auto-accept all model predictions to maximize throughput and retrain quarterly on unresolved cases only.",
+        "Train separate model per assignment group and ignore shared taxonomy to improve local precision.",
+        "Run AI only on closed cases so misclassification cannot affect live customer response paths."
       ],
       "correct": [
         0
@@ -2912,10 +2912,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Through configurable escalation rules based on SLA breach, priority, inactivity, or manual trigger \u2014 escalations can reassign cases, notify managers, and change priority automatically",
-        "Cases cannot be escalated in CSM",
-        "Only managers can manually escalate cases",
-        "Escalation requires a separate workflow application"
+        "Escalation combines SLA/priority conditions, ownership transitions, and communication obligations.",
+        "Escalation simply reassigns to manager group after fixed time regardless of entitlement or severity.",
+        "Escalation closes the original case and opens a new one at a higher support tier automatically.",
+        "Escalation is triggered only by customer sentiment score and not by operational SLA breach conditions."
       ],
       "correct": [
         0
@@ -2928,10 +2928,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Entitlements define customer-specific service levels that determine which SLA targets apply to their cases \u2014 a Gold entitlement might specify 1-hour response while Silver specifies 4 hours",
-        "Entitlements and SLAs are unrelated",
-        "Entitlements replace SLAs entirely",
-        "SLAs override Entitlements in all cases"
+        "Entitlements determine service rights and SLA selection logic, binding contractual support rules to case handling.",
+        "Entitlements are optional labels for reporting, while SLA definitions apply uniformly to all accounts.",
+        "Entitlements replace SLAs by directly controlling pause/resume timers through contact preference settings.",
+        "Entitlements are evaluated only at case closure when final response time is calculated for reporting."
       ],
       "correct": [
         0
@@ -2960,10 +2960,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "When an agent selects the customer and product, the system automatically checks if the customer has a valid entitlement (active contract) for that product \u2014 if not, the agent is alerted that the customer may not be eligible for support",
-        "Entitlements are never verified automatically",
-        "Agents must manually check contracts in a separate system",
-        "Verification only happens after the case is resolved"
+        "Asset/entitlement checks validate support eligibility and route case treatment based on covered products/services.",
+        "Verification is informational only; assignment and SLA logic should ignore entitlement state for speed.",
+        "Asset checks run after closure to enrich reporting and do not affect active case workflow paths.",
+        "Entitlement verification requires manual override each time because account relationships are too dynamic."
       ],
       "correct": [
         0
@@ -2976,10 +2976,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A configurable set of scheduled communications (email, portal updates) automatically sent to the customer at defined intervals during case processing \u2014 keeping customers informed without manual effort",
-        "A plan for migrating communication systems",
-        "An internal team meeting schedule",
-        "A document listing approved communication templates"
+        "Communication plans define timing/channels/audiences so updates remain consistent during service-impact events.",
+        "They are templates for agent signatures and have no relationship to case lifecycle communications.",
+        "They replace notifications and require manual send by supervisors for every status transition.",
+        "They are used only for marketing outreach and should not be tied to support operations."
       ],
       "correct": [
         0
@@ -2992,10 +2992,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A record that captures each customer touchpoint (call, chat, email) including duration, channel, and notes \u2014 providing a complete timeline of all interactions for a case or account",
-        "A social media post",
-        "An internal agent note",
-        "A system log entry"
+        "Interaction captures omnichannel engagement context and can be converted/linked to downstream work records.",
+        "Interaction is a billing object used to aggregate chargeback totals per support session.",
+        "Interaction replaces cases entirely in CSM and should be used for all lifecycle management tasks.",
+        "Interaction is a read-only audit table populated only by email inbound processing rules."
       ],
       "correct": [
         0
@@ -3008,10 +3008,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Build a composite Health Score using Performance Analytics indicators from multiple data sources \u2014 case volume trends, SLA breach rates, CSAT scores, and product telemetry. Use Predictive Intelligence to identify churn patterns and trigger proactive outreach when scores drop below thresholds",
-        "Use a simple formula of open case count only",
-        "Manually assign health scores quarterly",
-        "Only track CSAT and ignore other signals"
+        "Build composite health scoring with weighted indicators, drift monitoring, and action playbooks tied to thresholds.",
+        "Use one static health formula for all accounts so trend comparisons remain globally consistent.",
+        "Score accounts only by open case count because support load is the strongest churn predictor.",
+        "Recalculate health quarterly and let account teams decide interventions without automated triggers."
       ],
       "correct": [
         0
@@ -3024,10 +3024,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Configure separate portals for B2B (account-scoped, SSO via SAML) and B2C (consumer-facing, social login). Use Contacts for B2B and Consumers for B2C with appropriate ACLs. Implement different case routing and SLA models per segment. Scale B2C with Virtual Agent for high-volume deflection",
-        "Force all users through the same portal",
-        "Create separate instances for B2B and B2C",
-        "Only support B2B and refer B2C to a call center"
+        "Separate B2B and B2C experiences through controlled segmentation while preserving shared service capabilities.",
+        "Use one universal portal journey and ask users to self-identify as consumer or business on each case.",
+        "Create dedicated CSM instance for B2C and sync only severe cases back to B2B operations.",
+        "Store consumers as contacts under one generic account to simplify entitlement and data model complexity."
       ],
       "correct": [
         0
@@ -3040,10 +3040,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Major Issue Management to create a parent case for the flight delay, auto-generate child cases for affected passengers using a scheduled flow with passenger manifest data, implement playbooks for rebooking and compensation workflows, and use targeted communications for mass passenger notifications",
-        "Have agents manually create 300 cases",
-        "Create one case for the whole flight and email all passengers the same message",
-        "Wait for passengers to call in and create cases individually"
+        "Use event-to-case orchestration with parent-case communication strategy and passenger-specific context linking.",
+        "Create one bulk case for all passengers and broadcast updates through outbound email campaigns only.",
+        "Open incident records instead of CSM cases so flight operations can process impact at infrastructure level.",
+        "Queue all passenger cases for manual triage before any communication to prevent inaccurate outage messaging."
       ],
       "correct": [
         0
@@ -3072,10 +3072,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Quick Close allows agents to resolve simple cases in one action with minimal fields; Full Resolution follows the complete state transition flow with required documentation and root cause analysis",
-        "Quick Close deletes the case; Full Resolution archives it",
-        "They are the same action with different names",
-        "Quick Close skips SLA tracking"
+        "Quick Close applies streamlined closure for simple resolution paths; Full Resolution captures complete closure details/workflow.",
+        "Quick Close bypasses entitlement/SLA checks, while Full Resolution enforces them after closure.",
+        "They are equivalent actions with different labels for partner-facing and customer-facing portals.",
+        "Full Resolution should be used only for escalated cases; Quick Close is mandatory for standard incidents."
       ],
       "correct": [
         0
@@ -3104,10 +3104,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Service Entitlements define support levels for a service contract (e.g., 24/7 Premium Support); Product Entitlements define support for a specific product (e.g., Product X warranty support)",
-        "They are the same thing",
-        "Service Entitlements are for internal use; Product Entitlements are for customers",
-        "Product Entitlements are always more restrictive"
+        "Service entitlement usually governs contracted service scope/levels, while product entitlement validates support rights for specific covered products.",
+        "Service entitlement is used only for billing display, while product entitlement is the sole source of SLA calculation.",
+        "Product entitlement replaces account entitlement; service entitlement is deprecated in modern CSM deployments.",
+        "Both entitlement types are synonyms and are interchangeable without impact on case routing or SLA behavior."
       ],
       "correct": [
         0
@@ -3136,10 +3136,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Cases are matched to agents based on required skills (product expertise, language, certification) \u2014 the routing engine finds available agents with matching skill sets and appropriate capacity",
-        "Cases are routed alphabetically by agent name",
-        "Skills are used only for reporting, not routing",
-        "Agents manually claim cases from a general queue"
+        "Skill-based routing aligns case demand with agent capability profiles using configurable matching and queue policy.",
+        "It routes strictly by assignment group hierarchy and ignores individual capability metadata.",
+        "It is a reporting feature only; assignment still depends exclusively on manual triage.",
+        "It requires one unique case table per skill domain to avoid cross-skill assignment conflicts."
       ],
       "correct": [
         0
@@ -3152,10 +3152,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement AWA with multi-criteria routing: skill-based matching for product expertise and language, capacity management per agent, tier-based queues with automatic escalation, and affinity rules to maintain customer-agent continuity across interactions",
-        "Create one queue and let agents pick cases manually",
-        "Route all cases to Tier 1 and escalate via email",
-        "Assign cases round-robin regardless of skills or language"
+        "Design scalable routing, tier governance, and product-region skills with workload balancing and queue controls.",
+        "Assign by round-robin globally and let supervisors re-route cases manually to specialist groups.",
+        "Create one queue per product-region-tier combination and disable overflow to preserve ownership clarity.",
+        "Route all premium customers to Tier 3 directly to reduce reassignments and total touch time."
       ],
       "correct": [
         0
@@ -3168,10 +3168,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A real-time visual dashboard showing KPIs like open case volume, SLA compliance rates, agent utilization, customer satisfaction scores, and case aging \u2014 used by supervisors and managers",
-        "A customer-facing dashboard on the portal",
-        "A configuration page for CSM settings",
-        "A debugging tool for CSM scripts"
+        "CSM dashboards aggregate operational KPIs for oversight, trend monitoring, and resource/experience decisions.",
+        "Dashboards replace all reports and should be the single source for audit-grade evidence exports.",
+        "Dashboards are intended for agents only and should not be used by managers or operations leads.",
+        "Dashboards calculate SLA timers directly, making separate SLA engine configuration unnecessary."
       ],
       "correct": [
         0
@@ -3200,10 +3200,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "The percentage of cases resolved during the first customer interaction without requiring follow-up, escalation, or callback \u2014 a key indicator of agent effectiveness and customer satisfaction",
-        "The time to first response on a case",
-        "The number of cases created per first-time customer",
-        "The rate at which first-tier agents resolve cases"
+        "FCR measures cases resolved in the initial contact cycle without follow-up rework or escalation.",
+        "FCR counts any case closed within one business day regardless of transfer or reopen behavior.",
+        "FCR is equivalent to CSAT when surveys are sent immediately after closure.",
+        "FCR is computed only for phone channel interactions and excluded from digital support channels."
       ],
       "correct": [
         0
@@ -3216,10 +3216,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Enable Knowledge Management integration in CSM, configure article creation from case context (pre-populating fields from case data), implement a review workflow for agent-created articles, track article usage and linked case deflection metrics, and incentivize agents with KCS contribution tracking",
-        "Let only dedicated authors write KB articles separate from case work",
-        "Copy case resolution notes into KB articles manually after the fact",
-        "Use a third-party knowledge management tool"
+        "Operationalize KCS with article lifecycle governance, solve-loop behavior, and measurable reuse quality metrics.",
+        "Require agents to publish an article for every case before closure regardless of content maturity.",
+        "Separate knowledge authoring from support teams so case handling speed is not impacted by documentation.",
+        "Archive low-view articles monthly and republish only after customer request confirms missing content."
       ],
       "correct": [
         0
@@ -3266,10 +3266,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A formal statement of rules that an organization must follow, tracked as records with acknowledgment and compliance status",
-        "A Business Rule configuration",
-        "A system property",
-        "A type of ACL"
+        "A policy defines formal governance expectations and required behavior for people, process, and technology.",
+        "A policy is a one-time checklist used only during initial compliance implementation projects.",
+        "A policy is a real-time monitoring script that automatically closes non-compliant records.",
+        "A policy is equivalent to a control test result and should not be maintained separately."
       ],
       "correct": [
         0
@@ -3282,10 +3282,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A potential threat or vulnerability that could negatively impact the organization, scored by likelihood and impact",
-        "A failed deployment",
-        "A system outage",
-        "A user complaint"
+        "A risk is potential uncertainty that could affect objectives if it materializes.",
+        "A risk is any issue that has already happened and been permanently resolved.",
+        "A risk is a control deficiency that has no business impact scoring requirements.",
+        "A risk is a vendor questionnaire response awaiting procurement approval and onboarding."
       ],
       "correct": [
         0
@@ -3298,10 +3298,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A measure or process implemented to mitigate a risk or ensure compliance with a policy \u2014 it defines what is done to manage a specific risk",
-        "A form field setting",
-        "A type of ACL rule",
-        "A workflow approval step"
+        "A control is a preventive/detective mechanism used to reduce risk and demonstrate compliance intent.",
+        "A control is any audit comment captured during yearly assessment workshops with process owners.",
+        "A control is the same as a policy acknowledgment by an employee in portal onboarding tasks.",
+        "A control is a remediation ticket used only after incidents have already caused business impact."
       ],
       "correct": [
         0
@@ -3314,10 +3314,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "An assessment performed to verify that a control is operating effectively \u2014 it captures evidence and results to demonstrate compliance",
-        "A unit test for JavaScript code",
-        "A load test for the ServiceNow instance",
-        "A user acceptance test"
+        "A control test evaluates whether a control is designed/operating effectively over a defined period.",
+        "A control test is a policy publication event that records user acknowledgment timestamps.",
+        "A control test is a workflow notification sent to auditors after risk acceptance approval.",
+        "A control test is the same as incident postmortem review for any sev-1 outage event."
       ],
       "correct": [
         0
@@ -3330,10 +3330,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A library of mapped controls across regulatory frameworks (SOX, HIPAA, GDPR, etc.) that enables control harmonization and reduces redundant compliance activities",
-        "A single compliance policy",
-        "A type of risk scoring model",
-        "An integration tool for third-party compliance systems"
+        "UCF normalizes regulatory requirements into a reusable control model to reduce duplicate compliance effort.",
+        "UCF is a reporting plugin that exports audit PDFs and does not influence control design or mapping.",
+        "UCF replaces policy lifecycle management by storing all obligations directly on risk statements.",
+        "UCF is intended only for finance frameworks and cannot map technical/security compliance obligations."
       ],
       "correct": [
         0
@@ -3346,10 +3346,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Risks are scored using a matrix of Likelihood \u00d7 Impact, where each factor has configurable scales. The resulting score determines the risk rating (Critical, High, Medium, Low) and drives mitigation priorities",
-        "Risks are scored by the number of users affected",
-        "Risk scores are assigned randomly",
-        "Risks are only scored as Pass or Fail"
+        "Risk scoring combines defined factors/weights and governance rules to produce comparable, explainable risk ratings.",
+        "Risk scores should be manually assigned by auditors to avoid model bias from automated calculations.",
+        "Risk scoring is derived exclusively from control pass/fail rates and ignores business impact dimensions.",
+        "Risk scores are recalculated only at quarter close to maintain stable executive reporting baselines."
       ],
       "correct": [
         0
@@ -3362,10 +3362,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A Risk is a potential future threat; an Issue is a realized problem or finding that requires remediation \u2014 issues often result from control test failures or audit findings",
-        "They are the same concept with different names",
-        "Issues are internal; Risks are external",
-        "Risks are more severe than Issues"
+        "A risk represents uncertain future exposure; an issue reflects a realized problem requiring active remediation.",
+        "Issue and risk are equivalent terms in GRC and differ only by which dashboard displays the record.",
+        "Issues are always strategic and long-term, while risks are always immediate operational incidents.",
+        "A risk is created only after failure occurs; issues are used to predict potential future events."
       ],
       "correct": [
         0
@@ -3378,10 +3378,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A module that manages the full lifecycle of organizational policies including creation, review, approval, distribution, acknowledgment tracking, and compliance verification",
-        "A tool for writing Business Rules",
-        "A system for managing access policies",
-        "A notification management system"
+        "Policy and Compliance Management maps obligations to policies/controls and tracks adherence evidence over time.",
+        "Policy Management is only document storage; compliance evidence must remain external to avoid audit lock-in.",
+        "Compliance Management replaces control testing because policy acknowledgments are considered sufficient proof.",
+        "Policy and Compliance is limited to annual audits and should not be integrated with operational workflows."
       ],
       "correct": [
         0
@@ -3394,10 +3394,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A process for assessing, monitoring, and managing risks associated with third-party vendors including tiering, questionnaire-based assessments, and ongoing monitoring",
-        "A tool for managing vendor invoices",
-        "A procurement module",
-        "A vendor contact directory"
+        "Vendor risk management governs third-party assessments, controls, and remediation through lifecycle oversight.",
+        "It is primarily a procurement function and should remain outside GRC to avoid duplicate workflows.",
+        "Vendor risk should be tracked as incidents because third-party issues are operational by definition.",
+        "Once onboarding is complete, vendor risk posture is assumed stable unless contract terms change."
       ],
       "correct": [
         0
@@ -3410,10 +3410,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A visual matrix showing risks plotted by Likelihood (x-axis) vs Impact (y-axis), with color coding indicating severity \u2014 enabling quick identification of the highest-priority risks",
-        "A temperature monitoring dashboard",
-        "A map showing geographic risk distribution",
-        "A chart of risk scores over time"
+        "Heat maps visualize likelihood/impact distributions to prioritize treatment and communicate risk concentration.",
+        "Heat maps replace risk scoring by converting all risks into high/medium/low categories only.",
+        "Heat maps are compliance artifacts and should not influence operational remediation sequencing.",
+        "Heat maps should include only accepted risks so leadership sees final residual exposure posture."
       ],
       "correct": [
         0
@@ -3442,10 +3442,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Map controls across frameworks using UCF for harmonization, implement control tests with automated data collection via Integration Hub, set up continuous monitoring with scheduled test runs, configure automated evidence attachment and scoring, and build regulatory-specific dashboards with PA",
-        "Manually test each control quarterly",
-        "Create separate GRC implementations for each framework",
-        "Use spreadsheets for evidence collection and import monthly"
+        "Implement automated evidence collection and control testing with exception workflows and audit-ready traceability.",
+        "Run annual spreadsheet attestations only, then import final scores into GRC before audit season.",
+        "Create one universal control template and apply identical frequency/testing to all control families.",
+        "Track findings in incident records and map them to controls manually after each audit cycle."
       ],
       "correct": [
         0
@@ -3458,10 +3458,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Run a gap assessment to identify controls without recent test evidence, prioritize testing of high-risk controls, execute batch control tests with automated evidence collection, remediate failed controls with tracked issues, and generate audit-ready reports with complete evidence trails",
-        "Test all 200 controls manually in the last week",
-        "Only test controls the auditor specifically asks about",
-        "Prepare a PowerPoint summarizing the control environment"
+        "Model control objectives, evidence, and test cadence in platform with clear ownership and attestation history.",
+        "Store auditor notes in knowledge articles and attach screenshots only when external auditors request them.",
+        "Use policy exceptions as control evidence because approval history is sufficient for effectiveness claims.",
+        "Close failed tests quickly and reopen only if audit asks for prior-period control execution proof."
       ],
       "correct": [
         0
@@ -3474,10 +3474,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement Vendor Risk Management with tiered assessment workflows \u2014 auto-classify vendors by criticality, use digital questionnaires with automated scoring, integrate with external risk intelligence feeds for continuous monitoring, and set up automated reassessment schedules based on tier and risk score",
-        "Send the same questionnaire to all 500 vendors simultaneously",
-        "Only assess vendors when a contract renewal is due",
-        "Outsource all vendor assessments to a third party"
+        "Use scalable intake, tiered assessment, and continuous monitoring signals with remediation governance.",
+        "Assess only top-tier vendors annually and waive remaining vendors through risk acceptance templates.",
+        "Treat questionnaire completion as equivalent to control validation to accelerate onboarding throughput.",
+        "Move all vendor assessments to procurement workflow and import final ratings to GRC quarterly."
       ],
       "correct": [
         0
@@ -3490,10 +3490,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A structured approach that defines how risks are identified, assessed, categorized, and managed \u2014 it includes risk appetite, scoring methodology, and escalation thresholds",
-        "A JavaScript framework used in GRC development",
-        "A data import framework",
-        "A reporting framework"
+        "A risk framework defines taxonomy, scoring, and governance structure for consistent risk management execution.",
+        "A risk framework is a one-time audit template used only during annual compliance assessments.",
+        "A risk framework replaces policy management because controls are inherited directly from risk records.",
+        "A risk framework is optional when incidents and problems are already tracked in ITSM modules."
       ],
       "correct": [
         0
@@ -3506,10 +3506,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A formal declaration of the level of risk an organization is willing to accept in pursuit of its objectives \u2014 it sets thresholds that trigger escalation when exceeded",
-        "A document about food safety risks",
-        "A vendor selection criterion",
-        "A user access policy"
+        "Risk appetite defines acceptable risk boundaries to guide decision-making, treatment choices, and escalation thresholds.",
+        "Risk appetite is the list of all risks currently accepted with no requirement for threshold articulation.",
+        "Risk appetite is a technical control matrix generated from vulnerability scanners each quarter.",
+        "Risk appetite is a financial reserve model used only for cyber-insurance premium calculations."
       ],
       "correct": [
         0
@@ -3522,10 +3522,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "GRC can link risks and controls to ITSM processes \u2014 e.g., control test failures can auto-create incidents, risk events can trigger changes, and ITSM data feeds into risk indicators for continuous monitoring",
-        "GRC and ITSM are completely separate applications with no integration",
-        "GRC replaces ITSM entirely",
-        "Integration requires third-party middleware"
+        "GRC-ITSM integration links risk/control obligations to operational work for traceable remediation execution.",
+        "Integration should be avoided because ITSM ticket lifecycle introduces unnecessary compliance complexity.",
+        "GRC should consume only closed incident data to prevent premature compliance reporting fluctuations.",
+        "Integration is limited to change management and cannot support control deficiency remediation workflows."
       ],
       "correct": [
         0
@@ -3538,10 +3538,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A comprehensive list of all identified risks in the organization, including their assessments, owners, and mitigation status",
-        "A system log file",
-        "A user registration form",
-        "A list of registered IT assets"
+        "A risk register is a structured inventory of identified risks, scores, ownership, and treatment status.",
+        "A risk register is a static archive of closed issues with no requirement for active ownership.",
+        "A risk register is a policy library used only to classify authority documents by framework.",
+        "A risk register is a list of all exceptions automatically accepted by system administrators."
       ],
       "correct": [
         0
@@ -3554,10 +3554,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "The level of risk remaining after controls and mitigation measures have been applied \u2014 it represents the actual current risk exposure",
-        "The first risk identified",
-        "A risk that has been fully eliminated",
-        "A risk that only affects the IT department"
+        "Residual risk is the remaining exposure after controls and treatments are applied.",
+        "Residual risk is the initial inherent score before any controls are selected or tested.",
+        "Residual risk is the average score of all risks in a domain regardless of treatment state.",
+        "Residual risk is the amount of risk transferred to vendors through contract obligations."
       ],
       "correct": [
         0
@@ -3570,10 +3570,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Map all framework requirements using UCF to identify common controls, implement harmonized controls that satisfy multiple frameworks with a single test, maintain framework-specific test attestations and evidence metadata, and generate separate compliance reports per framework from the unified control set",
-        "Implement each framework completely independently",
-        "Only comply with the strictest framework and assume others are covered",
-        "Hire separate compliance teams per framework"
+        "Design a unified control framework with mapped obligations, reusable controls, and jurisdiction-aware evidence handling.",
+        "Maintain separate compliance apps per regulation to avoid cross-framework control mapping complexity.",
+        "Adopt strictest regulation globally and ignore local variance to simplify policy administration.",
+        "Use one quarterly self-attestation form for all standards and treat non-response as implicit compliance."
       ],
       "correct": [
         0

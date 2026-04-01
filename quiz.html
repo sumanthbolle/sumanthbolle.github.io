@@ -966,6 +966,65 @@ function shuffleArray(arr) {
   return a;
 }
 
+// ── OPTION HARDENING (ALL QUIZ SETS) ──
+// Some legacy banks have obvious length bias (longest option tends to be correct).
+// This display-layer balancing makes options closer in shape/length without changing
+// answer keys, so selections rely more on understanding than visual heuristics.
+const OPTION_BALANCE_FRAGMENTS = [
+  'under standard platform governance assumptions',
+  'for this implementation context and operating model',
+  'when evaluated against typical enterprise constraints',
+  'based on baseline best-practice interpretation',
+  'for most production deployment scenarios',
+  'given common auditability and maintainability requirements'
+];
+
+function stableHash(str) {
+  let hash = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i);
+    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+  }
+  return hash >>> 0;
+}
+
+function balancedDisplayOptions(q) {
+  const options = (q.options || []).map(opt => String(opt || '').trim());
+  if (options.length < 2) return options;
+
+  const lengths = options.map(opt => opt.length);
+  const maxLen = Math.max(...lengths);
+  const minLen = Math.min(...lengths);
+  const spread = maxLen - minLen;
+  if (spread <= 4) return options;
+
+  // Apply normalization to *all* MCQs (mild on low-spread, stronger on high-spread)
+  // so users cannot rely on visual length cues to infer correctness.
+  let targetLen = maxLen;
+  let maxPasses = 1;
+  if (spread >= 28) {
+    targetLen = Math.max(Math.floor(maxLen * 0.86), maxLen - 22);
+    maxPasses = 2;
+  } else if (spread >= 14) {
+    targetLen = Math.max(Math.floor(maxLen * 0.78), maxLen - 14);
+  } else {
+    targetLen = Math.max(Math.floor(maxLen * 0.72), maxLen - 8);
+  }
+
+  return options.map((opt, idx) => {
+    let out = opt;
+    let passes = 0;
+    while (out.length < targetLen && passes < maxPasses) {
+      const seed = `${q.id || 'q'}|${idx}|${passes}|${out.length}`;
+      const frag = OPTION_BALANCE_FRAGMENTS[stableHash(seed) % OPTION_BALANCE_FRAGMENTS.length];
+      const suffix = out.endsWith('.') ? ` ${frag}.` : `; ${frag}`;
+      out += suffix;
+      passes++;
+    }
+    return out;
+  });
+}
+
 // ── MCQ RENDERING ──
 // currentShuffleMap: maps display index → original index
 let currentShuffleMap = [];
@@ -983,9 +1042,10 @@ function renderMCQ(q) {
   const list = document.getElementById('optionsList');
   list.innerHTML = '';
   const letters = 'ABCDEFGH';
+  const displayOptions = balancedDisplayOptions(q);
   
   // Build shuffled options with original index tracking
-  const indexed = q.options.map((opt, i) => ({ text: opt, origIdx: i }));
+  const indexed = displayOptions.map((opt, i) => ({ text: opt, origIdx: i }));
   const shuffled = shuffleArray(indexed);
   currentShuffleMap = shuffled.map(s => s.origIdx);
   
