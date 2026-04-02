@@ -168,8 +168,11 @@
 
     /* QUIZ ACTIONS */
     .quiz-actions{display:flex;justify-content:space-between;align-items:center}
+    .left-actions{display:flex;align-items:center;gap:10px}
     .quit-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:10px 20px;border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:var(--font);transition:all .2s}
     .quit-btn:hover{border-color:var(--red);color:var(--red)}
+    .back-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:10px 20px;border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:var(--font);transition:all .2s}
+    .back-btn:hover{border-color:var(--text2);color:var(--text)}
     .next-btn,.submit-code-btn{background:var(--accent);color:var(--bg);border:none;padding:10px 24px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s}
     .next-btn:hover,.submit-code-btn:hover{opacity:0.85}
     .submit-code-btn{background:var(--blue);color:#fff;margin-right:12px}
@@ -331,7 +334,10 @@
       </div>
 
       <div class="quiz-actions">
-        <button class="quit-btn" id="quitBtn">Quit Quiz</button>
+        <div class="left-actions">
+          <button class="quit-btn" id="quitBtn">Quit Quiz</button>
+          <button class="back-btn" id="questionBackBtn">Back</button>
+        </div>
         <div>
           <button class="submit-code-btn" id="submitCodeBtn" style="display:none">Run & Validate</button>
           <button class="next-btn" id="nextBtn">Next Question</button>
@@ -581,6 +587,16 @@ let quizStartTime = null;
 let selectedOptions = new Set();
 let difficultyFilter = 'all';
 const QUIZ_ROTATION_KEY = 'sn_quiz_rotation_v1';
+let answerByIndex = [];
+
+function recomputeScoreFromAnswers() {
+  score = answerByIndex.reduce((sum, ans) => sum + (ans && ans.ok ? 1 : 0), 0);
+}
+
+function setAnswerAtCurrent(payload) {
+  answerByIndex[currentIndex] = payload;
+  recomputeScoreFromAnswers();
+}
 
 function getCategoryShareUrl(categoryKey) {
   return window.location.origin + window.location.pathname + '#category/' + encodeURIComponent(categoryKey);
