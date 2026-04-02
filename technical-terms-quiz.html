@@ -33,6 +33,7 @@
     .screen{display:none}
     .screen.active{display:block}
     .mode-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+    .section-title{font-size:13px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 10px}
     .mode-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer}
     .mode-card:hover{border-color:var(--text3)}
     .mode-title{font-weight:700;margin-bottom:6px}
@@ -164,6 +165,7 @@
         <div class="exp" id="explanation"></div>
         <div class="actions">
           <button class="btn btn-ghost" id="quitBtn">Quit</button>
+          <button class="btn btn-ghost" id="backBtn">Back</button>
           <button class="btn btn-pri" id="nextBtn">Next</button>
         </div>
       </article>
@@ -243,6 +245,10 @@
       {id:'confusion',name:'Confusion Gauntlet 20',desc:'Only confusing distinctions, 65 sec/question.',count:20,timer:65,levels:['confusing','advanced']},
       {id:'marathon',name:'Marathon (All)',desc:'All available after filter, no timer.',count:'all',timer:0,levels:['foundation','core','advanced','confusing']}
     ];
+    const SCRIPTING_MODES = [
+      {id:'script-core',name:'Scripting Core 4',desc:'Pure scripting scenarios, no timer.',count:4,timer:0},
+      {id:'script-interview',name:'Scripting Interview',desc:'Pure scripting scenarios, 180 sec/question.',count:'all',timer:180}
+    ];
 
     const SCRIPT_SCENARIOS = {
       t07: {
@@ -313,11 +319,17 @@
     let timerNow = 0;
     let timer = null;
     let chosenMode = null;
+    let chosenTrack = 'terms';
+    let scriptingOnlyMode = false;
     let currentShuffle = [];
     let activeScenario = null;
     let tabSwitchTriggered = false;
     let tabSwitchReason = '';
     const codeDrafts = {};
+
+    function recomputeScore(){
+      score = answers.reduce((n,a)=>n + (a && a.ok ? 1 : 0),0);
+    }
 
     function hash(text){
       let h = 2166136261;
@@ -516,7 +528,7 @@
         isScripting: true,
         note: message
       };
-      if(ok) score++;
+      recomputeScore();
       setCompileFeedback(ok ? 'pass' : 'fail', ok ? 'Compilation passed' : 'Compilation failed', [message]);
       const ex = document.getElementById('explanation');
       ex.textContent = (ok ? 'Scenario accepted. ' : 'Scenario rejected. ') + q.ex;
@@ -563,11 +575,17 @@
       return pool;
     }
 
+    function filteredScriptingPool(){
+      let pool = QUESTIONS.filter(q=>isScriptingQuestion(q));
+      if(filterLevel!=='all') pool = pool.filter(q=>q.level===filterLevel);
+      return pool;
+    }
+
     function renderModes(){
       const grid=document.getElementById('modeGrid');
       grid.innerHTML='';
       MODES.forEach(mode=>{
-        const pool = filteredPoolForMode(mode);
+        const pool = filteredPoolForMode(mode).filter(q=>!isScriptingQuestion(q));
         const max = pool.length;
         const count = mode.count==='all'?max:Math.min(mode.count,max);
         if(count===0) return;
@@ -576,6 +594,26 @@
         card.className='mode-card';
         card.innerHTML=`<div class="mode-title">${mode.name}</div><div class="mode-desc">${mode.desc}</div><div class="mode-meta">${count} questions${mode.timer?` · ${mode.timer}s/question`:''}</div>`;
         card.onclick=()=>startMode(mode,pool,count);
+        grid.appendChild(card);
+      });
+
+      const scriptHeader = document.createElement('div');
+      scriptHeader.className = 'mode-card';
+      scriptHeader.style.gridColumn = '1 / -1';
+      scriptHeader.style.cursor = 'default';
+      scriptHeader.innerHTML = '<div class="mode-title">Scripting Practice Section</div><div class="mode-desc">Pure write-code scenarios with compile and submit validation.</div><div class="mode-meta">Dedicated coding track</div>';
+      grid.appendChild(scriptHeader);
+
+      SCRIPTING_MODES.forEach(mode=>{
+        const pool = filteredScriptingPool();
+        const max = pool.length;
+        const count = mode.count==='all'?max:Math.min(mode.count,max);
+        if(count===0) return;
+        const card=document.createElement('button');
+        card.type='button';
+        card.className='mode-card';
+        card.innerHTML=`<div class="mode-title">${mode.name}</div><div class="mode-desc">${mode.desc}</div><div class="mode-meta">${count} scenarios${mode.timer?` · ${mode.timer}s/question`:''}</div>`;
+        card.onclick=()=>startScriptingMode(mode,pool,count);
         grid.appendChild(card);
       });
     }
@@ -588,6 +626,8 @@
     }
 
     function startMode(mode,pool,count){
+      chosenTrack='terms';
+      scriptingOnlyMode=false;
       chosenMode=mode;
       sessionQuestions = mode.count==='all' ? shuffle(pool) : selectRotatingSubset(pool,count,{mode:mode.id,level:filterLevel});
       answers = new Array(sessionQuestions.length).fill(null);
@@ -597,9 +637,22 @@
       renderQuestion();
     }
 
+    function startScriptingMode(mode,pool,count){
+      chosenTrack='scripting';
+      scriptingOnlyMode=true;
+      chosenMode=mode;
+      sessionQuestions = mode.count==='all' ? shuffle(pool) : selectRotatingSubset(pool,count,{mode:'scripting-'+mode.id,level:filterLevel});
+      answers = new Array(sessionQuestions.length).fill(null);
+      idx=0; score=0; answered=false;
+      timerMax=mode.timer||0;
+      show('playScreen');
+      renderQuestion();
+    }
+
     function renderQuestion(){
       const q=sessionQuestions[idx];
-      answered=false;
+      const previous = answers[idx];
+      answered=Boolean(previous);
       activeScenario = null;
       tabSwitchTriggered = false;
       tabSwitchReason = '';
@@ -614,7 +667,7 @@
 
       clearInterval(timer);
       const t=document.getElementById('timerBox');
-      if(timerMax>0){
+      if(timerMax>0 && !answered){
         timerNow=timerMax;
         t.className='timer';
         t.textContent=`${Math.floor(timerNow/60)}:${String(timerNow%60).padStart(2,'0')}`;
@@ -644,19 +697,28 @@
       feedback.className = 'compile-feedback';
       feedback.innerHTML = '';
 
-      if(isScriptingQuestion(q)){
+      if(scriptingOnlyMode && isScriptingQuestion(q)){
         activeScenario = SCRIPT_SCENARIOS[q.id];
+        document.getElementById('questionText').textContent = activeScenario.prompt;
         optsWrap.style.display = 'none';
         codeWrap.classList.add('active');
         document.getElementById('meta').innerHTML += `<span class="badge">Scripting</span>`;
         document.querySelector('#codeWrap .code-head span:last-child').textContent = activeScenario.title;
         codeEditor.value = Object.prototype.hasOwnProperty.call(codeDrafts,q.id) ? codeDrafts[q.id] : activeScenario.starter;
-        codeEditor.oninput = () => { codeDrafts[q.id] = codeEditor.value; };
-        setCompileFeedback('info','Write code and compile',[
-          activeScenario.prompt,
-          'If compiler flags errors, fix them and compile again.',
-          'Do not switch tab/window: focus loss auto-fails this submission.'
-        ]);
+        if(previous && previous.isScripting){
+          codeEditor.disabled = true;
+          compileBtn.disabled = true;
+          setCompileFeedback(previous.ok ? 'pass' : 'fail', previous.ok ? 'Compilation passed' : 'Compilation failed', [previous.note || 'Submitted']);
+          e.textContent = (previous.ok ? 'Scenario accepted. ' : 'Scenario rejected. ') + q.ex;
+          e.classList.add('show');
+        } else {
+          codeEditor.oninput = () => { codeDrafts[q.id] = codeEditor.value; };
+          setCompileFeedback('info','Write code and compile',[
+            activeScenario.prompt,
+            'If compiler flags errors, fix them and compile again.',
+            'Do not switch tab/window: focus loss auto-fails this submission.'
+          ]);
+        }
       }else{
         optsWrap.style.display = 'flex';
         codeWrap.classList.remove('active');
@@ -675,6 +737,17 @@
           btn.onclick=()=>submit(di);
           optsWrap.appendChild(btn);
         });
+        if(previous && !previous.isScripting){
+          const buttons=[...document.querySelectorAll('#options .opt')];
+          buttons.forEach((b,di)=>{
+            const oi=currentShuffle[di];
+            b.classList.add('disabled');
+            if(q.correct.includes(oi)) b.classList.add('correct');
+            if(previous.picked===oi && !previous.ok) b.classList.add('incorrect');
+          });
+          e.textContent=q.ex;
+          e.classList.add('show');
+        }
       }
       document.getElementById('nextBtn').textContent = idx===sessionQuestions.length-1?'Finish':'Next';
     }
@@ -682,13 +755,13 @@
     function submit(displayIdx){
       if(answered) return;
       const q=sessionQuestions[idx];
-      if(isScriptingQuestion(q)) return;
+      if(scriptingOnlyMode && isScriptingQuestion(q)) return;
       answered=true;
       clearInterval(timer);
       const picked=currentShuffle[displayIdx];
       const ok=q.correct.includes(picked);
       answers[idx]={ok,picked,correct:q.correct[0],id:q.id};
-      if(ok) score++;
+      recomputeScore();
       const buttons=[...document.querySelectorAll('#options .opt')];
       buttons.forEach((b,di)=>{
         const oi=currentShuffle[di];
@@ -704,11 +777,12 @@
     function autoWrong(reason){
       if(answered) return;
       const q=sessionQuestions[idx];
-      if(isScriptingQuestion(q)){
+      if(scriptingOnlyMode && isScriptingQuestion(q)){
         finishScriptingScenario(false, reason || 'Time expired before successful compilation.');
         return;
       }
       answers[idx]={ok:false,picked:null,correct:sessionQuestions[idx].correct[0],id:sessionQuestions[idx].id};
+      recomputeScore();
       const buttons=[...document.querySelectorAll('#options .opt')];
       buttons.forEach((b,di)=>{
         const oi=currentShuffle[di];
@@ -728,8 +802,19 @@
       renderQuestion();
     }
 
+    function back(){
+      clearInterval(timer);
+      if(idx===0){
+        show('modeScreen');
+        return;
+      }
+      idx--;
+      renderQuestion();
+    }
+
     function showResults(){
       show('resultScreen');
+      recomputeScore();
       const pct=Math.round((score/sessionQuestions.length)*100);
       document.getElementById('scoreHead').textContent=`Score ${pct}%`;
       document.getElementById('scoreSub').textContent = pct>=85?'Interview ready — sharp conceptual control.':pct>=70?'Strong base — revisit subtle boundaries.':'Good attempt — drill explanations and rerun.';
@@ -739,7 +824,7 @@
         const r=answers[i]||{ok:false,picked:null,correct:q.correct[0]};
         const card=document.createElement('div');
         card.className='review-item '+(r.ok?'ok':'bad');
-        const scripting = isScriptingQuestion(q) || r.isScripting;
+        const scripting = (scriptingOnlyMode && isScriptingQuestion(q)) || r.isScripting;
         const pickedTxt=scripting ? (r.ok ? 'Compiler accepted your script.' : 'Compiler rejected / submission failed.') : (r.picked===null?'No answer':q.options[r.picked]);
         const correctTxt=scripting ? 'Pass all required compiler checks for this scenario.' : q.options[r.correct];
         const note = scripting && r.note ? `<br>Details: ${esc(r.note)}` : '';
@@ -750,9 +835,19 @@
 
     document.getElementById('compileBtn').addEventListener('click',compileCurrentScenario);
     document.getElementById('nextBtn').addEventListener('click',next);
+    document.getElementById('backBtn').addEventListener('click',back);
     document.getElementById('quitBtn').addEventListener('click',()=>{clearInterval(timer);show('modeScreen');});
     document.getElementById('retryBtn').addEventListener('click',()=>{
-      if(chosenMode){const pool=filteredPoolForMode(chosenMode);const count=chosenMode.count==='all'?pool.length:Math.min(chosenMode.count,pool.length);startMode(chosenMode,pool,count);}
+      if(!chosenMode) return;
+      if(chosenTrack==='scripting'){
+        const pool=filteredScriptingPool();
+        const count=chosenMode.count==='all'?pool.length:Math.min(chosenMode.count,pool.length);
+        startScriptingMode(chosenMode,pool,count);
+        return;
+      }
+      const pool=filteredPoolForMode(chosenMode).filter(q=>!isScriptingQuestion(q));
+      const count=chosenMode.count==='all'?pool.length:Math.min(chosenMode.count,pool.length);
+      startMode(chosenMode,pool,count);
     });
     document.getElementById('homeBtn').addEventListener('click',()=>show('modeScreen'));
     document.addEventListener('visibilitychange',()=>{ if(document.hidden) markTabSwitchFailure('tab switch detected'); });
