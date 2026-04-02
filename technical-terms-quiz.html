@@ -254,7 +254,7 @@
       t07: {
         title: 'Before Business Rule Guard',
         prompt: 'Write a Before Business Rule snippet that blocks save when short_description is empty and provides a user-facing error.',
-        starter: `(function executeRule(current, previous /* null when async */) {\n  if (current.short_description.nil()) {\n    gs.addErrorMessage('Short description is required.');\n    current.setAbortAction(true);\n  }\n})(current, previous);`,
+        starter: `// TODO: Write a BEFORE Business Rule.\n// Requirement: block save when short_description is empty.\n(function executeRule(current, previous /* null when async */) {\n  // TODO: implement validation + abort logic\n\n})(current, previous);`,
         required: [
           { regex: /current\.short_description\.nil\(\)/, error: 'Missing validation check for current.short_description.nil().', hint: 'Add an if condition using current.short_description.nil().' },
           { regex: /gs\.addErrorMessage\(/, error: 'Missing gs.addErrorMessage(...) call.', hint: 'Show a clear error using gs.addErrorMessage(...) before aborting.' },
@@ -267,7 +267,7 @@
       t11: {
         title: 'GlideAjax Script Include',
         prompt: 'Create a client-callable Script Include method that returns the active incident count for sysparm_user using GlideAggregate.',
-        starter: `var InterviewAjax = Class.create();\nInterviewAjax.prototype = Object.extendsObject(AbstractAjaxProcessor, {\n  getActiveIncidentCount: function() {\n    var userId = this.getParameter('sysparm_user');\n    var ga = new GlideAggregate('incident');\n    ga.addQuery('caller_id', userId);\n    ga.addQuery('active', true);\n    ga.addAggregate('COUNT');\n    ga.query();\n    if (ga.next()) {\n      return String(ga.getAggregate('COUNT'));\n    }\n    return '0';\n  },\n  type: 'InterviewAjax'\n});`,
+        starter: `// TODO: Build a client-callable Script Include.\n// Method should return active incident COUNT for sysparm_user.\nvar InterviewAjax = Class.create();\nInterviewAjax.prototype = Object.extendsObject(AbstractAjaxProcessor, {\n  getActiveIncidentCount: function() {\n    // TODO: read sysparm_user\n    // TODO: use GlideAggregate('incident') + COUNT\n    // TODO: return count as String\n  },\n  type: 'InterviewAjax'\n});`,
         required: [
           { regex: /Object\.extendsObject\(\s*AbstractAjaxProcessor/, error: 'Script Include does not extend AbstractAjaxProcessor.', hint: 'Use Object.extendsObject(AbstractAjaxProcessor, { ... }).' },
           { regex: /getParameter\(\s*['"]sysparm_user['"]\s*\)/, error: 'Missing sysparm_user extraction.', hint: 'Read user input through this.getParameter("sysparm_user").' },
@@ -282,7 +282,7 @@
       t16: {
         title: 'Bulk Update with Controlled Side Effects',
         prompt: 'Write a background-safe script that updates active incidents, and explicitly suppresses workflow + sys fields before update.',
-        starter: `var gr = new GlideRecord('incident');\ngr.addQuery('active', true);\ngr.query();\nwhile (gr.next()) {\n  gr.work_notes = 'Maintenance annotation';\n  gr.setWorkflow(false);\n  gr.autoSysFields(false);\n  gr.update();\n}`,
+        starter: `// TODO: Update active incidents with controlled side effects.\nvar gr = new GlideRecord('incident');\n// TODO: filter active incidents\n// TODO: query and loop\nwhile (gr.next()) {\n  // TODO: set work note\n  // TODO: suppress workflow + sys fields\n  // TODO: update record\n}`,
         required: [
           { regex: /new\s+GlideRecord\(\s*['"]incident['"]\s*\)/, error: 'GlideRecord on incident table is missing.', hint: 'Initialize with new GlideRecord("incident").' },
           { regex: /addQuery\(\s*['"]active['"]\s*,\s*true\s*\)/, error: 'No active=true filter was found.', hint: 'Filter records using gr.addQuery("active", true).' },
@@ -295,7 +295,7 @@
       t18: {
         title: 'Event-driven Notification Trigger',
         prompt: 'Create a snippet that queues an event for the current record and passes recipient + actor as parameters.',
-        starter: `if (current.priority == 1) {\n  gs.eventQueue('x_interview.incident.escalated', current, current.assigned_to, gs.getUserID());\n}`,
+        starter: `// TODO: Queue escalation event for priority 1 records.\nif (current.priority == 1) {\n  // TODO: gs.eventQueue(eventName, current, current.assigned_to, gs.getUserID())\n}`,
         required: [
           { regex: /gs\.eventQueue\(/, error: 'Missing gs.eventQueue(...) call.', hint: 'Use gs.eventQueue(eventName, record, parm1, parm2).' },
           { regex: /gs\.eventQueue\(\s*['"][^'"]+['"]\s*,\s*current\s*,/, error: 'Event is not queued with current record context.', hint: 'Second argument should pass current.' },
@@ -477,6 +477,14 @@
       return '';
     }
 
+    function normalizeForCompare(str){
+      return String(str || '')
+        .replace(/\/\*[\s\S]*?\*\//g,'')
+        .replace(/\/\/.*$/gm,'')
+        .replace(/\s+/g,'')
+        .toLowerCase();
+    }
+
     function validateScenarioCode(code,scenario){
       const errors = [];
       const tips = [];
@@ -492,6 +500,29 @@
 
       const balanceErr = checkBalancedTokens(src);
       if(balanceErr) errors.push(balanceErr);
+
+      const normalizedSrc = normalizeForCompare(src);
+      const normalizedStarter = normalizeForCompare(scenario.starter || '');
+
+      if(normalizedSrc && normalizedStarter && normalizedSrc === normalizedStarter){
+        errors.push('Submission matches starter scaffold. Write your own implementation before compiling.');
+        tips.push('Replace TODO blocks with working code and remove placeholder comments.');
+      }
+
+      if(/(?:TODO|__FILL__|implement|placeholder)/i.test(src)){
+        errors.push('Starter placeholders detected (TODO/placeholder text still present).');
+        tips.push('Remove TODO markers and complete the logic before submission.');
+      }
+
+      const semanticLength = src
+        .replace(/\/\*[\s\S]*?\*\//g,'')
+        .replace(/\/\/.*$/gm,'')
+        .replace(/\s+/g,'')
+        .length;
+      if(semanticLength < 80){
+        errors.push('Submitted code is too short to satisfy scenario requirements.');
+        tips.push('Add complete logic, not just a minimal shell.');
+      }
 
       (scenario.required || []).forEach(rule=>{
         if(!rule.regex.test(src)){
