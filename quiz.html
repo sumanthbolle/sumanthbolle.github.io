@@ -1789,6 +1789,7 @@ document.getElementById('modalCancel').addEventListener('click', () => {
   document.getElementById('warningModal').classList.remove('open');
 });
 document.getElementById('modalConfirm').addEventListener('click', () => {
+  pendingStart = null;
   clearCategoryHash();
   document.getElementById('warningModal').classList.remove('open');
   clearInterval(timerInterval);
