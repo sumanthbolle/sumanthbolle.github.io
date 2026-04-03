@@ -5465,7 +5465,7 @@
     },
     {
       "id": "csa-dump-56",
-      "q": "What is the purpose of a Related List?",
+      "q": "What is the purpose of a Related List in ServiceNow forms?",
       "type": "mcq",
       "difficulty": "medium",
       "options": [
@@ -5477,7 +5477,7 @@
       "correct": [
         3
       ],
-      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "explanation": "A related list shows records from another table that are linked to the current record (for example, incident tasks under an incident).",
       "source": "CSA_Dumps.pdf"
     },
     {
@@ -5644,7 +5644,7 @@
     },
     {
       "id": "csa-dump-66",
-      "q": "How is a group defined in ServiceNow?",
+      "q": "How is a group represented in ServiceNow?",
       "type": "mcq",
       "difficulty": "medium",
       "options": [
@@ -5656,7 +5656,7 @@
       "correct": [
         1
       ],
-      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "explanation": "Each group is stored as a record in the Group [sys_user_group] table.",
       "source": "CSA_Dumps.pdf"
     },
     {
@@ -5937,7 +5937,7 @@
     },
     {
       "id": "csa-dump-86",
-      "q": "ServiceNow contains a resource which provides the following: A standard and shared set of service related definitions across ServiceNow products and platform that will enable and support true service level reporting. A CMDB framework across our products and platform that will enable and support multiple configuration strategies. What resource do these statements describe?",
+      "q": "Which resource provides a shared service-data framework and standardized service definitions across ServiceNow products to support service-level reporting?",
       "type": "mcq",
       "difficulty": "medium",
       "options": [
@@ -5949,7 +5949,7 @@
       "correct": [
         0
       ],
-      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "explanation": "This describes CSDM, which standardizes service definitions and CMDB alignment for consistent service reporting.",
       "source": "CSA_Dumps.pdf"
     },
     {
@@ -6105,7 +6105,7 @@
     },
     {
       "id": "csa-dump-95",
-      "q": "Your company is giving all first line workers a special T-shirt as a recognition for their hard work. Management team wants a way for employees to order the T-shirt, with the ability to specify the preferred size and color. How would you ensure that only first line workers (non-managers) can submit the order?",
+      "q": "A company wants only first-line workers (non-managers) to order a recognition T-shirt with size and color options. What is the best configuration approach?",
       "type": "mcq",
       "difficulty": "medium",
       "options": [
@@ -6117,7 +6117,7 @@
       "correct": [
         1
       ],
-      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "explanation": "Use catalog availability/user criteria controls so managers are excluded and only eligible workers can submit the item.",
       "source": "CSA_Dumps.pdf"
     },
     {
