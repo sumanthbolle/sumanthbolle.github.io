@@ -588,6 +588,7 @@ let selectedOptions = new Set();
 let difficultyFilter = 'all';
 const QUIZ_ROTATION_KEY = 'sn_quiz_rotation_v1';
 let answerByIndex = [];
+let strictNoReveal = false;
 
 function recomputeScoreFromAnswers() {
   score = answerByIndex.reduce((sum, ans) => sum + (ans && ans.ok ? 1 : 0), 0);
@@ -840,6 +841,7 @@ function selectCategory(key) {
 // ── START QUIZ ──
 function startQuiz(catKey, mode) {
   let questions = [...(QUESTIONS[catKey] || [])];
+  strictNoReveal = catKey === 'csa_dumps_live';
   
   // Apply difficulty filter from category screen
   if (difficultyFilter !== 'all') {
@@ -907,6 +909,9 @@ function renderQuestion() {
     <span class="badge badge-count">${q.type === 'mcq' ? 'Multiple Choice' : q.type === 'scripting' ? 'Write Code' : 'Scenario'}</span>
     ${SessionProgress.isAnswered(q.id) ? '<span class="badge badge-count" style="opacity:0.5">Previously answered</span>' : ''}
   `;
+  if (strictNoReveal) {
+    meta.innerHTML += '<span class="badge badge-count">Strict Mode</span>';
+  }
   
   // Question text
   document.getElementById('questionText').textContent = q.q;
@@ -1155,6 +1160,11 @@ function submitMCQ(q) {
   
   if (isCorrect) score++;
   SessionProgress.markAnswered(q.id, isCorrect);
+
+  if (strictNoReveal) {
+    buttons.forEach(btn => btn.classList.add('disabled'));
+    return;
+  }
   
   // Mark buttons using display index → original index mapping
   buttons.forEach((btn, displayIdx) => {
@@ -1209,6 +1219,17 @@ function submitCode() {
   
   const result = CodeValidator.validate(code, q.checks);
   const feedback = document.getElementById('codeFeedback');
+  const isCorrect = result.status === 'pass';
+
+  if (strictNoReveal) {
+    feedback.innerHTML = '<strong>Answer submitted (Strict Mode).</strong><ul><li>Your response is locked for this question.</li><li>Correctness is revealed only in final score summary.</li></ul>';
+    feedback.className = 'code-feedback partial';
+    feedback.style.display = 'block';
+    if (isCorrect) score++;
+    SessionProgress.markAnswered(q.id, isCorrect);
+    document.getElementById('submitCodeBtn').style.display = 'none';
+    return;
+  }
   
   let html = '<strong>' + (result.status === 'pass' ? '✅ All checks passed!' : result.status === 'partial' ? '⚠️ Partial — some checks passed' : '❌ Needs work') + '</strong>';
   html += ` (${result.passCount}/${result.total} checks)`;
@@ -1226,7 +1247,6 @@ function submitCode() {
   feedback.className = 'code-feedback ' + result.status;
   feedback.style.display = 'block';
   
-  const isCorrect = result.status === 'pass';
   if (isCorrect) score++;
   SessionProgress.markAnswered(q.id, isCorrect);
   
@@ -1251,6 +1271,10 @@ function autoSubmit() {
       answered = true;
       SessionProgress.markAnswered(q.id, false);
       const buttons = document.querySelectorAll('#optionsList .option-btn');
+      if (strictNoReveal) {
+        buttons.forEach(btn => btn.classList.add('disabled'));
+        return;
+      }
       buttons.forEach((btn, displayIdx) => {
         const origIdx = currentShuffleMap[displayIdx];
         btn.classList.add('disabled');
@@ -1331,7 +1355,19 @@ function showResults() {
     document.getElementById('resultsTitle').textContent = 'Keep Practicing';
     document.getElementById('resultsSubtitle').textContent = 'Review the explanations and try again.';
   }
+
+  if (strictNoReveal) {
+    document.getElementById('resultsSubtitle').textContent += ' Strict mode is enabled: answer key is hidden.';
+  }
   
+  const reviewSection = document.getElementById('reviewSection');
+  if (strictNoReveal) {
+    if (reviewSection) reviewSection.style.display = 'none';
+    SessionProgress.updateUI();
+    return;
+  }
+  if (reviewSection) reviewSection.style.display = 'block';
+
   // Build review list
   const reviewList = document.getElementById('reviewList');
   reviewList.innerHTML = '';
