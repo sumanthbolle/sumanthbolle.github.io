@@ -124,6 +124,14 @@
     .question-meta{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
     .question-text{font-size:16px;line-height:1.7;margin-bottom:20px;font-weight:500}
     .question-code{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px;font-family:var(--mono);font-size:13px;line-height:1.6;overflow-x:auto;white-space:pre;color:var(--text2)}
+    .question-card.copy-protected #questionText,
+    .question-card.copy-protected #questionCode,
+    .question-card.copy-protected #optionsList,
+    .question-card.copy-protected #questionMeta{
+      user-select:none;
+      -webkit-user-select:none;
+      -ms-user-select:none;
+    }
 
     /* MCQ OPTIONS */
     .options-list{display:flex;flex-direction:column;gap:10px}
@@ -304,7 +312,7 @@
       </div>
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 
-      <div class="question-card">
+      <div class="question-card" id="questionCard">
         <div class="question-meta" id="questionMeta"></div>
         <p class="question-text" id="questionText"></p>
         <div class="question-code" id="questionCode" style="display:none"></div>
@@ -589,6 +597,7 @@ let difficultyFilter = 'all';
 const QUIZ_ROTATION_KEY = 'sn_quiz_rotation_v1';
 let answerByIndex = [];
 let strictNoReveal = false;
+let questionCopyProtectionEnabled = false;
 
 function recomputeScoreFromAnswers() {
   score = answerByIndex.reduce((sum, ans) => sum + (ans && ans.ok ? 1 : 0), 0);
@@ -735,9 +744,60 @@ function handleInitialCategoryFromHash() {
   }
 }
 
+function setQuestionCopyProtection(enabled) {
+  questionCopyProtectionEnabled = !!enabled;
+  const card = document.getElementById('questionCard');
+  if (!card) return;
+  card.classList.toggle('copy-protected', questionCopyProtectionEnabled);
+}
+
+function getProtectedQuestionElementFromEvent(evt) {
+  if (!questionCopyProtectionEnabled) return null;
+  const quizPlayScreen = document.getElementById('quizPlayScreen');
+  if (!quizPlayScreen) return null;
+  const target = evt.target instanceof Element ? evt.target : (evt.target && evt.target.parentElement);
+  if (!target || !quizPlayScreen.contains(target)) return null;
+  if (target.closest('#codeEditor')) return null;
+  return target.closest('#questionText, #questionCode, #optionsList, #questionMeta');
+}
+
+function getProtectedQuestionElementFromSelection() {
+  if (!questionCopyProtectionEnabled) return null;
+  const sel = window.getSelection && window.getSelection();
+  if (!sel || sel.rangeCount === 0) return null;
+  const anchorNode = sel.anchorNode;
+  const anchorEl = anchorNode && (anchorNode.nodeType === 1 ? anchorNode : anchorNode.parentElement);
+  if (!anchorEl) return null;
+  return anchorEl.closest ? anchorEl.closest('#questionText, #questionCode, #optionsList, #questionMeta') : null;
+}
+
+function blockQuestionCopyEvent(evt) {
+  const protectedTarget = getProtectedQuestionElementFromEvent(evt);
+  if (!protectedTarget) return;
+  evt.preventDefault();
+  showCertificationLinkToast('Copy is disabled for quiz questions.');
+}
+
+['copy', 'cut', 'contextmenu', 'selectstart', 'dragstart'].forEach(evtName => {
+  document.addEventListener(evtName, blockQuestionCopyEvent, true);
+});
+
+document.addEventListener('keydown', evt => {
+  if (!questionCopyProtectionEnabled) return;
+  if (!(evt.ctrlKey || evt.metaKey)) return;
+  const key = (evt.key || '').toLowerCase();
+  if (key !== 'c' && key !== 'x') return;
+  const protectedByTarget = getProtectedQuestionElementFromEvent(evt);
+  const protectedBySelection = getProtectedQuestionElementFromSelection();
+  if (!protectedByTarget && !protectedBySelection) return;
+  evt.preventDefault();
+  showCertificationLinkToast('Copy is disabled for quiz questions.');
+}, true);
+
 function showScreen(id) {
   document.querySelectorAll('.quiz-screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  setQuestionCopyProtection(id === 'quizPlayScreen' && strictNoReveal);
 }
 
 // ── BUILD CATEGORY CARDS ──
