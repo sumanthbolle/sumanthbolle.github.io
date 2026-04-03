@@ -266,5 +266,42 @@
         "timer": 90
       }
     ]
+  },
+  "csa_dumps_live": {
+    "name": "CSA Dumps Live Test",
+    "icon": "🧪",
+    "desc": "Live test generated from uploaded CSA dump material. Includes timed practice and full simulation modes.",
+    "featured": true,
+    "color": "green",
+    "modes": [
+      {
+        "id": "practice",
+        "name": "Practice Mode",
+        "desc": "All extracted questions, no timer",
+        "count": "all",
+        "timer": 0
+      },
+      {
+        "id": "quick",
+        "name": "Quick 20",
+        "desc": "20 random questions, 60s each",
+        "count": 20,
+        "timer": 60
+      },
+      {
+        "id": "half",
+        "name": "Half Test 40",
+        "desc": "40 random questions, 75s each",
+        "count": 40,
+        "timer": 75
+      },
+      {
+        "id": "exam",
+        "name": "Full Live Test",
+        "desc": "60 random questions, 90s each",
+        "count": 60,
+        "timer": 90
+      }
+    ]
   }
 }

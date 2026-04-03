@@ -198,10 +198,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Consolidate overlapping Before BRs into a single Script Include with a dispatcher pattern, convert sequential After BRs to a Flow Designer subflow, and profile each rule's execution time with the BR debug log",
-        "Convert all Business Rules to client scripts for faster execution",
-        "Move all logic into a single Before Business Rule to reduce rule evaluations",
-        "Replace all Business Rules with scheduled jobs"
+        "Profile rule execution and query plans, retire redundant logic, and move heavy post-commit work to async paths.",
+        "Convert all rules to display rules so form load centralizes processing and removes update latency.",
+        "Increase node count first, then keep existing rule design because horizontal scale fixes script contention.",
+        "Disable ACL scripts temporarily so business rules can execute faster during high-traffic periods."
       ],
       "correct": [
         0
@@ -246,10 +246,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement CMDB Health audit using CSDM compliance dashboards, create reconciliation rules to merge duplicates using IRE, establish identification rules with proper precedence, then run a phased cleanup with rollback capabilities",
-        "Delete all orphaned CIs immediately and reimport from Discovery",
-        "Manually review each CI record and fix relationships",
-        "Disable all identification rules and start from scratch"
+        "Establish CI governance with ownership rules, dedupe/reconciliation tuning, and relationship completeness KPIs before migration.",
+        "Archive all orphaned CIs immediately, then rebuild relationships later from incident history references.",
+        "Clone production CMDB into a separate instance and manually merge trusted classes back after cleanup.",
+        "Replace reconciliation with import set transforms only, since IRE introduces unnecessary matching overhead."
       ],
       "correct": [
         0
@@ -262,10 +262,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement table rotation/archiving to reduce active table size, add database indexes on frequently queried columns, optimize ACL evaluation by reducing complex script-based ACLs, and enable query business rules to enforce mandatory filters",
-        "Increase the instance hardware allocation",
-        "Delete old incident records directly from the database",
-        "Disable all Business Rules on the incident table"
+        "Combine indexing strategy, query hygiene, and data lifecycle controls; validate gains with representative workload tests.",
+        "Turn off auditing and ACLs on large tables to reduce row read overhead before redesigning filters.",
+        "Move incident records to multiple custom tables by region so each list query scans fewer rows.",
+        "Force all users onto one saved list view so query plans stabilize automatically across sessions."
       ],
       "correct": [
         0
@@ -666,10 +666,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Create standardized variable sets for common fields, implement a catalog item taxonomy, consolidate workflows into parameterized Flow Designer flows, and use catalog client scripts at the variable set level",
-        "Delete all items and start over",
-        "Convert all catalog items to record producers",
-        "Merge all items into a single catalog item with conditional fields"
+        "Standardize variable sets/naming, enforce governance, and refactor catalog design into reusable request patterns.",
+        "Duplicate top items by department and hardcode variables so local teams can move faster independently.",
+        "Delete historical catalog items and recreate from scratch to avoid preserving inconsistent metadata.",
+        "Use one global catalog item with 200 variables and hide/show everything through client scripts."
       ],
       "correct": [
         0
@@ -682,10 +682,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement alert aggregation rules, configure alert correlation to group related alerts, tune severity mapping with the operations team, set up alert suppression for known maintenance windows, and establish event transform maps to normalize source data",
-        "Disable all alerts and only use manual incident creation",
-        "Set all alerts to the same severity level",
-        "Create a Business Rule to auto-close all alerts"
+        "Tune event rules and noise reduction first, then refine alert correlation into actionable incidents.",
+        "Route every alert to incident creation and rely on assignment groups to discard non-actionable tickets.",
+        "Disable event collection during peak hours and replay alerts overnight to control volume spikes.",
+        "Move all alert logic into flow designer without event normalization because flows are easier to monitor."
       ],
       "correct": [
         0
@@ -698,10 +698,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Flow Designer with decision tables for dynamic approval routing, implement Group Approval activities with conditional logic per risk/type combination, and leverage CMDB service relationships to auto-identify impacted service owners as approvers",
-        "Create a separate Change workflow for every possible combination",
-        "Use a single approval group for all changes",
-        "Hard-code approver lists in a Business Rule"
+        "Model approvals with staged flow logic and conditional branches tied to risk/service ownership.",
+        "Keep one linear approval list and let approvers skip downstream steps when priority is high.",
+        "Use UI action scripts to set approval outcomes directly on closed changes after implementation.",
+        "Create separate change tables per approval tier so each group owns an isolated lifecycle."
       ],
       "correct": [
         0
@@ -860,10 +860,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "ACL check → Data Policy validation → Before Business Rules → Database operation → After Business Rules → Async Business Rules → Workflow/Flow trigger → Notifications → Display Business Rules (on next load)",
-        "Before BR → Database → After BR → Done",
-        "Client Script → Server Script → Database → Done",
-        "The order is random and depends on server load"
+        "Understand ACL, policy, BR timing, DB write point, and post-commit processing boundaries for accurate debugging.",
+        "Focus on client script order first because server execution begins only after browser validation completes.",
+        "Assume after business rules can still modify current before commit if order is configured above 100.",
+        "Treat display business rules as part of update transaction because they execute before row write."
       ],
       "correct": [
         0
@@ -876,10 +876,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "The submit was triggered by a server-side operation (skipping client logic), a Client Script is overriding the UI Policy, or the browser's developer tools were used to bypass the mandatory check — Data Policies should enforce server-side",
-        "UI Policies are always enforced and this cannot happen",
-        "The user must have the admin role",
-        "The mandatory setting was probably not saved"
+        "Client-side mandatory checks can be bypassed; enforce critical rules server-side for non-UI channels.",
+        "UI policy mandatory is always enforced at database layer, so integrations cannot bypass it.",
+        "Form personalization by user role disables mandatory behavior until page cache is refreshed.",
+        "Mandatory enforcement depends solely on dictionary max length and not on policy evaluation timing."
       ],
       "correct": [
         0
@@ -1374,10 +1374,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Update Set batching to group related update sets with dependency ordering, implement a merge update set for cross-set dependencies, preview in test first to identify collisions, and establish a backout plan with update set reversion",
-        "Move each update set individually in random order",
-        "Export all customizations as XML and import manually",
-        "Use direct database replication between instances"
+        "Promote as one scoped release set via Dev -> Test -> Prod, preview for collisions, then commit with backout readiness.",
+        "Commit directly to Prod to preserve object references, then retrofit approvals in the next sprint.",
+        "Export customized records as XML and import to each instance to avoid update set dependency handling.",
+        "Clone Prod into Dev, rebuild changes there, and use compare reports as the deployment mechanism."
       ],
       "correct": [
         0
@@ -1390,10 +1390,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "A field-level read ACL on the configuration field requires a role the user doesn't have. Debug by impersonating the user, checking ACL evaluation using the Security Debug module (session debug), and reviewing the ACL rules on incident.configuration",
-        "The field must be deleted from the dictionary",
-        "The user's browser is caching an old form layout",
-        "itil role users can never see configuration fields"
+        "Check role inheritance plus module role requirements; validate ACL table and field conditions under impersonation.",
+        "Re-index text search and clear browser cache because navigator visibility is not role-dependent.",
+        "Grant admin temporarily, open the module once, then remove admin so role map refreshes automatically.",
+        "Replace all field ACLs with one table ACL so module links resolve consistently for every itil user."
       ],
       "correct": [
         0
@@ -1406,10 +1406,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Create a Data Policy with condition Priority=1 that sets Business Impact as mandatory, ensuring enforcement across all entry points including server-side operations",
-        "Create a UI Policy — it enforces on all channels",
-        "Write an onChange Client Script to check the field",
-        "Add a mandatory attribute in the Dictionary entry"
+        "Enforce requirement server-side using Data Policy or Before BR, while keeping UI Policy for user guidance.",
+        "Use only onChange client script and block save with addErrorMessage for all channels including imports.",
+        "Mark the field dictionary-mandatory globally and bypass for non-P1 through display business rule logic.",
+        "Rely on incident form mandatory flag because integrations honor form-level constraints by default."
       ],
       "correct": [
         0
@@ -1422,10 +1422,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Flow Designer with sequential approval steps, each with conditional branching based on the amount field. Use 'Ask for Approval' actions with Group/User lookup from the user's management chain via the sys_user.manager field",
-        "Create three separate workflows and a Business Rule to pick which one to launch",
-        "Use a single approval step with all three approvers CC'd",
-        "Write a Script Include that sends email requests manually"
+        "Model in Flow Designer with staged approvals and branching, then version and test transitions in subflow modules.",
+        "Encode approvals entirely in one UI Action so approvers can override stage transitions at runtime.",
+        "Use a display Business Rule chain to set approval states before every form render for deterministic routing.",
+        "Attach approval script to dictionary attributes so workflow engine reads approval tiers directly from fields."
       ],
       "correct": [
         0
@@ -1438,10 +1438,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Consolidate overlapping ACLs, replace script-based ACLs with condition-based ACLs where possible, use ACL debugging to identify expensive evaluations, and consider using before query Business Rules to pre-filter data instead of row-level ACLs",
-        "Delete all ACLs and rely on role-based access only",
-        "Increase server memory allocation",
-        "Disable ACL evaluation globally"
+        "Consolidate where possible, favor condition/role ACLs over scripted checks, and remove redundant field-level ACL overlap.",
+        "Convert all ACLs to scripted ACLs so logic is centralized and easier to maintain in one script include.",
+        "Move access logic from ACLs into client scripts to reduce server-side evaluation for list and form reads.",
+        "Grant broad table-read and enforce sensitive fields with UI Policy visibility rules to improve performance."
       ],
       "correct": [
         0
@@ -1454,10 +1454,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement a branching strategy with team-specific update sets, use an Update Set naming convention with team prefixes, establish a merge/preview process in a staging instance, and assign a release manager to coordinate commits to production",
-        "Let each team commit directly to production",
-        "Use a single shared update set for all teams",
-        "Disable update sets and make changes directly in production"
+        "Adopt disciplined update-set ownership and promotion order, with collision preview and peer validation before commit.",
+        "Allow freeform parallel commits in Prod and reconcile conflicts later using clone compare reports.",
+        "Disable customer updates table-wide during sprint close and apply all update sets after release freeze.",
+        "Merge all team work into one monolithic update set to ensure no dependency can be missed in promotion."
       ],
       "correct": [
         0
@@ -1470,10 +1470,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Check if the onBefore script sets ignore=true conditionally, enable Import Set debug logging via sys_properties, examine the transform history for each row's action (insert/update/ignore), and add explicit gs.info logging to the transform scripts",
-        "Re-run the import — it was probably a timeout issue",
-        "Check the email notification logs",
-        "The transform map has a row limit"
+        "Instrument transform scripts, capture skip reasons in logs, and set explicit reject/error paths for failed validations.",
+        "Disable onBefore script and rely on transform map coalesce to report every rejected row automatically.",
+        "Move validation to client script on import set form so analysts can fix data before transform execution.",
+        "Re-run import in chunks of 1,000 because silent skips are usually caused by transaction batch size only."
       ],
       "correct": [
         0
@@ -1486,10 +1486,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Catalog Category user criteria to control visibility, create category-level ACLs, and implement Service Portal widget customization with scripted data sources that filter based on gs.getUser() attributes",
-        "Create separate Service Portals for each department",
-        "Duplicate every catalog item per department",
-        "Use Client Scripts to hide categories after page load"
+        "Drive visibility by user criteria/entitlement context and validate portal audience mappings across role combinations.",
+        "Clone separate portals per role and hardcode category IDs in widget options to avoid entitlement ambiguity.",
+        "Use UI policy on sc_cat_item to hide categories since portal category rendering respects form policy states.",
+        "Expose all categories and filter client-side with scripted CSS classes for each user role at page load."
       ],
       "correct": [
         0
@@ -1662,10 +1662,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use a single incident table with the union of all states, implement UI Policies per assignment group/business unit to show/hide irrelevant states, and use Business Rules to enforce valid state transitions per BU — avoid table-per-BU duplication",
-        "Create three separate incident tables, one per BU",
-        "Force all BUs to use the same 5-state model",
-        "Use domain separation to give each BU a different instance"
+        "Use domain separation where strict data/process isolation is required, with shared services modeled intentionally.",
+        "Use one global domain and distinguish units only with assignment groups to minimize platform complexity.",
+        "Create three instances and synchronize data by nightly export/import to enforce governance boundaries.",
+        "Store business-unit routing in dictionary attributes and keep all records in global for reporting simplicity."
       ],
       "correct": [
         0
@@ -1678,10 +1678,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use employee_number as the coalesce field on the Transform Map, disable Business Rules via setWorkflow(false) in onBefore, increase the chunk size in import properties, and consider using the Table API with batch operations for better parallelism",
-        "Run the import during business hours for priority access",
-        "Remove the coalesce and create all records as new, then delete duplicates",
-        "Split into 100 separate import sets of 1,000 each"
+        "Use coalesce on stable keys, optimize map scripts, and avoid expensive per-row lookups inside transform events.",
+        "Disable coalesce and insert all rows first, then run duplicate cleanup scripts for performance recovery.",
+        "Process via client scripts in import UI to reduce transform map server load before commit.",
+        "Split destination user table into per-letter partitions and map each partition in separate transform maps."
       ],
       "correct": [
         0
@@ -1870,10 +1870,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use the Password Reset application with MID Server integration to Active Directory, configure multi-factor verification (security questions + email/SMS), and deploy a Service Portal widget for the self-service flow",
-        "Give users direct access to Active Directory",
-        "Create a catalog item that emails the admin to reset the password",
-        "Deploy a third-party tool completely outside ServiceNow"
+        "Use native reset flow with identity verification policy and audited notification templates across channels.",
+        "Implement reset via catalog item that writes directly to sys_user.password through business rule.",
+        "Expose admin-only password reset UI action to portal users through ACL exception for speed.",
+        "Handle reset in client script with GlideAjax returning encrypted password token to browser session."
       ],
       "correct": [
         0
@@ -1886,10 +1886,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Enable Business Rule debug logging, analyze the Transaction Log for slow transactions, use the Script Execution History to identify expensive scripts, benchmark each rule with execution time tracking, and implement a remediation plan prioritizing the highest-impact rules",
-        "Disable all Business Rules and re-enable one at a time",
-        "Upgrade the instance to a higher tier",
-        "Move all Business Rules to client scripts"
+        "Inventory rule purpose, retire duplicates, tune conditions/order, and shift heavy logic to reusable script includes.",
+        "Convert all rules to async so transaction latency drops regardless of side effects.",
+        "Move all business logic into display rules because they execute last and reduce data contention.",
+        "Prefix rules alphabetically and keep existing logic unchanged to avoid regression risk in production."
       ],
       "correct": [
         0
@@ -1966,15 +1966,223 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Immediately back out the Update Set to restore the previous configuration, verify the workflow is functioning by testing with an impersonated user, implement a post-incident review to prevent recurrence, and update the deployment process to require peer review and UAT sign-off before production commits",
-        "Manually fix the workflow in production during business hours",
-        "Roll back the entire instance to yesterday backup",
-        "Tell the CEO to submit expenses via email until next release"
+        "Back out the offending update set, validate critical path via impersonation, then run post-incident deployment controls.",
+        "Hotfix directly in production and delay root-cause analysis until next planned maintenance window.",
+        "Restore full instance backup to pre-release snapshot and re-enter same-day operational changes manually.",
+        "Disable expense workflow notifications so users can submit while the broken process remains in place."
       ],
       "correct": [
         0
       ],
       "explanation": "Emergency response: back out the Update Set (creates a reversal set), verify restoration, communicate resolution. Prevention: mandate UAT sign-off before production, require peer review of update sets, implement a change freeze window, and add ATF tests for critical workflows."
+    },
+    {
+      "id": "csa-h14",
+      "q": "A form should require Close notes when State changes to Resolved, regardless of whether updates come from UI, import set, or REST API. Which design best satisfies this requirement?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Combine server-side enforcement with UI feedback: Data Policy (or Before BR) plus conditional UI Policy action.",
+        "Use UI Policy only; platform integrations evaluate form policy rules before database commit.",
+        "Use onChange client script with g_form mandatory logic because state transitions are always browser-initiated.",
+        "Use display BR validation because display lifecycle executes before every insert and update transaction."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "UI Policies and Client Scripts are client-side only. To enforce across UI and non-UI channels (imports, APIs), use server-side enforcement such as Data Policy (or BR). Pairing UI Policy with Data Policy gives both UX guidance and true enforcement."
+    },
+    {
+      "id": "csa-h15",
+      "q": "A user has role itil directly, and is also in a group with role change_manager. Which statement is correct about effective access?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Effective access is additive: direct assignments and inherited group roles both contribute to runtime permissions.",
+        "Direct user role assignment suppresses inherited group roles to prevent privilege overlap.",
+        "Inherited group roles are informational only and excluded from ACL checks during data access.",
+        "Role precedence is timestamp-based, so first granted role defines final permission profile."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ServiceNow aggregates roles from all assignment paths. Effective access is cumulative (subject to ACL evaluation), not first-wins or direct-vs-inherited precedence."
+    },
+    {
+      "id": "csa-h16",
+      "q": "You need to move a configuration fix from Dev to Prod quickly. The fix includes one changed Business Rule and one modified form layout. Which is the safest sequence?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Package both config changes in one controlled update set, preview in target, test, then commit through pipeline.",
+        "Export changed records to XML and import to Prod to avoid update set sequencing risks.",
+        "Apply form layout manually in Prod and migrate only business rule via update set for speed.",
+        "Commit directly to Prod first, then push same update set to Test for parity verification."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The recommended path is Dev to Test to Prod with preview/resolution before commit. Direct XML/import or manual recreation increases drift/risk and bypasses promotion controls."
+    },
+    {
+      "id": "csa-h17",
+      "q": "An Incident onSubmit Client Script returns false based on a client-side condition. A user can still update the record via REST API. Why?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Client scripts run in browser context only; REST updates bypass them and require server-side validation controls.",
+        "REST calls ignore table validations by design, so only workflow activities can enforce update constraints.",
+        "onSubmit scripts trigger only for inserts, while updates never evaluate client-side return conditions.",
+        "REST executes as system admin by default, which bypasses all validation except dictionary max length checks."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Client Scripts execute in UI browser sessions only. Non-UI channels require server-side validation (Data Policy, ACL/scripted logic, Business Rules)."
+    },
+    {
+      "id": "csa-h18",
+      "q": "A reference field displays user names but stores values like 6816f79cc0a8016401c5a33be04be441. What is stored and why?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Reference fields store sys_id values, while the UI resolves and displays the referenced record display value.",
+        "Reference fields store a hashed display label for security and derive sys_id at query time.",
+        "Reference fields store external directory keys and map to sys_id only in reporting modules.",
+        "Reference fields store sys_choice labels and resolve target records through dictionary translation caches."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Reference fields persist the target record sys_id. The UI resolves and shows the display value, but the database stores the stable identifier."
+    },
+    {
+      "id": "csa-h19",
+      "q": "Which statement about table inheritance in Task hierarchy is accurate?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Child tables inherit parent schema/behavior and can extend with table-specific fields and logic.",
+        "Inheritance copies parent fields once, then parent and child schemas diverge with no ongoing linkage.",
+        "Inheritance applies to labels and choices only; physical column availability remains child-table specific.",
+        "Parent field changes never surface on child forms unless each child dictionary entry is recreated manually."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Task is a parent table. Child tables inherit shared fields and behavior while allowing table-specific extension. Parent-level changes typically propagate to children."
+    },
+    {
+      "id": "csa-h20",
+      "q": "You must make a field mandatory only when Assignment group is Network. Which approach is best for maintainability in CSA-level admin work?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use conditional UI Policy action for maintainable form behavior; pair server enforcement if channel-wide requirement exists.",
+        "Use catalog client script so the same mandatory logic automatically applies to standard table forms.",
+        "Set dictionary mandatory true and relax on load with script to preserve baseline data quality controls.",
+        "Use after BR to reject empty values, since post-commit validation provides consistent user feedback."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "For conditional form behavior, UI Policies are the maintainable no/low-code approach. Dictionary mandatory is unconditional; BR-only approach gives poor UX."
+    },
+    {
+      "id": "csa-h21",
+      "q": "A filter condition uses State is one of New, In Progress. Why is this preferable to two separate OR clauses in many admin scenarios?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "It provides equivalent multi-value filtering with cleaner intent and easier maintenance than stacked OR clauses.",
+        "It forces optimizer index usage automatically, unlike OR clauses which always trigger full scans.",
+        "It executes client-side first and sends minimized query syntax to bypass server ACL processing.",
+        "It alters ACL order so list queries evaluate field ACLs only after table ACL success."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "is one of expresses multi-value criteria concisely and readably. It does not bypass ACLs or auto-create indexes."
+    },
+    {
+      "id": "csa-h22",
+      "q": "In a Notification, recipients are configured as Assigned to, Watch list users, and a Support group. Which best describes final delivery behavior?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Recipient sources are resolved and de-duplicated before send, then normal notification rules/preferences apply.",
+        "Only the first configured recipient source is honored to prevent duplicate outbound messages.",
+        "Group recipients supersede field recipients, so watch list values are skipped when group is present.",
+        "Watch list recipients are processed only if Assigned to is empty at notification evaluation time."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Notification recipient sets are combined and deduplicated before send processing. Multiple sources can contribute recipients in one notification."
+    },
+    {
+      "id": "csa-h23",
+      "q": "A user reports that a module disappeared from left nav after role changes. What is the most accurate first check?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Validate module role requirements and the user’s effective role inheritance before troubleshooting UI-level causes.",
+        "Clear browser cache first because left-nav visibility is cached independently from role entitlements.",
+        "Rebuild dictionary caches first since module rendering depends on latest dictionary update timestamp.",
+        "Run module fix scripts to republish sys_ui_module records for all role maps after each role change."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Module visibility is role-driven. First validate role requirements and current effective roles (including inherited group roles)."
+    },
+    {
+      "id": "csa-h24",
+      "q": "Which combination best represents a realistic pre-production validation gate for CSA admin changes?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Preview in target, resolve collisions, run focused UAT, then commit with rollback plan and release evidence.",
+        "Commit to production and validate with live users because UAT environments rarely mirror real behavior.",
+        "Skip preview when update set count is small; XML exports provide equivalent dependency assurance.",
+        "Rely exclusively on ATF and bypass UAT because automated checks cover functional and operational readiness."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Best practice is preview plus conflict resolution plus UAT before commit to reduce regressions and environment drift."
+    },
+    {
+      "id": "csa-h25",
+      "q": "Which statement about ACL evaluation is most accurate for CSA exam expectations?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "ACL checks are operation-specific; satisfying role conditions helps but does not universally guarantee access.",
+        "A single passing ACL grants full CRUD access on the table regardless of operation context.",
+        "Read ACL success implies write ACL success when both ACLs reference the same role requirement.",
+        "Admin role bypasses ACL behavior in every execution path including delegated and scoped contexts."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ACLs are operation-specific and evaluated for access decisions; role assignment helps satisfy ACL requirements but does not replace ACL logic semantics."
+    },
+    {
+      "id": "csa-h26",
+      "q": "A list layout shows columns differently for two users on the same table. What is the most likely explanation?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "User-level personalization/view preferences can produce different list columns on the same table.",
+        "Dictionary metadata is duplicated per user, so each profile stores an independent column schema.",
+        "List columns are globally fixed and cannot differ unless the instance was recently cloned.",
+        "Group role inheritance enforces unique default list columns for each group membership path."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ServiceNow supports user personalization for list/form layouts and view preferences, so UI can differ per user without schema differences."
     }
   ],
   "csm": [
@@ -2208,10 +2416,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "CSM SLAs can be customer-specific using Entitlements — different customers can have different response/resolution targets for the same case type based on their service contract",
-        "CSM does not support SLAs",
-        "CSM uses the same SLA engine with no differences",
-        "CSM SLAs are always faster than ITSM SLAs"
+        "CSM commonly binds entitlement/account context into SLA targeting, rather than treating all requests through one generic SLA policy.",
+        "CSM SLAs are always faster than ITSM SLAs because customer-facing timers bypass internal workflow pauses.",
+        "CSM does not support SLA definitions; only entitlement records determine response and resolution obligations.",
+        "CSM and ITSM SLA behavior is identical in all cases once case and incident share the same priority value."
       ],
       "correct": [
         0
@@ -2224,10 +2432,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A guided, step-by-step workflow that walks agents through a defined process for handling specific case types, ensuring consistency and capturing required information at each step",
-        "A Knowledge Base article written for agents",
-        "A training manual stored in the system",
-        "A script that auto-resolves cases"
+        "Playbooks orchestrate guided agent actions with context-aware tasks/decisions to standardize complex case handling.",
+        "Playbooks are static knowledge articles that agents open when no workflow automation is available.",
+        "Playbooks replace assignment rules by deciding which group owns a case at creation time.",
+        "Playbooks should execute only after case closure to document what actions were taken by agents."
       ],
       "correct": [
         0
@@ -2256,10 +2464,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "The CSM portal is designed for external customers with branded experience, account-scoped visibility, and consumer-focused features; the ITSM Service Portal is for internal employees",
-        "They are identical portals",
-        "The CSM portal cannot display Knowledge articles",
-        "The ITSM portal supports multiple accounts"
+        "CSM portal experiences are customer-service focused, while generic ITSM portals center internal employee service flows.",
+        "They are identical portals with different themes and no difference in data model or workflow intent.",
+        "CSM portal is for agents and ITSM portal is for external contacts in partner support programs.",
+        "ITSM portal supports entitlements natively, while CSM portal requires custom plugins for account context."
       ],
       "correct": [
         0
@@ -2416,10 +2624,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Customer Central provides a 360-degree view of the customer — showing all cases, contracts, entitlements, products, and interactions for a single account in one unified workspace — while the standard workspace focuses on individual case handling",
-        "Customer Central is for customers; standard workspace is for agents",
-        "They are identical workspaces with different names",
-        "Customer Central only shows financial data"
+        "Customer Central unifies account-level context and outcomes, while agent workspace optimizes case execution workflows.",
+        "They are the same interface with different branding applied by role and theme configuration.",
+        "Customer Central is deprecated and should be replaced entirely by legacy CSM workspace modules.",
+        "Agent workspace is for external customers; Customer Central is for internal case assignment groups."
       ],
       "correct": [
         0
@@ -2432,10 +2640,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Integrate Event Management with CSM using event-to-case mapping rules, leverage Service Mapping to identify affected customers, and auto-create cases with proactive messaging via the customer portal and email notifications",
-        "Wait for customers to report issues and then create cases",
-        "Create a scheduled job to check for issues daily",
-        "Use a chatbot to ask customers if they have issues"
+        "Use proactive service signals and account context to trigger cases/plays before customer-reported impact.",
+        "Open incidents for all telemetry anomalies and let account teams convert them to cases manually.",
+        "Create one weekly batch case per customer with all alerts to reduce case volume overhead.",
+        "Limit proactive service to VIP contacts because entitlement verification slows event-based automation."
       ],
       "correct": [
         0
@@ -2448,10 +2656,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Entitlements linked to Service Contracts per account, where each entitlement specifies the SLA target duration. A single SLA Definition references the entitlement to dynamically determine the target for each case based on the customer's contract",
-        "Create a separate SLA Definition for each account",
-        "Use a Business Rule to calculate SLA targets per case",
-        "Hard-code account-specific timers in a Script Include"
+        "Model account-aware SLA/entitlement rules with precedence strategy and transparent exception handling.",
+        "Duplicate case tables by SLA tier and route accounts to tables that match contracted response windows.",
+        "Keep one global SLA and apply account targets through client scripts at case form submit.",
+        "Store SLA logic in knowledge articles so agents can manually select the correct response target."
       ],
       "correct": [
         0
@@ -2464,10 +2672,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Configure Assignment Groups per region, implement Business Schedule records for each region's operating hours, set up regional SLAs that reference the correct schedules, use Advanced Work Assignment with location-based routing, and configure portal language support",
-        "Create separate instances per region",
-        "Use domain separation for each region",
-        "Create separate case tables per region"
+        "Combine domain strategy, assignment/routing policy, and account hierarchy controls for regional operating models.",
+        "Deploy one CSM instance per region and synchronize accounts nightly to keep global reporting centralized.",
+        "Use catalog variables to encode region and let agents manually enforce local process variations.",
+        "Apply one global process and handle all regional exceptions through ad-hoc case comments and tasks."
       ],
       "correct": [
         0
@@ -2480,10 +2688,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Case Tasks for each tier with task-level SLAs — when Tier 1 escalates to Tier 2, a new task is created with Tier 2's SLA. The parent case tracks overall resolution SLA while each task tracks per-tier targets",
-        "Apply a single SLA to the entire case regardless of tier",
-        "Manually track tier times in a comments field",
-        "Create separate case records for each tier"
+        "Implement tiered routing and escalation logic with ownership transitions and measurable handoff SLAs.",
+        "Assign all new cases to Tier 2, then downgrade simple issues to Tier 1 for closure speed.",
+        "Use one assignment group and model tiers only as case tags for simplified reporting.",
+        "Escalate all unresolved cases at fixed intervals regardless of severity or entitlement terms."
       ],
       "correct": [
         0
@@ -2496,10 +2704,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Configure Assessment and Survey framework with different survey types triggered at case closure, use Survey Designer for branded survey forms, link responses to cases for correlation analysis, and build Performance Analytics dashboards for trending",
-        "Use a third-party survey tool completely outside ServiceNow",
-        "Ask agents to manually record customer satisfaction scores",
-        "Only track CSAT and ignore CES and NPS"
+        "Use survey orchestration and metric governance so CES, CSAT, and NPS each serve distinct decision loops.",
+        "Capture only CSAT because CES and NPS overlap and add unnecessary survey fatigue.",
+        "Compute CES/NPS from case close duration and reopen rates instead of explicit customer responses.",
+        "Run one annual satisfaction survey and map all outputs to case-level feedback records."
       ],
       "correct": [
         0
@@ -2512,10 +2720,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use the Partner model in CSM — create partner accounts, assign partner contacts with the sn_customerservice.partner role, configure ACLs to scope case visibility to partner-assigned cases, and set up partner portal with account-level data restrictions",
-        "Give partners full admin access to see everything",
-        "Create a separate instance for each partner",
-        "Email case updates to partners manually"
+        "Model account-contact-partner relationships with delegated access controls and clear case ownership boundaries.",
+        "Allow all partner users full account visibility to avoid delays in collaborative case handling.",
+        "Create separate accounts for each partner to prevent cross-company entitlement rule conflicts.",
+        "Use watch lists only; delegated partner access is unnecessary when email updates are enabled."
       ],
       "correct": [
         0
@@ -2528,10 +2736,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement AI-powered Knowledge search on the portal with contextual suggestions, configure Virtual Agent for common inquiries, enable Community forums for peer support, use Service Catalog for standard requests, and track deflection rates with Performance Analytics",
-        "Hire more agents to handle cases faster",
-        "Remove the ability to create cases from the portal",
-        "Only accept cases via phone"
+        "Implement deflection via contextual knowledge, intent routing, and measurable containment funnels.",
+        "Hide live support entry points to force portal-only interactions and reduce inbound case count.",
+        "Publish static FAQs and disable search personalization to avoid exposing irrelevant articles.",
+        "Increase mandatory fields on case forms so customers self-solve before completing submission."
       ],
       "correct": [
         0
@@ -2544,10 +2752,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Create a Major Issue parent case, use automated case matching rules to link incoming cases as children, post a public status update on the customer portal, send proactive notifications to affected accounts, and provide a single resolution that cascades to all child cases",
-        "Ask agents to handle each case individually",
-        "Close all cases with a generic message",
-        "Wait until the issue is resolved then respond to all cases"
+        "Use major-incident style communication and parent-child case orchestration to contain surge volumes.",
+        "Merge all incoming cases into one record and close duplicates without customer notification.",
+        "Suspend SLA clocks on outage-related cases until root cause is confirmed by infrastructure teams.",
+        "Create ad-hoc task lists in spreadsheets and update case statuses in bulk at day end."
       ],
       "correct": [
         0
@@ -2608,10 +2816,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Enables sending bulk communications to specific customer segments based on account, product, region, or other criteria — used for announcements, maintenance windows, and outage notifications",
-        "A one-on-one messaging feature between agent and customer",
-        "An internal agent communication tool",
-        "A marketing email system"
+        "Targeted communication segments audiences by context and triggers relevant outreach at controlled lifecycle points.",
+        "It sends every service bulletin to all contacts so communication parity is preserved across accounts.",
+        "It replaces case comments by pushing one-way updates without relationship to case or account context.",
+        "It is limited to outbound email campaigns and cannot be tied to service events or incidents."
       ],
       "correct": [
         0
@@ -2624,10 +2832,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Integration Hub with the Salesforce spoke for bidirectional sync, implement transform maps for initial data migration, configure scheduled integration flows for ongoing sync, and establish conflict resolution rules for bidirectional updates",
-        "Manually re-enter data from Salesforce into ServiceNow",
-        "Export Salesforce data to CSV and import weekly",
-        "Use Salesforce for all customer management and skip CSM setup"
+        "Integrate lifecycle signals bi-directionally with governed field mappings and ownership across CRM/CSM boundaries.",
+        "Use one-way sync from CSM to CRM only, since opportunity context should not influence support workflows.",
+        "Store Salesforce IDs in free-text fields and rely on agents to cross-reference account context manually.",
+        "Replicate CRM account/contact tables in CSM and disable sync to avoid reconciliation conflicts."
       ],
       "correct": [
         0
@@ -2640,10 +2848,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Train a Predictive Intelligence model on historical case data, configure auto-classification to set category/subcategory, implement priority prediction based on description sentiment and keywords, and use the predicted values to drive assignment rules — with agent override capability",
-        "Use random assignment and let agents reclassify",
-        "Write regex-based Business Rules to match keywords",
-        "Require customers to select all fields manually"
+        "Use model governance, confidence thresholds, and fallback routing to keep AI classification reliable in production.",
+        "Auto-accept all model predictions to maximize throughput and retrain quarterly on unresolved cases only.",
+        "Train separate model per assignment group and ignore shared taxonomy to improve local precision.",
+        "Run AI only on closed cases so misclassification cannot affect live customer response paths."
       ],
       "correct": [
         0
@@ -2704,10 +2912,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Through configurable escalation rules based on SLA breach, priority, inactivity, or manual trigger — escalations can reassign cases, notify managers, and change priority automatically",
-        "Cases cannot be escalated in CSM",
-        "Only managers can manually escalate cases",
-        "Escalation requires a separate workflow application"
+        "Escalation combines SLA/priority conditions, ownership transitions, and communication obligations.",
+        "Escalation simply reassigns to manager group after fixed time regardless of entitlement or severity.",
+        "Escalation closes the original case and opens a new one at a higher support tier automatically.",
+        "Escalation is triggered only by customer sentiment score and not by operational SLA breach conditions."
       ],
       "correct": [
         0
@@ -2720,10 +2928,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Entitlements define customer-specific service levels that determine which SLA targets apply to their cases — a Gold entitlement might specify 1-hour response while Silver specifies 4 hours",
-        "Entitlements and SLAs are unrelated",
-        "Entitlements replace SLAs entirely",
-        "SLAs override Entitlements in all cases"
+        "Entitlements determine service rights and SLA selection logic, binding contractual support rules to case handling.",
+        "Entitlements are optional labels for reporting, while SLA definitions apply uniformly to all accounts.",
+        "Entitlements replace SLAs by directly controlling pause/resume timers through contact preference settings.",
+        "Entitlements are evaluated only at case closure when final response time is calculated for reporting."
       ],
       "correct": [
         0
@@ -2752,10 +2960,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "When an agent selects the customer and product, the system automatically checks if the customer has a valid entitlement (active contract) for that product — if not, the agent is alerted that the customer may not be eligible for support",
-        "Entitlements are never verified automatically",
-        "Agents must manually check contracts in a separate system",
-        "Verification only happens after the case is resolved"
+        "Asset/entitlement checks validate support eligibility and route case treatment based on covered products/services.",
+        "Verification is informational only; assignment and SLA logic should ignore entitlement state for speed.",
+        "Asset checks run after closure to enrich reporting and do not affect active case workflow paths.",
+        "Entitlement verification requires manual override each time because account relationships are too dynamic."
       ],
       "correct": [
         0
@@ -2768,10 +2976,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A configurable set of scheduled communications (email, portal updates) automatically sent to the customer at defined intervals during case processing — keeping customers informed without manual effort",
-        "A plan for migrating communication systems",
-        "An internal team meeting schedule",
-        "A document listing approved communication templates"
+        "Communication plans define timing/channels/audiences so updates remain consistent during service-impact events.",
+        "They are templates for agent signatures and have no relationship to case lifecycle communications.",
+        "They replace notifications and require manual send by supervisors for every status transition.",
+        "They are used only for marketing outreach and should not be tied to support operations."
       ],
       "correct": [
         0
@@ -2784,10 +2992,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A record that captures each customer touchpoint (call, chat, email) including duration, channel, and notes — providing a complete timeline of all interactions for a case or account",
-        "A social media post",
-        "An internal agent note",
-        "A system log entry"
+        "Interaction captures omnichannel engagement context and can be converted/linked to downstream work records.",
+        "Interaction is a billing object used to aggregate chargeback totals per support session.",
+        "Interaction replaces cases entirely in CSM and should be used for all lifecycle management tasks.",
+        "Interaction is a read-only audit table populated only by email inbound processing rules."
       ],
       "correct": [
         0
@@ -2800,10 +3008,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Build a composite Health Score using Performance Analytics indicators from multiple data sources — case volume trends, SLA breach rates, CSAT scores, and product telemetry. Use Predictive Intelligence to identify churn patterns and trigger proactive outreach when scores drop below thresholds",
-        "Use a simple formula of open case count only",
-        "Manually assign health scores quarterly",
-        "Only track CSAT and ignore other signals"
+        "Build composite health scoring with weighted indicators, drift monitoring, and action playbooks tied to thresholds.",
+        "Use one static health formula for all accounts so trend comparisons remain globally consistent.",
+        "Score accounts only by open case count because support load is the strongest churn predictor.",
+        "Recalculate health quarterly and let account teams decide interventions without automated triggers."
       ],
       "correct": [
         0
@@ -2816,10 +3024,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Configure separate portals for B2B (account-scoped, SSO via SAML) and B2C (consumer-facing, social login). Use Contacts for B2B and Consumers for B2C with appropriate ACLs. Implement different case routing and SLA models per segment. Scale B2C with Virtual Agent for high-volume deflection",
-        "Force all users through the same portal",
-        "Create separate instances for B2B and B2C",
-        "Only support B2B and refer B2C to a call center"
+        "Separate B2B and B2C experiences through controlled segmentation while preserving shared service capabilities.",
+        "Use one universal portal journey and ask users to self-identify as consumer or business on each case.",
+        "Create dedicated CSM instance for B2C and sync only severe cases back to B2B operations.",
+        "Store consumers as contacts under one generic account to simplify entitlement and data model complexity."
       ],
       "correct": [
         0
@@ -2832,10 +3040,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Use Major Issue Management to create a parent case for the flight delay, auto-generate child cases for affected passengers using a scheduled flow with passenger manifest data, implement playbooks for rebooking and compensation workflows, and use targeted communications for mass passenger notifications",
-        "Have agents manually create 300 cases",
-        "Create one case for the whole flight and email all passengers the same message",
-        "Wait for passengers to call in and create cases individually"
+        "Use event-to-case orchestration with parent-case communication strategy and passenger-specific context linking.",
+        "Create one bulk case for all passengers and broadcast updates through outbound email campaigns only.",
+        "Open incident records instead of CSM cases so flight operations can process impact at infrastructure level.",
+        "Queue all passenger cases for manual triage before any communication to prevent inaccurate outage messaging."
       ],
       "correct": [
         0
@@ -2864,10 +3072,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Quick Close allows agents to resolve simple cases in one action with minimal fields; Full Resolution follows the complete state transition flow with required documentation and root cause analysis",
-        "Quick Close deletes the case; Full Resolution archives it",
-        "They are the same action with different names",
-        "Quick Close skips SLA tracking"
+        "Quick Close applies streamlined closure for simple resolution paths; Full Resolution captures complete closure details/workflow.",
+        "Quick Close bypasses entitlement/SLA checks, while Full Resolution enforces them after closure.",
+        "They are equivalent actions with different labels for partner-facing and customer-facing portals.",
+        "Full Resolution should be used only for escalated cases; Quick Close is mandatory for standard incidents."
       ],
       "correct": [
         0
@@ -2896,10 +3104,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Service Entitlements define support levels for a service contract (e.g., 24/7 Premium Support); Product Entitlements define support for a specific product (e.g., Product X warranty support)",
-        "They are the same thing",
-        "Service Entitlements are for internal use; Product Entitlements are for customers",
-        "Product Entitlements are always more restrictive"
+        "Service entitlement usually governs contracted service scope/levels, while product entitlement validates support rights for specific covered products.",
+        "Service entitlement is used only for billing display, while product entitlement is the sole source of SLA calculation.",
+        "Product entitlement replaces account entitlement; service entitlement is deprecated in modern CSM deployments.",
+        "Both entitlement types are synonyms and are interchangeable without impact on case routing or SLA behavior."
       ],
       "correct": [
         0
@@ -2928,10 +3136,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Cases are matched to agents based on required skills (product expertise, language, certification) — the routing engine finds available agents with matching skill sets and appropriate capacity",
-        "Cases are routed alphabetically by agent name",
-        "Skills are used only for reporting, not routing",
-        "Agents manually claim cases from a general queue"
+        "Skill-based routing aligns case demand with agent capability profiles using configurable matching and queue policy.",
+        "It routes strictly by assignment group hierarchy and ignores individual capability metadata.",
+        "It is a reporting feature only; assignment still depends exclusively on manual triage.",
+        "It requires one unique case table per skill domain to avoid cross-skill assignment conflicts."
       ],
       "correct": [
         0
@@ -2944,10 +3152,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement AWA with multi-criteria routing: skill-based matching for product expertise and language, capacity management per agent, tier-based queues with automatic escalation, and affinity rules to maintain customer-agent continuity across interactions",
-        "Create one queue and let agents pick cases manually",
-        "Route all cases to Tier 1 and escalate via email",
-        "Assign cases round-robin regardless of skills or language"
+        "Design scalable routing, tier governance, and product-region skills with workload balancing and queue controls.",
+        "Assign by round-robin globally and let supervisors re-route cases manually to specialist groups.",
+        "Create one queue per product-region-tier combination and disable overflow to preserve ownership clarity.",
+        "Route all premium customers to Tier 3 directly to reduce reassignments and total touch time."
       ],
       "correct": [
         0
@@ -2960,10 +3168,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A real-time visual dashboard showing KPIs like open case volume, SLA compliance rates, agent utilization, customer satisfaction scores, and case aging — used by supervisors and managers",
-        "A customer-facing dashboard on the portal",
-        "A configuration page for CSM settings",
-        "A debugging tool for CSM scripts"
+        "CSM dashboards aggregate operational KPIs for oversight, trend monitoring, and resource/experience decisions.",
+        "Dashboards replace all reports and should be the single source for audit-grade evidence exports.",
+        "Dashboards are intended for agents only and should not be used by managers or operations leads.",
+        "Dashboards calculate SLA timers directly, making separate SLA engine configuration unnecessary."
       ],
       "correct": [
         0
@@ -2992,10 +3200,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "The percentage of cases resolved during the first customer interaction without requiring follow-up, escalation, or callback — a key indicator of agent effectiveness and customer satisfaction",
-        "The time to first response on a case",
-        "The number of cases created per first-time customer",
-        "The rate at which first-tier agents resolve cases"
+        "FCR measures cases resolved in the initial contact cycle without follow-up rework or escalation.",
+        "FCR counts any case closed within one business day regardless of transfer or reopen behavior.",
+        "FCR is equivalent to CSAT when surveys are sent immediately after closure.",
+        "FCR is computed only for phone channel interactions and excluded from digital support channels."
       ],
       "correct": [
         0
@@ -3008,10 +3216,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Enable Knowledge Management integration in CSM, configure article creation from case context (pre-populating fields from case data), implement a review workflow for agent-created articles, track article usage and linked case deflection metrics, and incentivize agents with KCS contribution tracking",
-        "Let only dedicated authors write KB articles separate from case work",
-        "Copy case resolution notes into KB articles manually after the fact",
-        "Use a third-party knowledge management tool"
+        "Operationalize KCS with article lifecycle governance, solve-loop behavior, and measurable reuse quality metrics.",
+        "Require agents to publish an article for every case before closure regardless of content maturity.",
+        "Separate knowledge authoring from support teams so case handling speed is not impacted by documentation.",
+        "Archive low-view articles monthly and republish only after customer request confirms missing content."
       ],
       "correct": [
         0
@@ -3058,10 +3266,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A formal statement of rules that an organization must follow, tracked as records with acknowledgment and compliance status",
-        "A Business Rule configuration",
-        "A system property",
-        "A type of ACL"
+        "A policy defines formal governance expectations and required behavior for people, process, and technology.",
+        "A policy is a one-time checklist used only during initial compliance implementation projects.",
+        "A policy is a real-time monitoring script that automatically closes non-compliant records.",
+        "A policy is equivalent to a control test result and should not be maintained separately."
       ],
       "correct": [
         0
@@ -3074,10 +3282,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A potential threat or vulnerability that could negatively impact the organization, scored by likelihood and impact",
-        "A failed deployment",
-        "A system outage",
-        "A user complaint"
+        "A risk is potential uncertainty that could affect objectives if it materializes.",
+        "A risk is any issue that has already happened and been permanently resolved.",
+        "A risk is a control deficiency that has no business impact scoring requirements.",
+        "A risk is a vendor questionnaire response awaiting procurement approval and onboarding."
       ],
       "correct": [
         0
@@ -3090,10 +3298,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A measure or process implemented to mitigate a risk or ensure compliance with a policy — it defines what is done to manage a specific risk",
-        "A form field setting",
-        "A type of ACL rule",
-        "A workflow approval step"
+        "A control is a preventive/detective mechanism used to reduce risk and demonstrate compliance intent.",
+        "A control is any audit comment captured during yearly assessment workshops with process owners.",
+        "A control is the same as a policy acknowledgment by an employee in portal onboarding tasks.",
+        "A control is a remediation ticket used only after incidents have already caused business impact."
       ],
       "correct": [
         0
@@ -3106,10 +3314,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "An assessment performed to verify that a control is operating effectively — it captures evidence and results to demonstrate compliance",
-        "A unit test for JavaScript code",
-        "A load test for the ServiceNow instance",
-        "A user acceptance test"
+        "A control test evaluates whether a control is designed/operating effectively over a defined period.",
+        "A control test is a policy publication event that records user acknowledgment timestamps.",
+        "A control test is a workflow notification sent to auditors after risk acceptance approval.",
+        "A control test is the same as incident postmortem review for any sev-1 outage event."
       ],
       "correct": [
         0
@@ -3122,10 +3330,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A library of mapped controls across regulatory frameworks (SOX, HIPAA, GDPR, etc.) that enables control harmonization and reduces redundant compliance activities",
-        "A single compliance policy",
-        "A type of risk scoring model",
-        "An integration tool for third-party compliance systems"
+        "UCF normalizes regulatory requirements into a reusable control model to reduce duplicate compliance effort.",
+        "UCF is a reporting plugin that exports audit PDFs and does not influence control design or mapping.",
+        "UCF replaces policy lifecycle management by storing all obligations directly on risk statements.",
+        "UCF is intended only for finance frameworks and cannot map technical/security compliance obligations."
       ],
       "correct": [
         0
@@ -3138,10 +3346,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Risks are scored using a matrix of Likelihood × Impact, where each factor has configurable scales. The resulting score determines the risk rating (Critical, High, Medium, Low) and drives mitigation priorities",
-        "Risks are scored by the number of users affected",
-        "Risk scores are assigned randomly",
-        "Risks are only scored as Pass or Fail"
+        "Risk scoring combines defined factors/weights and governance rules to produce comparable, explainable risk ratings.",
+        "Risk scores should be manually assigned by auditors to avoid model bias from automated calculations.",
+        "Risk scoring is derived exclusively from control pass/fail rates and ignores business impact dimensions.",
+        "Risk scores are recalculated only at quarter close to maintain stable executive reporting baselines."
       ],
       "correct": [
         0
@@ -3154,10 +3362,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A Risk is a potential future threat; an Issue is a realized problem or finding that requires remediation — issues often result from control test failures or audit findings",
-        "They are the same concept with different names",
-        "Issues are internal; Risks are external",
-        "Risks are more severe than Issues"
+        "A risk represents uncertain future exposure; an issue reflects a realized problem requiring active remediation.",
+        "Issue and risk are equivalent terms in GRC and differ only by which dashboard displays the record.",
+        "Issues are always strategic and long-term, while risks are always immediate operational incidents.",
+        "A risk is created only after failure occurs; issues are used to predict potential future events."
       ],
       "correct": [
         0
@@ -3170,10 +3378,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A module that manages the full lifecycle of organizational policies including creation, review, approval, distribution, acknowledgment tracking, and compliance verification",
-        "A tool for writing Business Rules",
-        "A system for managing access policies",
-        "A notification management system"
+        "Policy and Compliance Management maps obligations to policies/controls and tracks adherence evidence over time.",
+        "Policy Management is only document storage; compliance evidence must remain external to avoid audit lock-in.",
+        "Compliance Management replaces control testing because policy acknowledgments are considered sufficient proof.",
+        "Policy and Compliance is limited to annual audits and should not be integrated with operational workflows."
       ],
       "correct": [
         0
@@ -3186,10 +3394,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A process for assessing, monitoring, and managing risks associated with third-party vendors including tiering, questionnaire-based assessments, and ongoing monitoring",
-        "A tool for managing vendor invoices",
-        "A procurement module",
-        "A vendor contact directory"
+        "Vendor risk management governs third-party assessments, controls, and remediation through lifecycle oversight.",
+        "It is primarily a procurement function and should remain outside GRC to avoid duplicate workflows.",
+        "Vendor risk should be tracked as incidents because third-party issues are operational by definition.",
+        "Once onboarding is complete, vendor risk posture is assumed stable unless contract terms change."
       ],
       "correct": [
         0
@@ -3202,10 +3410,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A visual matrix showing risks plotted by Likelihood (x-axis) vs Impact (y-axis), with color coding indicating severity — enabling quick identification of the highest-priority risks",
-        "A temperature monitoring dashboard",
-        "A map showing geographic risk distribution",
-        "A chart of risk scores over time"
+        "Heat maps visualize likelihood/impact distributions to prioritize treatment and communicate risk concentration.",
+        "Heat maps replace risk scoring by converting all risks into high/medium/low categories only.",
+        "Heat maps are compliance artifacts and should not influence operational remediation sequencing.",
+        "Heat maps should include only accepted risks so leadership sees final residual exposure posture."
       ],
       "correct": [
         0
@@ -3234,10 +3442,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Map controls across frameworks using UCF for harmonization, implement control tests with automated data collection via Integration Hub, set up continuous monitoring with scheduled test runs, configure automated evidence attachment and scoring, and build regulatory-specific dashboards with PA",
-        "Manually test each control quarterly",
-        "Create separate GRC implementations for each framework",
-        "Use spreadsheets for evidence collection and import monthly"
+        "Implement automated evidence collection and control testing with exception workflows and audit-ready traceability.",
+        "Run annual spreadsheet attestations only, then import final scores into GRC before audit season.",
+        "Create one universal control template and apply identical frequency/testing to all control families.",
+        "Track findings in incident records and map them to controls manually after each audit cycle."
       ],
       "correct": [
         0
@@ -3250,10 +3458,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Run a gap assessment to identify controls without recent test evidence, prioritize testing of high-risk controls, execute batch control tests with automated evidence collection, remediate failed controls with tracked issues, and generate audit-ready reports with complete evidence trails",
-        "Test all 200 controls manually in the last week",
-        "Only test controls the auditor specifically asks about",
-        "Prepare a PowerPoint summarizing the control environment"
+        "Model control objectives, evidence, and test cadence in platform with clear ownership and attestation history.",
+        "Store auditor notes in knowledge articles and attach screenshots only when external auditors request them.",
+        "Use policy exceptions as control evidence because approval history is sufficient for effectiveness claims.",
+        "Close failed tests quickly and reopen only if audit asks for prior-period control execution proof."
       ],
       "correct": [
         0
@@ -3266,10 +3474,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Implement Vendor Risk Management with tiered assessment workflows — auto-classify vendors by criticality, use digital questionnaires with automated scoring, integrate with external risk intelligence feeds for continuous monitoring, and set up automated reassessment schedules based on tier and risk score",
-        "Send the same questionnaire to all 500 vendors simultaneously",
-        "Only assess vendors when a contract renewal is due",
-        "Outsource all vendor assessments to a third party"
+        "Use scalable intake, tiered assessment, and continuous monitoring signals with remediation governance.",
+        "Assess only top-tier vendors annually and waive remaining vendors through risk acceptance templates.",
+        "Treat questionnaire completion as equivalent to control validation to accelerate onboarding throughput.",
+        "Move all vendor assessments to procurement workflow and import final ratings to GRC quarterly."
       ],
       "correct": [
         0
@@ -3282,10 +3490,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A structured approach that defines how risks are identified, assessed, categorized, and managed — it includes risk appetite, scoring methodology, and escalation thresholds",
-        "A JavaScript framework used in GRC development",
-        "A data import framework",
-        "A reporting framework"
+        "A risk framework defines taxonomy, scoring, and governance structure for consistent risk management execution.",
+        "A risk framework is a one-time audit template used only during annual compliance assessments.",
+        "A risk framework replaces policy management because controls are inherited directly from risk records.",
+        "A risk framework is optional when incidents and problems are already tracked in ITSM modules."
       ],
       "correct": [
         0
@@ -3298,10 +3506,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A formal declaration of the level of risk an organization is willing to accept in pursuit of its objectives — it sets thresholds that trigger escalation when exceeded",
-        "A document about food safety risks",
-        "A vendor selection criterion",
-        "A user access policy"
+        "Risk appetite defines acceptable risk boundaries to guide decision-making, treatment choices, and escalation thresholds.",
+        "Risk appetite is the list of all risks currently accepted with no requirement for threshold articulation.",
+        "Risk appetite is a technical control matrix generated from vulnerability scanners each quarter.",
+        "Risk appetite is a financial reserve model used only for cyber-insurance premium calculations."
       ],
       "correct": [
         0
@@ -3314,10 +3522,10 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "GRC can link risks and controls to ITSM processes — e.g., control test failures can auto-create incidents, risk events can trigger changes, and ITSM data feeds into risk indicators for continuous monitoring",
-        "GRC and ITSM are completely separate applications with no integration",
-        "GRC replaces ITSM entirely",
-        "Integration requires third-party middleware"
+        "GRC-ITSM integration links risk/control obligations to operational work for traceable remediation execution.",
+        "Integration should be avoided because ITSM ticket lifecycle introduces unnecessary compliance complexity.",
+        "GRC should consume only closed incident data to prevent premature compliance reporting fluctuations.",
+        "Integration is limited to change management and cannot support control deficiency remediation workflows."
       ],
       "correct": [
         0
@@ -3330,10 +3538,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A comprehensive list of all identified risks in the organization, including their assessments, owners, and mitigation status",
-        "A system log file",
-        "A user registration form",
-        "A list of registered IT assets"
+        "A risk register is a structured inventory of identified risks, scores, ownership, and treatment status.",
+        "A risk register is a static archive of closed issues with no requirement for active ownership.",
+        "A risk register is a policy library used only to classify authority documents by framework.",
+        "A risk register is a list of all exceptions automatically accepted by system administrators."
       ],
       "correct": [
         0
@@ -3346,10 +3554,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "The level of risk remaining after controls and mitigation measures have been applied — it represents the actual current risk exposure",
-        "The first risk identified",
-        "A risk that has been fully eliminated",
-        "A risk that only affects the IT department"
+        "Residual risk is the remaining exposure after controls and treatments are applied.",
+        "Residual risk is the initial inherent score before any controls are selected or tested.",
+        "Residual risk is the average score of all risks in a domain regardless of treatment state.",
+        "Residual risk is the amount of risk transferred to vendors through contract obligations."
       ],
       "correct": [
         0
@@ -3362,10 +3570,10 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Map all framework requirements using UCF to identify common controls, implement harmonized controls that satisfy multiple frameworks with a single test, maintain framework-specific test attestations and evidence metadata, and generate separate compliance reports per framework from the unified control set",
-        "Implement each framework completely independently",
-        "Only comply with the strictest framework and assume others are covered",
-        "Hire separate compliance teams per framework"
+        "Design a unified control framework with mapped obligations, reusable controls, and jurisdiction-aware evidence handling.",
+        "Maintain separate compliance apps per regulation to avoid cross-framework control mapping complexity.",
+        "Adopt strictest regulation globally and ignore local variance to simplify policy administration.",
+        "Use one quarterly self-attestation form for all standards and treat non-response as implicit compliance."
       ],
       "correct": [
         0
@@ -4367,6 +4575,1792 @@
       ],
       "explanation": "Derived from CIS Data Foundations governance and CMDB best-practice themes.",
       "source": "CIS - DF 1 - FINAL_compressed.pdf"
+    }
+  ],
+  "csa_dumps_live": [
+    {
+      "id": "csa-dump-1",
+      "q": "A Service Catalog may include which of the following components?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Order Guides, Exchange Rates, Calendars",
+        "Order Guides, Catalog Items, and Interceptors",
+        "Catalog Items, Asset Contracts, Task Surveys",
+        "Record Producers, Order Guides, and Catalog Items"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-2",
+      "q": "Which one of the following statements applies to a set of fields when they are coalesced during an import?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "If a match is found using the coalesce fields, the existing record is updated with the information being imported",
+        "If a match is not found using the coalesce fields, the system does not create a Transform Map",
+        "If a match is found using the coalesce fields, the system creates a new record",
+        "If a match is not found using the coalesce fields, the existing record is updated with the information being imported"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-3",
+      "q": "As it relates to ServiceNow reporting, which of the following statements describes what a metric can do?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A metric is a report gauge used on homepages to display real-time data",
+        "A metric is a time measurement used to report the effectiveness of workflows and SLAs",
+        "A metric is used to measure and evaluate the effectiveness of IT service management processes",
+        "A metric is a comparative measurement used to report the effectiveness of flows and SLAs."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-5",
+      "q": "Reports can be created from which different places in the platform? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "List column heading",
+        "Metrics module",
+        "Statistics module",
+        "View / Run module"
+      ],
+      "correct": [
+        0,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-6",
+      "q": "Knowledge Base Search results can be sorted by which of the following? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Most recent update",
+        "Popularity",
+        "Relevancy",
+        "Manager assignment",
+        "Number of views"
+      ],
+      "correct": [
+        0,
+        2,
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-7",
+      "q": "What is the path an Administrator could take to view the fulfillment stage task list for an order placed by a user?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "RITM (Number)>REQ (Number)>PROCUREMENT (Number)",
+        "REQ (Number)>RITM (Number)>PROCUREMENT (Number)",
+        "REQ (Number)>RITM (Number)>TASK (Number)",
+        "FULFILLMENT (Number)>RITM (Number)>TASK (Number)"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-8",
+      "q": "Which term refers to application menus and modules which you may want to access quickly and often?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Breadcrumb",
+        "Favorite",
+        "Tag",
+        "Bookmark"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-9",
+      "q": "What is generated from the Service Catalog once a user places an order for an item or service?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A change request",
+        "An Order Guide",
+        "A request",
+        "An SLA"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-10",
+      "q": "From the User menu, which actions can a user select? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Send Notifications",
+        "Log Out ServiceNow",
+        "Elevate Roles",
+        "Impersonate Users",
+        "Order from Service Catalog",
+        "Approve Records"
+      ],
+      "correct": [
+        1,
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-11",
+      "q": "Buttons, form links, and context menu items are all examples of what type of functionality?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Business Rule",
+        "UI Action",
+        "Client Script",
+        "UI Policy"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-12",
+      "q": "Which of the following is true of Service Catalog Items in relation to the Service Catalog?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "They run behind the scenes.",
+        "They are the building blocks.",
+        "They are optional.",
+        "They provide options."
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-13",
+      "q": "Table Access Control rules are processed in the following order:",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "any table name (wildcard), parent table name, table name",
+        "table name, parent table name, any table name (wildcard)",
+        "parent table name, table name, any table name (wildcard)",
+        "any table name (wildcard), table name, parent table name"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-14",
+      "q": "What is the platform name for the User table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "u_user",
+        "sys_users",
+        "x_users",
+        "sys_user"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-15",
+      "q": "A REQ number in the Service Catalog represents…",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "the order number.",
+        "the stage.",
+        "the task to complete.",
+        "the individual item in the order."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-16",
+      "q": "Which would NOT appear in the History section of the Application Navigator?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Records",
+        "UI Pages",
+        "Lists",
+        "Forms"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-17",
+      "q": "Which one of the following statements is a recommendation from ServiceNow about Update Sets?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Avoid using the Default Update set as an Update Set for moving customizations from instance to instance",
+        "Before moving customizations from instance to instance with Update Sets, ensure that both instances are different versions",
+        "Use the Baseline Update Set to store the contents of items after they are changed the first time",
+        "Once an Update Set is closed as “Complete”, change it back to “In Progress” until it is applied to another instance"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-18",
+      "q": "Which of the following is used to initiate a flow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Trigger",
+        "Core Action",
+        "A spoke",
+        "An Event"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-19",
+      "q": "For Administrators creating new Service Catalog items, what is a characteristic they should know about Service Catalog variables?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Service Catalog variables can only be used in Record Producers",
+        "Service Catalog variables can only be used in Order Guides",
+        "Service Catalog variables cannot affect the order price",
+        "Service Catalog variables are global by default"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-20",
+      "q": "Which one of the following statements is true about Column Context Menus?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It displays actions such as creating quick reports, configuring the list, and exporting data",
+        "It displays actions related to filtering options, assigning tags, and search",
+        "It displays actions related to viewing and filtering the entire list",
+        "It displays actions such as view form, view related task, and add relationship"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-21",
+      "q": "Which ServiceNow products can be used to discover and populate the CMDB? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Discovery",
+        "IntegrationHub ETL",
+        "Finder",
+        "CMDB Plug-in",
+        "CMDB Integration Dashboard"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-22",
+      "q": "When using the Load Data and Transform Map process, what is the Mapping Assist used for?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Mapping fields using the Import Log",
+        "Mapping fields using Transform History",
+        "Mapping fields using an SLA",
+        "Mapping fields using a Field Map"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-23",
+      "q": "Which one of the following statements describes the contents of the Configuration Management Database (CMDB)?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The CMDB contains data about tangible and intangible business assets",
+        "The CMDB contains the Business Rules that direct the intangible, configurable assets used by a company",
+        "The CMDB archives all Service Management PaaS equipment metadata and usage statistics",
+        "The CMDB contains ITIL process data pertaining to configuration items"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-24",
+      "q": "In what order should filter elements be specified?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Field, Operator, then Value",
+        "Field, Operator, then Condition",
+        "Operator, Condition, then Value",
+        "Value, Operator, then Field"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-25",
+      "q": "Which statement is true about business rules?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A business rule must run before a database action occurs",
+        "A business rule can be a piece of Javascript",
+        "A business rule must not run before a database action occurs",
+        "A business rule monitors fields on a form"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-26",
+      "q": "Which of the following are a type of client scripts supported in ServiceNow? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "onSubmit",
+        "onUpdate",
+        "onCellEdit",
+        "onLoad",
+        "onEdit",
+        "onChange G. onSave"
+      ],
+      "correct": [
+        0,
+        2,
+        3,
+        5
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 4
+    },
+    {
+      "id": "csa-dump-27",
+      "q": "Which type of tables may be extended by other tables, but do not extend another table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Base Tables",
+        "Core Tables",
+        "Extended Tables",
+        "Custom Tables"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-28",
+      "q": "Which of the following statement describes the purpose of an Order Guide?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Order Guides restrict the number of items in an order to only one item per request",
+        "Order Guide provide a list of guidelines for Administrators on how to set up item variables",
+        "Order Guide provide the ability to order multiple, related items as one request",
+        "Order Guides take the user directly to the checkout without prompting for information"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-29",
+      "q": "Which tool is used to have conversations with logged-in users in real-time?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Connect Chat",
+        "Now Messenger",
+        "User Presence",
+        "Comments"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-30",
+      "q": "Which of the following concepts are associated with the ServiceNow CMDB? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Service Processes",
+        "User Permissions",
+        "Tables and Fields",
+        "A Database",
+        "The Dependency View"
+      ],
+      "correct": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 4
+    },
+    {
+      "id": "csa-dump-31",
+      "q": "What is a formatter? Select one of the following.",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A formatter allows you to configure applications on your instance",
+        "A formatter is a form element used to display information that is not a field in the record",
+        "A formatter allows you to populate fields automatically",
+        "A formatter is a set of conditions applied to a table to help find and work with data"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-32",
+      "q": "When searching using the App Navigator search field, what can be returned? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Names of Applications and Modules",
+        "Names of Modules",
+        "Names of Applications",
+        "Favorites",
+        "History Records",
+        "Titles of Dashboard Gauges"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 4
+    },
+    {
+      "id": "csa-dump-33",
+      "q": "Which technique is used to get information from a series of referenced fields from different tables?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Table-Walking",
+        "Sys_ID Pulling",
+        "Dot-Walking",
+        "Record-Hopping"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-35",
+      "q": "Which one of the following statements best describes the purpose of an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "An Update Set allows administrators to group a series of changes into a named set and then move this set as a unit to other systems",
+        "By default, an Update Set includes customizations, Business Rules, and homepages",
+        "An Update Set is a group of customizations that is moved from Production to Development",
+        "By default, the changes included in an Update Set are visible only in the instance to which they are applied"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-36",
+      "q": "Which of the following can be customized through the Basic Configuration UI 16 module? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Banner Image",
+        "Record Number Format",
+        "Browser Tab Title",
+        "System Date Format",
+        "Form Header Size"
+      ],
+      "correct": [
+        0,
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-37",
+      "q": "What is the function of user impersonation?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Testing and visibility",
+        "Activate verbose logging",
+        "View custom perspectives",
+        "Unlock Application master list"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-38",
+      "q": "What information does the System Dictionary contain?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The human-readable labels and language settings",
+        "The definition for each table and column",
+        "The information on how tables relate to each other",
+        "The language dictionary used for spell checking"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-39",
+      "q": "When working on a form, what is the difference between Insert and Update operations?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Insert creates a new record and Update saves changes, both remain on the form",
+        "Insert creates a new record and Update saves changes, both exit the form",
+        "Insert saves changes and exits the form, Update saves changes and remains on the form",
+        "Insert saves changes and remains on the form, Update saves changes and exits the form"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-40",
+      "q": "How is the Event Log different from the Event Registry?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Event Log contains generated Events, the Event Registry is a table of Event definitions",
+        "Event Log is formatted in the Log style, the Event Registry displays different fields",
+        "Event Log lists Events that were triggered by integrations, the Event Registry lists the Events that were triggered during the day (24-hour period)",
+        "Event Log is the same as the Event Registry"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-42",
+      "q": "Which group of permissions is used to control Application and Module access?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Access Control Rules",
+        "UI Policies",
+        "Roles",
+        "Assignment Rules"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-44",
+      "q": "Create Incident, Password Reset, and Report outage: what do these services in the Service Catalog have in common?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "They direct the user to a record producer",
+        "They direct the user to a catalog property",
+        "They direct the user to a catalog UI policy",
+        "They direct the user to a catalog client script"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-46",
+      "q": "What is a characteristic of importing data into ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "An existing Transform Map can be used one time on the same import set",
+        "Coalesce fields are used only after running Transform",
+        "Any user can manage and set up import sets",
+        "An existing Transform Map can be used multiple times on the same import set"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-47",
+      "q": "What module in the Service Catalog application does an Administrator access to begin creating a new item?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Maintain Categories",
+        "Maintain Items",
+        "Content Items",
+        "Items"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-48",
+      "q": "Which of the following allows a user to edit field values in a list without opening the form?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Data Editor",
+        "Edit Menu",
+        "List Editor",
+        "Form Designer"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-49",
+      "q": "Which three Variable Types can be added to a Service Catalog Item?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "True/False, Multiple Choice, and Ordered",
+        "True/False, Checkbox, and Number List",
+        "Number List, Single Line Text, and Reference",
+        "Multiple Choice, Select Box, and Checkbox"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-50",
+      "q": "How are Workflows moved between instances?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Workflows are moved using Update Sets",
+        "Workflows are moved using Transform Maps",
+        "Workflows are moved using Application Sets",
+        "Workflows cannot be moved between instances"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-51",
+      "q": "The baseline Service Catalog homepage contains links to which of the following components?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Record Producers, Order Guides, and Catalog Items",
+        "Order Guides, Item Variables, and flows",
+        "Order Guides, Catalog Items, and flows",
+        "Record Producers, Order Guides, and Item Variables"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-52",
+      "q": "Which of the following statements is true when a new table is created by extending another table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The new table archives the parent table and assumed its roles in the database",
+        "The new table inherits all of the Business Rules, Client Scripts, and UI Policies of the parent table, but none of the existing fields",
+        "The new table inherits all of the fields of the parent table and can also contain new fields unique to itself",
+        "The new table inherits all of the fields, but does not inherit Access Control rules, Client Scripts, and UI Policies of the parent table"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-53",
+      "q": "Where can Admins check which release is running on an ServiceNow instance?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Memory Stats module",
+        "Stats module",
+        "System.upgraded table",
+        "Transactions log"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-54",
+      "q": "A knowledge article must be which of the following states to display to a user?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Published",
+        "Drafted",
+        "Retired",
+        "Reviewed"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-55",
+      "q": "What is the name of the conversational bot platform that provides assistance to help users obtain information, make decisions, and perform common tasks?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Answer Agent",
+        "live Feed",
+        "Virtual Agent",
+        "Connect Chat"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-56",
+      "q": "What is the purpose of a Related List?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "To create a one-to-many relationship",
+        "To dot-walk to a core table",
+        "To present related fields",
+        "To present related records"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-57",
+      "q": "Which one of the following statements describes the purpose of a Service Catalog flow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Service Catalog flow generates three basic components: item variable types, tasks, and approvals",
+        "Although a Service Catalog flow cannot send notifications, the flow drives complex fulfillment processes",
+        "A Service Catalog flow is used to drive complex fulfillment processes and sends notifications to defined users or groups",
+        "A Service Catalog flow generates three basic components: item variable types, tasks, and notifications"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-58",
+      "q": "Which term best describes something that is created, has worked performed upon it, and is eventually moved to a state of closed?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "report",
+        "flow",
+        "event",
+        "task"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-59",
+      "q": "Which are valid Service Now User Authentication Methods? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "XML feed",
+        "Local database",
+        "LDAP",
+        "SSO",
+        "FTP authentication"
+      ],
+      "correct": [
+        1,
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-60",
+      "q": "Access Control rules may be defined with which of the following permission requirements? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Roles",
+        "Conditional Expressions",
+        "Assignment Rules",
+        "Scripts",
+        "User Criteria",
+        "Groups"
+      ],
+      "correct": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-61",
+      "q": "Which section of the ServiceNow UI allows you to perform a global search?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Application Navigator",
+        "Banner frame",
+        "List pane",
+        "Content frame"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-62",
+      "q": "How do you make a list filter available to everyone?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Make active, assign a name, and save",
+        "Assign a group, set visibility, and save",
+        "Assign a name, set visibility, and save",
+        "Make active, set visibility, and save"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-63",
+      "q": "What would NOT appear in the Application Navigator if “service” is typed into the filter field?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Configuration > Business Services",
+        "Self-Service > Knowledge",
+        "Service Portal > Widgets",
+        "Incident > Assigned to me"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-64",
+      "q": "Which of the following is used to categorize, flag, and locate records?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Search",
+        "Favorites",
+        "Tags",
+        "Bookmarks"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-65",
+      "q": "Which tool should be used to populate commonly used fields in a form?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Template",
+        "Reference Qualifier",
+        "Formatter",
+        "Assignment Rule"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-66",
+      "q": "How is a group defined in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A group is one record stored in the Group Type [sys_user_group_type] table",
+        "A group is one record stored in the Group [sys_user_group] table",
+        "A group defines a set of users that share the same location",
+        "A group defines a set of users that share the same job title"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-69",
+      "q": "Which one of the following is NOT a type of Visual Task Board?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Flexible",
+        "Freeform",
+        "Feature",
+        "Guided boards"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-70",
+      "q": "What is (are) best practice(s) regarding users/groups/roles? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "You should never assign roles to groups.",
+        "You should assign roles to users.",
+        "You should add users to groups.",
+        "You should assign roles to groups."
+      ],
+      "correct": [
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-71",
+      "q": "What are two ways to generate an Event? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Business Rule",
+        "Workflow",
+        "Log entry",
+        "Knowledge article publication"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-72",
+      "q": "Which core table in the ServiceNow platform provides a series of standard fields used on each of the tables that extend it, such as the Incident [incident] and Problem [problem] tables?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Task [task]",
+        "Assignment [assignment]",
+        "Service [service]",
+        "Workflow [workflow]"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-73",
+      "q": "Which of the following statements describes how data is organized in a table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A column is a field in the database and a record is one user",
+        "A column is one field and a record is one row",
+        "A column is one field and a record is one column",
+        "A column contains data from one user and a record is one set of fields"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-75",
+      "q": "When creating a global custom table named “abc”, what is the table name that is automatically assigned by the platform?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "snc_abc",
+        "abc",
+        "u_abc",
+        "sys_abc"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-76",
+      "q": "Access Control rules may provide access security for which of the following database objects?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "For a specific role, group, or user",
+        "For a specific row, column, or table",
+        "For specific groups",
+        "For a specific CMDB Configuration item"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-77",
+      "q": "What is the primary application used to load data into ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Service Level Management",
+        "Configuration",
+        "System Import Sets",
+        "System Update Sets"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-78",
+      "q": "Which of the following steps can be used to import new data into ServiceNow from a spreadsheet?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Select Data Source, Schedule Transform",
+        "Load Data, Create Transform Map, Run Transform",
+        "Define Data Source, Select Transform Map, Run Transform",
+        "Select Import Set, Select Transform Map, Run Transform"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-79",
+      "q": "Which tool is used for creating dependencies between configuration items in the CMDB?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "CI Relationship Editor",
+        "CMDB Builder",
+        "CI Service Manager",
+        "Cl Class Manager"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-80",
+      "q": "What is the difference between a UI Policy and Data Policy?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Data Policies run when data is entered through the form, by an Import Set, or by web services, while UI Policies are set only by web services",
+        "Data Policies can be converted into UI Policies, but UI Policies cannot be converted into Data Policies",
+        "Data Policies run regardless of how data is entered into ServiceNow, while UI Policies are used for form interactions",
+        "Data Policies run only after UI Policies run successfully"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-81",
+      "q": "Which one of the following is an accurate list of changes that are captured in an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Changes made to: tables, forms, schedules, and client scripts",
+        "Changes made to: tables, forms, Business Rules, and data records",
+        "Changes made to: tables, forms, groups, and configuration items (CIs)",
+        "Changes made to: table, forms, views, and fields"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-82",
+      "q": "What are the steps to retrieve an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Verify Update Set is Complete, Retrieve, Preview, Apply",
+        "Verify Update Set is Complete, Test Connection, Apply",
+        "Verify Update Set is Complete, Test Connection, Commit",
+        "Verify Update Set is Complete, Retrieve, Preview, Commit"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-83",
+      "q": "IntegrationHub enables execution of third-party APIs as a part of a flow. These integrations are referred to as",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "an action",
+        "a spoke",
+        "a connection",
+        "an integration step"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-84",
+      "q": "Which of the following protects applications by identifying and restricting access to available files and data?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Application Configuration",
+        "Verbose Log",
+        "Access Control Rules",
+        "D. Application Scope"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-85",
+      "q": "Which one statement correctly describes Access Control rule evaluation?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Table access rules are evaluated from the general to the specific",
+        "If more than one rule applies to a record, the older rule is evaluated first",
+        "If a row level rule and a field level rule exist, both rules must be true before an operation is allowed",
+        "The role with the most permissions evaluates the rules first."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-86",
+      "q": "ServiceNow contains a resource which provides the following: A standard and shared set of service related definitions across ServiceNow products and platform that will enable and support true service level reporting. A CMDB framework across our products and platform that will enable and support multiple configuration strategies. What resource do these statements describe?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Common Services Data Model (CMDB)",
+        "Information Technology Service Management (ITSM)",
+        "Configuration Management Database (CMDB)",
+        "Information Technology Infrastructure Library (ITIL)"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-87",
+      "q": "An IT manager is responsible for the Network and Hardware assignment groups, each group contains 5 team members. These team members are working on many tasks, but the manager cannot see any tasks on the Service Desk > My Groups Work list. What could explain this?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The Service Desk > My Groups Work list shows active work tasks that are not yet assigned.",
+        "The manager does not have the itil role.",
+        "The manager is not a member of the Service Desk group.",
+        "The manager is not a member of the Network and Hardware groups. Schedules",
+        "The Assignment Group manager field is empty."
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-88",
+      "q": "What do you need to do before you can use an Application-based trigger in your flow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Activate application trigger spoke",
+        "Activate trigger security rules",
+        "Activate application spoke, and plug-ins as needed",
+        "Assign Application trigger role [sn_app_trigger_write] to SME",
+        "Activate application plugins only"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-89",
+      "q": "The ServiceNow platform includes which types of interfaces? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Now Mobile Apps",
+        "Agent Control Center",
+        "Back Office Dashboard",
+        "Service Portals",
+        "Now Platform® User Interfaces or next navigation unified experience",
+        "Field Service Taskboard"
+      ],
+      "correct": [
+        0,
+        3,
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-90",
+      "q": "Which of the following are not included in an Update Set, by default? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "B.",
+        "Published Workflows",
+        "Business Rules",
+        "F. Database Changes Data Homepages G. Related Lists H. Report Definitions J. Client Scripts K. Views"
+      ],
+      "correct": [
+        0,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-91",
+      "q": "You are showing your customer a new form that you have created for their new application. They would like to add a field to the form. Where could you do that? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Select Fields and Columns module",
+        "Right click on form header, select Configure > Form Layout",
+        "Click on context menu, select Configure > Form Designer",
+        "Select Field Class Manager module"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-92",
+      "q": "Which ServiceNow resource is a framework that ensures the data your ServiceNow application requires maps correctly to the appropriate CMDB tables?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Common Service Data Model (CSDM)",
+        "Service Mapping Utility (SMU)",
+        "Service Schema Map (SSM)",
+        "CMDB Class Manager (CMDBCM)",
+        "CI Class Manager (CICM)"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-93",
+      "q": "What do you activate when you want to add applications or functionality within your development instance?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "App Package",
+        "Updated Pack",
+        "Patch",
+        "Plugin",
+        "App Updated Set"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-94",
+      "q": "What field contains a record’s 32-character, unique identifier?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "sn_rec_id",
+        "rec_id",
+        "u_id",
+        "sys_id",
+        "sn_gu_id",
+        "sn_sys_id G. id"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-95",
+      "q": "Your company is giving all first line workers a special T-shirt as a recognition for their hard work. Management team wants a way for employees to order the T-shirt, with the ability to specify the preferred size and color. How would you ensure that only first line workers (non-managers) can submit the order?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Create Record Producer and use the Available For list to specify First Line [sn_first_line] role",
+        "Create Catalog Item and use the Not Available list to specify the Manager Group",
+        "Create Catalog Item and use the Available For list to specify ITIL [itil] role",
+        "Create Order Guide and use the User Criteria list to specify First Line [sn_first_line] role"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-96",
+      "q": "What is used frequently to move customizations from one instance to another?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Update Sets",
+        "Code Sets",
+        "Update Packs",
+        "Configuration Logs",
+        "Remote Sets",
+        "Local Sets G. Code Packs"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-97",
+      "q": "What icon do you use to change the label on a Favorite?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Clock",
+        "Hamburger",
+        "Pencil",
+        "Three dots",
+        "Triangle.",
+        "Star"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-98",
+      "q": "What needs to be specified, when creating a Business Rule? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "UI action",
+        "Table",
+        "Fields to update",
+        "Who can run",
+        "Script to run",
+        "Application scope G. Update set H. Timing I. Condition to evaluate"
+      ],
+      "correct": [
+        1,
+        4,
+        5
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-99",
+      "q": "What feature can track the amount of time that a task has been open, to ensure that tasks are completed within an allotted time?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Task Escalation Clock",
+        "Service Level Agreements",
+        "Inactivity Monitor",
+        "Response Time Clock",
+        "Business Time Remaining"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-100",
+      "q": "What is a quick way to create a report from a list view?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Click on filter breadcrumb, drag and drop on the Report > Create New module",
+        "Click Funnel, define filter conditions, click Create Report",
+        "Click Context Menu, select Create Report",
+        "Apply filter, right click on column header, select Bar Chart",
+        "Apply filter, right click on column header, select Create Report"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-101",
+      "q": "What import utility do you use when the field names on the import set match the name of the fields on the Target table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Schema Mapping",
+        "Automatic Mapping",
+        "Mapping Assist",
+        "Mapping Dashboard"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-102",
+      "q": "As an IT employee what interface would you use, if you wanted to browse internal IT documentation, like troubleshooting scripts and FAQs?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Knowledge",
+        "ServiceNow Wiki",
+        "Knowledge Now",
+        "SharePoint",
+        "Stack Overflow"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-103",
+      "q": "A new Service Desk employee in Latin America complains that the create dates and times are incorrect on their Incident list. What would you suggest to fix this issue?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Have them clear their cache.",
+        "Have them use the gear icon to set the employee’s time zone.",
+        "Recommend they use Chrome, instead of Explorer.",
+        "Use the system properties to correct the instance’s time zone.",
+        "Have them correct the time zone on their computer."
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-104",
+      "q": "What are three security modules often used by the System Administrator? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "System Properties > Security",
+        "Utilities > Migrate Security",
+        "System Security > Security",
+        "Self-Service > My Access",
+        "System Security > Access Control (ACL)",
+        "Password Management > Security Questions G. System Security > High Security Settings"
+      ],
+      "correct": [
+        0,
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-105",
+      "q": "When testing a catalog item, having a manager approval flows, which of these best practices would you follow? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Make sure the latest flows are activated.",
+        "Use the instance Incognito setting to quickly toggle between requester and approver.",
+        "Impersonate the requester to ensure the form works.",
+        "Make sure the requester's user record has a manager specified."
+      ],
+      "correct": [
+        0,
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-106",
+      "q": "What is a no-code approach to control the mandatory or read-only state of a form field?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "UI Action",
+        "Client Script",
+        "UI Script",
+        "UI RuIe",
+        "UI Policy"
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-107",
+      "q": "When moving multiple update sets at one time, what might you do to facilitate the move?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Batch",
+        "Verify",
+        "Test",
+        "Preview"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-108",
+      "q": "What is specified in an Access Control rule?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Groups, Conditional Expressions and Workflows",
+        "Table Schema, CRUD, and User Authentication",
+        "Object and Operation being secured; Permissions required to access the object",
+        "security_admin"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
     }
   ]
 }
