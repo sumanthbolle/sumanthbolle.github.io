@@ -98,6 +98,9 @@
     .mode-header{text-align:center;margin-bottom:32px}
     .mode-header h2{font-size:24px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px}
     .mode-header p{color:var(--text2);font-size:14px}
+    .mode-header-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .test-link-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:var(--radius-sm);padding:8px 12px;font-size:12px;cursor:pointer;transition:all .2s;font-family:var(--font)}
+    .test-link-btn:hover{border-color:var(--text2);color:var(--text)}
     .mode-options{display:flex;flex-direction:column;gap:12px}
     .mode-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:all .2s;display:flex;justify-content:space-between;align-items:center}
     .mode-card:hover{border-color:var(--text2)}
@@ -106,6 +109,28 @@
     .mode-card .mode-meta{text-align:right;font-size:12px;color:var(--text3)}
     .mode-back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;background:none;border:none;margin-bottom:24px;font-family:var(--font);transition:color .2s}
     .mode-back:hover{color:var(--text)}
+
+    /* PARTICIPANT SCREEN */
+    .participant-screen{max-width:740px;margin:0 auto}
+    .participant-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
+    .participant-card h3{font-size:22px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px}
+    .participant-card p{font-size:14px;color:var(--text2);line-height:1.6}
+    .participant-form{margin-top:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .participant-field{display:flex;flex-direction:column;gap:6px}
+    .participant-field label{font-size:12px;color:var(--text3)}
+    .participant-field input{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;color:var(--text);font-family:var(--font);font-size:14px;outline:none}
+    .participant-field input:focus{border-color:var(--text2)}
+    .participant-form .full{grid-column:1/-1}
+    .participant-error{font-size:12px;color:var(--red);min-height:16px}
+    .participant-start-btn{background:var(--accent);color:var(--bg);border:none;padding:10px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+    .leaderboard-box{margin-top:20px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+    .leaderboard-box h4{font-size:13px;font-weight:600;margin-bottom:8px}
+    .leaderboard-table-wrap{overflow:auto}
+    .leaderboard-table{width:100%;border-collapse:collapse;font-size:12px}
+    .leaderboard-table th,.leaderboard-table td{text-align:left;padding:8px;border-bottom:1px solid var(--border)}
+    .leaderboard-table th{color:var(--text3);font-weight:500}
+    .leaderboard-empty{font-size:12px;color:var(--text3)}
+    .leaderboard-row-you td{background:var(--blue-bg)}
 
     /* QUIZ SCREEN */
     .quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
@@ -136,6 +161,9 @@
     /* MCQ OPTIONS */
     .options-list{display:flex;flex-direction:column;gap:10px}
     .option-btn{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;cursor:pointer;font-size:14px;text-align:left;transition:all .2s;display:flex;align-items:flex-start;gap:12px;font-family:var(--font);color:var(--text);line-height:1.5;width:100%}
+    .option-main{display:flex;align-items:flex-start;gap:12px;flex:1}
+    .option-checkbox{margin-left:auto;display:flex;align-items:center;justify-content:center}
+    .option-checkbox input{width:16px;height:16px;accent-color:var(--accent)}
     .option-btn:hover:not(.disabled){border-color:var(--text2);background:var(--surface3)}
     .option-btn .option-letter{min-width:24px;height:24px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;transition:all .2s}
     .option-btn.selected{border-color:var(--accent);background:var(--surface3)}
@@ -184,6 +212,9 @@
     .next-btn,.submit-code-btn{background:var(--accent);color:var(--bg);border:none;padding:10px 24px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s}
     .next-btn:hover,.submit-code-btn:hover{opacity:0.85}
     .submit-code-btn{background:var(--blue);color:#fff;margin-right:12px}
+    .submit-mcq-btn{background:var(--purple);color:#fff;border:none;padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);margin-right:12px}
+    .submit-mcq-btn:hover{opacity:0.88}
+    .submit-mcq-btn:disabled{opacity:0.45;cursor:not-allowed}
 
     /* RESULTS */
     .results-card{max-width:480px;margin:40px auto;text-align:center}
@@ -237,7 +268,7 @@
     .completed-marker{position:absolute;top:12px;right:12px;width:24px;height:24px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center}
     .completed-marker svg{width:14px;height:14px;fill:#fff}
 
-    @media(max-width:640px){.question-card{padding:20px}.results-stats{grid-template-columns:1fr}.results-actions{flex-direction:column}.quiz-actions{flex-direction:column-reverse;gap:12px}.quiz-actions .next-btn,.quiz-actions .submit-code-btn{width:100%}.quiz-actions .quit-btn{width:100%}.session-banner-inner{flex-direction:column;gap:16px;text-align:center}.filter-bar{justify-content:center}}
+    @media(max-width:640px){.question-card{padding:20px}.results-stats{grid-template-columns:1fr}.results-actions{flex-direction:column}.quiz-actions{flex-direction:column-reverse;gap:12px}.quiz-actions .next-btn,.quiz-actions .submit-code-btn,.quiz-actions .submit-mcq-btn{width:100%}.quiz-actions .quit-btn{width:100%}.session-banner-inner{flex-direction:column;gap:16px;text-align:center}.filter-bar{justify-content:center}.participant-form{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -287,8 +318,57 @@
         <div class="mode-header">
           <h2 id="modeTitle">Choose Mode</h2>
           <p id="modeSubtitle">Select your quiz mode</p>
+          <div class="mode-header-actions">
+            <button class="test-link-btn" id="modeCopyLinkBtn" style="display:none">Copy this live test link</button>
+          </div>
         </div>
         <div class="mode-options" id="modeOptions"></div>
+      </div>
+    </div>
+
+    <!-- PARTICIPANT GATE SCREEN -->
+    <div class="quiz-screen" id="userGateScreen">
+      <div class="participant-screen">
+        <button class="mode-back" id="userGateBackBtn">← Back to modes</button>
+        <div class="participant-card">
+          <h3>Before you start</h3>
+          <p>Enter your details to begin this quiz. We use this to keep a local leaderboard and track attempt counts for the same name + email.</p>
+          <form id="participantForm" class="participant-form">
+            <div class="participant-field">
+              <label for="participantName">Name</label>
+              <input id="participantName" type="text" autocomplete="name" placeholder="Your full name" required>
+            </div>
+            <div class="participant-field">
+              <label for="participantEmail">Email</label>
+              <input id="participantEmail" type="email" autocomplete="email" placeholder="name@company.com" required>
+            </div>
+            <div class="participant-field full">
+              <div class="participant-error" id="participantError"></div>
+            </div>
+            <div class="participant-field full">
+              <button type="submit" class="participant-start-btn" id="participantStartBtn">Start Quiz</button>
+            </div>
+          </form>
+          <div class="leaderboard-box">
+            <h4>Leaderboard (this category)</h4>
+            <div class="leaderboard-table-wrap">
+              <table class="leaderboard-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Participant</th>
+                    <th>Score</th>
+                    <th>Time</th>
+                    <th>Attempts</th>
+                    <th>When</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboardTableBody"></tbody>
+              </table>
+            </div>
+            <div class="leaderboard-empty" id="leaderboardEmpty">No attempts recorded yet for this category.</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -347,6 +427,7 @@
           <button class="back-btn" id="questionBackBtn">Back</button>
         </div>
         <div>
+          <button class="submit-mcq-btn" id="submitMultiBtn" style="display:none" disabled>Submit Answers</button>
           <button class="submit-code-btn" id="submitCodeBtn" style="display:none">Run & Validate</button>
           <button class="next-btn" id="nextBtn">Next Question</button>
         </div>
@@ -595,9 +676,13 @@ let quizStartTime = null;
 let selectedOptions = new Set();
 let difficultyFilter = 'all';
 const QUIZ_ROTATION_KEY = 'sn_quiz_rotation_v1';
+const QUIZ_LEADERBOARD_KEY = 'sn_quiz_leaderboard_v1';
+const PARTICIPANT_PROFILE_KEY = 'sn_quiz_participant_profile_v1';
 let answerByIndex = [];
 let strictNoReveal = false;
 let questionCopyProtectionEnabled = false;
+let pendingStart = null;
+let activeParticipant = null;
 
 function recomputeScoreFromAnswers() {
   score = answerByIndex.reduce((sum, ans) => sum + (ans && ans.ok ? 1 : 0), 0);
@@ -800,6 +885,206 @@ function showScreen(id) {
   setQuestionCopyProtection(id === 'quizPlayScreen' && strictNoReveal);
 }
 
+function normalizeParticipantIdentity(name, email) {
+  return {
+    name: String(name || '').trim().replace(/\s+/g, ' '),
+    email: String(email || '').trim().toLowerCase()
+  };
+}
+
+function getParticipantIdentityKey(participant) {
+  const p = normalizeParticipantIdentity(participant && participant.name, participant && participant.email);
+  return (p.name || '').toLowerCase() + '|' + p.email;
+}
+
+function loadLeaderboardEntries() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(QUIZ_LEADERBOARD_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveLeaderboardEntries(entries) {
+  try {
+    localStorage.setItem(QUIZ_LEADERBOARD_KEY, JSON.stringify(Array.isArray(entries) ? entries : []));
+  } catch (e) {
+    // Ignore storage write failures.
+  }
+}
+
+function getAttemptsForParticipant(categoryKey, identityKey, entries) {
+  const list = entries || loadLeaderboardEntries();
+  return list.filter(row => row && row.category === categoryKey && row.identityKey === identityKey).length;
+}
+
+function formatLeaderboardTime(seconds) {
+  const mins = Math.floor((seconds || 0) / 60);
+  const secs = (seconds || 0) % 60;
+  return mins + ':' + String(secs).padStart(2, '0');
+}
+
+function renderLeaderboardTable(categoryKey) {
+  const tbody = document.getElementById('leaderboardTableBody');
+  const empty = document.getElementById('leaderboardEmpty');
+  if (!tbody || !empty) return;
+
+  tbody.innerHTML = '';
+  const rows = loadLeaderboardEntries()
+    .filter(r => r && r.category === categoryKey)
+    .sort((a, b) => {
+      if ((b.percent || 0) !== (a.percent || 0)) return (b.percent || 0) - (a.percent || 0);
+      if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
+      if ((a.timeSeconds || 0) !== (b.timeSeconds || 0)) return (a.timeSeconds || 0) - (b.timeSeconds || 0);
+      return (b.ts || 0) - (a.ts || 0);
+    })
+    .slice(0, 30);
+
+  if (!rows.length) {
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  const activeKey = activeParticipant ? getParticipantIdentityKey(activeParticipant) : '';
+  rows.forEach((row, idx) => {
+    const tr = document.createElement('tr');
+    if (activeKey && row.identityKey === activeKey) tr.className = 'leaderboard-row-you';
+    tr.innerHTML =
+      '<td>' + (idx + 1) + '</td>' +
+      '<td>' + escapeHtml(row.name || 'Unknown') + '</td>' +
+      '<td>' + (row.score || 0) + '/' + (row.total || 0) + ' (' + (row.percent || 0) + '%)</td>' +
+      '<td>' + formatLeaderboardTime(row.timeSeconds || 0) + '</td>' +
+      '<td>' + (row.attempts || 1) + '</td>' +
+      '<td>' + escapeHtml(new Date(row.ts || Date.now()).toLocaleString()) + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function renderModeHeaderActions(categoryKey) {
+  const copyBtn = document.getElementById('modeCopyLinkBtn');
+  if (!copyBtn) return;
+  if (categoryKey === 'csa_dumps_live') {
+    copyBtn.style.display = 'inline-flex';
+    copyBtn.onclick = function(evt) { copyCertificationLink(categoryKey, evt); };
+  } else {
+    copyBtn.style.display = 'none';
+    copyBtn.onclick = null;
+  }
+}
+
+function openParticipantGate(catKey, mode) {
+  pendingStart = { category: catKey, mode: mode };
+  let saved = {};
+  try {
+    saved = JSON.parse(localStorage.getItem(PARTICIPANT_PROFILE_KEY) || '{}') || {};
+  } catch (e) {}
+  document.getElementById('participantName').value = saved.name || '';
+  document.getElementById('participantEmail').value = saved.email || '';
+  document.getElementById('participantError').textContent = '';
+  renderLeaderboardTable(catKey);
+  showScreen('userGateScreen');
+}
+
+function finalizeStartQuiz(catKey, mode) {
+  let questions = [...(QUESTIONS[catKey] || [])];
+  strictNoReveal = catKey === 'csa_dumps_live';
+
+  if (difficultyFilter !== 'all') {
+    questions = questions.filter(q => q.difficulty === difficultyFilter);
+  }
+
+  if (mode.count === 'code') {
+    questions = questions.filter(q => q.type !== 'mcq');
+  } else if (mode.count === 'hard') {
+    questions = questions.filter(q => q.difficulty === 'hard');
+  }
+
+  let count = mode.count;
+  if (typeof count === 'number' && questions.length < count) {
+    const proceed = confirm(`This mode requires ${count} questions but only ${questions.length} are available in this category. Start with ${questions.length} questions instead?`);
+    if (!proceed) return;
+  }
+  if (typeof count === 'number') {
+    questions = selectRotatingSubset(questions, count, {
+      category: catKey,
+      modeId: mode.id || 'custom',
+      diff: difficultyFilter
+    });
+    questions = shuffleArray(questions);
+  } else {
+    questions = shuffleArray(questions);
+  }
+
+  if (questions.length === 0) {
+    alert('No questions match your filters. Try a different mode or difficulty.');
+    return;
+  }
+
+  currentQuestions = questions;
+  currentIndex = 0;
+  score = 0;
+  answerByIndex = [];
+  questionTimerMax = mode.timer || 0;
+  quizStartTime = Date.now();
+
+  const cat = CATEGORIES[catKey];
+  document.getElementById('quizIcon').textContent = cat.icon;
+  document.getElementById('quizCategoryName').textContent = cat.name;
+
+  showScreen('quizPlayScreen');
+  renderQuestion();
+}
+
+function queueQuizStart(catKey, mode) {
+  openParticipantGate(catKey, mode);
+}
+
+function getRequiredSelectionCount(q) {
+  if (!q || q.type !== 'mcq') return 1;
+  return Number(q.multi || (Array.isArray(q.correct) ? q.correct.length : 0) || 1);
+}
+
+function isMultiSelectQuestion(q) {
+  return getRequiredSelectionCount(q) > 1;
+}
+
+function syncMultiSubmitState(q) {
+  const btn = document.getElementById('submitMultiBtn');
+  if (!btn) return;
+  if (q && q.type === 'mcq' && isMultiSelectQuestion(q) && !answered) {
+    btn.style.display = 'inline-block';
+    btn.disabled = selectedOptions.size === 0;
+  } else {
+    btn.style.display = 'none';
+    btn.disabled = true;
+  }
+}
+
+function recordLeaderboardEntry(summary) {
+  if (!activeParticipant || !currentCategory) return null;
+  const p = normalizeParticipantIdentity(activeParticipant.name, activeParticipant.email);
+  const identityKey = getParticipantIdentityKey(p);
+  const rows = loadLeaderboardEntries();
+  const attempts = getAttemptsForParticipant(currentCategory, identityKey, rows) + 1;
+  const row = {
+    category: currentCategory,
+    identityKey,
+    name: p.name,
+    email: p.email,
+    score: summary.score,
+    total: summary.total,
+    percent: summary.percent,
+    timeSeconds: summary.elapsed,
+    attempts,
+    ts: Date.now()
+  };
+  rows.push(row);
+  saveLeaderboardEntries(rows);
+  return row;
+}
+
 // ── BUILD CATEGORY CARDS ──
 function buildCategoryGrid() {
   const grid = document.getElementById('categoryGrid');
@@ -864,6 +1149,7 @@ document.getElementById('difficultyFilter').addEventListener('click', e => {
 // ── CATEGORY SELECT ──
 function selectCategory(key) {
   currentCategory = key;
+  pendingStart = null;
   setCategoryHash(key);
   const cat = CATEGORIES[key];
   const modeTitle = document.getElementById('modeTitle');
@@ -891,64 +1177,17 @@ function selectCategory(key) {
       <div><h4>${mode.name}</h4><p>${mode.desc}${insufficient ? ` <span style="color:var(--yellow);font-size:12px">(only ${availableCount} available)</span>` : ''}</p></div>
       <div class="mode-meta">${displayCount} Q${mode.timer ? ` · ${mode.timer}s/Q` : ''}</div>
     `;
-    div.addEventListener('click', () => startQuiz(key, mode));
+    div.addEventListener('click', () => queueQuizStart(key, mode));
     modeOpts.appendChild(div);
   });
   
+  renderModeHeaderActions(key);
   showScreen('modeScreen');
 }
 
 // ── START QUIZ ──
 function startQuiz(catKey, mode) {
-  let questions = [...(QUESTIONS[catKey] || [])];
-  strictNoReveal = catKey === 'csa_dumps_live';
-  
-  // Apply difficulty filter from category screen
-  if (difficultyFilter !== 'all') {
-    questions = questions.filter(q => q.difficulty === difficultyFilter);
-  }
-  
-  // Apply mode filters
-  if (mode.count === 'code') {
-    questions = questions.filter(q => q.type !== 'mcq');
-  } else if (mode.count === 'hard') {
-    questions = questions.filter(q => q.difficulty === 'hard');
-  }
-  
-  // Limit count — warn if fewer questions available than requested
-  let count = mode.count;
-  if (typeof count === 'number' && questions.length < count) {
-    const proceed = confirm(`This mode requires ${count} questions but only ${questions.length} are available in this category. Start with ${questions.length} questions instead?`);
-    if (!proceed) return;
-  }
-  if (typeof count === 'number') {
-    questions = selectRotatingSubset(questions, count, {
-      category: catKey,
-      modeId: mode.id || 'custom',
-      diff: difficultyFilter
-    });
-    questions = shuffleArray(questions);
-  } else {
-    questions = shuffleArray(questions);
-  }
-  
-  if (questions.length === 0) {
-    alert('No questions match your filters. Try a different mode or difficulty.');
-    return;
-  }
-  
-  currentQuestions = questions;
-  currentIndex = 0;
-  score = 0;
-  questionTimerMax = mode.timer || 0;
-  quizStartTime = Date.now();
-  
-  const cat = CATEGORIES[catKey];
-  document.getElementById('quizIcon').textContent = cat.icon;
-  document.getElementById('quizCategoryName').textContent = cat.name;
-  
-  showScreen('quizPlayScreen');
-  renderQuestion();
+  return queueQuizStart(catKey, mode);
 }
 
 // ── RENDER QUESTION ──
@@ -992,18 +1231,25 @@ function renderQuestion() {
   const mcqSection = document.getElementById('mcqSection');
   const codeSection = document.getElementById('codeSection');
   const submitBtn = document.getElementById('submitCodeBtn');
+  const submitMultiBtn = document.getElementById('submitMultiBtn');
   const nextBtn = document.getElementById('nextBtn');
   
   if (q.type === 'mcq') {
     mcqSection.style.display = 'block';
     codeSection.style.display = 'none';
     submitBtn.style.display = 'none';
+    if (submitMultiBtn) submitMultiBtn.style.display = 'none';
     nextBtn.textContent = currentIndex === currentQuestions.length - 1 ? 'Finish' : 'Next Question';
     renderMCQ(q);
+    syncMultiSubmitState(q);
   } else {
     mcqSection.style.display = 'none';
     codeSection.style.display = 'block';
     submitBtn.style.display = 'inline-block';
+    if (submitMultiBtn) {
+      submitMultiBtn.style.display = 'none';
+      submitMultiBtn.disabled = true;
+    }
     nextBtn.textContent = currentIndex === currentQuestions.length - 1 ? 'Finish' : 'Next Question';
     renderCodeEditor(q);
   }
@@ -1149,13 +1395,23 @@ function applyLongestIncorrectBias(displayOptions, q) {
 let currentShuffleMap = [];
 
 function renderMCQ(q) {
-  const multiCount = q.multi || (q.correct.length > 1 ? q.correct.length : 0);
+  const multiCount = getRequiredSelectionCount(q);
+  const isMulti = isMultiSelectQuestion(q);
   const multiHint = document.getElementById('multiHint');
-  if (multiCount > 1) {
-    multiHint.textContent = `Select ${multiCount} answers`;
+  const submitMultiBtn = document.getElementById('submitMultiBtn');
+  if (isMulti) {
+    multiHint.textContent = `Select ${multiCount} answers and click Submit Answers`;
     multiHint.style.display = 'block';
+    if (submitMultiBtn) {
+      submitMultiBtn.style.display = 'inline-block';
+      submitMultiBtn.disabled = true;
+    }
   } else {
     multiHint.style.display = 'none';
+    if (submitMultiBtn) {
+      submitMultiBtn.style.display = 'none';
+      submitMultiBtn.disabled = true;
+    }
   }
   
   const list = document.getElementById('optionsList');
@@ -1172,7 +1428,11 @@ function renderMCQ(q) {
   shuffled.forEach((item, displayIdx) => {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
-    btn.innerHTML = `<span class="option-letter">${letters[displayIdx]}</span><span>${item.text}</span>`;
+    if (isMulti) {
+      btn.innerHTML = `<span class="option-main"><span class="option-letter">${letters[displayIdx]}</span><span>${item.text}</span></span><span class="option-checkbox"><input type="checkbox" tabindex="-1" aria-hidden="true"></span>`;
+    } else {
+      btn.innerHTML = `<span class="option-letter">${letters[displayIdx]}</span><span>${item.text}</span>`;
+    }
     btn.addEventListener('click', () => handleOptionClick(displayIdx, q));
     list.appendChild(btn);
   });
@@ -1181,26 +1441,23 @@ function renderMCQ(q) {
 function handleOptionClick(displayIndex, q) {
   if (answered) return;
   
-  const multiCount = q.multi || (q.correct.length > 1 ? q.correct.length : 0);
+  const multiCount = getRequiredSelectionCount(q);
   const buttons = document.querySelectorAll('#optionsList .option-btn');
   
   if (multiCount > 1) {
-    // Multi-select toggle
     if (selectedOptions.has(displayIndex)) {
       selectedOptions.delete(displayIndex);
       buttons[displayIndex].classList.remove('selected');
     } else {
-      if (selectedOptions.size < multiCount) {
-        selectedOptions.add(displayIndex);
-        buttons[displayIndex].classList.add('selected');
-      }
+      selectedOptions.add(displayIndex);
+      buttons[displayIndex].classList.add('selected');
     }
-    // Auto-submit when enough selected
-    if (selectedOptions.size === multiCount) {
-      setTimeout(() => submitMCQ(q), 300);
-    }
+    const cb = buttons[displayIndex].querySelector('input[type="checkbox"]');
+    if (cb) cb.checked = selectedOptions.has(displayIndex);
+    syncMultiSubmitState(q);
   } else {
-    // Single select — immediate submit
+    selectedOptions.clear();
+    buttons.forEach(btn => btn.classList.remove('selected'));
     selectedOptions.add(displayIndex);
     buttons[displayIndex].classList.add('selected');
     setTimeout(() => submitMCQ(q), 200);
@@ -1211,7 +1468,12 @@ function submitMCQ(q) {
   if (answered) return;
   answered = true;
   clearInterval(timerInterval);
-  
+  const submitMultiBtn = document.getElementById('submitMultiBtn');
+  if (submitMultiBtn) {
+    submitMultiBtn.style.display = 'none';
+    submitMultiBtn.disabled = true;
+  }
+
   const buttons = document.querySelectorAll('#optionsList .option-btn');
   // Map selected display indices → original indices
   const selectedOriginal = [...selectedOptions].map(di => currentShuffleMap[di]);
@@ -1353,13 +1615,17 @@ function autoSubmit() {
 // ── NEXT QUESTION ──
 document.getElementById('nextBtn').addEventListener('click', () => {
   if (!answered) {
-    // If MCQ and nothing selected, skip
     const q = currentQuestions[currentIndex];
-    if (q.type === 'mcq' && selectedOptions.size === 0) {
-      answered = true;
-      SessionProgress.markAnswered(q.id, false);
-    } else if (q.type !== 'mcq') {
-      // Force submit code
+    if (q.type === 'mcq') {
+      if (isMultiSelectQuestion(q) && selectedOptions.size > 0) {
+        submitMCQ(q);
+      } else if (selectedOptions.size === 0) {
+        answered = true;
+        SessionProgress.markAnswered(q.id, false);
+      } else {
+        submitMCQ(q);
+      }
+    } else {
       submitCode();
       return;
     }
@@ -1375,6 +1641,43 @@ document.getElementById('nextBtn').addEventListener('click', () => {
 
 // ── SUBMIT CODE BUTTON ──
 document.getElementById('submitCodeBtn').addEventListener('click', submitCode);
+document.getElementById('submitMultiBtn').addEventListener('click', () => {
+  const q = currentQuestions[currentIndex];
+  if (!q || q.type !== 'mcq' || !isMultiSelectQuestion(q) || answered) return;
+  if (selectedOptions.size === 0) return;
+  submitMCQ(q);
+});
+
+document.getElementById('participantForm').addEventListener('submit', evt => {
+  evt.preventDefault();
+  const name = document.getElementById('participantName').value;
+  const email = document.getElementById('participantEmail').value;
+  const p = normalizeParticipantIdentity(name, email);
+  const err = document.getElementById('participantError');
+
+  if (!p.name || !p.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)) {
+    err.textContent = 'Please enter a valid name and email to continue.';
+    return;
+  }
+
+  localStorage.setItem(PARTICIPANT_PROFILE_KEY, JSON.stringify(p));
+  activeParticipant = p;
+  err.textContent = '';
+
+  const start = pendingStart;
+  if (!start) {
+    err.textContent = 'No quiz mode selected. Please choose a mode again.';
+    return;
+  }
+
+  pendingStart = null;
+  finalizeStartQuiz(start.category, start.mode);
+});
+
+document.getElementById('userGateBackBtn').addEventListener('click', () => {
+  pendingStart = null;
+  showScreen('modeScreen');
+});
 
 // ── RESULTS ──
 function showResults() {
@@ -1384,6 +1687,9 @@ function showResults() {
   const total = currentQuestions.length;
   const pct = Math.round((score / total) * 100);
   const elapsed = Math.round((Date.now() - quizStartTime) / 1000);
+  const leaderboardEntry = activeParticipant && currentCategory
+    ? recordLeaderboardEntry({ score, total, percent: pct, elapsed })
+    : null;
   const mins = Math.floor(elapsed / 60);
   const secs = elapsed % 60;
   
@@ -1418,6 +1724,9 @@ function showResults() {
 
   if (strictNoReveal) {
     document.getElementById('resultsSubtitle').textContent += ' Strict mode is enabled: answer key is hidden.';
+  }
+  if (leaderboardEntry && activeParticipant) {
+    document.getElementById('resultsSubtitle').textContent += ` Attempt #${leaderboardEntry.attempts} recorded for ${activeParticipant.name}.`;
   }
   
   const reviewSection = document.getElementById('reviewSection');
@@ -1457,6 +1766,7 @@ document.getElementById('retryBtn').addEventListener('click', () => {
   selectCategory(currentCategory);
 });
 document.getElementById('homeBtn').addEventListener('click', () => {
+  pendingStart = null;
   clearCategoryHash();
   buildCategoryGrid();
   showScreen('categoryScreen');
@@ -1465,6 +1775,7 @@ document.getElementById('homeBtn').addEventListener('click', () => {
 
 // ── MODE BACK ──
 document.getElementById('modeBackBtn').addEventListener('click', () => {
+  pendingStart = null;
   clearCategoryHash();
   buildCategoryGrid();
   showScreen('categoryScreen');
@@ -1478,6 +1789,7 @@ document.getElementById('modalCancel').addEventListener('click', () => {
   document.getElementById('warningModal').classList.remove('open');
 });
 document.getElementById('modalConfirm').addEventListener('click', () => {
+  pendingStart = null;
   clearCategoryHash();
   document.getElementById('warningModal').classList.remove('open');
   clearInterval(timerInterval);
