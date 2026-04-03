@@ -1,5 +1,149 @@
 [
   {
+    "id": 83,
+    "title": "What is ServiceNow Now Assist? A Beginner Guide with Real Enterprise Examples",
+    "excerpt": "Understand Now Assist in simple terms: where it helps, where it does not, and how enterprises measure real value.",
+    "readTime": "12 min read",
+    "content": "<h2>Now Assist in Plain English</h2>\n<p><strong>Now Assist</strong> is ServiceNow's AI capability layer that helps people write, summarize, search, and resolve work faster across workflows like IT, HR, CSM, and creator experiences.</p>\n<p>Think of it as an <strong>AI copilot embedded inside ServiceNow work</strong>, not a separate chatbot project you manage outside the platform.</p>\n\n<h3>What Now Assist Usually Does</h3>\n<ul>\n  <li><strong>Agent Assist:</strong> suggests responses, summarizes case history, drafts closure notes.</li>\n  <li><strong>Knowledge Assist:</strong> drafts article content from incident/case context.</li>\n  <li><strong>Requester Assist:</strong> improves self-service by guiding users to the right request or answer.</li>\n  <li><strong>Search Assist:</strong> improves discovery with AI-enhanced answer relevance.</li>\n</ul>\n\n<div class=\"scenario-box\">\n  <h4>Enterprise Example: Global IT Help Desk</h4>\n  <p>A company handling 80k tickets/month enabled Now Assist for L1 teams. They used AI to summarize long ticket threads and draft responses for repetitive issues (VPN, MFA lockouts, software access).</p>\n  <p><strong>Result:</strong> lower average handling time, faster new-hire ramp-up, and better consistency in closure notes.</p>\n</div>\n\n<h3>Where Teams Get Confused</h3>\n<ul>\n  <li>Now Assist is <strong>not</strong> a magic replacement for process design.</li>\n  <li>If your knowledge base is weak, AI suggestions may still be weak.</li>\n  <li>If assignment rules are broken, AI cannot fix routing quality by itself.</li>\n</ul>\n\n<div class=\"warn-box\">\n  <h4>Important</h4>\n  <p>AI quality follows data quality. Strong taxonomy, clean KB content, and good case hygiene are prerequisites for meaningful outcomes.</p>\n</div>\n\n<h3>Implementation Checklist (Beginner-Friendly)</h3>\n<ol>\n  <li>Pick 1-2 high-volume use cases first.</li>\n  <li>Baseline current metrics (AHT, first-contact resolution, reopen rate).</li>\n  <li>Enable Now Assist for a pilot group.</li>\n  <li>Review AI outputs weekly with SMEs.</li>\n  <li>Expand only after quality and productivity targets are met.</li>\n</ol>\n\n<h3>How Leadership Measures Success</h3>\n<ul>\n  <li>Time saved per case</li>\n  <li>Deflection to self-service</li>\n  <li>Analyst productivity per shift</li>\n  <li>Customer/employee satisfaction trend</li>\n</ul>\n\n<p><strong>Simple takeaway:</strong> Now Assist works best when paired with mature workflows and clean service knowledge.</p>",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Beginner",
+    "forPersona": [
+      "Beginners",
+      "Business Analysts",
+      "Product Owners"
+    ],
+    "uniqueId": "now-assist-enterprise-guide-1774087200000",
+    "date": "Mar 21, 2026",
+    "dateISO": "2026-03-21T10:00:00Z"
+  },
+  {
+    "id": 82,
+    "title": "CSDM Explained for Beginners: How Enterprises Connect Business Services to Technology",
+    "excerpt": "A practical beginner guide to CSDM with examples from banking, retail, and healthcare service mapping.",
+    "readTime": "13 min read",
+    "content": "<h2>What is CSDM?</h2>\n<p><strong>CSDM (Common Service Data Model)</strong> is ServiceNow's standard way to model services, applications, technical components, and ownership relationships in CMDB.</p>\n<p>In simple terms: <strong>CSDM gives one common language</strong> so business, operations, and engineering talk about the same service objects.</p>\n\n<h3>Why CSDM Matters</h3>\n<ul>\n  <li>Incidents can be tied to actual business services.</li>\n  <li>Change risk can be evaluated using service impact context.</li>\n  <li>Executives can see technical outages in business terms.</li>\n</ul>\n\n<div class=\"scenario-box\">\n  <h4>Enterprise Example: Retail Checkout Outage</h4>\n  <p>Without CSDM, outage records pointed to random servers. Leadership could not assess business impact quickly.</p>\n  <p>After CSDM alignment, incidents were linked to the <strong>Checkout Business Service</strong>, enabling instant visibility into affected stores and revenue risk.</p>\n</div>\n\n<h3>CSDM in Very Simple Layers</h3>\n<table>\n  <tr><th>Layer</th><th>What it Represents</th><th>Example</th></tr>\n  <tr><td>Business Service</td><td>What the business sells/uses</td><td>Digital Payments</td></tr>\n  <tr><td>Application Service</td><td>App behavior users consume</td><td>Checkout API</td></tr>\n  <tr><td>Application/CI</td><td>Technical implementation</td><td>Payment microservice, DB, queue</td></tr>\n</table>\n\n<h3>Most Common Beginner Mistakes</h3>\n<ul>\n  <li>Treating every server as a business service.</li>\n  <li>Missing ownership fields (service owner, support group).</li>\n  <li>No relationship governance between app services and CIs.</li>\n</ul>\n\n<div class=\"tip-box\">\n  <h4>Start Small</h4>\n  <p>Model 3-5 critical services first (order-to-cash, payroll, identity, customer support) before scaling across the enterprise.</p>\n</div>\n\n<h3>What \"Good\" Looks Like</h3>\n<ul>\n  <li>Incident and change records consistently reference services.</li>\n  <li>Ownership is explicit and complete.</li>\n  <li>Service impact paths are visible in outages and major incidents.</li>\n</ul>\n\n<p><strong>Simple takeaway:</strong> CSDM is not theory. It is how enterprise teams translate technical failure into business impact and accountability.</p>",
+    "category": "servicenow",
+    "learningPath": "servicenow",
+    "difficulty": "Beginner",
+    "forPersona": [
+      "Beginners",
+      "CMDB Analysts",
+      "Service Owners"
+    ],
+    "uniqueId": "csdm-for-beginners-1774083600000",
+    "date": "Mar 21, 2026",
+    "dateISO": "2026-03-21T09:00:00Z"
+  },
+  {
+    "id": 81,
+    "title": "CMDB for Absolute Beginners: From Asset Lists to Service Impact Intelligence",
+    "excerpt": "Learn CMDB the easy way with practical enterprise patterns, governance basics, and adoption milestones.",
+    "readTime": "12 min read",
+    "content": "<h2>CMDB in One Sentence</h2>\n<p><strong>CMDB (Configuration Management Database)</strong> is the trusted system of record for IT components (CIs) and their relationships.</p>\n\n<h3>CMDB vs Asset List</h3>\n<ul>\n  <li><strong>Asset list:</strong> what you own.</li>\n  <li><strong>CMDB:</strong> what exists, how it works, and what depends on what.</li>\n</ul>\n\n<div class=\"scenario-box\">\n  <h4>Enterprise Example: Bank Mobile App Latency</h4>\n  <p>Ops team saw database CPU spikes but could not identify customer-facing impact quickly.</p>\n  <p>With relationship-aware CMDB, they traced impact from DB cluster -> API service -> mobile banking experience in minutes.</p>\n</div>\n\n<h3>Core CMDB Concepts</h3>\n<ul>\n  <li><strong>CI:</strong> a managed component (server, app, DB, load balancer).</li>\n  <li><strong>Class:</strong> CI type/category.</li>\n  <li><strong>Relationship:</strong> dependency path between CIs.</li>\n  <li><strong>Data source:</strong> where CI data comes from (discovery, cloud, integrations).</li>\n</ul>\n\n<h3>How Enterprises Build CMDB Maturity</h3>\n<ol>\n  <li>Define critical service scope.</li>\n  <li>Ingest trusted sources first.</li>\n  <li>Normalize and deduplicate records.</li>\n  <li>Establish ownership and lifecycle governance.</li>\n  <li>Use CMDB in incidents/changes/problem workflows.</li>\n</ol>\n\n<div class=\"warn-box\">\n  <h4>Common Failure Pattern</h4>\n  <p>Teams load huge CI volumes without governance and call it done. A large CMDB is not useful unless quality and relationships are trusted.</p>\n</div>\n\n<h3>Beginner KPI Set</h3>\n<ul>\n  <li>CI completeness</li>\n  <li>Relationship completeness for top services</li>\n  <li>Duplicate CI rate</li>\n  <li>Incidents linked to impacted services</li>\n</ul>\n\n<p><strong>Simple takeaway:</strong> CMDB is valuable when it supports faster diagnosis, safer change, and clearer business impact decisions.</p>",
+    "category": "servicenow",
+    "learningPath": "servicenow",
+    "difficulty": "Beginner",
+    "forPersona": [
+      "Beginners",
+      "IT Operations",
+      "Platform Admins"
+    ],
+    "uniqueId": "cmdb-enterprise-basics-1774080000000",
+    "date": "Mar 21, 2026",
+    "dateISO": "2026-03-21T08:00:00Z"
+  },
+  {
+    "id": 80,
+    "title": "ITSM Made Easy: How ServiceNow Standardizes Support at Enterprise Scale",
+    "excerpt": "A very easy ITSM explainer covering incident, request, problem, and change with practical enterprise examples.",
+    "readTime": "11 min read",
+    "content": "<h2>What is ITSM?</h2>\n<p><strong>ITSM (IT Service Management)</strong> is the discipline of delivering and improving IT services using standardized processes.</p>\n<p>In ServiceNow, ITSM usually means workflows like Incident, Request, Problem, and Change.</p>\n\n<h3>The 4 Building Blocks (Simple View)</h3>\n<table>\n  <tr><th>Practice</th><th>Main Goal</th><th>Typical Question</th></tr>\n  <tr><td>Incident</td><td>Restore service quickly</td><td>\"How fast can we recover?\"</td></tr>\n  <tr><td>Request</td><td>Fulfill standard needs</td><td>\"How do we deliver access/device/software?\"</td></tr>\n  <tr><td>Problem</td><td>Remove root cause</td><td>\"Why does this keep happening?\"</td></tr>\n  <tr><td>Change</td><td>Reduce release risk</td><td>\"How do we change safely?\"</td></tr>\n</table>\n\n<div class=\"scenario-box\">\n  <h4>Enterprise Example: SAP Outage Weekend</h4>\n  <p>Incident team restored service in 40 minutes. Problem team identified recurring DB patch conflict. Change team introduced staged rollout with pre-check gates.</p>\n  <p><strong>Outcome:</strong> fewer repeat outages and safer monthly release windows.</p>\n</div>\n\n<h3>Why ITSM Programs Fail</h3>\n<ul>\n  <li>Tool-first implementation without process ownership.</li>\n  <li>Too many mandatory fields with no operational value.</li>\n  <li>No clear SLAs/OLAs and no queue hygiene.</li>\n</ul>\n\n<h3>What Good ITSM Feels Like</h3>\n<ul>\n  <li>Users know where to request help.</li>\n  <li>Support teams triage consistently.</li>\n  <li>Changes are assessed for impact and timing.</li>\n  <li>Recurring incidents trigger root-cause work.</li>\n</ul>\n\n<div class=\"tip-box\">\n  <h4>Practical Rollout Tip</h4>\n  <p>Start with incident + request standardization, then layer in problem and change maturity once data quality stabilizes.</p>\n</div>\n\n<p><strong>Simple takeaway:</strong> ITSM is not just ticketing. It is operational discipline that scales reliable service delivery.</p>",
+    "category": "servicenow",
+    "learningPath": "servicenow",
+    "difficulty": "Beginner",
+    "forPersona": [
+      "Beginners",
+      "Service Desk",
+      "Operations Managers"
+    ],
+    "uniqueId": "itsm-made-easy-1774076400000",
+    "date": "Mar 21, 2026",
+    "dateISO": "2026-03-21T07:00:00Z"
+  },
+  {
+    "id": 79,
+    "title": "SecOps in ServiceNow: A Beginner-Friendly Guide to Vulnerability Response with Enterprise Examples",
+    "excerpt": "Understand SecOps in plain language: how vulnerabilities become actionable work, ownership, and measurable reduction.",
+    "readTime": "13 min read",
+    "content": "<h2>SecOps in Plain Terms</h2>\n<p><strong>SecOps</strong> in ServiceNow connects security findings with IT remediation workflows so vulnerabilities do not remain as dashboard noise.</p>\n\n<h3>Typical Flow</h3>\n<ol>\n  <li>Scanner identifies vulnerability.</li>\n  <li>Finding is normalized and enriched.</li>\n  <li>Ownership is assigned to the right team/app.</li>\n  <li>Remediation tasks are tracked through closure.</li>\n  <li>Risk posture is reported with evidence.</li>\n</ol>\n\n<div class=\"scenario-box\">\n  <h4>Enterprise Example: Critical OpenSSL Exposure</h4>\n  <p>A Fortune 500 organization had thousands of findings across hybrid infrastructure.</p>\n  <p>Using ServiceNow SecOps, they grouped findings by service ownership, auto-created remediation tasks, and prioritized internet-facing systems first.</p>\n</div>\n\n<h3>Beginner-Friendly Terms</h3>\n<ul>\n  <li><strong>Finding:</strong> scanner output item.</li>\n  <li><strong>Vulnerability item:</strong> actionable work record in platform process.</li>\n  <li><strong>Remediation task:</strong> assigned action to patch/fix/mitigate.</li>\n  <li><strong>Exception:</strong> accepted risk with governance approval.</li>\n</ul>\n\n<h3>What Enterprises Measure</h3>\n<ul>\n  <li>MTTR for critical vulnerabilities</li>\n  <li>Backlog aging by severity</li>\n  <li>Coverage by business-critical services</li>\n  <li>SLA compliance for remediation</li>\n</ul>\n\n<div class=\"warn-box\">\n  <h4>Avoid This Pitfall</h4>\n  <p>Security and operations often use different severity definitions. Align scoring and ownership early to prevent escalation conflicts.</p>\n</div>\n\n<p><strong>Simple takeaway:</strong> SecOps turns vulnerability data into accountable remediation work with measurable risk reduction.</p>",
+    "category": "servicenow",
+    "learningPath": "servicenow",
+    "difficulty": "Beginner",
+    "forPersona": [
+      "Beginners",
+      "Security Analysts",
+      "IT Operations"
+    ],
+    "uniqueId": "secops-vulnerability-response-1774072800000",
+    "date": "Mar 21, 2026",
+    "dateISO": "2026-03-21T06:00:00Z"
+  },
+  {
+    "id": 78,
+    "title": "IRM for Beginners: How ServiceNow Connects Risk, Compliance, and Business Decisions",
+    "excerpt": "Learn IRM in very simple terms and see how enterprises map controls, risks, and policy evidence in one platform.",
+    "readTime": "12 min read",
+    "content": "<h2>What is IRM?</h2>\n<p><strong>IRM (Integrated Risk Management)</strong> helps organizations manage risk, controls, policy obligations, and compliance activities in a connected model.</p>\n<p>Instead of siloed spreadsheets, IRM centralizes risk decisions and evidence.</p>\n\n<h3>Simple IRM Building Blocks</h3>\n<ul>\n  <li><strong>Risk:</strong> what could go wrong and impact objectives.</li>\n  <li><strong>Control:</strong> preventive/detective mechanism.</li>\n  <li><strong>Policy/Requirement:</strong> governance expectations.</li>\n  <li><strong>Issue:</strong> control gap requiring remediation.</li>\n</ul>\n\n<div class=\"scenario-box\">\n  <h4>Enterprise Example: SOX + ISO Overlap</h4>\n  <p>A global finance organization reduced duplicate audit work by mapping one control to multiple obligations (SOX, ISO, internal policy) and tracking evidence once.</p>\n</div>\n\n<h3>Why Leaders Invest in IRM</h3>\n<ul>\n  <li>Single view of enterprise risk posture</li>\n  <li>Clear control ownership</li>\n  <li>Faster audit readiness</li>\n  <li>Fewer manual evidence chases</li>\n</ul>\n\n<h3>Beginner Rollout Sequence</h3>\n<ol>\n  <li>Define top enterprise risks and taxonomy.</li>\n  <li>Map key controls with owners.</li>\n  <li>Attach obligations and testing schedules.</li>\n  <li>Track issues and remediation lifecycle.</li>\n</ol>\n\n<div class=\"tip-box\">\n  <h4>Keep It Practical</h4>\n  <p>Start with one domain (for example IT risk) and mature operating rhythm before broad enterprise expansion.</p>\n</div>\n\n<p><strong>Simple takeaway:</strong> IRM makes risk and compliance operational, not just annual reporting paperwork.</p>",
+    "category": "servicenow",
+    "learningPath": "servicenow",
+    "difficulty": "Beginner",
+    "forPersona": [
+      "Beginners",
+      "Risk Teams",
+      "Audit and Compliance"
+    ],
+    "uniqueId": "irm-enterprise-basics-1774069200000",
+    "date": "Mar 21, 2026",
+    "dateISO": "2026-03-21T05:00:00Z"
+  },
+  {
+    "id": 77,
+    "title": "ServiceNow App Engine Explained: Build Enterprise Apps Without Reinventing the Platform",
+    "excerpt": "A simple App Engine guide with enterprise examples on workflows, data models, and low-code governance.",
+    "readTime": "12 min read",
+    "content": "<h2>What is App Engine?</h2>\n<p><strong>App Engine</strong> is ServiceNow's application development capability for building business apps on the same platform foundation (data, workflow, security, UI, integration).</p>\n\n<h3>Why Enterprises Use It</h3>\n<ul>\n  <li>Faster delivery vs building every workflow from scratch.</li>\n  <li>Reuse of platform security, approvals, notifications, and reporting.</li>\n  <li>Lower integration and governance overhead.</li>\n</ul>\n\n<div class=\"scenario-box\">\n  <h4>Enterprise Example: Vendor Onboarding App</h4>\n  <p>A procurement team built a vendor onboarding workflow with risk checks, legal approvals, and finance sign-off using App Engine + Flow Designer.</p>\n  <p>They replaced email chains with a trackable, auditable process in one quarter.</p>\n</div>\n\n<h3>App Engine Core Ingredients</h3>\n<ul>\n  <li>Data model (tables/fields)</li>\n  <li>Workflow automation (Flow Designer)</li>\n  <li>Experience/UI components</li>\n  <li>Role-based access control</li>\n</ul>\n\n<h3>Beginner Mistakes to Avoid</h3>\n<ul>\n  <li>Building app logic before clear process mapping.</li>\n  <li>Ignoring role design and approvals.</li>\n  <li>Creating duplicate tables when standard models already exist.</li>\n</ul>\n\n<div class=\"warn-box\">\n  <h4>Governance Matters</h4>\n  <p>Low-code does not mean no architecture. Define app ownership, naming standards, and release controls from day one.</p>\n</div>\n\n<p><strong>Simple takeaway:</strong> App Engine helps enterprises deliver business apps quickly while staying inside platform governance guardrails.</p>",
+    "category": "servicenow",
+    "learningPath": "servicenow",
+    "difficulty": "Beginner",
+    "forPersona": [
+      "Beginners",
+      "Citizen Developers",
+      "Platform Teams"
+    ],
+    "uniqueId": "app-engine-beginner-guide-1774065600000",
+    "date": "Mar 21, 2026",
+    "dateISO": "2026-03-21T04:00:00Z"
+  },
+  {
+    "id": 76,
+    "title": "ServiceNow Buzzword Map: ITSM, CSDM, CMDB, SecOps, IRM, Now Assist and More (Easy Guide)",
+    "excerpt": "A quick-reference article that explains major ServiceNow buzzwords in simple language with practical enterprise context.",
+    "readTime": "10 min read",
+    "content": "<h2>Why This Buzzword Map Exists</h2>\n<p>ServiceNow conversations are full of acronyms. This guide gives easy explanations so beginners can connect terms to real enterprise outcomes.</p>\n\n<table>\n  <tr><th>Term</th><th>Easy Meaning</th><th>Enterprise Outcome</th></tr>\n  <tr><td>ITSM</td><td>Run IT support with standard processes</td><td>Faster recovery, better service quality</td></tr>\n  <tr><td>CMDB</td><td>Trusted technology inventory + relationships</td><td>Better impact analysis, safer change</td></tr>\n  <tr><td>CSDM</td><td>Standard model linking services to tech</td><td>Business-impact visibility</td></tr>\n  <tr><td>SecOps</td><td>Operationalize vulnerability/security work</td><td>Faster remediation, lower risk</td></tr>\n  <tr><td>IRM</td><td>Connect risk, controls, compliance</td><td>Audit readiness, governance clarity</td></tr>\n  <tr><td>App Engine</td><td>Build business apps on platform</td><td>Faster delivery with governance</td></tr>\n  <tr><td>Now Assist</td><td>AI help across workflows</td><td>Productivity + consistency gains</td></tr>\n  <tr><td>ITOM</td><td>Operations visibility/automation</td><td>Reduced outages and MTTR</td></tr>\n  <tr><td>HRSD</td><td>Employee service delivery workflows</td><td>Better employee support experience</td></tr>\n  <tr><td>CSM</td><td>Customer service operations</td><td>Better case handling and retention</td></tr>\n</table>\n\n<h3>How to Use This as a Beginner</h3>\n<ol>\n  <li>Learn each term with one enterprise example.</li>\n  <li>Map which terms your current project uses.</li>\n  <li>Practice explaining each in 30 seconds for interviews.</li>\n</ol>\n\n<div class=\"tip-box\">\n  <h4>Interview Tip</h4>\n  <p>Do not define buzzwords in isolation. Always add one business outcome and one implementation example.</p>\n</div>\n\n<p><strong>Simple takeaway:</strong> Buzzwords become easy when you connect them to people, process, platform, and measurable outcomes.</p>",
+    "category": "servicenow",
+    "learningPath": "servicenow",
+    "difficulty": "Beginner",
+    "forPersona": [
+      "Beginners",
+      "Career Switchers",
+      "Interview Prep"
+    ],
+    "uniqueId": "servicenow-buzzword-map-1774062000000",
+    "date": "Mar 21, 2026",
+    "dateISO": "2026-03-21T03:00:00Z"
+  },
+  {
     "id": 75,
     "title": "From Kubernetes Helm Charts to ServiceNow Update Sets: Resolving Multi-Developer Conflicts Like a Platform Architect",
     "excerpt": "Your team hits Update Set hell: Developer A overwrites B's script include, UAT preview explodes with 47 collisions, sprint slips by 3 days. This article translates your orchestration experience to ServiceNow's Update Set model, delivering a systematic conflict resolution pattern that cuts admin commit time from 2 hours to 5 minutes per sprint.",
