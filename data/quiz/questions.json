@@ -22,10 +22,10 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "Configuration Management Database \u2014 stores information about IT assets and their relationships",
-        "Customer Management Database \u2014 stores customer records",
-        "Change Management Database \u2014 tracks all changes",
-        "Code Management Database \u2014 version control for scripts"
+        "Configuration Management Database — stores information about IT assets and their relationships",
+        "Customer Management Database — stores customer records",
+        "Change Management Database — tracks all changes",
+        "Code Management Database — version control for scripts"
       ],
       "correct": [
         0
@@ -126,7 +126,7 @@
       "correct": [
         0
       ],
-      "explanation": "Intermittent ATF failures between environments typically stem from data-dependent conditions \u2014 records in different states, ACLs evaluating differently due to different users/roles, or Business Rules behaving differently based on existing data."
+      "explanation": "Intermittent ATF failures between environments typically stem from data-dependent conditions — records in different states, ACLs evaluating differently due to different users/roles, or Business Rules behaving differently based on existing data."
     },
     {
       "id": "arch-m4",
@@ -270,7 +270,7 @@
       "correct": [
         0
       ],
-      "explanation": "Table archiving moves historical data to archive tables. Database indexes accelerate query performance. Script-based ACLs evaluate per-row and are expensive at scale \u2014 converting to condition-based ACLs improves performance. Query Business Rules can enforce base filters to reduce result set sizes."
+      "explanation": "Table archiving moves historical data to archive tables. Database indexes accelerate query performance. Script-based ACLs evaluate per-row and are expensive at scale — converting to condition-based ACLs improves performance. Query Business Rules can enforce base filters to reduce result set sizes."
     }
   ],
   "scripting": [
@@ -384,7 +384,7 @@
       "correct": [
         0
       ],
-      "explanation": "current.update() in a Before BR initiates a NEW update operation (risk of infinite loop). setAbortAction(true) cancels the original pending operation entirely \u2014 no record is saved."
+      "explanation": "current.update() in a Before BR initiates a NEW update operation (risk of infinite loop). setAbortAction(true) cancels the original pending operation entirely — no record is saved."
     },
     {
       "id": "scr-m2",
@@ -400,7 +400,7 @@
       "correct": [
         0
       ],
-      "explanation": "getRowCount() iterates through the entire result set to count records. On large tables, use GlideAggregate with COUNT instead \u2014 it performs the count at the database level."
+      "explanation": "getRowCount() iterates through the entire result set to count records. On large tables, use GlideAggregate with COUNT instead — it performs the count at the database level."
     },
     {
       "id": "scr-m3",
@@ -586,7 +586,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Incidents reveal symptoms, Problems identify root causes, and Changes implement fixes \u2014 they link via related records",
+        "Incidents reveal symptoms, Problems identify root causes, and Changes implement fixes — they link via related records",
         "They are three names for the same process",
         "Incidents create Changes which create Problems",
         "Problems are a subset of the Incident table"
@@ -594,7 +594,7 @@
       "correct": [
         0
       ],
-      "explanation": "ITIL workflow: Incidents identify disruptions \u2192 Problem Management finds root causes \u2192 Change Management implements permanent fixes. They are separate processes linked through record relationships."
+      "explanation": "ITIL workflow: Incidents identify disruptions → Problem Management finds root causes → Change Management implements permanent fixes. They are separate processes linked through record relationships."
     },
     {
       "id": "mod-m2",
@@ -706,7 +706,7 @@
       "correct": [
         0
       ],
-      "explanation": "Flow Designer with decision tables provides maintainable approval routing logic. Dynamic approval groups based on CMDB relationships ensure the right service owners approve relevant changes. This scales without creating N\u00d7M workflow variants."
+      "explanation": "Flow Designer with decision tables provides maintainable approval routing logic. Dynamic approval groups based on CMDB relationships ensure the right service owners approve relevant changes. This scales without creating N×M workflow variants."
     }
   ],
   "fundamentals": [
@@ -724,7 +724,7 @@
       "correct": [
         0
       ],
-      "explanation": "Tables in ServiceNow store records (rows) with fields (columns). They are the backbone of the platform \u2014 every module is built on tables."
+      "explanation": "Tables in ServiceNow store records (rows) with fields (columns). They are the backbone of the platform — every module is built on tables."
     },
     {
       "id": "fun-e2",
@@ -756,7 +756,7 @@
       "correct": [
         0
       ],
-      "explanation": "Every record in ServiceNow has a sys_id \u2014 a 32-character GUID that uniquely identifies it across the platform."
+      "explanation": "Every record in ServiceNow has a sys_id — a 32-character GUID that uniquely identifies it across the platform."
     },
     {
       "id": "fun-e4",
@@ -780,7 +780,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "Whether the record is considered current and included in active queries \u2014 inactive records are effectively soft-deleted",
+        "Whether the record is considered current and included in active queries — inactive records are effectively soft-deleted",
         "Whether the record is locked from editing",
         "Whether the record appears in reports",
         "Whether Business Rules fire on the record"
@@ -796,9 +796,9 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Client Scripts (onLoad) \u2192 UI Policies \u2192 Data Policies (if run on client) \u2192 ACLs (field-level)",
-        "UI Policies \u2192 Client Scripts \u2192 ACLs \u2192 Data Policies",
-        "ACLs \u2192 Data Policies \u2192 UI Policies \u2192 Client Scripts",
+        "Client Scripts (onLoad) → UI Policies → Data Policies (if run on client) → ACLs (field-level)",
+        "UI Policies → Client Scripts → ACLs → Data Policies",
+        "ACLs → Data Policies → UI Policies → Client Scripts",
         "All execute simultaneously"
       ],
       "correct": [
@@ -828,7 +828,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Child tables inherit fields and configurations from parent tables \u2014 e.g., incident extends task, so all task fields exist on incident",
+        "Child tables inherit fields and configurations from parent tables — e.g., incident extends task, so all task fields exist on incident",
         "Tables cannot inherit from other tables",
         "Inheritance only applies to ACLs, not fields",
         "Child tables are copies of parent tables with no ongoing relationship"
@@ -868,7 +868,7 @@
       "correct": [
         0
       ],
-      "explanation": "The full server-side chain: ACLs verify write access \u2192 Data Policies validate field requirements \u2192 Before BRs execute (can modify/abort) \u2192 Database UPDATE occurs \u2192 After BRs execute \u2192 Async BRs queue \u2192 Workflows/Flows trigger \u2192 Notification rules evaluate \u2192 Display BRs fire on the next form load."
+      "explanation": "The full server-side chain: ACLs verify write access → Data Policies validate field requirements → Before BRs execute (can modify/abort) → Database UPDATE occurs → After BRs execute → Async BRs queue → Workflows/Flows trigger → Notification rules evaluate → Display BRs fire on the next form load."
     },
     {
       "id": "fun-h2",
@@ -884,7 +884,7 @@
       "correct": [
         0
       ],
-      "explanation": "UI Policies are client-side only \u2014 they can be bypassed by direct API calls, web services, Business Rules calling update(), or browser manipulation. Data Policies with the 'Apply to import sets' option enforce server-side."
+      "explanation": "UI Policies are client-side only — they can be bypassed by direct API calls, web services, Business Rules calling update(), or browser manipulation. Data Policies with the 'Apply to import sets' option enforce server-side."
     },
     {
       "id": "fun-h3",
@@ -892,8 +892,8 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Yes \u2014 the current object persists across the Business Rule chain for the same transaction, so changes made in Before BRs are visible to After BRs",
-        "No \u2014 After BRs re-query the database and get the original value",
+        "Yes — the current object persists across the Business Rule chain for the same transaction, so changes made in Before BRs are visible to After BRs",
+        "No — After BRs re-query the database and get the original value",
         "It depends on the execution order setting",
         "The current object is reset between Before and After BRs"
       ],
@@ -934,7 +934,7 @@
       "correct": [
         0
       ],
-      "explanation": "Update Sets track configuration changes (not data) made in an instance, allowing you to move customizations from dev \u2192 test \u2192 prod."
+      "explanation": "Update Sets track configuration changes (not data) made in an instance, allowing you to move customizations from dev → test → prod."
     },
     {
       "id": "csa-e3",
@@ -1078,7 +1078,7 @@
       "correct": [
         0
       ],
-      "explanation": "Catalog Client Scripts execute in the Service Catalog context \u2014 they interact with catalog variables (not table fields) using the same g_form API but target variable names instead of column names."
+      "explanation": "Catalog Client Scripts execute in the Service Catalog context — they interact with catalog variables (not table fields) using the same g_form API but target variable names instead of column names."
     },
     {
       "id": "csa-m2",
@@ -1198,7 +1198,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "It defines a filter condition that must be true for the Business Rule to execute \u2014 evaluated before the script runs",
+        "It defines a filter condition that must be true for the Business Rule to execute — evaluated before the script runs",
         "It specifies which table the Business Rule applies to",
         "It determines the execution order",
         "It sets the priority of the Business Rule"
@@ -1238,7 +1238,7 @@
       "correct": [
         0
       ],
-      "explanation": "Views (e.g., 'Default', 'itil', 'ESS') determine form layout \u2014 which fields, their arrangement, sections, and related lists. Different users/roles can be directed to different views of the same table."
+      "explanation": "Views (e.g., 'Default', 'itil', 'ESS') determine form layout — which fields, their arrangement, sections, and related lists. Different users/roles can be directed to different views of the same table."
     },
     {
       "id": "csa-m13",
@@ -1265,7 +1265,7 @@
         "ServiceNow creates a new update set that reverts the changes by applying the previous versions of the modified records",
         "The committed changes are permanently deleted",
         "The update set is moved back to the source instance",
-        "Nothing \u2014 committed update sets cannot be reverted"
+        "Nothing — committed update sets cannot be reverted"
       ],
       "correct": [
         0
@@ -1310,7 +1310,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "ACLs on the referenced table's record control whether the display value resolves \u2014 if the user cannot read the referenced record, they see the sys_id instead of the display value",
+        "ACLs on the referenced table's record control whether the display value resolves — if the user cannot read the referenced record, they see the sys_id instead of the display value",
         "Reference fields always show the display value regardless of ACLs",
         "Reference field security is controlled only by the source table's ACLs",
         "There is no field-level security for reference fields"
@@ -1342,7 +1342,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A review and approval process for Knowledge articles that ensures content quality before publication \u2014 articles move through Draft \u2192 Review \u2192 Published states",
+        "A review and approval process for Knowledge articles that ensures content quality before publication — articles move through Draft → Review → Published states",
         "A workflow for creating incidents from KB articles",
         "A process for automatically deleting outdated articles",
         "A method for importing external documentation"
@@ -1370,7 +1370,7 @@
     },
     {
       "id": "csa-h1",
-      "q": "A customer needs to migrate 500 customizations across 3 instances (dev \u2192 test \u2192 prod) with strict change control. Some customizations span multiple update sets and have dependencies. What is the recommended migration strategy?",
+      "q": "A customer needs to migrate 500 customizations across 3 instances (dev → test → prod) with strict change control. Some customizations span multiple update sets and have dependencies. What is the recommended migration strategy?",
       "type": "mcq",
       "difficulty": "hard",
       "options": [
@@ -1502,7 +1502,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "The 'when' field specifies the timing: before, after, async, or display \u2014 determining when the rule runs relative to the database operation",
+        "The 'when' field specifies the timing: before, after, async, or display — determining when the rule runs relative to the database operation",
         "It specifies which day of the week the rule runs",
         "It sets the condition that must be true",
         "It determines the user who can trigger the rule"
@@ -1518,7 +1518,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Dot-walking (e.g., current.caller_id.department) auto-resolves reference chains inline; GlideRecord lookup requires explicit code to query the referenced table \u2014 dot-walking is convenient but can be slow for deep chains",
+        "Dot-walking (e.g., current.caller_id.department) auto-resolves reference chains inline; GlideRecord lookup requires explicit code to query the referenced table — dot-walking is convenient but can be slow for deep chains",
         "They are the same mechanism",
         "Dot-walking only works on the client side",
         "GlideRecord lookups cannot traverse references"
@@ -1534,7 +1534,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Variables are dynamic form fields on catalog items stored in sc_item_option_mtom, not as table columns \u2014 they capture request-specific information that doesn't live on the target table",
+        "Variables are dynamic form fields on catalog items stored in sc_item_option_mtom, not as table columns — they capture request-specific information that doesn't live on the target table",
         "Variables and table fields are the same",
         "Variables can only be text fields",
         "Variables are stored on the incident table"
@@ -1542,7 +1542,7 @@
       "correct": [
         0
       ],
-      "explanation": "Catalog variables are request-specific inputs (e.g., laptop type, justification) stored in sc_item_option/sc_item_option_mtom. They don't create columns on the target table \u2014 they're accessed via current.variables in catalog workflows."
+      "explanation": "Catalog variables are request-specific inputs (e.g., laptop type, justification) stored in sc_item_option/sc_item_option_mtom. They don't create columns on the target table — they're accessed via current.variables in catalog workflows."
     },
     {
       "id": "csa-m24",
@@ -1551,7 +1551,7 @@
       "difficulty": "medium",
       "options": [
         "Configure the SLA Definition's 'Pause' condition to include state = Awaiting Caller, which stops the elapsed time clock while the condition is true",
-        "SLAs cannot be paused \u2014 they always count time",
+        "SLAs cannot be paused — they always count time",
         "Create a Business Rule to manually freeze the SLA",
         "Set the incident to inactive to stop the SLA"
       ],
@@ -1566,7 +1566,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A feature that triggers an action (notification, state change) when a record has not been updated for a specified duration \u2014 commonly used for stale incidents or unresolved problems",
+        "A feature that triggers an action (notification, state change) when a record has not been updated for a specified duration — commonly used for stale incidents or unresolved problems",
         "A tool that monitors inactive user accounts",
         "A report showing unused applications",
         "A server health check for idle instances"
@@ -1790,7 +1790,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A reusable collection of catalog variables that can be shared across multiple catalog items \u2014 eliminating duplicate variable definitions and ensuring consistency",
+        "A reusable collection of catalog variables that can be shared across multiple catalog items — eliminating duplicate variable definitions and ensuring consistency",
         "A set of variables used in Business Rules",
         "A collection of system properties",
         "A group of users who manage catalog items"
@@ -1806,7 +1806,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "It stores Business Service CIs that represent high-level services offered to the business \u2014 these are mapped to supporting infrastructure CIs via relationships",
+        "It stores Business Service CIs that represent high-level services offered to the business — these are mapped to supporting infrastructure CIs via relationships",
         "It stores CI security configurations",
         "It is the main CMDB table for all CI types",
         "It stores service catalog items"
@@ -1838,7 +1838,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "Controls whether the Business Rule is currently enabled and will execute \u2014 unchecking it disables the rule without deleting it",
+        "Controls whether the Business Rule is currently enabled and will execute — unchecking it disables the rule without deleting it",
         "Makes the Business Rule run only on active records",
         "Sets the rule to run in real-time vs. batch",
         "Determines if the rule can be edited"
@@ -1854,7 +1854,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "Displays records from other tables that are related to the current record \u2014 e.g., showing all Incidents related to a Problem",
+        "Displays records from other tables that are related to the current record — e.g., showing all Incidents related to a Problem",
         "Shows a list of related Knowledge articles",
         "Displays the record history",
         "Shows similar records for deduplication"
@@ -1878,7 +1878,7 @@
       "correct": [
         0
       ],
-      "explanation": "ServiceNow Password Reset integrates with AD via MID Server, supports MFA verification, and provides self-service widgets for the portal. The flow: user verifies identity \u2192 system resets AD password \u2192 confirms via the portal, all without agent involvement."
+      "explanation": "ServiceNow Password Reset integrates with AD via MID Server, supports MFA verification, and provides self-service widgets for the portal. The flow: user verifies identity → system resets AD password → confirms via the portal, all without agent involvement."
     },
     {
       "id": "csa-h12",
@@ -1894,7 +1894,7 @@
       "correct": [
         0
       ],
-      "explanation": "Systematic approach: BR debug logs show execution time per rule. Transaction logs identify slow form loads. Script Execution History reveals expensive operations. Prioritize remediation by impact (frequency \u00d7 execution time). Common fixes: replace GlideRecord with GlideAggregate, add conditions to avoid unnecessary execution, consolidate overlapping rules."
+      "explanation": "Systematic approach: BR debug logs show execution time per rule. Transaction logs identify slow form loads. Script Execution History reveals expensive operations. Prioritize remediation by impact (frequency × execution time). Common fixes: replace GlideRecord with GlideAggregate, add conditions to avoid unnecessary execution, consolidate overlapping rules."
     },
     {
       "id": "csa-m34",
@@ -1902,7 +1902,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Stores system-wide configuration properties that control platform behavior \u2014 administrators can customize instance settings without code changes",
+        "Stores system-wide configuration properties that control platform behavior — administrators can customize instance settings without code changes",
         "Stores table field definitions",
         "Contains user preferences",
         "Manages application licenses"
@@ -1926,7 +1926,7 @@
       "correct": [
         0
       ],
-      "explanation": "Global UI Scripts are JavaScript loaded on every page (or every non-mobile page) \u2014 useful for utility functions. Client Scripts are event-driven (onLoad, onChange, onSubmit) and scoped to a specific table and form."
+      "explanation": "Global UI Scripts are JavaScript loaded on every page (or every non-mobile page) — useful for utility functions. Client Scripts are event-driven (onLoad, onChange, onSubmit) and scoped to a specific table and form."
     },
     {
       "id": "csa-m36",
@@ -1934,7 +1934,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Create Notification records that define the trigger (event or condition), recipients (users, groups, fields), and email template \u2014 the system sends emails when conditions are met",
+        "Create Notification records that define the trigger (event or condition), recipients (users, groups, fields), and email template — the system sends emails when conditions are met",
         "Write a Business Rule that calls gs.sendEmail()",
         "Configure notifications in the email server settings",
         "Use Client Scripts to trigger email sends"
@@ -1950,7 +1950,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A wizard-like interface that bundles multiple catalog items into a single ordered request, guiding users through a sequence of selections \u2014 e.g., New Hire Onboarding bundling laptop + software + access",
+        "A wizard-like interface that bundles multiple catalog items into a single ordered request, guiding users through a sequence of selections — e.g., New Hire Onboarding bundling laptop + software + access",
         "A documentation guide for placing orders",
         "A sorting mechanism for catalog categories",
         "A report showing order history"
@@ -1958,7 +1958,7 @@
       "correct": [
         0
       ],
-      "explanation": "Order Guides present a multi-step wizard that combines multiple catalog items into one request. Users are guided through selections (e.g., choose hardware \u2192 choose software \u2192 choose access), and all items are submitted as a single request."
+      "explanation": "Order Guides present a multi-step wizard that combines multiple catalog items into one request. Users are guided through selections (e.g., choose hardware → choose software → choose access), and all items are submitted as a single request."
     },
     {
       "id": "csa-h13",
@@ -2126,7 +2126,7 @@
       "type": "mcq",
       "difficulty": "hard",
       "options": [
-        "Validate module role requirements and the user\u2019s effective role inheritance before troubleshooting UI-level causes.",
+        "Validate module role requirements and the user’s effective role inheritance before troubleshooting UI-level causes.",
         "Clear browser cache first because left-nav visibility is cached independently from role entitlements.",
         "Rebuild dictionary caches first since module rendering depends on latest dictionary update timestamp.",
         "Run module fix scripts to republish sys_ui_module records for all role maps after each role change."
@@ -2288,7 +2288,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "A categorization that determines the case workflow, fields, and SLA \u2014 common types include Question, Issue, and Request",
+        "A categorization that determines the case workflow, fields, and SLA — common types include Question, Issue, and Request",
         "The font style used in case descriptions",
         "The severity level of a case",
         "The channel through which a case was created"
@@ -2336,7 +2336,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "Phone, Email, Portal, Chat, Social Media, Walk-in \u2014 all channels are tracked and can create/update cases",
+        "Phone, Email, Portal, Chat, Social Media, Walk-in — all channels are tracked and can create/update cases",
         "Email only",
         "Phone and Email only",
         "Portal only"
@@ -2344,7 +2344,7 @@
       "correct": [
         0
       ],
-      "explanation": "CSM is omnichannel \u2014 customers can interact via phone, email, self-service portal, live chat, social media, and walk-in. All interactions are tracked against the case for a complete communication history."
+      "explanation": "CSM is omnichannel — customers can interact via phone, email, self-service portal, live chat, social media, and walk-in. All interactions are tracked against the case for a complete communication history."
     },
     {
       "id": "csm-m1",
@@ -2400,7 +2400,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A visual tool for dispatchers to assign and reassign cases to agents based on skills, availability, and workload \u2014 showing a real-time queue view",
+        "A visual tool for dispatchers to assign and reassign cases to agents based on skills, availability, and workload — showing a real-time queue view",
         "A developer tool for assigning variables",
         "A report builder for tracking assignments",
         "A configuration page for assignment rules"
@@ -2456,7 +2456,7 @@
       "correct": [
         0
       ],
-      "explanation": "Special Handling Notes are proactive alerts tied to accounts, contacts, or consumers. When an agent works on a case for a flagged customer, the note prominently displays critical information (e.g., 'VIP Client \u2014 escalate immediately')."
+      "explanation": "Special Handling Notes are proactive alerts tied to accounts, contacts, or consumers. When an agent works on a case for a flagged customer, the note prominently displays critical information (e.g., 'VIP Client — escalate immediately')."
     },
     {
       "id": "csm-m8",
@@ -2480,7 +2480,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "customer_contact extends sys_user and adds CSM-specific fields like account, title, and partner \u2014 contacts are users with customer-specific attributes",
+        "customer_contact extends sys_user and adds CSM-specific fields like account, title, and partner — contacts are users with customer-specific attributes",
         "They are completely separate tables with no relationship",
         "customer_contact replaces sys_user for all CSM users",
         "sys_user is for admins; customer_contact is for everyone else"
@@ -2496,7 +2496,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Cases use a multi-level categorization (Category \u2192 Subcategory \u2192 Type) that can drive automatic assignment, SLA selection, and knowledge article suggestions",
+        "Cases use a multi-level categorization (Category → Subcategory → Type) that can drive automatic assignment, SLA selection, and knowledge article suggestions",
         "Cases can only have one category level",
         "Categorization is purely cosmetic and has no impact on processing",
         "Categories are assigned randomly by the system"
@@ -2544,7 +2544,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Tracks specific product instances installed or provisioned for a customer, including version, serial number, and warranty status \u2014 used to link cases to specific assets",
+        "Tracks specific product instances installed or provisioned for a customer, including version, serial number, and warranty status — used to link cases to specific assets",
         "Tracks ServiceNow platform installations",
         "Records software installed on agent workstations",
         "Stores product catalog items"
@@ -2560,7 +2560,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A Case tracks the overall customer issue; Case Tasks are sub-tasks assigned to different teams or individuals to complete parts of the case resolution \u2014 both extend the task table",
+        "A Case tracks the overall customer issue; Case Tasks are sub-tasks assigned to different teams or individuals to complete parts of the case resolution — both extend the task table",
         "Case Tasks are auto-created for every case",
         "Cases and Case Tasks are on the same table",
         "Case Tasks can exist without a parent Case"
@@ -2592,7 +2592,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A record that defines the terms, duration, and scope of service provided to a customer \u2014 it drives entitlements and SLA targets for cases from that account",
+        "A record that defines the terms, duration, and scope of service provided to a customer — it drives entitlements and SLA targets for cases from that account",
         "A legal document stored as an attachment",
         "A type of catalog item",
         "An internal service agreement between IT teams"
@@ -2608,7 +2608,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "An online forum where customers can ask questions, share solutions, and interact with other customers and support staff \u2014 reducing case volume through peer support",
+        "An online forum where customers can ask questions, share solutions, and interact with other customers and support staff — reducing case volume through peer support",
         "An internal messaging system for agents",
         "A social media integration",
         "A team collaboration tool for CSM admins"
@@ -2632,7 +2632,7 @@
       "correct": [
         0
       ],
-      "explanation": "Customer Central is an account-centric workspace giving agents a complete view of the customer relationship \u2014 all open cases, contract status, entitlements, installed products, and communication history \u2014 enabling more informed, contextual support."
+      "explanation": "Customer Central is an account-centric workspace giving agents a complete view of the customer relationship — all open cases, contract status, entitlements, installed products, and communication history — enabling more informed, contextual support."
     },
     {
       "id": "csm-h1",
@@ -2648,7 +2648,7 @@
       "correct": [
         0
       ],
-      "explanation": "Proactive CSM architecture: Event Management detects infrastructure issues \u2192 Service Mapping identifies affected business services and linked customers \u2192 Automated case creation with customer-specific impact details \u2192 Proactive notifications via portal, email, and SMS before the customer is impacted."
+      "explanation": "Proactive CSM architecture: Event Management detects infrastructure issues → Service Mapping identifies affected business services and linked customers → Automated case creation with customer-specific impact details → Proactive notifications via portal, email, and SMS before the customer is impacted."
     },
     {
       "id": "csm-h2",
@@ -2728,7 +2728,7 @@
       "correct": [
         0
       ],
-      "explanation": "CSM's Partner model supports multi-party service: Partner accounts and contacts with specific roles, ACLs scoping visibility to assigned cases and relevant account data, and partner portal access for case management \u2014 all without exposing unrelated customer data."
+      "explanation": "CSM's Partner model supports multi-party service: Partner accounts and contacts with specific roles, ACLs scoping visibility to assigned cases and relevant account data, and partner portal access for case management — all without exposing unrelated customer data."
     },
     {
       "id": "csm-h7",
@@ -2784,7 +2784,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "It shows cases from the same account, with similar categories, or affecting the same product \u2014 helping agents identify patterns and link related issues",
+        "It shows cases from the same account, with similar categories, or affecting the same product — helping agents identify patterns and link related issues",
         "It only shows cases assigned to the same agent",
         "It displays cases from all customers",
         "It shows cases created on the same date"
@@ -2864,7 +2864,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "The primary table for CSM cases \u2014 it extends the task table and stores all customer service case records",
+        "The primary table for CSM cases — it extends the task table and stores all customer service case records",
         "The incident table used by CSM",
         "A staging table for case imports",
         "A reporting table for case metrics"
@@ -2880,7 +2880,7 @@
       "type": "mcq",
       "difficulty": "easy",
       "options": [
-        "The method through which a case was created or received \u2014 such as phone, email, portal, chat, or social media",
+        "The method through which a case was created or received — such as phone, email, portal, chat, or social media",
         "A TV channel about customer service",
         "A communication template",
         "A routing queue"
@@ -2952,7 +2952,7 @@
       "correct": [
         0
       ],
-      "explanation": "The Agent Assist panel uses contextual analysis to surface helpful information: KB articles matching the case description, previously resolved similar cases, and AI-recommended next actions \u2014 all without the agent needing to search manually."
+      "explanation": "The Agent Assist panel uses contextual analysis to surface helpful information: KB articles matching the case description, previously resolved similar cases, and AI-recommended next actions — all without the agent needing to search manually."
     },
     {
       "id": "csm-m26",
@@ -3056,9 +3056,9 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "The CSM data model follows a hierarchy: Account \u2192 Contact \u2192 Case \u2192 Case Task, with Products and Entitlements linking to Accounts, and Service Contracts defining the service terms",
+        "The CSM data model follows a hierarchy: Account → Contact → Case → Case Task, with Products and Entitlements linking to Accounts, and Service Contracts defining the service terms",
         "All CSM records are stored in a single flat table",
-        "The hierarchy is Account \u2192 Case only",
+        "The hierarchy is Account → Case only",
         "Cases are not related to any account or contact"
       ],
       "correct": [
@@ -3088,7 +3088,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Allows contacts to follow cases they did not create \u2014 receiving updates when the case state changes, useful for managers monitoring their team cases",
+        "Allows contacts to follow cases they did not create — receiving updates when the case state changes, useful for managers monitoring their team cases",
         "A security audit feature that tracks who viewed a case",
         "A dashboard that shows trending case categories",
         "An admin tool for monitoring agent performance"
@@ -3192,7 +3192,7 @@
       "correct": [
         0
       ],
-      "explanation": "Case State tracks lifecycle progression. State transitions can be configured to trigger actions (notifications, SLA events, task creation). Common states: New \u2192 In Progress \u2192 Awaiting Info \u2192 Resolved \u2192 Closed."
+      "explanation": "Case State tracks lifecycle progression. State transitions can be configured to trigger actions (notifications, SLA events, task creation). Common states: New → In Progress → Awaiting Info → Resolved → Closed."
     },
     {
       "id": "csm-m35",
@@ -3232,7 +3232,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Records the outcome of the interaction \u2014 such as \"Resolved\", \"Transferred\", \"Follow-up Required\", \"Escalated\" \u2014 enabling reporting on interaction effectiveness",
+        "Records the outcome of the interaction — such as \"Resolved\", \"Transferred\", \"Follow-up Required\", \"Escalated\" — enabling reporting on interaction effectiveness",
         "Sets the emotional tone of the interaction",
         "Determines which agent handles the next interaction",
         "Controls the display format of the interaction"
@@ -3258,7 +3258,7 @@
       "correct": [
         0
       ],
-      "explanation": "GRC stands for Governance, Risk, and Compliance \u2014 a suite of applications for managing organizational risks, policies, and regulatory compliance."
+      "explanation": "GRC stands for Governance, Risk, and Compliance — a suite of applications for managing organizational risks, policies, and regulatory compliance."
     },
     {
       "id": "grc-e2",
@@ -3370,7 +3370,7 @@
       "correct": [
         0
       ],
-      "explanation": "Risks represent potential threats (forward-looking). Issues represent actual findings or problems (current state) \u2014 often discovered through control testing, audits, or incident analysis. Issues require remediation plans with deadlines."
+      "explanation": "Risks represent potential threats (forward-looking). Issues represent actual findings or problems (current state) — often discovered through control testing, audits, or incident analysis. Issues require remediation plans with deadlines."
     },
     {
       "id": "grc-m4",
@@ -3386,7 +3386,7 @@
       "correct": [
         0
       ],
-      "explanation": "Policy and Compliance Management handles policy lifecycle: draft \u2192 review \u2192 approve \u2192 publish \u2192 distribute. It tracks who has acknowledged policies, monitors compliance exceptions, and manages policy retirement."
+      "explanation": "Policy and Compliance Management handles policy lifecycle: draft → review → approve → publish → distribute. It tracks who has acknowledged policies, monitors compliance exceptions, and manages policy retirement."
     },
     {
       "id": "grc-m5",
@@ -3426,7 +3426,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "A regulatory framework, standard, or law (e.g., SOX, HIPAA, ISO 27001) that the organization must comply with \u2014 it contains citations that map to controls",
+        "A regulatory framework, standard, or law (e.g., SOX, HIPAA, ISO 27001) that the organization must comply with — it contains citations that map to controls",
         "An internal knowledge base article",
         "A user manual for the GRC application",
         "A system administrator's documentation"
@@ -3546,7 +3546,7 @@
       "correct": [
         0
       ],
-      "explanation": "The Risk Register is the central repository of all identified risks. It tracks each risk description, assessment (likelihood \u00d7 impact), owner, mitigation plan, status, and review dates."
+      "explanation": "The Risk Register is the central repository of all identified risks. It tracks each risk description, assessment (likelihood × impact), owner, mitigation plan, status, and review dates."
     },
     {
       "id": "grc-e7",
@@ -4380,7 +4380,7 @@
         "Binding of alerts tospeciic Cis",
         "Correlationofaleris toknowledgebasearticles",
         "Mappedservicesprovide visibiltyto thebusinessimpactofan alert",
-        "Configurabion Manageris managing a CI class in the CMDB.The identicationrule\uff08s\uff09needs an update",
+        "Configurabion Manageris managing a CI class in the CMDB.The identicationrule（s）needs an update",
         "APl Integrations",
         "IRE Application",
         "Ci Class Manager",
@@ -4575,6 +4575,1792 @@
       ],
       "explanation": "Derived from CIS Data Foundations governance and CMDB best-practice themes.",
       "source": "CIS - DF 1 - FINAL_compressed.pdf"
+    }
+  ],
+  "csa_dumps_live": [
+    {
+      "id": "csa-dump-1",
+      "q": "A Service Catalog may include which of the following components?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Order Guides, Exchange Rates, Calendars",
+        "Order Guides, Catalog Items, and Interceptors",
+        "Catalog Items, Asset Contracts, Task Surveys",
+        "Record Producers, Order Guides, and Catalog Items"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-2",
+      "q": "Which one of the following statements applies to a set of fields when they are coalesced during an import?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "If a match is found using the coalesce fields, the existing record is updated with the information being imported",
+        "If a match is not found using the coalesce fields, the system does not create a Transform Map",
+        "If a match is found using the coalesce fields, the system creates a new record",
+        "If a match is not found using the coalesce fields, the existing record is updated with the information being imported"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-3",
+      "q": "As it relates to ServiceNow reporting, which of the following statements describes what a metric can do?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A metric is a report gauge used on homepages to display real-time data",
+        "A metric is a time measurement used to report the effectiveness of workflows and SLAs",
+        "A metric is used to measure and evaluate the effectiveness of IT service management processes",
+        "A metric is a comparative measurement used to report the effectiveness of flows and SLAs."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-5",
+      "q": "Reports can be created from which different places in the platform? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "List column heading",
+        "Metrics module",
+        "Statistics module",
+        "View / Run module"
+      ],
+      "correct": [
+        0,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-6",
+      "q": "Knowledge Base Search results can be sorted by which of the following? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Most recent update",
+        "Popularity",
+        "Relevancy",
+        "Manager assignment",
+        "Number of views"
+      ],
+      "correct": [
+        0,
+        2,
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-7",
+      "q": "What is the path an Administrator could take to view the fulfillment stage task list for an order placed by a user?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "RITM (Number)>REQ (Number)>PROCUREMENT (Number)",
+        "REQ (Number)>RITM (Number)>PROCUREMENT (Number)",
+        "REQ (Number)>RITM (Number)>TASK (Number)",
+        "FULFILLMENT (Number)>RITM (Number)>TASK (Number)"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-8",
+      "q": "Which term refers to application menus and modules which you may want to access quickly and often?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Breadcrumb",
+        "Favorite",
+        "Tag",
+        "Bookmark"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-9",
+      "q": "What is generated from the Service Catalog once a user places an order for an item or service?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A change request",
+        "An Order Guide",
+        "A request",
+        "An SLA"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-10",
+      "q": "From the User menu, which actions can a user select? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Send Notifications",
+        "Log Out ServiceNow",
+        "Elevate Roles",
+        "Impersonate Users",
+        "Order from Service Catalog",
+        "Approve Records"
+      ],
+      "correct": [
+        1,
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-11",
+      "q": "Buttons, form links, and context menu items are all examples of what type of functionality?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Business Rule",
+        "UI Action",
+        "Client Script",
+        "UI Policy"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-12",
+      "q": "Which of the following is true of Service Catalog Items in relation to the Service Catalog?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "They run behind the scenes.",
+        "They are the building blocks.",
+        "They are optional.",
+        "They provide options."
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-13",
+      "q": "Table Access Control rules are processed in the following order:",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "any table name (wildcard), parent table name, table name",
+        "table name, parent table name, any table name (wildcard)",
+        "parent table name, table name, any table name (wildcard)",
+        "any table name (wildcard), table name, parent table name"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-14",
+      "q": "What is the platform name for the User table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "u_user",
+        "sys_users",
+        "x_users",
+        "sys_user"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-15",
+      "q": "A REQ number in the Service Catalog represents…",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "the order number.",
+        "the stage.",
+        "the task to complete.",
+        "the individual item in the order."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-16",
+      "q": "Which would NOT appear in the History section of the Application Navigator?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Records",
+        "UI Pages",
+        "Lists",
+        "Forms"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-17",
+      "q": "Which one of the following statements is a recommendation from ServiceNow about Update Sets?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Avoid using the Default Update set as an Update Set for moving customizations from instance to instance",
+        "Before moving customizations from instance to instance with Update Sets, ensure that both instances are different versions",
+        "Use the Baseline Update Set to store the contents of items after they are changed the first time",
+        "Once an Update Set is closed as “Complete”, change it back to “In Progress” until it is applied to another instance"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-18",
+      "q": "Which of the following is used to initiate a flow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Trigger",
+        "Core Action",
+        "A spoke",
+        "An Event"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-19",
+      "q": "For Administrators creating new Service Catalog items, what is a characteristic they should know about Service Catalog variables?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Service Catalog variables can only be used in Record Producers",
+        "Service Catalog variables can only be used in Order Guides",
+        "Service Catalog variables cannot affect the order price",
+        "Service Catalog variables are global by default"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-20",
+      "q": "Which one of the following statements is true about Column Context Menus?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It displays actions such as creating quick reports, configuring the list, and exporting data",
+        "It displays actions related to filtering options, assigning tags, and search",
+        "It displays actions related to viewing and filtering the entire list",
+        "It displays actions such as view form, view related task, and add relationship"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-21",
+      "q": "Which ServiceNow products can be used to discover and populate the CMDB? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Discovery",
+        "IntegrationHub ETL",
+        "Finder",
+        "CMDB Plug-in",
+        "CMDB Integration Dashboard"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-22",
+      "q": "When using the Load Data and Transform Map process, what is the Mapping Assist used for?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Mapping fields using the Import Log",
+        "Mapping fields using Transform History",
+        "Mapping fields using an SLA",
+        "Mapping fields using a Field Map"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-23",
+      "q": "Which one of the following statements describes the contents of the Configuration Management Database (CMDB)?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The CMDB contains data about tangible and intangible business assets",
+        "The CMDB contains the Business Rules that direct the intangible, configurable assets used by a company",
+        "The CMDB archives all Service Management PaaS equipment metadata and usage statistics",
+        "The CMDB contains ITIL process data pertaining to configuration items"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-24",
+      "q": "In what order should filter elements be specified?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Field, Operator, then Value",
+        "Field, Operator, then Condition",
+        "Operator, Condition, then Value",
+        "Value, Operator, then Field"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-25",
+      "q": "Which statement is true about business rules?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A business rule must run before a database action occurs",
+        "A business rule can be a piece of Javascript",
+        "A business rule must not run before a database action occurs",
+        "A business rule monitors fields on a form"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-26",
+      "q": "Which of the following are a type of client scripts supported in ServiceNow? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "onSubmit",
+        "onUpdate",
+        "onCellEdit",
+        "onLoad",
+        "onEdit",
+        "onChange G. onSave"
+      ],
+      "correct": [
+        0,
+        2,
+        3,
+        5
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 4
+    },
+    {
+      "id": "csa-dump-27",
+      "q": "Which type of tables may be extended by other tables, but do not extend another table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Base Tables",
+        "Core Tables",
+        "Extended Tables",
+        "Custom Tables"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-28",
+      "q": "Which of the following statement describes the purpose of an Order Guide?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Order Guides restrict the number of items in an order to only one item per request",
+        "Order Guide provide a list of guidelines for Administrators on how to set up item variables",
+        "Order Guide provide the ability to order multiple, related items as one request",
+        "Order Guides take the user directly to the checkout without prompting for information"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-29",
+      "q": "Which tool is used to have conversations with logged-in users in real-time?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Connect Chat",
+        "Now Messenger",
+        "User Presence",
+        "Comments"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-30",
+      "q": "Which of the following concepts are associated with the ServiceNow CMDB? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Service Processes",
+        "User Permissions",
+        "Tables and Fields",
+        "A Database",
+        "The Dependency View"
+      ],
+      "correct": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 4
+    },
+    {
+      "id": "csa-dump-31",
+      "q": "What is a formatter? Select one of the following.",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A formatter allows you to configure applications on your instance",
+        "A formatter is a form element used to display information that is not a field in the record",
+        "A formatter allows you to populate fields automatically",
+        "A formatter is a set of conditions applied to a table to help find and work with data"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-32",
+      "q": "When searching using the App Navigator search field, what can be returned? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Names of Applications and Modules",
+        "Names of Modules",
+        "Names of Applications",
+        "Favorites",
+        "History Records",
+        "Titles of Dashboard Gauges"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 4
+    },
+    {
+      "id": "csa-dump-33",
+      "q": "Which technique is used to get information from a series of referenced fields from different tables?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Table-Walking",
+        "Sys_ID Pulling",
+        "Dot-Walking",
+        "Record-Hopping"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-35",
+      "q": "Which one of the following statements best describes the purpose of an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "An Update Set allows administrators to group a series of changes into a named set and then move this set as a unit to other systems",
+        "By default, an Update Set includes customizations, Business Rules, and homepages",
+        "An Update Set is a group of customizations that is moved from Production to Development",
+        "By default, the changes included in an Update Set are visible only in the instance to which they are applied"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-36",
+      "q": "Which of the following can be customized through the Basic Configuration UI 16 module? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Banner Image",
+        "Record Number Format",
+        "Browser Tab Title",
+        "System Date Format",
+        "Form Header Size"
+      ],
+      "correct": [
+        0,
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-37",
+      "q": "What is the function of user impersonation?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Testing and visibility",
+        "Activate verbose logging",
+        "View custom perspectives",
+        "Unlock Application master list"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-38",
+      "q": "What information does the System Dictionary contain?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The human-readable labels and language settings",
+        "The definition for each table and column",
+        "The information on how tables relate to each other",
+        "The language dictionary used for spell checking"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-39",
+      "q": "When working on a form, what is the difference between Insert and Update operations?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Insert creates a new record and Update saves changes, both remain on the form",
+        "Insert creates a new record and Update saves changes, both exit the form",
+        "Insert saves changes and exits the form, Update saves changes and remains on the form",
+        "Insert saves changes and remains on the form, Update saves changes and exits the form"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-40",
+      "q": "How is the Event Log different from the Event Registry?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Event Log contains generated Events, the Event Registry is a table of Event definitions",
+        "Event Log is formatted in the Log style, the Event Registry displays different fields",
+        "Event Log lists Events that were triggered by integrations, the Event Registry lists the Events that were triggered during the day (24-hour period)",
+        "Event Log is the same as the Event Registry"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-42",
+      "q": "Which group of permissions is used to control Application and Module access?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Access Control Rules",
+        "UI Policies",
+        "Roles",
+        "Assignment Rules"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-44",
+      "q": "Create Incident, Password Reset, and Report outage: what do these services in the Service Catalog have in common?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "They direct the user to a record producer",
+        "They direct the user to a catalog property",
+        "They direct the user to a catalog UI policy",
+        "They direct the user to a catalog client script"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-46",
+      "q": "What is a characteristic of importing data into ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "An existing Transform Map can be used one time on the same import set",
+        "Coalesce fields are used only after running Transform",
+        "Any user can manage and set up import sets",
+        "An existing Transform Map can be used multiple times on the same import set"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-47",
+      "q": "What module in the Service Catalog application does an Administrator access to begin creating a new item?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Maintain Categories",
+        "Maintain Items",
+        "Content Items",
+        "Items"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-48",
+      "q": "Which of the following allows a user to edit field values in a list without opening the form?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Data Editor",
+        "Edit Menu",
+        "List Editor",
+        "Form Designer"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-49",
+      "q": "Which three Variable Types can be added to a Service Catalog Item?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "True/False, Multiple Choice, and Ordered",
+        "True/False, Checkbox, and Number List",
+        "Number List, Single Line Text, and Reference",
+        "Multiple Choice, Select Box, and Checkbox"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-50",
+      "q": "How are Workflows moved between instances?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Workflows are moved using Update Sets",
+        "Workflows are moved using Transform Maps",
+        "Workflows are moved using Application Sets",
+        "Workflows cannot be moved between instances"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-51",
+      "q": "The baseline Service Catalog homepage contains links to which of the following components?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Record Producers, Order Guides, and Catalog Items",
+        "Order Guides, Item Variables, and flows",
+        "Order Guides, Catalog Items, and flows",
+        "Record Producers, Order Guides, and Item Variables"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-52",
+      "q": "Which of the following statements is true when a new table is created by extending another table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The new table archives the parent table and assumed its roles in the database",
+        "The new table inherits all of the Business Rules, Client Scripts, and UI Policies of the parent table, but none of the existing fields",
+        "The new table inherits all of the fields of the parent table and can also contain new fields unique to itself",
+        "The new table inherits all of the fields, but does not inherit Access Control rules, Client Scripts, and UI Policies of the parent table"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-53",
+      "q": "Where can Admins check which release is running on an ServiceNow instance?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Memory Stats module",
+        "Stats module",
+        "System.upgraded table",
+        "Transactions log"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-54",
+      "q": "A knowledge article must be which of the following states to display to a user?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Published",
+        "Drafted",
+        "Retired",
+        "Reviewed"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-55",
+      "q": "What is the name of the conversational bot platform that provides assistance to help users obtain information, make decisions, and perform common tasks?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Answer Agent",
+        "live Feed",
+        "Virtual Agent",
+        "Connect Chat"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-56",
+      "q": "What is the purpose of a Related List in ServiceNow forms?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "To create a one-to-many relationship",
+        "To dot-walk to a core table",
+        "To present related fields",
+        "To present related records"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "A related list shows records from another table that are linked to the current record (for example, incident tasks under an incident).",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-57",
+      "q": "Which one of the following statements describes the purpose of a Service Catalog flow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Service Catalog flow generates three basic components: item variable types, tasks, and approvals",
+        "Although a Service Catalog flow cannot send notifications, the flow drives complex fulfillment processes",
+        "A Service Catalog flow is used to drive complex fulfillment processes and sends notifications to defined users or groups",
+        "A Service Catalog flow generates three basic components: item variable types, tasks, and notifications"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-58",
+      "q": "Which term best describes something that is created, has worked performed upon it, and is eventually moved to a state of closed?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "report",
+        "flow",
+        "event",
+        "task"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-59",
+      "q": "Which are valid Service Now User Authentication Methods? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "XML feed",
+        "Local database",
+        "LDAP",
+        "SSO",
+        "FTP authentication"
+      ],
+      "correct": [
+        1,
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-60",
+      "q": "Access Control rules may be defined with which of the following permission requirements? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Roles",
+        "Conditional Expressions",
+        "Assignment Rules",
+        "Scripts",
+        "User Criteria",
+        "Groups"
+      ],
+      "correct": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-61",
+      "q": "Which section of the ServiceNow UI allows you to perform a global search?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Application Navigator",
+        "Banner frame",
+        "List pane",
+        "Content frame"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-62",
+      "q": "How do you make a list filter available to everyone?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Make active, assign a name, and save",
+        "Assign a group, set visibility, and save",
+        "Assign a name, set visibility, and save",
+        "Make active, set visibility, and save"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-63",
+      "q": "What would NOT appear in the Application Navigator if “service” is typed into the filter field?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Configuration > Business Services",
+        "Self-Service > Knowledge",
+        "Service Portal > Widgets",
+        "Incident > Assigned to me"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-64",
+      "q": "Which of the following is used to categorize, flag, and locate records?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Search",
+        "Favorites",
+        "Tags",
+        "Bookmarks"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-65",
+      "q": "Which tool should be used to populate commonly used fields in a form?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Template",
+        "Reference Qualifier",
+        "Formatter",
+        "Assignment Rule"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-66",
+      "q": "How is a group represented in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A group is one record stored in the Group Type [sys_user_group_type] table",
+        "A group is one record stored in the Group [sys_user_group] table",
+        "A group defines a set of users that share the same location",
+        "A group defines a set of users that share the same job title"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Each group is stored as a record in the Group [sys_user_group] table.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-69",
+      "q": "Which one of the following is NOT a type of Visual Task Board?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Flexible",
+        "Freeform",
+        "Feature",
+        "Guided boards"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-70",
+      "q": "What is (are) best practice(s) regarding users/groups/roles? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "You should never assign roles to groups.",
+        "You should assign roles to users.",
+        "You should add users to groups.",
+        "You should assign roles to groups."
+      ],
+      "correct": [
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-71",
+      "q": "What are two ways to generate an Event? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Business Rule",
+        "Workflow",
+        "Log entry",
+        "Knowledge article publication"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-72",
+      "q": "Which core table in the ServiceNow platform provides a series of standard fields used on each of the tables that extend it, such as the Incident [incident] and Problem [problem] tables?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Task [task]",
+        "Assignment [assignment]",
+        "Service [service]",
+        "Workflow [workflow]"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-73",
+      "q": "Which of the following statements describes how data is organized in a table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A column is a field in the database and a record is one user",
+        "A column is one field and a record is one row",
+        "A column is one field and a record is one column",
+        "A column contains data from one user and a record is one set of fields"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-75",
+      "q": "When creating a global custom table named “abc”, what is the table name that is automatically assigned by the platform?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "snc_abc",
+        "abc",
+        "u_abc",
+        "sys_abc"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-76",
+      "q": "Access Control rules may provide access security for which of the following database objects?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "For a specific role, group, or user",
+        "For a specific row, column, or table",
+        "For specific groups",
+        "For a specific CMDB Configuration item"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-77",
+      "q": "What is the primary application used to load data into ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Service Level Management",
+        "Configuration",
+        "System Import Sets",
+        "System Update Sets"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-78",
+      "q": "Which of the following steps can be used to import new data into ServiceNow from a spreadsheet?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Select Data Source, Schedule Transform",
+        "Load Data, Create Transform Map, Run Transform",
+        "Define Data Source, Select Transform Map, Run Transform",
+        "Select Import Set, Select Transform Map, Run Transform"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-79",
+      "q": "Which tool is used for creating dependencies between configuration items in the CMDB?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "CI Relationship Editor",
+        "CMDB Builder",
+        "CI Service Manager",
+        "Cl Class Manager"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-80",
+      "q": "What is the difference between a UI Policy and Data Policy?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Data Policies run when data is entered through the form, by an Import Set, or by web services, while UI Policies are set only by web services",
+        "Data Policies can be converted into UI Policies, but UI Policies cannot be converted into Data Policies",
+        "Data Policies run regardless of how data is entered into ServiceNow, while UI Policies are used for form interactions",
+        "Data Policies run only after UI Policies run successfully"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-81",
+      "q": "Which one of the following is an accurate list of changes that are captured in an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Changes made to: tables, forms, schedules, and client scripts",
+        "Changes made to: tables, forms, Business Rules, and data records",
+        "Changes made to: tables, forms, groups, and configuration items (CIs)",
+        "Changes made to: table, forms, views, and fields"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-82",
+      "q": "What are the steps to retrieve an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Verify Update Set is Complete, Retrieve, Preview, Apply",
+        "Verify Update Set is Complete, Test Connection, Apply",
+        "Verify Update Set is Complete, Test Connection, Commit",
+        "Verify Update Set is Complete, Retrieve, Preview, Commit"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-83",
+      "q": "IntegrationHub enables execution of third-party APIs as a part of a flow. These integrations are referred to as",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "an action",
+        "a spoke",
+        "a connection",
+        "an integration step"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-84",
+      "q": "Which of the following protects applications by identifying and restricting access to available files and data?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Application Configuration",
+        "Verbose Log",
+        "Access Control Rules",
+        "D. Application Scope"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-85",
+      "q": "Which one statement correctly describes Access Control rule evaluation?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Table access rules are evaluated from the general to the specific",
+        "If more than one rule applies to a record, the older rule is evaluated first",
+        "If a row level rule and a field level rule exist, both rules must be true before an operation is allowed",
+        "The role with the most permissions evaluates the rules first."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-86",
+      "q": "Which resource provides a shared service-data framework and standardized service definitions across ServiceNow products to support service-level reporting?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Common Services Data Model (CMDB)",
+        "Information Technology Service Management (ITSM)",
+        "Configuration Management Database (CMDB)",
+        "Information Technology Infrastructure Library (ITIL)"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "This describes CSDM, which standardizes service definitions and CMDB alignment for consistent service reporting.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-87",
+      "q": "An IT manager is responsible for the Network and Hardware assignment groups, each group contains 5 team members. These team members are working on many tasks, but the manager cannot see any tasks on the Service Desk > My Groups Work list. What could explain this?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The Service Desk > My Groups Work list shows active work tasks that are not yet assigned.",
+        "The manager does not have the itil role.",
+        "The manager is not a member of the Service Desk group.",
+        "The manager is not a member of the Network and Hardware groups. Schedules",
+        "The Assignment Group manager field is empty."
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-88",
+      "q": "What do you need to do before you can use an Application-based trigger in your flow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Activate application trigger spoke",
+        "Activate trigger security rules",
+        "Activate application spoke, and plug-ins as needed",
+        "Assign Application trigger role [sn_app_trigger_write] to SME",
+        "Activate application plugins only"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-89",
+      "q": "The ServiceNow platform includes which types of interfaces? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Now Mobile Apps",
+        "Agent Control Center",
+        "Back Office Dashboard",
+        "Service Portals",
+        "Now Platform® User Interfaces or next navigation unified experience",
+        "Field Service Taskboard"
+      ],
+      "correct": [
+        0,
+        3,
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-90",
+      "q": "Which of the following are not included in an Update Set, by default? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "B.",
+        "Published Workflows",
+        "Business Rules",
+        "F. Database Changes Data Homepages G. Related Lists H. Report Definitions J. Client Scripts K. Views"
+      ],
+      "correct": [
+        0,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-91",
+      "q": "You are showing your customer a new form that you have created for their new application. They would like to add a field to the form. Where could you do that? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Select Fields and Columns module",
+        "Right click on form header, select Configure > Form Layout",
+        "Click on context menu, select Configure > Form Designer",
+        "Select Field Class Manager module"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-92",
+      "q": "Which ServiceNow resource is a framework that ensures the data your ServiceNow application requires maps correctly to the appropriate CMDB tables?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Common Service Data Model (CSDM)",
+        "Service Mapping Utility (SMU)",
+        "Service Schema Map (SSM)",
+        "CMDB Class Manager (CMDBCM)",
+        "CI Class Manager (CICM)"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-93",
+      "q": "What do you activate when you want to add applications or functionality within your development instance?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "App Package",
+        "Updated Pack",
+        "Patch",
+        "Plugin",
+        "App Updated Set"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-94",
+      "q": "What field contains a record’s 32-character, unique identifier?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "sn_rec_id",
+        "rec_id",
+        "u_id",
+        "sys_id",
+        "sn_gu_id",
+        "sn_sys_id G. id"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-95",
+      "q": "A company wants only first-line workers (non-managers) to order a recognition T-shirt with size and color options. What is the best configuration approach?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Create Record Producer and use the Available For list to specify First Line [sn_first_line] role",
+        "Create Catalog Item and use the Not Available list to specify the Manager Group",
+        "Create Catalog Item and use the Available For list to specify ITIL [itil] role",
+        "Create Order Guide and use the User Criteria list to specify First Line [sn_first_line] role"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Use catalog availability/user criteria controls so managers are excluded and only eligible workers can submit the item.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-96",
+      "q": "What is used frequently to move customizations from one instance to another?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Update Sets",
+        "Code Sets",
+        "Update Packs",
+        "Configuration Logs",
+        "Remote Sets",
+        "Local Sets G. Code Packs"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-97",
+      "q": "What icon do you use to change the label on a Favorite?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Clock",
+        "Hamburger",
+        "Pencil",
+        "Three dots",
+        "Triangle.",
+        "Star"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-98",
+      "q": "What needs to be specified, when creating a Business Rule? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "UI action",
+        "Table",
+        "Fields to update",
+        "Who can run",
+        "Script to run",
+        "Application scope G. Update set H. Timing I. Condition to evaluate"
+      ],
+      "correct": [
+        1,
+        4,
+        5
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-99",
+      "q": "What feature can track the amount of time that a task has been open, to ensure that tasks are completed within an allotted time?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Task Escalation Clock",
+        "Service Level Agreements",
+        "Inactivity Monitor",
+        "Response Time Clock",
+        "Business Time Remaining"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-100",
+      "q": "What is a quick way to create a report from a list view?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Click on filter breadcrumb, drag and drop on the Report > Create New module",
+        "Click Funnel, define filter conditions, click Create Report",
+        "Click Context Menu, select Create Report",
+        "Apply filter, right click on column header, select Bar Chart",
+        "Apply filter, right click on column header, select Create Report"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-101",
+      "q": "What import utility do you use when the field names on the import set match the name of the fields on the Target table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Schema Mapping",
+        "Automatic Mapping",
+        "Mapping Assist",
+        "Mapping Dashboard"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-102",
+      "q": "As an IT employee what interface would you use, if you wanted to browse internal IT documentation, like troubleshooting scripts and FAQs?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Knowledge",
+        "ServiceNow Wiki",
+        "Knowledge Now",
+        "SharePoint",
+        "Stack Overflow"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-103",
+      "q": "A new Service Desk employee in Latin America complains that the create dates and times are incorrect on their Incident list. What would you suggest to fix this issue?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Have them clear their cache.",
+        "Have them use the gear icon to set the employee’s time zone.",
+        "Recommend they use Chrome, instead of Explorer.",
+        "Use the system properties to correct the instance’s time zone.",
+        "Have them correct the time zone on their computer."
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-104",
+      "q": "What are three security modules often used by the System Administrator? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "System Properties > Security",
+        "Utilities > Migrate Security",
+        "System Security > Security",
+        "Self-Service > My Access",
+        "System Security > Access Control (ACL)",
+        "Password Management > Security Questions G. System Security > High Security Settings"
+      ],
+      "correct": [
+        0,
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump-105",
+      "q": "When testing a catalog item, having a manager approval flows, which of these best practices would you follow? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Make sure the latest flows are activated.",
+        "Use the instance Incognito setting to quickly toggle between requester and approver.",
+        "Impersonate the requester to ensure the form works.",
+        "Make sure the requester's user record has a manager specified."
+      ],
+      "correct": [
+        0,
+        2,
+        3
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump-106",
+      "q": "What is a no-code approach to control the mandatory or read-only state of a form field?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "UI Action",
+        "Client Script",
+        "UI Script",
+        "UI RuIe",
+        "UI Policy"
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-107",
+      "q": "When moving multiple update sets at one time, what might you do to facilitate the move?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Batch",
+        "Verify",
+        "Test",
+        "Preview"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump-108",
+      "q": "What is specified in an Access Control rule?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Groups, Conditional Expressions and Workflows",
+        "Table Schema, CRUD, and User Authentication",
+        "Object and Operation being secured; Permissions required to access the object",
+        "security_admin"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Answer sourced from uploaded CSA dump key.",
+      "source": "CSA_Dumps.pdf"
     }
   ]
 }
