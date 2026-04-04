@@ -991,6 +991,10 @@ function finalizeStartQuiz(catKey, mode) {
   let questions = [...(QUESTIONS[catKey] || [])];
   strictNoReveal = catKey === 'csa_dumps_live';
 
+  if (mode && mode.sourceSet) {
+    questions = questions.filter(q => q.sourceSet === mode.sourceSet);
+  }
+
   if (difficultyFilter !== 'all') {
     questions = questions.filter(q => q.difficulty === difficultyFilter);
   }
@@ -1162,11 +1166,12 @@ function selectCategory(key) {
   
   cat.modes.forEach(mode => {
     const questions = QUESTIONS[key] || [];
-    const availableCount = questions.length;
+    const modeQuestions = mode.sourceSet ? questions.filter(q => q.sourceSet === mode.sourceSet) : questions;
+    const availableCount = modeQuestions.length;
     let count = mode.count;
     if (count === 'all') count = availableCount;
-    else if (count === 'code') count = questions.filter(q => q.type !== 'mcq').length;
-    else if (count === 'hard') count = questions.filter(q => q.difficulty === 'hard').length;
+    else if (count === 'code') count = modeQuestions.filter(q => q.type !== 'mcq').length;
+    else if (count === 'hard') count = modeQuestions.filter(q => q.difficulty === 'hard').length;
     
     const insufficient = typeof mode.count === 'number' && availableCount < mode.count;
     const displayCount = typeof mode.count === 'number' ? Math.min(mode.count, availableCount) : count;
