@@ -91,6 +91,21 @@
     
     .empty-state{text-align:center;padding:80px 20px;color:var(--gray)}
     .empty-state h3{font-size:24px;margin-bottom:12px;color:var(--text)}
+
+    /* Production architecture section */
+    .prod-arch-section{max-width:980px;margin:0 auto 20px;padding:0 22px 20px}
+    .prod-arch-wrap{background:linear-gradient(135deg,#0f172a 0%,#111827 45%,#1f2937 100%);color:#e5e7eb;border-radius:24px;padding:32px 28px;box-shadow:0 10px 30px rgba(2,6,23,0.35);border:1px solid rgba(148,163,184,0.2)}
+    .prod-arch-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:18px}
+    .prod-arch-title{font-size:28px;font-weight:700;line-height:1.2}
+    .prod-arch-sub{font-size:14px;color:#93c5fd;max-width:620px;line-height:1.7}
+    .prod-arch-note{font-size:12px;color:#cbd5e1;background:rgba(15,23,42,0.8);padding:8px 12px;border-radius:10px;border:1px solid rgba(148,163,184,0.2)}
+    .prod-arch-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .prod-arch-card{background:rgba(15,23,42,0.55);border:1px solid rgba(148,163,184,0.2);border-radius:16px;padding:16px 16px 14px}
+    .prod-arch-card h3{font-size:16px;color:#f8fafc;margin-bottom:8px}
+    .prod-arch-card p{font-size:14px;color:#d1d5db;line-height:1.65;margin:0 0 10px}
+    .prod-arch-card ul{margin:0 0 0 18px;color:#cbd5e1}
+    .prod-arch-card li{font-size:13px;line-height:1.6;margin:0 0 8px}
+    .prod-arch-label{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:8px;background:rgba(37,99,235,0.2);border:1px solid rgba(96,165,250,0.35);color:#bfdbfe;font-size:11px;font-weight:600;letter-spacing:.2px;text-transform:uppercase;margin-bottom:8px}
     
     /* Quick Quiz Section */
     .quiz-section{max-width:900px;margin:0 auto;padding:20px 22px 80px}
@@ -162,6 +177,9 @@
       .quiz-result .score-big{font-size:48px}
       .interview-filters{gap:8px}
       .filter-btn{padding:6px 14px;font-size:13px}
+      .prod-arch-wrap{padding:24px 18px}
+      .prod-arch-title{font-size:22px}
+      .prod-arch-grid{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -215,6 +233,19 @@
       <p>Try selecting a different category.</p>
     </div>
   </main>
+
+  <section class="prod-arch-section" id="prodArchitectureSection">
+    <div class="prod-arch-wrap">
+      <div class="prod-arch-head">
+        <div>
+          <h2 class="prod-arch-title">Production Architecture Standpoint</h2>
+          <p class="prod-arch-sub">Same concepts, but from the side where things break at 2 AM. This section skips polished textbook wording and explains what actually happens in live enterprise instances.</p>
+        </div>
+        <div class="prod-arch-note">Raw mode: less theory, more "what actually burns in prod".</div>
+      </div>
+      <div class="prod-arch-grid" id="prodArchGrid"></div>
+    </div>
+  </section>
 
   <!-- Quick Quiz Section -->
   <section class="quiz-section" id="quizSection">
@@ -582,6 +613,88 @@
       }
     }
 
+    var PROD_ARCH_MODULES = [
+      {
+        lane: "Transaction Path",
+        title: "Request save pipeline (browser to DB and back)",
+        overview: "In real life, save is not one thing. It is a chain. Browser scripts run first, then server rules run, then DB commit happens, then post-commit work starts. Most production bugs are order-of-execution bugs.",
+        points: [
+          "Client script can set a value, but before Business Rule can overwrite it and nobody notices until users complain.",
+          "After Business Rules and async rules may trigger external calls, and that queue can lag while UI still says save succeeded.",
+          "If one slow rule sits in the sync path, every user save looks slow even if DB is healthy."
+        ]
+      },
+      {
+        lane: "Runtime Boundaries",
+        title: "Client and server split (where people get tricked)",
+        overview: "Form logic in browser is quick for UX but never trust it for security. Real enforcement must live on server ACL/rules. If logic exists only in client, integration users bypass it.",
+        points: [
+          "g_form checks are convenience checks; ACL is the real gatekeeper.",
+          "GlideAjax calls add network hops. Too many tiny calls make forms feel sticky and random.",
+          "Display value and raw value confusion causes bad comparisons and false validations."
+        ]
+      },
+      {
+        lane: "Data Flow",
+        title: "CMDB and reference integrity under load",
+        overview: "CMDB breaks quietly. Not in one big crash. It drifts. Discovery, imports, and manual edits all touch same CIs. Reconciliation and identification quality decides whether data is trusted or theater.",
+        points: [
+          "Wrong key strategy in imports creates duplicate CIs that look legit to users.",
+          "Reference chains become expensive when every report dot-walks deep paths without indexes.",
+          "Bad class hygiene means relationship maps look complete but answer nothing useful."
+        ]
+      },
+      {
+        lane: "Integration",
+        title: "Outbound and inbound integration behavior in production",
+        overview: "Integrations are mostly about retries, idempotency, and visibility. Happy path demos hide the real work: duplicate payloads, partial failures, stale auth, and back-pressure.",
+        points: [
+          "If outbound call has no retry strategy, one 429 spike becomes lost business events.",
+          "If retry has no idempotency key, you create duplicate tickets and people stop trusting automation.",
+          "You need dead-letter visibility, not just logs, otherwise failures age out silently."
+        ]
+      },
+      {
+        lane: "Security",
+        title: "ACL and role model reality check",
+        overview: "Security incidents are usually from assumptions. Teams think a role implies safe access everywhere. But table ACL + field ACL + script condition interactions create edge paths nobody tested.",
+        points: [
+          "Multiple ACL matches are cumulative; one unexpected deny can break app behavior after release.",
+          "Admin testing hides real user pain because elevated users bypass normal access checks.",
+          "Cross-scope access rules can quietly block calls after an app update if privileges are not versioned carefully."
+        ]
+      },
+      {
+        lane: "Operations",
+        title: "Performance and release hygiene",
+        overview: "Production stability is less about one smart script and more about boring discipline: query shape, index usage, batch sizing, and release blast-radius control.",
+        points: [
+          "GlideRecord loops on large sets without batching will spike node memory and create slow list views.",
+          "One update set with mixed unrelated changes makes rollback risky and post-deploy triage painful.",
+          "You need observable checkpoints (timings, counts, error buckets) per flow, not only final success status."
+        ]
+      }
+    ];
+
+    function renderProductionArchitectureSection() {
+      var grid = document.getElementById('prodArchGrid');
+      if (!grid) return;
+
+      var html = '';
+      PROD_ARCH_MODULES.forEach(function(item) {
+        var points = (item.points || []).map(function(p) { return '<li>' + p + '</li>'; }).join('');
+        html += `
+          <article class="prod-arch-card">
+            <span class="prod-arch-label">${item.lane}</span>
+            <h3>${item.title}</h3>
+            <p>${item.overview}</p>
+            <ul>${points}</ul>
+          </article>
+        `;
+      });
+      grid.innerHTML = html;
+    }
+
     // Filter buttons
     document.querySelectorAll('[data-ifilter]').forEach(function(btn) {
       btn.addEventListener('click', function() {
@@ -594,6 +707,7 @@
     // Initialize router after DOM ready
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => Router.init(), 100);
+      renderProductionArchitectureSection();
       quizInit();
     });
 
