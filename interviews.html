@@ -91,6 +91,21 @@
     
     .empty-state{text-align:center;padding:80px 20px;color:var(--gray)}
     .empty-state h3{font-size:24px;margin-bottom:12px;color:var(--text)}
+
+    /* Production architecture section */
+    .prod-arch-section{max-width:980px;margin:0 auto 20px;padding:0 22px 20px}
+    .prod-arch-wrap{background:linear-gradient(135deg,#0f172a 0%,#111827 45%,#1f2937 100%);color:#e5e7eb;border-radius:24px;padding:32px 28px;box-shadow:0 10px 30px rgba(2,6,23,0.35);border:1px solid rgba(148,163,184,0.2)}
+    .prod-arch-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:18px}
+    .prod-arch-title{font-size:28px;font-weight:700;line-height:1.2}
+    .prod-arch-sub{font-size:14px;color:#93c5fd;max-width:620px;line-height:1.7}
+    .prod-arch-note{font-size:12px;color:#cbd5e1;background:rgba(15,23,42,0.8);padding:8px 12px;border-radius:10px;border:1px solid rgba(148,163,184,0.2)}
+    .prod-arch-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .prod-arch-card{background:rgba(15,23,42,0.55);border:1px solid rgba(148,163,184,0.2);border-radius:16px;padding:16px 16px 14px}
+    .prod-arch-card h3{font-size:16px;color:#f8fafc;margin-bottom:8px}
+    .prod-arch-card p{font-size:14px;color:#d1d5db;line-height:1.65;margin:0 0 10px}
+    .prod-arch-card ul{margin:0 0 0 18px;color:#cbd5e1}
+    .prod-arch-card li{font-size:13px;line-height:1.6;margin:0 0 8px}
+    .prod-arch-label{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:8px;background:rgba(37,99,235,0.2);border:1px solid rgba(96,165,250,0.35);color:#bfdbfe;font-size:11px;font-weight:600;letter-spacing:.2px;text-transform:uppercase;margin-bottom:8px}
     
     /* Quick Quiz Section */
     .quiz-section{max-width:900px;margin:0 auto;padding:20px 22px 80px}
@@ -162,6 +177,9 @@
       .quiz-result .score-big{font-size:48px}
       .interview-filters{gap:8px}
       .filter-btn{padding:6px 14px;font-size:13px}
+      .prod-arch-wrap{padding:24px 18px}
+      .prod-arch-title{font-size:22px}
+      .prod-arch-grid{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -215,6 +233,19 @@
       <p>Try selecting a different category.</p>
     </div>
   </main>
+
+  <section class="prod-arch-section" id="prodArchitectureSection">
+    <div class="prod-arch-wrap">
+      <div class="prod-arch-head">
+        <div>
+          <h2 class="prod-arch-title">Production Architecture Standpoint</h2>
+          <p class="prod-arch-sub">Same concepts, but from the side where things break at 2 AM. This section skips polished textbook wording and explains what actually happens in live enterprise instances.</p>
+        </div>
+        <div class="prod-arch-note">Raw mode: less theory, more "what actually burns in prod".</div>
+      </div>
+      <div class="prod-arch-grid" id="prodArchGrid"></div>
+    </div>
+  </section>
 
   <!-- Quick Quiz Section -->
   <section class="quiz-section" id="quizSection">
@@ -582,6 +613,88 @@
       }
     }
 
+    var PROD_ARCH_MODULES = [
+      {
+        lane: "Transaction Path",
+        title: "Request save pipeline (browser to DB and back)",
+        overview: "In ServiceNow, clicking Save does not mean one single action. It is a chain: Client Script (browser logic) -> Business Rule (server logic) -> database commit -> post-commit jobs. New teams usually debug only one step and miss where the real overwrite happened.",
+        points: [
+          "A Client Script can set a field, but a Before Business Rule can still overwrite it on server side. So user thinks form saved 'their value', but DB contains another value.",
+          "After/Async rules often call integrations. UI may show save success while downstream systems are still pending or failing in queue.",
+          "One slow synchronous rule blocks every save on that table, even when database itself is fine."
+        ]
+      },
+      {
+        lane: "Runtime Boundaries",
+        title: "Client and server split (where people get tricked)",
+        overview: "Simple version: browser logic is for user experience, server logic is for trust. If validation exists only in Client Script, API users and integrations can bypass it. Real enforcement belongs in ACLs, Business Rules, and Script Includes on server side.",
+        points: [
+          "g_form checks are convenience checks; ACL is the real permission gate.",
+          "GlideAjax is the bridge from browser to server. Too many small GlideAjax calls make forms feel laggy and inconsistent.",
+          "Display value vs raw value confusion (for example reference fields) creates wrong comparisons and false validation failures."
+        ]
+      },
+      {
+        lane: "Data Flow",
+        title: "CMDB and reference integrity under load",
+        overview: "CMDB (Configuration Management Database) stores CIs (servers, apps, databases, etc.). It usually does not fail loudly; it drifts slowly. Discovery, imports, and humans all update same records, so poor match rules create duplicates and bad dependencies.",
+        points: [
+          "Weak identification keys during import create duplicate CIs that look valid but represent the same asset.",
+          "Heavy dot-walking across long reference chains slows reports when fields are not indexed properly.",
+          "If CI classes are inconsistent, relationship maps look populated but are not useful for impact analysis."
+        ]
+      },
+      {
+        lane: "Integration",
+        title: "Outbound and inbound integration behavior in production",
+        overview: "Real integration work is not the first successful API call. It is retry behavior, duplicate protection, and failure visibility. Happy-path testing misses what happens during token expiry, rate limits, and partial downstream outages.",
+        points: [
+          "Without retry strategy, one temporary 429/503 can drop important events permanently.",
+          "Retries without idempotency key create duplicate incidents/requests and break trust in automation.",
+          "Need dead-letter queue visibility (or equivalent error bucket), not only logs, so unresolved payloads are actioned."
+        ]
+      },
+      {
+        lane: "Security",
+        title: "ACL and role model reality check",
+        overview: "Security issues usually come from assumptions, not from one big hack. A role alone does not guarantee safe access. ServiceNow access is the result of table ACLs, field ACLs, script conditions, and sometimes cross-scope rules working together.",
+        points: [
+          "When multiple ACLs match, user must pass all required checks. One extra deny can break features after release.",
+          "Testing only as admin hides real permission failures that business users hit immediately.",
+          "Cross-scope privilege changes after upgrades can silently block Script Include/API calls if not reviewed."
+        ]
+      },
+      {
+        lane: "Operations",
+        title: "Performance and release hygiene",
+        overview: "Production stability is mostly boring discipline: efficient queries, proper indexes, safe batch sizes, and clean update set boundaries. Fancy logic matters less than predictable operations.",
+        points: [
+          "Large GlideRecord loops without batching can spike node memory and slow down list/form response.",
+          "One update set with unrelated changes increases rollback risk and slows incident triage after deployment.",
+          "Track timings, processed counts, and error buckets per flow/job; final success flag alone is not enough in production."
+        ]
+      }
+    ];
+
+    function renderProductionArchitectureSection() {
+      var grid = document.getElementById('prodArchGrid');
+      if (!grid) return;
+
+      var html = '';
+      PROD_ARCH_MODULES.forEach(function(item) {
+        var points = (item.points || []).map(function(p) { return '<li>' + p + '</li>'; }).join('');
+        html += `
+          <article class="prod-arch-card">
+            <span class="prod-arch-label">${item.lane}</span>
+            <h3>${item.title}</h3>
+            <p>${item.overview}</p>
+            <ul>${points}</ul>
+          </article>
+        `;
+      });
+      grid.innerHTML = html;
+    }
+
     // Filter buttons
     document.querySelectorAll('[data-ifilter]').forEach(function(btn) {
       btn.addEventListener('click', function() {
@@ -594,6 +707,7 @@
     // Initialize router after DOM ready
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => Router.init(), 100);
+      renderProductionArchitectureSection();
       quizInit();
     });
 
