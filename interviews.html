@@ -617,61 +617,61 @@
       {
         lane: "Transaction Path",
         title: "Request save pipeline (browser to DB and back)",
-        overview: "In real life, save is not one thing. It is a chain. Browser scripts run first, then server rules run, then DB commit happens, then post-commit work starts. Most production bugs are order-of-execution bugs.",
+        overview: "In ServiceNow, clicking Save does not mean one single action. It is a chain: Client Script (browser logic) -> Business Rule (server logic) -> database commit -> post-commit jobs. New teams usually debug only one step and miss where the real overwrite happened.",
         points: [
-          "Client script can set a value, but before Business Rule can overwrite it and nobody notices until users complain.",
-          "After Business Rules and async rules may trigger external calls, and that queue can lag while UI still says save succeeded.",
-          "If one slow rule sits in the sync path, every user save looks slow even if DB is healthy."
+          "A Client Script can set a field, but a Before Business Rule can still overwrite it on server side. So user thinks form saved 'their value', but DB contains another value.",
+          "After/Async rules often call integrations. UI may show save success while downstream systems are still pending or failing in queue.",
+          "One slow synchronous rule blocks every save on that table, even when database itself is fine."
         ]
       },
       {
         lane: "Runtime Boundaries",
         title: "Client and server split (where people get tricked)",
-        overview: "Form logic in browser is quick for UX but never trust it for security. Real enforcement must live on server ACL/rules. If logic exists only in client, integration users bypass it.",
+        overview: "Simple version: browser logic is for user experience, server logic is for trust. If validation exists only in Client Script, API users and integrations can bypass it. Real enforcement belongs in ACLs, Business Rules, and Script Includes on server side.",
         points: [
-          "g_form checks are convenience checks; ACL is the real gatekeeper.",
-          "GlideAjax calls add network hops. Too many tiny calls make forms feel sticky and random.",
-          "Display value and raw value confusion causes bad comparisons and false validations."
+          "g_form checks are convenience checks; ACL is the real permission gate.",
+          "GlideAjax is the bridge from browser to server. Too many small GlideAjax calls make forms feel laggy and inconsistent.",
+          "Display value vs raw value confusion (for example reference fields) creates wrong comparisons and false validation failures."
         ]
       },
       {
         lane: "Data Flow",
         title: "CMDB and reference integrity under load",
-        overview: "CMDB breaks quietly. Not in one big crash. It drifts. Discovery, imports, and manual edits all touch same CIs. Reconciliation and identification quality decides whether data is trusted or theater.",
+        overview: "CMDB (Configuration Management Database) stores CIs (servers, apps, databases, etc.). It usually does not fail loudly; it drifts slowly. Discovery, imports, and humans all update same records, so poor match rules create duplicates and bad dependencies.",
         points: [
-          "Wrong key strategy in imports creates duplicate CIs that look legit to users.",
-          "Reference chains become expensive when every report dot-walks deep paths without indexes.",
-          "Bad class hygiene means relationship maps look complete but answer nothing useful."
+          "Weak identification keys during import create duplicate CIs that look valid but represent the same asset.",
+          "Heavy dot-walking across long reference chains slows reports when fields are not indexed properly.",
+          "If CI classes are inconsistent, relationship maps look populated but are not useful for impact analysis."
         ]
       },
       {
         lane: "Integration",
         title: "Outbound and inbound integration behavior in production",
-        overview: "Integrations are mostly about retries, idempotency, and visibility. Happy path demos hide the real work: duplicate payloads, partial failures, stale auth, and back-pressure.",
+        overview: "Real integration work is not the first successful API call. It is retry behavior, duplicate protection, and failure visibility. Happy-path testing misses what happens during token expiry, rate limits, and partial downstream outages.",
         points: [
-          "If outbound call has no retry strategy, one 429 spike becomes lost business events.",
-          "If retry has no idempotency key, you create duplicate tickets and people stop trusting automation.",
-          "You need dead-letter visibility, not just logs, otherwise failures age out silently."
+          "Without retry strategy, one temporary 429/503 can drop important events permanently.",
+          "Retries without idempotency key create duplicate incidents/requests and break trust in automation.",
+          "Need dead-letter queue visibility (or equivalent error bucket), not only logs, so unresolved payloads are actioned."
         ]
       },
       {
         lane: "Security",
         title: "ACL and role model reality check",
-        overview: "Security incidents are usually from assumptions. Teams think a role implies safe access everywhere. But table ACL + field ACL + script condition interactions create edge paths nobody tested.",
+        overview: "Security issues usually come from assumptions, not from one big hack. A role alone does not guarantee safe access. ServiceNow access is the result of table ACLs, field ACLs, script conditions, and sometimes cross-scope rules working together.",
         points: [
-          "Multiple ACL matches are cumulative; one unexpected deny can break app behavior after release.",
-          "Admin testing hides real user pain because elevated users bypass normal access checks.",
-          "Cross-scope access rules can quietly block calls after an app update if privileges are not versioned carefully."
+          "When multiple ACLs match, user must pass all required checks. One extra deny can break features after release.",
+          "Testing only as admin hides real permission failures that business users hit immediately.",
+          "Cross-scope privilege changes after upgrades can silently block Script Include/API calls if not reviewed."
         ]
       },
       {
         lane: "Operations",
         title: "Performance and release hygiene",
-        overview: "Production stability is less about one smart script and more about boring discipline: query shape, index usage, batch sizing, and release blast-radius control.",
+        overview: "Production stability is mostly boring discipline: efficient queries, proper indexes, safe batch sizes, and clean update set boundaries. Fancy logic matters less than predictable operations.",
         points: [
-          "GlideRecord loops on large sets without batching will spike node memory and create slow list views.",
-          "One update set with mixed unrelated changes makes rollback risky and post-deploy triage painful.",
-          "You need observable checkpoints (timings, counts, error buckets) per flow, not only final success status."
+          "Large GlideRecord loops without batching can spike node memory and slow down list/form response.",
+          "One update set with unrelated changes increases rollback risk and slows incident triage after deployment.",
+          "Track timings, processed counts, and error buckets per flow/job; final success flag alone is not enough in production."
         ]
       }
     ];
