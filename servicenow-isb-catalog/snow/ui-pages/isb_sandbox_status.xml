@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  UI Page: ISB Sandbox Status Viewer
+  Create in: System UI > UI Pages
+
+  Provides a quick-lookup page where users can check their active
+  sandbox status by entering their RITM number.
+-->
+<ui_page>
+  <name>isb_sandbox_status</name>
+  <description>Innovation Sandbox - Check sandbox lease status</description>
+  <html><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:g2="null">
+<html>
+<head>
+  <title>Innovation Sandbox Status</title>
+  <style>
+    .isb-container { max-width: 700px; margin: 40px auto; font-family: Arial, sans-serif; }
+    .isb-header { background: #232f3e; color: #fff; padding: 20px; border-radius: 8px 8px 0 0; }
+    .isb-body { border: 1px solid #ddd; border-top: none; padding: 25px; border-radius: 0 0 8px 8px; }
+    .isb-field { margin: 10px 0; }
+    .isb-field label { font-weight: bold; display: inline-block; width: 180px; }
+    .isb-status { padding: 4px 12px; border-radius: 4px; font-weight: bold; color: #fff; }
+    .isb-status.active { background: #28a745; }
+    .isb-status.pending { background: #ffc107; color: #333; }
+    .isb-status.expired { background: #dc3545; }
+    .isb-status.frozen { background: #17a2b8; }
+    .isb-input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; width: 300px; }
+    .isb-btn { background: #ff9900; color: #fff; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    .isb-btn:hover { background: #e68a00; }
+    .isb-result { margin-top: 20px; }
+    .isb-error { color: #dc3545; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="isb-container">
+    <div class="isb-header">
+      <h2 style="margin: 0;">Innovation Sandbox - Lease Status</h2>
+    </div>
+    <div class="isb-body">
+      <p>Enter your RITM number to check the status of your sandbox lease.</p>
+      <div>
+        <input type="text" id="ritm_number" class="isb-input" placeholder="e.g., RITM0012345"/>
+        <button class="isb-btn" onclick="checkStatus()">Check Status</button>
+      </div>
+      <div id="result" class="isb-result"></div>
+    </div>
+  </div>
+
+  <script>
+    function checkStatus() {
+      var ritm = document.getElementById('ritm_number').value.trim();
+      if (!ritm) {
+        document.getElementById('result').innerHTML =
+          '<p class="isb-error">Please enter a RITM number.</p>';
+        return;
+      }
+
+      var ga = new GlideAjax('ISBSandboxStatusAjax');
+      ga.addParam('sysparm_name', 'getLeaseStatus');
+      ga.addParam('sysparm_ritm_number', ritm);
+      ga.getXMLAnswer(function(answer) {
+        try {
+          var data = JSON.parse(answer);
+          if (data.error) {
+            document.getElementById('result').innerHTML =
+              '<p class="isb-error">' + data.error + '</p>';
+            return;
+          }
+          var statusClass = data.leaseStatus ? data.leaseStatus.toLowerCase() : '';
+          var html = '<div class="isb-result">';
+          html += '<h3>Sandbox Details</h3>';
+          html += '<div class="isb-field"><label>RITM:</label> ' + data.ritmNumber + '</div>';
+          html += '<div class="isb-field"><label>Lease ID:</label> ' + (data.leaseId || 'N/A') + '</div>';
+          html += '<div class="isb-field"><label>AWS Account:</label> ' + (data.awsAccountId || 'N/A') + '</div>';
+          html += '<div class="isb-field"><label>Status:</label> <span class="isb-status ' + statusClass + '">' + (data.leaseStatus || 'N/A') + '</span></div>';
+          html += '<div class="isb-field"><label>Expiration:</label> ' + (data.expirationDate || 'N/A') + '</div>';
+          html += '<div class="isb-field"><label>Cost Accrued:</label> $' + (data.totalCostAccrued || '0.00') + '</div>';
+          html += '<div class="isb-field"><label>Login URL:</label> <a href="' + (data.loginUrl || '#') + '" target="_blank">' + (data.loginUrl || 'N/A') + '</a></div>';
+          html += '</div>';
+          document.getElementById('result').innerHTML = html;
+        } catch(e) {
+          document.getElementById('result').innerHTML =
+            '<p class="isb-error">Error parsing response.</p>';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
+</j:jelly>
+  ]]></html>
+</ui_page>

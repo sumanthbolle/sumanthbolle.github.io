@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  System Properties for ISB Integration
+  Create in: System Properties > All Properties or via Update Set
+
+  These properties store configuration for the ISB API integration.
+  Sensitive values (secrets, keys) should use encrypted property type.
+-->
+<system_properties>
+
+  <!-- ===== ISB API Configuration ===== -->
+  <property>
+    <name>x_tema_isb.api_base_url</name>
+    <description>Base URL for the Innovation Sandbox on AWS API Gateway (e.g., https://abc123.execute-api.ap-southeast-1.amazonaws.com/prod)</description>
+    <type>string</type>
+    <value></value>
+    <category>ISB Integration</category>
+  </property>
+
+  <property>
+    <name>x_tema_isb.api_client_id</name>
+    <description>OAuth Client ID for ISB API authentication</description>
+    <type>string</type>
+    <value></value>
+    <category>ISB Integration</category>
+  </property>
+
+  <property>
+    <name>x_tema_isb.api_client_secret</name>
+    <description>OAuth Client Secret for ISB API authentication (encrypted)</description>
+    <type>password2</type>
+    <value></value>
+    <category>ISB Integration</category>
+  </property>
+
+  <property>
+    <name>x_tema_isb.auth_token_cache</name>
+    <description>Cached ISB API auth token (auto-managed by ISBApiClient)</description>
+    <type>string</type>
+    <value></value>
+    <category>ISB Integration</category>
+    <read_roles>admin</read_roles>
+    <write_roles>admin</write_roles>
+  </property>
+
+  <property>
+    <name>x_tema_isb.auth_token_expiry</name>
+    <description>Cached ISB API auth token expiry timestamp (auto-managed)</description>
+    <type>string</type>
+    <value>0</value>
+    <category>ISB Integration</category>
+    <read_roles>admin</read_roles>
+    <write_roles>admin</write_roles>
+  </property>
+
+  <!-- ===== IDC User Group Lambda Configuration ===== -->
+  <property>
+    <name>x_tema_isb.idc_lambda_api_url</name>
+    <description>API Gateway URL for the IDC User Group Manager Lambda (e.g., https://xyz789.execute-api.ap-southeast-1.amazonaws.com/prod)</description>
+    <type>string</type>
+    <value></value>
+    <category>ISB Integration</category>
+  </property>
+
+  <property>
+    <name>x_tema_isb.idc_api_key</name>
+    <description>API Key for the IDC User Group Manager Lambda endpoint (encrypted)</description>
+    <type>password2</type>
+    <value></value>
+    <category>ISB Integration</category>
+  </property>
+
+  <property>
+    <name>x_tema_isb.identity_store_id</name>
+    <description>IAM Identity Center Identity Store ID (e.g., d-1234567890)</description>
+    <type>string</type>
+    <value></value>
+    <category>ISB Integration</category>
+  </property>
+
+  <!-- ===== Lambda Start Script Configuration ===== -->
+  <property>
+    <name>x_tema_isb.lambda_start_api_url</name>
+    <description>API Gateway URL for the Lambda start/stop script</description>
+    <type>string</type>
+    <value></value>
+    <category>ISB Integration</category>
+  </property>
+
+  <property>
+    <name>x_tema_isb.lambda_api_key</name>
+    <description>API Key for the Lambda start/stop script endpoint (encrypted)</description>
+    <type>password2</type>
+    <value></value>
+    <category>ISB Integration</category>
+  </property>
+
+  <property>
+    <name>x_tema_isb.s3_bucket_name</name>
+    <description>S3 bucket name for sandbox configuration storage</description>
+    <type>string</type>
+    <value></value>
+    <category>ISB Integration</category>
+  </property>
+
+</system_properties>

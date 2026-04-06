@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  REST Message Definitions for Innovation Sandbox (ISB) API Integration
+  
+  Create under: System Web Services > Outbound > REST Message
+  
+  Authentication: Uses OAuth 2.0 Bearer token obtained via ISB /auth endpoint
+  or a pre-configured API key / JWT stored in a SNOW credential record.
+  
+  Base URL is stored in system property: x_tema_isb.api_base_url
+-->
+<rest_messages>
+
+  <!-- ===== REST Message: ISB Sandbox API ===== -->
+  <rest_message>
+    <name>ISB_Sandbox_API</name>
+    <description>Integration with AWS Innovation Sandbox on AWS APIs for lease management, account operations, and authentication.</description>
+    <rest_endpoint>${x_tema_isb.api_base_url}</rest_endpoint>
+    <authentication_type>No authentication</authentication_type>
+    <!-- Auth is handled per-request via Authorization header with Bearer token -->
+
+    <!-- ===== HTTP Method: Authenticate (Get Token) ===== -->
+    <http_method>
+      <name>Authenticate</name>
+      <http_method>POST</http_method>
+      <rest_endpoint>${x_tema_isb.api_base_url}/auth/token</rest_endpoint>
+      <request_headers>
+        <header name="Content-Type" value="application/json"/>
+        <header name="Accept" value="application/json"/>
+      </request_headers>
+      <request_body><![CDATA[{
+  "clientId": "${client_id}",
+  "clientSecret": "${client_secret}"
+}]]></request_body>
+    </http_method>
+
+    <!-- ===== HTTP Method: Create Lease (Assign Sandbox) ===== -->
+    <http_method>
+      <name>CreateLease</name>
+      <http_method>POST</http_method>
+      <rest_endpoint>${x_tema_isb.api_base_url}/leases</rest_endpoint>
+      <request_headers>
+        <header name="Content-Type" value="application/json"/>
+        <header name="Accept" value="application/json"/>
+        <header name="Authorization" value="Bearer ${auth_token}"/>
+      </request_headers>
+      <request_body><![CDATA[{
+  "leaseTemplateUuid": "${lease_template_uuid}",
+  "comments": "${comments}",
+  "userEmail": "${user_email}"
+}]]></request_body>
+    </http_method>
+
+    <!-- ===== HTTP Method: Get Lease ===== -->
+    <http_method>
+      <name>GetLease</name>
+      <http_method>GET</http_method>
+      <rest_endpoint>${x_tema_isb.api_base_url}/leases/${lease_id}</rest_endpoint>
+      <request_headers>
+        <header name="Accept" value="application/json"/>
+        <header name="Authorization" value="Bearer ${auth_token}"/>
+      </request_headers>
+    </http_method>
+
+    <!-- ===== HTTP Method: Terminate Lease (Release Sandbox) ===== -->
+    <http_method>
+      <name>TerminateLease</name>
+      <http_method>POST</http_method>
+      <rest_endpoint>${x_tema_isb.api_base_url}/leases/${lease_id}/terminate</rest_endpoint>
+      <request_headers>
+        <header name="Content-Type" value="application/json"/>
+        <header name="Accept" value="application/json"/>
+        <header name="Authorization" value="Bearer ${auth_token}"/>
+      </request_headers>
+    </http_method>
+
+    <!-- ===== HTTP Method: Get Lease Templates ===== -->
+    <http_method>
+      <name>GetLeaseTemplates</name>
+      <http_method>GET</http_method>
+      <rest_endpoint>${x_tema_isb.api_base_url}/leaseTemplates</rest_endpoint>
+      <request_headers>
+        <header name="Accept" value="application/json"/>
+        <header name="Authorization" value="Bearer ${auth_token}"/>
+      </request_headers>
+    </http_method>
+
+    <!-- ===== HTTP Method: Get Configuration ===== -->
+    <http_method>
+      <name>GetConfiguration</name>
+      <http_method>GET</http_method>
+      <rest_endpoint>${x_tema_isb.api_base_url}/configurations</rest_endpoint>
+      <request_headers>
+        <header name="Accept" value="application/json"/>
+        <header name="Authorization" value="Bearer ${auth_token}"/>
+      </request_headers>
+    </http_method>
+
+    <!-- ===== HTTP Method: Review Lease (Approve/Deny) ===== -->
+    <http_method>
+      <name>ReviewLease</name>
+      <http_method>POST</http_method>
+      <rest_endpoint>${x_tema_isb.api_base_url}/leases/${lease_id}/review</rest_endpoint>
+      <request_headers>
+        <header name="Content-Type" value="application/json"/>
+        <header name="Accept" value="application/json"/>
+        <header name="Authorization" value="Bearer ${auth_token}"/>
+      </request_headers>
+      <request_body><![CDATA[{
+  "action": "${review_action}"
+}]]></request_body>
+    </http_method>
+
+  </rest_message>
+
+  <!-- ===== REST Message: IDC User Group Lambda ===== -->
+  <rest_message>
+    <name>ISB_IDC_UserGroup_API</name>
+    <description>AWS Lambda-backed API to add/remove users from the temaisb_UserGroup in IAM Identity Center.</description>
+    <rest_endpoint>${x_tema_isb.idc_lambda_api_url}</rest_endpoint>
+    <authentication_type>No authentication</authentication_type>
+
+    <!-- ===== HTTP Method: Add User to Group ===== -->
+    <http_method>
+      <name>AddUserToGroup</name>
+      <http_method>POST</http_method>
+      <rest_endpoint>${x_tema_isb.idc_lambda_api_url}/user-group/add</rest_endpoint>
+      <request_headers>
+        <header name="Content-Type" value="application/json"/>
+        <header name="Accept" value="application/json"/>
+        <header name="x-api-key" value="${idc_api_key}"/>
+      </request_headers>
+      <request_body><![CDATA[{
+  "userEmail": "${user_email}",
+  "groupName": "temaisb_UserGroup",
+  "identityStoreId": "${identity_store_id}"
+}]]></request_body>
+    </http_method>
+
+    <!-- ===== HTTP Method: Remove User from Group ===== -->
+    <http_method>
+      <name>RemoveUserFromGroup</name>
+      <http_method>POST</http_method>
+      <rest_endpoint>${x_tema_isb.idc_lambda_api_url}/user-group/remove</rest_endpoint>
+      <request_headers>
+        <header name="Content-Type" value="application/json"/>
+        <header name="Accept" value="application/json"/>
+        <header name="x-api-key" value="${idc_api_key}"/>
+      </request_headers>
+      <request_body><![CDATA[{
+  "userEmail": "${user_email}",
+  "groupName": "temaisb_UserGroup",
+  "identityStoreId": "${identity_store_id}"
+}]]></request_body>
+    </http_method>
+
+  </rest_message>
+
+  <!-- ===== REST Message: AWS Lambda Start Script ===== -->
+  <rest_message>
+    <name>ISB_Lambda_Start_Script</name>
+    <description>Triggers the AWS Lambda start script based on the scheduled start time and updates the S3 bucket configuration.</description>
+    <rest_endpoint>${x_tema_isb.lambda_start_api_url}</rest_endpoint>
+    <authentication_type>No authentication</authentication_type>
+
+    <http_method>
+      <name>TriggerStartScript</name>
+      <http_method>POST</http_method>
+      <rest_endpoint>${x_tema_isb.lambda_start_api_url}/start</rest_endpoint>
+      <request_headers>
+        <header name="Content-Type" value="application/json"/>
+        <header name="Accept" value="application/json"/>
+        <header name="x-api-key" value="${lambda_api_key}"/>
+      </request_headers>
+      <request_body><![CDATA[{
+  "userEmail": "${user_email}",
+  "startTime": "${start_time}",
+  "leaseId": "${lease_id}",
+  "s3BucketName": "${s3_bucket_name}",
+  "awsRegion": "${aws_region}",
+  "action": "${action}"
+}]]></request_body>
+    </http_method>
+
+  </rest_message>
+
+</rest_messages>

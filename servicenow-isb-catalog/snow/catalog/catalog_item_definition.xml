@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ServiceNow Catalog Item Definition
+  Name: Temasek - AWS Innovation Sandbox Account (Assign / Release)
+  Replaces: Terraform - Create AWS Sandbox Account
+  
+  Import via: System Definition > Update Sets or Catalog Builder
+-->
+<record_update table="sc_cat_item">
+  <sc_cat_item>
+    <name>Temasek – AWS Innovation Sandbox Account (Assign / Release)</name>
+    <short_description>Request assignment or release of an AWS Innovation Sandbox account via the ISB platform.</short_description>
+    <description><![CDATA[
+      Submit a request to be assigned a new AWS Innovation Sandbox for experimentation,
+      prototyping, or training purposes. Once approved, the system will automatically
+      provision your sandbox via the Innovation Sandbox on AWS (ISB) APIs, add you to
+      the required IAM Identity Center user group, and return your login URL and access details.
+
+      You may also use this catalog to release (terminate) an existing sandbox assignment.
+    ]]></description>
+    <category>Cloud Services</category>
+    <sc_catalogs>Service Catalog</sc_catalogs>
+    <active>true</active>
+    <order>100</order>
+    <workflow>ISB_Sandbox_Provision_Flow</workflow>
+    <delivery_plan/>
+    <delivery_time display_value="1 Hour">3600</delivery_time>
+    <icon>images/icons/cloud_aws.png</icon>
+    <meta>Sandbox, AWS, ISB, Innovation, Temasek</meta>
+    <availability>Desktop and Mobile</availability>
+    <roles/>
+  </sc_cat_item>
+</record_update>

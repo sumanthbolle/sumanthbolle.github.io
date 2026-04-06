@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Catalog Item Variables (Form Fields)
+  Associated Catalog Item: Temasek - AWS Innovation Sandbox Account (Assign / Release)
+
+  These variables define the form that the requester fills out.
+  Import via Update Set or manually create in: Service Catalog > Catalog Items > Variables
+-->
+<catalog_variables>
+
+  <!-- ===== Section: Request Type ===== -->
+  <variable>
+    <name>request_type</name>
+    <type>Select Box</type>
+    <question_text>Request Type</question_text>
+    <tooltip>Select whether you want to be assigned a new sandbox or release an existing one.</tooltip>
+    <mandatory>true</mandatory>
+    <order>100</order>
+    <default_value>assign</default_value>
+    <choice_list>
+      <choice value="assign" display_value="Assign New Sandbox"/>
+      <choice value="release" display_value="Release Existing Sandbox"/>
+    </choice_list>
+  </variable>
+
+  <!-- ===== Section: Requester Information ===== -->
+  <variable>
+    <name>section_requester_info</name>
+    <type>Label</type>
+    <question_text>--- Requester Information ---</question_text>
+    <order>200</order>
+  </variable>
+
+  <variable>
+    <name>requested_for</name>
+    <type>Reference</type>
+    <question_text>Requested For</question_text>
+    <tooltip>The user who will be assigned the sandbox account.</tooltip>
+    <reference>sys_user</reference>
+    <mandatory>true</mandatory>
+    <order>300</order>
+    <default_value>javascript:gs.getUserID()</default_value>
+  </variable>
+
+  <variable>
+    <name>requester_email</name>
+    <type>Email</type>
+    <question_text>Requester Email</question_text>
+    <tooltip>Corporate email address (must match IAM Identity Center).</tooltip>
+    <mandatory>true</mandatory>
+    <order>400</order>
+    <read_only>false</read_only>
+    <default_value>javascript:gs.getUser().getEmail()</default_value>
+  </variable>
+
+  <variable>
+    <name>requester_department</name>
+    <type>Single Line Text</type>
+    <question_text>Department</question_text>
+    <mandatory>true</mandatory>
+    <order>500</order>
+    <default_value>javascript:gs.getUser().getDepartmentID()</default_value>
+  </variable>
+
+  <variable>
+    <name>cost_center</name>
+    <type>Single Line Text</type>
+    <question_text>Cost Center</question_text>
+    <tooltip>Cost center to be charged for sandbox usage.</tooltip>
+    <mandatory>true</mandatory>
+    <order>600</order>
+  </variable>
+
+  <!-- ===== Section: Sandbox Configuration ===== -->
+  <variable>
+    <name>section_sandbox_config</name>
+    <type>Label</type>
+    <question_text>--- Sandbox Configuration ---</question_text>
+    <order>700</order>
+  </variable>
+
+  <variable>
+    <name>lease_template_uuid</name>
+    <type>Single Line Text</type>
+    <question_text>Lease Template UUID</question_text>
+    <tooltip>UUID of the ISB lease template to use. Contact your cloud team if unsure.</tooltip>
+    <mandatory>true</mandatory>
+    <order>800</order>
+    <default_value/>
+  </variable>
+
+  <variable>
+    <name>sandbox_duration_hours</name>
+    <type>Select Box</type>
+    <question_text>Sandbox Duration</question_text>
+    <tooltip>How long you need the sandbox (in hours).</tooltip>
+    <mandatory>true</mandatory>
+    <order>900</order>
+    <default_value>24</default_value>
+    <choice_list>
+      <choice value="8" display_value="8 Hours"/>
+      <choice value="24" display_value="24 Hours (1 Day)"/>
+      <choice value="72" display_value="72 Hours (3 Days)"/>
+      <choice value="168" display_value="168 Hours (1 Week)"/>
+      <choice value="336" display_value="336 Hours (2 Weeks)"/>
+      <choice value="720" display_value="720 Hours (30 Days)"/>
+    </choice_list>
+  </variable>
+
+  <variable>
+    <name>max_budget_usd</name>
+    <type>Numeric Scale</type>
+    <question_text>Maximum Budget (USD)</question_text>
+    <tooltip>Maximum spend allowed on this sandbox.</tooltip>
+    <mandatory>true</mandatory>
+    <order>1000</order>
+    <default_value>100</default_value>
+    <scale_min>10</scale_min>
+    <scale_max>1000</scale_max>
+  </variable>
+
+  <variable>
+    <name>aws_region</name>
+    <type>Select Box</type>
+    <question_text>Preferred AWS Region</question_text>
+    <mandatory>true</mandatory>
+    <order>1100</order>
+    <default_value>ap-southeast-1</default_value>
+    <choice_list>
+      <choice value="ap-southeast-1" display_value="Asia Pacific (Singapore) - ap-southeast-1"/>
+      <choice value="us-east-1" display_value="US East (N. Virginia) - us-east-1"/>
+      <choice value="us-west-2" display_value="US West (Oregon) - us-west-2"/>
+      <choice value="eu-west-1" display_value="Europe (Ireland) - eu-west-1"/>
+      <choice value="ap-northeast-1" display_value="Asia Pacific (Tokyo) - ap-northeast-1"/>
+    </choice_list>
+  </variable>
+
+  <variable>
+    <name>cost_report_group</name>
+    <type>Single Line Text</type>
+    <question_text>Cost Report Group</question_text>
+    <tooltip>Cost allocation group for reporting (e.g., Engineering, DataScience).</tooltip>
+    <mandatory>false</mandatory>
+    <order>1150</order>
+  </variable>
+
+  <!-- ===== Section: Release-specific fields (visible when request_type = release) ===== -->
+  <variable>
+    <name>section_release</name>
+    <type>Label</type>
+    <question_text>--- Sandbox Release Details ---</question_text>
+    <order>1200</order>
+    <visible_on>request_type=release</visible_on>
+  </variable>
+
+  <variable>
+    <name>existing_lease_id</name>
+    <type>Single Line Text</type>
+    <question_text>Existing Lease ID</question_text>
+    <tooltip>The lease ID of the sandbox you wish to release (Base64 encoded).</tooltip>
+    <mandatory>false</mandatory>
+    <order>1300</order>
+    <visible_on>request_type=release</visible_on>
+  </variable>
+
+  <!-- ===== Section: Business Justification ===== -->
+  <variable>
+    <name>section_justification</name>
+    <type>Label</type>
+    <question_text>--- Business Justification ---</question_text>
+    <order>1400</order>
+  </variable>
+
+  <variable>
+    <name>business_justification</name>
+    <type>Multi Line Text</type>
+    <question_text>Business Justification</question_text>
+    <tooltip>Describe why you need this sandbox and what you plan to use it for.</tooltip>
+    <mandatory>true</mandatory>
+    <order>1500</order>
+    <max_length>2000</max_length>
+  </variable>
+
+  <variable>
+    <name>project_name</name>
+    <type>Single Line Text</type>
+    <question_text>Project / Initiative Name</question_text>
+    <mandatory>true</mandatory>
+    <order>1600</order>
+  </variable>
+
+  <variable>
+    <name>start_date</name>
+    <type>Date/Time</type>
+    <question_text>Preferred Start Date/Time (UTC)</question_text>
+    <tooltip>When should the sandbox become active? Leave blank for immediate.</tooltip>
+    <mandatory>false</mandatory>
+    <order>1700</order>
+  </variable>
+
+  <!-- ===== Section: Acknowledgement ===== -->
+  <variable>
+    <name>accept_terms</name>
+    <type>CheckBox</type>
+    <question_text>I acknowledge and accept the Innovation Sandbox Terms of Service and agree to comply with all security and usage policies.</question_text>
+    <mandatory>true</mandatory>
+    <order>1800</order>
+  </variable>
+
+</catalog_variables>

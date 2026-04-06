@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  ISB User Group Manager Lambda
+  Manages IAM Identity Center user group membership for Innovation Sandbox.
+  Deployed behind API Gateway with API key authentication.
+
+Parameters:
+  IdentityStoreId:
+    Type: String
+    Description: IAM Identity Center Identity Store ID
+  GroupName:
+    Type: String
+    Default: temaisb_UserGroup
+    Description: IAM Identity Center group name for ISB users
+  LogLevel:
+    Type: String
+    Default: INFO
+    AllowedValues: [DEBUG, INFO, WARNING, ERROR]
+  StageName:
+    Type: String
+    Default: prod
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: python3.12
+    MemorySize: 256
+    Environment:
+      Variables:
+        IDENTITY_STORE_ID: !Ref IdentityStoreId
+        GROUP_NAME: !Ref GroupName
+        LOG_LEVEL: !Ref LogLevel
+
+Resources:
+
+  ISBUserGroupApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref StageName
+      Description: API for ISB IDC User Group Management
+      Auth:
+        ApiKeyRequired: true
+        UsagePlan:
+          CreateUsagePlan: PER_API
+          Description: ISB User Group API Usage Plan
+          Throttle:
+            BurstLimit: 10
+            RateLimit: 5
+          Quota:
+            Limit: 1000
+            Period: DAY
+
+  ISBUserGroupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: isb-user-group-manager
+      Handler: index.lambda_handler
+      CodeUri: .
+      Description: Manages IAM Identity Center group membership for ISB
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - identitystore:ListUsers
+                - identitystore:ListGroups
+                - identitystore:CreateGroupMembership
+                - identitystore:DeleteGroupMembership
+                - identitystore:GetGroupMembershipId
+                - identitystore:ListGroupMemberships
+              Resource: !Sub "arn:aws:identitystore::${AWS::AccountId}:identitystore/${IdentityStoreId}"
+            - Effect: Allow
+              Action:
+                - identitystore:ListUsers
+                - identitystore:ListGroups
+              Resource: "*"
+      Events:
+        AddUserToGroup:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ISBUserGroupApi
+            Path: /user-group/add
+            Method: POST
+        RemoveUserFromGroup:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ISBUserGroupApi
+            Path: /user-group/remove
+            Method: POST
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway URL for ISB User Group Manager
+    Value: !Sub "https://${ISBUserGroupApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+  ApiKeyId:
+    Description: API Key ID (retrieve value from console or CLI)
+    Value: !Ref ISBUserGroupApi
+  FunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt ISBUserGroupFunction.Arn
