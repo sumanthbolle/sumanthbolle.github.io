@@ -269,6 +269,17 @@
     @media(min-width:769px){
       .menu-toggle{display:none}
     }
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{
+        animation:none !important;
+        transition:none !important;
+      }
+      nav,.mobile-menu,.search-overlay{backdrop-filter:none}
+    }
+    @media (max-width:768px){
+      nav,.mobile-menu,.search-overlay{backdrop-filter:none}
+    }
   </style>
 </head>
 <body>

@@ -183,6 +183,15 @@
       .prod-arch-title{font-size:22px}
       .prod-arch-grid{grid-template-columns:1fr}
     }
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      *{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+      .toast{transition:none}
+      .quiz-explanation.show{animation:none}
+    }
+    @media(max-width:768px){
+      nav,.mobile-menu{backdrop-filter:none}
+    }
   </style>
 </head>
 <body>

@@ -402,6 +402,17 @@
       .project-title{font-size:24px}
       .project-screen canvas{height:190px}
     }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+      .hero-title .typewriter{white-space:normal;border-right:none;width:auto}
+    }
+    @media(max-width:768px){
+      nav,.mobile-menu,.integration-panel{backdrop-filter:none}
+      .loop-glow,.hub-glow,.node-pulse,.data-particle{display:none}
+      .sn-hub-outer,.orbit-ring,.orbit-1,.orbit-2,.orbit-3,.live-dot{animation:none}
+      .project-screen{box-shadow:0 12px 28px rgba(0,0,0,0.35)}
+    }
   </style>
 </head>
 <body>
@@ -708,7 +719,7 @@
 
     <section class="contact-section" id="contact">
       <div class="profile-image-container">
-        <img class="contact-profile" src="https://sumanthbolle.github.io/profile.jpeg" alt="Sumanth Bolle" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <img class="contact-profile" src="https://sumanthbolle.github.io/profile.jpeg" alt="Sumanth Bolle" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
         <div class="contact-profile-fallback">SB</div>
       </div>
       <h2 class="contact-name">Sumanth Bolle</h2>
