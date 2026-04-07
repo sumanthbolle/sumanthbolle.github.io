@@ -50,12 +50,16 @@
     .mobile-menu.active{display:block}
     .mobile-menu a{display:block;padding:12px 0;color:var(--text2);text-decoration:none;font-size:15px;border-bottom:1px solid var(--border)}
     .mobile-menu a:last-child{border:none}
+    .sub-tabs{display:flex;justify-content:center;gap:4px;padding:8px 24px;background:rgba(0,0,0,0.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:fixed;top:52px;width:100%;z-index:9998}
+    .sub-tab{padding:6px 20px;border:none;border-radius:20px;background:transparent;color:var(--text3);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.25s;text-decoration:none;font-family:inherit}
+    .sub-tab:hover{background:rgba(255,255,255,0.06);color:var(--text)}
+    .sub-tab.active{background:var(--text);color:var(--bg)}
 
     /* ─── Layout ─── */
-    .app{display:flex;margin-top:52px;min-height:calc(100vh - 52px)}
+    .app{display:flex;margin-top:88px;min-height:calc(100vh - 88px)}
 
     /* ─── Sidebar ─── */
-    .sidebar{width:280px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg2);position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;overflow-x:hidden;transition:transform .3s}
+    .sidebar{width:280px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg2);position:sticky;top:88px;height:calc(100vh - 88px);overflow-y:auto;overflow-x:hidden;transition:transform .3s}
     .sidebar::-webkit-scrollbar{width:4px}
     .sidebar::-webkit-scrollbar-track{background:transparent}
     .sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
@@ -255,9 +259,9 @@
 
     /* ─── Responsive ─── */
     @media(max-width:768px){
-      .sidebar{position:fixed;top:52px;left:0;z-index:500;width:280px;transform:translateX(-100%)}
+      .sidebar{position:fixed;top:88px;left:0;z-index:500;width:280px;transform:translateX(-100%)}
       .sidebar.open{transform:translateX(0)}
-      .sidebar-overlay{display:none;position:fixed;inset:0;top:52px;z-index:499;background:rgba(0,0,0,0.5)}
+      .sidebar-overlay{display:none;position:fixed;inset:0;top:88px;z-index:499;background:rgba(0,0,0,0.5)}
       .sidebar-overlay.active{display:block}
       .menu-toggle{display:block}
       .nav-links{display:none}
@@ -273,17 +277,14 @@
 </head>
 <body>
 
-<!-- ─── Nav (consistent with existing site) ─── -->
+<!-- ─── Nav ─── -->
 <nav>
   <div class="nav-c">
     <a href="index.html" class="nav-logo">Sumanth <span>Bolle</span></a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
-      <li><a href="blog.html">Blog</a></li>
+      <li><a href="blog.html" class="active">Blog</a></li>
       <li><a href="interviews.html">Interviews</a></li>
-      <li><a href="tutorials.html" class="active">Tutorials</a></li>
-      <li><a href="quiz.html">Quiz</a></li>
-      <li><a href="technical-terms-quiz.html">Tech Terms Quiz</a></li>
     </ul>
     <button class="menu-toggle" id="menuToggle" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -292,11 +293,12 @@
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html">Home</a>
-  <a href="blog.html">Blog</a>
+  <a href="blog.html" style="color:var(--text)">Blog</a>
   <a href="interviews.html">Interviews</a>
-  <a href="tutorials.html" style="color:var(--text)">Tutorials</a>
-  <a href="quiz.html">Quiz</a>
-  <a href="technical-terms-quiz.html">Tech Terms Quiz</a>
+</div>
+<div class="sub-tabs">
+  <a href="blog.html" class="sub-tab">Blog Posts</a>
+  <a href="tutorials.html" class="sub-tab active">Tutorials</a>
 </div>
 
 <!-- ─── Sidebar Overlay (mobile) ─── -->
