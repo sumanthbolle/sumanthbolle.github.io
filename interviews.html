@@ -199,6 +199,7 @@
       .prod-arch-grid{grid-template-columns:1fr}
     }
   </style>
+  <script src="assets/js/shared/search.js"></script>
 </head>
 <body>
   <nav>
@@ -507,13 +508,42 @@
       });
     }
 
+    function initInterviewSearch(){
+      if(!window.SBSearch||!INTERVIEWS.length)return;
+      var catColors={'Core Concepts':'#5856d6','Performance':'#ff375f','Architecture':'#007aff','Security':'#ff9500','Scripting':'#34c759','Integration':'#30b0c7','AI Implementation':'#af52de'};
+      SBSearch.init({
+        items:INTERVIEWS,
+        fields:[
+          {name:'question',weight:4},
+          {name:'answer',weight:1},
+          {name:'category',weight:3},
+          {name:'difficulty',weight:1}
+        ],
+        placeholder:'Search interview questions...',
+        onSelect:function(item){
+          filterByCategory('all');
+          setTimeout(function(){openQuestion(item.id)},150);
+        },
+        renderTitle:function(item){return item.question},
+        renderExcerpt:function(item){
+          var plain=item.answer.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+          return plain.substring(0,150);
+        },
+        renderMeta:function(item){
+          return '<span>'+item.category+'</span><span>'+(item.difficulty||'')+'</span><span>'+(item.company||'')+'</span>';
+        },
+        getColor:function(item){return catColors[item.category]||'#0066CC'},
+        getIcon:function(item){return 'Q'}
+      });
+    }
+
     fetchInterviewsData()
       .then(function(data) {
         INTERVIEWS = data;
         renderInterviews('all');
         updateStats();
+        initInterviewSearch();
         
-        // Handle pending question from URL
         if (pendingQuestionId) {
           setTimeout(() => {
             openQuestion(pendingQuestionId, true);
@@ -524,8 +554,8 @@
       .catch(function() {
         renderInterviews('all');
         updateStats();
+        initInterviewSearch();
         
-        // Handle pending question from URL with default data
         if (pendingQuestionId) {
           setTimeout(() => {
             openQuestion(pendingQuestionId, true);

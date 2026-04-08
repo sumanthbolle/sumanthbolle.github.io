@@ -262,6 +262,7 @@
       .article-nav-btn{width:100%;text-align:center}
     }
   </style>
+<script src="assets/js/shared/search.js"></script>
 </head>
 <body>
 <div class="reading-progress" id="readingProgress"></div>
@@ -469,11 +470,39 @@ async function loadBlogPosts(){
       BLOG_POSTS=await res.json();
       document.getElementById('blogCount').textContent=BLOG_POSTS.length;
       renderBlogGrid('all');
+      initBlogSearch();
       if(pendingArticleId){openBlogArticle(pendingArticleId,true);pendingArticleId=null}
       return;
     }catch(e){lastErr=e;}
   }
   grid.innerHTML='<div class="blog-error"><h3>Could not load posts</h3><p>'+(lastErr?lastErr.message:'Unknown error')+'</p></div>';
+}
+
+var categoryColors={ai:'#5856d6',career:'#ff6723',architecture:'#007aff',servicenow:'#4a8f24'};
+function initBlogSearch(){
+  if(!window.SBSearch||!BLOG_POSTS.length)return;
+  SBSearch.init({
+    items:BLOG_POSTS,
+    fields:[
+      {name:'title',weight:4},
+      {name:'excerpt',weight:2},
+      {name:'content',weight:1},
+      {name:'category',weight:2}
+    ],
+    placeholder:'Search articles...',
+    onSelect:function(item){openBlogArticle(String(item.id))},
+    renderTitle:function(item){return item.title},
+    renderExcerpt:function(item){return item.excerpt||''},
+    renderMeta:function(item){
+      return '<span style="text-transform:capitalize">'+item.category+'</span><span>'+
+        (item.difficulty||'')+'</span><span>'+(item.readTime||'')+'</span>';
+    },
+    getColor:function(item){return categoryColors[item.category]||'#0066CC'},
+    getIcon:function(item){
+      var icons={ai:'AI',career:'C',architecture:'A',servicenow:'SN'};
+      return icons[item.category]||'?';
+    }
+  });
 }
 
 function renderBlogGrid(filter){
