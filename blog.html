@@ -219,7 +219,16 @@
     .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
     .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200}
     .sidebar-overlay.active{display:block}
-    .sidebar-toggle-mob{display:none;position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:var(--blue);color:var(--white);border:none;font-size:20px;cursor:pointer;z-index:150;box-shadow:0 4px 20px rgba(0,0,0,0.2);align-items:center;justify-content:center}
+    .sidebar-toggle-mob{display:none;position:fixed;bottom:24px;right:24px;height:44px;border-radius:22px;background:var(--blue);color:var(--white);border:none;font-size:14px;font-weight:600;cursor:pointer;z-index:150;box-shadow:0 4px 20px rgba(0,0,0,0.25);align-items:center;justify-content:center;padding:0 20px;gap:8px;font-family:inherit}
+    .mob-modules{display:none}
+    .mob-module{background:var(--white);border:1px solid rgba(0,0,0,0.08);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all 0.2s}
+    .mob-module:hover,.mob-module:active{background:var(--bg);border-color:rgba(0,0,0,0.15)}
+    .mob-module-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .mob-module-num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--white);flex-shrink:0}
+    .mob-module-title{font-size:15px;font-weight:600}
+    .mob-module-topics{font-size:13px;color:var(--gray);line-height:1.6}
+    .mob-module-topics a{color:var(--blue);text-decoration:none;display:block;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+    .mob-module-topics a:last-child{border:none}
     footer{background:var(--white);padding:24px;text-align:center;border-top:1px solid rgba(0,0,0,0.06)}
     .footer-text{font-size:12px;color:var(--gray)}
     @media(max-width:1100px){.floating-toc{display:none!important}}
@@ -232,9 +241,16 @@
       .sidebar{position:fixed;left:calc(-1 * 280px);top:84px;height:calc(100vh - 84px);z-index:250;transition:left 0.3s;padding-top:0}
       .sidebar.mobile-open{left:0}
       .sidebar-toggle-mob{display:flex}
+      .mob-modules{display:block}
       .blog-grid{grid-template-columns:1fr}
-      .article-view{padding:32px 20px 60px}
-      .csa-welcome{padding:40px 20px}
+      .article-view{padding:32px 16px 60px}
+      .article-view pre{overflow-x:auto;font-size:12px;max-width:calc(100vw - 32px)}
+      .article-view table{display:block;overflow-x:auto;max-width:calc(100vw - 32px)}
+      .article-content pre{overflow-x:auto;font-size:12px}
+      .article-content table{display:block;overflow-x:auto}
+      .csa-welcome{padding:32px 16px}
+      .csa-welcome pre{overflow-x:auto;font-size:12px}
+      .csa-welcome table{display:block;overflow-x:auto}
       .article-meta{flex-direction:column;gap:10px}
       .article-share{margin-left:0}
       .tryit-body{grid-template-columns:1fr}
@@ -242,6 +258,8 @@
       .csa-tips-grid{grid-template-columns:1fr}
       .cert-hero{padding:32px 24px;border-radius:0}
       .cert-grid{grid-template-columns:repeat(2,1fr)}
+      .article-nav{flex-direction:column;gap:12px}
+      .article-nav-btn{width:100%;text-align:center}
     }
   </style>
 </head>
@@ -341,7 +359,7 @@
   </div>
 </section>
 
-<button class="sidebar-toggle-mob" id="sidebarMobToggle">&#9776;</button>
+<button class="sidebar-toggle-mob" id="sidebarMobToggle">&#9776; Topics</button>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="toast" id="toast"></div>
 <footer><p class="footer-text">&copy; 2026 Sumanth Bolle. Designed with precision.</p></footer>
@@ -498,7 +516,17 @@ function toggleMod(id){
 
 function renderCSAWelcome(){
   var total=CSA_MODULES.reduce(function(a,m){return a+m.topics.length},0);
-  document.getElementById('csaContent').innerHTML='<div class="csa-welcome"><h2>ServiceNow CSA Certification</h2><p>Master the platform from zero to certified. Select a topic from the sidebar to begin.</p><div class="csa-stats"><div><div class="csa-stat-num">'+CSA_MODULES.length+'</div><div class="csa-stat-label">Modules</div></div><div><div class="csa-stat-num">'+total+'</div><div class="csa-stat-label">Topics</div></div><div><div class="csa-stat-num">'+completedTopics.length+'</div><div class="csa-stat-label">Completed</div></div></div><h3 style="font-size:20px;font-weight:600;margin-bottom:16px">Exam Pro Tips</h3><div class="csa-tips-grid"><div class="csa-tip"><h4>Know the Fundamentals</h4><p>60% of questions test core concepts: tables, forms, lists, basic admin.</p></div><div class="csa-tip"><h4>Hands-On Practice</h4><p>Get a free PDI. Theory alone won\'t pass.</p></div><div class="csa-tip"><h4>Time Management</h4><p>60 questions in 90 minutes. Flag difficult ones.</p></div><div class="csa-tip"><h4>UI Policy vs Client Script vs BR</h4><p>Know when to use each. Heavily tested.</p></div><div class="csa-tip"><h4>Update Sets Lifecycle</h4><p>Create, capture, transfer, preview, commit.</p></div><div class="csa-tip"><h4>Official Documentation</h4><p>Exam references docs.servicenow.com.</p></div></div></div>';
+  var mobModules='<div class="mob-modules"><h3 style="font-size:18px;font-weight:600;margin:28px 0 16px">Browse Modules</h3>';
+  CSA_MODULES.forEach(function(m){
+    mobModules+='<div class="mob-module"><div class="mob-module-head"><span class="mob-module-num" style="background:'+m.color+'">'+m.id+'</span><span class="mob-module-title">'+m.title+'</span></div><div class="mob-module-topics">';
+    m.topics.forEach(function(t){
+      var done=completedTopics.includes(t.id);
+      mobModules+='<a href="#" onclick="openCsaTopic(\''+t.id+'\');return false;">'+(done?'&#10003; ':'')+t.title+' <span style="color:var(--gray);font-size:11px">'+t.duration+'</span></a>';
+    });
+    mobModules+='</div></div>';
+  });
+  mobModules+='</div>';
+  document.getElementById('csaContent').innerHTML='<div class="csa-welcome"><h2>ServiceNow CSA Certification</h2><p>Master the platform from zero to certified.</p><div class="csa-stats"><div><div class="csa-stat-num">'+CSA_MODULES.length+'</div><div class="csa-stat-label">Modules</div></div><div><div class="csa-stat-num">'+total+'</div><div class="csa-stat-label">Topics</div></div><div><div class="csa-stat-num">'+completedTopics.length+'</div><div class="csa-stat-label">Completed</div></div></div>'+mobModules+'<h3 style="font-size:18px;font-weight:600;margin:28px 0 16px">Exam Pro Tips</h3><div class="csa-tips-grid"><div class="csa-tip"><h4>Know the Fundamentals</h4><p>60% of questions test core concepts: tables, forms, lists, basic admin.</p></div><div class="csa-tip"><h4>Hands-On Practice</h4><p>Get a free PDI. Theory alone won\'t pass.</p></div><div class="csa-tip"><h4>Time Management</h4><p>60 questions in 90 minutes. Flag difficult ones.</p></div><div class="csa-tip"><h4>UI Policy vs Client Script vs BR</h4><p>Know when to use each. Heavily tested.</p></div><div class="csa-tip"><h4>Update Sets Lifecycle</h4><p>Create, capture, transfer, preview, commit.</p></div><div class="csa-tip"><h4>Official Documentation</h4><p>Exam references docs.servicenow.com.</p></div></div></div>';
 }
 
 function openCsaTopic(topicId,fromRouter){
