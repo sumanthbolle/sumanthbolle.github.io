@@ -140,30 +140,124 @@
   var webSearchTimer;
   var lastWebQuery = '';
 
+  var cseLoaded = false;
+  var cseReady = false;
+  var cseCallbackQueue = [];
+  var CSE_CX = '71b23c515f34d4d52';
+
+  function loadCSE(cb) {
+    if (cseReady) { cb(); return; }
+    cseCallbackQueue.push(cb);
+    if (cseLoaded) return;
+    cseLoaded = true;
+
+    window.__gcse = window.__gcse || {};
+    window.__gcse.parsetags = 'explicit';
+    window.__gcse.callback = function() {
+      var container = document.getElementById('sbCseContainer');
+      if (container) {
+        google.search.cse.element.render({ div: 'sbCseResults', tag: 'searchresults-only' });
+      }
+      cseReady = true;
+      cseCallbackQueue.forEach(function(fn) { fn(); });
+      cseCallbackQueue = [];
+    };
+
+    var cseContainer = document.createElement('div');
+    cseContainer.id = 'sbCseContainer';
+    cseContainer.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden';
+    cseContainer.innerHTML = '<div id="sbCseResults"></div>';
+    document.body.appendChild(cseContainer);
+
+    var script = document.createElement('script');
+    script.src = 'https://cse.google.com/cse.js?cx=' + CSE_CX;
+    script.async = true;
+    document.head.appendChild(script);
+  }
+
+  function searchCSE(query, callback) {
+    loadCSE(function() {
+      try {
+        var el = google.search.cse.element.getElement('sbCseResults');
+        if (!el) { callback(null); return; }
+
+        var done = false;
+        el.clearAllResults();
+
+        var checkResults = function() {
+          if (done) return;
+          var container = document.getElementById('sbCseContainer');
+          if (!container) { callback(null); return; }
+
+          var results = container.querySelectorAll('.gsc-webResult .gs-result, .gsc-result');
+          if (results.length > 0) {
+            done = true;
+            var parsed = parseCSEResults(results, query);
+            callback(parsed);
+          }
+        };
+
+        var observer = new MutationObserver(function() { checkResults(); });
+        var target = document.getElementById('sbCseResults');
+        if (target) observer.observe(target, { childList: true, subtree: true });
+
+        el.execute('ServiceNow ' + query);
+
+        setTimeout(function() {
+          if (!done) { checkResults(); }
+          setTimeout(function() {
+            if (!done) { done = true; observer.disconnect(); callback(buildFallbackLinks(query)); }
+          }, 3000);
+        }, 1500);
+
+        setTimeout(function() { observer.disconnect(); }, 6000);
+      } catch(e) {
+        callback(buildFallbackLinks(query));
+      }
+    });
+  }
+
+  function parseCSEResults(resultEls, query) {
+    var items = [];
+    for (var i = 0; i < Math.min(resultEls.length, 3); i++) {
+      var el = resultEls[i];
+      var linkEl = el.querySelector('a.gs-title');
+      var snippetEl = el.querySelector('.gs-snippet');
+      if (!linkEl) continue;
+      var url = linkEl.href || '';
+      var title = linkEl.textContent || '';
+      var snippet = snippetEl ? snippetEl.textContent : '';
+      if (!url || url.indexOf('http') !== 0) continue;
+      items.push({ title: title, snippet: snippet, url: url, source: extractDomain(url) });
+    }
+
+    if (items.length === 0) return buildFallbackLinks(query);
+
+    var best = items[0];
+    var dominated = ['docs.servicenow.com', 'developer.servicenow.com', 'community.servicenow.com'];
+    for (var j = 0; j < items.length; j++) {
+      for (var d = 0; d < dominated.length; d++) {
+        if (items[j].source.indexOf(dominated[d]) !== -1) { best = items[j]; break; }
+      }
+      if (best !== items[0]) break;
+    }
+
+    var reason = 'Top search result';
+    if (best.source.indexOf('docs.servicenow.com') !== -1) reason = 'Official ServiceNow documentation';
+    else if (best.source.indexOf('community.servicenow.com') !== -1) reason = 'ServiceNow community discussion';
+    else if (best.source.indexOf('developer.servicenow.com') !== -1) reason = 'ServiceNow developer resource';
+
+    return {
+      title: best.title,
+      snippet: best.snippet,
+      url: best.url,
+      source: best.source,
+      reason: reason
+    };
+  }
+
   function fetchWebResult(query, callback) {
-    var q = 'ServiceNow ' + query;
-
-    if (config && config.googleCseKey && config.googleCseId) {
-      var endpoint = 'https://www.googleapis.com/customsearch/v1?key=' + config.googleCseKey +
-        '&cx=' + config.googleCseId + '&q=' + encodeURIComponent(q) + '&num=3';
-      fetchJSON(endpoint, function(data) {
-        if (!data || !data.items || data.items.length === 0) { callback(buildFallbackLinks(query)); return; }
-        var best = pickBestGoogleResult(data.items, query);
-        callback(best);
-      });
-      return;
-    }
-
-    if (config && config.webSearchEndpoint) {
-      fetchJSON(config.webSearchEndpoint + encodeURIComponent(q), function(data) {
-        if (!data) { callback(buildFallbackLinks(query)); return; }
-        var result = parseDDGResponse(data, query);
-        callback(result || buildFallbackLinks(query));
-      });
-      return;
-    }
-
-    callback(buildFallbackLinks(query));
+    searchCSE(query, callback);
   }
 
   function buildFallbackLinks(query) {
