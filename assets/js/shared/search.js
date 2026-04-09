@@ -135,6 +135,152 @@
 
   // ── Apple-Style UI ──
 
+  // ── Web Search (Best from the Web) ──
+
+  var webSearchTimer;
+  var lastWebQuery = '';
+
+  function fetchWebResult(query, callback) {
+    var q = 'ServiceNow ' + query;
+    var endpoint = (config && config.webSearchEndpoint) || 'https://api.duckduckgo.com/?q=' + encodeURIComponent(q) + '&format=json&no_redirect=1&no_html=1&skip_disambig=1';
+
+    if (config && config.googleCseKey && config.googleCseId) {
+      endpoint = 'https://www.googleapis.com/customsearch/v1?key=' + config.googleCseKey +
+        '&cx=' + config.googleCseId + '&q=' + encodeURIComponent(q) + '&num=3';
+      fetchJSON(endpoint, function(data) {
+        if (!data || !data.items || data.items.length === 0) { callback(null); return; }
+        var best = pickBestGoogleResult(data.items, query);
+        callback(best);
+      });
+      return;
+    }
+
+    fetchJSON(endpoint, function(data) {
+      if (!data) { callback(null); return; }
+      var result = parseDDGResponse(data, query);
+      callback(result);
+    });
+  }
+
+  function fetchJSON(url, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.timeout = 5000;
+    xhr.onload = function() {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try { cb(JSON.parse(xhr.responseText)); } catch(e) { cb(null); }
+      } else { cb(null); }
+    };
+    xhr.onerror = function() { cb(null); };
+    xhr.ontimeout = function() { cb(null); };
+    xhr.send();
+  }
+
+  function parseDDGResponse(data, query) {
+    if (data.AbstractURL && data.Abstract) {
+      return {
+        title: data.Heading || query,
+        snippet: data.Abstract,
+        url: data.AbstractURL,
+        source: extractDomain(data.AbstractURL),
+        reason: data.AbstractSource ? 'From ' + data.AbstractSource + ' — comprehensive reference' : 'Top reference match'
+      };
+    }
+    if (data.RelatedTopics && data.RelatedTopics.length > 0) {
+      for (var i = 0; i < data.RelatedTopics.length; i++) {
+        var topic = data.RelatedTopics[i];
+        if (topic.FirstURL && topic.Text) {
+          return {
+            title: topic.Text.split(' - ')[0] || topic.Text.substring(0, 80),
+            snippet: topic.Text,
+            url: topic.FirstURL,
+            source: extractDomain(topic.FirstURL),
+            reason: 'Most relevant related topic'
+          };
+        }
+        if (topic.Topics) {
+          for (var j = 0; j < topic.Topics.length; j++) {
+            if (topic.Topics[j].FirstURL) {
+              return {
+                title: topic.Topics[j].Text.split(' - ')[0] || topic.Topics[j].Text.substring(0, 80),
+                snippet: topic.Topics[j].Text,
+                url: topic.Topics[j].FirstURL,
+                source: extractDomain(topic.Topics[j].FirstURL),
+                reason: 'Related ' + (topic.Name || 'topic')
+              };
+            }
+          }
+        }
+      }
+    }
+    if (data.Results && data.Results.length > 0 && data.Results[0].FirstURL) {
+      return {
+        title: data.Results[0].Text || query,
+        snippet: data.Results[0].Text,
+        url: data.Results[0].FirstURL,
+        source: extractDomain(data.Results[0].FirstURL),
+        reason: 'Direct answer'
+      };
+    }
+    return null;
+  }
+
+  function pickBestGoogleResult(items, query) {
+    var dominated = ['docs.servicenow.com', 'developer.servicenow.com', 'servicenow.com'];
+    var best = items[0];
+    for (var i = 0; i < items.length; i++) {
+      var domain = extractDomain(items[i].link);
+      for (var d = 0; d < dominated.length; d++) {
+        if (domain.indexOf(dominated[d]) !== -1) { best = items[i]; break; }
+      }
+    }
+    return {
+      title: best.title,
+      snippet: best.snippet,
+      url: best.link,
+      source: extractDomain(best.link),
+      reason: best.link.indexOf('docs.servicenow.com') !== -1
+        ? 'Official ServiceNow documentation'
+        : best.link.indexOf('community.servicenow.com') !== -1
+        ? 'ServiceNow community discussion'
+        : 'Highest relevance match'
+    };
+  }
+
+  function extractDomain(url) {
+    try { return new URL(url).hostname.replace('www.', ''); } catch(e) { return url; }
+  }
+
+  function renderWebResult(result, query) {
+    var webEl = resultsEl.querySelector('.sb-web-section');
+    if (!webEl) return;
+    if (!result) {
+      webEl.innerHTML = '';
+      return;
+    }
+    webEl.innerHTML =
+      '<div class="sb-web-label">Best from the Web</div>' +
+      '<a class="sb-web-result" href="' + escHtml(result.url) + '" target="_blank" rel="noopener">' +
+        '<div class="sb-web-result-body">' +
+          '<div class="sb-web-result-title">' + highlightMatch(escHtml(result.title), query) + '</div>' +
+          '<div class="sb-web-result-snippet">' + escHtml(result.snippet).substring(0, 160) + '</div>' +
+          '<div class="sb-web-result-meta">' +
+            '<span class="sb-web-source">' + escHtml(result.source) + '</span>' +
+            '<span class="sb-web-reason">' + escHtml(result.reason) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="sb-web-arrow"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+      '</a>';
+  }
+
+  function renderWebLoading() {
+    var webEl = resultsEl.querySelector('.sb-web-section');
+    if (!webEl) return;
+    webEl.innerHTML =
+      '<div class="sb-web-label">Best from the Web</div>' +
+      '<div class="sb-web-loading"><div class="sb-web-loading-bar"></div><div class="sb-web-loading-bar short"></div></div>';
+  }
+
   var CSS = '\n\
 .sb-search-btn{background:none;border:1px solid rgba(128,128,128,0.25);border-radius:10px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;color:inherit;font-family:inherit;font-size:13px;transition:all 0.2s;opacity:0.7}\n\
 .sb-search-btn:hover{opacity:1;border-color:rgba(128,128,128,0.5)}\n\
@@ -174,6 +320,29 @@
   .sb-search-esc{background:rgba(255,255,255,0.1);color:#98989d}\n\
   .sb-search-input-wrap{border-bottom-color:rgba(255,255,255,0.08)}\n\
   .sb-search-footer{border-top-color:rgba(255,255,255,0.06)}\n\
+}\n\
+.sb-web-section{border-top:1px solid rgba(0,0,0,0.06);margin-top:4px;padding-top:4px}\n\
+.sb-web-label{font-size:11px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:8px 16px 4px}\n\
+.sb-web-result{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:12px;cursor:pointer;transition:background 0.15s;text-decoration:none;color:inherit}\n\
+.sb-web-result:hover{background:rgba(52,199,89,0.06)}\n\
+.sb-web-result-body{flex:1;min-width:0}\n\
+.sb-web-result-title{font-size:14px;font-weight:600;color:#1d1d1f;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}\n\
+.sb-web-result-title mark{background:rgba(52,199,89,0.15);color:#16a34a;border-radius:2px;padding:0 1px}\n\
+.sb-web-result-snippet{font-size:13px;color:#6e6e73;margin-top:4px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}\n\
+.sb-web-result-meta{display:flex;gap:12px;margin-top:6px;font-size:11px;flex-wrap:wrap}\n\
+.sb-web-source{color:#16a34a;font-weight:600}\n\
+.sb-web-reason{color:#86868b;font-style:italic}\n\
+.sb-web-arrow{color:#86868b;flex-shrink:0;margin-top:4px}\n\
+.sb-web-loading{padding:12px 16px}\n\
+.sb-web-loading-bar{height:12px;background:rgba(0,0,0,0.05);border-radius:6px;margin-bottom:8px;animation:sbShimmer 1.2s ease-in-out infinite}\n\
+.sb-web-loading-bar.short{width:60%}\n\
+@keyframes sbShimmer{0%,100%{opacity:0.4}50%{opacity:0.8}}\n\
+@media(prefers-color-scheme:dark){\n\
+  .sb-web-section{border-top-color:rgba(255,255,255,0.06)}\n\
+  .sb-web-result:hover{background:rgba(52,199,89,0.08)}\n\
+  .sb-web-result-title{color:#f5f5f7}\n\
+  .sb-web-result-snippet{color:#98989d}\n\
+  .sb-web-loading-bar{background:rgba(255,255,255,0.08)}\n\
 }\n\
 @media(max-width:768px){\n\
   .sb-search-btn kbd{display:none}\n\
@@ -222,7 +391,7 @@
         '<button class="sb-search-esc">ESC</button>' +
       '</div>' +
       '<div class="sb-search-results">' +
-        '<div class="sb-search-hint">Start typing to search across all content</div>' +
+        '<div class="sb-search-hint">Search across articles + the best from the web</div>' +
       '</div>' +
       '<div class="sb-search-footer">' +
         '<span><kbd>&uarr;</kbd><kbd>&darr;</kbd> navigate</span>' +
@@ -247,7 +416,7 @@
     overlayEl.classList.add('open');
     modalEl.classList.add('open');
     inputEl.value = '';
-    resultsEl.innerHTML = '<div class="sb-search-hint">Start typing to search across all content</div>';
+    resultsEl.innerHTML = '<div class="sb-search-hint">Search across articles + the best from the web</div>';
     activeIdx = -1;
     resultItems = [];
     setTimeout(function() { inputEl.focus(); }, 50);
@@ -270,7 +439,7 @@
     var q = inputEl.value.trim();
     if (q.length < 2) {
       resultsEl.innerHTML = q.length === 0
-        ? '<div class="sb-search-hint">Start typing to search across all content</div>'
+        ? '<div class="sb-search-hint">Search across articles + the best from the web</div>'
         : '<div class="sb-search-hint">Type at least 2 characters</div>';
       resultItems = [];
       activeIdx = -1;
@@ -308,6 +477,7 @@
         '</div></div>';
     });
 
+    html += '<div class="sb-web-section"></div>';
     resultsEl.innerHTML = html;
     resultItems = results;
     activeIdx = -1;
@@ -321,6 +491,19 @@
         setActive(parseInt(el.dataset.idx));
       });
     });
+
+    if (config.enableWebSearch !== false) {
+      clearTimeout(webSearchTimer);
+      var currentQuery = q;
+      webSearchTimer = setTimeout(function() {
+        if (currentQuery !== inputEl.value.trim()) return;
+        renderWebLoading();
+        fetchWebResult(currentQuery, function(result) {
+          if (inputEl.value.trim() !== currentQuery) return;
+          renderWebResult(result, currentQuery);
+        });
+      }, 400);
+    }
   }
 
   function onKeydown(e) {
