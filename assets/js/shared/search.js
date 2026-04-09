@@ -142,24 +142,95 @@
 
   function fetchWebResult(query, callback) {
     var q = 'ServiceNow ' + query;
-    var endpoint = (config && config.webSearchEndpoint) || 'https://api.duckduckgo.com/?q=' + encodeURIComponent(q) + '&format=json&no_redirect=1&no_html=1&skip_disambig=1';
 
     if (config && config.googleCseKey && config.googleCseId) {
-      endpoint = 'https://www.googleapis.com/customsearch/v1?key=' + config.googleCseKey +
+      var endpoint = 'https://www.googleapis.com/customsearch/v1?key=' + config.googleCseKey +
         '&cx=' + config.googleCseId + '&q=' + encodeURIComponent(q) + '&num=3';
       fetchJSON(endpoint, function(data) {
-        if (!data || !data.items || data.items.length === 0) { callback(null); return; }
+        if (!data || !data.items || data.items.length === 0) { callback(buildFallbackLinks(query)); return; }
         var best = pickBestGoogleResult(data.items, query);
         callback(best);
       });
       return;
     }
 
-    fetchJSON(endpoint, function(data) {
-      if (!data) { callback(null); return; }
-      var result = parseDDGResponse(data, query);
-      callback(result);
+    if (config && config.webSearchEndpoint) {
+      fetchJSON(config.webSearchEndpoint + encodeURIComponent(q), function(data) {
+        if (!data) { callback(buildFallbackLinks(query)); return; }
+        var result = parseDDGResponse(data, query);
+        callback(result || buildFallbackLinks(query));
+      });
+      return;
+    }
+
+    callback(buildFallbackLinks(query));
+  }
+
+  function buildFallbackLinks(query) {
+    var q = query.toLowerCase().replace(/\s+/g, ' ').trim();
+    var tokens = tokenize(query);
+
+    var sources = [
+      { domain: 'docs.servicenow.com', name: 'ServiceNow Docs', prefix: 'site:docs.servicenow.com ServiceNow ', icon: '\uD83D\uDCD6', weight: 3 },
+      { domain: 'developer.servicenow.com', name: 'Developer Portal', prefix: 'site:developer.servicenow.com ', icon: '\uD83D\uDCBB', weight: 2 },
+      { domain: 'community.servicenow.com', name: 'Community', prefix: 'site:community.servicenow.com ServiceNow ', icon: '\uD83D\uDCAC', weight: 1 }
+    ];
+
+    var searchTerms = {
+      'gliderecord': {source: 0, query: 'GlideRecord API'},
+      'glideajax': {source: 0, query: 'GlideAjax'},
+      'business rule': {source: 0, query: 'business rules'},
+      'client script': {source: 0, query: 'client scripts'},
+      'script include': {source: 0, query: 'script includes'},
+      'ui policy': {source: 0, query: 'UI policy'},
+      'flow designer': {source: 0, query: 'flow designer'},
+      'acl': {source: 0, query: 'access control rules ACL'},
+      'cmdb': {source: 0, query: 'CMDB configuration management'},
+      'csdm': {source: 0, query: 'common service data model CSDM'},
+      'service catalog': {source: 0, query: 'service catalog'},
+      'update set': {source: 0, query: 'update sets'},
+      'import set': {source: 0, query: 'import sets transform map'},
+      'service portal': {source: 0, query: 'service portal widget'},
+      'now assist': {source: 0, query: 'now assist AI'},
+      'discovery': {source: 0, query: 'discovery ITOM'},
+      'service mapping': {source: 0, query: 'service mapping'},
+      'atf': {source: 0, query: 'automated test framework ATF'},
+      'rest api': {source: 1, query: 'REST API'},
+      'performance': {source: 2, query: 'ServiceNow performance best practices'},
+      'domain separation': {source: 0, query: 'domain separation'},
+      'notification': {source: 0, query: 'email notification'},
+      'g_form': {source: 1, query: 'g_form API methods'},
+      'glideaggregate': {source: 0, query: 'GlideAggregate'},
+      'glidedatetime': {source: 0, query: 'GlideDateTime'},
+      'encoded query': {source: 0, query: 'encoded query'},
+    };
+
+    var bestSource = sources[0];
+    var bestQuery = 'ServiceNow ' + query;
+    var reason = 'Search official documentation';
+
+    for (var key in searchTerms) {
+      if (q.indexOf(key) !== -1) {
+        var match = searchTerms[key];
+        bestSource = sources[match.source];
+        bestQuery = match.query;
+        reason = 'Matched: ' + key;
+        break;
+      }
+    }
+
+    var results = sources.map(function(src) {
+      return {
+        title: src.name + ': ' + query,
+        snippet: 'Search ' + src.name + ' for detailed documentation and examples',
+        url: 'https://www.google.com/search?q=' + encodeURIComponent(src.prefix + bestQuery),
+        source: src.domain,
+        icon: src.icon,
+        reason: reason
+      };
     });
+
+    return { type: 'multi', results: results, query: query };
   }
 
   function fetchJSON(url, cb) {
@@ -258,9 +329,27 @@
     if (!result) {
       webEl.innerHTML =
         '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Web Search</div>' +
-        '<div class="sb-web-noresult">No stronger external match found for this query</div>';
+        '<div class="sb-web-noresult">No external match found for this query</div>';
       return;
     }
+
+    var arrow = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    if (result.type === 'multi') {
+      var html = '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Search the Web</div>';
+      result.results.forEach(function(r) {
+        html += '<a class="sb-web-result" href="' + escHtml(r.url) + '" target="_blank" rel="noopener">' +
+          '<div class="sb-web-result-icon-sm">' + r.icon + '</div>' +
+          '<div class="sb-web-result-body">' +
+            '<div class="sb-web-result-title">' + escHtml(r.source) + '</div>' +
+            '<div class="sb-web-result-snippet">Search for &ldquo;' + escHtml(result.query) + '&rdquo;</div>' +
+          '</div>' +
+          '<div class="sb-web-arrow">' + arrow + '</div></a>';
+      });
+      webEl.innerHTML = html;
+      return;
+    }
+
     webEl.innerHTML =
       '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Web Search</div>' +
       '<a class="sb-web-result" href="' + escHtml(result.url) + '" target="_blank" rel="noopener">' +
@@ -272,7 +361,7 @@
             '<span class="sb-web-reason">' + escHtml(result.reason) + '</span>' +
           '</div>' +
         '</div>' +
-        '<div class="sb-web-arrow"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+        '<div class="sb-web-arrow">' + arrow + '</div>' +
       '</a>';
   }
 
@@ -390,6 +479,7 @@
 .sb-web-source{color:#16a34a;font-weight:600}\n\
 .sb-web-reason{color:#86868b;font-style:italic}\n\
 .sb-web-arrow{color:#86868b;flex-shrink:0;margin-top:4px}\n\
+.sb-web-result-icon-sm{font-size:20px;width:32px;text-align:center;flex-shrink:0;margin-top:2px}\n\
 .sb-web-loading{padding:12px 16px}\n\
 .sb-web-loading-bar{height:12px;background:rgba(0,0,0,0.05);border-radius:6px;margin-bottom:8px;animation:sbShimmer 1.2s ease-in-out infinite}\n\
 .sb-web-loading-bar.short{width:60%}\n\
