@@ -254,18 +254,21 @@
   function renderWebResult(result, query) {
     var webEl = resultsEl.querySelector('.sb-web-section');
     if (!webEl) return;
+    clearWebProgress();
     if (!result) {
-      webEl.innerHTML = '';
+      webEl.innerHTML =
+        '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Web Search</div>' +
+        '<div class="sb-web-noresult">No stronger external match found for this query</div>';
       return;
     }
     webEl.innerHTML =
-      '<div class="sb-web-label">Best from the Web</div>' +
+      '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Web Search</div>' +
       '<a class="sb-web-result" href="' + escHtml(result.url) + '" target="_blank" rel="noopener">' +
         '<div class="sb-web-result-body">' +
           '<div class="sb-web-result-title">' + highlightMatch(escHtml(result.title), query) + '</div>' +
-          '<div class="sb-web-result-snippet">' + escHtml(result.snippet).substring(0, 160) + '</div>' +
+          '<div class="sb-web-result-snippet">' + escHtml(result.snippet).substring(0, 180) + '</div>' +
           '<div class="sb-web-result-meta">' +
-            '<span class="sb-web-source">' + escHtml(result.source) + '</span>' +
+            '<span class="sb-web-source">&#128279; ' + escHtml(result.source) + '</span>' +
             '<span class="sb-web-reason">' + escHtml(result.reason) + '</span>' +
           '</div>' +
         '</div>' +
@@ -273,12 +276,50 @@
       '</a>';
   }
 
+  var webProgressSteps = [
+    {text: 'Searching the web for ServiceNow content...', icon: '&#128269;', delay: 0},
+    {text: 'Scanning docs.servicenow.com...', icon: '&#128196;', delay: 800},
+    {text: 'Checking community forums...', icon: '&#128172;', delay: 1600},
+    {text: 'Ranking results...', icon: '&#9889;', delay: 2200}
+  ];
+  var webProgressTimer = null;
+
   function renderWebLoading() {
     var webEl = resultsEl.querySelector('.sb-web-section');
     if (!webEl) return;
+    clearWebProgress();
     webEl.innerHTML =
-      '<div class="sb-web-label">Best from the Web</div>' +
-      '<div class="sb-web-loading"><div class="sb-web-loading-bar"></div><div class="sb-web-loading-bar short"></div></div>';
+      '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Web Search</div>' +
+      '<div class="sb-web-progress">' +
+        '<div class="sb-web-step active"><span class="sb-web-step-dot"></span><span class="sb-web-step-text">' + webProgressSteps[0].text + '</span></div>' +
+      '</div>';
+
+    var stepIdx = 1;
+    webProgressTimer = setInterval(function() {
+      if (stepIdx >= webProgressSteps.length) { clearInterval(webProgressTimer); return; }
+      var prog = webEl.querySelector('.sb-web-progress');
+      if (!prog) { clearInterval(webProgressTimer); return; }
+      var steps = prog.querySelectorAll('.sb-web-step');
+      steps.forEach(function(s) { s.classList.remove('active'); s.classList.add('done'); });
+      var step = webProgressSteps[stepIdx];
+      prog.innerHTML += '<div class="sb-web-step active"><span class="sb-web-step-dot"></span><span class="sb-web-step-text">' + step.text + '</span></div>';
+      stepIdx++;
+    }, 700);
+  }
+
+  function clearWebProgress() {
+    if (webProgressTimer) { clearInterval(webProgressTimer); webProgressTimer = null; }
+  }
+
+  function renderWebComplete() {
+    clearWebProgress();
+    var webEl = resultsEl.querySelector('.sb-web-section');
+    if (!webEl) return;
+    var prog = webEl.querySelector('.sb-web-progress');
+    if (prog) {
+      prog.querySelectorAll('.sb-web-step').forEach(function(s) { s.classList.remove('active'); s.classList.add('done'); });
+      prog.innerHTML += '<div class="sb-web-step done"><span class="sb-web-step-dot"></span><span class="sb-web-step-text">Found best match &#10003;</span></div>';
+    }
   }
 
   var CSS = '\n\
@@ -322,7 +363,23 @@
   .sb-search-footer{border-top-color:rgba(255,255,255,0.06)}\n\
 }\n\
 .sb-web-section{border-top:1px solid rgba(0,0,0,0.06);margin-top:4px;padding-top:4px}\n\
-.sb-web-label{font-size:11px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:8px 16px 4px}\n\
+.sb-web-label{font-size:11px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:8px 16px 6px;display:flex;align-items:center;gap:6px}\n\
+.sb-web-label-icon{font-size:14px}\n\
+.sb-web-trigger{display:flex;align-items:center;gap:8px;padding:10px 16px;margin:0 8px 4px;border-radius:10px;border:1px dashed rgba(52,199,89,0.3);background:rgba(52,199,89,0.04);cursor:pointer;transition:all 0.2s;color:#6e6e73;font-size:13px;font-family:inherit}\n\
+.sb-web-trigger:hover{border-color:rgba(52,199,89,0.5);background:rgba(52,199,89,0.08);color:#1d1d1f}\n\
+.sb-web-trigger svg{width:16px;height:16px;stroke:#16a34a;fill:none;stroke-width:2}\n\
+.sb-web-trigger-label{flex:1}\n\
+.sb-web-trigger kbd{font-family:inherit;font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.08);color:#86868b}\n\
+.sb-web-progress{padding:4px 16px 8px}\n\
+.sb-web-step{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;color:#86868b;opacity:0;animation:sbStepIn 0.3s ease forwards}\n\
+.sb-web-step.done{color:#16a34a}\n\
+.sb-web-step.active .sb-web-step-dot{animation:sbPulse 1s ease-in-out infinite}\n\
+.sb-web-step-dot{width:6px;height:6px;border-radius:50%;background:#16a34a;flex-shrink:0}\n\
+.sb-web-step.done .sb-web-step-dot{background:#16a34a}\n\
+.sb-web-step.active .sb-web-step-dot{background:#f59e0b}\n\
+.sb-web-noresult{padding:8px 16px 12px;font-size:12px;color:#86868b;font-style:italic}\n\
+@keyframes sbStepIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}\n\
+@keyframes sbPulse{0%,100%{opacity:1}50%{opacity:0.4}}\n\
 .sb-web-result{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-radius:12px;cursor:pointer;transition:background 0.15s;text-decoration:none;color:inherit}\n\
 .sb-web-result:hover{background:rgba(52,199,89,0.06)}\n\
 .sb-web-result-body{flex:1;min-width:0}\n\
@@ -342,7 +399,9 @@
   .sb-web-result:hover{background:rgba(52,199,89,0.08)}\n\
   .sb-web-result-title{color:#f5f5f7}\n\
   .sb-web-result-snippet{color:#98989d}\n\
-  .sb-web-loading-bar{background:rgba(255,255,255,0.08)}\n\
+  .sb-web-trigger{border-color:rgba(52,199,89,0.2);background:rgba(52,199,89,0.05);color:#98989d}\n\
+  .sb-web-trigger:hover{color:#f5f5f7;border-color:rgba(52,199,89,0.4);background:rgba(52,199,89,0.1)}\n\
+  .sb-web-trigger kbd{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.1);color:#6e6e73}\n\
 }\n\
 @media(max-width:768px){\n\
   .sb-search-btn kbd{display:none}\n\
@@ -416,9 +475,12 @@
     overlayEl.classList.add('open');
     modalEl.classList.add('open');
     inputEl.value = '';
-    resultsEl.innerHTML = '<div class="sb-search-hint">Search across articles + the best from the web</div>';
+    resultsEl.innerHTML = '<div class="sb-search-hint">Search across articles + the best from the web<br><span style="font-size:11px;opacity:0.7">Type to search locally &bull; Click &#127760; or press <kbd style="font-size:10px;padding:1px 4px;border-radius:3px;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.08)">&#8997;W</kbd> to search the web</span></div>';
     activeIdx = -1;
     resultItems = [];
+    webSearchInFlight = false;
+    clearWebProgress();
+    clearTimeout(webSearchTimer);
     setTimeout(function() { inputEl.focus(); }, 50);
     document.body.style.overflow = 'hidden';
   }
@@ -477,7 +539,15 @@
         '</div></div>';
     });
 
-    html += '<div class="sb-web-section"></div>';
+    if (config.enableWebSearch !== false) {
+      var globeIcon = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+      html += '<div class="sb-web-section">' +
+        '<div class="sb-web-trigger" id="sbWebTrigger">' +
+          globeIcon +
+          '<span class="sb-web-trigger-label">Search the web for <strong>' + escHtml(q) + '</strong></span>' +
+          '<kbd>&#8997;W</kbd>' +
+        '</div></div>';
+    }
     resultsEl.innerHTML = html;
     resultItems = results;
     activeIdx = -1;
@@ -493,17 +563,32 @@
     });
 
     if (config.enableWebSearch !== false) {
-      clearTimeout(webSearchTimer);
+      var triggerBtn = document.getElementById('sbWebTrigger');
       var currentQuery = q;
+      if (triggerBtn) {
+        triggerBtn.addEventListener('click', function() { triggerWebSearch(currentQuery); });
+      }
+      clearTimeout(webSearchTimer);
       webSearchTimer = setTimeout(function() {
-        if (currentQuery !== inputEl.value.trim()) return;
-        renderWebLoading();
-        fetchWebResult(currentQuery, function(result) {
-          if (inputEl.value.trim() !== currentQuery) return;
-          renderWebResult(result, currentQuery);
-        });
-      }, 400);
+        if (inputEl.value.trim() !== currentQuery) return;
+        triggerWebSearch(currentQuery);
+      }, 1500);
     }
+  }
+
+  var webSearchInFlight = false;
+
+  function triggerWebSearch(query) {
+    if (webSearchInFlight) return;
+    webSearchInFlight = true;
+    var triggerBtn = document.getElementById('sbWebTrigger');
+    if (triggerBtn) triggerBtn.style.display = 'none';
+    renderWebLoading();
+    fetchWebResult(query, function(result) {
+      webSearchInFlight = false;
+      if (inputEl.value.trim() !== query) return;
+      renderWebResult(result, query);
+    });
   }
 
   function onKeydown(e) {
@@ -518,6 +603,10 @@
       selectResult(activeIdx);
     } else if (e.key === 'Escape') {
       closeSearch();
+    } else if (e.altKey && e.key === 'w') {
+      e.preventDefault();
+      var q = inputEl.value.trim();
+      if (q.length >= 2) triggerWebSearch(q);
     }
   }
 
