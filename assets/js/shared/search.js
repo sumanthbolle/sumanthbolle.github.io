@@ -140,26 +140,191 @@
   var webSearchTimer;
   var lastWebQuery = '';
 
-  function fetchWebResult(query, callback) {
-    var q = 'ServiceNow ' + query;
-    var endpoint = (config && config.webSearchEndpoint) || 'https://api.duckduckgo.com/?q=' + encodeURIComponent(q) + '&format=json&no_redirect=1&no_html=1&skip_disambig=1';
+  var cseLoaded = false;
+  var cseReady = false;
+  var cseCallbackQueue = [];
+  var CSE_CX = '71b23c515f34d4d52';
 
-    if (config && config.googleCseKey && config.googleCseId) {
-      endpoint = 'https://www.googleapis.com/customsearch/v1?key=' + config.googleCseKey +
-        '&cx=' + config.googleCseId + '&q=' + encodeURIComponent(q) + '&num=3';
-      fetchJSON(endpoint, function(data) {
-        if (!data || !data.items || data.items.length === 0) { callback(null); return; }
-        var best = pickBestGoogleResult(data.items, query);
-        callback(best);
-      });
-      return;
+  function loadCSE(cb) {
+    if (cseReady) { cb(); return; }
+    cseCallbackQueue.push(cb);
+    if (cseLoaded) return;
+    cseLoaded = true;
+
+    window.__gcse = window.__gcse || {};
+    window.__gcse.parsetags = 'explicit';
+    window.__gcse.callback = function() {
+      var container = document.getElementById('sbCseContainer');
+      if (container) {
+        google.search.cse.element.render({ div: 'sbCseResults', tag: 'searchresults-only' });
+      }
+      cseReady = true;
+      cseCallbackQueue.forEach(function(fn) { fn(); });
+      cseCallbackQueue = [];
+    };
+
+    var cseContainer = document.createElement('div');
+    cseContainer.id = 'sbCseContainer';
+    cseContainer.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden';
+    cseContainer.innerHTML = '<div id="sbCseResults"></div>';
+    document.body.appendChild(cseContainer);
+
+    var script = document.createElement('script');
+    script.src = 'https://cse.google.com/cse.js?cx=' + CSE_CX;
+    script.async = true;
+    document.head.appendChild(script);
+  }
+
+  function searchCSE(query, callback) {
+    loadCSE(function() {
+      try {
+        var el = google.search.cse.element.getElement('sbCseResults');
+        if (!el) { callback(null); return; }
+
+        var done = false;
+        el.clearAllResults();
+
+        var checkResults = function() {
+          if (done) return;
+          var container = document.getElementById('sbCseContainer');
+          if (!container) { callback(null); return; }
+
+          var results = container.querySelectorAll('.gsc-webResult .gs-result, .gsc-result');
+          if (results.length > 0) {
+            done = true;
+            var parsed = parseCSEResults(results, query);
+            callback(parsed);
+          }
+        };
+
+        var observer = new MutationObserver(function() { checkResults(); });
+        var target = document.getElementById('sbCseResults');
+        if (target) observer.observe(target, { childList: true, subtree: true });
+
+        el.execute('ServiceNow ' + query);
+
+        setTimeout(function() {
+          if (!done) { checkResults(); }
+          setTimeout(function() {
+            if (!done) { done = true; observer.disconnect(); callback(buildFallbackLinks(query)); }
+          }, 3000);
+        }, 1500);
+
+        setTimeout(function() { observer.disconnect(); }, 6000);
+      } catch(e) {
+        callback(buildFallbackLinks(query));
+      }
+    });
+  }
+
+  function parseCSEResults(resultEls, query) {
+    var items = [];
+    for (var i = 0; i < Math.min(resultEls.length, 3); i++) {
+      var el = resultEls[i];
+      var linkEl = el.querySelector('a.gs-title');
+      var snippetEl = el.querySelector('.gs-snippet');
+      if (!linkEl) continue;
+      var url = linkEl.href || '';
+      var title = linkEl.textContent || '';
+      var snippet = snippetEl ? snippetEl.textContent : '';
+      if (!url || url.indexOf('http') !== 0) continue;
+      items.push({ title: title, snippet: snippet, url: url, source: extractDomain(url) });
     }
 
-    fetchJSON(endpoint, function(data) {
-      if (!data) { callback(null); return; }
-      var result = parseDDGResponse(data, query);
-      callback(result);
+    if (items.length === 0) return buildFallbackLinks(query);
+
+    var best = items[0];
+    var dominated = ['docs.servicenow.com', 'developer.servicenow.com', 'community.servicenow.com'];
+    for (var j = 0; j < items.length; j++) {
+      for (var d = 0; d < dominated.length; d++) {
+        if (items[j].source.indexOf(dominated[d]) !== -1) { best = items[j]; break; }
+      }
+      if (best !== items[0]) break;
+    }
+
+    var reason = 'Top search result';
+    if (best.source.indexOf('docs.servicenow.com') !== -1) reason = 'Official ServiceNow documentation';
+    else if (best.source.indexOf('community.servicenow.com') !== -1) reason = 'ServiceNow community discussion';
+    else if (best.source.indexOf('developer.servicenow.com') !== -1) reason = 'ServiceNow developer resource';
+
+    return {
+      title: best.title,
+      snippet: best.snippet,
+      url: best.url,
+      source: best.source,
+      reason: reason
+    };
+  }
+
+  function fetchWebResult(query, callback) {
+    searchCSE(query, callback);
+  }
+
+  function buildFallbackLinks(query) {
+    var q = query.toLowerCase().replace(/\s+/g, ' ').trim();
+    var tokens = tokenize(query);
+
+    var sources = [
+      { domain: 'docs.servicenow.com', name: 'ServiceNow Docs', prefix: 'site:docs.servicenow.com ServiceNow ', icon: '\uD83D\uDCD6', weight: 3 },
+      { domain: 'developer.servicenow.com', name: 'Developer Portal', prefix: 'site:developer.servicenow.com ', icon: '\uD83D\uDCBB', weight: 2 },
+      { domain: 'community.servicenow.com', name: 'Community', prefix: 'site:community.servicenow.com ServiceNow ', icon: '\uD83D\uDCAC', weight: 1 }
+    ];
+
+    var searchTerms = {
+      'gliderecord': {source: 0, query: 'GlideRecord API'},
+      'glideajax': {source: 0, query: 'GlideAjax'},
+      'business rule': {source: 0, query: 'business rules'},
+      'client script': {source: 0, query: 'client scripts'},
+      'script include': {source: 0, query: 'script includes'},
+      'ui policy': {source: 0, query: 'UI policy'},
+      'flow designer': {source: 0, query: 'flow designer'},
+      'acl': {source: 0, query: 'access control rules ACL'},
+      'cmdb': {source: 0, query: 'CMDB configuration management'},
+      'csdm': {source: 0, query: 'common service data model CSDM'},
+      'service catalog': {source: 0, query: 'service catalog'},
+      'update set': {source: 0, query: 'update sets'},
+      'import set': {source: 0, query: 'import sets transform map'},
+      'service portal': {source: 0, query: 'service portal widget'},
+      'now assist': {source: 0, query: 'now assist AI'},
+      'discovery': {source: 0, query: 'discovery ITOM'},
+      'service mapping': {source: 0, query: 'service mapping'},
+      'atf': {source: 0, query: 'automated test framework ATF'},
+      'rest api': {source: 1, query: 'REST API'},
+      'performance': {source: 2, query: 'ServiceNow performance best practices'},
+      'domain separation': {source: 0, query: 'domain separation'},
+      'notification': {source: 0, query: 'email notification'},
+      'g_form': {source: 1, query: 'g_form API methods'},
+      'glideaggregate': {source: 0, query: 'GlideAggregate'},
+      'glidedatetime': {source: 0, query: 'GlideDateTime'},
+      'encoded query': {source: 0, query: 'encoded query'},
+    };
+
+    var bestSource = sources[0];
+    var bestQuery = 'ServiceNow ' + query;
+    var reason = 'Search official documentation';
+
+    for (var key in searchTerms) {
+      if (q.indexOf(key) !== -1) {
+        var match = searchTerms[key];
+        bestSource = sources[match.source];
+        bestQuery = match.query;
+        reason = 'Matched: ' + key;
+        break;
+      }
+    }
+
+    var results = sources.map(function(src) {
+      return {
+        title: src.name + ': ' + query,
+        snippet: 'Search ' + src.name + ' for detailed documentation and examples',
+        url: 'https://www.google.com/search?q=' + encodeURIComponent(src.prefix + bestQuery),
+        source: src.domain,
+        icon: src.icon,
+        reason: reason
+      };
     });
+
+    return { type: 'multi', results: results, query: query };
   }
 
   function fetchJSON(url, cb) {
@@ -258,9 +423,27 @@
     if (!result) {
       webEl.innerHTML =
         '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Web Search</div>' +
-        '<div class="sb-web-noresult">No stronger external match found for this query</div>';
+        '<div class="sb-web-noresult">No external match found for this query</div>';
       return;
     }
+
+    var arrow = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    if (result.type === 'multi') {
+      var html = '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Search the Web</div>';
+      result.results.forEach(function(r) {
+        html += '<a class="sb-web-result" href="' + escHtml(r.url) + '" target="_blank" rel="noopener">' +
+          '<div class="sb-web-result-icon-sm">' + r.icon + '</div>' +
+          '<div class="sb-web-result-body">' +
+            '<div class="sb-web-result-title">' + escHtml(r.source) + '</div>' +
+            '<div class="sb-web-result-snippet">Search for &ldquo;' + escHtml(result.query) + '&rdquo;</div>' +
+          '</div>' +
+          '<div class="sb-web-arrow">' + arrow + '</div></a>';
+      });
+      webEl.innerHTML = html;
+      return;
+    }
+
     webEl.innerHTML =
       '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Web Search</div>' +
       '<a class="sb-web-result" href="' + escHtml(result.url) + '" target="_blank" rel="noopener">' +
@@ -272,7 +455,7 @@
             '<span class="sb-web-reason">' + escHtml(result.reason) + '</span>' +
           '</div>' +
         '</div>' +
-        '<div class="sb-web-arrow"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+        '<div class="sb-web-arrow">' + arrow + '</div>' +
       '</a>';
   }
 
@@ -390,6 +573,7 @@
 .sb-web-source{color:#16a34a;font-weight:600}\n\
 .sb-web-reason{color:#86868b;font-style:italic}\n\
 .sb-web-arrow{color:#86868b;flex-shrink:0;margin-top:4px}\n\
+.sb-web-result-icon-sm{font-size:20px;width:32px;text-align:center;flex-shrink:0;margin-top:2px}\n\
 .sb-web-loading{padding:12px 16px}\n\
 .sb-web-loading-bar{height:12px;background:rgba(0,0,0,0.05);border-radius:6px;margin-bottom:8px;animation:sbShimmer 1.2s ease-in-out infinite}\n\
 .sb-web-loading-bar.short{width:60%}\n\
