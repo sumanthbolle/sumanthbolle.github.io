@@ -53,9 +53,32 @@
     .header-stat-num{font-size:32px;font-weight:700;color:var(--white)}
     .header-stat-label{font-size:13px;color:var(--gray);margin-top:4px}
     
-    .interview-container{max-width:900px;margin:0 auto;padding:60px 22px}
+    .interview-layout{display:flex;max-width:1200px;margin:0 auto;padding:40px 22px;gap:32px}
+    .iv-sidebar{width:260px;flex-shrink:0;position:sticky;top:100px;height:fit-content;max-height:calc(100vh - 120px);overflow-y:auto}
+    .iv-sidebar::-webkit-scrollbar{width:4px}
+    .iv-sidebar::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:2px}
+    .iv-sidebar-section{margin-bottom:24px}
+    .iv-sidebar-label{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:1px;padding:0 12px 8px}
+    .iv-cat-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:14px;color:var(--text);font-weight:500;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+    .iv-cat-item:hover{background:rgba(0,0,0,0.04)}
+    .iv-cat-item.active{background:rgba(0,102,204,0.08);color:var(--blue);font-weight:600}
+    .iv-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .iv-cat-name{flex:1}
+    .iv-cat-count{font-size:12px;color:var(--gray);background:rgba(0,0,0,0.04);padding:2px 8px;border-radius:10px;font-weight:500}
+    .iv-cat-item.active .iv-cat-count{background:rgba(0,102,204,0.1);color:var(--blue)}
+    .iv-diff-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:13px;color:var(--gray);border:none;background:none;width:100%;text-align:left;font-family:inherit}
+    .iv-diff-item:hover{background:rgba(0,0,0,0.03);color:var(--text)}
+    .iv-diff-item.active{background:rgba(0,102,204,0.06);color:var(--blue)}
+    .iv-diff-badge{width:6px;height:6px;border-radius:50%}
+    .iv-main{flex:1;min-width:0}
+    .iv-active-filter{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+    .iv-active-label{font-size:15px;font-weight:600;color:var(--text)}
+    .iv-active-count{font-size:13px;color:var(--gray)}
+    .iv-mobile-filter-toggle{display:none;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;background:var(--white);border:1px solid rgba(0,0,0,0.1);cursor:pointer;font-size:14px;font-weight:500;color:var(--text);font-family:inherit;margin-bottom:16px;width:100%}
+    .iv-mobile-filter-toggle svg{width:16px;height:16px;stroke:var(--gray);fill:none;stroke-width:2}
+    .interview-container{max-width:100%;padding:0}
     
-    .interview-filters{display:flex;gap:12px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
+    .interview-filters{display:none}
     .filter-btn{padding:8px 20px;border:1px solid rgba(0,0,0,0.1);border-radius:20px;background:var(--white);color:var(--text);font-size:14px;cursor:pointer;transition:all 0.3s}
     .filter-btn:hover,.filter-btn.active{background:var(--blue);color:var(--white);border-color:var(--blue)}
     
@@ -73,9 +96,7 @@
     .badge-difficulty.expert{background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(239,68,68,0.08));color:#ef4444;border:1px solid rgba(239,68,68,0.2)}
     .badge-category{background:linear-gradient(135deg,rgba(52,199,89,0.15),rgba(52,199,89,0.08));color:#22c55e;border:1px solid rgba(52,199,89,0.2)}
     .badge-difficulty.foundation{background:linear-gradient(135deg,rgba(0,102,204,0.15),rgba(0,102,204,0.08));color:var(--blue);border:1px solid rgba(0,102,204,0.2)}
-    .filter-core{background:linear-gradient(135deg,#0066CC,#0055aa);color:#fff;border-color:#0066CC}
-    .filter-core:hover{background:linear-gradient(135deg,#0055aa,#004499)}
-    .filter-core.active{background:linear-gradient(135deg,#0055aa,#003388);border-color:#003388}
+    
     .interview-question{font-size:18px;font-weight:600;line-height:1.5;color:var(--text)}
     .interview-toggle{width:40px;height:40px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.3s}
     .interview-toggle svg{width:20px;height:20px;stroke:var(--gray);fill:none;stroke-width:2;transition:transform 0.3s}
@@ -108,6 +129,8 @@
     
     .empty-state{text-align:center;padding:80px 20px;color:var(--gray)}
     .empty-state h3{font-size:24px;margin-bottom:12px;color:var(--text)}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:200}
+    .sidebar-overlay.active{display:block}
 
     /* Production architecture section */
     .prod-arch-section{max-width:980px;margin:0 auto 20px;padding:0 22px 20px}
@@ -176,14 +199,22 @@
     footer{background:var(--white);padding:24px;text-align:center;border-top:1px solid rgba(0,0,0,0.06)}
     .footer-text{font-size:12px;color:var(--gray)}
     
+    @media(max-width:900px){
+      .iv-sidebar{display:none}
+      .iv-sidebar.mobile-open{display:block;position:fixed;top:84px;left:0;width:280px;height:calc(100vh - 84px);z-index:250;background:var(--white);box-shadow:4px 0 20px rgba(0,0,0,0.1);padding:16px 8px;overflow-y:auto}
+      .iv-mobile-filter-toggle{display:flex}
+      .interview-layout{padding:20px 16px;flex-direction:column;gap:0}
+    }
     @media(max-width:768px){
       .nav-links{display:none}
       .menu-toggle{display:block}
       .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
       .menu-toggle.active span:nth-child(2){opacity:0}
       .menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
-      .interview-header{padding:20px 24px}
-      .interview-answer-inner{padding:0 24px 24px}
+      .interview-header{padding:20px 20px}
+      .interview-answer-inner{padding:0 20px 24px}
+      .interview-answer-inner pre{overflow-x:auto;font-size:12px}
+      .interview-answer-inner table{display:block;overflow-x:auto}
       .header-stats{gap:24px}
       .interview-footer{flex-direction:column;align-items:flex-start}
       .share-actions{width:100%}
@@ -192,8 +223,6 @@
       .quiz-option{padding:14px 16px}
       .quiz-actions{flex-direction:column;gap:12px}
       .quiz-result .score-big{font-size:48px}
-      .interview-filters{gap:8px}
-      .filter-btn{padding:6px 14px;font-size:13px}
       .prod-arch-wrap{padding:24px 18px}
       .prod-arch-title{font-size:22px}
       .prod-arch-grid{grid-template-columns:1fr}
@@ -237,23 +266,36 @@
     </div>
   </header>
 
-  <main class="interview-container">
-    <div class="interview-filters">
-      <button class="filter-btn active" data-ifilter="all">All Questions</button>
-      <button class="filter-btn filter-core" data-ifilter="Core Concepts">Core Concepts</button>
-      <button class="filter-btn" data-ifilter="Performance">Performance</button>
-      <button class="filter-btn" data-ifilter="Architecture">Architecture</button>
-      <button class="filter-btn" data-ifilter="Security">Security</button>
-      <button class="filter-btn" data-ifilter="Scripting">Scripting</button>
-      <button class="filter-btn" data-ifilter="Integration">Integration</button>
-      <button class="filter-btn" data-ifilter="AI Implementation">AI</button>
-    </div>
-    <div class="interview-list" id="interviewList"></div>
-    <div class="empty-state" id="emptyState" style="display:none">
-      <h3>No questions found</h3>
-      <p>Try selecting a different category.</p>
-    </div>
-  </main>
+  <div class="interview-layout">
+    <aside class="iv-sidebar" id="ivSidebar">
+      <div class="iv-sidebar-section">
+        <div class="iv-sidebar-label">Categories</div>
+        <div id="ivCatList"></div>
+      </div>
+      <div class="iv-sidebar-section">
+        <div class="iv-sidebar-label">Difficulty</div>
+        <div id="ivDiffList"></div>
+      </div>
+    </aside>
+    <main class="iv-main">
+      <button class="iv-mobile-filter-toggle" id="ivMobileToggle" onclick="document.getElementById('ivSidebar').classList.toggle('mobile-open');document.getElementById('ivSidebarOverlay').classList.toggle('active')">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <span>Filter by Category</span>
+      </button>
+      <div class="iv-active-filter">
+        <span class="iv-active-label" id="ivActiveLabel">All Questions</span>
+        <span class="iv-active-count" id="ivActiveCount"></span>
+      </div>
+      <div class="interview-container">
+        <div class="interview-list" id="interviewList"></div>
+        <div class="empty-state" id="emptyState" style="display:none">
+          <h3>No questions found</h3>
+          <p>Try selecting a different category.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div class="sidebar-overlay" id="ivSidebarOverlay" onclick="document.getElementById('ivSidebar').classList.remove('mobile-open');this.classList.remove('active')"></div>
 
   <section class="prod-arch-section" id="prodArchitectureSection">
     <div class="prod-arch-wrap">
@@ -475,13 +517,63 @@
       }, 3000);
     }
 
-    function filterByCategory(category) {
-      // Update active filter button
-      document.querySelectorAll('[data-ifilter]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.ifilter === category);
+    var currentFilter = 'all';
+    var currentDifficulty = null;
+    var catColors = {
+      'Core Concepts':'#5856d6','Scripting':'#34c759','Performance':'#ff375f',
+      'Architecture':'#007aff','Security':'#ff9500','Integration':'#30b0c7','AI Implementation':'#af52de'
+    };
+    var diffColors = {'Beginner':'#34c759','Foundation':'#5856d6','Senior':'#ff375f','Expert':'#ef4444'};
+    var diffOrder = {'Beginner':0,'Foundation':1,'Senior':2,'Expert':3};
+
+    function buildSidebar() {
+      var cats = {};
+      var diffs = {};
+      INTERVIEWS.forEach(function(q) {
+        cats[q.category] = (cats[q.category]||0) + 1;
+        diffs[q.difficulty] = (diffs[q.difficulty]||0) + 1;
       });
-      
+
+      var catHtml = '<button class="iv-cat-item active" data-cat="all" onclick="sidebarFilter(\'all\')"><div class="iv-cat-dot" style="background:#86868b"></div><span class="iv-cat-name">All Questions</span><span class="iv-cat-count">' + INTERVIEWS.length + '</span></button>';
+      var catOrder = ['Core Concepts','Scripting','Performance','Architecture','Security','Integration','AI Implementation'];
+      catOrder.forEach(function(c) {
+        if (!cats[c]) return;
+        catHtml += '<button class="iv-cat-item" data-cat="' + c + '" onclick="sidebarFilter(\'' + c + '\')"><div class="iv-cat-dot" style="background:' + (catColors[c]||'#86868b') + '"></div><span class="iv-cat-name">' + c + '</span><span class="iv-cat-count">' + cats[c] + '</span></button>';
+      });
+      document.getElementById('ivCatList').innerHTML = catHtml;
+
+      var diffHtml = '';
+      ['Beginner','Foundation','Senior','Expert'].forEach(function(d) {
+        if (!diffs[d]) return;
+        diffHtml += '<button class="iv-diff-item" data-diff="' + d + '" onclick="sidebarDiffFilter(\'' + d + '\')"><div class="iv-diff-badge" style="background:' + (diffColors[d]||'#86868b') + '"></div><span>' + d + '</span><span class="iv-cat-count">' + diffs[d] + '</span></button>';
+      });
+      document.getElementById('ivDiffList').innerHTML = diffHtml;
+    }
+
+    function sidebarFilter(category) {
+      currentFilter = category;
+      currentDifficulty = null;
+      document.querySelectorAll('.iv-cat-item').forEach(function(el) { el.classList.toggle('active', el.dataset.cat === category); });
+      document.querySelectorAll('.iv-diff-item').forEach(function(el) { el.classList.remove('active'); });
+      document.getElementById('ivActiveLabel').textContent = category === 'all' ? 'All Questions' : category;
       renderInterviews(category);
+      closeMobileSidebar();
+    }
+
+    function sidebarDiffFilter(diff) {
+      if (currentDifficulty === diff) { currentDifficulty = null; } else { currentDifficulty = diff; }
+      document.querySelectorAll('.iv-diff-item').forEach(function(el) { el.classList.toggle('active', el.dataset.diff === currentDifficulty); });
+      renderInterviews(currentFilter);
+      closeMobileSidebar();
+    }
+
+    function closeMobileSidebar() {
+      document.getElementById('ivSidebar').classList.remove('mobile-open');
+      document.getElementById('ivSidebarOverlay').classList.remove('active');
+    }
+
+    function filterByCategory(category) {
+      sidebarFilter(category);
     }
 
     // ==================== DATA & RENDERING ====================
@@ -540,6 +632,7 @@
     fetchInterviewsData()
       .then(function(data) {
         INTERVIEWS = data;
+        buildSidebar();
         renderInterviews('all');
         updateStats();
         initInterviewSearch();
@@ -552,6 +645,7 @@
         }
       })
       .catch(function() {
+        buildSidebar();
         renderInterviews('all');
         updateStats();
         initInterviewSearch();
@@ -579,7 +673,16 @@
     }
 
     function renderInterviews(filter) {
-      var filtered = filter === 'all' ? INTERVIEWS : INTERVIEWS.filter(function(q) { return q.category === filter; });
+      var filtered = filter === 'all' ? INTERVIEWS.slice() : INTERVIEWS.filter(function(q) { return q.category === filter; });
+      if (currentDifficulty) {
+        filtered = filtered.filter(function(q) { return q.difficulty === currentDifficulty; });
+      }
+      filtered.sort(function(a, b) {
+        var da = diffOrder[a.difficulty] !== undefined ? diffOrder[a.difficulty] : 99;
+        var db = diffOrder[b.difficulty] !== undefined ? diffOrder[b.difficulty] : 99;
+        return da - db;
+      });
+      document.getElementById('ivActiveCount').textContent = filtered.length + ' question' + (filtered.length !== 1 ? 's' : '');
       var list = document.getElementById('interviewList');
       var empty = document.getElementById('emptyState');
       
@@ -745,14 +848,7 @@
       grid.innerHTML = html;
     }
 
-    // Filter buttons
-    document.querySelectorAll('[data-ifilter]').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('[data-ifilter]').forEach(function(b) { b.classList.remove('active'); });
-        this.classList.add('active');
-        renderInterviews(this.dataset.ifilter);
-      });
-    });
+    
 
     // Initialize router after DOM ready
     document.addEventListener('DOMContentLoaded', function() {
