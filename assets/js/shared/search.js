@@ -122,6 +122,43 @@
     return matrix[a.length][b.length];
   }
 
+  function markdownToHtml(md) {
+    if (!md) return '';
+    var html = md;
+    // Code blocks (``` ... ```)
+    html = html.replace(/```(\w*)\n([\s\S]*?)```/g, function(m, lang, code) {
+      return '<pre>' + escHtml(code.trim()) + '</pre>';
+    });
+    // Inline code
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // Headers
+    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    // Bold
+    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    // Citation markers [1] [2] etc
+    html = html.replace(/\[(\d+)\]/g, '<a class="sb-cite" href="#" data-cite="$1">$1</a>');
+    // Unordered lists
+    html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>[\s\S]*?<\/li>)/g, function(m) {
+      if (m.indexOf('<ul>') === -1) return '<ul>' + m + '</ul>';
+      return m;
+    });
+    // Merge consecutive <ul> tags
+    html = html.replace(/<\/ul>\s*<ul>/g, '');
+    // Ordered lists
+    html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+    // Paragraphs — split by double newline
+    html = html.replace(/\n\n/g, '</p><p>');
+    // Single newlines after block elements are fine, others become <br>
+    html = html.replace(/([^>])\n([^<])/g, '$1<br>$2');
+    // Wrap in paragraph if not starting with a block element
+    if (!/^<(h[23]|ul|ol|pre|div|p)/.test(html.trim())) {
+      html = '<p>' + html + '</p>';
+    }
+    return html;
+  }
+
   function highlightMatch(text, query) {
     if (!text || !query) return text || '';
     var tokens = tokenize(query);
@@ -360,8 +397,7 @@
       var html = '<div class="sb-web-label"><span class="sb-web-label-icon">&#10024;</span> AI Research</div>';
 
       if (result.answer) {
-        var formatted = escHtml(result.answer)
-          .replace(/\[(\d+)\]/g, '<a class="sb-cite" href="#" data-cite="$1">[$1]</a>');
+        var formatted = markdownToHtml(result.answer);
         html += '<div class="sb-ai-answer">' + formatted + '</div>';
       }
 
@@ -465,7 +501,7 @@
 .sb-search-btn kbd{font-family:inherit;font-size:11px;padding:2px 6px;border-radius:5px;background:rgba(128,128,128,0.12);border:1px solid rgba(128,128,128,0.15);line-height:1;opacity:0.7}\n\
 .sb-search-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:100000;opacity:0;visibility:hidden;transition:opacity 0.2s,visibility 0.2s}\n\
 .sb-search-overlay.open{opacity:1;visibility:visible}\n\
-.sb-search-modal{position:fixed;top:min(14vh,100px);left:50%;transform:translateX(-50%) scale(0.98);width:min(920px,94vw);max-height:min(560px,75vh);background:#fff;border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,0.25),0 0 0 1px rgba(0,0,0,0.08);z-index:100001;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity 0.2s,visibility 0.2s,transform 0.2s}\n\
+.sb-search-modal{position:fixed;top:min(10vh,80px);left:50%;transform:translateX(-50%) scale(0.98);width:min(1060px,95vw);max-height:min(600px,80vh);background:#fff;border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,0.25),0 0 0 1px rgba(0,0,0,0.08);z-index:100001;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity 0.2s,visibility 0.2s,transform 0.2s}\n\
 .sb-search-modal.open{opacity:1;visibility:visible;transform:translateX(-50%) scale(1)}\n\
 .sb-search-input-wrap{display:flex;align-items:center;padding:0 20px;border-bottom:1px solid rgba(0,0,0,0.08)}\n\
 .sb-search-input-wrap svg{width:18px;height:18px;stroke:#86868b;fill:none;stroke-width:2;flex-shrink:0}\n\
@@ -485,18 +521,25 @@
 .sb-web-result-ai:hover{background:rgba(168,85,247,0.07);border-color:rgba(168,85,247,0.25)}\n\
 .sb-web-result-ai .sb-web-result-title mark{background:rgba(168,85,247,0.15);color:#7c3aed}\n\
 .sb-web-reason-block{font-size:12px;color:#7c3aed;margin-top:6px;padding:6px 10px;background:rgba(168,85,247,0.06);border-radius:6px;line-height:1.5;font-style:italic}\n\
-.sb-ai-answer{font-size:13px;line-height:1.7;color:#333;padding:10px 12px;margin-bottom:10px}\n\
-.sb-cite{color:#7c3aed;font-size:11px;font-weight:600;text-decoration:none;cursor:pointer;vertical-align:super;padding:0 1px}\n\
-.sb-cite:hover{text-decoration:underline}\n\
-.sb-sources-label{font-size:10px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:4px 12px 4px}\n\
-.sb-source-card{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:8px;cursor:pointer;transition:background 0.15s;text-decoration:none;color:inherit}\n\
+.sb-ai-answer{font-size:13.5px;line-height:1.75;color:#333;padding:8px 4px 12px;margin-bottom:8px}\n\
+.sb-ai-answer p{margin-bottom:10px}\n\
+.sb-ai-answer h2,.sb-ai-answer h3{font-size:13px;font-weight:700;color:#1d1d1f;margin:14px 0 6px;letter-spacing:-0.2px}\n\
+.sb-ai-answer strong{font-weight:600;color:#1d1d1f}\n\
+.sb-ai-answer ul,.sb-ai-answer ol{margin:6px 0 10px 16px;font-size:13px}\n\
+.sb-ai-answer li{margin-bottom:4px;line-height:1.6}\n\
+.sb-ai-answer code{font-size:12px;background:rgba(0,0,0,0.05);padding:1px 5px;border-radius:4px;font-family:ui-monospace,monospace}\n\
+.sb-ai-answer pre{font-size:11.5px;background:rgba(0,0,0,0.04);padding:10px 12px;border-radius:8px;overflow-x:auto;margin:8px 0;line-height:1.5;font-family:ui-monospace,monospace}\n\
+.sb-cite{color:#7c3aed;font-size:10px;font-weight:700;text-decoration:none;cursor:pointer;vertical-align:super;padding:0 1px;background:rgba(168,85,247,0.08);border-radius:3px;margin:0 1px}\n\
+.sb-cite:hover{background:rgba(168,85,247,0.18)}\n\
+.sb-sources-label{font-size:10px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:6px 4px 6px}\n\
+.sb-source-card{display:flex;align-items:center;gap:8px;padding:8px 6px;border-radius:8px;cursor:pointer;transition:background 0.15s;text-decoration:none;color:inherit}\n\
 .sb-source-card:hover{background:rgba(168,85,247,0.06)}\n\
-.sb-source-num{width:20px;height:20px;border-radius:6px;background:rgba(168,85,247,0.1);color:#7c3aed;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}\n\
+.sb-source-num{width:22px;height:22px;border-radius:6px;background:rgba(168,85,247,0.1);color:#7c3aed;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}\n\
 .sb-source-body{flex:1;min-width:0}\n\
-.sb-source-title{font-size:12px;font-weight:500;color:#1d1d1f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n\
-.sb-source-domain{font-size:10px;color:#86868b;display:flex;align-items:center;gap:4px}\n\
+.sb-source-title{font-size:12.5px;font-weight:500;color:#1d1d1f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n\
+.sb-source-domain{font-size:10.5px;color:#86868b;display:flex;align-items:center;gap:4px;margin-top:1px}\n\
 .sb-source-domain svg{opacity:0.5}\n\
-.sb-related-q{font-size:12px;color:#7c3aed;padding:6px 12px;cursor:pointer;border-radius:6px;transition:background 0.15s;line-height:1.4}\n\
+.sb-related-q{font-size:12.5px;color:#7c3aed;padding:7px 6px;cursor:pointer;border-radius:6px;transition:background 0.15s;line-height:1.4}\n\
 .sb-related-q:hover{background:rgba(168,85,247,0.06)}\n\
 .sb-search-result{display:flex;align-items:flex-start;gap:14px;padding:12px 16px;border-radius:12px;cursor:pointer;transition:background 0.15s}\n\
 .sb-search-result:hover,.sb-search-result.active{background:rgba(0,102,204,0.06)}\n\
@@ -519,7 +562,7 @@
   .sb-search-input-wrap{border-bottom-color:rgba(255,255,255,0.08)}\n\
   .sb-search-footer{border-top-color:rgba(255,255,255,0.06)}\n\
 }\n\
-.sb-web-section{border-left:1px solid rgba(0,0,0,0.06);width:300px;flex-shrink:0;overflow-y:auto;padding:8px}\n\
+.sb-web-section{border-left:1px solid rgba(0,0,0,0.06);width:420px;flex-shrink:0;overflow-y:auto;padding:12px 14px}\n\
 .sb-web-section::-webkit-scrollbar{width:5px}\n\
 .sb-web-section::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:3px}\n\
 .sb-web-label{font-size:11px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:8px 16px 6px;display:flex;align-items:center;gap:6px}\n\
@@ -566,6 +609,9 @@
   .sb-web-result-ai:hover{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.3)}\n\
   .sb-web-reason-block{background:rgba(168,85,247,0.1);color:#c084fc}\n\
   .sb-ai-answer{color:#d1d5db}\n\
+  .sb-ai-answer h2,.sb-ai-answer h3,.sb-ai-answer strong{color:#f5f5f7}\n\
+  .sb-ai-answer code{background:rgba(255,255,255,0.08)}\n\
+  .sb-ai-answer pre{background:rgba(255,255,255,0.06)}\n\
   .sb-source-title{color:#f5f5f7}\n\
   .sb-source-num{background:rgba(168,85,247,0.15)}\n\
   .sb-source-card:hover{background:rgba(168,85,247,0.1)}\n\
