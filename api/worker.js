@@ -50,25 +50,25 @@ export default {
           messages: [
             {
               role: 'system',
-              content: 'You are a ServiceNow technical search assistant. Given a search query, find the single most relevant and authoritative resource. Respond with ONLY a JSON object: {"title":"page title","snippet":"2-sentence summary","reason":"one sentence why this is the best match"}. No markdown, no code fences, just the JSON object. If nothing relevant exists, respond with null.'
+              content: 'You are a ServiceNow technical search assistant. Given a search query, provide a concise, direct answer in 3-5 sentences. Use citation markers like [1], [2] to reference sources. Focus on practical information a ServiceNow developer or architect needs.'
             },
             {
               role: 'user',
-              content: 'Find the best ServiceNow resource for: ' + query
+              content: 'ServiceNow: ' + query
             }
           ],
           temperature: 0.1,
-          max_tokens: 300,
+          max_tokens: 500,
           search_domain_filter: [
             'docs.servicenow.com',
             'developer.servicenow.com',
             'servicenow.com',
             'community.servicenow.com'
           ],
-          search_recency_filter: 'year',
           web_search_options: {
-            search_context_size: 'medium'
-          }
+            search_context_size: 'high'
+          },
+          return_related_questions: true
         })
       });
 
@@ -77,8 +77,6 @@ export default {
       }
 
       const data = await response.json();
-
-      // Extract the best result from search_results + citations + model answer
       const result = buildResult(data, query);
       return jsonResponse({ success: true, result }, allowedOrigin);
 
@@ -92,63 +90,40 @@ function buildResult(data, query) {
   const searchResults = data.search_results || [];
   const citations = data.citations || [];
   const answer = data.choices?.[0]?.message?.content || '';
+  const relatedQuestions = data.related_questions || [];
 
-  // Parse Claude-style JSON from the answer
-  let parsed = null;
-  try {
-    const cleaned = answer.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    if (cleaned && cleaned !== 'null') {
-      parsed = JSON.parse(cleaned);
-    }
-  } catch(e) {
-    // Not JSON — use as plain text snippet
+  if (!answer && searchResults.length === 0) return null;
+
+  // Build sources array from search_results (real URLs)
+  const sources = searchResults.slice(0, 5).map((sr, i) => ({
+    index: i + 1,
+    title: sr.title || '',
+    url: sr.url,
+    snippet: sr.snippet || '',
+    source: extractDomain(sr.url),
+    date: sr.date || null
+  }));
+
+  // If no search_results, build from citations
+  if (sources.length === 0 && citations.length > 0) {
+    citations.slice(0, 5).forEach((url, i) => {
+      sources.push({
+        index: i + 1,
+        title: '',
+        url: url,
+        snippet: '',
+        source: extractDomain(url),
+        date: null
+      });
+    });
   }
 
-  // Priority: use search_results (they have real verified URLs)
-  if (searchResults.length > 0) {
-    // Pick the best search result — prefer official ServiceNow domains
-    const preferred = ['docs.servicenow.com', 'developer.servicenow.com', 'community.servicenow.com'];
-    let best = searchResults[0];
-
-    for (const sr of searchResults) {
-      const domain = extractDomain(sr.url);
-      if (preferred.some(p => domain.includes(p))) {
-        best = sr;
-        break;
-      }
-    }
-
-    return {
-      title: best.title || (parsed && parsed.title) || query,
-      snippet: (parsed && parsed.snippet) || best.snippet || answer.substring(0, 200),
-      url: best.url,
-      source: extractDomain(best.url),
-      reason: (parsed && parsed.reason) || 'Most relevant ServiceNow resource found'
-    };
-  }
-
-  // Fallback: use citations if search_results is empty
-  if (citations.length > 0) {
-    const bestUrl = citations.find(url => {
-      const d = extractDomain(url);
-      return d.includes('servicenow.com');
-    }) || citations[0];
-
-    return {
-      title: (parsed && parsed.title) || query,
-      snippet: (parsed && parsed.snippet) || answer.substring(0, 200),
-      url: bestUrl,
-      source: extractDomain(bestUrl),
-      reason: (parsed && parsed.reason) || 'Cited source from search results'
-    };
-  }
-
-  // No search results at all
-  if (parsed && parsed.title) {
-    return null; // parsed has no URL, useless
-  }
-
-  return null;
+  return {
+    type: 'rich',
+    answer: answer,
+    sources: sources,
+    relatedQuestions: relatedQuestions.slice(0, 3)
+  };
 }
 
 function extractDomain(url) {
