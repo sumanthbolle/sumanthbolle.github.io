@@ -332,19 +332,19 @@
     if (!webEl) return;
     clearWebProgress();
 
-    var arrow = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var arrow = '<svg viewBox="0 0 24 24" width="12" height="12"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
     if (!result) {
       webEl.innerHTML =
         '<div class="sb-web-label"><span class="sb-web-label-icon">&#10024;</span> AI Research</div>' +
-        '<div class="sb-web-noresult">No stronger external match found for this query</div>';
+        '<div class="sb-web-noresult">No external results found for this query</div>';
       return;
     }
 
     if (result.type === 'multi') {
-      var html = '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Search the Web</div>';
+      var fhtml = '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Search the Web</div>';
       result.results.forEach(function(r) {
-        html += '<a class="sb-web-result" href="' + escHtml(r.url) + '" target="_blank" rel="noopener">' +
+        fhtml += '<a class="sb-web-result" href="' + escHtml(r.url) + '" target="_blank" rel="noopener">' +
           '<div class="sb-web-result-icon-sm">' + r.icon + '</div>' +
           '<div class="sb-web-result-body">' +
             '<div class="sb-web-result-title">' + escHtml(r.source) + '</div>' +
@@ -352,7 +352,48 @@
           '</div>' +
           '<div class="sb-web-arrow">' + arrow + '</div></a>';
       });
+      webEl.innerHTML = fhtml;
+      return;
+    }
+
+    if (result.type === 'rich') {
+      var html = '<div class="sb-web-label"><span class="sb-web-label-icon">&#10024;</span> AI Research</div>';
+
+      if (result.answer) {
+        var formatted = escHtml(result.answer)
+          .replace(/\[(\d+)\]/g, '<a class="sb-cite" href="#" data-cite="$1">[$1]</a>');
+        html += '<div class="sb-ai-answer">' + formatted + '</div>';
+      }
+
+      if (result.sources && result.sources.length > 0) {
+        html += '<div class="sb-sources-label">Sources</div>';
+        result.sources.forEach(function(s) {
+          html += '<a class="sb-source-card" href="' + escHtml(s.url) + '" target="_blank" rel="noopener">' +
+            '<div class="sb-source-num">' + s.index + '</div>' +
+            '<div class="sb-source-body">' +
+              '<div class="sb-source-title">' + escHtml(s.title || s.source) + '</div>' +
+              '<div class="sb-source-domain">' + escHtml(s.source) + ' ' + arrow + '</div>' +
+            '</div>' +
+          '</a>';
+        });
+      }
+
+      if (result.relatedQuestions && result.relatedQuestions.length > 0) {
+        html += '<div class="sb-sources-label" style="margin-top:12px">Related</div>';
+        result.relatedQuestions.forEach(function(rq) {
+          html += '<div class="sb-related-q" onclick="document.querySelector(\'.sb-search-input\').value=\'' + escHtml(rq).replace(/'/g, "\\'") + '\';document.querySelector(\'.sb-search-input\').dispatchEvent(new Event(\'input\'));">' + escHtml(rq) + '</div>';
+        });
+      }
+
       webEl.innerHTML = html;
+
+      webEl.querySelectorAll('.sb-cite').forEach(function(cite) {
+        cite.addEventListener('click', function(e) {
+          e.preventDefault();
+          var idx = parseInt(cite.dataset.cite) - 1;
+          if (result.sources[idx]) window.open(result.sources[idx].url, '_blank');
+        });
+      });
       return;
     }
 
@@ -444,6 +485,19 @@
 .sb-web-result-ai:hover{background:rgba(168,85,247,0.07);border-color:rgba(168,85,247,0.25)}\n\
 .sb-web-result-ai .sb-web-result-title mark{background:rgba(168,85,247,0.15);color:#7c3aed}\n\
 .sb-web-reason-block{font-size:12px;color:#7c3aed;margin-top:6px;padding:6px 10px;background:rgba(168,85,247,0.06);border-radius:6px;line-height:1.5;font-style:italic}\n\
+.sb-ai-answer{font-size:13px;line-height:1.7;color:#333;padding:10px 12px;margin-bottom:10px}\n\
+.sb-cite{color:#7c3aed;font-size:11px;font-weight:600;text-decoration:none;cursor:pointer;vertical-align:super;padding:0 1px}\n\
+.sb-cite:hover{text-decoration:underline}\n\
+.sb-sources-label{font-size:10px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:4px 12px 4px}\n\
+.sb-source-card{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:8px;cursor:pointer;transition:background 0.15s;text-decoration:none;color:inherit}\n\
+.sb-source-card:hover{background:rgba(168,85,247,0.06)}\n\
+.sb-source-num{width:20px;height:20px;border-radius:6px;background:rgba(168,85,247,0.1);color:#7c3aed;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}\n\
+.sb-source-body{flex:1;min-width:0}\n\
+.sb-source-title{font-size:12px;font-weight:500;color:#1d1d1f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n\
+.sb-source-domain{font-size:10px;color:#86868b;display:flex;align-items:center;gap:4px}\n\
+.sb-source-domain svg{opacity:0.5}\n\
+.sb-related-q{font-size:12px;color:#7c3aed;padding:6px 12px;cursor:pointer;border-radius:6px;transition:background 0.15s;line-height:1.4}\n\
+.sb-related-q:hover{background:rgba(168,85,247,0.06)}\n\
 .sb-search-result{display:flex;align-items:flex-start;gap:14px;padding:12px 16px;border-radius:12px;cursor:pointer;transition:background 0.15s}\n\
 .sb-search-result:hover,.sb-search-result.active{background:rgba(0,102,204,0.06)}\n\
 .sb-search-result-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px}\n\
@@ -511,6 +565,11 @@
   .sb-web-result-ai{border-color:rgba(168,85,247,0.2);background:rgba(168,85,247,0.05)}\n\
   .sb-web-result-ai:hover{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.3)}\n\
   .sb-web-reason-block{background:rgba(168,85,247,0.1);color:#c084fc}\n\
+  .sb-ai-answer{color:#d1d5db}\n\
+  .sb-source-title{color:#f5f5f7}\n\
+  .sb-source-num{background:rgba(168,85,247,0.15)}\n\
+  .sb-source-card:hover{background:rgba(168,85,247,0.1)}\n\
+  .sb-related-q:hover{background:rgba(168,85,247,0.1)}\n\
 }\n\
 @media(max-width:768px){\n\
   .sb-search-btn kbd{display:none}\n\
