@@ -155,7 +155,7 @@
     xhr.onload = function() {
       try {
         var data = JSON.parse(xhr.responseText);
-        if (data.success && data.result && data.result.url) {
+        if (data.success && data.result) {
           callback(data.result);
         } else {
           callback(buildFallbackLinks(query));
