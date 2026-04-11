@@ -424,16 +424,19 @@
 .sb-search-btn kbd{font-family:inherit;font-size:11px;padding:2px 6px;border-radius:5px;background:rgba(128,128,128,0.12);border:1px solid rgba(128,128,128,0.15);line-height:1;opacity:0.7}\n\
 .sb-search-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:100000;opacity:0;visibility:hidden;transition:opacity 0.2s,visibility 0.2s}\n\
 .sb-search-overlay.open{opacity:1;visibility:visible}\n\
-.sb-search-modal{position:fixed;top:min(20vh,140px);left:50%;transform:translateX(-50%) scale(0.98);width:min(640px,92vw);max-height:min(520px,70vh);background:#fff;border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,0.25),0 0 0 1px rgba(0,0,0,0.08);z-index:100001;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity 0.2s,visibility 0.2s,transform 0.2s}\n\
+.sb-search-modal{position:fixed;top:min(14vh,100px);left:50%;transform:translateX(-50%) scale(0.98);width:min(920px,94vw);max-height:min(560px,75vh);background:#fff;border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,0.25),0 0 0 1px rgba(0,0,0,0.08);z-index:100001;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity 0.2s,visibility 0.2s,transform 0.2s}\n\
 .sb-search-modal.open{opacity:1;visibility:visible;transform:translateX(-50%) scale(1)}\n\
 .sb-search-input-wrap{display:flex;align-items:center;padding:0 20px;border-bottom:1px solid rgba(0,0,0,0.08)}\n\
 .sb-search-input-wrap svg{width:18px;height:18px;stroke:#86868b;fill:none;stroke-width:2;flex-shrink:0}\n\
 .sb-search-input{flex:1;border:none;outline:none;font-size:17px;padding:16px 14px;background:none;font-family:inherit;color:#1d1d1f}\n\
 .sb-search-input::placeholder{color:#86868b}\n\
 .sb-search-esc{font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,0.06);border:none;color:#86868b;cursor:pointer;font-family:inherit;flex-shrink:0}\n\
-.sb-search-results{overflow-y:auto;flex:1;padding:8px}\n\
+.sb-search-results{overflow-y:auto;flex:1;padding:0;display:flex}\n\
 .sb-search-results::-webkit-scrollbar{width:6px}\n\
 .sb-search-results::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px}\n\
+.sb-local-section{flex:1;overflow-y:auto;padding:8px;min-width:0}\n\
+.sb-local-section::-webkit-scrollbar{width:5px}\n\
+.sb-local-section::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:3px}\n\
 .sb-search-empty{padding:40px 20px;text-align:center;color:#86868b;font-size:14px}\n\
 .sb-search-hint{padding:32px 20px;text-align:center;color:#86868b;font-size:13px;line-height:1.8}\n\
 .sb-section-label{font-size:11px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:8px 16px 4px;display:flex;align-items:center;gap:6px}\n\
@@ -462,7 +465,9 @@
   .sb-search-input-wrap{border-bottom-color:rgba(255,255,255,0.08)}\n\
   .sb-search-footer{border-top-color:rgba(255,255,255,0.06)}\n\
 }\n\
-.sb-web-section{border-top:1px solid rgba(0,0,0,0.06);margin-top:4px;padding-top:4px}\n\
+.sb-web-section{border-left:1px solid rgba(0,0,0,0.06);width:300px;flex-shrink:0;overflow-y:auto;padding:8px}\n\
+.sb-web-section::-webkit-scrollbar{width:5px}\n\
+.sb-web-section::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.1);border-radius:3px}\n\
 .sb-web-label{font-size:11px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:8px 16px 6px;display:flex;align-items:center;gap:6px}\n\
 .sb-web-label-icon{font-size:14px}\n\
 .sb-web-trigger{display:flex;align-items:center;gap:8px;padding:10px 16px;margin:0 8px 4px;border-radius:10px;border:1px dashed rgba(168,85,247,0.3);background:rgba(168,85,247,0.04);cursor:pointer;transition:all 0.2s;color:#6e6e73;font-size:13px;font-family:inherit}\n\
@@ -496,7 +501,7 @@
 .sb-web-loading-bar.short{width:60%}\n\
 @keyframes sbShimmer{0%,100%{opacity:0.4}50%{opacity:0.8}}\n\
 @media(prefers-color-scheme:dark){\n\
-  .sb-web-section{border-top-color:rgba(255,255,255,0.06)}\n\
+  .sb-web-section{border-left-color:rgba(255,255,255,0.06)}\n\
   .sb-web-result:hover{background:rgba(52,199,89,0.08)}\n\
   .sb-web-result-title{color:#f5f5f7}\n\
   .sb-web-result-snippet{color:#98989d}\n\
@@ -509,7 +514,10 @@
 }\n\
 @media(max-width:768px){\n\
   .sb-search-btn kbd{display:none}\n\
-  .sb-search-modal{top:12px;max-height:calc(100vh - 24px);border-radius:14px}\n\
+  .sb-search-modal{top:8px;width:96vw;max-height:calc(100vh - 16px);border-radius:14px}\n\
+  .sb-search-results{flex-direction:column}\n\
+  .sb-local-section{max-height:50vh}\n\
+  .sb-web-section{width:100%;border-left:none;border-top:1px solid rgba(0,0,0,0.06);max-height:40vh}\n\
   .sb-search-footer{display:none}\n\
 }\n\
 ';
@@ -586,7 +594,7 @@
     overlayEl.classList.add('open');
     modalEl.classList.add('open');
     inputEl.value = '';
-    resultsEl.innerHTML = '<div class="sb-search-hint">Search across articles + the best from the web<br><span style="font-size:11px;opacity:0.7">Type to search locally &bull; Click &#127760; or press <kbd style="font-size:10px;padding:1px 4px;border-radius:3px;background:rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.08)">&#8997;W</kbd> to search the web</span></div>';
+    resultsEl.innerHTML = '<div class="sb-local-section"><div class="sb-search-hint">Type to search articles<br><span style="font-size:11px;opacity:0.7">&#10024; AI Research appears on the right</span></div></div><div class="sb-web-section"><div class="sb-search-hint" style="padding:24px 12px;font-size:12px">&#10024; AI Research<br>Results will appear here when you search</div></div>';
     activeIdx = -1;
     resultItems = [];
     webSearchInFlight = false;
@@ -612,8 +620,8 @@
     var q = inputEl.value.trim();
     if (q.length < 2) {
       resultsEl.innerHTML = q.length === 0
-        ? '<div class="sb-search-hint">Search across articles + the best from the web</div>'
-        : '<div class="sb-search-hint">Type at least 2 characters</div>';
+        ? '<div class="sb-local-section"><div class="sb-search-hint">Type to search articles</div></div><div class="sb-web-section"><div class="sb-search-hint" style="padding:24px 12px;font-size:12px">&#10024; AI Research</div></div>'
+        : '<div class="sb-local-section"><div class="sb-search-hint">Type at least 2 characters</div></div><div class="sb-web-section"></div>';
       resultItems = [];
       activeIdx = -1;
       return;
@@ -626,7 +634,7 @@
     var results = search(q, searchIndexCache, 15);
 
     if (results.length === 0) {
-      resultsEl.innerHTML = '<div class="sb-search-empty">No results for &ldquo;' + escHtml(q) + '&rdquo;</div>';
+      resultsEl.innerHTML = '<div class="sb-local-section"><div class="sb-search-empty">No results for &ldquo;' + escHtml(q) + '&rdquo;</div></div>';
       resultItems = [];
       activeIdx = -1;
       if (config.enableWebSearch !== false) {
@@ -636,7 +644,7 @@
       return;
     }
 
-    var html = '<div class="sb-section-label">From My Articles</div>';
+    var html = '<div class="sb-local-section"><div class="sb-section-label">From My Articles</div>';
     results.forEach(function(r, i) {
       var item = r.item;
       var title = config.renderTitle ? config.renderTitle(item) : (item.title || item.question || '');
@@ -654,14 +662,9 @@
         '</div></div>';
     });
 
+    html += '</div>';
     if (config.enableWebSearch !== false) {
-      var globeIcon = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
-      html += '<div class="sb-web-section">' +
-        '<div class="sb-web-trigger" id="sbWebTrigger">' +
-          '<span style="font-size:16px">&#10024;</span>' +
-          '<span class="sb-web-trigger-label">AI Research: find the best external resource for <strong>' + escHtml(q) + '</strong></span>' +
-          '<kbd>&#8997;W</kbd>' +
-        '</div></div>';
+      html += '<div class="sb-web-section"></div>';
     }
     resultsEl.innerHTML = html;
     resultItems = results;
@@ -678,16 +681,12 @@
     });
 
     if (config.enableWebSearch !== false) {
-      var triggerBtn = document.getElementById('sbWebTrigger');
       var currentQuery = q;
-      if (triggerBtn) {
-        triggerBtn.addEventListener('click', function() { triggerWebSearch(currentQuery); });
-      }
       clearTimeout(webSearchTimer);
       webSearchTimer = setTimeout(function() {
         if (inputEl.value.trim() !== currentQuery) return;
         triggerWebSearch(currentQuery);
-      }, 1500);
+      }, 300);
     }
   }
 
