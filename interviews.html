@@ -611,7 +611,8 @@
           {name:'category',weight:3},
           {name:'difficulty',weight:1}
         ],
-        placeholder:'Search interview questions...',
+        placeholder:'Search questions + AI research...',
+        aiSearchEndpoint:window.SB_AI_SEARCH_ENDPOINT||null,
         onSelect:function(item){
           filterByCategory('all');
           setTimeout(function(){openQuestion(item.id)},150);

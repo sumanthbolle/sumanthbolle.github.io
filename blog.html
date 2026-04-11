@@ -489,7 +489,8 @@ function initBlogSearch(){
       {name:'content',weight:1},
       {name:'category',weight:2}
     ],
-    placeholder:'Search articles...',
+    placeholder:'Search articles + AI research...',
+    aiSearchEndpoint:window.SB_AI_SEARCH_ENDPOINT||null,
     onSelect:function(item){openBlogArticle(String(item.id))},
     renderTitle:function(item){return item.title},
     renderExcerpt:function(item){return item.excerpt||''},
