@@ -140,124 +140,35 @@
   var webSearchTimer;
   var lastWebQuery = '';
 
-  var cseLoaded = false;
-  var cseReady = false;
-  var cseCallbackQueue = [];
-  var CSE_CX = '71b23c515f34d4d52';
+  function fetchWebResult(query, callback) {
+    var endpoint = config && config.aiSearchEndpoint;
+    if (!endpoint) {
+      callback(buildFallbackLinks(query));
+      return;
+    }
 
-  function loadCSE(cb) {
-    if (cseReady) { cb(); return; }
-    cseCallbackQueue.push(cb);
-    if (cseLoaded) return;
-    cseLoaded = true;
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', endpoint, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.timeout = 12000;
 
-    window.__gcse = window.__gcse || {};
-    window.__gcse.parsetags = 'explicit';
-    window.__gcse.callback = function() {
-      var container = document.getElementById('sbCseContainer');
-      if (container) {
-        google.search.cse.element.render({ div: 'sbCseResults', tag: 'searchresults-only' });
-      }
-      cseReady = true;
-      cseCallbackQueue.forEach(function(fn) { fn(); });
-      cseCallbackQueue = [];
-    };
-
-    var cseContainer = document.createElement('div');
-    cseContainer.id = 'sbCseContainer';
-    cseContainer.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden';
-    cseContainer.innerHTML = '<div id="sbCseResults"></div>';
-    document.body.appendChild(cseContainer);
-
-    var script = document.createElement('script');
-    script.src = 'https://cse.google.com/cse.js?cx=' + CSE_CX;
-    script.async = true;
-    document.head.appendChild(script);
-  }
-
-  function searchCSE(query, callback) {
-    loadCSE(function() {
+    xhr.onload = function() {
       try {
-        var el = google.search.cse.element.getElement('sbCseResults');
-        if (!el) { callback(null); return; }
-
-        var done = false;
-        el.clearAllResults();
-
-        var checkResults = function() {
-          if (done) return;
-          var container = document.getElementById('sbCseContainer');
-          if (!container) { callback(null); return; }
-
-          var results = container.querySelectorAll('.gsc-webResult .gs-result, .gsc-result');
-          if (results.length > 0) {
-            done = true;
-            var parsed = parseCSEResults(results, query);
-            callback(parsed);
-          }
-        };
-
-        var observer = new MutationObserver(function() { checkResults(); });
-        var target = document.getElementById('sbCseResults');
-        if (target) observer.observe(target, { childList: true, subtree: true });
-
-        el.execute('ServiceNow ' + query);
-
-        setTimeout(function() {
-          if (!done) { checkResults(); }
-          setTimeout(function() {
-            if (!done) { done = true; observer.disconnect(); callback(buildFallbackLinks(query)); }
-          }, 3000);
-        }, 1500);
-
-        setTimeout(function() { observer.disconnect(); }, 6000);
+        var data = JSON.parse(xhr.responseText);
+        if (data.success && data.result && data.result.url) {
+          callback(data.result);
+        } else {
+          callback(buildFallbackLinks(query));
+        }
       } catch(e) {
         callback(buildFallbackLinks(query));
       }
-    });
-  }
-
-  function parseCSEResults(resultEls, query) {
-    var items = [];
-    for (var i = 0; i < Math.min(resultEls.length, 3); i++) {
-      var el = resultEls[i];
-      var linkEl = el.querySelector('a.gs-title');
-      var snippetEl = el.querySelector('.gs-snippet');
-      if (!linkEl) continue;
-      var url = linkEl.href || '';
-      var title = linkEl.textContent || '';
-      var snippet = snippetEl ? snippetEl.textContent : '';
-      if (!url || url.indexOf('http') !== 0) continue;
-      items.push({ title: title, snippet: snippet, url: url, source: extractDomain(url) });
-    }
-
-    if (items.length === 0) return buildFallbackLinks(query);
-
-    var best = items[0];
-    var dominated = ['docs.servicenow.com', 'developer.servicenow.com', 'community.servicenow.com'];
-    for (var j = 0; j < items.length; j++) {
-      for (var d = 0; d < dominated.length; d++) {
-        if (items[j].source.indexOf(dominated[d]) !== -1) { best = items[j]; break; }
-      }
-      if (best !== items[0]) break;
-    }
-
-    var reason = 'Top search result';
-    if (best.source.indexOf('docs.servicenow.com') !== -1) reason = 'Official ServiceNow documentation';
-    else if (best.source.indexOf('community.servicenow.com') !== -1) reason = 'ServiceNow community discussion';
-    else if (best.source.indexOf('developer.servicenow.com') !== -1) reason = 'ServiceNow developer resource';
-
-    return {
-      title: best.title,
-      snippet: best.snippet,
-      url: best.url,
-      source: best.source,
-      reason: reason
     };
-  }
 
-  function fetchWebResult(query, callback) {
-    searchCSE(query, callback);
+    xhr.onerror = function() { callback(buildFallbackLinks(query)); };
+    xhr.ontimeout = function() { callback(buildFallbackLinks(query)); };
+
+    xhr.send(JSON.stringify({ query: query }));
   }
 
   function buildFallbackLinks(query) {
@@ -420,14 +331,15 @@
     var webEl = resultsEl.querySelector('.sb-web-section');
     if (!webEl) return;
     clearWebProgress();
-    if (!result) {
-      webEl.innerHTML =
-        '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Web Search</div>' +
-        '<div class="sb-web-noresult">No external match found for this query</div>';
-      return;
-    }
 
     var arrow = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    if (!result) {
+      webEl.innerHTML =
+        '<div class="sb-web-label"><span class="sb-web-label-icon">&#10024;</span> AI Research</div>' +
+        '<div class="sb-web-noresult">No stronger external match found for this query</div>';
+      return;
+    }
 
     if (result.type === 'multi') {
       var html = '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Search the Web</div>';
@@ -445,25 +357,25 @@
     }
 
     webEl.innerHTML =
-      '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Web Search</div>' +
-      '<a class="sb-web-result" href="' + escHtml(result.url) + '" target="_blank" rel="noopener">' +
+      '<div class="sb-web-label"><span class="sb-web-label-icon">&#10024;</span> AI Research</div>' +
+      '<a class="sb-web-result sb-web-result-ai" href="' + escHtml(result.url) + '" target="_blank" rel="noopener">' +
         '<div class="sb-web-result-body">' +
           '<div class="sb-web-result-title">' + highlightMatch(escHtml(result.title), query) + '</div>' +
-          '<div class="sb-web-result-snippet">' + escHtml(result.snippet).substring(0, 180) + '</div>' +
+          '<div class="sb-web-result-snippet">' + escHtml(result.snippet) + '</div>' +
           '<div class="sb-web-result-meta">' +
             '<span class="sb-web-source">&#128279; ' + escHtml(result.source) + '</span>' +
-            '<span class="sb-web-reason">' + escHtml(result.reason) + '</span>' +
           '</div>' +
+          '<div class="sb-web-reason-block">' + escHtml(result.reason) + '</div>' +
         '</div>' +
         '<div class="sb-web-arrow">' + arrow + '</div>' +
       '</a>';
   }
 
   var webProgressSteps = [
-    {text: 'Searching the web for ServiceNow content...', icon: '&#128269;', delay: 0},
-    {text: 'Scanning docs.servicenow.com...', icon: '&#128196;', delay: 800},
-    {text: 'Checking community forums...', icon: '&#128172;', delay: 1600},
-    {text: 'Ranking results...', icon: '&#9889;', delay: 2200}
+    {text: 'Researching across ServiceNow sources...', icon: '&#128269;', delay: 0},
+    {text: 'Analyzing docs.servicenow.com...', icon: '&#128196;', delay: 900},
+    {text: 'Checking developer portal & community...', icon: '&#128172;', delay: 1800},
+    {text: 'Selecting the single best resource...', icon: '&#9889;', delay: 2700}
   ];
   var webProgressTimer = null;
 
@@ -472,7 +384,7 @@
     if (!webEl) return;
     clearWebProgress();
     webEl.innerHTML =
-      '<div class="sb-web-label"><span class="sb-web-label-icon">&#127760;</span> Web Search</div>' +
+      '<div class="sb-web-label"><span class="sb-web-label-icon">&#10024;</span> AI Research</div>' +
       '<div class="sb-web-progress">' +
         '<div class="sb-web-step active"><span class="sb-web-step-dot"></span><span class="sb-web-step-text">' + webProgressSteps[0].text + '</span></div>' +
       '</div>';
@@ -524,6 +436,11 @@
 .sb-search-results::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px}\n\
 .sb-search-empty{padding:40px 20px;text-align:center;color:#86868b;font-size:14px}\n\
 .sb-search-hint{padding:32px 20px;text-align:center;color:#86868b;font-size:13px;line-height:1.8}\n\
+.sb-section-label{font-size:11px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:8px 16px 4px;display:flex;align-items:center;gap:6px}\n\
+.sb-web-result-ai{border:1px solid rgba(168,85,247,0.15);background:rgba(168,85,247,0.03)}\n\
+.sb-web-result-ai:hover{background:rgba(168,85,247,0.07);border-color:rgba(168,85,247,0.25)}\n\
+.sb-web-result-ai .sb-web-result-title mark{background:rgba(168,85,247,0.15);color:#7c3aed}\n\
+.sb-web-reason-block{font-size:12px;color:#7c3aed;margin-top:6px;padding:6px 10px;background:rgba(168,85,247,0.06);border-radius:6px;line-height:1.5;font-style:italic}\n\
 .sb-search-result{display:flex;align-items:flex-start;gap:14px;padding:12px 16px;border-radius:12px;cursor:pointer;transition:background 0.15s}\n\
 .sb-search-result:hover,.sb-search-result.active{background:rgba(0,102,204,0.06)}\n\
 .sb-search-result-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px}\n\
@@ -548,9 +465,9 @@
 .sb-web-section{border-top:1px solid rgba(0,0,0,0.06);margin-top:4px;padding-top:4px}\n\
 .sb-web-label{font-size:11px;font-weight:600;color:#86868b;text-transform:uppercase;letter-spacing:0.8px;padding:8px 16px 6px;display:flex;align-items:center;gap:6px}\n\
 .sb-web-label-icon{font-size:14px}\n\
-.sb-web-trigger{display:flex;align-items:center;gap:8px;padding:10px 16px;margin:0 8px 4px;border-radius:10px;border:1px dashed rgba(52,199,89,0.3);background:rgba(52,199,89,0.04);cursor:pointer;transition:all 0.2s;color:#6e6e73;font-size:13px;font-family:inherit}\n\
-.sb-web-trigger:hover{border-color:rgba(52,199,89,0.5);background:rgba(52,199,89,0.08);color:#1d1d1f}\n\
-.sb-web-trigger svg{width:16px;height:16px;stroke:#16a34a;fill:none;stroke-width:2}\n\
+.sb-web-trigger{display:flex;align-items:center;gap:8px;padding:10px 16px;margin:0 8px 4px;border-radius:10px;border:1px dashed rgba(168,85,247,0.3);background:rgba(168,85,247,0.04);cursor:pointer;transition:all 0.2s;color:#6e6e73;font-size:13px;font-family:inherit}\n\
+.sb-web-trigger:hover{border-color:rgba(168,85,247,0.5);background:rgba(168,85,247,0.08);color:#1d1d1f}\n\
+.sb-web-trigger svg{width:16px;height:16px;stroke:#7c3aed;fill:none;stroke-width:2}\n\
 .sb-web-trigger-label{flex:1}\n\
 .sb-web-trigger kbd{font-family:inherit;font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.08);color:#86868b}\n\
 .sb-web-progress{padding:4px 16px 8px}\n\
@@ -583,9 +500,12 @@
   .sb-web-result:hover{background:rgba(52,199,89,0.08)}\n\
   .sb-web-result-title{color:#f5f5f7}\n\
   .sb-web-result-snippet{color:#98989d}\n\
-  .sb-web-trigger{border-color:rgba(52,199,89,0.2);background:rgba(52,199,89,0.05);color:#98989d}\n\
-  .sb-web-trigger:hover{color:#f5f5f7;border-color:rgba(52,199,89,0.4);background:rgba(52,199,89,0.1)}\n\
+  .sb-web-trigger{border-color:rgba(168,85,247,0.2);background:rgba(168,85,247,0.05);color:#98989d}\n\
+  .sb-web-trigger:hover{color:#f5f5f7;border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.1)}\n\
   .sb-web-trigger kbd{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.1);color:#6e6e73}\n\
+  .sb-web-result-ai{border-color:rgba(168,85,247,0.2);background:rgba(168,85,247,0.05)}\n\
+  .sb-web-result-ai:hover{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.3)}\n\
+  .sb-web-reason-block{background:rgba(168,85,247,0.1);color:#c084fc}\n\
 }\n\
 @media(max-width:768px){\n\
   .sb-search-btn kbd{display:none}\n\
@@ -709,10 +629,14 @@
       resultsEl.innerHTML = '<div class="sb-search-empty">No results for &ldquo;' + escHtml(q) + '&rdquo;</div>';
       resultItems = [];
       activeIdx = -1;
+      if (config.enableWebSearch !== false) {
+        resultsEl.innerHTML += '<div class="sb-web-section"></div>';
+        triggerWebSearch(q);
+      }
       return;
     }
 
-    var html = '';
+    var html = '<div class="sb-section-label">From My Articles</div>';
     results.forEach(function(r, i) {
       var item = r.item;
       var title = config.renderTitle ? config.renderTitle(item) : (item.title || item.question || '');
@@ -734,8 +658,8 @@
       var globeIcon = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
       html += '<div class="sb-web-section">' +
         '<div class="sb-web-trigger" id="sbWebTrigger">' +
-          globeIcon +
-          '<span class="sb-web-trigger-label">Search the web for <strong>' + escHtml(q) + '</strong></span>' +
+          '<span style="font-size:16px">&#10024;</span>' +
+          '<span class="sb-web-trigger-label">AI Research: find the best external resource for <strong>' + escHtml(q) + '</strong></span>' +
           '<kbd>&#8997;W</kbd>' +
         '</div></div>';
     }
