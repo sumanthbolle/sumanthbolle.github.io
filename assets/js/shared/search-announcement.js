@@ -1,66 +1,109 @@
 /**
- * Search Announcement Badge — v1
- * Adds a "✨ NEW · AI-Powered Search" chip next to the SBSearch bar.
- * Self-contained: injects its own CSS, finds the search container via
- * polling, and persists dismissal in localStorage.
+ * Search Announcement Badge — v2 (Flashy)
+ * Animated shimmer + pulsing star + gradient text
+ * Self-contained: injects CSS, finds search bar, persists dismissal.
  *
- * Usage:  <script defer src="assets/js/shared/search-announcement.js"></script>
- *         (load AFTER search.js)
+ * Usage: <script defer src="assets/js/shared/search-announcement.js?v=2"></script>
+ *        (load AFTER search.js)
  */
 (function () {
   'use strict';
 
-  var DISMISS_KEY = 'sb_ai_search_announce_v2';
+  var DISMISS_KEY = 'sb_ai_search_announce_v3';
+  try { if (localStorage.getItem(DISMISS_KEY)) return; } catch (e) { return; }
 
-  /* ── bail early if already dismissed ── */
-  try { if (localStorage.getItem(DISMISS_KEY)) return; } catch (e) { /* private mode */ }
-
-  /* ── inject styles once ── */
+  /* ── CSS ── */
   var css = [
-    '.search-announce{display:inline-flex;align-items:center;gap:6px;padding:5px 13px 5px 9px;',
-    'background:linear-gradient(135deg,rgba(88,86,214,.1),rgba(0,102,204,.07));',
-    'border:1px solid rgba(88,86,214,.18);border-radius:20px;font-size:12px;font-weight:600;',
-    'color:#5856d6;white-space:nowrap;animation:_saIn .45s ease both;cursor:default;',
-    'margin-left:8px;flex-shrink:0;line-height:1;user-select:none}',
+    '.sa{display:inline-flex;align-items:center;gap:7px;padding:6px 16px 6px 10px;',
+    'border-radius:22px;white-space:nowrap;cursor:default;position:relative;',
+    'overflow:hidden;line-height:1;margin-left:8px;flex-shrink:0;',
+    'animation:saEnter .6s cubic-bezier(.16,1,.3,1) both;font-family:inherit;z-index:1}',
 
-    '.search-announce-spark{font-size:13px;line-height:1}',
+    '.sa-bg{position:absolute;inset:0;border-radius:inherit;',
+    'background:linear-gradient(135deg,rgba(168,85,247,.08),rgba(59,130,246,.06));',
+    'border:1px solid rgba(168,85,247,.22);z-index:-2}',
 
-    '.search-announce-new{background:linear-gradient(135deg,#5856d6,#007aff);color:#fff;',
-    'font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;',
-    'padding:2px 6px;border-radius:4px;line-height:1.3}',
+    '.sa-shimmer{position:absolute;inset:0;border-radius:inherit;z-index:-1;overflow:hidden}',
+    '.sa-shimmer::after{content:"";position:absolute;top:-50%;left:-75%;width:50%;height:200%;',
+    'background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.18) 50%,transparent 60%);',
+    'animation:saShimmer 3s ease-in-out infinite}',
 
-    '.search-announce-text{color:#5856d6;font-weight:500;font-size:12px}',
+    '.sa-icon{display:flex;align-items:center;animation:saPulse 2s ease-in-out infinite}',
+    '.sa-icon svg{filter:drop-shadow(0 0 3px rgba(168,85,247,.4))}',
 
-    '.search-announce-dismiss{background:none;border:none;color:rgba(88,86,214,.35);',
-    'font-size:16px;cursor:pointer;padding:0 0 0 3px;line-height:1;transition:color .2s}',
-    '.search-announce-dismiss:hover{color:#5856d6}',
+    '.sa-pill{background:linear-gradient(135deg,#a855f7,#3b82f6);color:#fff;',
+    'font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;',
+    'padding:2.5px 7px;border-radius:5px;line-height:1.3;',
+    'box-shadow:0 1px 6px rgba(168,85,247,.3)}',
 
-    '@keyframes _saIn{from{opacity:0;transform:translateY(-5px) scale(.96)}',
+    '.sa-text{font-weight:600;font-size:12px;',
+    'background:linear-gradient(135deg,#a855f7,#3b82f6);',
+    '-webkit-background-clip:text;-webkit-text-fill-color:transparent;',
+    'background-clip:text}',
+
+    '.sa-x{background:none;border:none;color:#7c3aed;opacity:.3;font-size:16px;',
+    'cursor:pointer;padding:0 0 0 2px;line-height:1;transition:opacity .2s;',
+    '-webkit-text-fill-color:initial}',
+    '.sa-x:hover{opacity:.8}',
+
+    '@keyframes saEnter{from{opacity:0;transform:translateY(-8px) scale(.9)}',
     'to{opacity:1;transform:translateY(0) scale(1)}}',
 
-    '@media(max-width:600px){.search-announce-text{display:none}',
-    '.search-announce{padding:4px 9px 4px 7px;margin-left:6px}}'
+    '@keyframes saShimmer{0%{left:-75%}50%{left:125%}100%{left:125%}}',
+
+    '@keyframes saPulse{0%,100%{transform:scale(1) rotate(0deg)}',
+    '50%{transform:scale(1.15) rotate(8deg)}}',
+
+    '@media(max-width:600px){.sa-text{display:none}.sa{padding:5px 10px 5px 8px;margin-left:6px}}'
   ].join('');
 
   var style = document.createElement('style');
   style.textContent = css;
   document.head.appendChild(style);
 
-  /* ── poll for the search wrapper created by SBSearch.init() ── */
+  /* ── SVG star icon with gradient ── */
+  var STAR_SVG = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+    '<defs><linearGradient id="saGrad" x1="0" y1="0" x2="16" y2="16" gradientUnits="userSpaceOnUse">' +
+    '<stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#3b82f6"/>' +
+    '</linearGradient></defs>' +
+    '<path d="M8 1L9.5 5.5L14 4L10.5 7.5L15 9L10.5 9.5L12 14L8 10.5L4 14L5.5 9.5L1 9L5.5 7.5L2 4L6.5 5.5L8 1Z" fill="url(#saGrad)"/>' +
+    '</svg>';
+
+  /* ── Build badge HTML ── */
+  function buildBadge() {
+    var el = document.createElement('span');
+    el.className = 'sa';
+    el.setAttribute('role', 'status');
+    el.setAttribute('aria-label', 'New feature: AI-powered search');
+    el.innerHTML =
+      '<div class="sa-bg"></div>' +
+      '<div class="sa-shimmer"></div>' +
+      '<span class="sa-icon">' + STAR_SVG + '</span>' +
+      '<span class="sa-pill">NEW</span>' +
+      '<span class="sa-text">AI-Powered Search</span>' +
+      '<button class="sa-x" title="Dismiss" aria-label="Dismiss">\u00d7</button>';
+
+    el.querySelector('.sa-x').addEventListener('click', function (e) {
+      e.stopPropagation();
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(-6px) scale(.92)';
+      el.style.transition = 'all .25s ease';
+      setTimeout(function () { el.remove(); }, 260);
+      try { localStorage.setItem(DISMISS_KEY, '1'); } catch (ex) {}
+    });
+
+    return el;
+  }
+
+  /* ── Poll for search bar ── */
   var attempts = 0;
-  var maxAttempts = 80;          // ~8 seconds
-  var interval   = 100;          // ms
-
   var poll = setInterval(function () {
-    attempts++;
-    if (attempts > maxAttempts) { clearInterval(poll); return; }
+    if (++attempts > 80) { clearInterval(poll); return; }
 
-    /* SBSearch typically renders a wrapper with class containing "sb-search" */
     var wrap = document.querySelector(
       '.sb-search-wrap, .sb-search-bar, [class*="sb-search"]'
     );
 
-    /* fallback: grab the search input by its AI-related placeholder */
     if (!wrap) {
       var inp = document.querySelector('input[placeholder*="AI research"]') ||
                 document.querySelector('input[placeholder*="Search articles"]') ||
@@ -71,37 +114,14 @@
     if (!wrap) return;
     clearInterval(poll);
 
-    /* prevent double-injection (hot-reload / SPA) */
-    if (wrap.parentElement && wrap.parentElement.querySelector('.search-announce')) return;
+    if (wrap.parentElement && wrap.parentElement.querySelector('.sa')) return;
 
-    /* ── build badge ── */
-    var badge = document.createElement('span');
-    badge.className = 'search-announce';
-    badge.setAttribute('role', 'status');
-    badge.setAttribute('aria-label', 'New feature: AI-powered search');
-    badge.innerHTML =
-      '<span class="search-announce-spark">\u2728</span>' +
-      '<span class="search-announce-new">NEW</span>' +
-      '<span class="search-announce-text">AI-Powered Search</span>' +
-      '<button class="search-announce-dismiss" title="Dismiss" aria-label="Dismiss">\u00d7</button>';
-
-    /* dismiss handler */
-    badge.querySelector('.search-announce-dismiss').addEventListener('click', function (e) {
-      e.stopPropagation();
-      badge.style.opacity  = '0';
-      badge.style.transform = 'translateY(-5px) scale(.96)';
-      badge.style.transition = 'all .22s ease';
-      setTimeout(function () { badge.remove(); }, 250);
-      try { localStorage.setItem(DISMISS_KEY, '1'); } catch (ex) { /* ok */ }
-    });
-
-    /* ── insert badge ── */
-    // If the wrap's parent is flex-row, append inside so it lines up.
+    var badge = buildBadge();
     var parent = wrap.parentElement;
+
     if (parent) {
       var cs = window.getComputedStyle(parent);
       if (cs.display === 'flex' || cs.display === 'inline-flex') {
-        // Place right after the search wrap inside the flex container
         if (wrap.nextSibling) {
           parent.insertBefore(badge, wrap.nextSibling);
         } else {
@@ -111,11 +131,10 @@
       }
     }
 
-    // Default: insert right after the wrap element
     if (wrap.nextSibling) {
       wrap.parentNode.insertBefore(badge, wrap.nextSibling);
     } else if (wrap.parentNode) {
       wrap.parentNode.appendChild(badge);
     }
-  }, interval);
+  }, 100);
 })();
