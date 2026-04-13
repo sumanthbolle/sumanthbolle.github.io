@@ -401,6 +401,743 @@
       .project-title{font-size:24px}
       .project-screen canvas{height:190px}
     }
+  
+    .projects-section{
+      --panel:rgba(255,255,255,.055);
+      --panel-soft:rgba(255,255,255,.035);
+      --line:rgba(255,255,255,.09);
+      --line-strong:rgba(255,255,255,.14);
+      --text:#f5f5f7;
+      --text-2:rgba(245,245,247,.86);
+      --text-3:rgba(245,245,247,.62);
+      --text-4:rgba(245,245,247,.34);
+      --shadow:0 30px 80px rgba(0,0,0,.34);
+      --ease:cubic-bezier(.22,1,.36,1);
+      --max:1280px;
+      position:relative;
+      overflow:hidden;
+      background:#000;
+    }
+    .projects-section .section-h{position:relative;z-index:4}
+    .projects-section .section-title{max-width:12ch;margin:0 auto}
+    .projects-section .section-sub{max-width:760px;margin-left:auto;margin-right:auto}
+    .projects-section .projects-intro-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+    .projects-section .projects-intro-pills span{padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);font-size:12px;color:rgba(255,255,255,.68)}
+
+.rail{
+      position:fixed;
+      right:22px;
+      top:50%;
+      transform:translateY(-50%);
+      z-index:50;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      pointer-events:none;
+    }
+    .rail-dot{
+      width:4px;height:4px;border-radius:999px;background:rgba(255,255,255,.15);
+      transition:all .45s var(--ease);
+    }
+    .rail-dot.on{height:24px;background:rgba(255,255,255,.7)}
+
+    .projects{position:relative}
+    .project{position:relative}
+    .divider{
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+    }
+
+    .pin{
+      height:100svh;
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:stretch;
+      justify-content:center;
+    }
+    .project-wrap{
+      width:min(100%,var(--max));
+      position:relative;
+      margin:0 auto;
+      padding:0 24px;
+    }
+    .topline{
+      position:absolute;
+      top:28px;
+      left:24px;
+      right:24px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      z-index:10;
+    }
+    .project-meta{display:flex;flex-direction:column;gap:7px}
+    .project-index{
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--text-4);
+    }
+    .project-label{
+      font-size:13px;
+      letter-spacing:-.01em;
+      background-image:linear-gradient(90deg,
+        #78a8ff 0%,
+        #8c8cff 12%,
+        #b28dff 24%,
+        #ef87c8 38%,
+        #ffab73 52%,
+        #f4d96a 66%,
+        #67dfbc 80%,
+        #6fd6ff 92%,
+        #78a8ff 100%);
+      background-size:260% 100%;
+      -webkit-background-clip:text;
+      background-clip:text;
+      -webkit-text-fill-color:transparent;
+      color:transparent;
+      animation:rgbFlow 5.6s linear infinite;
+      filter:saturate(1.1) brightness(1.04) drop-shadow(0 0 14px rgba(145,166,255,.18));
+      font-weight:600;
+    }
+    .proof-strip{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:flex-end;
+    }
+    .proof-pill,
+    .stack-pill{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      font-size:12px;
+      color:var(--text-3);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      white-space:nowrap;
+    }
+
+    .stage-zone{
+      position:absolute;
+      top:88px;
+      left:24px;
+      right:24px;
+      height:56%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      perspective:1900px;
+      z-index:2;
+    }
+    .stage{
+      position:relative;
+      width:min(100%,1100px);
+      height:100%;
+      transform-style:preserve-3d;
+      transform:rotateX(10deg) rotateY(0deg);
+      will-change:transform;
+    }
+    .stage-floor{
+      position:absolute;
+      left:14%;
+      right:14%;
+      bottom:8%;
+      height:26%;
+      border-radius:44px;
+      background:radial-gradient(ellipse at center, rgba(0,0,0,.44), transparent 72%);
+      filter:blur(26px);
+      transform:translateZ(-180px);
+    }
+    .deck,
+    .glass-card,
+    .floating-chip,
+    .signal-badge{
+      position:absolute;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+    }
+    .deck.base{
+      inset:14% 12%;
+      border-radius:42px;
+      opacity:.56;
+      transform:translateZ(-160px) rotateX(76deg);
+    }
+    .deck.mid{
+      inset:11% 12% 14% 12%;
+      border-radius:34px;
+      transform:translateZ(-20px);
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+    }
+    .glass-card{
+      border-radius:24px;
+      color:var(--text-2);
+      padding:12px 14px;
+    }
+    .floating-chip,
+    .signal-badge{
+      inset:auto;
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:600;
+      color:var(--text-2);
+      white-space:nowrap;
+    }
+    .scene-note{
+      position:absolute;
+      left:24px;
+      bottom:22px;
+      max-width:280px;
+      padding:12px 14px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text-3);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .beat-zone{
+      position:absolute;
+      left:24px;
+      right:24px;
+      bottom:0;
+      height:44%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:6;
+    }
+    .beat{
+      position:absolute;
+      width:min(100%,1120px);
+      display:grid;
+      grid-template-columns:minmax(0,1fr) auto;
+      gap:24px 72px;
+      align-items:end;
+      opacity:0;
+      transform:translateY(28px);
+      padding-bottom:58px;
+    }
+    .beat-copy{max-width:560px}
+    .beat-kicker{
+      margin-bottom:12px;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--text-4);
+    }
+    .beat h2{
+      margin:0 0 12px;
+      font-size:clamp(36px,4vw,64px);
+      line-height:1.02;
+      letter-spacing:-.055em;
+      max-width:11ch;
+    }
+    .rgb-point{
+      display:inline-block;
+      position:relative;
+      background-image:linear-gradient(90deg,
+        #78a8ff 0%,
+        #8c8cff 12%,
+        #b28dff 24%,
+        #ef87c8 38%,
+        #ffab73 52%,
+        #f4d96a 66%,
+        #67dfbc 80%,
+        #6fd6ff 92%,
+        #78a8ff 100%);
+      background-size:260% 100%;
+      background-position:0% 50%;
+      -webkit-background-clip:text;
+      background-clip:text;
+      -webkit-text-fill-color:transparent;
+      color:transparent;
+      filter:saturate(.94) brightness(.96);
+      transform-origin:50% 55%;
+      transition:transform .45s var(--ease), filter .45s var(--ease), opacity .35s var(--ease);
+      will-change:background-position, transform, filter;
+    }
+    .rgb-point.live{
+      animation:rgbFlow 5.6s linear infinite, rgbPulse .62s var(--ease) 1;
+      filter:saturate(1.1) brightness(1.04) drop-shadow(0 0 14px rgba(145,166,255,.18));
+      transform:scale(1.015);
+    }
+    @keyframes rgbFlow{
+      0%{background-position:0% 50%}
+      100%{background-position:260% 50%}
+    }
+    @keyframes rgbPulse{
+      0%{transform:scale(.985);filter:saturate(.9) brightness(.98)}
+      55%{transform:scale(1.04);filter:saturate(1.2) brightness(1.08) drop-shadow(0 0 18px rgba(145,166,255,.22))}
+      100%{transform:scale(1.015);filter:saturate(1.1) brightness(1.04) drop-shadow(0 0 14px rgba(145,166,255,.18))}
+    }
+
+    .beat p{
+      margin:0;
+      font-size:17px;
+      line-height:1.6;
+      letter-spacing:-.02em;
+      color:var(--text-3);
+      max-width:40ch;
+    }
+    .beat-metric{
+      min-width:180px;
+      text-align:right;
+    }
+    .metric-value{
+      font-size:clamp(52px,7vw,96px);
+      line-height:.95;
+      letter-spacing:-.08em;
+      font-weight:700;
+      font-variant-numeric:tabular-nums;
+    }
+    .metric-label{
+      margin-top:8px;
+      font-size:13px;
+      color:var(--text-4);
+    }
+
+    .progress{
+      position:absolute;
+      left:50%;
+      bottom:26px;
+      transform:translateX(-50%);
+      display:flex;
+      gap:8px;
+      z-index:8;
+    }
+    .pip{
+      width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.15);
+      transition:all .45s var(--ease);
+    }
+    .pip.on{width:28px;background:rgba(255,255,255,.7)}
+
+    .project.p0{--accent:#8da2ff;--accent2:#8cf0dc;--accent3:rgba(141,162,255,.26)}
+    .project.p1{--accent:#67d0b4;--accent2:#87d6ff;--accent3:rgba(103,208,180,.24)}
+    .project.p2{--accent:#f5ba63;--accent2:#ff906c;--accent3:rgba(245,186,99,.24)}
+    .project.p3{--accent:#ff8d5c;--accent2:#f9d34b;--accent3:rgba(255,141,92,.25)}
+
+    .project .deck.base{
+      background:
+        radial-gradient(circle at 50% 35%, var(--accent3), transparent 55%),
+        linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+    }
+    .project .deck.mid{
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,.08), transparent 30%),
+        linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+    }
+    .project .floating-chip,
+    .project .signal-badge{
+      border-color:rgba(255,255,255,.12);
+      background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04));
+    }
+
+    .semantic{position:absolute;inset:0;transform-style:preserve-3d}
+    .path{
+      position:absolute;
+      height:2px;
+      transform-origin:left center;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,255,255,.28), rgba(255,255,255,.05));
+      opacity:.75;
+    }
+    .path.active{
+      background:linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow:0 0 24px rgba(255,255,255,.14);
+    }
+
+    /* Routing */
+    .routing .router-core{
+      position:absolute;
+      right:20%;
+      top:34%;
+      width:146px;height:146px;border-radius:50%;
+      transform:translateZ(80px);
+      background:
+        radial-gradient(circle at 35% 35%, rgba(255,255,255,.34), transparent 42%),
+        linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow:0 0 80px rgba(141,162,255,.26);
+    }
+    .routing .router-core::after{
+      content:"LLM";
+      position:absolute;inset:0;display:grid;place-items:center;
+      font-size:20px;font-weight:800;letter-spacing:-.05em;color:#091011;
+    }
+    .routing .rule-gate{
+      position:absolute;
+      left:42%;
+      top:42%;
+      width:116px;height:64px;border-radius:18px;
+      display:grid;place-items:center;
+      transform:translateZ(62px);
+      font-size:13px;font-weight:700;color:var(--text-2);
+      background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04));
+      border:1px solid var(--line-strong);
+      box-shadow:var(--shadow);
+    }
+    .routing .tray{
+      position:absolute;
+      width:180px;height:78px;border-radius:24px;
+      padding:12px 16px;
+      display:flex;align-items:flex-end;
+      color:var(--text-2);font-size:13px;font-weight:700;
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      transform:translateZ(46px);
+    }
+    .routing .tray.rule{right:10%;top:14%}
+    .routing .tray.output{right:12%;bottom:16%}
+    .routing .query-card{
+      position:absolute;
+      width:124px;height:72px;border-radius:20px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:700;color:var(--text-2);
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      transform-style:preserve-3d;
+    }
+    .routing .q1{left:8%;top:24%;transform:translateZ(16px) rotateY(-8deg)}
+    .routing .q2{left:10%;top:36%;transform:translateZ(24px) rotateY(-8deg)}
+    .routing .q3{left:7%;top:48%;transform:translateZ(32px) rotateY(-8deg)}
+    .routing .q4{left:11%;top:60%;transform:translateZ(40px) rotateY(-8deg)}
+    .routing .q5{left:9%;top:72%;transform:translateZ(48px) rotateY(-8deg)}
+    .routing .context-chip.kb{left:64%;top:14%;transform:translateZ(100px)}
+    .routing .context-chip.cmdb{left:70%;top:54%;transform:translateZ(120px)}
+    .routing .context-chip.table{left:54%;top:62%;transform:translateZ(88px)}
+    .routing .context-chip{
+      position:absolute;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--text-2);
+      font-size:12px;font-weight:600;
+      box-shadow:var(--shadow);
+    }
+    .routing .route.in{left:18%;top:46%;width:248px}
+    .routing .route.deflect{
+      left:48%;top:44%;width:182px;transform:rotate(-34deg);
+    }
+    .routing .route.main{
+      left:48%;top:50%;width:170px;transform:rotate(-2deg);
+    }
+    .routing .route.out{
+      left:71%;top:62%;width:118px;transform:rotate(42deg);
+    }
+    .routing .status-chip.s1{left:18%;top:12%;transform:translateZ(110px)}
+    .routing .status-chip.s2{left:56%;bottom:12%;transform:translateZ(92px)}
+
+    /* Agent */
+    .agent .track{
+      position:absolute;
+      left:16%;right:14%;top:52%;
+      height:2px;background:rgba(255,255,255,.10);transform:translateZ(20px);
+    }
+    .agent .track-progress{
+      position:absolute;
+      left:16%;top:52%;height:2px;width:0%;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      box-shadow:0 0 24px rgba(103,208,180,.22);
+      transform:translateZ(22px);
+    }
+    .agent .state{
+      position:absolute;
+      width:88px;height:88px;border-radius:24px;
+      display:grid;place-items:center;
+      text-align:center;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+      color:var(--text-3);
+      font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+      box-shadow:var(--shadow);
+      transform:translateZ(72px);
+    }
+    .agent .st1{left:14%;top:36%}
+    .agent .st2{left:30%;top:24%}
+    .agent .st3{left:48%;top:18%}
+    .agent .st4{left:64%;top:24%}
+    .agent .st5{left:80%;top:36%}
+    .agent .state.active{
+      color:#0a1210;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-color:transparent;
+      box-shadow:0 0 34px rgba(103,208,180,.28);
+    }
+    .agent .ticket{
+      position:absolute;
+      left:14%;top:60%;
+      width:136px;height:82px;border-radius:22px;
+      padding:12px 14px;
+      transform:translateZ(110px);
+      display:flex;flex-direction:column;justify-content:space-between;
+      border:1px solid var(--line-strong);
+      background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      color:var(--text-2);
+    }
+    .agent .ticket .ticket-top{
+      font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-4);
+    }
+    .agent .ticket .ticket-title{
+      font-size:13px;font-weight:700;letter-spacing:-.02em;
+    }
+    .agent .audit{
+      position:absolute;
+      right:10%;bottom:14%;
+      width:220px;height:150px;
+      transform:translateZ(56px);
+    }
+    .agent .audit-card{
+      position:absolute;left:0;right:0;height:48px;border-radius:16px;padding:14px 16px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));
+      color:var(--text-3);font-size:12px;
+      box-shadow:var(--shadow);
+    }
+    .agent .audit-card.a1{bottom:0}
+    .agent .audit-card.a2{bottom:34px}
+    .agent .audit-card.a3{bottom:68px}
+    .agent .status-chip.s1{left:12%;top:14%;transform:translateZ(110px)}
+    .agent .status-chip.s2{right:12%;top:16%;transform:translateZ(92px)}
+    .agent .status-chip.s3{right:22%;bottom:10%;transform:translateZ(92px)}
+
+    /* ROI */
+    .roi .intake{
+      position:absolute;
+      left:10%;top:42%;
+      width:136px;height:84px;border-radius:24px;
+      display:grid;place-items:center;
+      transform:translateZ(110px);
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.04));
+      color:var(--text-2);font-size:13px;font-weight:700;
+      box-shadow:var(--shadow);
+    }
+    .roi .lane-card{
+      position:absolute;
+      width:188px;height:96px;border-radius:24px;
+      padding:14px 16px;
+      display:flex;flex-direction:column;justify-content:space-between;
+      transform:translateZ(74px);
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      color:var(--text-2);
+    }
+    .roi .lane-card .ratio{
+      font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-4);
+    }
+    .roi .lane-card .label{
+      font-size:18px;font-weight:800;letter-spacing:-.05em;
+    }
+    .roi .lane-card.rules{left:34%;top:20%}
+    .roi .lane-card.ai{left:34%;top:58%}
+    .roi .roi-block{
+      position:absolute;
+      right:10%;top:34%;
+      width:178px;height:134px;border-radius:28px;
+      display:grid;place-items:center;
+      transform:translateZ(118px);
+      border:1px solid transparent;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#171008;
+      font-size:20px;font-weight:800;letter-spacing:-.05em;
+      box-shadow:0 0 40px rgba(245,186,99,.25), var(--shadow);
+    }
+    .roi .cost-stack{
+      position:absolute;
+      right:16%;bottom:12%;
+      display:flex;gap:10px;transform:translateZ(54px);
+    }
+    .roi .cost{
+      width:56px;height:96px;border-radius:18px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+    }
+    .roi .split.from{left:21%;top:46%;width:120px}
+    .roi .split.rules{left:44%;top:38%;width:152px;transform:rotate(-16deg)}
+    .roi .split.ai{left:44%;top:54%;width:152px;transform:rotate(16deg)}
+    .roi .merge.rules{left:54%;top:33%;width:150px;transform:rotate(14deg)}
+    .roi .merge.ai{left:54%;top:57%;width:150px;transform:rotate(-14deg)}
+    .roi .status-chip.s1{left:12%;top:16%;transform:translateZ(110px)}
+    .roi .status-chip.s2{left:56%;bottom:12%;transform:translateZ(94px)}
+    .roi .status-chip.s3{right:10%;top:16%;transform:translateZ(86px)}
+
+    /* Signal */
+    .signal .tower{
+      position:absolute;
+      left:16%;top:14%;
+      width:10px;height:160px;border-radius:999px;
+      transform:translateZ(80px);
+      background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.16));
+      box-shadow:0 0 24px rgba(255,255,255,.12);
+    }
+    .signal .tower::before{
+      content:"";
+      position:absolute;
+      left:50%;top:-18px;transform:translateX(-50%);
+      width:26px;height:26px;border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 34px rgba(255,141,92,.32);
+    }
+    .signal .wave{
+      position:absolute;
+      left:16%;top:2%;
+      border:1px solid rgba(255,255,255,.14);
+      border-bottom:0;border-radius:999px 999px 0 0;
+      transform:translateX(-50%) translateZ(50px);
+    }
+    .signal .w1{width:140px;height:78px}
+    .signal .w2{width:210px;height:112px;top:-10px}
+    .signal .w3{width:282px;height:146px;top:-22px}
+    .signal .grid{
+      position:absolute;
+      right:10%;
+      top:18%;
+      width:58%;
+      height:58%;
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:14px;
+      transform:translateZ(58px);
+    }
+    .signal .node{
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .signal .node::after{
+      content:"";
+      position:absolute;inset:0;
+      background:linear-gradient(180deg,transparent,rgba(255,255,255,.03));
+    }
+    .signal .node.risk{
+      background:linear-gradient(180deg,rgba(255,141,92,.84),rgba(255,141,92,.18));
+      box-shadow:0 0 40px rgba(255,141,92,.24), var(--shadow);
+    }
+    .signal .detect-ring{
+      position:absolute;
+      right:26%;top:30%;
+      width:140px;height:140px;border-radius:50%;
+      border:1px solid rgba(255,255,255,.16);
+      transform:translateZ(100px);
+      opacity:0;
+    }
+    .signal .dispatch-line{
+      position:absolute;
+      left:26%;top:48%;
+      width:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      box-shadow:0 0 24px rgba(255,141,92,.22);
+      transform:translateZ(110px);
+    }
+    .signal .dispatch-card{
+      position:absolute;
+      left:28%;bottom:16%;
+      width:152px;height:74px;border-radius:22px;
+      padding:14px 16px;
+      display:flex;align-items:center;justify-content:center;
+      transform:translateZ(118px);
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.04));
+      box-shadow:var(--shadow);
+      color:var(--text-2);font-weight:700;
+    }
+    .signal .status-chip.s1{left:12%;top:16%;transform:translateZ(112px)}
+    .signal .status-chip.s2{right:16%;top:14%;transform:translateZ(92px)}
+    .signal .status-chip.s3{right:10%;bottom:12%;transform:translateZ(92px)}
+
+    .stack{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+
+    .footer{
+      padding:88px 24px 120px;
+      text-align:center;
+      position:relative;
+    }
+    .footer-inner{
+      width:min(100%,880px);
+      margin:0 auto;
+    }
+    .footer h2{
+      margin:0;
+      font-size:clamp(34px,5vw,64px);
+      line-height:1.04;
+      letter-spacing:-.06em;
+    }
+    .footer p{
+      margin:16px auto 0;
+      max-width:34ch;
+      font-size:17px;
+      line-height:1.6;
+      color:var(--text-3);
+      letter-spacing:-.02em;
+    }
+    .footer .stack{justify-content:center}
+    .footer .stack-pill{color:var(--text-2)}
+
+    @media (max-width:980px){
+      .hero-inner{grid-template-columns:1fr}
+      .hero-stage{order:-1;height:380px}
+      .beat{grid-template-columns:1fr;gap:18px;padding-bottom:70px}
+      .beat-metric{text-align:left;min-width:auto}
+      .proof-strip{display:none}
+      .rail{display:none}
+      .stage-zone{height:52%}
+      .beat-zone{height:48%}
+      .routing .tray.rule{right:4%}
+      .routing .tray.output{right:6%}
+      .signal .grid{width:62%}
+    }
+
+    @media (max-width:700px){
+      .hero{padding-top:94px}
+      .hero p{font-size:16px}
+      .topline{top:22px;left:18px;right:18px}
+      .project-wrap{padding:0 18px}
+      .stage-zone{top:74px;left:18px;right:18px;height:48%}
+      .beat-zone{left:18px;right:18px;height:52%}
+      .beat h2{max-width:12ch}
+      .beat p{font-size:15px}
+      .metric-value{font-size:clamp(46px,12vw,72px)}
+      .scene-note{left:16px;right:16px;max-width:none}
+      .routing .query-card{width:98px;height:60px;font-size:11px}
+      .routing .router-core{width:114px;height:114px}
+      .routing .rule-gate{width:92px;height:54px}
+      .routing .tray{width:146px;height:68px;font-size:12px}
+      .agent .state{width:66px;height:66px;border-radius:18px;font-size:10px}
+      .agent .ticket{width:118px;height:72px}
+      .agent .audit{width:180px;height:120px}
+      .roi .lane-card{width:150px;height:86px}
+      .roi .roi-block{width:138px;height:106px;font-size:17px}
+      .signal .grid{gap:10px}
+      .signal .dispatch-card{width:126px}
+      .floating-chip,.signal-badge,.proof-pill,.stack-pill{font-size:11px}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+      .pin{height:auto;min-height:100svh}
+      .beat{position:relative;opacity:1!important;transform:none!important}
+      .stage,.hero-deck{transform:none!important}
+    }
   </style>
 </head>
 <body>
@@ -412,15 +1149,16 @@
         <li><a href="#about">About</a></li>
         <li><a href="#expertise">Expertise</a></li>
         <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
         <li><a href="blog.html">Blog</a></li>
         <li><a href="interviews.html">Interviews</a></li>
         <li><a href="#integrations">Integrations</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
-      <button class="menu-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu">
-      <a href="#about">About</a><a href="#expertise">Expertise</a><a href="#skills">Skills</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><a href="#integrations">Integrations</a><a href="#contact">Contact</a>
+      <a href="#about">About</a><a href="#expertise">Expertise</a><a href="#skills">Skills</a><a href="#projects">Projects</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><a href="#integrations">Integrations</a><a href="#contact">Contact</a>
     </div>
   </nav>
 
@@ -694,12 +1432,19 @@
     <section class="projects-section" id="projects">
       <div class="section-c">
         <div class="section-h">
-          <p class="section-eye" data-animate>Enterprise AI Projects</p>
-          <h2 class="section-title" data-animate style="color:#fff">AI that delivers measurable impact.</h2>
-          <p class="section-sub" data-animate>Agentic Workflows • LLM Orchestration • Enterprise Automation • Cost Optimization</p>
+          <p class="section-eye" data-animate>Selected Projects</p>
+          <h2 class="section-title" data-animate style="color:#fff">Enterprise AI, in production.</h2>
+          <p class="section-sub" data-animate>ServiceNow AI platform engineering, agentic workflows, enterprise AI adoption, and telecom AI operations.</p>
+          <div class="projects-intro-pills" data-animate>
+            <span>ServiceNow AI</span>
+            <span>Agentic workflows</span>
+            <span>Business case design</span>
+            <span>Predictive operations</span>
+          </div>
         </div>
       </div>
-      <div id="projectsList"></div>
+      <div class="rail" id="projectRail" aria-hidden="true"></div>
+      <div id="projectsList" class="projects"></div>
     </section>
 
     <section class="contact-section" id="contact">
@@ -721,13 +1466,15 @@
   </main>
 
   <button class="back-to-top"><svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg></button>
-  <footer><p class="footer-text">© 2025 Sumanth Bolle. Designed with precision.</p></footer>
+  <footer><p class="footer-text">© <script>document.write(new Date().getFullYear())</script> Sumanth Bolle. Designed with precision.</p></footer>
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="assets/js/shared/subscribe.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script>
     var ICONS={bolt:'<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',gear:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',rocket:'<svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09zM12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/></svg>',cloud:'<svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>',code:'<svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',database:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',tool:'<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',shield:'<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',trophy:'<svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6M18 9h1.5a2.5 2.5 0 000-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 1012 0V2z"/></svg>',target:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',layers:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',brain:'<svg viewBox="0 0 24 24"><path d="M12 4.5a2.5 2.5 0 00-4.96-.46 2.5 2.5 0 00-1.98 3 2.5 2.5 0 00-1.32 4.24 3 3 0 00.34 5.58 2.5 2.5 0 002.96 3.08A2.5 2.5 0 0012 19.5M12 4.5a2.5 2.5 0 014.96-.46 2.5 2.5 0 011.98 3 2.5 2.5 0 011.32 4.24 3 3 0 01-.34 5.58 2.5 2.5 0 01-2.96 3.08A2.5 2.5 0 0112 19.5"/></svg>',server:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>',link:'<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>',refresh:'<svg viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>'};
     
-    var DATA={about:[{icon:'bolt',cls:'icon-bolt',title:'AI-Native Development',desc:'Expert in integrating Generative AI, LLMs, and AI Agents to automate complex processes.',large:true},{icon:'gear',cls:'icon-gear',title:'ServiceNow Mastery',desc:'Strong expertise across ITSM, ITOM, SecOps, GRC, and custom apps.'},{icon:'rocket',cls:'icon-rocket',title:'Enterprise Scale',desc:'Delivering solutions for global organizations including Walt Disney.'}],stats:[{num:'10+',label:'Certifications'},{num:'60%',label:'Manual Work Reduced'},{num:'40%',label:'Faster Completion'},{num:'99.9%',label:'Platform Uptime'}],skills:[{icon:'bolt',cls:'icon-bolt',title:'ServiceNow',tags:['ITSM','ITOM','SecOps','GRC','CMDB']},{icon:'brain',cls:'icon-ai',title:'AI & ML',tags:['GenAI','LLMs','TensorFlow','NLP']},{icon:'code',cls:'icon-code',title:'Development',tags:['JavaScript','Python','React','REST']},{icon:'cloud',cls:'icon-cloud',title:'Cloud',tags:['GCP','AWS','Azure']},{icon:'database',cls:'icon-data',title:'Data',tags:['SQL','JSON','XML','SOAP']},{icon:'tool',cls:'icon-tools',title:'Tools',tags:['GlideRecord','Flow Designer','ATF']}],certs:[{icon:'trophy',cls:'icon-trophy',name:'Architecture Excellence',issuer:'ServiceNow'},{icon:'target',cls:'icon-target',name:'Application Developer',issuer:'ServiceNow'},{icon:'layers',cls:'icon-layers',name:'CIS-ITSM',issuer:'ServiceNow'},{icon:'shield',cls:'icon-shield',name:'CIS-TPRM',issuer:'ServiceNow'},{icon:'cloud',cls:'icon-cloud',name:'Associate Cloud Engineer',issuer:'Google Cloud'},{icon:'brain',cls:'icon-ai',name:'Azure AI',issuer:'Microsoft'}],integrationTypes:[{icon:'refresh',cls:'icon-cloud',title:'REST API',desc:'Bi-directional sync'},{icon:'server',cls:'icon-server',title:'SOAP Services',desc:'Legacy integrations'},{icon:'link',cls:'icon-link',title:'Integration Hub',desc:'Pre-built spokes'},{icon:'bolt',cls:'icon-bolt',title:'Flow Designer',desc:'Automated workflows'}],projects:[{num:'01',cat:'Enterprise AI Platform',title:'Maverick — Self-Built AI Brain for ServiceNow',desc:'Independently architected and built a production-ready enterprise AI platform that integrates AWS Bedrock and Ollama with ServiceNow, delivering federated search across all tables with intelligent token optimization.',problem:'Now Assist licensing costs $120K–240K/year for 200 users. Regulated and air-gapped enterprises cannot send data outside their network boundary.',solution:'Built Maverick with just 2 scripts and zero custom tables — works on ANY ServiceNow instance. Smart routing resolves 40% of queries without any LLM call. 60–70% token optimization through structured prompt engineering.',tech:['AWS Bedrock','Ollama','ServiceNow','REST API','Prompt Engineering','Federated Search'],stats:[{val:'75-90%',lbl:'Cost Savings'},{val:'60-70%',lbl:'Token Reduction'},{val:'0',lbl:'Custom Tables'},{val:'40%',lbl:'Zero-Token Resolution'}]},{num:'02',cat:'Agentic AI Orchestration',title:'AI-Powered Warranty Claim Resolution',desc:'Designed and demonstrated a multi-agent AI orchestration system for medical device warranty claims, transforming a 7-day manual process into a 35-second autonomous resolution pipeline.',problem:'Warranty claims required 4–5 human handoffs across L1, L2, and warranty teams with zero decision transparency. Average resolution time: 7 business days.',solution:'Built an AI Agent with ReAct reasoning that extracts claim context via NLU, validates warranty coverage in real-time through Integration Hub, and auto-resolves software/firmware issues — including remote device patching — with full audit trail.',tech:['AI Agent Studio','Integration Hub','Flow Designer','Now Assist','NLU','ReAct Strategy'],stats:[{val:'35s',lbl:'Resolution Time'},{val:'0',lbl:'Human Handoffs'},{val:'100%',lbl:'Audit Trail'},{val:'7→0 Days',lbl:'Wait Eliminated'}]},{num:'03',cat:'AI Strategy & Adoption',title:'Now Assist — Enterprise AI Adoption & Rollout',desc:'Within the first month at a sovereign wealth fund subsidiary, designed and presented a comprehensive AI adoption strategy that convinced executive management to purchase ServiceNow Now Assist.',problem:'The organization processed 10,000+ monthly tickets with no AI augmentation. Leadership was skeptical about Now Assist ROI and needed a clear, data-driven business case.',solution:'Architected a 70/30 automation framework — 70% ticket volume handled by traditional ServiceNow workflows consuming zero assists; 30% strategically routed to Now Assist for summarization, GenAI virtual agent, and agentic workflows. Delivered structured WITH vs WITHOUT comparison.',tech:['Now Assist','Flow Designer','Virtual Agent','GenAI','Incident Triage','ROI Modeling'],stats:[{val:'70/30',lbl:'Automation Split'},{val:'$200-500K',lbl:'Annual Savings'},{val:'125 hrs',lbl:'Agent Time Saved/mo'},{val:'1 Month',lbl:'Decision to Purchase'}]},{num:'04',cat:'Telecom AI Transformation',title:'IPTV Telecom — End-to-End AI Agent Ecosystem',desc:'Designed and built a comprehensive AI-powered customer experience solution for a major telecom IPTV platform, spanning autonomous log analysis, conversational ticketing, and proactive hardware failure detection.',problem:'The IPTV support operation relied on reactive, manual troubleshooting with high escalation rates. No proactive detection of device failures or automated resolution capability.',solution:'Built AI Agents for autonomous log analysis and troubleshooting, Virtual Agent with NLU for conversational ticketing, agentic workflows connecting to IPTV telemetry systems, and proactive hardware failure detection that auto-schedules technician visits before customers experience issues.',tech:['AI Agents','NLU','Virtual Agent','CSM','Telco Module','Proactive Intelligence'],stats:[{val:'E2E',lbl:'AI Pipeline'},{val:'Proactive',lbl:'Failure Detection'},{val:'New',lbl:'Partnership Won'},{val:'CSM+Telco',lbl:'Upsell Generated'}]}],apis:[{method:'POST',endpoint:'/api/now/table/incident',status:'201'},{method:'GET',endpoint:'/api/now/cmdb/instance',status:'200'},{method:'PUT',endpoint:'/api/now/table/change',status:'200'},{method:'GET',endpoint:'/api/now/table/sys_user',status:'200'}]};
+    var DATA={about:[{icon:'bolt',cls:'icon-bolt',title:'AI-Native Development',desc:'Expert in integrating Generative AI, LLMs, and AI Agents to automate complex processes.',large:true},{icon:'gear',cls:'icon-gear',title:'ServiceNow Mastery',desc:'Strong expertise across ITSM, ITOM, SecOps, GRC, and custom apps.'},{icon:'rocket',cls:'icon-rocket',title:'Enterprise Scale',desc:'Delivering solutions for global organizations including Walt Disney.'}],stats:[{num:'10+',label:'Certifications'},{num:'60%',label:'Manual Work Reduced'},{num:'40%',label:'Faster Completion'},{num:'99.9%',label:'Platform Uptime'}],skills:[{icon:'bolt',cls:'icon-bolt',title:'ServiceNow',tags:['ITSM','ITOM','SecOps','GRC','CMDB']},{icon:'brain',cls:'icon-ai',title:'AI & ML',tags:['GenAI','LLMs','TensorFlow','NLP']},{icon:'code',cls:'icon-code',title:'Development',tags:['JavaScript','Python','React','REST']},{icon:'cloud',cls:'icon-cloud',title:'Cloud',tags:['GCP','AWS','Azure']},{icon:'database',cls:'icon-data',title:'Data',tags:['SQL','JSON','XML','SOAP']},{icon:'tool',cls:'icon-tools',title:'Tools',tags:['GlideRecord','Flow Designer','ATF']}],certs:[{icon:'trophy',cls:'icon-trophy',name:'Architecture Excellence',issuer:'ServiceNow'},{icon:'target',cls:'icon-target',name:'Application Developer',issuer:'ServiceNow'},{icon:'layers',cls:'icon-layers',name:'CIS-ITSM',issuer:'ServiceNow'},{icon:'shield',cls:'icon-shield',name:'CIS-CSM',issuer:'ServiceNow'},{icon:'cloud',cls:'icon-cloud',name:'Associate Cloud Engineer',issuer:'Google Cloud'},{icon:'brain',cls:'icon-ai',name:'Azure AI',issuer:'Microsoft'}],integrationTypes:[{icon:'refresh',cls:'icon-cloud',title:'REST API',desc:'Bi-directional sync'},{icon:'server',cls:'icon-server',title:'SOAP Services',desc:'Legacy integrations'},{icon:'link',cls:'icon-link',title:'Integration Hub',desc:'Pre-built spokes'},{icon:'bolt',cls:'icon-bolt',title:'Flow Designer',desc:'Automated workflows'}],projects:[{num:'01',cat:'Enterprise AI Platform',title:'Maverick — Self-Built AI Brain for ServiceNow',desc:'Independently architected and built a production-ready enterprise AI platform that integrates AWS Bedrock and Ollama with ServiceNow, delivering federated search across all tables with intelligent token optimization.',problem:'Now Assist licensing costs $120K–240K/year for 200 users. Regulated and air-gapped enterprises cannot send data outside their network boundary.',solution:'Built Maverick with just 2 scripts and zero custom tables — works on ANY ServiceNow instance. Smart routing resolves 40% of queries without any LLM call. 60–70% token optimization through structured prompt engineering.',tech:['AWS Bedrock','Ollama','ServiceNow','REST API','Prompt Engineering','Federated Search'],stats:[{val:'75-90%',lbl:'Cost Savings'},{val:'60-70%',lbl:'Token Reduction'},{val:'0',lbl:'Custom Tables'},{val:'40%',lbl:'Zero-Token Resolution'}]},{num:'02',cat:'Agentic AI Orchestration',title:'AI-Powered Warranty Claim Resolution',desc:'Designed and demonstrated a multi-agent AI orchestration system for medical device warranty claims, transforming a 7-day manual process into a 35-second autonomous resolution pipeline.',problem:'Warranty claims required 4–5 human handoffs across L1, L2, and warranty teams with zero decision transparency. Average resolution time: 7 business days.',solution:'Built an AI Agent with ReAct reasoning that extracts claim context via NLU, validates warranty coverage in real-time through Integration Hub, and auto-resolves software/firmware issues — including remote device patching — with full audit trail.',tech:['AI Agent Studio','Integration Hub','Flow Designer','Now Assist','NLU','ReAct Strategy'],stats:[{val:'35s',lbl:'Resolution Time'},{val:'0',lbl:'Human Handoffs'},{val:'100%',lbl:'Audit Trail'},{val:'7→0 Days',lbl:'Wait Eliminated'}]},{num:'03',cat:'AI Strategy & Adoption',title:'Now Assist — Enterprise AI Adoption & Rollout',desc:'Within the first month at a sovereign wealth fund subsidiary, designed and presented a comprehensive AI adoption strategy that convinced executive management to purchase ServiceNow Now Assist.',problem:'The organization processed 10,000+ monthly tickets with no AI augmentation. Leadership was skeptical about Now Assist ROI and needed a clear, data-driven business case.',solution:'Architected a 70/30 automation framework — 70% ticket volume handled by traditional ServiceNow workflows consuming zero assists; 30% strategically routed to Now Assist for summarization, GenAI virtual agent, and agentic workflows. Delivered structured WITH vs WITHOUT comparison.',tech:['Now Assist','Flow Designer','Virtual Agent','GenAI','Incident Triage','ROI Modeling'],stats:[{val:'70/30',lbl:'Automation Split'},{val:'$200-500K',lbl:'Annual Savings'},{val:'125 hrs',lbl:'Agent Time Saved/mo'},{val:'1 Month',lbl:'Decision to Purchase'}]},{num:'04',cat:'Telecom AI Transformation',title:'IPTV Telecom — End-to-End AI Agent Ecosystem',desc:'Designed and built a comprehensive AI-powered customer experience solution for a major telecom IPTV platform, spanning autonomous log analysis, conversational ticketing, and proactive hardware failure detection.',problem:'The IPTV support operation relied on reactive, manual troubleshooting with high escalation rates. No proactive detection of device failures or automated resolution capability.',solution:'Built AI Agents for autonomous log analysis and troubleshooting, Virtual Agent with NLU for conversational ticketing, agentic workflows connecting to IPTV telemetry systems, and proactive hardware failure detection that auto-schedules technician visits before customers experience issues.',tech:['AI Agents','NLU','Virtual Agent','CSM','Telco Module','Proactive Intelligence'],stats:[{val:'E2E',lbl:'AI Pipeline'},{val:'Proactive',lbl:'Failure Detection'},{val:'New',lbl:'Partnership Won'},{val:'CSM+Telco',lbl:'Upsell Generated'}]}],apis:[{method:'POST',endpoint:'/api/now/table/incident',status:'201'},{method:'GET',endpoint:'/api/now/cmdb/instance',status:'200'},{method:'PUT',endpoint:'/api/now/table/change',status:'200'},{method:'GET',endpoint:'/api/now/table/sys_user',status:'200'}]};
     
     // Preview data for blog and interviews
     var BLOG_PREVIEW=[{id:1,title:"Building AI Agents in ServiceNow",excerpt:"Learn how to create intelligent AI agents that automate complex workflows.",category:"servicenow",date:"Dec 10, 2025",readTime:"8 min"},{id:2,title:"GenAI Summarization for Risk Management",excerpt:"How I implemented GenAI-powered summarization in ServiceNow's Risk Workspace.",category:"ai",date:"Dec 5, 2025",readTime:"6 min"},{id:3,title:"Flow Designer Best Practices",excerpt:"Essential patterns when building flows that handle thousands of executions daily.",category:"tutorial",date:"Nov 28, 2025",readTime:"10 min"}];
@@ -751,8 +1498,7 @@
     // Interview Preview
     h='';INTERVIEW_PREVIEW.forEach(function(q,i){var diffClass=q.difficulty==='Expert'?'expert':'';h+='<a href="interviews.html" class="preview-card interview-preview-card" data-animate-card style="transition-delay:'+(i*.1)+'s"><div class="interview-badges"><span class="interview-badge badge-company">'+q.company+'</span><span class="interview-badge badge-difficulty '+diffClass+'">'+q.difficulty+'</span></div><p class="interview-preview-q">'+q.question+'</p></a>';});document.getElementById('interviewPreview').innerHTML=h;
 
-    // Projects
-    h='';DATA.projects.forEach(function(p,i){var tech='',stats='';p.tech.forEach(function(t){tech+='<span class="tech-tag">'+t+'</span>';});p.stats.forEach(function(s){stats+='<div class="project-stat-card"><div class="project-stat-value">'+s.val+'</div><div class="project-stat-label">'+s.lbl+'</div></div>';});h+='<div class="project-item"><div class="project-grid"><div class="project-visual"><div class="project-screen"><canvas id="canvas'+i+'" width="600" height="300"></canvas></div><div class="project-stats-row">'+stats+'</div></div><div class="project-content"><div class="project-num">'+p.num+'</div><span class="project-category">'+p.cat+'</span><h3 class="project-title">'+p.title+'</h3><p class="project-desc">'+p.desc+'</p><div class="project-features"><div class="feature-item"><div class="feature-icon problem">!</div><div class="feature-text"><h4>Problem</h4><p>'+p.problem+'</p></div></div><div class="feature-item"><div class="feature-icon solution">✓</div><div class="feature-text"><h4>Solution</h4><p>'+p.solution+'</p></div></div></div><div class="project-tech">'+tech+'</div></div></div></div>';if(i<DATA.projects.length-1)h+='<div class="project-divider"></div>';});document.getElementById('projectsList').innerHTML=h;
+    // Legacy canvas projects removed — replaced by semantic 3D project system below
 
     // API Log
     var apiLog=document.getElementById('apiLog');
@@ -765,7 +1511,7 @@
 
     // Mobile menu
     var menuToggle=document.querySelector('.menu-toggle'),mobileMenu=document.querySelector('.mobile-menu');
-    menuToggle.addEventListener('click',function(){this.classList.toggle('active');mobileMenu.classList.toggle('active');});
+    menuToggle.addEventListener('click',function(){this.classList.toggle('active');mobileMenu.classList.toggle('active');this.setAttribute('aria-expanded',mobileMenu.classList.contains('active'));});
     document.querySelectorAll('.mobile-menu a').forEach(function(a){a.addEventListener('click',function(){menuToggle.classList.remove('active');mobileMenu.classList.remove('active');});});
 
     // Back to top
@@ -779,19 +1525,531 @@
     // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var href=this.getAttribute('href');if(href==='#')return;e.preventDefault();var t=document.querySelector(href);if(t)t.scrollIntoView({behavior:'smooth'});});});
 
-    // Canvas animations — Enterprise AI Projects
-    function animateCanvas0(){var c=document.getElementById('canvas0');if(!c)return;var ctx=c.getContext('2d'),w=c.width,h=c.height,f=0;var particles=[];for(var i=0;i<30;i++)particles.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-0.5)*1.5,vy:(Math.random()-0.5)*1.5,r:Math.random()*3+1});function draw(){ctx.fillStyle='rgba(10,10,20,0.15)';ctx.fillRect(0,0,w,h);particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(102,126,234,0.7)';ctx.fill();});for(var i=0;i<particles.length;i++)for(var j=i+1;j<particles.length;j++){var dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<100){ctx.strokeStyle='rgba(102,126,234,'+(1-dist/100)*0.3+')';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.stroke();}}var cx=w/2,cy=h/2;ctx.save();ctx.shadowColor='#667eea';ctx.shadowBlur=20;ctx.fillStyle='#667eea';ctx.beginPath();ctx.arc(cx,cy,28+Math.sin(f*0.03)*4,0,Math.PI*2);ctx.fill();ctx.restore();ctx.fillStyle='#fff';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.fillText('AI',cx,cy+5);var labels=['Incidents','CMDB','Changes','HR Cases','Problems','KB'];labels.forEach(function(l,i){var a=i*(Math.PI*2/6)+f*0.005,r=90+Math.sin(f*0.02+i)*10,lx=cx+Math.cos(a)*r,ly=cy+Math.sin(a)*r;ctx.strokeStyle='rgba(129,215,66,0.3)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(lx,ly);ctx.stroke();ctx.fillStyle='rgba(129,215,66,0.9)';ctx.beginPath();ctx.arc(lx,ly,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font='8px sans-serif';ctx.fillText(l,lx,ly+3);});ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='11px sans-serif';ctx.fillText('Federated Search — Smart Routing',cx,h-15);f++;requestAnimationFrame(draw);}ctx.fillStyle='#0a0a14';ctx.fillRect(0,0,w,h);draw();}
+  </script>
 
-    function animateCanvas1(){var c=document.getElementById('canvas1');if(!c)return;var ctx=c.getContext('2d'),w=c.width,h=c.height,f=0;var stages=[{label:'Claim In',x:60,color:'#60a5fa'},{label:'NLU Extract',x:170,color:'#a78bfa'},{label:'Warranty API',x:280,color:'#fbbf24'},{label:'Decision',x:390,color:'#f97316'},{label:'Auto-Fix',x:500,color:'#34d399'}];function draw(){ctx.fillStyle='#0a0a14';ctx.fillRect(0,0,w,h);var baseY=h*0.45;ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(30,baseY);ctx.lineTo(w-30,baseY);ctx.stroke();stages.forEach(function(s,i){var pulse=Math.sin(f*0.05-i*0.8);var active=((f/40)%stages.length|0)===i;var r=active?22+pulse*4:16;ctx.save();if(active){ctx.shadowColor=s.color;ctx.shadowBlur=25;}ctx.fillStyle=active?s.color:'rgba(255,255,255,0.15)';ctx.beginPath();ctx.arc(s.x,baseY,r,0,Math.PI*2);ctx.fill();ctx.restore();ctx.fillStyle=active?'#fff':'rgba(255,255,255,0.5)';ctx.font=(active?'bold ':'')+' 9px sans-serif';ctx.textAlign='center';ctx.fillText(s.label,s.x,baseY+r+18);if(i<stages.length-1){var progress=active?Math.min((f%40)/40,1):((f/40)%stages.length|0)>i?1:0;if(progress>0){var nx=stages[i+1].x,sx=s.x+r+4;ctx.strokeStyle=s.color;ctx.lineWidth=2;ctx.globalAlpha=progress*0.8;ctx.beginPath();ctx.moveTo(sx,baseY);ctx.lineTo(sx+(nx-r-4-sx)*progress,baseY);ctx.stroke();ctx.globalAlpha=1;}}});ctx.fillStyle='rgba(52,211,153,0.15)';ctx.fillRect(w*0.6,h*0.05,w*0.36,55);ctx.strokeStyle='rgba(52,211,153,0.4)';ctx.strokeRect(w*0.6,h*0.05,w*0.36,55);ctx.fillStyle='#34d399';ctx.font='bold 22px sans-serif';ctx.textAlign='center';ctx.fillText('35 seconds',w*0.78,h*0.05+25);ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='10px sans-serif';ctx.fillText('vs 7 days legacy',w*0.78,h*0.05+44);ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('AI Agent Pipeline — ReAct Reasoning',w/2,h-12);f++;requestAnimationFrame(draw);}draw();}
+  <script>
 
-    function animateCanvas2(){var c=document.getElementById('canvas2');if(!c)return;var ctx=c.getContext('2d'),w=c.width,h=c.height,f=0;function draw(){ctx.fillStyle='#0a0a14';ctx.fillRect(0,0,w,h);var cx=w*0.35,cy=h*0.5,outerR=90,innerR=55;var auto70=0.7*Math.PI*2,ai30=0.3*Math.PI*2;var startA=-Math.PI/2;ctx.lineWidth=18;ctx.lineCap='round';ctx.strokeStyle='#22c55e';ctx.beginPath();ctx.arc(cx,cy,outerR,startA,startA+auto70*(Math.min(f/80,1)));ctx.stroke();ctx.strokeStyle='#667eea';ctx.beginPath();ctx.arc(cx,cy,outerR,startA+auto70,startA+auto70+ai30*(Math.min((f-30)/80,1)));ctx.stroke();ctx.lineWidth=10;var glowA=startA+(f*0.02)%(Math.PI*2);ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.beginPath();ctx.arc(cx,cy,outerR,glowA,glowA+0.3);ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 24px sans-serif';ctx.textAlign='center';ctx.fillText('70/30',cx,cy-4);ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='10px sans-serif';ctx.fillText('Automation Split',cx,cy+16);ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(w*0.68,h*0.22,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.8)';ctx.font='12px sans-serif';ctx.textAlign='left';ctx.fillText('70% Zero-Assist Workflows',w*0.7,h*0.25);ctx.fillStyle='#667eea';ctx.beginPath();ctx.arc(w*0.68,h*0.38,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.8)';ctx.fillText('30% Now Assist AI',w*0.7,h*0.41);var items=[{lbl:'Summarization',y:h*0.56},{lbl:'GenAI Virtual Agent',y:h*0.68},{lbl:'Agentic Workflows',y:h*0.80}];items.forEach(function(it,i){var alpha=Math.min(Math.max((f-60-i*20)/30,0),1);ctx.globalAlpha=alpha;ctx.fillStyle='rgba(102,126,234,0.15)';ctx.fillRect(w*0.62,it.y-10,w*0.34*alpha,22);ctx.fillStyle='#a5b4fc';ctx.font='11px sans-serif';ctx.textAlign='left';ctx.fillText('→ '+it.lbl,w*0.64,it.y+5);ctx.globalAlpha=1;});ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('10,000 tickets/month — Entitlement Optimized',w/2,h-12);f++;requestAnimationFrame(draw);}draw();}
+    if (window.gsap && window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+    }
 
-    function animateCanvas3(){var c=document.getElementById('canvas3');if(!c)return;var ctx=c.getContext('2d'),w=c.width,h=c.height,f=0;var nodes=[{label:'AI Agent',x:w*0.5,y:h*0.18,color:'#667eea',r:24},{label:'Log Analysis',x:w*0.15,y:h*0.5,color:'#60a5fa',r:18},{label:'NLU Bot',x:w*0.38,y:h*0.55,color:'#a78bfa',r:18},{label:'Proactive\nDetection',x:w*0.62,y:h*0.55,color:'#f97316',r:18},{label:'Telemetry',x:w*0.85,y:h*0.5,color:'#34d399',r:18}];function draw(){ctx.fillStyle='#0a0a14';ctx.fillRect(0,0,w,h);for(var i=1;i<nodes.length;i++){var n=nodes[i],hub=nodes[0];var pulse=(Math.sin(f*0.04+i)*0.5+0.5);ctx.strokeStyle='rgba(102,126,234,'+0.1+pulse*0.25+')';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(hub.x,hub.y+hub.r);ctx.lineTo(n.x,n.y-n.r);ctx.stroke();ctx.setLineDash([]);if(f%(80)==(i*20)%80){var t=((f%40)/40);var px=hub.x+(n.x-hub.x)*t,py=(hub.y+hub.r)+(n.y-n.r-hub.y-hub.r)*t;ctx.fillStyle=n.color;ctx.beginPath();ctx.arc(px,py,3,0,Math.PI*2);ctx.fill();}}nodes.forEach(function(n,i){var pulse=i===0?Math.sin(f*0.03)*3:0;ctx.save();ctx.shadowColor=n.color;ctx.shadowBlur=i===0?20:10;ctx.fillStyle=n.color;ctx.beginPath();ctx.arc(n.x,n.y,n.r+pulse,0,Math.PI*2);ctx.fill();ctx.restore();ctx.fillStyle='#fff';ctx.font=(i===0?'bold 10':'9')+'px sans-serif';ctx.textAlign='center';var lines=n.label.split('\n');lines.forEach(function(l,li){ctx.fillText(l,n.x,n.y+3+(li-lines.length/2+0.5)*11);});});ctx.fillStyle='rgba(247,183,51,0.12)';var alertX=w*0.15,alertY=h*0.82,alertW=w*0.7,alertH=30;var alertAlpha=Math.sin(f*0.05)*0.3+0.7;ctx.globalAlpha=alertAlpha;ctx.fillStyle='rgba(249,115,22,0.12)';ctx.fillRect(alertX,alertY,alertW,alertH);ctx.strokeStyle='rgba(249,115,22,0.4)';ctx.lineWidth=1;ctx.strokeRect(alertX,alertY,alertW,alertH);ctx.fillStyle='#f97316';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillText('⚡ Proactive Alert: Device failure predicted — Technician auto-dispatched',w/2,alertY+18);ctx.globalAlpha=1;ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='10px sans-serif';ctx.fillText('E2E AI Ecosystem — Strategic Partnership Won',w/2,h-8);f++;requestAnimationFrame(draw);}draw();}
-    // Initialize canvas animations
-    animateCanvas0();
-    animateCanvas1();
-    animateCanvas2();
-    animateCanvas3();
+    const SEMANTIC_PROJECTS = [
+      {
+        id: 'p0',
+        label: 'Maverick — Self-Built AI Brain for ServiceNow',
+        proofs: ['40% resolved pre-LLM', '75–90% cost savings'],
+        note: 'A ServiceNow-native AI layer that routes routine work before inference and grounds hard cases with platform context.',
+        scene: 'routing',
+        beats: [
+          { kicker: 'Route', title: 'Route routine work before the model.', accent: 'the model', body: 'Smart routing clears repeatable asks at the rules layer instead of sending everything to an LLM.', metric: '40%', metricLabel: 'resolved before LLM' },
+          { kicker: 'Grounding', title: 'Bring ServiceNow context into the reasoning path.', accent: 'ServiceNow context', body: 'CMDB, KB, and table data stay close to the decision path for the cases that actually need AI.', metric: 'Hybrid', metricLabel: 'Ollama + Bedrock' },
+          { kicker: 'Control', title: 'Reduce spend without adding another platform.', accent: 'Reduce spend', body: 'The architecture stays lean, governable, and usable even in regulated environments.', metric: '75–90%', metricLabel: 'cost reduction' }
+        ]
+      },
+      {
+        id: 'p1',
+        label: 'AI-Powered Warranty Claim Resolution',
+        proofs: ['35s resolution', '100% audit trail'],
+        note: 'A multi-step claim workflow that extracts context, validates entitlement, decides coverage, and responds without handoffs.',
+        scene: 'agent',
+        beats: [
+          { kicker: 'Flow', title: 'Move one claim through five decisions.', accent: 'five decisions', body: 'The claim progresses through intake, extraction, validation, decision, and resolution in one visible path.', metric: '35s', metricLabel: 'average resolution' },
+          { kicker: 'Validation', title: 'Check entitlement before taking action.', accent: 'entitlement', body: 'Warranty status and coverage are validated first so the agent can respond with the right next step.', metric: '0', metricLabel: 'human handoffs' },
+          { kicker: 'Trust', title: 'Leave a clear audit trail behind every outcome.', accent: 'audit trail', body: 'Each decision remains explainable because the workflow records how the claim moved and why.', metric: '100%', metricLabel: 'decision traceability' }
+        ]
+      },
+      {
+        id: 'p2',
+        label: 'Now Assist — Enterprise AI Adoption & Rollout',
+        proofs: ['70 / 30 model', '125h saved monthly'],
+        note: 'An adoption model that keeps predictable work in workflows and applies AI only where reasoning creates actual value.',
+        scene: 'roi',
+        beats: [
+          { kicker: 'Split', title: 'Split work by fit, not by hype.', accent: 'fit', body: 'Traditional workflow automation handles the predictable lane while AI is reserved for judgment-heavy work.', metric: '70 / 30', metricLabel: 'delivery model' },
+          { kicker: 'Adoption', title: 'Keep zero-assist work in the workflow lane.', accent: 'workflow lane', body: 'Ticket categories are mapped deliberately so assist consumption stays targeted instead of broad and expensive.', metric: '125h', metricLabel: 'saved each month' },
+          { kicker: 'Decision', title: 'Build a business case leadership can sign.', accent: 'business case', body: 'The model lands in hours saved, adoption fit, and ROI that can survive an executive review.', metric: '$200–500K', metricLabel: 'annual savings range' }
+        ]
+      },
+      {
+        id: 'p3',
+        label: 'IPTV Telecom — End-to-End AI Agent Ecosystem',
+        proofs: ['pre-failure detect', 'proactive dispatch'],
+        note: 'Telemetry, conversational triage, AI agents, and technician dispatch connected into one proactive support path.',
+        scene: 'signal',
+        beats: [
+          { kicker: 'Signal', title: 'Catch the pattern before the customer notices.', accent: 'before the customer notices', body: 'Device behavior starts drifting before the outage is visible, so the model watches for weak signals early.', metric: 'Pre', metricLabel: 'failure detection' },
+          { kicker: 'Detect', title: 'Turn raw telemetry into a risk signal.', accent: 'risk signal', body: 'The system isolates the risky node and surfaces it before support becomes reactive.', metric: 'Auto', metricLabel: 'risk isolation' },
+          { kicker: 'Act', title: 'Dispatch with context, not after failure.', accent: 'Dispatch', body: 'Diagnostics and technician actions move first so the experience feels proactive rather than escalated.', metric: 'CSM + Telco', metricLabel: 'solution footprint' }
+        ]
+      }
+    ];
+function sceneMarkup(type, note){
+      if(type === 'routing'){
+        return `
+          <div class="deck base"></div>
+          <div class="deck mid"><div class="scene-note">${note}</div></div>
+          <div class="semantic routing">
+            <div class="stage-floor"></div>
+            <div class="path route in"></div>
+            <div class="path route deflect"></div>
+            <div class="path route main"></div>
+            <div class="path route out"></div>
+
+            <div class="floating-chip status-chip s1 route-chip">Deflect</div>
+            <div class="floating-chip status-chip s2 token-chip">Token saved</div>
+
+            <div class="query-card q1">Password reset</div>
+            <div class="query-card q2">Access check</div>
+            <div class="query-card q3">Network issue</div>
+            <div class="query-card q4">Policy lookup</div>
+            <div class="query-card q5">Priority route</div>
+
+            <div class="rule-gate">Rules</div>
+            <div class="router-core"></div>
+            <div class="tray rule">Resolved here</div>
+            <div class="tray output">Reasoned output</div>
+
+            <div class="context-chip kb">KB</div>
+            <div class="context-chip cmdb">CMDB</div>
+            <div class="context-chip table">Tables</div>
+          </div>
+        `;
+      }
+      if(type === 'agent'){
+        return `
+          <div class="deck base"></div>
+          <div class="deck mid"><div class="scene-note">${note}</div></div>
+          <div class="semantic agent">
+            <div class="stage-floor"></div>
+            <div class="track"></div>
+            <div class="track-progress"></div>
+
+            <div class="floating-chip status-chip s1">Autonomous</div>
+            <div class="floating-chip status-chip s2">Verifiable</div>
+            <div class="floating-chip status-chip s3">Traceable</div>
+
+            <div class="state st1">Intake</div>
+            <div class="state st2">Extract</div>
+            <div class="state st3">Validate</div>
+            <div class="state st4">Decide</div>
+            <div class="state st5">Resolve</div>
+
+            <div class="ticket">
+              <div class="ticket-top">Ticket</div>
+              <div class="ticket-title">Warranty claim</div>
+            </div>
+
+            <div class="audit">
+              <div class="audit-card a3">Context validated</div>
+              <div class="audit-card a2">Validation executed</div>
+              <div class="audit-card a1">Closure written</div>
+            </div>
+          </div>
+        `;
+      }
+      if(type === 'roi'){
+        return `
+          <div class="deck base"></div>
+          <div class="deck mid"><div class="scene-note">${note}</div></div>
+          <div class="semantic roi">
+            <div class="stage-floor"></div>
+
+            <div class="path split from"></div>
+            <div class="path split rules"></div>
+            <div class="path split ai"></div>
+            <div class="path merge rules"></div>
+            <div class="path merge ai"></div>
+
+            <div class="floating-chip status-chip s1">Business case</div>
+            <div class="floating-chip status-chip s2">Hours saved</div>
+            <div class="floating-chip status-chip s3">Budget sign-off</div>
+
+            <div class="intake">Use case</div>
+
+            <div class="lane-card rules">
+              <div class="ratio">70%</div>
+              <div class="label">Workflow</div>
+            </div>
+
+            <div class="lane-card ai">
+              <div class="ratio">30%</div>
+              <div class="label">AI</div>
+            </div>
+
+            <div class="roi-block">ROI</div>
+
+            <div class="cost-stack">
+              <div class="cost c1"></div>
+              <div class="cost c2"></div>
+              <div class="cost c3"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="deck base"></div>
+        <div class="deck mid"><div class="scene-note">${note}</div></div>
+        <div class="semantic signal">
+          <div class="stage-floor"></div>
+
+          <div class="floating-chip status-chip s1">Telemetry</div>
+          <div class="floating-chip status-chip s2">Risk detected</div>
+          <div class="floating-chip status-chip s3">Outage avoided</div>
+
+          <div class="tower"></div>
+          <div class="wave w1"></div>
+          <div class="wave w2"></div>
+          <div class="wave w3"></div>
+
+          <div class="grid">
+            ${Array.from({length: 20}).map((_, i) => `<div class="node ${i===13 ? 'risk' : ''}"></div>`).join('')}
+          </div>
+
+          <div class="detect-ring"></div>
+          <div class="dispatch-line"></div>
+          <div class="dispatch-card">Technician scheduled</div>
+        </div>
+      `;
+    }
+
+    function escapeRegExp(value){
+      return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function renderBeatTitle(title, accent){
+      if(!accent || !title.includes(accent)) return title;
+      return title.replace(new RegExp(escapeRegExp(accent), 'g'), `<span class="rgb-point">${accent}</span>`);
+    }
+
+    function renderProjects(){
+      const projects = document.getElementById('projectsList');
+      projects.innerHTML = '';
+
+      SEMANTIC_PROJECTS.forEach((item, index) => {
+        const section = document.createElement('section');
+        section.className = `project ${item.id}`;
+        section.id = item.id;
+        section.innerHTML = `
+          <div class="pin">
+            <div class="project-wrap">
+              <div class="topline">
+                <div class="project-meta">
+                  <div class="project-index">${String(index + 1).padStart(2,'0')} / 04</div>
+                  <div class="project-label">${item.label}</div>
+                </div>
+                <div class="proof-strip">
+                  ${item.proofs.map(proof => `<span class="proof-pill">${proof}</span>`).join('')}
+                </div>
+              </div>
+
+              <div class="stage-zone">
+                <div class="stage" data-scene="${item.scene}">
+                  ${sceneMarkup(item.scene, item.note)}
+                </div>
+              </div>
+
+              <div class="beat-zone">
+                ${item.beats.map((beat, beatIndex) => `
+                  <div class="beat" id="beat-${item.id}-${beatIndex}">
+                    <div class="beat-copy">
+                      <div class="beat-kicker">${beat.kicker}</div>
+                      <h2>${renderBeatTitle(beat.title, beat.accent)}</h2>
+                      <p>${beat.body}</p>
+                    </div>
+                    <div class="beat-metric">
+                      <div class="metric-value" data-val="${beat.metric}">–</div>
+                      <div class="metric-label">${beat.metricLabel}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div class="progress">
+                ${item.beats.map(() => '<div class="pip"></div>').join('')}
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+        `;
+        projects.appendChild(section);
+      });
+    }
+
+    renderProjects();
+
+    function countUp(el){
+      if(!el) return;
+      const raw = el.dataset.val;
+      const match = raw.match(/^([^\d]*)(\d+)(.*)$/);
+      if(!match){ el.textContent = raw; return; }
+      const [, pre, digits, suffix] = match;
+      const target = parseInt(digits, 10);
+      const duration = 1100;
+      const start = performance.now();
+
+      const tick = (now) => {
+        const p = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = `${pre}${Math.round(target * eased)}${suffix}`;
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+
+    const navTargets = [...document.querySelectorAll('.project')];
+    const rail = document.getElementById('projectRail');
+    const railDots = navTargets.map((section, index) => {
+      const dot = document.createElement('div');
+      dot.className = `rail-dot ${index === 0 ? 'on' : ''}`;
+      rail.appendChild(dot);
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top center',
+        end: 'bottom center',
+        onToggle: (self) => {
+          if (self.isActive) {
+            railDots.forEach((other, otherIndex) => other.classList.toggle('on', otherIndex === index));
+          }
+        }
+      });
+      return dot;
+    });
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function setPips(pips, activeIndex){
+      pips.forEach((pip, index) => pip.classList.toggle('on', index === activeIndex));
+    }
+
+    function activateBeat(beats, activeIndex){
+      beats.forEach((beat, index) => {
+        const active = index === activeIndex;
+        beat.classList.toggle('is-active', active);
+        beat.querySelectorAll('.rgb-point').forEach(node => node.classList.toggle('live', active));
+      });
+    }
+
+    function deactivateBeat(beats, activeIndex){
+      const beat = beats[activeIndex];
+      if(!beat) return;
+      beat.classList.remove('is-active');
+      beat.querySelectorAll('.rgb-point').forEach(node => node.classList.remove('live'));
+    }
+
+    function clearStates(section){
+      section.querySelectorAll('.state').forEach(el => el.classList.remove('active'));
+    }
+
+    function buildSceneTimeline(section, type, tl, labels){
+      const stage = section.querySelector('.stage');
+
+      if(type === 'routing'){
+        const q1 = section.querySelector('.q1');
+        const q2 = section.querySelector('.q2');
+        const q3 = section.querySelector('.q3');
+        const q4 = section.querySelector('.q4');
+        const q5 = section.querySelector('.q5');
+        const ruleGate = section.querySelector('.rule-gate');
+        const core = section.querySelector('.router-core');
+        const trayRule = section.querySelector('.tray.rule');
+        const trayOutput = section.querySelector('.tray.output');
+        const paths = section.querySelectorAll('.route');
+        const chips = [section.querySelector('.kb'), section.querySelector('.cmdb'), section.querySelector('.table')];
+        const deflectChip = section.querySelector('.route-chip');
+        const tokenChip = section.querySelector('.token-chip');
+
+        gsap.set(chips, {opacity:0, y:12, scale:.96});
+        gsap.set([deflectChip, tokenChip], {opacity:0, y:10, scale:.94});
+
+        tl.to(stage, {rotateX: 12, rotateY: -10, duration:.10, ease:'none'}, 0)
+          .to(ruleGate, {scale:1.06, boxShadow:'0 0 30px rgba(255,255,255,.14)', duration:.06}, labels[0])
+          .to(q1, {x:390, y:-96, rotateY:10, scale:.92, duration:.11, ease:'power1.inOut'}, labels[0])
+          .to(q2, {x:382, y:-48, rotateY:8, scale:.92, duration:.11, ease:'power1.inOut'}, labels[0] + .01)
+          .to(deflectChip, {opacity:1, y:0, scale:1, duration:.06}, labels[0] + .04)
+          .to([paths[1]], {opacity:1, duration:.04}, labels[0])
+          .to(trayRule, {y:-6, duration:.08}, labels[0] + .05)
+
+          .to(stage, {rotateY: 0, duration:.12, ease:'none'}, labels[1] - .02)
+          .to(core, {scale:1.05, boxShadow:'0 0 96px rgba(141,162,255,.28)', duration:.07}, labels[1])
+          .to([q3, q4, q5], {x:370, y:-90, stagger:.03, duration:.09, ease:'power1.inOut'}, labels[1] - .01)
+          .to([q3, q4, q5], {x:480, y:[-114,-86,-58], stagger:.04, duration:.10, ease:'power1.inOut'}, labels[1] + .05)
+          .to(chips, {opacity:1, y:0, scale:1, stagger:.03, duration:.07}, labels[1] + .02)
+          .to([paths[2]], {opacity:1, duration:.04}, labels[1])
+
+          .to(stage, {rotateX: 9, rotateY: 8, duration:.12, ease:'none'}, labels[2] - .02)
+          .to([q3, q4, q5], {x:620, y:[30,62,94], stagger:.04, duration:.12, ease:'power1.inOut'}, labels[2] + .01)
+          .to(trayOutput, {y:-8, duration:.09}, labels[2] + .06)
+          .to(tokenChip, {opacity:1, y:0, scale:1, duration:.06}, labels[2] + .04)
+          .to([paths[3]], {opacity:1, duration:.04}, labels[2] + .01);
+      }
+
+      if(type === 'agent'){
+        const ticket = section.querySelector('.ticket');
+        const states = [...section.querySelectorAll('.state')];
+        const progress = section.querySelector('.track-progress');
+        const auditCards = section.querySelectorAll('.audit-card');
+        const chips = section.querySelectorAll('.status-chip');
+
+        gsap.set(auditCards, {opacity:0, y:14});
+        gsap.set(chips, {opacity:0, y:10, scale:.94});
+
+        tl.to(stage, {rotateX: 12, rotateY: -8, duration:.10, ease:'none'}, 0)
+          .call(() => { clearStates(section); states[0].classList.add('active'); states[1].classList.add('active'); }, null, labels[0])
+          .to(progress, {width:'38%', duration:.10, ease:'none'}, labels[0])
+          .to(ticket, {x:180, y:-96, duration:.12, ease:'power1.inOut'}, labels[0] + .01)
+          .to(chips[0], {opacity:1, y:0, scale:1, duration:.06}, labels[0] + .03)
+
+          .to(stage, {rotateY: 0, duration:.12, ease:'none'}, labels[1] - .01)
+          .call(() => { clearStates(section); states[0].classList.add('active'); states[1].classList.add('active'); states[2].classList.add('active'); states[3].classList.add('active'); }, null, labels[1])
+          .to(progress, {width:'74%', duration:.12, ease:'none'}, labels[1])
+          .to(ticket, {x:380, y:-126, duration:.12, ease:'power1.inOut'}, labels[1] + .01)
+          .to(auditCards[2], {opacity:1, y:0, duration:.07}, labels[1] + .02)
+          .to(auditCards[1], {opacity:1, y:0, duration:.07}, labels[1] + .05)
+          .to(chips[1], {opacity:1, y:0, scale:1, duration:.06}, labels[1] + .04)
+
+          .to(stage, {rotateX: 9, rotateY: 8, duration:.12, ease:'none'}, labels[2] - .01)
+          .call(() => { clearStates(section); states.forEach(node => node.classList.add('active')); }, null, labels[2])
+          .to(progress, {width:'92%', duration:.10, ease:'none'}, labels[2])
+          .to(ticket, {x:560, y:-92, duration:.12, ease:'power1.inOut'}, labels[2] + .01)
+          .to(auditCards[0], {opacity:1, y:0, duration:.07}, labels[2] + .03)
+          .to(chips[2], {opacity:1, y:0, scale:1, duration:.06}, labels[2] + .05);
+      }
+
+      if(type === 'roi'){
+        const intake = section.querySelector('.intake');
+        const rules = section.querySelector('.lane-card.rules');
+        const ai = section.querySelector('.lane-card.ai');
+        const roiBlock = section.querySelector('.roi-block');
+        const costs = section.querySelectorAll('.cost');
+        const paths = section.querySelectorAll('.path');
+        const chips = section.querySelectorAll('.status-chip');
+
+        gsap.set(chips, {opacity:0, y:10, scale:.94});
+
+        tl.to(stage, {rotateX: 12, rotateY: -8, duration:.10, ease:'none'}, 0)
+          .to(intake, {x:46, duration:.08}, labels[0])
+          .to(paths[0], {opacity:1, duration:.05}, labels[0])
+          .to([paths[1], paths[2]], {opacity:1, duration:.05}, labels[0] + .03)
+          .to(rules, {x:48, y:-8, scale:1.02, duration:.09}, labels[0] + .03)
+          .to(ai, {x:48, y:8, scale:1.02, duration:.09}, labels[0] + .03)
+          .to(chips[0], {opacity:1, y:0, scale:1, duration:.06}, labels[0] + .04)
+
+          .to(stage, {rotateY: 0, duration:.12, ease:'none'}, labels[1] - .01)
+          .to(rules, {x:84, duration:.12}, labels[1])
+          .to(ai, {x:74, duration:.12}, labels[1])
+          .to(costs, {y:24, scaleY:.72, stagger:.03, duration:.10}, labels[1] + .02)
+          .to(chips[1], {opacity:1, y:0, scale:1, duration:.06}, labels[1] + .04)
+
+          .to(stage, {rotateX: 9, rotateY: 8, duration:.12, ease:'none'}, labels[2] - .01)
+          .to([paths[3], paths[4]], {opacity:1, duration:.05}, labels[2])
+          .to(roiBlock, {scale:1.08, duration:.09}, labels[2] + .04)
+          .to([rules, ai], {x:120, duration:.10}, labels[2] + .01)
+          .to(costs, {opacity:.18, y:42, stagger:.02, duration:.09}, labels[2] + .04)
+          .to(chips[2], {opacity:1, y:0, scale:1, duration:.06}, labels[2] + .05);
+      }
+
+      if(type === 'signal'){
+        const risk = section.querySelector('.node.risk');
+        const ring = section.querySelector('.detect-ring');
+        const dispatchLine = section.querySelector('.dispatch-line');
+        const dispatchCard = section.querySelector('.dispatch-card');
+        const waves = section.querySelectorAll('.wave');
+        const chips = section.querySelectorAll('.status-chip');
+
+        gsap.set([ring, dispatchCard], {opacity:0, scale:.94});
+        gsap.set(chips, {opacity:0, y:10, scale:.94});
+
+        tl.to(stage, {rotateX: 12, rotateY: -9, duration:.10, ease:'none'}, 0)
+          .to(risk, {scale:1.08, duration:.08}, labels[0])
+          .to(waves, {opacity:.9, stagger:.02, duration:.08}, labels[0])
+          .to(chips[0], {opacity:1, y:0, scale:1, duration:.06}, labels[0] + .04)
+
+          .to(stage, {rotateY: 0, duration:.12, ease:'none'}, labels[1] - .01)
+          .to(risk, {scale:1.18, duration:.10}, labels[1])
+          .to(ring, {opacity:1, scale:1.08, duration:.10}, labels[1] + .02)
+          .to(chips[1], {opacity:1, y:0, scale:1, duration:.06}, labels[1] + .04)
+
+          .to(stage, {rotateX: 9, rotateY: 9, duration:.12, ease:'none'}, labels[2] - .01)
+          .to(dispatchLine, {width:260, duration:.10, ease:'none'}, labels[2] + .01)
+          .to(dispatchCard, {opacity:1, scale:1, duration:.08}, labels[2] + .04)
+          .to(chips[2], {opacity:1, y:0, scale:1, duration:.06}, labels[2] + .05);
+      }
+    }
+
+    document.querySelectorAll('.project').forEach((section) => {
+      const beats = [...section.querySelectorAll('.beat')];
+      const pips = [...section.querySelectorAll('.pip')];
+      const metrics = beats.map(beat => beat.querySelector('.metric-value'));
+      const type = section.querySelector('.stage').dataset.scene;
+
+      gsap.set(beats, {opacity:0, y:24});
+
+      const tl = gsap.timeline();
+      const labels = [0.10, 0.39, 0.68];
+      const fade = 0.06;
+      const tail = 0.08;
+      const counted = new Set();
+
+      buildSceneTimeline(section, type, tl, labels);
+
+      beats.forEach((beat, index) => {
+        const start = labels[index];
+
+        tl.to(beat, {
+          opacity:1,
+          y:0,
+          duration:fade,
+          ease:'power2.out',
+          onStart: () => {
+            setPips(pips, index);
+            activateBeat(beats, index);
+          },
+          onUpdate: function(){
+            if(this.progress() > 0.55 && !counted.has(index)){
+              counted.add(index);
+              countUp(metrics[index]);
+            }
+          },
+          onReverseComplete: () => {
+            counted.delete(index);
+            deactivateBeat(beats, index);
+          }
+        }, start);
+
+        if(index < beats.length - 1){
+          tl.to(beat, {
+            opacity:0,
+            y:-14,
+            duration:fade,
+            ease:'power2.in',
+            onStart: () => deactivateBeat(beats, index),
+            onReverseComplete: () => activateBeat(beats, index)
+          }, start + 0.17);
+        }
+      });
+
+      tl.to(beats[beats.length - 1], {
+        opacity:0,
+        y:-14,
+        duration:tail,
+        ease:'power2.in',
+        onStart: () => deactivateBeat(beats, beats.length - 1),
+        onReverseComplete: () => activateBeat(beats, beats.length - 1)
+      }, 0.92);
+
+      ScrollTrigger.create({
+        trigger: section,
+        pin: section.querySelector('.pin'),
+        start: 'top top',
+        end: '+=540%',
+        scrub: 1.15,
+        animation: tl,
+        onEnter: () => { counted.clear(); setPips(pips, -1); activateBeat(beats, -1); },
+        onEnterBack: () => { counted.clear(); setPips(pips, -1); activateBeat(beats, -1); }
+      });
+    });
+  
   </script>
 </body>
 </html>
