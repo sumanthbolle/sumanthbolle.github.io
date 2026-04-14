@@ -402,24 +402,15 @@
       updateSendButton();
     }
 
-    function buildContextBody(query) {
-      const contextMessages = conversationHistory.slice(-MAX_CONTEXT_MESSAGES);
-
-      let contextStr = '';
-      if (contextMessages.length > 1) {
-        const prior = contextMessages.slice(0, -1);
-        contextStr = prior.map(m =>
-          (m.role === 'user' ? 'User: ' : 'Assistant: ') + m.content
-        ).join('\n\n');
-        contextStr = '\n\nConversation context:\n' + contextStr + '\n\nNow answer this follow-up:';
-      }
-
-      return {query: query + contextStr};
+    function buildRequestBody(query) {
+      const prior = conversationHistory.slice(-(MAX_CONTEXT_MESSAGES));
+      const context = prior.length > 1 ? prior.slice(0, -1) : [];
+      return {query, context};
     }
 
     async function fetchResponse(query) {
       try {
-        const body = buildContextBody(query);
+        const body = buildRequestBody(query);
         const res = await fetch(ENDPOINT, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},

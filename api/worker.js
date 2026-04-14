@@ -29,8 +29,11 @@ export default {
     }
 
     try {
-      const { query } = await request.json();
-      if (!query || query.length < 2 || query.length > 200) {
+      const body = await request.json();
+      const query = body.query;
+      const context = body.context;
+
+      if (!query || query.length < 2 || query.length > 500) {
         return jsonResponse({ success: false, error: 'Invalid query' }, allowedOrigin);
       }
 
@@ -38,6 +41,30 @@ export default {
       if (!apiKey) {
         return jsonResponse({ success: false, error: 'API key not configured' }, allowedOrigin);
       }
+
+      const messages = [
+        {
+          role: 'system',
+          content: 'You are a ServiceNow technical search assistant. Given a search query, provide a concise, direct answer in 3-5 sentences. Use citation markers like [1], [2] to reference sources. Focus on practical information a ServiceNow developer or architect needs.'
+        }
+      ];
+
+      if (Array.isArray(context) && context.length > 0) {
+        const trimmed = context.slice(-10);
+        for (const msg of trimmed) {
+          if (msg.role === 'user' || msg.role === 'assistant') {
+            messages.push({
+              role: msg.role,
+              content: (msg.content || '').slice(0, 2000)
+            });
+          }
+        }
+      }
+
+      messages.push({
+        role: 'user',
+        content: 'ServiceNow: ' + query
+      });
 
       const response = await fetch('https://api.perplexity.ai/v1/sonar', {
         method: 'POST',
@@ -47,16 +74,7 @@ export default {
         },
         body: JSON.stringify({
           model: 'sonar',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a ServiceNow technical search assistant. Given a search query, provide a concise, direct answer in 3-5 sentences. Use citation markers like [1], [2] to reference sources. Focus on practical information a ServiceNow developer or architect needs.'
-            },
-            {
-              role: 'user',
-              content: 'ServiceNow: ' + query
-            }
-          ],
+          messages: messages,
           temperature: 0.1,
           max_tokens: 500,
           search_domain_filter: [
