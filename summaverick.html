@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Summaverick — AI Research Assistant | Sumanth Bolle</title>
+  <meta name="description" content="Summaverick — Search-grade speed, research-grade depth. An AI research assistant by Sumanth Bolle.">
+  <link rel="canonical" href="https://sumanthbolle.com/summaverick">
+  <meta property="og:title" content="Summaverick — AI Research Assistant">
+  <meta property="og:description" content="Search-grade speed, research-grade depth. Ask anything, search deeper, research with clarity.">
+  <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
+  <meta property="og:url" content="https://sumanthbolle.com/summaverick">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#050508;
+      --surface:rgba(255,255,255,0.04);
+      --surface-hover:rgba(255,255,255,0.07);
+      --border:rgba(255,255,255,0.08);
+      --border-strong:rgba(255,255,255,0.14);
+      --text-1:#f5f5f7;
+      --text-2:rgba(255,255,255,0.82);
+      --text-3:rgba(255,255,255,0.52);
+      --text-4:rgba(255,255,255,0.30);
+      --accent-gradient:linear-gradient(90deg,#78a8ff 0%,#8c8cff 12%,#b28dff 24%,#ef87c8 38%,#ffab73 52%,#f4d96a 66%,#67dfbc 80%,#6fd6ff 92%,#78a8ff 100%);
+      --glass:rgba(230,233,242,0.06);
+      --glass-strong:rgba(225,228,240,0.10);
+      --radius:24px;
+      --ease:cubic-bezier(.22,1,.36,1);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;background:var(--bg);color:var(--text-1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+
+    /* Ambient BG */
+    .ambient{position:fixed;inset:0;pointer-events:none;z-index:0}
+    .ambient .orb{position:absolute;border-radius:50%;filter:blur(120px)}
+    .ambient .orb-1{width:34rem;height:34rem;left:50%;top:-14rem;transform:translateX(-50%);background:rgba(96,165,250,0.10)}
+    .ambient .orb-2{width:28rem;height:28rem;right:-8rem;top:18%;background:rgba(167,139,250,0.08)}
+    .ambient .orb-3{width:26rem;height:26rem;left:-10rem;bottom:12%;background:rgba(103,223,188,0.06)}
+    .ambient .grid-overlay{position:absolute;inset:0;opacity:0.03;background-image:linear-gradient(rgba(255,255,255,0.8) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.8) 1px,transparent 1px);background-size:90px 90px}
+
+    /* Nav */
+    .sm-nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:rgba(5,5,8,0.72);border-bottom:1px solid var(--border)}
+    .sm-nav-inner{max-width:1180px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .sm-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text-1)}
+    .sm-brand-icon{width:36px;height:36px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface);display:grid;place-items:center;position:relative;overflow:hidden}
+    .sm-brand-icon::before{content:'';position:absolute;inset:0;border-radius:12px;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.18),transparent 45%)}
+    .sm-brand-icon svg{width:18px;height:18px;stroke:var(--text-2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;position:relative}
+    .sm-brand-name{font-size:14px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase}
+    .sm-brand-sub{font-size:11px;color:var(--text-4);margin-top:1px}
+    .sm-nav-links{display:flex;align-items:center;gap:20px}
+    .sm-nav-links a{color:var(--text-3);text-decoration:none;font-size:13px;transition:color 0.3s}
+    .sm-nav-links a:hover,.sm-nav-links a.active{color:var(--text-1)}
+    .sm-new-btn{padding:7px 18px;border-radius:980px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.3s;display:flex;align-items:center;gap:6px}
+    .sm-new-btn:hover{background:var(--surface-hover);border-color:var(--border-strong)}
+    .sm-new-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+    /* Main layout */
+    .sm-main{flex:1;display:flex;flex-direction:column;position:relative;z-index:1;max-width:860px;width:100%;margin:0 auto;padding:0 20px}
+
+    /* Landing (empty state) */
+    .sm-landing{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 0 120px;animation:fadeUp 0.7s var(--ease)}
+    .sm-landing.hidden{display:none}
+    .sm-landing h1{font-size:clamp(36px,6vw,56px);font-weight:600;letter-spacing:-0.04em;line-height:1.08;max-width:600px}
+    .sm-landing h1 .gradient-text{background-image:var(--accent-gradient);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:rgbFlow 5.6s linear infinite}
+    .sm-landing .subtitle{font-size:17px;color:var(--text-3);margin-top:16px;line-height:1.6;max-width:480px}
+    .sm-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:28px}
+    .sm-chip{padding:9px 16px;border-radius:980px;border:1px solid var(--border);background:var(--surface);color:var(--text-3);font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.3s}
+    .sm-chip:hover{background:var(--surface-hover);color:var(--text-1);border-color:var(--border-strong);transform:translateY(-1px)}
+
+    /* Chat area */
+    .sm-chat{flex:1;display:none;flex-direction:column;padding-top:24px;padding-bottom:140px;overflow-y:auto}
+    .sm-chat.active{display:flex}
+    .sm-chat::-webkit-scrollbar{width:5px}
+    .sm-chat::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+
+    /* Message bubbles */
+    .sm-msg{margin-bottom:28px;animation:fadeUp 0.4s var(--ease)}
+    .sm-msg-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .sm-msg-avatar{width:28px;height:28px;border-radius:10px;display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0}
+    .sm-msg-avatar.user{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+    .sm-msg-avatar.ai{border:1px solid var(--border-strong);background:var(--surface)}
+    .sm-msg-avatar.ai svg{width:14px;height:14px;stroke:var(--text-2);fill:none;stroke-width:1.8}
+    .sm-msg-sender{font-size:13px;font-weight:600;color:var(--text-2)}
+    .sm-msg-body{padding-left:38px}
+
+    .sm-msg-user .sm-msg-content{font-size:16px;line-height:1.6;color:var(--text-1)}
+
+    .sm-msg-ai .sm-msg-content{font-size:15px;line-height:1.75;color:var(--text-2)}
+    .sm-msg-ai .sm-msg-content p{margin-bottom:12px}
+    .sm-msg-ai .sm-msg-content p:last-child{margin-bottom:0}
+    .sm-msg-ai .sm-msg-content strong{color:var(--text-1);font-weight:600}
+    .sm-msg-ai .sm-msg-content code{font-size:13px;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:5px;font-family:ui-monospace,'SF Mono',monospace}
+    .sm-msg-ai .sm-msg-content pre{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:14px 16px;overflow-x:auto;margin:12px 0;font-size:13px;line-height:1.6;font-family:ui-monospace,'SF Mono',monospace}
+    .sm-msg-ai .sm-msg-content h2,.sm-msg-ai .sm-msg-content h3{font-size:14px;font-weight:700;color:var(--text-1);margin:18px 0 8px;letter-spacing:-0.01em}
+    .sm-msg-ai .sm-msg-content ul,.sm-msg-ai .sm-msg-content ol{margin:8px 0 12px 18px}
+    .sm-msg-ai .sm-msg-content li{margin-bottom:6px;line-height:1.6}
+    .sm-msg-ai .sm-msg-content a{color:#78a8ff;text-decoration:none}
+    .sm-msg-ai .sm-msg-content a:hover{text-decoration:underline}
+
+    /* Citation markers */
+    .sm-cite{color:#b28dff;font-size:10px;font-weight:700;cursor:pointer;vertical-align:super;padding:0 2px;background:rgba(178,141,255,0.12);border-radius:3px;margin:0 1px;text-decoration:none}
+    .sm-cite:hover{background:rgba(178,141,255,0.24)}
+
+    /* Sources panel */
+    .sm-sources{margin-top:16px;padding-left:38px}
+    .sm-sources-label{font-size:10px;font-weight:600;color:var(--text-4);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px}
+    .sm-source-card{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;border:1px solid var(--border);background:var(--surface);text-decoration:none;color:inherit;transition:all 0.2s;margin-bottom:6px}
+    .sm-source-card:hover{background:var(--surface-hover);border-color:var(--border-strong)}
+    .sm-source-num{width:24px;height:24px;border-radius:8px;background:rgba(178,141,255,0.12);color:#b28dff;font-size:11px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
+    .sm-source-info{flex:1;min-width:0}
+    .sm-source-title{font-size:13px;font-weight:500;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sm-source-domain{font-size:11px;color:var(--text-4);margin-top:2px}
+    .sm-source-arrow{color:var(--text-4);flex-shrink:0}
+    .sm-source-arrow svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+
+    /* Related questions */
+    .sm-related{margin-top:14px;padding-left:38px;display:flex;flex-wrap:wrap;gap:8px}
+    .sm-related-btn{padding:8px 14px;border-radius:980px;border:1px solid var(--border);background:var(--surface);color:var(--text-3);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.3s}
+    .sm-related-btn:hover{background:var(--surface-hover);color:var(--text-1);border-color:var(--border-strong)}
+
+    /* Loading */
+    .sm-loading{display:flex;align-items:center;gap:10px;padding-left:38px;margin-bottom:20px;animation:fadeUp 0.3s var(--ease)}
+    .sm-loading-dot{width:6px;height:6px;border-radius:50%;background:var(--text-3);animation:dotPulse 1.4s ease-in-out infinite}
+    .sm-loading-dot:nth-child(2){animation-delay:0.15s}
+    .sm-loading-dot:nth-child(3){animation-delay:0.3s}
+    .sm-loading-text{font-size:13px;color:var(--text-4)}
+
+    /* Input bar */
+    .sm-input-wrap{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:16px 20px 24px;background:linear-gradient(to top,var(--bg) 60%,transparent)}
+    .sm-input-bar{max-width:860px;margin:0 auto;border-radius:var(--radius);border:1px solid var(--border-strong);background:rgba(10,10,16,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);padding:14px 16px;display:flex;align-items:flex-end;gap:10px;transition:border-color 0.3s}
+    .sm-input-bar:focus-within{border-color:rgba(120,168,255,0.35)}
+    .sm-input-bar textarea{flex:1;background:none;border:none;outline:none;color:var(--text-1);font-size:15px;font-family:inherit;line-height:1.5;resize:none;max-height:140px;min-height:22px}
+    .sm-input-bar textarea::placeholder{color:var(--text-4)}
+    .sm-send-btn{width:36px;height:36px;border-radius:50%;border:none;background:#fff;color:#000;cursor:pointer;display:grid;place-items:center;flex-shrink:0;transition:all 0.2s;opacity:0.3;pointer-events:none}
+    .sm-send-btn.active{opacity:1;pointer-events:auto}
+    .sm-send-btn:hover{transform:scale(1.05)}
+    .sm-send-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
+    .sm-input-meta{display:flex;align-items:center;gap:8px;margin-top:8px;max-width:860px;margin-left:auto;margin-right:auto;justify-content:center}
+    .sm-input-meta span{font-size:11px;color:var(--text-4)}
+
+    /* Research cards on landing */
+    .sm-research-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:32px;width:100%;max-width:560px}
+    .sm-research-card{border-radius:18px;border:1px solid var(--border);background:var(--surface);padding:20px;text-align:left;cursor:pointer;transition:all 0.3s}
+    .sm-research-card:hover{background:var(--surface-hover);border-color:var(--border-strong);transform:translateY(-2px)}
+    .sm-research-card-icon{width:36px;height:36px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,0.3);display:grid;place-items:center;margin-bottom:12px}
+    .sm-research-card-icon svg{width:18px;height:18px;stroke:var(--text-2);fill:none;stroke-width:1.8}
+    .sm-research-card h3{font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:6px}
+    .sm-research-card p{font-size:12px;color:var(--text-4);line-height:1.5}
+
+    /* Animations */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes rgbFlow{0%{background-position:0% 50%}100%{background-position:260% 50%}}
+    @keyframes dotPulse{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+
+    /* Responsive */
+    @media(max-width:640px){
+      .sm-nav-links{display:none}
+      .sm-landing h1{font-size:32px}
+      .sm-research-grid{grid-template-columns:1fr}
+      .sm-chips{gap:8px}
+      .sm-chip{font-size:12px;padding:7px 12px}
+      .sm-brand-sub{display:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <nav class="sm-nav">
+    <div class="sm-nav-inner">
+      <a href="index.html" class="sm-brand">
+        <div class="sm-brand-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div>
+          <div class="sm-brand-name">Summaverick</div>
+          <div class="sm-brand-sub">Search-grade speed &middot; research-grade depth</div>
+        </div>
+      </a>
+      <div class="sm-nav-links">
+        <a href="index.html">Portfolio</a>
+        <a href="blog.html">Blog</a>
+        <a href="interviews.html">Interviews</a>
+      </div>
+      <button class="sm-new-btn" id="newChatBtn" title="New session">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New
+      </button>
+    </div>
+  </nav>
+
+  <main class="sm-main">
+    <div class="sm-landing" id="landing">
+      <h1>Ask anything.<br><span class="gradient-text">Search deeper.</span><br><span style="color:var(--text-3)">Research with clarity.</span></h1>
+      <p class="subtitle">Summaverick blends AI search with research-grade depth into a calm, focused interface built for thoughtful exploration.</p>
+      <div class="sm-chips" id="chips"></div>
+      <div class="sm-research-grid" id="researchGrid"></div>
+    </div>
+
+    <div class="sm-chat" id="chatArea"></div>
+  </main>
+
+  <div class="sm-input-wrap">
+    <div class="sm-input-bar" id="inputBar">
+      <textarea id="queryInput" rows="1" placeholder="Ask anything. Search deeper. Research with clarity." autocomplete="off" spellcheck="false"></textarea>
+      <button class="sm-send-btn" id="sendBtn" title="Send">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      </button>
+    </div>
+    <div class="sm-input-meta">
+      <span>Powered by Perplexity Sonar &middot; Session resets on refresh</span>
+    </div>
+  </div>
+
+  <script>
+  window.SB_AI_SEARCH_ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';
+
+  (function(){
+    'use strict';
+
+    const ENDPOINT = window.SB_AI_SEARCH_ENDPOINT;
+    const MAX_CONTEXT_MESSAGES = 10;
+
+    const chips = [
+      'AI agent design patterns',
+      'ServiceNow AI architecture',
+      'RAG vs fine-tuning tradeoffs',
+      'Now Assist best practices',
+      'CMDB data model deep dive',
+    ];
+
+    const researchCards = [
+      {title:'Quick answer', icon:'search', text:'Direct, high-confidence answer with minimal friction.'},
+      {title:'What matters most', icon:'sparkles', text:'Key context, tradeoffs, and the most important takeaway.'},
+      {title:'Deeper research', icon:'telescope', text:'Structured exploration across sources and interpretations.'},
+      {title:'Next moves', icon:'workflow', text:'Smart continuation paths from insight to action.'},
+    ];
+
+    const icons = {
+      search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+      sparkles: '<svg viewBox="0 0 24 24"><path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3z"/></svg>',
+      telescope: '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/><path d="M12 8v4l3 3"/></svg>',
+      workflow: '<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+      compass: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+      arrowUp: '<svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
+      externalLink: '<svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>',
+    };
+
+    let conversationHistory = [];
+    let isLoading = false;
+
+    const landing = document.getElementById('landing');
+    const chatArea = document.getElementById('chatArea');
+    const queryInput = document.getElementById('queryInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const newChatBtn = document.getElementById('newChatBtn');
+    const chipsEl = document.getElementById('chips');
+    const researchGridEl = document.getElementById('researchGrid');
+
+    function init() {
+      renderChips();
+      renderResearchCards();
+      bindEvents();
+      autoResizeTextarea();
+    }
+
+    function renderChips() {
+      chipsEl.innerHTML = chips.map(c =>
+        `<button class="sm-chip" data-query="${esc(c)}">${esc(c)}</button>`
+      ).join('');
+    }
+
+    function renderResearchCards() {
+      researchGridEl.innerHTML = researchCards.map(card =>
+        `<div class="sm-research-card" data-query="${esc(card.title)}">
+          <div class="sm-research-card-icon">${icons[card.icon] || ''}</div>
+          <h3>${esc(card.title)}</h3>
+          <p>${esc(card.text)}</p>
+        </div>`
+      ).join('');
+    }
+
+    function bindEvents() {
+      sendBtn.addEventListener('click', handleSend);
+      queryInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          handleSend();
+        }
+      });
+      queryInput.addEventListener('input', function() {
+        updateSendButton();
+        autoResizeTextarea();
+      });
+
+      chipsEl.addEventListener('click', function(e) {
+        const chip = e.target.closest('.sm-chip');
+        if (chip) submitQuery(chip.dataset.query);
+      });
+      researchGridEl.addEventListener('click', function(e) {
+        const card = e.target.closest('.sm-research-card');
+        if (card) submitQuery(card.dataset.query);
+      });
+      chatArea.addEventListener('click', function(e) {
+        const btn = e.target.closest('.sm-related-btn');
+        if (btn) submitQuery(btn.dataset.query);
+        const cite = e.target.closest('.sm-cite');
+        if (cite) {
+          e.preventDefault();
+          const url = cite.dataset.url;
+          if (url) window.open(url, '_blank');
+        }
+      });
+      newChatBtn.addEventListener('click', resetChat);
+    }
+
+    function updateSendButton() {
+      const hasText = queryInput.value.trim().length > 0;
+      sendBtn.classList.toggle('active', hasText && !isLoading);
+    }
+
+    function autoResizeTextarea() {
+      queryInput.style.height = 'auto';
+      queryInput.style.height = Math.min(queryInput.scrollHeight, 140) + 'px';
+    }
+
+    function submitQuery(query) {
+      queryInput.value = query;
+      updateSendButton();
+      handleSend();
+    }
+
+    function handleSend() {
+      const query = queryInput.value.trim();
+      if (!query || query.length < 2 || isLoading) return;
+
+      if (landing.classList.contains('hidden') === false) {
+        landing.classList.add('hidden');
+        chatArea.classList.add('active');
+      }
+
+      appendUserMessage(query);
+      conversationHistory.push({role: 'user', content: query});
+      queryInput.value = '';
+      queryInput.style.height = 'auto';
+      updateSendButton();
+      showLoading();
+      fetchResponse(query);
+    }
+
+    function appendUserMessage(text) {
+      const div = document.createElement('div');
+      div.className = 'sm-msg sm-msg-user';
+      div.innerHTML = `
+        <div class="sm-msg-header">
+          <div class="sm-msg-avatar user">You</div>
+          <div class="sm-msg-sender">You</div>
+        </div>
+        <div class="sm-msg-body">
+          <div class="sm-msg-content">${esc(text)}</div>
+        </div>`;
+      chatArea.appendChild(div);
+      scrollToBottom();
+    }
+
+    function showLoading() {
+      isLoading = true;
+      updateSendButton();
+      const div = document.createElement('div');
+      div.className = 'sm-msg sm-msg-ai';
+      div.id = 'loadingMsg';
+      div.innerHTML = `
+        <div class="sm-msg-header">
+          <div class="sm-msg-avatar ai">${icons.compass}</div>
+          <div class="sm-msg-sender">Summaverick</div>
+        </div>
+        <div class="sm-loading">
+          <div class="sm-loading-dot"></div>
+          <div class="sm-loading-dot"></div>
+          <div class="sm-loading-dot"></div>
+          <span class="sm-loading-text">Researching across sources…</span>
+        </div>`;
+      chatArea.appendChild(div);
+      scrollToBottom();
+    }
+
+    function removeLoading() {
+      const el = document.getElementById('loadingMsg');
+      if (el) el.remove();
+      isLoading = false;
+      updateSendButton();
+    }
+
+    function buildContextBody(query) {
+      const contextMessages = conversationHistory.slice(-MAX_CONTEXT_MESSAGES);
+
+      let contextStr = '';
+      if (contextMessages.length > 1) {
+        const prior = contextMessages.slice(0, -1);
+        contextStr = prior.map(m =>
+          (m.role === 'user' ? 'User: ' : 'Assistant: ') + m.content
+        ).join('\n\n');
+        contextStr = '\n\nConversation context:\n' + contextStr + '\n\nNow answer this follow-up:';
+      }
+
+      return {query: query + contextStr};
+    }
+
+    async function fetchResponse(query) {
+      try {
+        const body = buildContextBody(query);
+        const res = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(body)
+        });
+
+        if (!res.ok) throw new Error('API error: ' + res.status);
+        const data = await res.json();
+
+        removeLoading();
+
+        if (data.success && data.result) {
+          const answer = data.result.answer || 'No answer available.';
+          conversationHistory.push({role: 'assistant', content: answer});
+          appendAIMessage(data.result);
+        } else {
+          appendErrorMessage('No results found. Try rephrasing your question.');
+        }
+      } catch (err) {
+        removeLoading();
+        appendErrorMessage('Something went wrong. Please try again.');
+      }
+    }
+
+    function appendAIMessage(result) {
+      const answer = result.answer || '';
+      const sources = result.sources || [];
+      const related = result.relatedQuestions || [];
+
+      let formattedAnswer = formatMarkdown(answer);
+      sources.forEach(function(s) {
+        const citeRe = new RegExp('\\[' + s.index + '\\]', 'g');
+        formattedAnswer = formattedAnswer.replace(citeRe,
+          `<a class="sm-cite" href="#" data-url="${esc(s.url)}" title="${esc(s.title || s.source)}">${s.index}</a>`
+        );
+      });
+
+      let sourcesHtml = '';
+      if (sources.length > 0) {
+        sourcesHtml = `<div class="sm-sources">
+          <div class="sm-sources-label">Sources</div>
+          ${sources.map(s => `
+            <a class="sm-source-card" href="${esc(s.url)}" target="_blank" rel="noopener">
+              <div class="sm-source-num">${s.index}</div>
+              <div class="sm-source-info">
+                <div class="sm-source-title">${esc(s.title || s.source)}</div>
+                <div class="sm-source-domain">${esc(s.source)}</div>
+              </div>
+              <div class="sm-source-arrow">${icons.externalLink}</div>
+            </a>
+          `).join('')}
+        </div>`;
+      }
+
+      let relatedHtml = '';
+      if (related.length > 0) {
+        relatedHtml = `<div class="sm-related">
+          ${related.map(q => `<button class="sm-related-btn" data-query="${esc(q)}">${esc(q)}</button>`).join('')}
+        </div>`;
+      }
+
+      const div = document.createElement('div');
+      div.className = 'sm-msg sm-msg-ai';
+      div.innerHTML = `
+        <div class="sm-msg-header">
+          <div class="sm-msg-avatar ai">${icons.compass}</div>
+          <div class="sm-msg-sender">Summaverick</div>
+        </div>
+        <div class="sm-msg-body">
+          <div class="sm-msg-content">${formattedAnswer}</div>
+        </div>
+        ${sourcesHtml}
+        ${relatedHtml}`;
+      chatArea.appendChild(div);
+      scrollToBottom();
+    }
+
+    function appendErrorMessage(text) {
+      const div = document.createElement('div');
+      div.className = 'sm-msg sm-msg-ai';
+      div.innerHTML = `
+        <div class="sm-msg-header">
+          <div class="sm-msg-avatar ai">${icons.compass}</div>
+          <div class="sm-msg-sender">Summaverick</div>
+        </div>
+        <div class="sm-msg-body">
+          <div class="sm-msg-content" style="color:var(--text-3);font-style:italic">${esc(text)}</div>
+        </div>`;
+      chatArea.appendChild(div);
+      scrollToBottom();
+    }
+
+    function resetChat() {
+      conversationHistory = [];
+      chatArea.innerHTML = '';
+      chatArea.classList.remove('active');
+      landing.classList.remove('hidden');
+      queryInput.value = '';
+      queryInput.style.height = 'auto';
+      updateSendButton();
+    }
+
+    function scrollToBottom() {
+      requestAnimationFrame(() => {
+        window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+      });
+    }
+
+    function formatMarkdown(md) {
+      if (!md) return '';
+      let html = md;
+      html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (m, lang, code) => '<pre>' + esc(code.trim()) + '</pre>');
+      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+      html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+      html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+      html = html.replace(/(<li>[\s\S]*?<\/li>)/g, function(m) {
+        if (m.indexOf('<ul>') === -1) return '<ul>' + m + '</ul>';
+        return m;
+      });
+      html = html.replace(/<\/ul>\s*<ul>/g, '');
+      html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+      html = html.replace(/\n\n/g, '</p><p>');
+      html = html.replace(/([^>])\n([^<])/g, '$1<br>$2');
+      if (!/^<(h[23]|ul|ol|pre|div|p)/.test(html.trim())) {
+        html = '<p>' + html + '</p>';
+      }
+      return html;
+    }
+
+    function esc(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    init();
+  })();
+  </script>
+</body>
+</html>
