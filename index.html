@@ -625,8 +625,9 @@
       width:min(100%,1120px);
       margin:0 auto;
       display:grid;
-      grid-template-columns:minmax(0,1fr) auto;
-      gap:24px 72px;
+      grid-template-columns:minmax(0,580px) auto;
+      gap:24px 56px;
+      justify-content:center;
       align-items:end;
       opacity:0;
       transform:translateY(28px);
@@ -1900,24 +1901,24 @@ function sceneMarkup(type, note){
         gsap.set(auditCards, {opacity:0, y:14});
         gsap.set(chips, {opacity:0, y:10, scale:.94});
 
-        tl.to(stage, {rotateX: 12, rotateY: -6, duration:.10, ease:'none'}, 0)
+        tl.to(stage, {rotateX: 12, rotateY: -4, duration:.10, ease:'none'}, 0)
           .call(() => { clearStates(section); states[0].classList.add('active'); states[1].classList.add('active'); }, null, labels[0])
           .to(progress, {width:'38%', duration:.10, ease:'none'}, labels[0])
-          .to(ticket, {x:100, y:-56, duration:.12, ease:'power1.inOut'}, labels[0] + .01)
+          .to(ticket, {x:60, y:-40, duration:.12, ease:'power1.inOut'}, labels[0] + .01)
           .to(chips[0], {opacity:1, y:0, scale:1, duration:.06}, labels[0] + .03)
 
           .to(stage, {rotateY: 0, duration:.12, ease:'none'}, labels[1] - .01)
           .call(() => { clearStates(section); states[0].classList.add('active'); states[1].classList.add('active'); states[2].classList.add('active'); states[3].classList.add('active'); }, null, labels[1])
           .to(progress, {width:'74%', duration:.12, ease:'none'}, labels[1])
-          .to(ticket, {x:220, y:-74, duration:.12, ease:'power1.inOut'}, labels[1] + .01)
+          .to(ticket, {x:140, y:-54, duration:.12, ease:'power1.inOut'}, labels[1] + .01)
           .to(auditCards[2], {opacity:1, y:0, duration:.07}, labels[1] + .02)
           .to(auditCards[1], {opacity:1, y:0, duration:.07}, labels[1] + .05)
           .to(chips[1], {opacity:1, y:0, scale:1, duration:.06}, labels[1] + .04)
 
-          .to(stage, {rotateX: 9, rotateY: 4, duration:.12, ease:'none'}, labels[2] - .01)
+          .to(stage, {rotateX: 9, rotateY: 3, duration:.12, ease:'none'}, labels[2] - .01)
           .call(() => { clearStates(section); states.forEach(node => node.classList.add('active')); }, null, labels[2])
           .to(progress, {width:'92%', duration:.10, ease:'none'}, labels[2])
-          .to(ticket, {x:330, y:-52, duration:.12, ease:'power1.inOut'}, labels[2] + .01)
+          .to(ticket, {x:220, y:-38, duration:.12, ease:'power1.inOut'}, labels[2] + .01)
           .to(auditCards[0], {opacity:1, y:0, duration:.07}, labels[2] + .03)
           .to(chips[2], {opacity:1, y:0, scale:1, duration:.06}, labels[2] + .05);
       }
@@ -1933,24 +1934,24 @@ function sceneMarkup(type, note){
 
         gsap.set(chips, {opacity:0, y:10, scale:.94});
 
-        tl.to(stage, {rotateX: 12, rotateY: -6, duration:.10, ease:'none'}, 0)
-          .to(intake, {x:30, duration:.08}, labels[0])
+        tl.to(stage, {rotateX: 12, rotateY: -4, duration:.10, ease:'none'}, 0)
+          .to(intake, {x:20, duration:.08}, labels[0])
           .to(paths[0], {opacity:1, duration:.05}, labels[0])
           .to([paths[1], paths[2]], {opacity:1, duration:.05}, labels[0] + .03)
-          .to(rules, {x:32, y:-8, scale:1.02, duration:.09}, labels[0] + .03)
-          .to(ai, {x:32, y:8, scale:1.02, duration:.09}, labels[0] + .03)
+          .to(rules, {x:20, y:-8, scale:1.02, duration:.09}, labels[0] + .03)
+          .to(ai, {x:20, y:8, scale:1.02, duration:.09}, labels[0] + .03)
           .to(chips[0], {opacity:1, y:0, scale:1, duration:.06}, labels[0] + .04)
 
           .to(stage, {rotateY: 0, duration:.12, ease:'none'}, labels[1] - .01)
-          .to(rules, {x:56, duration:.12}, labels[1])
-          .to(ai, {x:50, duration:.12}, labels[1])
+          .to(rules, {x:36, duration:.12}, labels[1])
+          .to(ai, {x:32, duration:.12}, labels[1])
           .to(costs, {y:24, scaleY:.72, stagger:.03, duration:.10}, labels[1] + .02)
           .to(chips[1], {opacity:1, y:0, scale:1, duration:.06}, labels[1] + .04)
 
-          .to(stage, {rotateX: 9, rotateY: 4, duration:.12, ease:'none'}, labels[2] - .01)
+          .to(stage, {rotateX: 9, rotateY: 3, duration:.12, ease:'none'}, labels[2] - .01)
           .to([paths[3], paths[4]], {opacity:1, duration:.05}, labels[2])
           .to(roiBlock, {scale:1.08, duration:.09}, labels[2] + .04)
-          .to([rules, ai], {x:80, duration:.10}, labels[2] + .01)
+          .to([rules, ai], {x:50, duration:.10}, labels[2] + .01)
           .to(costs, {opacity:.18, y:42, stagger:.02, duration:.09}, labels[2] + .04)
           .to(chips[2], {opacity:1, y:0, scale:1, duration:.06}, labels[2] + .05);
       }
@@ -1966,7 +1967,7 @@ function sceneMarkup(type, note){
         gsap.set([ring, dispatchCard], {opacity:0, scale:.94});
         gsap.set(chips, {opacity:0, y:10, scale:.94});
 
-        tl.to(stage, {rotateX: 12, rotateY: -6, duration:.10, ease:'none'}, 0)
+        tl.to(stage, {rotateX: 12, rotateY: -4, duration:.10, ease:'none'}, 0)
           .to(risk, {scale:1.08, duration:.08}, labels[0])
           .to(waves, {opacity:.9, stagger:.02, duration:.08}, labels[0])
           .to(chips[0], {opacity:1, y:0, scale:1, duration:.06}, labels[0] + .04)
@@ -1976,7 +1977,7 @@ function sceneMarkup(type, note){
           .to(ring, {opacity:1, scale:1.08, duration:.10}, labels[1] + .02)
           .to(chips[1], {opacity:1, y:0, scale:1, duration:.06}, labels[1] + .04)
 
-          .to(stage, {rotateX: 9, rotateY: 4, duration:.12, ease:'none'}, labels[2] - .01)
+          .to(stage, {rotateX: 9, rotateY: 3, duration:.12, ease:'none'}, labels[2] - .01)
           .to(dispatchLine, {width:200, duration:.10, ease:'none'}, labels[2] + .01)
           .to(dispatchCard, {opacity:1, scale:1, duration:.08}, labels[2] + .04)
           .to(chips[2], {opacity:1, y:0, scale:1, duration:.06}, labels[2] + .05);
@@ -2048,8 +2049,8 @@ function sceneMarkup(type, note){
         trigger: section,
         pin: section.querySelector('.pin'),
         start: 'top top',
-        end: '+=540%',
-        scrub: 1.15,
+        end: '+=420%',
+        scrub: 0.5,
         animation: tl,
         onEnter: () => { counted.clear(); setPips(pips, -1); activateBeat(beats, -1); },
         onEnterBack: () => { counted.clear(); setPips(pips, -1); activateBeat(beats, -1); }
