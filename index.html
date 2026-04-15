@@ -56,7 +56,31 @@
     .hero-links{display:flex;gap:24px;margin-top:32px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1;opacity:0;animation:fadeInUp 0.8s ease 3s forwards}
     .hero-link{font-size:19px;color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:6px}
     .hero-link:hover{text-decoration:underline}
-    
+
+    /* Summaverick announcement banner */
+    .sm-announce{display:block;text-decoration:none;background:var(--black);padding:48px 20px;position:relative;overflow:hidden;cursor:pointer}
+    .sm-announce-inner{position:relative;max-width:680px;margin:0 auto;display:flex;align-items:center;justify-content:center}
+    .sm-announce-shape{position:relative;padding:28px 52px 28px 44px;border-radius:22px 22px 22px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);overflow:hidden;transition:transform 0.5s cubic-bezier(.22,1,.36,1),box-shadow 0.5s ease}
+    .sm-announce:hover .sm-announce-shape{transform:translateY(-3px) scale(1.01);box-shadow:0 24px 80px rgba(120,168,255,0.12),0 0 0 1px rgba(255,255,255,0.1)}
+    .sm-announce-aurora{position:absolute;inset:-40%;width:180%;height:180%;background:conic-gradient(from 180deg at 50% 50%,rgba(120,168,255,0.3),rgba(167,139,250,0.35),rgba(192,132,252,0.3),rgba(244,114,182,0.3),rgba(251,146,60,0.2),rgba(52,211,153,0.25),rgba(6,182,212,0.3),rgba(120,168,255,0.3));animation:smAuroraRotate 6s linear infinite;filter:blur(40px);opacity:0.5;mix-blend-mode:screen}
+    @keyframes smAuroraRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    .sm-announce-edge{position:absolute;inset:0;border-radius:22px 22px 22px 4px;padding:1px;background:linear-gradient(135deg,rgba(120,168,255,0.4),rgba(167,139,250,0.3),rgba(244,114,182,0.3),rgba(52,211,153,0.35),rgba(6,182,212,0.4));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:0.7}
+    .sm-announce-pointer{position:absolute;right:-18px;top:50%;transform:translateY(-50%);width:36px;height:36px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;display:grid;place-items:center;overflow:hidden;transition:transform 0.4s cubic-bezier(.22,1,.36,1)}
+    .sm-announce:hover .sm-announce-pointer{transform:translateY(-50%) translateX(4px)}
+    .sm-announce-pointer::before{content:'';position:absolute;inset:-80%;width:260%;height:260%;background:conic-gradient(from 0deg,rgba(120,168,255,0.25),rgba(244,114,182,0.25),rgba(52,211,153,0.25),rgba(120,168,255,0.25));animation:smAuroraRotate 4s linear infinite;filter:blur(16px)}
+    .sm-announce-pointer svg{position:relative;width:14px;height:14px;stroke:rgba(255,255,255,0.7);fill:none;stroke-width:2.5}
+    .sm-announce-text{position:relative;z-index:2;font-size:clamp(22px,4vw,34px);font-weight:600;letter-spacing:-0.03em;color:var(--white);line-height:1.2;white-space:nowrap}
+    .sm-announce-sub{position:relative;z-index:2;font-size:13px;color:rgba(255,255,255,0.4);margin-top:6px;letter-spacing:0.01em}
+    .sm-announce-glow{position:absolute;width:280px;height:280px;border-radius:50%;filter:blur(100px);pointer-events:none;opacity:0.12}
+    .sm-announce-glow.g1{left:-60px;top:-80px;background:#818cf8}
+    .sm-announce-glow.g2{right:-60px;bottom:-80px;background:#f472b6}
+    .sm-announce-pulse{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 0 0 rgba(52,211,153,0.4);animation:smPulse 2.4s ease infinite;z-index:2}
+    @keyframes smPulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.4)}70%{box-shadow:0 0 0 10px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+    @media(max-width:640px){
+      .sm-announce-shape{padding:22px 40px 22px 36px}
+      .sm-announce-pointer{right:-14px;width:28px;height:28px}
+    }
+
     .section{padding:100px 0;background:var(--white)}
     .section-dark{background:var(--black);color:var(--white)}
     .section-gray{background:var(--bg)}
@@ -441,6 +465,24 @@
         <a href="https://github.com/sumanthbolle" target="_blank" rel="noopener noreferrer" class="hero-link">GitHub →</a>
       </div>
     </section>
+
+    <a href="summaverick.html" class="sm-announce" aria-label="Meet Summaverick — AI Research Assistant">
+      <div class="sm-announce-glow g1"></div>
+      <div class="sm-announce-glow g2"></div>
+      <div class="sm-announce-inner">
+        <div class="sm-announce-shape">
+          <div class="sm-announce-aurora"></div>
+          <div class="sm-announce-edge"></div>
+          <div class="sm-announce-pulse"></div>
+          <div class="sm-announce-text">Meet Summaverick</div>
+          <div class="sm-announce-sub">AI-powered research assistant — try it now</div>
+          <div class="sm-announce-pointer">
+            <span style="position:absolute;inset:0" class="sm-announce-pointer-bg"></span>
+            <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+          </div>
+        </div>
+      </div>
+    </a>
 
     <section class="section section-gray" id="about">
       <div class="section-c">
