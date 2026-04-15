@@ -457,7 +457,6 @@
       <div class="section-c"><div class="stats-row" id="statsRow"></div></div>
     </section>
 
-    <!-- EXPERTISE SECTION - COMMENTED OUT
     <section class="exp-glimpse-section" id="expertise">
       <div class="section-c">
         <div class="section-h">
@@ -524,14 +523,10 @@
         </div>
       </div>
     </section>
-    EXPERTISE SECTION END -->
 
-    <!-- PROJECTS SECTION - COMMENTED OUT
     <div id="projectsList"></div>
     <div id="projRail"></div>
-    PROJECTS SECTION END -->
 
-    <!-- SKILLS SECTION - COMMENTED OUT
     <section class="section section-gray" id="skills">
       <div class="section-c">
         <div class="section-h">
@@ -541,7 +536,6 @@
         <div class="skills-grid" id="skillsGrid"></div>
       </div>
     </section>
-    SKILLS SECTION END -->
 
     <section class="section section-dark" id="certs">
       <div class="section-h" style="padding:0 22px">
@@ -595,7 +589,6 @@
       </div>
     </section>
 
-    <!-- INTEGRATION SECTION - COMMENTED OUT
     <section class="integration-section" id="integrations">
       <div class="section-c">
         <div class="section-h">
@@ -704,7 +697,6 @@
         <div class="integration-types" id="intTypes"></div>
       </div>
     </section>
-    INTEGRATION SECTION END -->
 
 
     <section class="contact-section" id="contact">
@@ -748,9 +740,9 @@
     // Render sections
     var h='';DATA.about.forEach(function(a,i){h+='<div class="about-card'+(a.large?' large':'')+'" data-animate-card style="transition-delay:'+(i*.15)+'s">'+icon(a.icon,a.cls)+'<h3>'+a.title+'</h3><p>'+a.desc+'</p></div>';});document.getElementById('aboutGrid').innerHTML=h;
     h='';DATA.stats.forEach(function(s,i){h+='<div class="stat-item" data-animate-card style="transition-delay:'+(i*.1)+'s"><div class="stat-num">'+s.num+'</div><div class="stat-label">'+s.label+'</div></div>';});document.getElementById('statsRow').innerHTML=h;
-    /* skills grid commented out */ // h='';DATA.skills.forEach(function(s,i){var t='';s.tags.forEach(function(x){t+='<span class="skill-tag">'+x+'</span>';});h+='<div class="skill-tile" data-animate-card style="transition-delay:'+(i*.1)+'s">'+icon(s.icon,s.cls)+'<h4>'+s.title+'</h4><div class="skill-tags">'+t+'</div></div>';});document.getElementById('skillsGrid').innerHTML=h;
+    h='';DATA.skills.forEach(function(s,i){var t='';s.tags.forEach(function(x){t+='<span class="skill-tag">'+x+'</span>';});h+='<div class="skill-tile" data-animate-card style="transition-delay:'+(i*.1)+'s">'+icon(s.icon,s.cls)+'<h4>'+s.title+'</h4><div class="skill-tags">'+t+'</div></div>';});document.getElementById('skillsGrid').innerHTML=h;
     h='';DATA.certs.forEach(function(c,i){h+='<div class="cert-card" data-animate-card style="transition-delay:'+(i*.1)+'s">'+icon(c.icon,c.cls)+'<h4>'+c.name+'</h4><p class="cert-issuer">'+c.issuer+'</p></div>';});document.getElementById('certScroll').innerHTML=h;
-    /* integration types commented out */ // h='';DATA.integrationTypes.forEach(function(t,i){h+='<div class="int-type" data-animate-card style="transition-delay:'+(i*.1)+'s">'+icon(t.icon,t.cls)+'<h4>'+t.title+'</h4><p>'+t.desc+'</p></div>';});document.getElementById('intTypes').innerHTML=h;
+    h='';DATA.integrationTypes.forEach(function(t,i){h+='<div class="int-type" data-animate-card style="transition-delay:'+(i*.1)+'s">'+icon(t.icon,t.cls)+'<h4>'+t.title+'</h4><p>'+t.desc+'</p></div>';});document.getElementById('intTypes').innerHTML=h;
 
     // Blog Preview
     h='';BLOG_PREVIEW.forEach(function(p,i){h+='<a href="blog.html#article/'+p.id+'" class="preview-card" data-animate-card style="transition-delay:'+(i*.1)+'s"><div class="preview-thumb"><div class="preview-thumb-bg blog"></div><span class="preview-category cat-'+p.category+'">'+p.category+'</span></div><div class="preview-content"><div class="preview-meta"><span>'+p.date+'</span><span>'+p.readTime+'</span></div><h3 class="preview-title">'+p.title+'</h3><p class="preview-excerpt">'+p.excerpt+'</p></div></a>';});document.getElementById('blogPreview').innerHTML=h;
@@ -760,15 +752,14 @@
 
     // Legacy canvas projects removed — replaced by semantic 3D project system below
 
-    // API Log — commented out (integration section hidden)
+    // API Log
     var apiLog=document.getElementById('apiLog');
-    if(apiLog){
     function addLog(){var api=DATA.apis[Math.floor(Math.random()*DATA.apis.length)];var e=document.createElement('div');e.className='log-entry';e.innerHTML='<span class="log-method '+api.method.toLowerCase()+'">'+api.method+'</span><span class="log-endpoint">'+api.endpoint+'</span><span class="log-status">'+api.status+'</span><span class="log-time">'+new Date().toLocaleTimeString()+'</span>';apiLog.insertBefore(e,apiLog.firstChild);if(apiLog.children.length>8)apiLog.removeChild(apiLog.lastChild);document.getElementById('apiCount').textContent=Math.floor(Math.random()*80+120);}
     addLog();setInterval(addLog,2000);
+
     // Unite animation
     var uniteWords=['uniteAI','uniteData','uniteWorkflows'],uniteIdx=0;
     setInterval(function(){uniteWords.forEach(function(w){document.getElementById(w).classList.remove('active');});document.getElementById(uniteWords[uniteIdx]).classList.add('active');uniteIdx=(uniteIdx+1)%3;},2000);
-    }
 
     // Mobile menu
     var menuToggle=document.querySelector('.menu-toggle'),mobileMenu=document.querySelector('.mobile-menu');
@@ -835,7 +826,7 @@ const DRAW_MAP={neural:canvas_neural,react:canvas_react,roi:canvas_roi,telecom:c
 
 function projCountUp(el){const raw=el.dataset.val,match=raw.match(/^([^\d]*)(\d+)(.*)/);if(!match){el.textContent=raw;return}const[,pre,numStr,suf]=match,target=parseInt(numStr),dur=1200,t0=performance.now();function tick(now){const p=Math.min(1,(now-t0)/dur),ease=p===1?1:1-Math.pow(2,-10*p);el.textContent=pre+Math.round(target*ease)+suf;if(p<1)requestAnimationFrame(tick)}requestAnimationFrame(tick)}
 
-const projWrap=document.getElementById('projectsList'); if(projWrap){
+const projWrap=document.getElementById('projectsList');
 PROJ_DATA.forEach(p=>{const sec=document.createElement('section');sec.className='projects-section';sec.id='section-'+p.id;sec.innerHTML=`<div class="proj-pin" id="pin-${p.id}"><canvas id="c_${p.id}" class="proj-canvas"></canvas><div class="proj-vignette"></div><div class="proj-gradient"></div><span class="proj-num">${p.num} / 04</span><div class="proj-header"><div class="proj-cat">${p.cat}</div><h2 class="proj-main-title">${p.title.replace(/\n/g,'<br>')}</h2></div><div class="proj-text-zone">${p.feats.map((f,fi)=>`<div class="feat" id="feat-${p.id}-${fi}"><div class="feat-left"><div class="feat-num">0${fi+1}</div><h3 class="feat-h">${f.glow?f.h.replace(f.glow,'<span class="rgb-word">'+f.glow+'</span>'):f.h}</h3><p class="feat-body">${f.body}</p></div><div class="feat-right"><div class="feat-metric" data-val="${f.metric}">–</div><div class="feat-metric-label">${f.ml}</div></div></div>`).join('')}</div><div class="proj-progress">${p.feats.map(()=>'<div class="prog-pip"></div>').join('')}</div></div><div class="proj-div"></div>`;projWrap.appendChild(sec)});
 
 const railEl=document.getElementById('projRail');
@@ -844,7 +835,6 @@ const projRds=projNavTargets.map((el,i)=>{const d=document.createElement('div');
 projNavTargets.forEach((el,i)=>{ScrollTrigger.create({trigger:el,start:'top center',end:'bottom center',onToggle:self=>{if(self.isActive)projRds.forEach((d,j)=>d.classList.toggle('on',j===i))}})});
 
 PROJ_DATA.forEach(p=>{const section=document.getElementById('section-'+p.id),pin=document.getElementById('pin-'+p.id),feats=p.feats.map((_,fi)=>document.getElementById('feat-'+p.id+'-'+fi)),pips=pin.querySelectorAll('.prog-pip'),header=pin.querySelector('.proj-header'),n=feats.length;let counted=new Set();gsap.set(header,{opacity:0,y:16});gsap.set(feats,{opacity:0,y:20});const tl=gsap.timeline(),FADE=0.03,HEAD=FADE,TAIL=0.05,BODY=1-HEAD-TAIL,SLOT=BODY/n,HOLD=SLOT-FADE*2;function triggerFeat(feat,fi){pips.forEach((pip,pi)=>pip.classList.toggle('active',pi===fi));const m=feat.querySelector('.feat-metric');if(m)projCountUp(m);const w=feat.querySelector('.rgb-word');if(w){w.classList.remove('pop','glow');setTimeout(()=>w.classList.add('pop'),300);setTimeout(()=>{w.classList.remove('pop');w.classList.add('glow')},1200)}}function cleanFeat(feat,fi){counted.delete(fi);const w=feat.querySelector('.rgb-word');if(w)w.classList.remove('pop','glow')}tl.to(header,{opacity:1,y:0,duration:HEAD,ease:'power2.out'},0);feats.forEach((feat,fi)=>{const zoneStart=HEAD+fi*SLOT;tl.to(feat,{opacity:1,y:0,duration:FADE,ease:'power2.out',onStart:()=>{pips.forEach((pip,pi)=>pip.classList.toggle('active',pi===fi))},onUpdate:function(){if(this.progress()>0.5&&!counted.has(fi)){counted.add(fi);triggerFeat(feat,fi)}},onReverseComplete:()=>cleanFeat(feat,fi)},zoneStart);if(fi<n-1){tl.to(feat,{opacity:0,y:-14,duration:FADE,ease:'power2.in',onStart:()=>cleanFeat(feat,fi),onReverseComplete:()=>{counted.add(fi);triggerFeat(feat,fi)}},zoneStart+FADE+HOLD)}});tl.to(header,{opacity:0,y:-10,duration:TAIL,ease:'power2.in'},1-TAIL);tl.to(feats[n-1],{opacity:0,y:-14,duration:TAIL,ease:'power2.in',onStart:()=>cleanFeat(feats[n-1],n-1),onReverseComplete:()=>{counted.add(n-1);triggerFeat(feats[n-1],n-1)}},1-TAIL);const drawFn=DRAW_MAP[p.draw];ScrollTrigger.create({trigger:section,pin:pin,start:'top top',end:'+=600%',scrub:1,animation:tl,onEnter:()=>{counted.clear();feats.forEach((f,i)=>cleanFeat(f,i));if(drawFn)runCanvas('c_'+p.id,drawFn)},onLeave:()=>killCanvas('c_'+p.id),onEnterBack:()=>{counted.clear();feats.forEach((f,i)=>cleanFeat(f,i));if(drawFn)runCanvas('c_'+p.id,drawFn)},onLeaveBack:()=>killCanvas('c_'+p.id)})});
-} /* end if(projWrap) */
 
 
   </script>
