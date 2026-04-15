@@ -1,27 +1,34 @@
 /*
- * Cloudflare Worker — Perplexity AI Search Proxy
- * 
- * Single API call: Perplexity searches the web, reads the pages,
- * and returns the best result with a real URL and reasoning.
- * 
+ * Summaverick — General AI Search & Research Worker
+ * Cloudflare Worker · Perplexity Sonar API
+ *
+ * Handles both single-shot search (blog, interviews) and
+ * multi-turn conversation (Summaverick chat) through one endpoint.
+ *
  * Environment variables:
- *   PERPLEXITY_API_KEY — Get from perplexity.ai/settings/api
- *   ALLOWED_ORIGIN     — https://sumanthbolle.com
+ *   PERPLEXITY_API_KEY — from perplexity.ai/settings/api
+ *   ALLOWED_ORIGIN     — e.g. https://sumanthbolle.com (or * for dev)
  */
+
+const SYSTEM_PROMPT = `You are Summaverick, an expert AI research assistant. You provide clear, well-structured answers grounded in real sources.
+
+Guidelines:
+- Give thorough, practical answers — not just summaries.
+- Use citation markers like [1], [2] to reference your sources inline.
+- Structure longer answers with markdown: headings, bold for key terms, bullet lists where helpful.
+- When comparing options, use a clear pros/cons or tradeoff structure.
+- If the question is ambiguous, address the most likely interpretation and note alternatives.
+- Be direct. Skip filler phrases like "Great question!" or "Sure, I'd be happy to help."`;
+
+const MAX_RETRIES = 2;
+const RETRY_DELAY_MS = 800;
 
 export default {
   async fetch(request, env) {
-    const allowedOrigin = env.ALLOWED_ORIGIN || '*';
+    const origin = env.ALLOWED_ORIGIN || '*';
 
     if (request.method === 'OPTIONS') {
-      return new Response(null, {
-        headers: {
-          'Access-Control-Allow-Origin': allowedOrigin,
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Access-Control-Max-Age': '86400',
-        }
-      });
+      return corsResponse(null, origin, 204);
     }
 
     if (request.method !== 'POST') {
@@ -30,81 +37,94 @@ export default {
 
     try {
       const body = await request.json();
-      const query = body.query;
+      const query = sanitize(body.query);
       const context = body.context;
 
-      if (!query || query.length < 2 || query.length > 500) {
-        return jsonResponse({ success: false, error: 'Invalid query' }, allowedOrigin);
+      if (!query || query.length < 2 || query.length > 1000) {
+        return jsonResponse({ success: false, error: 'Invalid query' }, origin);
+      }
+
+      if (query === '__analytics__') {
+        return jsonResponse({ success: true, result: null }, origin);
       }
 
       const apiKey = env.PERPLEXITY_API_KEY;
       if (!apiKey) {
-        return jsonResponse({ success: false, error: 'API key not configured' }, allowedOrigin);
+        return jsonResponse({ success: false, error: 'API key not configured' }, origin);
       }
 
-      const messages = [
-        {
-          role: 'system',
-          content: 'You are a ServiceNow technical search assistant. Given a search query, provide a concise, direct answer in 3-5 sentences. Use citation markers like [1], [2] to reference sources. Focus on practical information a ServiceNow developer or architect needs.'
-        }
-      ];
+      const messages = [{ role: 'system', content: SYSTEM_PROMPT }];
 
       if (Array.isArray(context) && context.length > 0) {
-        const trimmed = context.slice(-10);
-        for (const msg of trimmed) {
+        for (const msg of context.slice(-10)) {
           if (msg.role === 'user' || msg.role === 'assistant') {
             messages.push({
               role: msg.role,
-              content: (msg.content || '').slice(0, 2000)
+              content: sanitize(msg.content).slice(0, 4000)
             });
           }
         }
       }
 
-      messages.push({
-        role: 'user',
-        content: 'ServiceNow: ' + query
-      });
+      messages.push({ role: 'user', content: query });
 
-      const response = await fetch('https://api.perplexity.ai/v1/sonar', {
+      const sonarPayload = {
+        model: 'sonar',
+        messages,
+        temperature: 0.2,
+        max_tokens: 1024,
+        web_search_options: { search_context_size: 'high' },
+        return_related_questions: true
+      };
+
+      const data = await callSonar(apiKey, sonarPayload);
+      const result = buildResult(data);
+      return jsonResponse({ success: true, result }, origin);
+
+    } catch (e) {
+      return jsonResponse({ success: false, error: e.message || 'Internal error' }, origin);
+    }
+  }
+};
+
+async function callSonar(apiKey, payload) {
+  let lastError;
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch('https://api.perplexity.ai/v1/sonar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + apiKey
         },
-        body: JSON.stringify({
-          model: 'sonar',
-          messages: messages,
-          temperature: 0.1,
-          max_tokens: 500,
-          search_domain_filter: [
-            'docs.servicenow.com',
-            'developer.servicenow.com',
-            'servicenow.com',
-            'community.servicenow.com'
-          ],
-          web_search_options: {
-            search_context_size: 'high'
-          },
-          return_related_questions: true
-        })
+        body: JSON.stringify(payload)
       });
 
-      if (!response.ok) {
-        return jsonResponse({ success: false, error: 'API error: ' + response.status }, allowedOrigin);
+      if (res.ok) return await res.json();
+
+      if (res.status === 429 || res.status >= 500) {
+        lastError = new Error('Sonar API ' + res.status);
+        if (attempt < MAX_RETRIES) {
+          await sleep(RETRY_DELAY_MS * (attempt + 1));
+          continue;
+        }
       }
 
-      const data = await response.json();
-      const result = buildResult(data, query);
-      return jsonResponse({ success: true, result }, allowedOrigin);
-
-    } catch(e) {
-      return jsonResponse({ success: false, error: e.message }, allowedOrigin);
+      throw new Error('API error: ' + res.status);
+    } catch (e) {
+      lastError = e;
+      if (attempt < MAX_RETRIES && !e.message.startsWith('API error:')) {
+        await sleep(RETRY_DELAY_MS * (attempt + 1));
+        continue;
+      }
     }
   }
-};
 
-function buildResult(data, query) {
+  throw lastError;
+}
+
+function buildResult(data) {
   const searchResults = data.search_results || [];
   const citations = data.citations || [];
   const answer = data.choices?.[0]?.message?.content || '';
@@ -112,8 +132,7 @@ function buildResult(data, query) {
 
   if (!answer && searchResults.length === 0) return null;
 
-  // Build sources array from search_results (real URLs)
-  const sources = searchResults.slice(0, 5).map((sr, i) => ({
+  const sources = searchResults.slice(0, 8).map((sr, i) => ({
     index: i + 1,
     title: sr.title || '',
     url: sr.url,
@@ -122,13 +141,12 @@ function buildResult(data, query) {
     date: sr.date || null
   }));
 
-  // If no search_results, build from citations
   if (sources.length === 0 && citations.length > 0) {
-    citations.slice(0, 5).forEach((url, i) => {
+    citations.slice(0, 8).forEach((url, i) => {
       sources.push({
         index: i + 1,
         title: '',
-        url: url,
+        url,
         snippet: '',
         source: extractDomain(url),
         date: null
@@ -138,14 +156,35 @@ function buildResult(data, query) {
 
   return {
     type: 'rich',
-    answer: answer,
-    sources: sources,
-    relatedQuestions: relatedQuestions.slice(0, 3)
+    answer,
+    sources,
+    relatedQuestions: relatedQuestions.slice(0, 4)
   };
 }
 
+function sanitize(str) {
+  if (!str || typeof str !== 'string') return '';
+  return str.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim();
+}
+
 function extractDomain(url) {
-  try { return new URL(url).hostname.replace('www.', ''); } catch(e) { return url; }
+  try { return new URL(url).hostname.replace('www.', ''); } catch { return url; }
+}
+
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+function corsResponse(body, origin, status = 200) {
+  return new Response(body, {
+    status,
+    headers: {
+      'Access-Control-Allow-Origin': origin,
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '86400',
+    }
+  });
 }
 
 function jsonResponse(data, origin) {
@@ -153,7 +192,7 @@ function jsonResponse(data, origin) {
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': origin,
-      'Cache-Control': 'public, max-age=300'
+      'Cache-Control': 'no-cache'
     }
   });
 }
