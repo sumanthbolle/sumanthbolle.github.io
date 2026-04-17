@@ -57,32 +57,35 @@
     .hero-link{font-size:19px;color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:6px}
     .hero-link:hover{text-decoration:underline}
 
-    /* Summaverick announcement banner */
-    .sm-announce{display:block;text-decoration:none;background:var(--black);padding:48px 20px;position:relative;overflow:hidden;cursor:pointer}
-    .sm-announce-inner{position:relative;max-width:680px;margin:0 auto;display:flex;align-items:center;justify-content:center}
-    .sm-announce-shape{position:relative;display:flex;align-items:center;gap:18px;padding:22px 22px 22px 44px;border-radius:22px 22px 22px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);overflow:hidden;transition:transform 0.5s cubic-bezier(.22,1,.36,1),box-shadow 0.5s ease}
-    .sm-announce:hover .sm-announce-shape{transform:translateY(-3px) scale(1.01);box-shadow:0 24px 80px rgba(120,168,255,0.18),0 0 0 1px rgba(255,255,255,0.12)}
-    .sm-announce-aurora{position:absolute;inset:-40%;width:180%;height:180%;background:conic-gradient(from 180deg at 50% 50%,rgba(120,168,255,0.55),rgba(167,139,250,0.6),rgba(192,132,252,0.55),rgba(244,114,182,0.55),rgba(251,146,60,0.4),rgba(52,211,153,0.45),rgba(6,182,212,0.55),rgba(120,168,255,0.55));animation:smAuroraRotate 8s linear infinite;filter:blur(36px);opacity:0.85;pointer-events:none}
-    @keyframes smAuroraRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-    .sm-announce-edge{position:absolute;inset:0;border-radius:22px 22px 22px 4px;padding:1px;background:linear-gradient(135deg,rgba(120,168,255,0.55),rgba(167,139,250,0.45),rgba(244,114,182,0.45),rgba(52,211,153,0.5),rgba(6,182,212,0.55));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:0.85}
-    .sm-announce-content{position:relative;z-index:2;flex:1;min-width:0}
-    .sm-announce-text{font-size:clamp(22px,4vw,34px);font-weight:600;letter-spacing:-0.03em;color:var(--white);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .sm-announce-sub{font-size:13px;color:rgba(255,255,255,0.55);margin-top:6px;letter-spacing:0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .sm-announce-pointer{position:relative;z-index:2;flex-shrink:0;width:38px;height:38px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;display:grid;place-items:center;overflow:hidden;transition:transform 0.4s cubic-bezier(.22,1,.36,1),background 0.3s ease}
-    .sm-announce:hover .sm-announce-pointer{transform:translateX(4px);background:rgba(255,255,255,0.1)}
-    .sm-announce-pointer::before{content:'';position:absolute;inset:-80%;width:260%;height:260%;background:conic-gradient(from 0deg,rgba(120,168,255,0.5),rgba(244,114,182,0.5),rgba(52,211,153,0.5),rgba(120,168,255,0.5));animation:smAuroraRotate 5s linear infinite;filter:blur(14px);opacity:0.9}
-    .sm-announce-pointer svg{position:relative;z-index:1;width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-    .sm-announce-glow{position:absolute;width:340px;height:340px;border-radius:50%;filter:blur(100px);pointer-events:none;opacity:0.18}
-    .sm-announce-glow.g1{left:-80px;top:-100px;background:#818cf8}
-    .sm-announce-glow.g2{right:-80px;bottom:-100px;background:#f472b6}
-    .sm-announce-pulse{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 0 0 rgba(52,211,153,0.5);animation:smPulse 2.4s ease infinite;z-index:3}
-    @keyframes smPulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.5)}70%{box-shadow:0 0 0 10px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+    /* Summaverick announcement — top arrow banner */
+    .sm-arrow-section{background:var(--black);padding:80px 20px 28px;position:relative;overflow:hidden}
+    .sm-arrow-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(124,92,255,0.18) 0%,transparent 70%);pointer-events:none}
+    .sm-arrow{position:relative;display:block;width:100%;max-width:880px;margin:0 auto;aspect-ratio:880 / 230;text-decoration:none;filter:drop-shadow(0 12px 50px rgba(124,92,255,0.28));transition:transform 0.5s cubic-bezier(.22,1,.36,1),filter 0.5s ease;opacity:0;animation:smArrowEnter 1s cubic-bezier(.22,1,.36,1) 0.3s forwards}
+    @keyframes smArrowEnter{from{opacity:0;transform:translateY(-12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .sm-arrow:hover{transform:translateY(-3px);filter:drop-shadow(0 18px 70px rgba(168,85,247,0.45))}
+    .sm-arrow-svg{display:block;width:100%;height:100%;overflow:visible}
+    .sm-arrow-wisp{transform-origin:50% 50%;mix-blend-mode:screen}
+    .sm-arrow-wisp.w1{animation:smWisp1 9s ease-in-out infinite}
+    .sm-arrow-wisp.w2{animation:smWisp2 11s ease-in-out infinite}
+    .sm-arrow-wisp.w3{animation:smWisp3 13s ease-in-out infinite}
+    .sm-arrow-wisp.w4{animation:smWisp4 10s ease-in-out infinite}
+    @keyframes smWisp1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-10px) scale(1.1)}}
+    @keyframes smWisp2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-30px,12px) scale(1.08)}}
+    @keyframes smWisp3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(35px,8px) scale(1.12)}}
+    @keyframes smWisp4{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-40px,-8px) scale(1.06)}}
+    .sm-arrow-edge-anim{animation:smEdgeHue 8s linear infinite}
+    @keyframes smEdgeHue{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}
+    .sm-arrow-text{position:absolute;top:50%;left:35.2%;transform:translate(-50%,-50%);font-size:clamp(22px,4.6vw,46px);font-weight:600;letter-spacing:-0.025em;color:#fff;white-space:nowrap;text-shadow:0 2px 24px rgba(0,0,0,0.55),0 0 30px rgba(168,85,247,0.25);pointer-events:none;line-height:1}
+    .sm-arrow-pulse{position:absolute;top:50%;left:5.2%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 0 0 rgba(52,211,153,0.5);animation:smPulse 2.4s ease infinite;z-index:3;pointer-events:none}
+    @keyframes smPulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.5)}70%{box-shadow:0 0 0 12px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
     @media(max-width:640px){
-      .sm-announce{padding:32px 16px}
-      .sm-announce-shape{padding:18px 16px 18px 36px;gap:12px}
-      .sm-announce-pointer{width:32px;height:32px}
-      .sm-announce-pointer svg{width:14px;height:14px}
-      .sm-announce-pulse{left:14px;width:7px;height:7px}
+      .sm-arrow-section{padding:70px 14px 18px}
+      .sm-arrow{aspect-ratio:880 / 260}
+      .sm-arrow-text{left:34%;font-size:clamp(16px,5.2vw,26px)}
+      .sm-arrow-pulse{left:4.5%;width:6px;height:6px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .sm-arrow,.sm-arrow-wisp,.sm-arrow-stroke{animation:none}
     }
 
     .section{padding:100px 0;background:var(--white)}
@@ -459,6 +462,113 @@
   </nav>
 
   <main id="main">
+    <section class="sm-arrow-section" aria-label="Meet Summaverick announcement">
+      <a href="summaverick.html" class="sm-arrow" aria-label="Meet Summaverick — AI Research Assistant">
+        <svg class="sm-arrow-svg" viewBox="0 0 880 230" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <!-- Arrow: rectangle body fused with taller triangular head; rounded corners -->
+            <path id="smArrowShape" d="M 22 64 Q 18 64 18 68 L 18 162 Q 18 166 22 166 L 596 166 Q 600 166 600 170 L 600 196 Q 600 214 614 204 L 854 119 Q 866 115 854 111 L 614 26 Q 600 16 600 34 L 600 60 Q 600 64 596 64 Z" />
+            <clipPath id="smArrowClip"><use href="#smArrowShape"/></clipPath>
+            <linearGradient id="smArrowEdge" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff5577"/>
+              <stop offset="22%" stop-color="#c084fc"/>
+              <stop offset="48%" stop-color="#7c5cff"/>
+              <stop offset="72%" stop-color="#22d3ee"/>
+              <stop offset="100%" stop-color="#34d399"/>
+            </linearGradient>
+            <linearGradient id="smArrowFill" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#191328"/>
+              <stop offset="50%" stop-color="#0d0820"/>
+              <stop offset="100%" stop-color="#15102a"/>
+            </linearGradient>
+            <linearGradient id="smArrowSheen" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+              <stop offset="40%" stop-color="#ffffff" stop-opacity="0"/>
+            </linearGradient>
+
+            <!-- Aurora ribbon gradients -->
+            <radialGradient id="smWispRed" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ff4d6d" stop-opacity="1"/>
+              <stop offset="60%" stop-color="#ff4d6d" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#ff4d6d" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="smWispPurple" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#c084fc" stop-opacity="1"/>
+              <stop offset="60%" stop-color="#a855f7" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="smWispBlue" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#60a5fa" stop-opacity="1"/>
+              <stop offset="60%" stop-color="#3b82f6" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="smWispCyan" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#67e8f9" stop-opacity="1"/>
+              <stop offset="60%" stop-color="#22d3ee" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="smWispMagenta" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#f0abfc" stop-opacity="1"/>
+              <stop offset="60%" stop-color="#e879f9" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#e879f9" stop-opacity="0"/>
+            </radialGradient>
+
+            <filter id="smRibbonBlur" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="9"/>
+            </filter>
+            <filter id="smRibbonSoft" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="22"/>
+            </filter>
+            <filter id="smEdgeOuterGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="10"/>
+            </filter>
+            <filter id="smEdgeInnerGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="3"/>
+            </filter>
+          </defs>
+
+          <!-- Outer luminous halo (very soft, big) -->
+          <g class="sm-arrow-edge-anim">
+            <use href="#smArrowShape" fill="none" stroke="url(#smArrowEdge)" stroke-width="14" stroke-linejoin="round" opacity="0.45" filter="url(#smEdgeOuterGlow)"/>
+          </g>
+
+          <!-- Glass body -->
+          <use href="#smArrowShape" fill="url(#smArrowFill)"/>
+          <!-- Subtle top sheen -->
+          <use href="#smArrowShape" fill="url(#smArrowSheen)"/>
+
+          <!-- Aurora ribbons clipped to arrow shape -->
+          <g clip-path="url(#smArrowClip)">
+            <!-- Soft background haze layer -->
+            <g filter="url(#smRibbonSoft)" opacity="0.95">
+              <ellipse class="sm-arrow-wisp w2" cx="160" cy="120" rx="180" ry="58" fill="url(#smWispRed)"/>
+              <ellipse class="sm-arrow-wisp w1" cx="420" cy="105" rx="220" ry="62" fill="url(#smWispPurple)"/>
+              <ellipse class="sm-arrow-wisp w3" cx="650" cy="120" rx="200" ry="68" fill="url(#smWispBlue)"/>
+              <ellipse class="sm-arrow-wisp w4" cx="800" cy="115" rx="120" ry="72" fill="url(#smWispCyan)"/>
+            </g>
+            <!-- Sharper ribbon strokes that suggest silk wisps -->
+            <g filter="url(#smRibbonBlur)" fill="none" stroke-linecap="round" opacity="0.85">
+              <path class="sm-arrow-wisp w1" d="M 30 130 Q 200 60 380 120 T 720 100 Q 800 90 855 115" stroke="url(#smArrowEdge)" stroke-width="14"/>
+              <path class="sm-arrow-wisp w3" d="M 40 105 Q 220 170 420 110 T 700 130 Q 790 140 850 118" stroke="url(#smArrowEdge)" stroke-width="10" opacity="0.85"/>
+              <path class="sm-arrow-wisp w2" d="M 80 145 Q 260 100 440 145 T 760 115" stroke="url(#smArrowEdge)" stroke-width="6" opacity="0.7"/>
+            </g>
+            <!-- Bright magenta accent near top of arrowhead -->
+            <ellipse class="sm-arrow-wisp w4" cx="700" cy="60" rx="120" ry="40" fill="url(#smWispMagenta)" filter="url(#smRibbonSoft)" opacity="0.85"/>
+          </g>
+
+          <!-- Crisp luminous edge -->
+          <g class="sm-arrow-edge-anim">
+            <use href="#smArrowShape" fill="none" stroke="url(#smArrowEdge)" stroke-width="3.2" stroke-linejoin="round" filter="url(#smEdgeInnerGlow)" opacity="0.95"/>
+            <use href="#smArrowShape" fill="none" stroke="url(#smArrowEdge)" stroke-width="1.6" stroke-linejoin="round" opacity="1"/>
+          </g>
+          <!-- Inner highlight ribbon along top edge -->
+          <use href="#smArrowShape" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="0.8" stroke-linejoin="round"/>
+        </svg>
+        <span class="sm-arrow-pulse" aria-hidden="true"></span>
+        <span class="sm-arrow-text">Meet Summaverick</span>
+      </a>
+    </section>
+
     <section class="hero">
       <p class="hero-eye">Full-Stack ServiceNow AI Engineer</p>
       <h1 class="hero-title"><span class="typewriter">Sumanth Bolle</span></h1>
@@ -469,25 +579,6 @@
         <a href="https://github.com/sumanthbolle" target="_blank" rel="noopener noreferrer" class="hero-link">GitHub →</a>
       </div>
     </section>
-
-    <a href="summaverick.html" class="sm-announce" aria-label="Meet Summaverick — AI Research Assistant">
-      <div class="sm-announce-glow g1"></div>
-      <div class="sm-announce-glow g2"></div>
-      <div class="sm-announce-inner">
-        <div class="sm-announce-shape">
-          <div class="sm-announce-aurora"></div>
-          <div class="sm-announce-edge"></div>
-          <div class="sm-announce-pulse"></div>
-          <div class="sm-announce-content">
-            <div class="sm-announce-text">Meet Summaverick</div>
-            <div class="sm-announce-sub">AI-powered research assistant — try it now</div>
-          </div>
-          <div class="sm-announce-pointer">
-            <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
-          </div>
-        </div>
-      </div>
-    </a>
 
     <section class="section section-gray" id="about">
       <div class="section-c">
