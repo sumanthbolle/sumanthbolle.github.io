@@ -149,6 +149,58 @@
     .sm-research-card h3{font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:6px}
     .sm-research-card p{font-size:12px;color:var(--text-4);line-height:1.5}
 
+    /* Trending widgets — landing only */
+    .sm-trending{width:100%;max-width:880px;margin-top:36px;text-align:left}
+    .sm-trending-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;padding:0 4px}
+    .sm-trending-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-4);display:flex;align-items:center;gap:8px}
+    .sm-trending-pulse{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 0 0 rgba(52,211,153,0.5);animation:smTrendPulse 2.4s ease infinite}
+    @keyframes smTrendPulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.5)}70%{box-shadow:0 0 0 8px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+    .sm-trending-region{font-size:11px;color:var(--text-4)}
+    .sm-trending-region b{color:var(--text-3);font-weight:600}
+    .sm-trending-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .sm-widget{position:relative;border-radius:18px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));padding:16px;display:flex;flex-direction:column;text-align:left;text-decoration:none;color:inherit;cursor:pointer;overflow:hidden;transition:transform 0.35s var(--ease),border-color 0.3s,background 0.3s;opacity:0;transform:translateY(10px);animation:fadeUp 0.6s var(--ease) forwards}
+    .sm-widget:nth-child(1){animation-delay:0.05s}
+    .sm-widget:nth-child(2){animation-delay:0.15s}
+    .sm-widget:nth-child(3){animation-delay:0.25s}
+    .sm-widget:hover{transform:translateY(-3px);border-color:var(--border-strong);background:linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))}
+    .sm-widget::before{content:'';position:absolute;inset:0;border-radius:18px;padding:1px;background:linear-gradient(135deg,rgba(120,168,255,0.0),rgba(167,139,250,0.0));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:0;transition:opacity 0.3s}
+    .sm-widget:hover::before{opacity:1;background:linear-gradient(135deg,rgba(120,168,255,0.45),rgba(244,114,182,0.35))}
+    .sm-widget-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .sm-widget-icon{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;background:rgba(255,255,255,0.04);border:1px solid var(--border)}
+    .sm-widget-icon svg{width:13px;height:13px;stroke:var(--text-2);fill:none;stroke-width:1.8}
+    .sm-widget.news .sm-widget-icon{background:rgba(244,114,182,0.10);border-color:rgba(244,114,182,0.25)}
+    .sm-widget.news .sm-widget-icon svg{stroke:#f472b6}
+    .sm-widget.market .sm-widget-icon{background:rgba(52,211,153,0.10);border-color:rgba(52,211,153,0.25)}
+    .sm-widget.market .sm-widget-icon svg{stroke:#34d399}
+    .sm-widget.tech .sm-widget-icon{background:rgba(120,168,255,0.10);border-color:rgba(120,168,255,0.25)}
+    .sm-widget.tech .sm-widget-icon svg{stroke:#78a8ff}
+    .sm-widget-label{font-size:10px;font-weight:600;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-4)}
+    .sm-widget-title{font-size:14px;font-weight:600;color:var(--text-1);line-height:1.35;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .sm-widget-body{font-size:12px;color:var(--text-3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:auto}
+    .sm-widget-meta{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--text-4)}
+    .sm-widget-meta .sep{opacity:0.4}
+    .sm-widget-src{display:inline-flex;align-items:center;gap:4px;color:var(--text-3);text-decoration:none;transition:color 0.2s}
+    .sm-widget-src:hover{color:#78a8ff;text-decoration:underline}
+    .sm-widget-src svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2}
+    .sm-widget-cta{margin-top:10px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--text-3);transition:color 0.2s}
+    .sm-widget:hover .sm-widget-cta{color:#78a8ff}
+    .sm-widget-cta svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
+    .sm-ticker{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600}
+    .sm-ticker-symbol{font-family:ui-monospace,'SF Mono',monospace;color:var(--text-1)}
+    .sm-ticker-pct{padding:2px 7px;border-radius:6px;font-size:11px;font-weight:700;font-family:ui-monospace,'SF Mono',monospace}
+    .sm-ticker-pct.up{background:rgba(52,211,153,0.14);color:#34d399}
+    .sm-ticker-pct.down{background:rgba(248,113,113,0.14);color:#f87171}
+    .sm-widget-skeleton{background:linear-gradient(90deg,rgba(255,255,255,0.04),rgba(255,255,255,0.08),rgba(255,255,255,0.04));background-size:200% 100%;animation:smShimmer 1.6s linear infinite;border-radius:6px;height:10px}
+    .sm-widget-skeleton.t{height:14px;margin-bottom:8px;width:90%}
+    .sm-widget-skeleton.t2{width:75%}
+    .sm-widget-skeleton.b{height:10px;margin-bottom:6px}
+    .sm-widget-skeleton.b2{width:80%}
+    @keyframes smShimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+    .sm-trending.hidden{display:none}
+    @media(max-width:740px){
+      .sm-trending-grid{grid-template-columns:1fr}
+    }
+
     /* Animations */
     @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
     @keyframes rgbFlow{0%{background-position:0% 50%}100%{background-position:260% 50%}}
@@ -198,6 +250,15 @@
     <div class="sm-landing" id="landing">
       <h1>Ask anything.<br><span class="gradient-text">Search deeper.</span><br><span style="color:var(--text-3)">Research with clarity.</span></h1>
       <p class="subtitle">A general-purpose AI research assistant. World news, tech, code, careers, or everyday decisions — ask anything and get clear, source-grounded answers.</p>
+
+      <section class="sm-trending" id="trendingSection" aria-label="Trending today" hidden>
+        <div class="sm-trending-head">
+          <div class="sm-trending-label"><span class="sm-trending-pulse" aria-hidden="true"></span>Trending today</div>
+          <div class="sm-trending-region" id="trendingRegion"></div>
+        </div>
+        <div class="sm-trending-grid" id="trendingGrid"></div>
+      </section>
+
       <div class="sm-research-grid" id="researchGrid"></div>
     </div>
 
@@ -242,6 +303,9 @@
       compass: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
       arrowUp: '<svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
       externalLink: '<svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>',
+      newspaper: '<svg viewBox="0 0 24 24"><path d="M4 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+      chart: '<svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>',
+      chip: '<svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg>',
     };
 
     let conversationHistory = [];
@@ -253,11 +317,166 @@
     const sendBtn = document.getElementById('sendBtn');
     const newChatBtn = document.getElementById('newChatBtn');
     const researchGridEl = document.getElementById('researchGrid');
+    const trendingSection = document.getElementById('trendingSection');
+    const trendingGrid = document.getElementById('trendingGrid');
+    const trendingRegion = document.getElementById('trendingRegion');
 
     function init() {
       renderStarters();
       bindEvents();
       autoResizeTextarea();
+      loadTrending();
+    }
+
+    /* ───────── Trending widgets ───────── */
+
+    function trendingUrl() {
+      if (!ENDPOINT) return null;
+      try {
+        const u = new URL(ENDPOINT);
+        u.pathname = '/trending';
+        u.search = '';
+        return u.toString();
+      } catch (e) { return null; }
+    }
+
+    function showTrendingSkeleton() {
+      if (!trendingSection || !trendingGrid) return;
+      trendingSection.hidden = false;
+      trendingGrid.innerHTML = ['news','market','tech'].map(kind => `
+        <div class="sm-widget ${kind}" aria-busy="true">
+          <div class="sm-widget-head">
+            <div class="sm-widget-icon">${widgetIconFor(kind)}</div>
+            <div class="sm-widget-label">${widgetSkeletonLabel(kind)}</div>
+          </div>
+          <div class="sm-widget-skeleton t"></div>
+          <div class="sm-widget-skeleton t t2"></div>
+          <div class="sm-widget-skeleton b"></div>
+          <div class="sm-widget-skeleton b b2"></div>
+        </div>`).join('');
+    }
+
+    function widgetIconFor(kind) {
+      if (kind === 'news') return icons.newspaper;
+      if (kind === 'market') return icons.chart;
+      if (kind === 'tech') return icons.chip;
+      return icons.sparkles;
+    }
+
+    function widgetSkeletonLabel(kind) {
+      if (kind === 'news') return 'Top story';
+      if (kind === 'market') return 'Top mover';
+      if (kind === 'tech') return 'Top on HN';
+      return '';
+    }
+
+    async function loadTrending() {
+      const url = trendingUrl();
+      if (!url) { hideTrending(); return; }
+      showTrendingSkeleton();
+
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 12000);
+        const res = await fetch(url, { signal: ctrl.signal });
+        clearTimeout(timer);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (!data || !data.success || !data.widgets) throw new Error('no widgets');
+        renderTrending(data);
+      } catch (e) {
+        hideTrending();
+      }
+    }
+
+    function hideTrending() {
+      if (trendingSection) trendingSection.hidden = true;
+    }
+
+    function renderTrending(data) {
+      const w = data.widgets || {};
+      const cards = [];
+      if (w.news)   cards.push(renderNewsWidget(w.news));
+      if (w.market) cards.push(renderMarketWidget(w.market));
+      if (w.tech)   cards.push(renderTechWidget(w.tech));
+
+      if (cards.length === 0) { hideTrending(); return; }
+
+      trendingGrid.innerHTML = cards.join('');
+      if (trendingRegion) {
+        const detected = data.detected === 'network' ? 'based on your network' : (data.detected === 'override' ? 'custom region' : 'global view');
+        trendingRegion.innerHTML = `Showing <b>${esc(data.countryName || 'Global')}</b> · ${esc(detected)}`;
+      }
+
+      trendingGrid.querySelectorAll('.sm-widget[data-ask]').forEach(el => {
+        const handler = (ev) => {
+          if (ev.target.closest('[data-noask]')) return;
+          ev.preventDefault();
+          submitQuery(el.dataset.ask);
+        };
+        el.addEventListener('click', handler);
+        el.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); submitQuery(el.dataset.ask); }
+        });
+      });
+    }
+
+    const arrowRightSvg = '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
+
+    function renderNewsWidget(n) {
+      const ask = `Give me a deeper briefing on this story: "${n.title}". What are the key facts, context, and credible perspectives?`;
+      const src = n.url ? `<a class="sm-widget-src" href="${esc(n.url)}" target="_blank" rel="noopener" data-noask="1">${esc(n.source || 'Source')} ${icons.externalLink}</a>` : `<span>${esc(n.source || '')}</span>`;
+      return `
+        <div class="sm-widget news" role="button" tabindex="0" data-ask="${esc(ask)}" title="${esc(n.title)}">
+          <div class="sm-widget-head">
+            <div class="sm-widget-icon">${icons.newspaper}</div>
+            <div class="sm-widget-label">${esc(n.label || 'Top story')}</div>
+          </div>
+          <div class="sm-widget-title">${esc(n.title)}</div>
+          <div class="sm-widget-body">${esc(n.summary || '')}</div>
+          <div class="sm-widget-meta">${src}</div>
+          <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
+        </div>`;
+    }
+
+    function renderMarketWidget(m) {
+      const sign = m.changePercent >= 0 ? '+' : '';
+      const ask = `Why is ${m.name} (${m.symbol}) the biggest mover in ${m.index} today, ${sign}${m.changePercent}%? Give me context and sources.`;
+      return `
+        <div class="sm-widget market" role="button" tabindex="0" data-ask="${esc(ask)}">
+          <div class="sm-widget-head">
+            <div class="sm-widget-icon">${icons.chart}</div>
+            <div class="sm-widget-label">${esc(m.label || 'Top mover')}</div>
+          </div>
+          <div class="sm-widget-title sm-ticker">
+            <span class="sm-ticker-symbol">${esc(m.symbol)}</span>
+            <span class="sm-ticker-pct ${m.direction === 'up' ? 'up' : 'down'}">${sign}${esc(String(m.changePercent))}%</span>
+          </div>
+          <div class="sm-widget-body">${esc(m.name || '')}${m.reason ? ' · ' + esc(m.reason) : ''}</div>
+          <div class="sm-widget-meta"><span>${esc(m.index || '')}</span></div>
+          <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
+        </div>`;
+    }
+
+    function renderTechWidget(t) {
+      const ask = `Summarise and react to this Hacker News story: "${t.title}". Why is it resonating with developers? Any notable context?`;
+      const link = t.url || t.hnUrl;
+      const src = link ? `<a class="sm-widget-src" href="${esc(link)}" target="_blank" rel="noopener" data-noask="1">${esc(t.source || 'news.ycombinator.com')} ${icons.externalLink}</a>` : `<span>${esc(t.source || '')}</span>`;
+      return `
+        <div class="sm-widget tech" role="button" tabindex="0" data-ask="${esc(ask)}" title="${esc(t.title)}">
+          <div class="sm-widget-head">
+            <div class="sm-widget-icon">${icons.chip}</div>
+            <div class="sm-widget-label">${esc(t.label || 'Top on Hacker News')}</div>
+          </div>
+          <div class="sm-widget-title">${esc(t.title)}</div>
+          <div class="sm-widget-body">${src}</div>
+          <div class="sm-widget-meta">
+            <span>▲ ${esc(String(t.score || 0))}</span>
+            <span class="sep">·</span>
+            <span>${esc(String(t.comments || 0))} comments</span>
+          </div>
+          <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
+        </div>`;
     }
 
     function renderStarters() {
@@ -324,6 +543,7 @@
       if (isFirst) {
         landing.classList.add('hidden');
         chatArea.classList.add('active');
+        hideTrending();
         appendWelcomeMessage();
       }
 
@@ -515,6 +735,7 @@
       queryInput.value = '';
       queryInput.style.height = 'auto';
       updateSendButton();
+      loadTrending();
     }
 
     function scrollToBottom() {
