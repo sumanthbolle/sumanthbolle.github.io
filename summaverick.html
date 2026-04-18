@@ -421,54 +421,32 @@
       if (cards.length === 0) { hideTrending(); return; }
 
       setGridColumns(cards.length);
-      trendingGrid.innerHTML = cards.map(c => c.html).join('');
+      trendingGrid.innerHTML = cards.join('');
       if (trendingRegion) {
         const detected = data.detected === 'network' ? 'based on your network' : (data.detected === 'override' ? 'custom region' : 'global view');
         trendingRegion.innerHTML = `Showing <b>${esc(data.countryName || 'Global')}</b> · ${esc(detected)}`;
       }
 
-      /* Bind ask strings via dataset AFTER parsing HTML — the browser
-       * will store the exact JS string without any attribute-parse
-       * round-trip, so quotes and other tricky characters survive. */
-      const cardEls = trendingGrid.querySelectorAll('.sm-widget');
-      cardEls.forEach((el, i) => {
-        const ask = cards[i] && cards[i].ask;
-        if (!ask) return;
-        el.dataset.ask = ask;
-
+      trendingGrid.querySelectorAll('.sm-widget[data-ask]').forEach(el => {
         const handler = (ev) => {
           if (ev.target.closest('[data-noask]')) return;
           ev.preventDefault();
-          const q = el.dataset.ask;
-          if (q) submitQuery(q);
+          submitQuery(el.dataset.ask);
         };
         el.addEventListener('click', handler);
         el.addEventListener('keydown', (ev) => {
-          if (ev.key === 'Enter' || ev.key === ' ') {
-            ev.preventDefault();
-            const q = el.dataset.ask;
-            if (q) submitQuery(q);
-          }
+          if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); submitQuery(el.dataset.ask); }
         });
       });
     }
 
     const arrowRightSvg = '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
 
-    /* Each widget renderer now returns { html, ask } so that the ask
-     * string is bound to the card via el.dataset after innerHTML parsing,
-     * never interpolated into an HTML attribute. This avoids any class
-     * of "attribute-break" bug from titles containing " or stray markup.
-     * All remaining attribute-context interpolations (href, title) go
-     * through escAttr() as a second line of defense. */
-
     function renderNewsWidget(n) {
       const ask = `Give me a deeper briefing on this story: "${n.title}". What are the key facts, context, and credible perspectives?`;
-      const src = n.url
-        ? `<a class="sm-widget-src" href="${escAttr(n.url)}" target="_blank" rel="noopener" data-noask="1">${esc(n.source || 'Source')} ${icons.externalLink}</a>`
-        : `<span>${esc(n.source || '')}</span>`;
-      const html = `
-        <div class="sm-widget news" role="button" tabindex="0" title="${escAttr(n.title)}">
+      const src = n.url ? `<a class="sm-widget-src" href="${esc(n.url)}" target="_blank" rel="noopener" data-noask="1">${esc(n.source || 'Source')} ${icons.externalLink}</a>` : `<span>${esc(n.source || '')}</span>`;
+      return `
+        <div class="sm-widget news" role="button" tabindex="0" data-ask="${esc(ask)}" title="${esc(n.title)}">
           <div class="sm-widget-head">
             <div class="sm-widget-icon">${icons.newspaper}</div>
             <div class="sm-widget-label">${esc(n.label || 'Top story')}</div>
@@ -478,16 +456,13 @@
           <div class="sm-widget-meta">${src}</div>
           <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
         </div>`;
-      return { html, ask };
     }
 
     function renderWorldNewsWidget(n) {
       const ask = `What's the full story behind the #1 global headline right now: "${n.title}"? Give me the key facts, international context, and the range of credible perspectives.`;
-      const src = n.url
-        ? `<a class="sm-widget-src" href="${escAttr(n.url)}" target="_blank" rel="noopener" data-noask="1">${esc(n.source || 'Source')} ${icons.externalLink}</a>`
-        : `<span>${esc(n.source || '')}</span>`;
-      const html = `
-        <div class="sm-widget world" role="button" tabindex="0" title="${escAttr(n.title)}">
+      const src = n.url ? `<a class="sm-widget-src" href="${esc(n.url)}" target="_blank" rel="noopener" data-noask="1">${esc(n.source || 'Source')} ${icons.externalLink}</a>` : `<span>${esc(n.source || '')}</span>`;
+      return `
+        <div class="sm-widget world" role="button" tabindex="0" data-ask="${esc(ask)}" title="${esc(n.title)}">
           <div class="sm-widget-head">
             <div class="sm-widget-icon">${icons.globe}</div>
             <div class="sm-widget-label">${esc(n.label || '#1 worldwide · Top story')}</div>
@@ -497,14 +472,13 @@
           <div class="sm-widget-meta">${src}</div>
           <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
         </div>`;
-      return { html, ask };
     }
 
     function renderMarketWidget(m) {
       const sign = m.changePercent >= 0 ? '+' : '';
       const ask = `Why is ${m.name} (${m.symbol}) the biggest mover in ${m.index} today, ${sign}${m.changePercent}%? Give me context and sources.`;
-      const html = `
-        <div class="sm-widget market" role="button" tabindex="0">
+      return `
+        <div class="sm-widget market" role="button" tabindex="0" data-ask="${esc(ask)}">
           <div class="sm-widget-head">
             <div class="sm-widget-icon">${icons.chart}</div>
             <div class="sm-widget-label">${esc(m.label || 'Top mover')}</div>
@@ -517,17 +491,14 @@
           <div class="sm-widget-meta"><span>${esc(m.index || '')}</span></div>
           <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
         </div>`;
-      return { html, ask };
     }
 
     function renderTechWidget(t) {
       const ask = `Summarise and react to this Hacker News story: "${t.title}". Why is it resonating with developers? Any notable context?`;
       const link = t.url || t.hnUrl;
-      const src = link
-        ? `<a class="sm-widget-src" href="${escAttr(link)}" target="_blank" rel="noopener" data-noask="1">${esc(t.source || 'news.ycombinator.com')} ${icons.externalLink}</a>`
-        : `<span>${esc(t.source || '')}</span>`;
-      const html = `
-        <div class="sm-widget tech" role="button" tabindex="0" title="${escAttr(t.title)}">
+      const src = link ? `<a class="sm-widget-src" href="${esc(link)}" target="_blank" rel="noopener" data-noask="1">${esc(t.source || 'news.ycombinator.com')} ${icons.externalLink}</a>` : `<span>${esc(t.source || '')}</span>`;
+      return `
+        <div class="sm-widget tech" role="button" tabindex="0" data-ask="${esc(ask)}" title="${esc(t.title)}">
           <div class="sm-widget-head">
             <div class="sm-widget-icon">${icons.chip}</div>
             <div class="sm-widget-label">${esc(t.label || 'Top on Hacker News')}</div>
@@ -541,7 +512,6 @@
           </div>
           <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
         </div>`;
-      return { html, ask };
     }
 
     function renderStarters() {
@@ -837,23 +807,6 @@
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
-    }
-
-    /* esc() is safe for text nodes (it escapes < > & via the
-     * textContent→innerHTML round-trip) but DOES NOT escape the
-     * double-quote character. Interpolating esc(x) inside an HTML
-     * attribute like foo="${esc(x)}" silently truncates whenever x
-     * contains a " — which caused prefilled widget queries to lose
-     * their story context when a headline quoted something.
-     * Use this helper for any attribute-bound interpolation. */
-    function escAttr(str) {
-      if (str == null) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
     }
 
     init();
