@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Summaverick — Ask anything. Search deeper. Research with clarity.</title>
+  <title>Summaverick — a research-grade AI assistant</title>
   <meta name="description" content="Summaverick is a general-purpose AI research assistant. Ask anything — world news, tech, code, careers, or everyday decisions — and get clear, source-grounded answers.">
   <link rel="canonical" href="https://sumanthbolle.com/summaverick">
   <meta property="og:title" content="Summaverick — AI Research Assistant">
@@ -27,11 +27,13 @@
       --text-2:rgba(255,255,255,0.82);
       --text-3:rgba(255,255,255,0.52);
       --text-4:rgba(255,255,255,0.30);
-      --accent-gradient:linear-gradient(90deg,#78a8ff 0%,#8c8cff 12%,#b28dff 24%,#ef87c8 38%,#ffab73 52%,#f4d96a 66%,#67dfbc 80%,#6fd6ff 92%,#78a8ff 100%);
+      --accent:#a78bfa;
+      --accent-soft:linear-gradient(180deg,#cdb4ff 0%,#a78bfa 100%);
       --glass:rgba(230,233,242,0.06);
       --glass-strong:rgba(225,228,240,0.10);
       --radius:24px;
       --ease:cubic-bezier(.22,1,.36,1);
+      --input-area-h:120px; /* updated at runtime; conservative default */
     }
     html{scroll-behavior:smooth}
     body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;background:var(--bg);color:var(--text-1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
@@ -51,8 +53,7 @@
     .sm-brand-icon{width:36px;height:36px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface);display:grid;place-items:center;position:relative;overflow:hidden}
     .sm-brand-icon::before{content:'';position:absolute;inset:0;border-radius:12px;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.18),transparent 45%)}
     .sm-brand-icon svg{width:18px;height:18px;stroke:var(--text-2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;position:relative}
-    .sm-brand-name{font-size:14px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase}
-    .sm-brand-sub{font-size:11px;color:var(--text-4);margin-top:1px}
+    .sm-brand-name{font-size:15px;font-weight:600;letter-spacing:-0.01em;color:var(--text-1)}
     .sm-nav-links{display:flex;align-items:center;gap:20px}
     .sm-nav-links a{color:var(--text-3);text-decoration:none;font-size:13px;transition:color 0.3s}
     .sm-nav-links a:hover,.sm-nav-links a.active{color:var(--text-1)}
@@ -64,32 +65,44 @@
     .sm-main{flex:1;display:flex;flex-direction:column;position:relative;z-index:1;max-width:860px;width:100%;margin:0 auto;padding:0 20px}
 
     /* Landing (empty state) */
-    .sm-landing{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 0 120px;animation:fadeUp 0.7s var(--ease)}
+    .sm-landing{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:9vh 0 calc(var(--input-area-h) + 40px);animation:fadeUp 0.7s var(--ease)}
     .sm-landing.hidden{display:none}
-    .sm-landing h1{font-size:clamp(36px,6vw,56px);font-weight:600;letter-spacing:-0.04em;line-height:1.08;max-width:600px}
-    .sm-landing h1 .gradient-text{background-image:var(--accent-gradient);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:rgbFlow 5.6s linear infinite}
-    .sm-landing .subtitle{font-size:17px;color:var(--text-3);margin-top:16px;line-height:1.6;max-width:480px}
+    .sm-landing h1{font-size:clamp(40px,6.4vw,64px);font-weight:600;letter-spacing:-0.045em;line-height:1.04;max-width:680px;color:var(--text-1)}
+    .sm-landing h1 .quiet{color:var(--text-3);font-weight:500}
+    .sm-landing h1 .accent{background:var(--accent-soft);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    .sm-landing .subtitle{font-size:16px;color:var(--text-3);margin-top:14px;line-height:1.55;max-width:440px;letter-spacing:-0.005em}
     /* Chat area */
-    .sm-chat{flex:1;display:none;flex-direction:column;padding-top:24px;padding-bottom:140px;overflow-y:auto}
+    .sm-chat{flex:1;display:none;flex-direction:column;padding-top:24px;padding-bottom:calc(var(--input-area-h) + 24px);overflow-y:auto}
     .sm-chat.active{display:flex}
     .sm-chat::-webkit-scrollbar{width:5px}
     .sm-chat::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
 
-    /* Message bubbles */
-    .sm-msg{margin-bottom:28px;animation:fadeUp 0.4s var(--ease)}
-    .sm-msg-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-    .sm-msg-avatar{width:28px;height:28px;border-radius:10px;display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0}
-    .sm-msg-avatar.user{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-    .sm-msg-avatar.ai{border:1px solid var(--border-strong);background:var(--surface)}
-    .sm-msg-avatar.ai svg{width:14px;height:14px;stroke:var(--text-2);fill:none;stroke-width:1.8}
-    .sm-msg-sender{font-size:13px;font-weight:600;color:var(--text-2)}
-    .sm-msg-body{padding-left:38px}
+    /* Conversation turns — no avatar+name label per turn; the visual
+     * difference between a soft right-aligned user message and the
+     * full-width AI response is enough signal. */
+    .sm-msg{margin-bottom:28px;animation:fadeUp 0.45s var(--ease)}
+    .sm-msg-user{display:flex;justify-content:flex-end}
+    .sm-msg-user .sm-msg-content{max-width:78%;font-size:15px;line-height:1.55;color:var(--text-1);background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:18px 18px 6px 18px;padding:10px 14px;letter-spacing:-0.005em;white-space:pre-wrap}
+    .sm-msg-ai .sm-msg-body{max-width:680px}
 
-    .sm-msg-user .sm-msg-content{font-size:16px;line-height:1.6;color:var(--text-1)}
-
-    .sm-msg-ai .sm-msg-content{font-size:15px;line-height:1.75;color:var(--text-2)}
-    .sm-msg-ai .sm-msg-content p{margin-bottom:12px}
-    .sm-msg-ai .sm-msg-content p:last-child{margin-bottom:0}
+    .sm-msg-ai .sm-msg-content{font-size:15px;line-height:1.7;color:var(--text-2)}
+    .sm-msg-ai .sm-msg-content p,.sm-msg-ai .sm-msg-content ul,.sm-msg-ai .sm-msg-content ol,.sm-msg-ai .sm-msg-content pre,.sm-msg-ai .sm-msg-content h2,.sm-msg-ai .sm-msg-content h3{margin-bottom:14px;opacity:0;transform:translateY(4px);animation:smReveal 0.5s var(--ease) forwards}
+    .sm-msg-ai .sm-msg-content > :last-child{margin-bottom:0}
+    /* Stagger: each block appears slightly after the previous one. */
+    .sm-msg-ai .sm-msg-content > :nth-child(1){animation-delay:0s}
+    .sm-msg-ai .sm-msg-content > :nth-child(2){animation-delay:0.08s}
+    .sm-msg-ai .sm-msg-content > :nth-child(3){animation-delay:0.16s}
+    .sm-msg-ai .sm-msg-content > :nth-child(4){animation-delay:0.24s}
+    .sm-msg-ai .sm-msg-content > :nth-child(5){animation-delay:0.32s}
+    .sm-msg-ai .sm-msg-content > :nth-child(6){animation-delay:0.40s}
+    .sm-msg-ai .sm-msg-content > :nth-child(7){animation-delay:0.48s}
+    .sm-msg-ai .sm-msg-content > :nth-child(n+8){animation-delay:0.56s}
+    @media(prefers-reduced-motion:reduce){
+      .sm-msg-ai .sm-msg-content p,.sm-msg-ai .sm-msg-content ul,.sm-msg-ai .sm-msg-content ol,.sm-msg-ai .sm-msg-content pre,.sm-msg-ai .sm-msg-content h2,.sm-msg-ai .sm-msg-content h3{animation:none;opacity:1;transform:none}
+      .sm-widget{animation:none;opacity:1;transform:none}
+      .sm-widget-skeleton{animation:none}
+      .sm-thinking-mark{animation:none}
+    }
     .sm-msg-ai .sm-msg-content strong{color:var(--text-1);font-weight:600}
     .sm-msg-ai .sm-msg-content code{font-size:13px;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:5px;font-family:ui-monospace,'SF Mono',monospace}
     .sm-msg-ai .sm-msg-content pre{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:14px 16px;overflow-x:auto;margin:12px 0;font-size:13px;line-height:1.6;font-family:ui-monospace,'SF Mono',monospace}
@@ -99,33 +112,31 @@
     .sm-msg-ai .sm-msg-content a{color:#78a8ff;text-decoration:none}
     .sm-msg-ai .sm-msg-content a:hover{text-decoration:underline}
 
-    /* Citation markers */
-    .sm-cite{color:#b28dff;font-size:10px;font-weight:700;cursor:pointer;vertical-align:super;padding:0 2px;background:rgba(178,141,255,0.12);border-radius:3px;margin:0 1px;text-decoration:none}
-    .sm-cite:hover{background:rgba(178,141,255,0.24)}
+    /* Citation markers — small, raised, monospaced; not candy. */
+    .sm-cite{display:inline-block;min-width:14px;height:14px;padding:0 4px;margin:0 1px;font-family:ui-monospace,'SF Mono',monospace;font-size:10px;font-weight:600;line-height:14px;text-align:center;color:var(--text-3);background:rgba(255,255,255,0.06);border-radius:4px;vertical-align:1px;text-decoration:none;transition:background 0.2s,color 0.2s}
+    .sm-cite:hover{background:rgba(255,255,255,0.12);color:var(--text-1)}
 
     /* Sources panel */
-    .sm-sources{margin-top:16px;padding-left:38px}
-    .sm-sources-label{font-size:10px;font-weight:600;color:var(--text-4);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:8px}
-    .sm-source-card{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;border:1px solid var(--border);background:var(--surface);text-decoration:none;color:inherit;transition:all 0.2s;margin-bottom:6px}
-    .sm-source-card:hover{background:var(--surface-hover);border-color:var(--border-strong)}
-    .sm-source-num{width:24px;height:24px;border-radius:8px;background:rgba(178,141,255,0.12);color:#b28dff;font-size:11px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
+    .sm-sources{margin-top:16px}
+    .sm-sources-label{font-size:12px;font-weight:500;color:var(--text-4);margin-bottom:10px;letter-spacing:-0.005em}
+    .sm-source-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:transparent;text-decoration:none;color:inherit;transition:background 0.2s,border-color 0.2s;margin-bottom:6px}
+    .sm-source-card:hover{background:rgba(255,255,255,0.03);border-color:var(--border-strong)}
+    .sm-source-num{width:18px;height:18px;border-radius:5px;background:rgba(255,255,255,0.06);color:var(--text-3);font-family:ui-monospace,'SF Mono',monospace;font-size:10px;font-weight:600;display:grid;place-items:center;flex-shrink:0}
     .sm-source-info{flex:1;min-width:0}
-    .sm-source-title{font-size:13px;font-weight:500;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sm-source-title{font-size:13px;font-weight:500;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.005em}
     .sm-source-domain{font-size:11px;color:var(--text-4);margin-top:2px}
-    .sm-source-arrow{color:var(--text-4);flex-shrink:0}
+    .sm-source-arrow{color:var(--text-4);flex-shrink:0;opacity:0.6}
     .sm-source-arrow svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
 
     /* Related questions */
-    .sm-related{margin-top:14px;padding-left:38px;display:flex;flex-wrap:wrap;gap:8px}
-    .sm-related-btn{padding:8px 14px;border-radius:980px;border:1px solid var(--border);background:var(--surface);color:var(--text-3);font-size:12px;cursor:pointer;font-family:inherit;transition:all 0.3s}
-    .sm-related-btn:hover{background:var(--surface-hover);color:var(--text-1);border-color:var(--border-strong)}
+    .sm-related{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+    .sm-related-btn{padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-3);font-size:13px;cursor:pointer;font-family:inherit;text-align:left;letter-spacing:-0.005em;transition:background 0.2s,color 0.2s,border-color 0.2s}
+    .sm-related-btn:hover{background:rgba(255,255,255,0.03);color:var(--text-1);border-color:var(--border-strong)}
 
-    /* Loading */
-    .sm-loading{display:flex;align-items:center;gap:10px;padding-left:38px;margin-bottom:20px;animation:fadeUp 0.3s var(--ease)}
-    .sm-loading-dot{width:6px;height:6px;border-radius:50%;background:var(--text-3);animation:dotPulse 1.4s ease-in-out infinite}
-    .sm-loading-dot:nth-child(2){animation-delay:0.15s}
-    .sm-loading-dot:nth-child(3){animation-delay:0.3s}
-    .sm-loading-text{font-size:13px;color:var(--text-4)}
+    /* Thinking indicator — a single soft mark that breathes */
+    .sm-thinking{margin-bottom:20px;display:flex;align-items:center;gap:8px;animation:fadeUp 0.3s var(--ease)}
+    .sm-thinking-mark{width:14px;height:14px;border-radius:50%;background:var(--text-2);animation:smThink 1.6s ease-in-out infinite}
+    @keyframes smThink{0%,100%{transform:scale(0.55);opacity:0.35}50%{transform:scale(1);opacity:0.95}}
 
     /* Input bar */
     .sm-input-wrap{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:16px 20px 24px;background:linear-gradient(to top,var(--bg) 60%,transparent)}
@@ -137,85 +148,73 @@
     .sm-send-btn.active{opacity:1;pointer-events:auto}
     .sm-send-btn:hover{transform:scale(1.05)}
     .sm-send-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
-    .sm-input-meta{display:flex;align-items:center;gap:8px;margin-top:8px;max-width:860px;margin-left:auto;margin-right:auto;justify-content:center}
-    .sm-input-meta span{font-size:11px;color:var(--text-4)}
+    .sm-input-meta{display:flex;align-items:center;gap:8px;margin-top:8px;max-width:860px;margin-left:auto;margin-right:auto;justify-content:center;transition:opacity 0.4s var(--ease)}
+    .sm-input-meta.faded{opacity:0;pointer-events:none}
+    .sm-input-meta span{font-size:11px;color:var(--text-4);letter-spacing:-0.005em}
+    .sm-input-meta a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.18);transition:color 0.2s,border-color 0.2s}
+    .sm-input-meta a:hover{color:var(--text-2);border-color:var(--text-3)}
 
-    /* Research cards on landing */
-    .sm-research-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:32px;width:100%;max-width:560px}
-    .sm-research-card{border-radius:18px;border:1px solid var(--border);background:var(--surface);padding:20px;text-align:left;cursor:pointer;transition:all 0.3s}
-    .sm-research-card:hover{background:var(--surface-hover);border-color:var(--border-strong);transform:translateY(-2px)}
-    .sm-research-card-icon{width:36px;height:36px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,0.3);display:grid;place-items:center;margin-bottom:12px}
-    .sm-research-card-icon svg{width:18px;height:18px;stroke:var(--text-2);fill:none;stroke-width:1.8}
-    .sm-research-card h3{font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:6px}
-    .sm-research-card p{font-size:12px;color:var(--text-4);line-height:1.5}
+    /* Suggestion list — quiet, tap-target sized, no decorative chrome */
+    .sm-research-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:32px;width:100%;max-width:680px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+    .sm-research-card{background:var(--bg);padding:18px 20px;text-align:left;cursor:pointer;transition:background 0.25s var(--ease)}
+    .sm-research-card:hover,.sm-research-card:focus-visible{background:rgba(255,255,255,0.025);outline:none}
+    .sm-research-card h3{font-size:14px;font-weight:500;color:var(--text-2);line-height:1.45;letter-spacing:-0.005em;margin:0}
+    .sm-research-card p{display:none}
+    @media(max-width:640px){.sm-research-grid{grid-template-columns:1fr}}
 
-    /* Trending widgets — landing only */
-    .sm-trending{width:100%;max-width:880px;margin-top:36px;text-align:left}
-    .sm-trending-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;padding:0 4px}
-    .sm-trending-label{font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-4);display:flex;align-items:center;gap:8px}
-    .sm-trending-pulse{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 0 0 rgba(52,211,153,0.5);animation:smTrendPulse 2.4s ease infinite}
-    @keyframes smTrendPulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.5)}70%{box-shadow:0 0 0 8px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
-    .sm-trending-region{font-size:11px;color:var(--text-4)}
-    .sm-trending-region b{color:var(--text-3);font-weight:600}
-    .sm-trending-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .sm-trending-grid.cols-4{grid-template-columns:repeat(2,1fr)}
-    .sm-widget{position:relative;border-radius:18px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));padding:16px;display:flex;flex-direction:column;text-align:left;text-decoration:none;color:inherit;cursor:pointer;overflow:hidden;transition:transform 0.35s var(--ease),border-color 0.3s,background 0.3s;opacity:0;transform:translateY(10px);animation:fadeUp 0.6s var(--ease) forwards}
-    .sm-widget:nth-child(1){animation-delay:0.05s}
-    .sm-widget:nth-child(2){animation-delay:0.12s}
-    .sm-widget:nth-child(3){animation-delay:0.19s}
-    .sm-widget:nth-child(4){animation-delay:0.26s}
-    .sm-widget:hover{transform:translateY(-3px);border-color:var(--border-strong);background:linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))}
-    .sm-widget::before{content:'';position:absolute;inset:0;border-radius:18px;padding:1px;background:linear-gradient(135deg,rgba(120,168,255,0.0),rgba(167,139,250,0.0));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:0;transition:opacity 0.3s}
-    .sm-widget:hover::before{opacity:1;background:linear-gradient(135deg,rgba(120,168,255,0.45),rgba(244,114,182,0.35))}
-    .sm-widget-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-    .sm-widget-icon{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;background:rgba(255,255,255,0.04);border:1px solid var(--border)}
-    .sm-widget-icon svg{width:13px;height:13px;stroke:var(--text-2);fill:none;stroke-width:1.8}
-    .sm-widget.news .sm-widget-icon{background:rgba(244,114,182,0.10);border-color:rgba(244,114,182,0.25)}
-    .sm-widget.news .sm-widget-icon svg{stroke:#f472b6}
-    .sm-widget.world .sm-widget-icon{background:rgba(251,146,60,0.10);border-color:rgba(251,146,60,0.28)}
-    .sm-widget.world .sm-widget-icon svg{stroke:#fb923c}
-    .sm-widget.market .sm-widget-icon{background:rgba(52,211,153,0.10);border-color:rgba(52,211,153,0.25)}
-    .sm-widget.market .sm-widget-icon svg{stroke:#34d399}
-    .sm-widget.tech .sm-widget-icon{background:rgba(120,168,255,0.10);border-color:rgba(120,168,255,0.25)}
-    .sm-widget.tech .sm-widget-icon svg{stroke:#78a8ff}
-    .sm-widget-label{font-size:10px;font-weight:600;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-4)}
-    .sm-widget-title{font-size:14px;font-weight:600;color:var(--text-1);line-height:1.35;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-    .sm-widget-body{font-size:12px;color:var(--text-3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:auto}
-    .sm-widget-meta{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--text-4)}
-    .sm-widget-meta .sep{opacity:0.4}
+    /* Trending strip — landing only */
+    .sm-trending{width:100%;max-width:880px;margin-top:48px;text-align:left}
+    .sm-trending-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 2px 14px;color:var(--text-3);font-size:13px;letter-spacing:-0.005em}
+    .sm-trending-label{font-weight:500;color:var(--text-2)}
+    .sm-trending-region{color:var(--text-4);font-weight:400}
+    /* Always 2-up at tablet+; collapses to 1-up on phones via the
+     * media query below. With three cards (GLOBAL fallback), the
+     * solo third card spans the full row so the layout reads as a
+     * deliberate 2+1, not as an orphaned half-width tile. */
+    .sm-trending-grid,.sm-trending-grid.cols-4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .sm-trending-grid.cols-3 > .sm-widget:nth-child(3){grid-column:1 / -1}
+    .sm-widget{position:relative;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,0.025);padding:18px 18px 16px;display:flex;flex-direction:column;text-align:left;text-decoration:none;color:inherit;cursor:pointer;overflow:hidden;transition:background 0.35s var(--ease),border-color 0.35s var(--ease);opacity:0;transform:translateY(6px);animation:smReveal 0.55s var(--ease) forwards}
+    .sm-widget:nth-child(1){animation-delay:0.04s}
+    .sm-widget:nth-child(2){animation-delay:0.10s}
+    .sm-widget:nth-child(3){animation-delay:0.16s}
+    .sm-widget:nth-child(4){animation-delay:0.22s}
+    .sm-widget:hover,.sm-widget:focus-visible{background:rgba(255,255,255,0.045);border-color:var(--border-strong);outline:none}
+    @keyframes smReveal{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .sm-widget-kicker{font-size:12px;color:var(--text-4);margin-bottom:8px;letter-spacing:-0.005em;font-weight:400}
+    .sm-widget-title{font-size:15px;font-weight:600;color:var(--text-1);line-height:1.35;margin-bottom:8px;letter-spacing:-0.012em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .sm-widget-body{font-size:13px;color:var(--text-3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:auto}
+    .sm-widget-meta{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:12px;color:var(--text-4);letter-spacing:-0.005em}
+    .sm-widget-meta .sep{opacity:0.5}
     .sm-widget-src{display:inline-flex;align-items:center;gap:4px;color:var(--text-3);text-decoration:none;transition:color 0.2s}
-    .sm-widget-src:hover{color:#78a8ff;text-decoration:underline}
-    .sm-widget-src svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2}
-    .sm-widget-cta{margin-top:10px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--text-3);transition:color 0.2s}
-    .sm-widget:hover .sm-widget-cta{color:#78a8ff}
-    .sm-widget-cta svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
-    .sm-ticker{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600}
-    .sm-ticker-symbol{font-family:ui-monospace,'SF Mono',monospace;color:var(--text-1)}
-    .sm-ticker-pct{padding:2px 7px;border-radius:6px;font-size:11px;font-weight:700;font-family:ui-monospace,'SF Mono',monospace}
-    .sm-ticker-pct.up{background:rgba(52,211,153,0.14);color:#34d399}
-    .sm-ticker-pct.down{background:rgba(248,113,113,0.14);color:#f87171}
-    .sm-widget-skeleton{background:linear-gradient(90deg,rgba(255,255,255,0.04),rgba(255,255,255,0.08),rgba(255,255,255,0.04));background-size:200% 100%;animation:smShimmer 1.6s linear infinite;border-radius:6px;height:10px}
+    .sm-widget-src:hover{color:var(--text-1)}
+    .sm-widget-src svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2;opacity:0.7}
+    .sm-ticker{display:inline-flex;align-items:baseline;gap:8px;font-size:15px;font-weight:600;letter-spacing:-0.012em}
+    .sm-ticker-symbol{color:var(--text-1)}
+    .sm-ticker-pct{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-0.005em}
+    .sm-ticker-pct.up{color:#34d399}
+    .sm-ticker-pct.down{color:#f87171}
+    .sm-widget-skeleton{background:rgba(255,255,255,0.06);border-radius:5px;height:10px;animation:smBreathe 2.2s ease-in-out infinite}
     .sm-widget-skeleton.t{height:14px;margin-bottom:8px;width:90%}
-    .sm-widget-skeleton.t2{width:75%}
+    .sm-widget-skeleton.t2{width:72%}
     .sm-widget-skeleton.b{height:10px;margin-bottom:6px}
     .sm-widget-skeleton.b2{width:80%}
-    @keyframes smShimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+    @keyframes smBreathe{0%,100%{opacity:0.45}50%{opacity:0.85}}
     .sm-trending.hidden{display:none}
     @media(max-width:740px){
-      .sm-trending-grid{grid-template-columns:1fr}
+      .sm-trending-grid,.sm-trending-grid.cols-4,.sm-trending-grid.cols-3{grid-template-columns:1fr}
+      .sm-trending-grid.cols-3 > .sm-widget:nth-child(3){grid-column:auto}
     }
 
-    /* Animations */
-    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes rgbFlow{0%{background-position:0% 50%}100%{background-position:260% 50%}}
-    @keyframes dotPulse{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+    /* Shared motion */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
     /* Responsive */
     @media(max-width:640px){
       .sm-nav-links{display:none}
-      .sm-landing h1{font-size:32px}
+      .sm-landing h1{font-size:34px;line-height:1.06}
       .sm-research-grid{grid-template-columns:1fr}
-      .sm-brand-sub{display:none}
+      .sm-new-btn-label{display:none}
+      .sm-new-btn{padding:7px;width:32px;height:32px;justify-content:center}
     }
   </style>
 </head>
@@ -233,32 +232,29 @@
         <div class="sm-brand-icon">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         </div>
-        <div>
-          <div class="sm-brand-name">Summaverick</div>
-          <div class="sm-brand-sub">Search-grade speed &middot; research-grade depth</div>
-        </div>
+        <div class="sm-brand-name">Summaverick</div>
       </a>
       <div class="sm-nav-links">
         <a href="index.html">Portfolio</a>
         <a href="blog.html">Blog</a>
         <a href="interviews.html">Interviews</a>
       </div>
-      <button class="sm-new-btn" id="newChatBtn" title="New session">
+      <button class="sm-new-btn" id="newChatBtn" title="New conversation" aria-label="New conversation">
         <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        New
+        <span class="sm-new-btn-label">New</span>
       </button>
     </div>
   </nav>
 
   <main class="sm-main">
     <div class="sm-landing" id="landing">
-      <h1>Ask anything.<br><span class="gradient-text">Search deeper.</span><br><span style="color:var(--text-3)">Research with clarity.</span></h1>
-      <p class="subtitle">A general-purpose AI research assistant. World news, tech, code, careers, or everyday decisions — ask anything and get clear, source-grounded answers.</p>
+      <h1>What would you like to <span class="accent">understand</span> today?</h1>
+      <p class="subtitle">News, code, decisions — anything you'd reach for a search bar or a friend for. Answers arrive with the sources they came from.</p>
 
-      <section class="sm-trending" id="trendingSection" aria-label="Trending today" hidden>
+      <section class="sm-trending" id="trendingSection" aria-label="Today" hidden>
         <div class="sm-trending-head">
-          <div class="sm-trending-label"><span class="sm-trending-pulse" aria-hidden="true"></span>Trending today</div>
-          <div class="sm-trending-region" id="trendingRegion"></div>
+          <span class="sm-trending-label" id="trendingLabel">Today</span>
+          <span class="sm-trending-region" id="trendingRegion"></span>
         </div>
         <div class="sm-trending-grid" id="trendingGrid"></div>
       </section>
@@ -271,13 +267,13 @@
 
   <div class="sm-input-wrap">
     <div class="sm-input-bar" id="inputBar">
-      <textarea id="queryInput" rows="1" placeholder="Ask anything. Search deeper. Research with clarity." autocomplete="off" spellcheck="false"></textarea>
+      <textarea id="queryInput" rows="1" placeholder="Message Summaverick" autocomplete="off" spellcheck="false"></textarea>
       <button class="sm-send-btn" id="sendBtn" title="Send">
         <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
       </button>
     </div>
-    <div class="sm-input-meta">
-      <span>For production implementations or custom developments, <a href="https://www.linkedin.com/in/sumanthbolle/" target="_blank" rel="noopener" style="color:#78a8ff;text-decoration:none">book 15 min with Sumanth &rarr;</a></span>
+    <div class="sm-input-meta" id="inputMeta">
+      <span>Built by <a href="https://www.linkedin.com/in/sumanthbolle/" target="_blank" rel="noopener">Sumanth Bolle</a></span>
     </div>
   </div>
 
@@ -290,14 +286,17 @@
     const ENDPOINT = window.SB_AI_SEARCH_ENDPOINT;
     const MAX_CONTEXT_MESSAGES = 10;
 
-    const WELCOME_MESSAGE = "Hey, I\u2019m Summaverick \u2014 an AI research assistant. Ask me anything: world events, science, tech, code, careers, or a decision you\u2019re weighing. What would you like to explore?";
+    /* Intentionally short. The hero already greets; a long welcome
+     * read like onboarding copy. This sentence is just enough to
+     * acknowledge the question is being thought through. */
+    const WELCOME_MESSAGE = "Looking that up now.";
 
     const starters = [
-  { query: 'What are the biggest world stories making headlines right now?', icon: 'sparkles', text: 'A grounded briefing of today\u2019s most significant global events with sources you can open.' },
-  { query: 'Explain the most important AI breakthrough of this month in plain English', icon: 'telescope', text: 'A clear, non-hyped explanation of the latest frontier model, paper, or release and why it matters.' },
-  { query: 'Write a Python script that downloads a CSV from a URL and summarises its columns', icon: 'workflow', text: 'Runnable code with imports, error handling, and a short explanation of each step.' },
-  { query: 'Help me think through whether to change jobs this year', icon: 'compass', text: 'A calm, structured way to weigh the trade-offs \u2014 not generic career advice.' },
-];
+      { query: 'What just happened in the world today?' },
+      { query: 'Explain the most important AI release this month, simply.' },
+      { query: 'Write a small Python script to summarise a CSV from a URL.' },
+      { query: 'Help me think through whether to switch jobs this year.' },
+    ];
 
     const icons = {
       search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
@@ -325,12 +324,34 @@
     const trendingSection = document.getElementById('trendingSection');
     const trendingGrid = document.getElementById('trendingGrid');
     const trendingRegion = document.getElementById('trendingRegion');
+    const inputMeta = document.getElementById('inputMeta');
 
     function init() {
       renderStarters();
       bindEvents();
       autoResizeTextarea();
+      observeInputHeight();
       loadTrending();
+    }
+
+    /* Keep a CSS custom property in sync with the actual input area
+     * height so the landing and chat reserve enough bottom space and
+     * never get hidden behind the fixed input bar — especially on
+     * mobile where viewport, keyboard, and a multi-line textarea all
+     * change the height dynamically. */
+    function observeInputHeight() {
+      const wrap = document.querySelector('.sm-input-wrap');
+      if (!wrap) return;
+      const apply = () => {
+        const h = Math.ceil(wrap.getBoundingClientRect().height);
+        document.documentElement.style.setProperty('--input-area-h', h + 'px');
+      };
+      apply();
+      if (typeof ResizeObserver === 'function') {
+        new ResizeObserver(apply).observe(wrap);
+      } else {
+        window.addEventListener('resize', apply);
+      }
     }
 
     /* ───────── Trending widgets ───────── */
@@ -353,12 +374,8 @@
        * below reflows the grid once the response arrives. */
       const kinds = ['world','news','market','tech'];
       setGridColumns(kinds.length);
-      trendingGrid.innerHTML = kinds.map(kind => `
-        <div class="sm-widget ${kind}" aria-busy="true">
-          <div class="sm-widget-head">
-            <div class="sm-widget-icon">${widgetIconFor(kind)}</div>
-            <div class="sm-widget-label">${widgetSkeletonLabel(kind)}</div>
-          </div>
+      trendingGrid.innerHTML = kinds.map(() => `
+        <div class="sm-widget" aria-busy="true">
           <div class="sm-widget-skeleton t"></div>
           <div class="sm-widget-skeleton t t2"></div>
           <div class="sm-widget-skeleton b"></div>
@@ -369,22 +386,7 @@
     function setGridColumns(n) {
       if (!trendingGrid) return;
       trendingGrid.classList.toggle('cols-4', n === 4);
-    }
-
-    function widgetIconFor(kind) {
-      if (kind === 'news') return icons.newspaper;
-      if (kind === 'world') return icons.globe;
-      if (kind === 'market') return icons.chart;
-      if (kind === 'tech') return icons.chip;
-      return icons.sparkles;
-    }
-
-    function widgetSkeletonLabel(kind) {
-      if (kind === 'news') return 'Top story';
-      if (kind === 'world') return '#1 worldwide';
-      if (kind === 'market') return 'Top mover';
-      if (kind === 'tech') return 'Top on HN';
-      return '';
+      trendingGrid.classList.toggle('cols-3', n === 3);
     }
 
     async function loadTrending() {
@@ -423,8 +425,10 @@
       setGridColumns(cards.length);
       trendingGrid.innerHTML = cards.map(c => c.html).join('');
       if (trendingRegion) {
-        const detected = data.detected === 'network' ? 'based on your network' : (data.detected === 'override' ? 'custom region' : 'global view');
-        trendingRegion.innerHTML = `Showing <b>${esc(data.countryName || 'Global')}</b> · ${esc(detected)}`;
+        const region = data.countryName && data.countryName !== 'Global'
+          ? data.countryName
+          : 'Worldwide';
+        trendingRegion.textContent = region;
       }
 
       /* Bind ask strings via dataset AFTER parsing HTML — the browser
@@ -453,49 +457,38 @@
       });
     }
 
-    const arrowRightSvg = '<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
-
-    /* Each widget renderer now returns { html, ask } so that the ask
-     * string is bound to the card via el.dataset after innerHTML parsing,
-     * never interpolated into an HTML attribute. This avoids any class
-     * of "attribute-break" bug from titles containing " or stray markup.
-     * All remaining attribute-context interpolations (href, title) go
-     * through escAttr() as a second line of defense. */
+    /* Each widget renderer returns { html, ask }. The ask string is
+     * bound to the card via el.dataset after innerHTML parses, never
+     * interpolated into an HTML attribute, so quote-laden headlines
+     * survive intact. Attribute-context interpolations use escAttr(). */
 
     function renderNewsWidget(n) {
       const ask = `Give me a deeper briefing on this story: "${n.title}". What are the key facts, context, and credible perspectives?`;
       const src = n.url
         ? `<a class="sm-widget-src" href="${escAttr(n.url)}" target="_blank" rel="noopener" data-noask="1">${esc(n.source || 'Source')} ${icons.externalLink}</a>`
         : `<span>${esc(n.source || '')}</span>`;
+      const kicker = n.label && n.label.includes('·') ? n.label.split('·').slice(1).join('·').trim() : (n.label || 'Local');
       const html = `
         <div class="sm-widget news" role="button" tabindex="0" title="${escAttr(n.title)}">
-          <div class="sm-widget-head">
-            <div class="sm-widget-icon">${icons.newspaper}</div>
-            <div class="sm-widget-label">${esc(n.label || 'Top story')}</div>
-          </div>
+          <div class="sm-widget-kicker">${esc(kicker)}</div>
           <div class="sm-widget-title">${esc(n.title)}</div>
           <div class="sm-widget-body">${esc(n.summary || '')}</div>
           <div class="sm-widget-meta">${src}</div>
-          <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
         </div>`;
       return { html, ask };
     }
 
     function renderWorldNewsWidget(n) {
-      const ask = `What's the full story behind the #1 global headline right now: "${n.title}"? Give me the key facts, international context, and the range of credible perspectives.`;
+      const ask = `What's the full story behind the top global headline right now: "${n.title}"? Give me the key facts, international context, and the range of credible perspectives.`;
       const src = n.url
         ? `<a class="sm-widget-src" href="${escAttr(n.url)}" target="_blank" rel="noopener" data-noask="1">${esc(n.source || 'Source')} ${icons.externalLink}</a>`
         : `<span>${esc(n.source || '')}</span>`;
       const html = `
         <div class="sm-widget world" role="button" tabindex="0" title="${escAttr(n.title)}">
-          <div class="sm-widget-head">
-            <div class="sm-widget-icon">${icons.globe}</div>
-            <div class="sm-widget-label">${esc(n.label || '#1 worldwide · Top story')}</div>
-          </div>
+          <div class="sm-widget-kicker">Worldwide</div>
           <div class="sm-widget-title">${esc(n.title)}</div>
           <div class="sm-widget-body">${esc(n.summary || '')}</div>
           <div class="sm-widget-meta">${src}</div>
-          <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
         </div>`;
       return { html, ask };
     }
@@ -505,17 +498,12 @@
       const ask = `Why is ${m.name} (${m.symbol}) the biggest mover in ${m.index} today, ${sign}${m.changePercent}%? Give me context and sources.`;
       const html = `
         <div class="sm-widget market" role="button" tabindex="0">
-          <div class="sm-widget-head">
-            <div class="sm-widget-icon">${icons.chart}</div>
-            <div class="sm-widget-label">${esc(m.label || 'Top mover')}</div>
-          </div>
+          <div class="sm-widget-kicker">${esc(m.index || 'Markets')}</div>
           <div class="sm-widget-title sm-ticker">
             <span class="sm-ticker-symbol">${esc(m.symbol)}</span>
             <span class="sm-ticker-pct ${m.direction === 'up' ? 'up' : 'down'}">${sign}${esc(String(m.changePercent))}%</span>
           </div>
-          <div class="sm-widget-body">${esc(m.name || '')}${m.reason ? ' · ' + esc(m.reason) : ''}</div>
-          <div class="sm-widget-meta"><span>${esc(m.index || '')}</span></div>
-          <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
+          <div class="sm-widget-body">${esc(m.name || '')}${m.reason ? ' — ' + esc(m.reason) : ''}</div>
         </div>`;
       return { html, ask };
     }
@@ -528,30 +516,27 @@
         : `<span>${esc(t.source || '')}</span>`;
       const html = `
         <div class="sm-widget tech" role="button" tabindex="0" title="${escAttr(t.title)}">
-          <div class="sm-widget-head">
-            <div class="sm-widget-icon">${icons.chip}</div>
-            <div class="sm-widget-label">${esc(t.label || 'Top on Hacker News')}</div>
-          </div>
+          <div class="sm-widget-kicker">Hacker News</div>
           <div class="sm-widget-title">${esc(t.title)}</div>
           <div class="sm-widget-body">${src}</div>
           <div class="sm-widget-meta">
-            <span>▲ ${esc(String(t.score || 0))}</span>
+            <span>${esc(String(t.score || 0))} points</span>
             <span class="sep">·</span>
             <span>${esc(String(t.comments || 0))} comments</span>
           </div>
-          <span class="sm-widget-cta">Ask Summaverick ${arrowRightSvg}</span>
         </div>`;
       return { html, ask };
     }
 
     function renderStarters() {
       researchGridEl.innerHTML = starters.map(s =>
-        `<div class="sm-research-card" data-query="${esc(s.query)}">
-          <div class="sm-research-card-icon">${icons[s.icon] || ''}</div>
+        `<button class="sm-research-card" type="button">
           <h3>${esc(s.query)}</h3>
-          <p>${esc(s.text)}</p>
-        </div>`
+        </button>`
       ).join('');
+      Array.from(researchGridEl.children).forEach((el, i) => {
+        el.dataset.q = starters[i].query;
+      });
     }
 
     function bindEvents() {
@@ -569,7 +554,7 @@
 
       researchGridEl.addEventListener('click', function(e) {
         const card = e.target.closest('.sm-research-card');
-        if (card) submitQuery(card.dataset.query);
+        if (card && card.dataset.q) submitQuery(card.dataset.q);
       });
       chatArea.addEventListener('click', function(e) {
         const btn = e.target.closest('.sm-related-btn');
@@ -609,6 +594,7 @@
         landing.classList.add('hidden');
         chatArea.classList.add('active');
         hideTrending();
+        if (inputMeta) inputMeta.classList.add('faded');
         appendWelcomeMessage();
       }
 
@@ -623,17 +609,9 @@
     }
 
     function appendWelcomeMessage() {
-      const div = document.createElement('div');
-      div.className = 'sm-msg sm-msg-ai';
-      div.innerHTML = `
-        <div class="sm-msg-header">
-          <div class="sm-msg-avatar ai">${icons.compass}</div>
-          <div class="sm-msg-sender">Summaverick</div>
-        </div>
-        <div class="sm-msg-body">
-          <div class="sm-msg-content"><p>${esc(WELCOME_MESSAGE)}</p></div>
-        </div>`;
-      chatArea.appendChild(div);
+      /* Intentionally no-op. The sober design replaces the chatty
+       * welcome paragraph with a quieter "thinking" indicator that
+       * already follows the user's first message — see showLoading(). */
     }
 
     function logQuery(query) {
@@ -651,14 +629,10 @@
     function appendUserMessage(text) {
       const div = document.createElement('div');
       div.className = 'sm-msg sm-msg-user';
-      div.innerHTML = `
-        <div class="sm-msg-header">
-          <div class="sm-msg-avatar user">You</div>
-          <div class="sm-msg-sender">You</div>
-        </div>
-        <div class="sm-msg-body">
-          <div class="sm-msg-content">${esc(text)}</div>
-        </div>`;
+      const bubble = document.createElement('div');
+      bubble.className = 'sm-msg-content';
+      bubble.textContent = text;
+      div.appendChild(bubble);
       chatArea.appendChild(div);
       scrollToBottom();
     }
@@ -670,15 +644,10 @@
       div.className = 'sm-msg sm-msg-ai';
       div.id = 'loadingMsg';
       div.innerHTML = `
-        <div class="sm-msg-header">
-          <div class="sm-msg-avatar ai">${icons.compass}</div>
-          <div class="sm-msg-sender">Summaverick</div>
-        </div>
-        <div class="sm-loading">
-          <div class="sm-loading-dot"></div>
-          <div class="sm-loading-dot"></div>
-          <div class="sm-loading-dot"></div>
-          <span class="sm-loading-text">Researching across sources…</span>
+        <div class="sm-msg-body">
+          <div class="sm-thinking" aria-label="Thinking">
+            <span class="sm-thinking-mark" aria-hidden="true"></span>
+          </div>
         </div>`;
       chatArea.appendChild(div);
       scrollToBottom();
@@ -764,15 +733,11 @@
       const div = document.createElement('div');
       div.className = 'sm-msg sm-msg-ai';
       div.innerHTML = `
-        <div class="sm-msg-header">
-          <div class="sm-msg-avatar ai">${icons.compass}</div>
-          <div class="sm-msg-sender">Summaverick</div>
-        </div>
         <div class="sm-msg-body">
           <div class="sm-msg-content">${formattedAnswer}</div>
-        </div>
-        ${sourcesHtml}
-        ${relatedHtml}`;
+          ${sourcesHtml}
+          ${relatedHtml}
+        </div>`;
       chatArea.appendChild(div);
       scrollToBottom();
     }
@@ -781,12 +746,8 @@
       const div = document.createElement('div');
       div.className = 'sm-msg sm-msg-ai';
       div.innerHTML = `
-        <div class="sm-msg-header">
-          <div class="sm-msg-avatar ai">${icons.compass}</div>
-          <div class="sm-msg-sender">Summaverick</div>
-        </div>
         <div class="sm-msg-body">
-          <div class="sm-msg-content" style="color:var(--text-3);font-style:italic">${esc(text)}</div>
+          <div class="sm-msg-content" style="color:var(--text-3)">${esc(text)}</div>
         </div>`;
       chatArea.appendChild(div);
       scrollToBottom();
@@ -797,6 +758,7 @@
       chatArea.innerHTML = '';
       chatArea.classList.remove('active');
       landing.classList.remove('hidden');
+      if (inputMeta) inputMeta.classList.remove('faded');
       queryInput.value = '';
       queryInput.style.height = 'auto';
       updateSendButton();
