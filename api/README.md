@@ -44,11 +44,14 @@ If every widget fails, nothing is cached and the next request retries.
 
 ## Per-source behaviour
 
-- **news** — Sonar with `search_recency_filter: 'day'` + a `json_schema` response format. Prompted for the single biggest story in the user's country (or globally).
-- **market** — Sonar with `search_recency_filter: 'day'` + `json_schema`. Identifies the largest absolute percentage mover in the country's local benchmark index (see `COUNTRY_TO_INDEX` in `worker.js`).
+- **worldNews** — Sonar with `search_recency_filter: 'day'` + `json_schema`, `search_context_size: 'high'`. Prompted for the single biggest globally-notable story in the past 24 hours. Always returned (on success), independent of country.
+- **news** — Sonar with `search_recency_filter: 'day'` + `json_schema`, scoped via `user_location: { country }`. Prompted for the biggest story in the user's country. **Skipped** when country resolves to `GLOBAL` (would otherwise duplicate `worldNews`).
+- **market** — Sonar with `search_recency_filter: 'day'` + `json_schema`. Identifies the largest absolute percentage mover in the country's local benchmark index (see `COUNTRY_TO_INDEX` in `worker.js`). Falls back to MSCI World when no country is detected.
 - **tech** — Hacker News Firebase API. Walks the first 5 `topstories` IDs until it finds a live, non-deleted item with a URL. Cached at the Cloudflare edge for 2 min via the `cf.cacheTtl` fetch option.
 
 Each source is wrapped in `Promise.allSettled` + a 9 s timeout so one slow/broken provider can never block the others.
+
+The frontend renders cards in this order: **#1 worldwide → local top story → top mover → top on HN**. Anything that failed to fetch is simply omitted.
 
 ## Deploy
 
