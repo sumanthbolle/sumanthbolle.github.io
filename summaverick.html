@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Summaverick — AI Research Assistant | Sumanth Bolle</title>
-  <meta name="description" content="Summaverick — Search-grade speed, research-grade depth. An AI research assistant by Sumanth Bolle.">
+  <title>Summaverick — Ask anything. Search deeper. Research with clarity.</title>
+  <meta name="description" content="Summaverick is a general-purpose AI research assistant. Ask anything — world news, tech, code, careers, or everyday decisions — and get clear, source-grounded answers.">
   <link rel="canonical" href="https://sumanthbolle.com/summaverick">
   <meta property="og:title" content="Summaverick — AI Research Assistant">
-  <meta property="og:description" content="Search-grade speed, research-grade depth. Ask anything, search deeper, research with clarity.">
+  <meta property="og:description" content="Ask anything — world news, tech, code, or personal decisions — and get clear, source-grounded answers.">
   <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
   <meta property="og:url" content="https://sumanthbolle.com/summaverick">
   <meta property="og:type" content="website">
@@ -197,7 +197,7 @@
   <main class="sm-main">
     <div class="sm-landing" id="landing">
       <h1>Ask anything.<br><span class="gradient-text">Search deeper.</span><br><span style="color:var(--text-3)">Research with clarity.</span></h1>
-      <p class="subtitle">Summaverick blends AI search with research-grade depth into a calm, focused interface built for thoughtful exploration.</p>
+      <p class="subtitle">A general-purpose AI research assistant. World news, tech, code, careers, or everyday decisions — ask anything and get clear, source-grounded answers.</p>
       <div class="sm-research-grid" id="researchGrid"></div>
     </div>
 
@@ -225,13 +225,13 @@
     const ENDPOINT = window.SB_AI_SEARCH_ENDPOINT;
     const MAX_CONTEXT_MESSAGES = 10;
 
-    const WELCOME_MESSAGE = "Hey, I\u2019m Summaverick, Sumanth\u2019s Research AI Agent. Ask me anything about agentic workflows, Now Assist, DSA patterns, or your next career move. What\u2019s on your mind today?";
+    const WELCOME_MESSAGE = "Hey, I\u2019m Summaverick \u2014 an AI research assistant. Ask me anything: world events, science, tech, code, careers, or a decision you\u2019re weighing. What would you like to explore?";
 
     const starters = [
-  { query: 'How to use GlideRecord to query and update records in a scoped app', icon: 'search', text: 'Scoped GlideRecord patterns with best practices for querying, updating, and ACL context.' },
-  { query: 'Business Rule vs Flow Designer — when to use which', icon: 'compass', text: 'Decision framework for choosing between server-side scripting and low-code automation.' },
-  { query: 'Troubleshoot REST API 403 forbidden errors in IntegrationHub', icon: 'workflow', text: 'Common causes and fixes for authentication and ACL failures in outbound integrations.' },
-  { query: 'Comprehensive guide to CMDB CI lifecycle and identification rules', icon: 'search', text: 'End-to-end breakdown of CI identification, reconciliation, and data integrity enforcement.' },
+  { query: 'What are the biggest world stories making headlines right now?', icon: 'sparkles', text: 'A grounded briefing of today\u2019s most significant global events with sources you can open.' },
+  { query: 'Explain the most important AI breakthrough of this month in plain English', icon: 'telescope', text: 'A clear, non-hyped explanation of the latest frontier model, paper, or release and why it matters.' },
+  { query: 'Write a Python script that downloads a CSV from a URL and summarises its columns', icon: 'workflow', text: 'Runnable code with imports, error handling, and a short explanation of each step.' },
+  { query: 'Help me think through whether to change jobs this year', icon: 'compass', text: 'A calm, structured way to weigh the trade-offs \u2014 not generic career advice.' },
 ];
 
     const icons = {
