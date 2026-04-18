@@ -33,6 +33,7 @@
       --glass-strong:rgba(225,228,240,0.10);
       --radius:24px;
       --ease:cubic-bezier(.22,1,.36,1);
+      --input-area-h:120px; /* updated at runtime; conservative default */
     }
     html{scroll-behavior:smooth}
     body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;background:var(--bg);color:var(--text-1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
@@ -64,14 +65,14 @@
     .sm-main{flex:1;display:flex;flex-direction:column;position:relative;z-index:1;max-width:860px;width:100%;margin:0 auto;padding:0 20px}
 
     /* Landing (empty state) */
-    .sm-landing{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:64px 0 200px;animation:fadeUp 0.7s var(--ease)}
+    .sm-landing{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:9vh 0 calc(var(--input-area-h) + 40px);animation:fadeUp 0.7s var(--ease)}
     .sm-landing.hidden{display:none}
     .sm-landing h1{font-size:clamp(40px,6.4vw,64px);font-weight:600;letter-spacing:-0.045em;line-height:1.04;max-width:680px;color:var(--text-1)}
     .sm-landing h1 .quiet{color:var(--text-3);font-weight:500}
     .sm-landing h1 .accent{background:var(--accent-soft);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
     .sm-landing .subtitle{font-size:16px;color:var(--text-3);margin-top:14px;line-height:1.55;max-width:440px;letter-spacing:-0.005em}
     /* Chat area */
-    .sm-chat{flex:1;display:none;flex-direction:column;padding-top:24px;padding-bottom:140px;overflow-y:auto}
+    .sm-chat{flex:1;display:none;flex-direction:column;padding-top:24px;padding-bottom:calc(var(--input-area-h) + 24px);overflow-y:auto}
     .sm-chat.active{display:flex}
     .sm-chat::-webkit-scrollbar{width:5px}
     .sm-chat::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
@@ -147,7 +148,8 @@
     .sm-send-btn.active{opacity:1;pointer-events:auto}
     .sm-send-btn:hover{transform:scale(1.05)}
     .sm-send-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
-    .sm-input-meta{display:flex;align-items:center;gap:8px;margin-top:8px;max-width:860px;margin-left:auto;margin-right:auto;justify-content:center}
+    .sm-input-meta{display:flex;align-items:center;gap:8px;margin-top:8px;max-width:860px;margin-left:auto;margin-right:auto;justify-content:center;transition:opacity 0.4s var(--ease)}
+    .sm-input-meta.faded{opacity:0;pointer-events:none}
     .sm-input-meta span{font-size:11px;color:var(--text-4);letter-spacing:-0.005em}
     .sm-input-meta a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.18);transition:color 0.2s,border-color 0.2s}
     .sm-input-meta a:hover{color:var(--text-2);border-color:var(--text-3)}
@@ -165,8 +167,12 @@
     .sm-trending-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 2px 14px;color:var(--text-3);font-size:13px;letter-spacing:-0.005em}
     .sm-trending-label{font-weight:500;color:var(--text-2)}
     .sm-trending-region{color:var(--text-4);font-weight:400}
-    .sm-trending-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .sm-trending-grid.cols-4{grid-template-columns:repeat(2,1fr)}
+    /* Always 2-up at tablet+; collapses to 1-up on phones via the
+     * media query below. With three cards (GLOBAL fallback), the
+     * solo third card spans the full row so the layout reads as a
+     * deliberate 2+1, not as an orphaned half-width tile. */
+    .sm-trending-grid,.sm-trending-grid.cols-4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .sm-trending-grid.cols-3 > .sm-widget:nth-child(3){grid-column:1 / -1}
     .sm-widget{position:relative;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,0.025);padding:18px 18px 16px;display:flex;flex-direction:column;text-align:left;text-decoration:none;color:inherit;cursor:pointer;overflow:hidden;transition:background 0.35s var(--ease),border-color 0.35s var(--ease);opacity:0;transform:translateY(6px);animation:smReveal 0.55s var(--ease) forwards}
     .sm-widget:nth-child(1){animation-delay:0.04s}
     .sm-widget:nth-child(2){animation-delay:0.10s}
@@ -195,7 +201,8 @@
     @keyframes smBreathe{0%,100%{opacity:0.45}50%{opacity:0.85}}
     .sm-trending.hidden{display:none}
     @media(max-width:740px){
-      .sm-trending-grid,.sm-trending-grid.cols-4{grid-template-columns:1fr}
+      .sm-trending-grid,.sm-trending-grid.cols-4,.sm-trending-grid.cols-3{grid-template-columns:1fr}
+      .sm-trending-grid.cols-3 > .sm-widget:nth-child(3){grid-column:auto}
     }
 
     /* Shared motion */
@@ -265,7 +272,7 @@
         <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
       </button>
     </div>
-    <div class="sm-input-meta">
+    <div class="sm-input-meta" id="inputMeta">
       <span>Built by <a href="https://www.linkedin.com/in/sumanthbolle/" target="_blank" rel="noopener">Sumanth Bolle</a></span>
     </div>
   </div>
@@ -317,12 +324,34 @@
     const trendingSection = document.getElementById('trendingSection');
     const trendingGrid = document.getElementById('trendingGrid');
     const trendingRegion = document.getElementById('trendingRegion');
+    const inputMeta = document.getElementById('inputMeta');
 
     function init() {
       renderStarters();
       bindEvents();
       autoResizeTextarea();
+      observeInputHeight();
       loadTrending();
+    }
+
+    /* Keep a CSS custom property in sync with the actual input area
+     * height so the landing and chat reserve enough bottom space and
+     * never get hidden behind the fixed input bar — especially on
+     * mobile where viewport, keyboard, and a multi-line textarea all
+     * change the height dynamically. */
+    function observeInputHeight() {
+      const wrap = document.querySelector('.sm-input-wrap');
+      if (!wrap) return;
+      const apply = () => {
+        const h = Math.ceil(wrap.getBoundingClientRect().height);
+        document.documentElement.style.setProperty('--input-area-h', h + 'px');
+      };
+      apply();
+      if (typeof ResizeObserver === 'function') {
+        new ResizeObserver(apply).observe(wrap);
+      } else {
+        window.addEventListener('resize', apply);
+      }
     }
 
     /* ───────── Trending widgets ───────── */
@@ -357,6 +386,7 @@
     function setGridColumns(n) {
       if (!trendingGrid) return;
       trendingGrid.classList.toggle('cols-4', n === 4);
+      trendingGrid.classList.toggle('cols-3', n === 3);
     }
 
     async function loadTrending() {
@@ -564,6 +594,7 @@
         landing.classList.add('hidden');
         chatArea.classList.add('active');
         hideTrending();
+        if (inputMeta) inputMeta.classList.add('faded');
         appendWelcomeMessage();
       }
 
@@ -727,6 +758,7 @@
       chatArea.innerHTML = '';
       chatArea.classList.remove('active');
       landing.classList.remove('hidden');
+      if (inputMeta) inputMeta.classList.remove('faded');
       queryInput.value = '';
       queryInput.style.height = 'auto';
       updateSendButton();
