@@ -159,14 +159,24 @@ async function handleTrending(request, env, ctx, origin) {
     return jsonResponse({ success: false, error: 'API key not configured' }, origin);
   }
 
-  const [newsRes, marketRes, techRes] = await Promise.allSettled([
-    fetchNewsWidget(apiKey, country),
+  /* When country is detected, we surface four widgets: local news, world
+   * news, local market mover, top on HN. When we can't detect a country
+   * (Tor/VPN/weird edge) 'news' would duplicate 'worldNews', so we skip
+   * the local news fetch and show three widgets. */
+  const localNewsPromise = country === 'GLOBAL'
+    ? Promise.resolve(null)
+    : fetchNewsWidget(apiKey, country);
+
+  const [newsRes, worldNewsRes, marketRes, techRes] = await Promise.allSettled([
+    localNewsPromise,
+    fetchWorldNewsWidget(apiKey),
     fetchMarketWidget(apiKey, country),
     fetchTechWidget(),
   ]);
 
   const widgets = {
     news: pickFulfilled(newsRes),
+    worldNews: pickFulfilled(worldNewsRes),
     market: pickFulfilled(marketRes),
     tech: pickFulfilled(techRes),
   };
@@ -182,7 +192,11 @@ async function handleTrending(request, env, ctx, origin) {
     widgets,
   };
 
-  const ttl = successCount === 3 ? TRENDING_TTL_SECONDS : TRENDING_PARTIAL_TTL_SECONDS;
+  /* Full success = every widget we *tried* to fetch succeeded. When
+   * country is GLOBAL we intentionally skip local news, so the target
+   * is 3; otherwise it's 4. */
+  const expected = country === 'GLOBAL' ? 3 : 4;
+  const ttl = successCount >= expected ? TRENDING_TTL_SECONDS : TRENDING_PARTIAL_TTL_SECONDS;
   const responseBody = JSON.stringify(payload);
 
   if (successCount > 0 && ctx && typeof ctx.waitUntil === 'function') {
@@ -202,47 +216,69 @@ function pickFulfilled(settled) {
   return settled.status === 'fulfilled' && settled.value ? settled.value : null;
 }
 
-/* ── News widget: top world / country headline of the day via Sonar ── */
-async function fetchNewsWidget(apiKey, country) {
-  const region = COUNTRY_NAME[country] || 'the world';
-  const messages = [
-    { role: 'system', content: 'You return strict JSON only. Do not invent facts. Use only verified, citable news from the past 24 hours.' },
-    { role: 'user', content: `Pick the single most significant news story being widely reported right now ${country === 'GLOBAL' ? 'around the world' : `in ${region}`}. Return JSON with the headline, a one-sentence neutral summary, the publishing source name, and the article URL. The story must be from the past 24 hours.` },
-  ];
+/* Shared JSON schema for any news fetcher. */
+const NEWS_WIDGET_SCHEMA = {
+  type: 'object',
+  properties: {
+    headline: { type: 'string' },
+    summary: { type: 'string' },
+    source: { type: 'string' },
+    url: { type: 'string' },
+  },
+  required: ['headline', 'summary', 'source', 'url'],
+};
 
-  const schema = {
-    type: 'object',
-    properties: {
-      headline: { type: 'string' },
-      summary: { type: 'string' },
-      source: { type: 'string' },
-      url: { type: 'string' },
-    },
-    required: ['headline', 'summary', 'source', 'url'],
-  };
-
-  const payload = {
+function buildNewsPayload(prompt, webSearchOptions) {
+  return {
     model: 'sonar',
-    messages,
+    messages: [
+      { role: 'system', content: 'You return strict JSON only. Do not invent facts. Use only verified, citable news from the past 24 hours.' },
+      { role: 'user', content: prompt },
+    ],
     temperature: 0.1,
     max_tokens: 400,
     search_recency_filter: 'day',
-    web_search_options: countryToSonarLocation(country, 'medium'),
-    response_format: { type: 'json_schema', json_schema: { schema } },
+    web_search_options: webSearchOptions,
+    response_format: { type: 'json_schema', json_schema: { schema: NEWS_WIDGET_SCHEMA } },
   };
+}
 
-  const data = await callSonarWithTimeout(apiKey, payload, TRENDING_REQUEST_TIMEOUT_MS);
+function parseNewsWidget(data, kind, label) {
   const parsed = parseStructured(data);
   if (!parsed || !parsed.headline) return null;
-
   return {
-    kind: 'news',
-    label: country === 'GLOBAL' ? 'Top story · Global' : `Top story · ${COUNTRY_NAME[country] || country}`,
+    kind,
+    label,
     title: String(parsed.headline).slice(0, 200),
     summary: String(parsed.summary || '').slice(0, 280),
     source: String(parsed.source || '').slice(0, 80),
     url: safeUrl(parsed.url),
   };
+}
+
+/* ── News widget: top country headline of the day via Sonar ── */
+async function fetchNewsWidget(apiKey, country) {
+  const region = COUNTRY_NAME[country] || 'the world';
+  const scope = country === 'GLOBAL' ? 'around the world' : `in ${region}`;
+  const payload = buildNewsPayload(
+    `Pick the single most significant news story being widely reported right now ${scope}. Return JSON with the headline, a one-sentence neutral summary, the publishing source name, and the article URL. The story must be from the past 24 hours.`,
+    countryToSonarLocation(country, 'medium'),
+  );
+  const data = await callSonarWithTimeout(apiKey, payload, TRENDING_REQUEST_TIMEOUT_MS);
+  const label = country === 'GLOBAL'
+    ? 'Top story · Global'
+    : `Top story · ${COUNTRY_NAME[country] || country}`;
+  return parseNewsWidget(data, 'news', label);
+}
+
+/* ── World news widget: #1 story anywhere on the planet right now ── */
+async function fetchWorldNewsWidget(apiKey) {
+  const payload = buildNewsPayload(
+    'Pick the SINGLE most significant news story being widely reported anywhere in the world in the past 24 hours — the story that the most international outlets are leading with right now. It must be globally notable (not a story only relevant to one country). Return JSON with the headline, a one-sentence neutral summary, the publishing source name, and the article URL.',
+    { search_context_size: 'high' },
+  );
+  const data = await callSonarWithTimeout(apiKey, payload, TRENDING_REQUEST_TIMEOUT_MS);
+  return parseNewsWidget(data, 'worldNews', '#1 worldwide · Top story');
 }
 
 /* ── Market widget: top mover in the country's local index, via Sonar ── */
