@@ -1,825 +1,1997 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Summaverick — a research-grade AI assistant</title>
-  <meta name="description" content="Summaverick is a general-purpose AI research assistant. Ask anything — world news, tech, code, careers, or everyday decisions — and get clear, source-grounded answers.">
-  <link rel="canonical" href="https://sumanthbolle.com/summaverick">
-  <meta property="og:title" content="Summaverick — AI Research Assistant">
-  <meta property="og:description" content="Ask anything — world news, tech, code, or personal decisions — and get clear, source-grounded answers.">
-  <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
-  <meta property="og:url" content="https://sumanthbolle.com/summaverick">
-  <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Summaverick — search less. understand more.</title>
+  <meta
+    name="description"
+    content="Summaverick helps you search, compare, and understand with source-backed answers."
+  />
+  <link rel="canonical" href="https://sumanthbolle.com/summaverick" />
+  <meta property="og:title" content="Summaverick — search less. understand more." />
+  <meta
+    property="og:description"
+    content="For questions that need more than a quick answer."
+  />
+  <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg" />
+  <meta property="og:url" content="https://sumanthbolle.com/summaverick" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    :root{
-      --bg:#050508;
-      --surface:rgba(255,255,255,0.04);
-      --surface-hover:rgba(255,255,255,0.07);
-      --border:rgba(255,255,255,0.08);
-      --border-strong:rgba(255,255,255,0.14);
-      --text-1:#f5f5f7;
-      --text-2:rgba(255,255,255,0.82);
-      --text-3:rgba(255,255,255,0.52);
-      --text-4:rgba(255,255,255,0.30);
-      --accent:#a78bfa;
-      --accent-soft:linear-gradient(180deg,#cdb4ff 0%,#a78bfa 100%);
-      --glass:rgba(230,233,242,0.06);
-      --glass-strong:rgba(225,228,240,0.10);
-      --radius:24px;
-      --ease:cubic-bezier(.22,1,.36,1);
-      --input-area-h:120px; /* updated at runtime; conservative default */
-    }
-    html{scroll-behavior:smooth}
-    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;background:var(--bg);color:var(--text-1);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Ambient BG */
-    .ambient{position:fixed;inset:0;pointer-events:none;z-index:0}
-    .ambient .orb{position:absolute;border-radius:50%;filter:blur(120px)}
-    .ambient .orb-1{width:34rem;height:34rem;left:50%;top:-14rem;transform:translateX(-50%);background:rgba(96,165,250,0.10)}
-    .ambient .orb-2{width:28rem;height:28rem;right:-8rem;top:18%;background:rgba(167,139,250,0.08)}
-    .ambient .orb-3{width:26rem;height:26rem;left:-10rem;bottom:12%;background:rgba(103,223,188,0.06)}
-    .ambient .grid-overlay{position:absolute;inset:0;opacity:0.03;background-image:linear-gradient(rgba(255,255,255,0.8) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.8) 1px,transparent 1px);background-size:90px 90px}
-
-    /* Nav */
-    .sm-nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:rgba(5,5,8,0.72);border-bottom:1px solid var(--border)}
-    .sm-nav-inner{max-width:1180px;margin:0 auto;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .sm-brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text-1)}
-    .sm-brand-icon{width:36px;height:36px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface);display:grid;place-items:center;position:relative;overflow:hidden}
-    .sm-brand-icon::before{content:'';position:absolute;inset:0;border-radius:12px;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.18),transparent 45%)}
-    .sm-brand-icon svg{width:18px;height:18px;stroke:var(--text-2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;position:relative}
-    .sm-brand-name{font-size:15px;font-weight:600;letter-spacing:-0.01em;color:var(--text-1)}
-    .sm-nav-links{display:flex;align-items:center;gap:20px}
-    .sm-nav-links a{color:var(--text-3);text-decoration:none;font-size:13px;transition:color 0.3s}
-    .sm-nav-links a:hover,.sm-nav-links a.active{color:var(--text-1)}
-    .sm-new-btn{padding:7px 18px;border-radius:980px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.3s;display:flex;align-items:center;gap:6px}
-    .sm-new-btn:hover{background:var(--surface-hover);border-color:var(--border-strong)}
-    .sm-new-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
-
-    /* Main layout */
-    .sm-main{flex:1;display:flex;flex-direction:column;position:relative;z-index:1;max-width:860px;width:100%;margin:0 auto;padding:0 20px}
-
-    /* Landing (empty state) */
-    .sm-landing{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:9vh 0 calc(var(--input-area-h) + 40px);animation:fadeUp 0.7s var(--ease)}
-    .sm-landing.hidden{display:none}
-    .sm-landing h1{font-size:clamp(40px,6.4vw,64px);font-weight:600;letter-spacing:-0.045em;line-height:1.04;max-width:680px;color:var(--text-1)}
-    .sm-landing h1 .quiet{color:var(--text-3);font-weight:500}
-    .sm-landing h1 .accent{background:var(--accent-soft);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-    .sm-landing .subtitle{font-size:16px;color:var(--text-3);margin-top:14px;line-height:1.55;max-width:440px;letter-spacing:-0.005em}
-    /* Chat area */
-    .sm-chat{flex:1;display:none;flex-direction:column;padding-top:24px;padding-bottom:calc(var(--input-area-h) + 24px);overflow-y:auto}
-    .sm-chat.active{display:flex}
-    .sm-chat::-webkit-scrollbar{width:5px}
-    .sm-chat::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
-
-    /* Conversation turns — no avatar+name label per turn; the visual
-     * difference between a soft right-aligned user message and the
-     * full-width AI response is enough signal. */
-    .sm-msg{margin-bottom:28px;animation:fadeUp 0.45s var(--ease)}
-    .sm-msg-user{display:flex;justify-content:flex-end}
-    .sm-msg-user .sm-msg-content{max-width:78%;font-size:15px;line-height:1.55;color:var(--text-1);background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:18px 18px 6px 18px;padding:10px 14px;letter-spacing:-0.005em;white-space:pre-wrap}
-    .sm-msg-ai .sm-msg-body{max-width:680px}
-
-    .sm-msg-ai .sm-msg-content{font-size:15px;line-height:1.7;color:var(--text-2)}
-    .sm-msg-ai .sm-msg-content p,.sm-msg-ai .sm-msg-content ul,.sm-msg-ai .sm-msg-content ol,.sm-msg-ai .sm-msg-content pre,.sm-msg-ai .sm-msg-content h2,.sm-msg-ai .sm-msg-content h3{margin-bottom:14px;opacity:0;transform:translateY(4px);animation:smReveal 0.5s var(--ease) forwards}
-    .sm-msg-ai .sm-msg-content > :last-child{margin-bottom:0}
-    /* Stagger: each block appears slightly after the previous one. */
-    .sm-msg-ai .sm-msg-content > :nth-child(1){animation-delay:0s}
-    .sm-msg-ai .sm-msg-content > :nth-child(2){animation-delay:0.08s}
-    .sm-msg-ai .sm-msg-content > :nth-child(3){animation-delay:0.16s}
-    .sm-msg-ai .sm-msg-content > :nth-child(4){animation-delay:0.24s}
-    .sm-msg-ai .sm-msg-content > :nth-child(5){animation-delay:0.32s}
-    .sm-msg-ai .sm-msg-content > :nth-child(6){animation-delay:0.40s}
-    .sm-msg-ai .sm-msg-content > :nth-child(7){animation-delay:0.48s}
-    .sm-msg-ai .sm-msg-content > :nth-child(n+8){animation-delay:0.56s}
-    @media(prefers-reduced-motion:reduce){
-      .sm-msg-ai .sm-msg-content p,.sm-msg-ai .sm-msg-content ul,.sm-msg-ai .sm-msg-content ol,.sm-msg-ai .sm-msg-content pre,.sm-msg-ai .sm-msg-content h2,.sm-msg-ai .sm-msg-content h3{animation:none;opacity:1;transform:none}
-      .sm-widget{animation:none;opacity:1;transform:none}
-      .sm-widget-skeleton{animation:none}
-      .sm-thinking-mark{animation:none}
-    }
-    .sm-msg-ai .sm-msg-content strong{color:var(--text-1);font-weight:600}
-    .sm-msg-ai .sm-msg-content code{font-size:13px;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:5px;font-family:ui-monospace,'SF Mono',monospace}
-    .sm-msg-ai .sm-msg-content pre{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:14px 16px;overflow-x:auto;margin:12px 0;font-size:13px;line-height:1.6;font-family:ui-monospace,'SF Mono',monospace}
-    .sm-msg-ai .sm-msg-content h2,.sm-msg-ai .sm-msg-content h3{font-size:14px;font-weight:700;color:var(--text-1);margin:18px 0 8px;letter-spacing:-0.01em}
-    .sm-msg-ai .sm-msg-content ul,.sm-msg-ai .sm-msg-content ol{margin:8px 0 12px 18px}
-    .sm-msg-ai .sm-msg-content li{margin-bottom:6px;line-height:1.6}
-    .sm-msg-ai .sm-msg-content a{color:#78a8ff;text-decoration:none}
-    .sm-msg-ai .sm-msg-content a:hover{text-decoration:underline}
-
-    /* Citation markers — small, raised, monospaced; not candy. */
-    .sm-cite{display:inline-block;min-width:14px;height:14px;padding:0 4px;margin:0 1px;font-family:ui-monospace,'SF Mono',monospace;font-size:10px;font-weight:600;line-height:14px;text-align:center;color:var(--text-3);background:rgba(255,255,255,0.06);border-radius:4px;vertical-align:1px;text-decoration:none;transition:background 0.2s,color 0.2s}
-    .sm-cite:hover{background:rgba(255,255,255,0.12);color:var(--text-1)}
-
-    /* Sources panel */
-    .sm-sources{margin-top:16px}
-    .sm-sources-label{font-size:12px;font-weight:500;color:var(--text-4);margin-bottom:10px;letter-spacing:-0.005em}
-    .sm-source-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:transparent;text-decoration:none;color:inherit;transition:background 0.2s,border-color 0.2s;margin-bottom:6px}
-    .sm-source-card:hover{background:rgba(255,255,255,0.03);border-color:var(--border-strong)}
-    .sm-source-num{width:18px;height:18px;border-radius:5px;background:rgba(255,255,255,0.06);color:var(--text-3);font-family:ui-monospace,'SF Mono',monospace;font-size:10px;font-weight:600;display:grid;place-items:center;flex-shrink:0}
-    .sm-source-info{flex:1;min-width:0}
-    .sm-source-title{font-size:13px;font-weight:500;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.005em}
-    .sm-source-domain{font-size:11px;color:var(--text-4);margin-top:2px}
-    .sm-source-arrow{color:var(--text-4);flex-shrink:0;opacity:0.6}
-    .sm-source-arrow svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
-
-    /* Related questions */
-    .sm-related{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
-    .sm-related-btn{padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-3);font-size:13px;cursor:pointer;font-family:inherit;text-align:left;letter-spacing:-0.005em;transition:background 0.2s,color 0.2s,border-color 0.2s}
-    .sm-related-btn:hover{background:rgba(255,255,255,0.03);color:var(--text-1);border-color:var(--border-strong)}
-
-    /* Thinking indicator — a single soft mark that breathes */
-    .sm-thinking{margin-bottom:20px;display:flex;align-items:center;gap:8px;animation:fadeUp 0.3s var(--ease)}
-    .sm-thinking-mark{width:14px;height:14px;border-radius:50%;background:var(--text-2);animation:smThink 1.6s ease-in-out infinite}
-    @keyframes smThink{0%,100%{transform:scale(0.55);opacity:0.35}50%{transform:scale(1);opacity:0.95}}
-
-    /* Input bar */
-    .sm-input-wrap{position:fixed;bottom:0;left:0;right:0;z-index:50;padding:16px 20px 24px;background:linear-gradient(to top,var(--bg) 60%,transparent)}
-    .sm-input-bar{max-width:860px;margin:0 auto;border-radius:var(--radius);border:1px solid var(--border-strong);background:rgba(10,10,16,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);padding:14px 16px;display:flex;align-items:flex-end;gap:10px;transition:border-color 0.3s}
-    .sm-input-bar:focus-within{border-color:rgba(120,168,255,0.35)}
-    .sm-input-bar textarea{flex:1;background:none;border:none;outline:none;color:var(--text-1);font-size:15px;font-family:inherit;line-height:1.5;resize:none;max-height:140px;min-height:22px}
-    .sm-input-bar textarea::placeholder{color:var(--text-4)}
-    .sm-send-btn{width:36px;height:36px;border-radius:50%;border:none;background:#fff;color:#000;cursor:pointer;display:grid;place-items:center;flex-shrink:0;transition:all 0.2s;opacity:0.3;pointer-events:none}
-    .sm-send-btn.active{opacity:1;pointer-events:auto}
-    .sm-send-btn:hover{transform:scale(1.05)}
-    .sm-send-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
-    .sm-input-meta{display:flex;align-items:center;gap:8px;margin-top:8px;max-width:860px;margin-left:auto;margin-right:auto;justify-content:center;transition:opacity 0.4s var(--ease)}
-    .sm-input-meta.faded{opacity:0;pointer-events:none}
-    .sm-input-meta span{font-size:11px;color:var(--text-4);letter-spacing:-0.005em}
-    .sm-input-meta a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.18);transition:color 0.2s,border-color 0.2s}
-    .sm-input-meta a:hover{color:var(--text-2);border-color:var(--text-3)}
-
-    /* Suggestion list — quiet, tap-target sized, no decorative chrome */
-    .sm-research-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:32px;width:100%;max-width:680px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-    .sm-research-card{background:var(--bg);padding:18px 20px;text-align:left;cursor:pointer;transition:background 0.25s var(--ease)}
-    .sm-research-card:hover,.sm-research-card:focus-visible{background:rgba(255,255,255,0.025);outline:none}
-    .sm-research-card h3{font-size:14px;font-weight:500;color:var(--text-2);line-height:1.45;letter-spacing:-0.005em;margin:0}
-    .sm-research-card p{display:none}
-    @media(max-width:640px){.sm-research-grid{grid-template-columns:1fr}}
-
-    /* Trending strip — landing only */
-    .sm-trending{width:100%;max-width:880px;margin-top:48px;text-align:left}
-    .sm-trending-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 2px 14px;color:var(--text-3);font-size:13px;letter-spacing:-0.005em}
-    .sm-trending-label{font-weight:500;color:var(--text-2)}
-    .sm-trending-region{color:var(--text-4);font-weight:400}
-    /* Always 2-up at tablet+; collapses to 1-up on phones via the
-     * media query below. With three cards (GLOBAL fallback), the
-     * solo third card spans the full row so the layout reads as a
-     * deliberate 2+1, not as an orphaned half-width tile. */
-    .sm-trending-grid,.sm-trending-grid.cols-4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-    .sm-trending-grid.cols-3 > .sm-widget:nth-child(3){grid-column:1 / -1}
-    .sm-widget{position:relative;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,0.025);padding:18px 18px 16px;display:flex;flex-direction:column;text-align:left;text-decoration:none;color:inherit;cursor:pointer;overflow:hidden;transition:background 0.35s var(--ease),border-color 0.35s var(--ease);opacity:0;transform:translateY(6px);animation:smReveal 0.55s var(--ease) forwards}
-    .sm-widget:nth-child(1){animation-delay:0.04s}
-    .sm-widget:nth-child(2){animation-delay:0.10s}
-    .sm-widget:nth-child(3){animation-delay:0.16s}
-    .sm-widget:nth-child(4){animation-delay:0.22s}
-    .sm-widget:hover,.sm-widget:focus-visible{background:rgba(255,255,255,0.045);border-color:var(--border-strong);outline:none}
-    @keyframes smReveal{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-    .sm-widget-kicker{font-size:12px;color:var(--text-4);margin-bottom:8px;letter-spacing:-0.005em;font-weight:400}
-    .sm-widget-title{font-size:15px;font-weight:600;color:var(--text-1);line-height:1.35;margin-bottom:8px;letter-spacing:-0.012em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-    .sm-widget-body{font-size:13px;color:var(--text-3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:auto}
-    .sm-widget-meta{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:12px;color:var(--text-4);letter-spacing:-0.005em}
-    .sm-widget-meta .sep{opacity:0.5}
-    .sm-widget-src{display:inline-flex;align-items:center;gap:4px;color:var(--text-3);text-decoration:none;transition:color 0.2s}
-    .sm-widget-src:hover{color:var(--text-1)}
-    .sm-widget-src svg{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2;opacity:0.7}
-    .sm-ticker{display:inline-flex;align-items:baseline;gap:8px;font-size:15px;font-weight:600;letter-spacing:-0.012em}
-    .sm-ticker-symbol{color:var(--text-1)}
-    .sm-ticker-pct{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-0.005em}
-    .sm-ticker-pct.up{color:#34d399}
-    .sm-ticker-pct.down{color:#f87171}
-    .sm-widget-skeleton{background:rgba(255,255,255,0.06);border-radius:5px;height:10px;animation:smBreathe 2.2s ease-in-out infinite}
-    .sm-widget-skeleton.t{height:14px;margin-bottom:8px;width:90%}
-    .sm-widget-skeleton.t2{width:72%}
-    .sm-widget-skeleton.b{height:10px;margin-bottom:6px}
-    .sm-widget-skeleton.b2{width:80%}
-    @keyframes smBreathe{0%,100%{opacity:0.45}50%{opacity:0.85}}
-    .sm-trending.hidden{display:none}
-    @media(max-width:740px){
-      .sm-trending-grid,.sm-trending-grid.cols-4,.sm-trending-grid.cols-3{grid-template-columns:1fr}
-      .sm-trending-grid.cols-3 > .sm-widget:nth-child(3){grid-column:auto}
+    :root {
+      --max: 1180px;
+      --chat: 780px;
+      --composer-h: 168px;
+      --ease: cubic-bezier(.22, 1, .36, 1);
+      --shadow-xl: 0 28px 90px rgba(0, 0, 0, 0.22);
+      --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.14);
+      --radius-xl: 32px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --rgb-red: #ff5f57;
+      --rgb-green: #28c840;
+      --rgb-blue: #3b82f6;
+      --rgb-pink: #ff4fd8;
+      --rgb-cyan: #33d6ff;
+      --rgb-violet: #8b5cf6;
     }
 
-    /* Shared motion */
-    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    html[data-theme="dark"] {
+      --bg: #050608;
+      --bg-2: #090b10;
+      --surface: rgba(255, 255, 255, 0.045);
+      --surface-2: rgba(255, 255, 255, 0.065);
+      --surface-3: rgba(255, 255, 255, 0.085);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.13);
+      --text: #f5f5f7;
+      --text-soft: rgba(255, 255, 255, 0.84);
+      --text-muted: rgba(255, 255, 255, 0.58);
+      --text-faint: rgba(255, 255, 255, 0.34);
+      --link: #8ec5ff;
+      --topbar: rgba(5, 6, 8, 0.68);
+      --hero-glow-a: rgba(59, 130, 246, 0.15);
+      --hero-glow-b: rgba(168, 85, 247, 0.16);
+      --hero-glow-c: rgba(45, 212, 191, 0.11);
+      --ambient-opacity: 1;
+      --composer-bg: linear-gradient(180deg, rgba(255,255,255,0.065), rgba(255,255,255,0.03));
+      --panel-bg: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+      --body-bg:
+        radial-gradient(1000px 520px at 50% -12%, rgba(124, 58, 237, 0.16), transparent 56%),
+        radial-gradient(760px 360px at 82% 18%, rgba(34, 211, 238, 0.11), transparent 62%),
+        radial-gradient(720px 340px at 14% 82%, rgba(125, 211, 252, 0.07), transparent 64%),
+        linear-gradient(180deg, #040507 0%, #06080d 46%, #040507 100%);
+      --bottom-fade: linear-gradient(to top, rgba(5, 6, 8, 0.96), rgba(5, 6, 8, 0.8) 56%, transparent);
+      --send-bg: #ffffff;
+      --send-fg: #050608;
+    }
 
-    /* Responsive */
-    @media(max-width:640px){
-      .sm-nav-links{display:none}
-      .sm-landing h1{font-size:34px;line-height:1.06}
-      .sm-research-grid{grid-template-columns:1fr}
-      .sm-new-btn-label{display:none}
-      .sm-new-btn{padding:7px;width:32px;height:32px;justify-content:center}
+    html[data-theme="light"] {
+      --bg: #f6f7fb;
+      --bg-2: #eef1f7;
+      --surface: rgba(255, 255, 255, 0.72);
+      --surface-2: rgba(255, 255, 255, 0.88);
+      --surface-3: rgba(255, 255, 255, 0.96);
+      --border: rgba(15, 23, 42, 0.08);
+      --border-strong: rgba(15, 23, 42, 0.14);
+      --text: #0f172a;
+      --text-soft: rgba(15, 23, 42, 0.88);
+      --text-muted: rgba(15, 23, 42, 0.62);
+      --text-faint: rgba(15, 23, 42, 0.38);
+      --link: #2563eb;
+      --topbar: rgba(246, 247, 251, 0.74);
+      --hero-glow-a: rgba(59, 130, 246, 0.12);
+      --hero-glow-b: rgba(236, 72, 153, 0.10);
+      --hero-glow-c: rgba(16, 185, 129, 0.10);
+      --ambient-opacity: 1;
+      --composer-bg: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.84));
+      --panel-bg: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.72));
+      --body-bg:
+        radial-gradient(920px 480px at 50% -10%, rgba(99, 102, 241, 0.10), transparent 56%),
+        radial-gradient(740px 340px at 88% 18%, rgba(56, 189, 248, 0.09), transparent 62%),
+        radial-gradient(660px 320px at 12% 82%, rgba(236, 72, 153, 0.07), transparent 64%),
+        linear-gradient(180deg, #f8f9fc 0%, #f2f5fb 46%, #f7f9fc 100%);
+      --shadow-xl: 0 28px 90px rgba(15, 23, 42, 0.10);
+      --shadow-lg: 0 18px 50px rgba(15, 23, 42, 0.08);
+      --bottom-fade: linear-gradient(to top, rgba(246, 247, 251, 0.95), rgba(246, 247, 251, 0.78) 56%, transparent);
+      --send-bg: #0f172a;
+      --send-fg: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+      color: var(--text);
+      background: var(--body-bg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      transition: background 400ms var(--ease), color 250ms ease;
+    }
+
+    body.input-focused { --ambient-opacity: 1.08; }
+    body.loading-active { --ambient-opacity: 1.16; }
+
+    a { color: inherit; text-decoration: none; }
+    button, textarea { font: inherit; }
+
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      opacity: var(--ambient-opacity);
+      transition: opacity 500ms var(--ease);
+    }
+
+    .ambient::before,
+    .ambient::after,
+    .ambient .orb {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(110px);
+      transition: transform 700ms var(--ease), opacity 450ms ease;
+    }
+
+    .ambient::before {
+      width: 40rem;
+      height: 40rem;
+      left: 50%;
+      top: -14rem;
+      transform: translateX(-50%);
+      background: radial-gradient(circle at center, var(--hero-glow-b), transparent 58%);
+    }
+
+    .ambient::after {
+      width: 30rem;
+      height: 30rem;
+      right: -6rem;
+      top: 14%;
+      background: radial-gradient(circle at center, var(--hero-glow-a), transparent 60%);
+    }
+
+    .ambient .orb {
+      width: 26rem;
+      height: 26rem;
+      left: -8rem;
+      bottom: 10%;
+      background: radial-gradient(circle at center, var(--hero-glow-c), transparent 62%);
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: var(--topbar);
+      border-bottom: 1px solid var(--border);
+      transition: background 250ms ease, border-color 250ms ease;
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(circle at 30% 28%, rgba(255,255,255,0.26), transparent 40%),
+        var(--surface);
+      transition: background 250ms ease, border-color 250ms ease;
+    }
+
+    html[data-theme="light"] .brand-mark {
+      background:
+        radial-gradient(circle at 30% 28%, rgba(255,255,255,0.94), transparent 44%),
+        rgba(255,255,255,0.72);
+    }
+
+    .brand-mark svg {
+      width: 17px;
+      height: 17px;
+      fill: none;
+      stroke: var(--text-soft);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand-copy { line-height: 1.02; }
+    .brand-name {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .brand-sub {
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--text-faint);
+      letter-spacing: -0.01em;
+    }
+
+    .topnav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .topnav a {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: color 180ms ease;
+    }
+
+    .topnav a:hover { color: var(--text); }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: background 250ms ease, border-color 250ms ease;
+    }
+
+    .theme-btn,
+    .new-btn {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 0;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+
+    .theme-btn.active {
+      background: var(--surface-3);
+      color: var(--text);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset;
+    }
+
+    html[data-theme="light"] .theme-btn.active {
+      box-shadow: 0 1px 0 rgba(255,255,255,0.75) inset;
+    }
+
+    .new-btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .new-btn:hover,
+    .theme-btn:hover { transform: translateY(-1px); }
+
+    .new-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .page {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .landing {
+      transition: opacity 600ms var(--ease), transform 700ms var(--ease), filter 500ms var(--ease);
+      transform-origin: top center;
+      padding-bottom: 28px;
+    }
+
+    .app-active .landing {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.985);
+      filter: blur(6px);
+      pointer-events: none;
+      height: 0;
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+    }
+
+    .hero {
+      padding: 78px 0 36px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
+      gap: 48px;
+      align-items: end;
+      min-height: calc(100vh - 60px - var(--composer-h));
+    }
+
+    .hero-copy { max-width: 680px; }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 18px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-faint);
+    }
+
+    .hero-title {
+      font-size: clamp(48px, 7vw, 94px);
+      line-height: 0.92;
+      letter-spacing: -0.062em;
+      font-weight: 620;
+      max-width: 8.6ch;
+    }
+
+    .hero-line { display: block; }
+    .hero-static { color: var(--text); }
+    .hero-phrase-wrap {
+      position: relative;
+      display: inline-flex;
+      min-height: 1.06em;
+      align-items: center;
+    }
+
+    .rgb-text {
+      background: linear-gradient(
+        92deg,
+        var(--rgb-red) 0%,
+        var(--rgb-pink) 18%,
+        var(--rgb-violet) 36%,
+        var(--rgb-blue) 54%,
+        var(--rgb-cyan) 72%,
+        var(--rgb-green) 100%
+      );
+      background-size: 220% 220%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      animation: rgbShift 7s linear infinite;
+    }
+
+    @keyframes rgbShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    .phrase {
+      display: inline-block;
+      transform-origin: center;
+      transition: opacity 420ms var(--ease), transform 420ms var(--ease), filter 420ms var(--ease);
+    }
+
+    .phrase.is-exit {
+      opacity: 0;
+      transform: translateY(12px) scale(0.985);
+      filter: blur(4px);
+    }
+
+    .phrase.is-enter {
+      opacity: 0;
+      transform: translateY(-12px) scale(1.012);
+      filter: blur(4px);
+    }
+
+    .phrase.is-enter-active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+
+    .hero-sub {
+      margin-top: 20px;
+      max-width: 600px;
+      font-size: 19px;
+      line-height: 1.52;
+      letter-spacing: -0.016em;
+      color: var(--text-muted);
+    }
+
+    .hero-notes {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-note {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      color: var(--text-soft);
+      letter-spacing: -0.01em;
+      transition: background 250ms ease, border-color 250ms ease;
+    }
+
+    .hero-right {
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .editorial {
+      position: relative;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background: var(--panel-bg);
+      box-shadow: var(--shadow-xl);
+      padding: 22px;
+      overflow: hidden;
+      transition: background 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+    }
+
+    .editorial::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, rgba(59,130,246,0.08), transparent 35%),
+        linear-gradient(300deg, rgba(236,72,153,0.07), transparent 36%);
+      pointer-events: none;
+    }
+
+    html[data-theme="light"] .editorial::before {
+      background:
+        linear-gradient(120deg, rgba(59,130,246,0.055), transparent 35%),
+        linear-gradient(300deg, rgba(236,72,153,0.05), transparent 36%);
+    }
+
+    .editorial-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .editorial-label {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .editorial-region {
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    .editorial-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 10px;
+    }
+
+    .lead-story,
+    .mini-story {
+      cursor: pointer;
+      transition: transform 220ms var(--ease), background 220ms ease, border-color 220ms ease;
+      outline: none;
+    }
+
+    .lead-story {
+      min-height: 228px;
+      padding: 20px 20px 18px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .mini-story {
+      min-height: 132px;
+      padding: 16px 16px 14px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .lead-story:hover,
+    .mini-story:hover,
+    .lead-story:focus-visible,
+    .mini-story:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--border-strong);
+      background: var(--surface-2);
+    }
+
+    .lead-kicker,
+    .mini-kicker {
+      font-size: 12px;
+      color: var(--text-faint);
+      margin-bottom: 10px;
+    }
+
+    .lead-title {
+      font-size: 22px;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      font-weight: 620;
+      color: var(--text);
+      max-width: 15ch;
+    }
+
+    .lead-summary {
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      max-width: 44ch;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .lead-meta,
+    .mini-meta {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .mini-title {
+      font-size: 14px;
+      line-height: 1.34;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      color: var(--text-soft);
+    }
+
+    .skeleton-card {
+      min-height: 150px;
+      border-radius: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sk {
+      border-radius: 999px;
+      background: rgba(127, 127, 127, 0.16);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    .sk-1 { height: 12px; width: 30%; }
+    .sk-2 { height: 14px; width: 88%; border-radius: 7px; }
+    .sk-3 { height: 14px; width: 74%; border-radius: 7px; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.42; }
+      50% { opacity: 0.9; }
+    }
+
+    .starter-wrap { padding-bottom: 36px; }
+
+    .starter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .starter {
+      text-align: left;
+      padding: 16px 16px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: transform 200ms var(--ease), background 180ms ease, border-color 180ms ease;
+    }
+
+    .starter:hover,
+    .starter:focus-visible {
+      transform: translateY(-1px);
+      background: var(--surface-2);
+      border-color: var(--border-strong);
+      outline: none;
+    }
+
+    .starter span {
+      display: block;
+      font-size: 14px;
+      line-height: 1.42;
+      letter-spacing: -0.012em;
+    }
+
+    .conversation {
+      display: none;
+      max-width: var(--chat);
+      margin: 0 auto;
+      padding: 34px 0 calc(var(--composer-h) + 38px);
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 600ms var(--ease), transform 700ms var(--ease);
+    }
+
+    .app-active .conversation {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .msg {
+      margin-bottom: 30px;
+      animation: fadeUp 380ms var(--ease);
+    }
+
+    .msg.user {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: 78%;
+      padding: 13px 16px;
+      border-radius: 20px 20px 8px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.58;
+      letter-spacing: -0.01em;
+      white-space: pre-wrap;
+      transition: background 250ms ease, border-color 250ms ease;
+    }
+
+    .msg.ai .content {
+      color: var(--text-soft);
+      font-size: 15px;
+      line-height: 1.76;
+      letter-spacing: -0.013em;
+    }
+
+    .content p,
+    .content ul,
+    .content ol,
+    .content pre,
+    .content h2,
+    .content h3 {
+      margin-bottom: 15px;
+    }
+
+    .content h2,
+    .content h3 {
+      margin-top: 22px;
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 650;
+      letter-spacing: -0.015em;
+      color: var(--text);
+    }
+
+    .content strong {
+      color: var(--text);
+      font-weight: 650;
+    }
+
+    .content code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: var(--surface);
+      font-size: 13px;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    }
+
+    .content pre {
+      overflow-x: auto;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      line-height: 1.6;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    }
+
+    .content ul,
+    .content ol {
+      padding-left: 18px;
+    }
+
+    .content li { margin-bottom: 7px; }
+
+    .content a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    .content a:hover { text-decoration: underline; }
+
+    .cite {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 17px;
+      height: 17px;
+      margin: 0 2px;
+      padding: 0 4px;
+      border-radius: 5px;
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 700;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      vertical-align: 1px;
+      transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+    }
+
+    .cite:hover {
+      background: var(--surface-2);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .sources {
+      margin-top: 22px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .sources-label {
+      font-size: 12px;
+      color: var(--text-faint);
+      margin-bottom: 2px;
+    }
+
+    .source {
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      transition: opacity 150ms ease;
+    }
+
+    .source-index {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 700;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    }
+
+    .source-title {
+      font-size: 13px;
+      line-height: 1.35;
+      color: var(--text-soft);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .source-domain {
+      margin-top: 2px;
+      font-size: 11px;
+      color: var(--text-faint);
+    }
+
+    .source-arrow {
+      color: var(--text-faint);
+      font-size: 14px;
+    }
+
+    .related {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .related button {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+    }
+
+    .related button:hover {
+      background: var(--surface-2);
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+
+    .thinking {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-faint);
+      font-size: 14px;
+      letter-spacing: -0.01em;
+    }
+
+    .thinking-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: breathe 1.4s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(0.68); opacity: 0.35; }
+      50% { transform: scale(1); opacity: 1; }
+    }
+
+    .composer-wrap {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 45;
+      padding: 18px 18px 22px;
+      background: var(--bottom-fade);
+      transition: background 250ms ease;
+    }
+
+    .composer-shell {
+      max-width: var(--chat);
+      margin: 0 auto;
+    }
+
+    .composer {
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background: var(--composer-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-xl);
+      padding: 12px;
+      transition: border-color 200ms ease, transform 220ms var(--ease), background 200ms ease, box-shadow 220ms ease;
+    }
+
+    body.input-focused .composer {
+      transform: translateY(-1px) scale(1.004);
+      border-color: var(--border-strong);
+    }
+
+    .composer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 4px 4px 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+
+    .mode-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .mode-pill {
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-faint);
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
+      white-space: nowrap;
+    }
+
+    .mode-pill:hover {
+      background: var(--surface-2);
+      color: var(--text-soft);
+    }
+
+    .mode-pill.active {
+      background: var(--surface-3);
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+
+    .composer-mode-note {
+      font-size: 12px;
+      color: var(--text-faint);
+      white-space: nowrap;
+    }
+
+    .composer-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+    }
+
+    .composer-stage {
+      position: relative;
+      flex: 1;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+
+    .composer textarea {
+      flex: 1;
+      min-height: 28px;
+      max-height: 140px;
+      resize: none;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.5;
+      letter-spacing: -0.012em;
+      padding: 4px 4px 2px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .composer-hint {
+      position: absolute;
+      left: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 1;
+      font-size: 16px;
+      line-height: 1.5;
+      letter-spacing: -0.012em;
+      color: var(--text-faint);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: calc(100% - 12px);
+      transition: opacity 180ms ease;
+    }
+
+    .composer.has-input .composer-hint,
+    body.input-focused .composer.has-focus .composer-hint {
+      opacity: 0;
+    }
+
+    .composer-hint .phrase { min-width: 1px; }
+
+    .send {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 0;
+      background: var(--send-bg);
+      color: var(--send-fg);
+      display: grid;
+      place-items: center;
+      opacity: 0.32;
+      pointer-events: none;
+      cursor: pointer;
+      transition: opacity 160ms ease, transform 160ms ease, box-shadow 160ms ease, background 200ms ease, color 200ms ease;
+      flex-shrink: 0;
+    }
+
+    .send.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .send:hover {
+      transform: scale(1.045);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.14);
+    }
+
+    .send svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .composer-meta {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--text-faint);
+      transition: opacity 180ms ease;
+    }
+
+    .composer-meta.faded {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .composer-meta a { border-bottom: 1px solid var(--border-strong); }
+
+    .footer-space { height: calc(var(--composer-h) + 8px); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-top: 46px;
+        min-height: auto;
+      }
+
+      .starter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .page,
+      .topbar-inner {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .topnav a:nth-child(-n+3) { display: none; }
+
+      .hero { padding-top: 34px; }
+
+      .hero-title {
+        font-size: 46px;
+        max-width: 9.6ch;
+      }
+
+      .hero-sub { font-size: 16px; }
+      .editorial {
+        padding: 16px;
+        border-radius: 24px;
+      }
+
+      .lead-story { min-height: 186px; }
+      .lead-title { font-size: 20px; }
+      .mini-grid { grid-template-columns: 1fr; }
+      .starter-grid { grid-template-columns: 1fr; }
+      .bubble { max-width: 88%; }
+      .composer-wrap { padding: 14px 14px 18px; }
+
+      .composer-top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .mode-group {
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .mode-group::-webkit-scrollbar { display: none; }
+      .composer-mode-note { white-space: normal; }
+      .new-btn-label { display: none; }
+      .new-btn {
+        padding: 0;
+        width: 32px;
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="ambient">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="grid-overlay"></div>
-  </div>
+  <div class="ambient"><div class="orb"></div></div>
 
-  <nav class="sm-nav">
-    <div class="sm-nav-inner">
-      <a href="index.html" class="sm-brand">
-        <div class="sm-brand-icon">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        </div>
-        <div class="sm-brand-name">Summaverick</div>
-      </a>
-      <div class="sm-nav-links">
-        <a href="index.html">Portfolio</a>
-        <a href="blog.html">Blog</a>
-        <a href="interviews.html">Interviews</a>
+  <div class="shell" id="appShell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="index.html" aria-label="Back to portfolio">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M3 12h18"></path>
+              <path d="M12 3c2.4 2.3 4 5.5 4 9s-1.6 6.7-4 9c-2.4-2.3-4-5.5-4-9s1.6-6.7 4-9z"></path>
+            </svg>
+          </div>
+          <div class="brand-copy">
+            <div class="brand-name">Summaverick</div>
+            <div class="brand-sub">understand more</div>
+          </div>
+        </a>
+
+        <nav class="topnav" aria-label="Primary">
+          <a href="index.html">Portfolio</a>
+          <a href="blog.html">Blog</a>
+          <a href="interviews.html">Interviews</a>
+
+          <div class="theme-toggle" aria-label="Theme">
+            <button class="theme-btn" type="button" data-theme="light">Light</button>
+            <button class="theme-btn active" type="button" data-theme="dark">Dark</button>
+          </div>
+
+          <button class="new-btn" id="newChatBtn" type="button" aria-label="New conversation" title="New conversation">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span class="new-btn-label">New chat</span>
+          </button>
+        </nav>
       </div>
-      <button class="sm-new-btn" id="newChatBtn" title="New conversation" aria-label="New conversation">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span class="sm-new-btn-label">New</span>
-      </button>
-    </div>
-  </nav>
+    </header>
 
-  <main class="sm-main">
-    <div class="sm-landing" id="landing">
-      <h1>What would you like to <span class="accent">understand</span> today?</h1>
-      <p class="subtitle">News, code, decisions — anything you'd reach for a search bar or a friend for. Answers arrive with the sources they came from.</p>
+    <main class="page">
+      <section class="landing" id="landing">
+        <section class="hero">
+          <div class="hero-copy">
+            <span class="eyebrow">Summaverick</span>
 
-      <section class="sm-trending" id="trendingSection" aria-label="Today" hidden>
-        <div class="sm-trending-head">
-          <span class="sm-trending-label" id="trendingLabel">Today</span>
-          <span class="sm-trending-region" id="trendingRegion"></span>
-        </div>
-        <div class="sm-trending-grid" id="trendingGrid"></div>
+            <h1 class="hero-title">
+              <span class="hero-line hero-static">Search less.</span>
+              <span class="hero-line hero-phrase-wrap">
+                <span class="phrase rgb-text" id="heroPhrase">Ask anything</span>
+              </span>
+            </h1>
+
+            <p class="hero-sub">
+              For questions that need more than a quick answer.
+              News, code, work, career decisions, and the strange corners of the internet —
+              with the sources left visible.
+            </p>
+
+            <div class="hero-notes">
+              <div class="hero-note">source-backed answers</div>
+              <div class="hero-note">keeps context across turns</div>
+              <div class="hero-note">built for deeper follow-ups</div>
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <section class="editorial" aria-label="Today">
+              <div class="editorial-head">
+                <div class="editorial-label">Today</div>
+                <div class="editorial-region" id="trendingRegion">Loading</div>
+              </div>
+
+              <div class="editorial-grid" id="trendingGrid">
+                <div class="skeleton-card">
+                  <div class="sk sk-1"></div>
+                  <div class="sk sk-2"></div>
+                  <div class="sk sk-3"></div>
+                </div>
+                <div class="mini-grid">
+                  <div class="skeleton-card">
+                    <div class="sk sk-1"></div>
+                    <div class="sk sk-2"></div>
+                    <div class="sk sk-3"></div>
+                  </div>
+                  <div class="skeleton-card">
+                    <div class="sk sk-1"></div>
+                    <div class="sk sk-2"></div>
+                    <div class="sk sk-3"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="starter-wrap">
+          <div class="starter-grid" id="starterGrid"></div>
+        </section>
       </section>
 
-      <div class="sm-research-grid" id="researchGrid"></div>
-    </div>
+      <section class="conversation" id="chatArea"></section>
+      <div class="footer-space"></div>
+    </main>
 
-    <div class="sm-chat" id="chatArea"></div>
-  </main>
+    <div class="composer-wrap">
+      <div class="composer-shell">
+        <div class="composer" id="composer">
+          <div class="composer-top">
+            <div class="mode-group" id="depthModes">
+              <button class="mode-pill active" type="button" data-mode="quick">Quick</button>
+              <button class="mode-pill" type="button" data-mode="deeper">Deeper</button>
+              <button class="mode-pill" type="button" data-mode="research">Full picture</button>
+            </div>
+            <div class="composer-mode-note" id="modeNote">Direct answer, less context.</div>
+          </div>
 
-  <div class="sm-input-wrap">
-    <div class="sm-input-bar" id="inputBar">
-      <textarea id="queryInput" rows="1" placeholder="Message Summaverick" autocomplete="off" spellcheck="false"></textarea>
-      <button class="sm-send-btn" id="sendBtn" title="Send">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-      </button>
-    </div>
-    <div class="sm-input-meta" id="inputMeta">
-      <span>Built by <a href="https://www.linkedin.com/in/sumanthbolle/" target="_blank" rel="noopener">Sumanth Bolle</a></span>
+          <div class="composer-row">
+            <div class="composer-stage">
+              <textarea id="queryInput" rows="1" autocomplete="off" spellcheck="false" aria-label="Ask Summaverick"></textarea>
+              <div class="composer-hint" id="composerHint" aria-hidden="true">
+                <span class="phrase rgb-text" id="composerPhrase">Ask anything</span>
+              </div>
+            </div>
+
+            <button class="send" id="sendBtn" type="button" aria-label="Send">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 19V5"></path>
+                <path d="M6 11l6-6 6 6"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="composer-meta" id="inputMeta">
+          <span>Built by <a href="https://www.linkedin.com/in/sumanthbolle/" target="_blank" rel="noopener">Sumanth Bolle</a></span>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-  window.SB_AI_SEARCH_ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';
+    window.SB_AI_SEARCH_ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';
 
-  (function(){
-    'use strict';
+    (function () {
+      'use strict';
 
-    const ENDPOINT = window.SB_AI_SEARCH_ENDPOINT;
-    const MAX_CONTEXT_MESSAGES = 10;
+      const ENDPOINT = window.SB_AI_SEARCH_ENDPOINT;
+      const MAX_CONTEXT_MESSAGES = 10;
+      const THEME_KEY = 'summaverick-theme';
 
-    /* Intentionally short. The hero already greets; a long welcome
-     * read like onboarding copy. This sentence is just enough to
-     * acknowledge the question is being thought through. */
-    const WELCOME_MESSAGE = "Looking that up now.";
+      const PHRASES = [
+        'Ask anything',
+        'Ask what matters',
+        'Understand more'
+      ];
 
-    const starters = [
-      { query: 'What just happened in the world today?' },
-      { query: 'Explain the most important AI release this month, simply.' },
-      { query: 'Write a small Python script to summarise a CSV from a URL.' },
-      { query: 'Help me think through whether to switch jobs this year.' },
-    ];
+      const starters = [
+        { query: 'What just happened in the world today?' },
+        { query: 'Explain the most important AI release this month, simply.' },
+        { query: 'Write a small Python script to summarise a CSV from a URL.' },
+        { query: 'Help me think through whether to switch jobs this year.' },
+      ];
 
-    const icons = {
-      search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
-      sparkles: '<svg viewBox="0 0 24 24"><path d="M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3z"/></svg>',
-      telescope: '<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/><path d="M12 8v4l3 3"/></svg>',
-      workflow: '<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-      compass: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
-      arrowUp: '<svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
-      externalLink: '<svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>',
-      newspaper: '<svg viewBox="0 0 24 24"><path d="M4 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
-      chart: '<svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>',
-      chip: '<svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg>',
-      globe: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
-    };
-
-    let conversationHistory = [];
-    let isLoading = false;
-
-    const landing = document.getElementById('landing');
-    const chatArea = document.getElementById('chatArea');
-    const queryInput = document.getElementById('queryInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const newChatBtn = document.getElementById('newChatBtn');
-    const researchGridEl = document.getElementById('researchGrid');
-    const trendingSection = document.getElementById('trendingSection');
-    const trendingGrid = document.getElementById('trendingGrid');
-    const trendingRegion = document.getElementById('trendingRegion');
-    const inputMeta = document.getElementById('inputMeta');
-
-    function init() {
-      renderStarters();
-      bindEvents();
-      autoResizeTextarea();
-      observeInputHeight();
-      loadTrending();
-    }
-
-    /* Keep a CSS custom property in sync with the actual input area
-     * height so the landing and chat reserve enough bottom space and
-     * never get hidden behind the fixed input bar — especially on
-     * mobile where viewport, keyboard, and a multi-line textarea all
-     * change the height dynamically. */
-    function observeInputHeight() {
-      const wrap = document.querySelector('.sm-input-wrap');
-      if (!wrap) return;
-      const apply = () => {
-        const h = Math.ceil(wrap.getBoundingClientRect().height);
-        document.documentElement.style.setProperty('--input-area-h', h + 'px');
+      const modeMeta = {
+        quick: {
+          note: 'Direct answer, less context.',
+          prefix: '',
+          loading: [
+            'Getting the useful bits together.',
+            'Pulling in the strongest sources.',
+            'Framing a direct answer.'
+          ]
+        },
+        deeper: {
+          note: 'More nuance, more context.',
+          prefix: 'Answer with extra context and trade-offs: ',
+          loading: [
+            'Looking across sources and context.',
+            'Pulling the threads together.',
+            'Shaping a clearer picture.'
+          ]
+        },
+        research: {
+          note: 'Fuller answer, stronger context.',
+          prefix: 'Give a fuller research-style answer with context and strong sourcing: ',
+          loading: [
+            'Comparing the strongest references.',
+            'Building the full picture.',
+            'Checking for useful context.'
+          ]
+        }
       };
-      apply();
-      if (typeof ResizeObserver === 'function') {
-        new ResizeObserver(apply).observe(wrap);
-      } else {
-        window.addEventListener('resize', apply);
-      }
-    }
 
-    /* ───────── Trending widgets ───────── */
+      const icons = {
+        externalLink: '<svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>'
+      };
 
-    function trendingUrl() {
-      if (!ENDPOINT) return null;
-      try {
-        const u = new URL(ENDPOINT);
-        u.pathname = '/trending';
-        u.search = '';
-        return u.toString();
-      } catch (e) { return null; }
-    }
+      const state = {
+        history: [],
+        loading: false,
+        mode: 'quick',
+        loadingTimer: null,
+        loadingIndex: 0,
+        phraseIndex: 0,
+        phraseTimer: null
+      };
 
-    function showTrendingSkeleton() {
-      if (!trendingSection || !trendingGrid) return;
-      trendingSection.hidden = false;
-      /* We don't know yet if local-news will be returned (GLOBAL fallback
-       * skips it), but rendering 4 skeletons is safe — the real render
-       * below reflows the grid once the response arrives. */
-      const kinds = ['world','news','market','tech'];
-      setGridColumns(kinds.length);
-      trendingGrid.innerHTML = kinds.map(() => `
-        <div class="sm-widget" aria-busy="true">
-          <div class="sm-widget-skeleton t"></div>
-          <div class="sm-widget-skeleton t t2"></div>
-          <div class="sm-widget-skeleton b"></div>
-          <div class="sm-widget-skeleton b b2"></div>
-        </div>`).join('');
-    }
+      const root = document.documentElement;
+      const body = document.body;
+      const appShell = document.getElementById('appShell');
+      const landing = document.getElementById('landing');
+      const starterGrid = document.getElementById('starterGrid');
+      const chatArea = document.getElementById('chatArea');
+      const queryInput = document.getElementById('queryInput');
+      const sendBtn = document.getElementById('sendBtn');
+      const newChatBtn = document.getElementById('newChatBtn');
+      const inputMeta = document.getElementById('inputMeta');
+      const composer = document.getElementById('composer');
+      const depthModes = document.getElementById('depthModes');
+      const modeNote = document.getElementById('modeNote');
+      const trendingGrid = document.getElementById('trendingGrid');
+      const trendingRegion = document.getElementById('trendingRegion');
+      const heroPhrase = document.getElementById('heroPhrase');
+      const composerPhrase = document.getElementById('composerPhrase');
+      const themeButtons = Array.from(document.querySelectorAll('.theme-btn'));
 
-    function setGridColumns(n) {
-      if (!trendingGrid) return;
-      trendingGrid.classList.toggle('cols-4', n === 4);
-      trendingGrid.classList.toggle('cols-3', n === 3);
-    }
-
-    async function loadTrending() {
-      const url = trendingUrl();
-      if (!url) { hideTrending(); return; }
-      showTrendingSkeleton();
-
-      try {
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 12000);
-        const res = await fetch(url, { signal: ctrl.signal });
-        clearTimeout(timer);
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        if (!data || !data.success || !data.widgets) throw new Error('no widgets');
-        renderTrending(data);
-      } catch (e) {
-        hideTrending();
-      }
-    }
-
-    function hideTrending() {
-      if (trendingSection) trendingSection.hidden = true;
-    }
-
-    function renderTrending(data) {
-      const w = data.widgets || {};
-      const cards = [];
-      if (w.worldNews) cards.push(renderWorldNewsWidget(w.worldNews));
-      if (w.news)      cards.push(renderNewsWidget(w.news));
-      if (w.market)    cards.push(renderMarketWidget(w.market));
-      if (w.tech)      cards.push(renderTechWidget(w.tech));
-
-      if (cards.length === 0) { hideTrending(); return; }
-
-      setGridColumns(cards.length);
-      trendingGrid.innerHTML = cards.map(c => c.html).join('');
-      if (trendingRegion) {
-        const region = data.countryName && data.countryName !== 'Global'
-          ? data.countryName
-          : 'Worldwide';
-        trendingRegion.textContent = region;
+      function init() {
+        applyInitialTheme();
+        renderStarters();
+        bindEvents();
+        resizeTextarea();
+        observeComposerHeight();
+        updateComposerState();
+        updateSendState();
+        setMode('quick');
+        loadTrending();
+        startPhraseCycle();
       }
 
-      /* Bind ask strings via dataset AFTER parsing HTML — the browser
-       * will store the exact JS string without any attribute-parse
-       * round-trip, so quotes and other tricky characters survive. */
-      const cardEls = trendingGrid.querySelectorAll('.sm-widget');
-      cardEls.forEach((el, i) => {
-        const ask = cards[i] && cards[i].ask;
-        if (!ask) return;
-        el.dataset.ask = ask;
+      function bindEvents() {
+        sendBtn.addEventListener('click', handleSend);
 
-        const handler = (ev) => {
-          if (ev.target.closest('[data-noask]')) return;
-          ev.preventDefault();
-          const q = el.dataset.ask;
-          if (q) submitQuery(q);
-        };
-        el.addEventListener('click', handler);
-        el.addEventListener('keydown', (ev) => {
-          if (ev.key === 'Enter' || ev.key === ' ') {
-            ev.preventDefault();
-            const q = el.dataset.ask;
-            if (q) submitQuery(q);
+        queryInput.addEventListener('input', function () {
+          updateComposerState();
+          updateSendState();
+          resizeTextarea();
+        });
+
+        queryInput.addEventListener('focus', function () {
+          body.classList.add('input-focused');
+          composer.classList.add('has-focus');
+          updateComposerState();
+        });
+
+        queryInput.addEventListener('blur', function () {
+          body.classList.remove('input-focused');
+          composer.classList.remove('has-focus');
+          updateComposerState();
+        });
+
+        queryInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
           }
         });
-      });
-    }
 
-    /* Each widget renderer returns { html, ask }. The ask string is
-     * bound to the card via el.dataset after innerHTML parses, never
-     * interpolated into an HTML attribute, so quote-laden headlines
-     * survive intact. Attribute-context interpolations use escAttr(). */
-
-    function renderNewsWidget(n) {
-      const ask = `Give me a deeper briefing on this story: "${n.title}". What are the key facts, context, and credible perspectives?`;
-      const src = n.url
-        ? `<a class="sm-widget-src" href="${escAttr(n.url)}" target="_blank" rel="noopener" data-noask="1">${esc(n.source || 'Source')} ${icons.externalLink}</a>`
-        : `<span>${esc(n.source || '')}</span>`;
-      const kicker = n.label && n.label.includes('·') ? n.label.split('·').slice(1).join('·').trim() : (n.label || 'Local');
-      const html = `
-        <div class="sm-widget news" role="button" tabindex="0" title="${escAttr(n.title)}">
-          <div class="sm-widget-kicker">${esc(kicker)}</div>
-          <div class="sm-widget-title">${esc(n.title)}</div>
-          <div class="sm-widget-body">${esc(n.summary || '')}</div>
-          <div class="sm-widget-meta">${src}</div>
-        </div>`;
-      return { html, ask };
-    }
-
-    function renderWorldNewsWidget(n) {
-      const ask = `What's the full story behind the top global headline right now: "${n.title}"? Give me the key facts, international context, and the range of credible perspectives.`;
-      const src = n.url
-        ? `<a class="sm-widget-src" href="${escAttr(n.url)}" target="_blank" rel="noopener" data-noask="1">${esc(n.source || 'Source')} ${icons.externalLink}</a>`
-        : `<span>${esc(n.source || '')}</span>`;
-      const html = `
-        <div class="sm-widget world" role="button" tabindex="0" title="${escAttr(n.title)}">
-          <div class="sm-widget-kicker">Worldwide</div>
-          <div class="sm-widget-title">${esc(n.title)}</div>
-          <div class="sm-widget-body">${esc(n.summary || '')}</div>
-          <div class="sm-widget-meta">${src}</div>
-        </div>`;
-      return { html, ask };
-    }
-
-    function renderMarketWidget(m) {
-      const sign = m.changePercent >= 0 ? '+' : '';
-      const ask = `Why is ${m.name} (${m.symbol}) the biggest mover in ${m.index} today, ${sign}${m.changePercent}%? Give me context and sources.`;
-      const html = `
-        <div class="sm-widget market" role="button" tabindex="0">
-          <div class="sm-widget-kicker">${esc(m.index || 'Markets')}</div>
-          <div class="sm-widget-title sm-ticker">
-            <span class="sm-ticker-symbol">${esc(m.symbol)}</span>
-            <span class="sm-ticker-pct ${m.direction === 'up' ? 'up' : 'down'}">${sign}${esc(String(m.changePercent))}%</span>
-          </div>
-          <div class="sm-widget-body">${esc(m.name || '')}${m.reason ? ' — ' + esc(m.reason) : ''}</div>
-        </div>`;
-      return { html, ask };
-    }
-
-    function renderTechWidget(t) {
-      const ask = `Summarise and react to this Hacker News story: "${t.title}". Why is it resonating with developers? Any notable context?`;
-      const link = t.url || t.hnUrl;
-      const src = link
-        ? `<a class="sm-widget-src" href="${escAttr(link)}" target="_blank" rel="noopener" data-noask="1">${esc(t.source || 'news.ycombinator.com')} ${icons.externalLink}</a>`
-        : `<span>${esc(t.source || '')}</span>`;
-      const html = `
-        <div class="sm-widget tech" role="button" tabindex="0" title="${escAttr(t.title)}">
-          <div class="sm-widget-kicker">Hacker News</div>
-          <div class="sm-widget-title">${esc(t.title)}</div>
-          <div class="sm-widget-body">${src}</div>
-          <div class="sm-widget-meta">
-            <span>${esc(String(t.score || 0))} points</span>
-            <span class="sep">·</span>
-            <span>${esc(String(t.comments || 0))} comments</span>
-          </div>
-        </div>`;
-      return { html, ask };
-    }
-
-    function renderStarters() {
-      researchGridEl.innerHTML = starters.map(s =>
-        `<button class="sm-research-card" type="button">
-          <h3>${esc(s.query)}</h3>
-        </button>`
-      ).join('');
-      Array.from(researchGridEl.children).forEach((el, i) => {
-        el.dataset.q = starters[i].query;
-      });
-    }
-
-    function bindEvents() {
-      sendBtn.addEventListener('click', handleSend);
-      queryInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          handleSend();
-        }
-      });
-      queryInput.addEventListener('input', function() {
-        updateSendButton();
-        autoResizeTextarea();
-      });
-
-      researchGridEl.addEventListener('click', function(e) {
-        const card = e.target.closest('.sm-research-card');
-        if (card && card.dataset.q) submitQuery(card.dataset.q);
-      });
-      chatArea.addEventListener('click', function(e) {
-        const btn = e.target.closest('.sm-related-btn');
-        if (btn) submitQuery(btn.dataset.query);
-        const cite = e.target.closest('.sm-cite');
-        if (cite) {
-          e.preventDefault();
-          const url = cite.dataset.url;
-          if (url) window.open(url, '_blank');
-        }
-      });
-      newChatBtn.addEventListener('click', resetChat);
-    }
-
-    function updateSendButton() {
-      const hasText = queryInput.value.trim().length > 0;
-      sendBtn.classList.toggle('active', hasText && !isLoading);
-    }
-
-    function autoResizeTextarea() {
-      queryInput.style.height = 'auto';
-      queryInput.style.height = Math.min(queryInput.scrollHeight, 140) + 'px';
-    }
-
-    function submitQuery(query) {
-      queryInput.value = query;
-      updateSendButton();
-      handleSend();
-    }
-
-    function handleSend() {
-      const query = queryInput.value.trim();
-      if (!query || query.length < 2 || isLoading) return;
-
-      const isFirst = !landing.classList.contains('hidden');
-      if (isFirst) {
-        landing.classList.add('hidden');
-        chatArea.classList.add('active');
-        hideTrending();
-        if (inputMeta) inputMeta.classList.add('faded');
-        appendWelcomeMessage();
-      }
-
-      logQuery(query);
-      appendUserMessage(query);
-      conversationHistory.push({role: 'user', content: query});
-      queryInput.value = '';
-      queryInput.style.height = 'auto';
-      updateSendButton();
-      showLoading();
-      fetchResponse(query);
-    }
-
-    function appendWelcomeMessage() {
-      /* Intentionally no-op. The sober design replaces the chatty
-       * welcome paragraph with a quieter "thinking" indicator that
-       * already follows the user's first message — see showLoading(). */
-    }
-
-    function logQuery(query) {
-      try {
-        console.log('[Summaverick]', new Date().toISOString(), query);
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon(ENDPOINT, JSON.stringify({
-            query: '__analytics__',
-            context: [{role:'log', content: query}]
-          }));
-        }
-      } catch(e) {}
-    }
-
-    function appendUserMessage(text) {
-      const div = document.createElement('div');
-      div.className = 'sm-msg sm-msg-user';
-      const bubble = document.createElement('div');
-      bubble.className = 'sm-msg-content';
-      bubble.textContent = text;
-      div.appendChild(bubble);
-      chatArea.appendChild(div);
-      scrollToBottom();
-    }
-
-    function showLoading() {
-      isLoading = true;
-      updateSendButton();
-      const div = document.createElement('div');
-      div.className = 'sm-msg sm-msg-ai';
-      div.id = 'loadingMsg';
-      div.innerHTML = `
-        <div class="sm-msg-body">
-          <div class="sm-thinking" aria-label="Thinking">
-            <span class="sm-thinking-mark" aria-hidden="true"></span>
-          </div>
-        </div>`;
-      chatArea.appendChild(div);
-      scrollToBottom();
-    }
-
-    function removeLoading() {
-      const el = document.getElementById('loadingMsg');
-      if (el) el.remove();
-      isLoading = false;
-      updateSendButton();
-    }
-
-    function buildRequestBody(query) {
-      const prior = conversationHistory.slice(-(MAX_CONTEXT_MESSAGES));
-      const context = prior.length > 1 ? prior.slice(0, -1) : [];
-      return {query, context};
-    }
-
-    async function fetchResponse(query) {
-      try {
-        const body = buildRequestBody(query);
-        const res = await fetch(ENDPOINT, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(body)
+        starterGrid.addEventListener('click', function (e) {
+          const btn = e.target.closest('[data-query]');
+          if (!btn) return;
+          submitQuery(btn.dataset.query);
         });
 
-        if (!res.ok) throw new Error('API error: ' + res.status);
-        const data = await res.json();
+        depthModes.addEventListener('click', function (e) {
+          const btn = e.target.closest('[data-mode]');
+          if (!btn) return;
+          setMode(btn.dataset.mode);
+        });
 
-        removeLoading();
+        chatArea.addEventListener('click', function (e) {
+          const related = e.target.closest('[data-related]');
+          if (related) {
+            submitQuery(related.dataset.related);
+            return;
+          }
 
-        if (data.success && data.result) {
-          const answer = data.result.answer || 'No answer available.';
-          conversationHistory.push({role: 'assistant', content: answer});
-          appendAIMessage(data.result);
-        } else {
-          appendErrorMessage('No results found. Try rephrasing your question.');
+          const cite = e.target.closest('.cite');
+          if (cite && cite.dataset.url) {
+            e.preventDefault();
+            window.open(cite.dataset.url, '_blank', 'noopener');
+          }
+        });
+
+        newChatBtn.addEventListener('click', resetChat);
+
+        themeButtons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            setTheme(btn.dataset.theme);
+          });
+        });
+      }
+
+      function applyInitialTheme() {
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved === 'light' || saved === 'dark') {
+          setTheme(saved, false);
+          return;
         }
-      } catch (err) {
-        removeLoading();
-        appendErrorMessage('Something went wrong. Please try again.');
-      }
-    }
-
-    function appendAIMessage(result) {
-      const answer = result.answer || '';
-      const sources = result.sources || [];
-      const related = result.relatedQuestions || [];
-
-      let formattedAnswer = formatMarkdown(answer);
-      sources.forEach(function(s) {
-        const citeRe = new RegExp('\\[' + s.index + '\\]', 'g');
-        formattedAnswer = formattedAnswer.replace(citeRe,
-          `<a class="sm-cite" href="#" data-url="${esc(s.url)}" title="${esc(s.title || s.source)}">${s.index}</a>`
-        );
-      });
-
-      let sourcesHtml = '';
-      if (sources.length > 0) {
-        sourcesHtml = `<div class="sm-sources">
-          <div class="sm-sources-label">Sources</div>
-          ${sources.map(s => `
-            <a class="sm-source-card" href="${esc(s.url)}" target="_blank" rel="noopener">
-              <div class="sm-source-num">${s.index}</div>
-              <div class="sm-source-info">
-                <div class="sm-source-title">${esc(s.title || s.source)}</div>
-                <div class="sm-source-domain">${esc(s.source)}</div>
-              </div>
-              <div class="sm-source-arrow">${icons.externalLink}</div>
-            </a>
-          `).join('')}
-        </div>`;
+        const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        setTheme(prefersLight ? 'light' : 'dark', false);
       }
 
-      let relatedHtml = '';
-      if (related.length > 0) {
-        relatedHtml = `<div class="sm-related">
-          ${related.map(q => `<button class="sm-related-btn" data-query="${esc(q)}">${esc(q)}</button>`).join('')}
-        </div>`;
+      function setTheme(theme, persist = true) {
+        root.setAttribute('data-theme', theme);
+        themeButtons.forEach(function (btn) {
+          btn.classList.toggle('active', btn.dataset.theme === theme);
+        });
+        if (persist) localStorage.setItem(THEME_KEY, theme);
       }
 
-      const div = document.createElement('div');
-      div.className = 'sm-msg sm-msg-ai';
-      div.innerHTML = `
-        <div class="sm-msg-body">
-          <div class="sm-msg-content">${formattedAnswer}</div>
+      function observeComposerHeight() {
+        const wrap = document.querySelector('.composer-wrap');
+        if (!wrap) return;
+
+        const apply = function () {
+          const h = Math.ceil(wrap.getBoundingClientRect().height);
+          document.documentElement.style.setProperty('--composer-h', h + 'px');
+        };
+
+        apply();
+        if (typeof ResizeObserver === 'function') {
+          new ResizeObserver(apply).observe(wrap);
+        } else {
+          window.addEventListener('resize', apply);
+        }
+      }
+
+      function resizeTextarea() {
+        queryInput.style.height = 'auto';
+        queryInput.style.height = Math.min(queryInput.scrollHeight, 140) + 'px';
+      }
+
+      function updateComposerState() {
+        composer.classList.toggle('has-input', queryInput.value.trim().length > 0);
+      }
+
+      function updateSendState() {
+        const hasText = queryInput.value.trim().length > 1;
+        sendBtn.classList.toggle('active', hasText && !state.loading);
+      }
+
+      function setMode(mode) {
+        state.mode = mode;
+        Array.from(depthModes.querySelectorAll('.mode-pill')).forEach(function (pill) {
+          pill.classList.toggle('active', pill.dataset.mode === mode);
+        });
+        modeNote.textContent = modeMeta[mode].note;
+      }
+
+      function renderStarters() {
+        starterGrid.innerHTML = starters.map(function (item) {
+          return `
+            <button class="starter" type="button" data-query="${escAttr(item.query)}">
+              <span>${esc(item.query)}</span>
+            </button>
+          `;
+        }).join('');
+      }
+
+      function enterConversationMode() {
+        appShell.classList.add('app-active');
+        inputMeta.classList.add('faded');
+      }
+
+      function resetChat() {
+        clearLoadingCycle();
+        state.history = [];
+        state.loading = false;
+        chatArea.innerHTML = '';
+        appShell.classList.remove('app-active');
+        inputMeta.classList.remove('faded');
+        body.classList.remove('loading-active');
+        queryInput.value = '';
+        updateComposerState();
+        resizeTextarea();
+        updateSendState();
+        loadTrending();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function submitQuery(query) {
+        queryInput.value = query;
+        updateComposerState();
+        resizeTextarea();
+        updateSendState();
+        handleSend();
+      }
+
+      function handleSend() {
+        const query = queryInput.value.trim();
+        if (!query || query.length < 2 || state.loading) return;
+
+        if (!appShell.classList.contains('app-active')) {
+          enterConversationMode();
+        }
+
+        logQuery(query);
+        appendUserMessage(query);
+        state.history.push({ role: 'user', content: query });
+
+        queryInput.value = '';
+        updateComposerState();
+        resizeTextarea();
+        setLoading(true);
+        appendThinking();
+        fetchResponse(query);
+      }
+
+      function logQuery(query) {
+        try {
+          console.log('[Summaverick]', new Date().toISOString(), query);
+          if (navigator.sendBeacon) {
+            navigator.sendBeacon(ENDPOINT, JSON.stringify({
+              query: '__analytics__',
+              context: [{ role: 'log', content: query }]
+            }));
+          }
+        } catch (e) {}
+      }
+
+      function setLoading(flag) {
+        state.loading = flag;
+        body.classList.toggle('loading-active', flag);
+        updateSendState();
+      }
+
+      function buildRequestBody(query) {
+        const prior = state.history.slice(-MAX_CONTEXT_MESSAGES);
+        const context = prior.length > 1 ? prior.slice(0, -1) : [];
+        return {
+          query: modeMeta[state.mode].prefix + query,
+          context
+        };
+      }
+
+      function appendUserMessage(text) {
+        const node = document.createElement('div');
+        node.className = 'msg user';
+        node.innerHTML = `<div class="bubble">${esc(text)}</div>`;
+        chatArea.appendChild(node);
+        scrollToBottom();
+      }
+
+      function appendThinking() {
+        const line = modeMeta[state.mode].loading[0];
+        const node = document.createElement('div');
+        node.className = 'msg ai';
+        node.id = 'loadingMsg';
+        node.innerHTML = `
+          <div class="thinking">
+            <span class="thinking-dot" aria-hidden="true"></span>
+            <span id="thinkingText">${esc(line)}</span>
+          </div>
+        `;
+        chatArea.appendChild(node);
+        startLoadingCycle();
+        scrollToBottom();
+      }
+
+      function startLoadingCycle() {
+        clearLoadingCycle();
+        state.loadingIndex = 0;
+        state.loadingTimer = window.setInterval(function () {
+          const el = document.getElementById('thinkingText');
+          if (!el) return;
+          const lines = modeMeta[state.mode].loading;
+          state.loadingIndex = (state.loadingIndex + 1) % lines.length;
+          el.textContent = lines[state.loadingIndex];
+        }, 1500);
+      }
+
+      function clearLoadingCycle() {
+        if (state.loadingTimer) {
+          window.clearInterval(state.loadingTimer);
+          state.loadingTimer = null;
+        }
+      }
+
+      function removeLoading() {
+        clearLoadingCycle();
+        const node = document.getElementById('loadingMsg');
+        if (node) node.remove();
+      }
+
+      async function fetchResponse(query) {
+        try {
+          const res = await fetch(ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(buildRequestBody(query))
+          });
+
+          if (!res.ok) throw new Error('API error: ' + res.status);
+          const data = await res.json();
+
+          removeLoading();
+          setLoading(false);
+
+          if (data.success && data.result) {
+            const answer = data.result.answer || 'No answer available.';
+            state.history.push({ role: 'assistant', content: answer });
+            appendAIMessage(data.result);
+          } else {
+            appendErrorMessage('No results found. Try rephrasing your question.');
+          }
+        } catch (err) {
+          removeLoading();
+          setLoading(false);
+          appendErrorMessage('Something went wrong. Please try again.');
+        }
+      }
+
+      function appendAIMessage(result) {
+        const answer = result.answer || '';
+        const sources = result.sources || [];
+        const related = result.relatedQuestions || [];
+
+        let formattedAnswer = formatMarkdown(answer);
+        sources.forEach(function (s) {
+          const citeRe = new RegExp('\\[' + s.index + '\\]', 'g');
+          formattedAnswer = formattedAnswer.replace(
+            citeRe,
+            `<a class="cite" href="#" data-url="${escAttr(s.url || '')}" title="${escAttr(s.title || s.source || '')}">${esc(String(s.index))}</a>`
+          );
+        });
+
+        let sourcesHtml = '';
+        if (sources.length > 0) {
+          sourcesHtml = `
+            <div class="sources">
+              <div class="sources-label">Sources</div>
+              ${sources.map(function (s) {
+                return `
+                  <a class="source" href="${escAttr(s.url || '#')}" target="_blank" rel="noopener">
+                    <div class="source-index">${esc(String(s.index))}</div>
+                    <div>
+                      <div class="source-title">${esc(s.title || s.source || 'Source')}</div>
+                      <div class="source-domain">${esc(s.source || '')}</div>
+                    </div>
+                    <div class="source-arrow">↗</div>
+                  </a>
+                `;
+              }).join('')}
+            </div>
+          `;
+        }
+
+        let relatedHtml = '';
+        if (related.length > 0) {
+          relatedHtml = `
+            <div class="related">
+              ${related.map(function (q) {
+                return `<button type="button" data-related="${escAttr(q)}">${esc(q)}</button>`;
+              }).join('')}
+            </div>
+          `;
+        }
+
+        const div = document.createElement('div');
+        div.className = 'msg ai';
+        div.innerHTML = `
+          <div class="content">${formattedAnswer}</div>
           ${sourcesHtml}
           ${relatedHtml}
-        </div>`;
-      chatArea.appendChild(div);
-      scrollToBottom();
-    }
-
-    function appendErrorMessage(text) {
-      const div = document.createElement('div');
-      div.className = 'sm-msg sm-msg-ai';
-      div.innerHTML = `
-        <div class="sm-msg-body">
-          <div class="sm-msg-content" style="color:var(--text-3)">${esc(text)}</div>
-        </div>`;
-      chatArea.appendChild(div);
-      scrollToBottom();
-    }
-
-    function resetChat() {
-      conversationHistory = [];
-      chatArea.innerHTML = '';
-      chatArea.classList.remove('active');
-      landing.classList.remove('hidden');
-      if (inputMeta) inputMeta.classList.remove('faded');
-      queryInput.value = '';
-      queryInput.style.height = 'auto';
-      updateSendButton();
-      loadTrending();
-    }
-
-    function scrollToBottom() {
-      requestAnimationFrame(() => {
-        window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
-      });
-    }
-
-    function formatMarkdown(md) {
-      if (!md) return '';
-      let html = md;
-      html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (m, lang, code) => '<pre>' + esc(code.trim()) + '</pre>');
-      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-      html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-      html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-      html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
-      html = html.replace(/(<li>[\s\S]*?<\/li>)/g, function(m) {
-        if (m.indexOf('<ul>') === -1) return '<ul>' + m + '</ul>';
-        return m;
-      });
-      html = html.replace(/<\/ul>\s*<ul>/g, '');
-      html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
-      html = html.replace(/\n\n/g, '</p><p>');
-      html = html.replace(/([^>])\n([^<])/g, '$1<br>$2');
-      if (!/^<(h[23]|ul|ol|pre|div|p)/.test(html.trim())) {
-        html = '<p>' + html + '</p>';
+        `;
+        chatArea.appendChild(div);
+        scrollToBottom();
       }
-      return html;
-    }
 
-    function esc(str) {
-      if (!str) return '';
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
+      function appendErrorMessage(text) {
+        const div = document.createElement('div');
+        div.className = 'msg ai';
+        div.innerHTML = `<div class="content" style="color:var(--text-muted)"><p>${esc(text)}</p></div>`;
+        chatArea.appendChild(div);
+        scrollToBottom();
+      }
 
-    /* esc() is safe for text nodes (it escapes < > & via the
-     * textContent→innerHTML round-trip) but DOES NOT escape the
-     * double-quote character. Interpolating esc(x) inside an HTML
-     * attribute like foo="${esc(x)}" silently truncates whenever x
-     * contains a " — which caused prefilled widget queries to lose
-     * their story context when a headline quoted something.
-     * Use this helper for any attribute-bound interpolation. */
-    function escAttr(str) {
-      if (str == null) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-    }
+      function trendingUrl() {
+        if (!ENDPOINT) return null;
+        try {
+          const u = new URL(ENDPOINT);
+          u.pathname = '/trending';
+          u.search = '';
+          return u.toString();
+        } catch (e) {
+          return null;
+        }
+      }
 
-    init();
-  })();
+      async function loadTrending() {
+        const url = trendingUrl();
+        if (!url) {
+          trendingRegion.textContent = '';
+          trendingGrid.innerHTML = '';
+          return;
+        }
+
+        try {
+          const ctrl = new AbortController();
+          const timer = setTimeout(() => ctrl.abort(), 12000);
+          const res = await fetch(url, { signal: ctrl.signal });
+          clearTimeout(timer);
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const data = await res.json();
+          if (!data || !data.success || !data.widgets) throw new Error('no widgets');
+          renderTrending(data);
+        } catch (e) {
+          trendingRegion.textContent = '';
+          trendingGrid.innerHTML = '';
+        }
+      }
+
+      function renderTrending(data) {
+        const w = data.widgets || {};
+        const cards = [];
+
+        if (w.worldNews) cards.push(makeWorldLead(w.worldNews));
+        else if (w.news) cards.push(makeLocalLead(w.news));
+
+        if (w.news && w.worldNews) cards.push(makeLocalMini(w.news));
+        if (w.market) cards.push(makeMarketMini(w.market));
+        if (w.tech) cards.push(makeTechMini(w.tech));
+
+        if (!cards.length) {
+          trendingGrid.innerHTML = '';
+          trendingRegion.textContent = '';
+          return;
+        }
+
+        const region = data.countryName && data.countryName !== 'Global' ? data.countryName : 'Worldwide';
+        trendingRegion.textContent = region;
+
+        const lead = cards[0];
+        const minis = cards.slice(1, 3);
+
+        trendingGrid.innerHTML = `
+          ${lead ? lead.html : ''}
+          ${minis.length ? `<div class="mini-grid">${minis.map(item => item.html).join('')}</div>` : ''}
+        `;
+
+        bindTrendingCard(document.querySelector('.lead-story'), lead);
+        Array.from(document.querySelectorAll('.mini-story')).forEach(function (node, index) {
+          bindTrendingCard(node, minis[index]);
+        });
+      }
+
+      function bindTrendingCard(node, card) {
+        if (!node || !card || !card.ask) return;
+        node.setAttribute('tabindex', '0');
+        node.setAttribute('role', 'button');
+        node.addEventListener('click', function () { submitQuery(card.ask); });
+        node.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            submitQuery(card.ask);
+          }
+        });
+      }
+
+      function makeWorldLead(item) {
+        return {
+          ask: `What's the full story behind this global headline: "${item.title}"? Give me the facts, context, and credible perspectives.`,
+          html: `
+            <article class="lead-story">
+              <div>
+                <div class="lead-kicker">Worldwide</div>
+                <div class="lead-title">${esc(item.title || '')}</div>
+                <div class="lead-summary">${esc(item.summary || '')}</div>
+              </div>
+              <div class="lead-meta">${esc(item.source || 'Source')}</div>
+            </article>
+          `
+        };
+      }
+
+      function makeLocalLead(item) {
+        const kicker = item.label && item.label.includes('·')
+          ? item.label.split('·').slice(1).join('·').trim()
+          : (item.label || 'News');
+
+        return {
+          ask: `Give me a deeper briefing on this story: "${item.title}". What matters most and what context should I know?`,
+          html: `
+            <article class="lead-story">
+              <div>
+                <div class="lead-kicker">${esc(kicker)}</div>
+                <div class="lead-title">${esc(item.title || '')}</div>
+                <div class="lead-summary">${esc(item.summary || '')}</div>
+              </div>
+              <div class="lead-meta">${esc(item.source || 'Source')}</div>
+            </article>
+          `
+        };
+      }
+
+      function makeLocalMini(item) {
+        const kicker = item.label && item.label.includes('·')
+          ? item.label.split('·').slice(1).join('·').trim()
+          : (item.label || 'News');
+
+        return {
+          ask: `Summarise this story clearly: "${item.title}". What are the facts and what should I pay attention to?`,
+          html: `
+            <article class="mini-story">
+              <div>
+                <div class="mini-kicker">${esc(kicker)}</div>
+                <div class="mini-title">${esc(item.title || '')}</div>
+              </div>
+              <div class="mini-meta">${esc(item.source || 'Source')}</div>
+            </article>
+          `
+        };
+      }
+
+      function makeMarketMini(item) {
+        const sign = Number(item.changePercent) >= 0 ? '+' : '';
+        return {
+          ask: `Why is ${item.name} (${item.symbol}) moving ${sign}${item.changePercent}% today? Give me context and sources.`,
+          html: `
+            <article class="mini-story">
+              <div>
+                <div class="mini-kicker">${esc(item.index || 'Markets')}</div>
+                <div class="mini-title">${esc(item.symbol || '')} ${esc(sign + String(item.changePercent || ''))}%</div>
+              </div>
+              <div class="mini-meta">${esc(item.name || '')}</div>
+            </article>
+          `
+        };
+      }
+
+      function makeTechMini(item) {
+        return {
+          ask: `Summarise this developer story: "${item.title}". Why is it getting attention and what should I know?`,
+          html: `
+            <article class="mini-story">
+              <div>
+                <div class="mini-kicker">Developer signal</div>
+                <div class="mini-title">${esc(item.title || '')}</div>
+              </div>
+              <div class="mini-meta">${esc(String(item.score || 0))} points · ${esc(String(item.comments || 0))} comments</div>
+            </article>
+          `
+        };
+      }
+
+      function startPhraseCycle() {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        state.phraseTimer = window.setInterval(function () {
+          state.phraseIndex = (state.phraseIndex + 1) % PHRASES.length;
+          const next = PHRASES[state.phraseIndex];
+          transitionPhrase(heroPhrase, next);
+          transitionPhrase(composerPhrase, next);
+        }, 2600);
+      }
+
+      function transitionPhrase(el, nextText) {
+        if (!el) return;
+        el.classList.remove('is-enter', 'is-enter-active');
+        el.classList.add('is-exit');
+
+        window.setTimeout(function () {
+          el.textContent = nextText;
+          el.classList.remove('is-exit');
+          el.classList.add('is-enter');
+          requestAnimationFrame(function () {
+            el.classList.add('is-enter-active');
+          });
+          window.setTimeout(function () {
+            el.classList.remove('is-enter', 'is-enter-active');
+          }, 430);
+        }, 280);
+      }
+
+      function scrollToBottom() {
+        requestAnimationFrame(function () {
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        });
+      }
+
+      function formatMarkdown(md) {
+        if (!md) return '<p></p>';
+        let html = esc(md);
+
+        html = html.replace(/```([\s\S]*?)```/g, function (_, code) {
+          return '<pre>' + esc(code.trim()) + '</pre>';
+        });
+        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+        html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+        html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+        html = html.replace(/(<li>.*<\/li>)/gs, function (match) {
+          return match.includes('<ul>') ? match : '<ul>' + match + '</ul>';
+        });
+        html = html.replace(/<\/ul>\s*<ul>/g, '');
+        html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+        html = html.replace(/(<li>.*<\/li>)/gs, function (match) {
+          if (match.includes('<ol>') || match.includes('<ul>')) return match;
+          return '<ol>' + match + '</ol>';
+        });
+        html = html.replace(/<\/ol>\s*<ol>/g, '');
+        html = html.replace(/\n\n/g, '</p><p>');
+        html = html.replace(/\n/g, '<br>');
+        if (!/^<(h2|h3|ul|ol|pre|p)/.test(html.trim())) {
+          html = '<p>' + html + '</p>';
+        }
+        return html;
+      }
+
+      function esc(str) {
+        if (str == null) return '';
+        const div = document.createElement('div');
+        div.textContent = String(str);
+        return div.innerHTML;
+      }
+
+      function escAttr(str) {
+        if (str == null) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      }
+
+      init();
+    })();
   </script>
 </body>
 </html>
