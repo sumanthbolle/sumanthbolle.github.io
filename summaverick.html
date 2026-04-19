@@ -706,6 +706,10 @@
       letter-spacing: -0.013em;
     }
 
+    .stream-block {
+      animation: fadeUp 320ms var(--ease);
+    }
+
     .content p,
     .content ul,
     .content ol,
@@ -1725,12 +1729,45 @@
         const div = document.createElement('div');
         div.className = 'msg ai';
         div.innerHTML = `
-          <div class="content">${formattedAnswer}</div>
-          ${sourcesHtml}
-          ${relatedHtml}
+          <div class="content"></div>
+          <div class="tail"></div>
         `;
         chatArea.appendChild(div);
         scrollToBottom();
+
+        const contentEl = div.querySelector('.content');
+        const tailEl = div.querySelector('.tail');
+
+        streamHTMLInto(contentEl, formattedAnswer, 95).then(function () {
+          tailEl.innerHTML = sourcesHtml + relatedHtml;
+          scrollToBottom();
+        });
+      }
+
+      async function streamHTMLInto(target, html, delay) {
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const nodes = Array.from(temp.childNodes);
+
+        if (nodes.length === 0) {
+          target.innerHTML = html;
+          return;
+        }
+
+        for (const node of nodes) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'stream-block';
+          wrapper.appendChild(node.cloneNode(true));
+          target.appendChild(wrapper.firstChild);
+          scrollToBottom();
+          await wait(delay);
+        }
+      }
+
+      function wait(ms) {
+        return new Promise(function (resolve) {
+          window.setTimeout(resolve, ms);
+        });
       }
 
       function appendErrorMessage(text) {
