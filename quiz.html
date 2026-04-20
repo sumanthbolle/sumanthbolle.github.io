@@ -1030,6 +1030,13 @@ function finalizeStartQuiz(catKey, mode) {
     questions = questions.filter(q => q.difficulty === 'hard');
   }
 
+  // Exam-style modes (timed, fixed-count) skip questions explicitly flagged
+  // as ambiguous in the source dump so they don't penalize a real test taker.
+  const isExamStyleMode = mode && (mode.id === 'exam' || mode.id === 'half') && typeof mode.count === 'number';
+  if (isExamStyleMode) {
+    questions = questions.filter(q => !q.needsReview);
+  }
+
   let count = mode.count;
   if (typeof count === 'number' && questions.length < count) {
     const proceed = confirm(`This mode requires ${count} questions but only ${questions.length} are available in this category. Start with ${questions.length} questions instead?`);

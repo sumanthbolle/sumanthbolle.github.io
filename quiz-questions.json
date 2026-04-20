@@ -21844,6 +21844,3932 @@
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "CSA_Dumps.pdf"
+    },
+    {
+      "id": "csa-dump5-00bfa17b30",
+      "q": "Which ServiceNow products can be used to discover and populate the CMDB? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Discovery",
+        "IntegrationHub ETL",
+        "Finder",
+        "CMDB Plug-in",
+        "CMDB Integration Dashboard"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "explanation": "Discovery is indeed used for discovering and populating the CMDB with information about the IT infrastructure. IntegrationHub ETL (Extract, Transform, Load) is a ServiceNow product that allows for data extraction, transformation, and loading into the CMDB from various external sources, helping to populate the CMDB with accurate and up-to- date information",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump5-ca94d06698",
+      "q": "When using the Load Data and Transform Map process, what is the Mapping Assist used for?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Mapping fields using the Import Log",
+        "Mapping fields using Transform History",
+        "Mapping fields using an SLA",
+        "Mapping fields using a Field Map"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-f88448cf51",
+      "q": "Which one of the following statements describes the contents of the Configuration Management Database (CMDB)?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The CMDB contains data about tangible and intangible business assets",
+        "The CMDB contains the Business Rules that direct the intangible, configurable assets used by a company",
+        "The CMDB archives all Service Management PaaS equipment metadata and usage statistics",
+        "The CMDB contains ITIL process data pertaining to configuration items"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-a21ee1eebc",
+      "q": "In what order should filter elements be specified?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Field, Operator, then Value",
+        "Field, Operator, then Condition",
+        "Operator, Condition, then Value",
+        "Value, Operator, then Field"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-593491762c",
+      "q": "Which statement is true about business rules?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A business rule must run before a database action occurs",
+        "A business rule can be a piece of Javascript",
+        "A business rule must not run before a database action occurs",
+        "A business rule monitors fields on a form"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-748c0fd719",
+      "q": "Which of the following are a type of client scripts supported in ServiceNow? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "onSubmit",
+        "onUpdate",
+        "onCellEdit",
+        "onLoad",
+        "onEdit",
+        "onChange",
+        "onSave"
+      ],
+      "correct": [
+        0,
+        2,
+        3,
+        5
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 4
+    },
+    {
+      "id": "csa-dump5-710dd6285b",
+      "q": "Which type of tables may be extended by other tables, but do not extend another table?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Base Tables",
+        "Core Tables",
+        "Extended Tables",
+        "Custom Tables"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-8c5ea2b175",
+      "q": "Which of the following statement describes the purpose of an Order Guide?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Order Guides restrict the number of items in an order to only one item per request",
+        "Order Guide provide a list of guidelines for Administrators on how to set up item variables",
+        "Order Guide provide the ability to order multiple, related items as one request",
+        "Order Guides take the user directly to the checkout without prompting for information"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-c2f586f969",
+      "q": "Which tool is used to have conversations with logged-in users in real-time?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Connect Chat",
+        "Now Messenger",
+        "User Presence",
+        "Comments"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-9903543fc7",
+      "q": "Which of the following concepts are associated with the ServiceNow CMDB? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Service Processes",
+        "User Permissions",
+        "Tables and Fields",
+        "A Database",
+        "The Dependency View"
+      ],
+      "correct": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "explanation": "A. Service Processes: ServiceNow CMDB helps in managing service processes by providing visibility into the configuration items (CIs) that support these processes. The support information of each service offering is stored in CI. C. Tables and Fields: In ServiceNow, the CMDB is represented by tables and fields that store information about configuration items (CIs) and their attributes. D. A Database: The ServiceNow CMDB is essentially a database that stores configuration item (CI) data and relationships between CIs. E. The Dependency View: The Dependency View in ServiceNow CMDB provides a graphical representation of the relationships and dependencies between configuration items (CIs).",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 4
+    },
+    {
+      "id": "csa-dump5-7d40fef69a",
+      "q": "What is a formatter? Select one of the following.",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A formatter allows you to configure applications on your instance",
+        "A formatter is a form element used to display information that is not a field in the record",
+        "A formatter allows you to populate fields automatically",
+        "A formatter is a set of conditions applied to a table to help find and work with data"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "https://docs.servicenow.com/bundle/vancouver-platform-administration/page/administer/form- administration/concept/c_Formatters.html",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-7db29bc3f1",
+      "q": "When searching using the App Navigator search field, what can be returned? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Names of Applications and Modules",
+        "Names of Modules",
+        "Names of Applications",
+        "Favorites",
+        "History Records",
+        "Titles of Dashboard Gauges"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 4,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-298b10a747",
+      "q": "Which technique is used to get information from a series of referenced fields from different tables?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Table-Walking",
+        "Sys_ID Pulling",
+        "Dot-Walking",
+        "Record-Hopping"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-15bbaa610e",
+      "q": "What is a schema map?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A schema map enables administrators to define records from specific tables as trouble sources for Configuration Items",
+        "A schema map graphically organizes the visual task boards for the CMDB",
+        "A schema map graphically displays the Configuration Items that support a business service",
+        "A schema map displays the details of tables and their relationships in a visual manner, allowing administrators to view and easily access different parts of the database schema"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-f30d40619e",
+      "q": "Which one of the following statements best describes the purpose of an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "An Update Set allows administrators to group a series of changes into a named set and then move this set as a unit to other systems",
+        "By default, an Update Set includes customizations, Business Rules, and homepages",
+        "An Update Set is a group of customizations that is moved from Production to Development",
+        "By default, the changes included in an Update Set are visible only in the instance to which they are applied"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-8270924e29",
+      "q": "Which of the following can be customized through the Basic Configuration UI 16 module? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Banner Image",
+        "Record Number Format",
+        "Browser Tab Title",
+        "System Date Format",
+        "Form Header Size"
+      ],
+      "correct": [
+        0,
+        2,
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-b29797af10",
+      "q": "What is the function of user impersonation?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Testing and visibility",
+        "Activate verbose logging",
+        "View custom perspectives",
+        "Unlock Application master list"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-261355d720",
+      "q": "What information does the System Dictionary contain?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "The human-readable labels and language settings",
+        "The definition for each table and column",
+        "The information on how tables relate to each other",
+        "The language dictionary used for spell checking"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-0c7e8bdf32",
+      "q": "When working on a form, what is the difference between Insert and Update operations?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Insert creates a new record and Update saves changes, both remain on the form",
+        "Insert creates a new record and Update saves changes, both exit the form",
+        "Insert saves changes and exits the form, Update saves changes and remains on the form",
+        "Insert saves changes and remains on the form, Update saves changes and exits the form"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-7cf1c8c040",
+      "q": "How is the Event Log different from the Event Registry?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Event Log contains generated Events, the Event Registry is a table of Event definitions",
+        "Event Log is formatted in the Log style, the Event Registry displays different fields",
+        "Event Log lists Events that were triggered by integrations, the Event Registry lists the Events that were triggered during the day (24-hour period)",
+        "Event Log is the same as the Event Registry"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-d8610b1ff1",
+      "q": "What is a Dictionary Override?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Dictionary Override is an incoming customer update in an Update Set which applies to the same objects as a newer local customer update",
+        "A Dictionary Override is the addition, modification, or removal of anything that could have an effect on IT services",
+        "A Dictionary Override is a task within a flow that requests an action before the flow can continue",
+        "A Dictionary Override sets field properties in extended tables"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-7a3ea26b23",
+      "q": "Which group of permissions is used to control Application and Module access?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Access Control Rules",
+        "UI Policies",
+        "Roles",
+        "Assignment Rules"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-ef95478930",
+      "q": "What is a Record Producer?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Record Producer is a type of Catalog Item that is used for Requests, not Services",
+        "A Record Producer creates user records",
+        "A Record Producer is a type of Catalog Item that provides easy ordering by bundling requests",
+        "A Record Producer is a type of a Catalog Item that allows users to create task-based records from the Service Catalog"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-2116840141",
+      "q": "Create Incident, Password Reset, and Report outage: what do these services in the Service Catalog have in common?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "They direct the user to a record producer",
+        "They direct the user to a catalog property",
+        "They direct the user to a catalog UI policy",
+        "They direct the user to a catalog client script"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-f3f763c1d8",
+      "q": "What is the Import Set Table?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A table where data will be placed, post-transformation",
+        "A table that determines relationships",
+        "A staging area for imported records",
+        "A repository for Update Set information"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-22f6a7e249",
+      "q": "What is a characteristic of importing data into ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "An existing Transform Map can be used one time on the same import set",
+        "Coalesce fields are used only after running Transform",
+        "Any user can manage and set up import sets",
+        "An existing Transform Map can be used multiple times on the same import set"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-950b6dfea6",
+      "q": "What module in the Service Catalog application does an Administrator access to begin creating a new item?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Maintain Categories",
+        "Maintain Items",
+        "Content Items",
+        "Items"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-aad09f3e3b",
+      "q": "Which of the following allows a user to edit field values in a list without opening the form?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Data Editor",
+        "Edit Menu",
+        "List Editor",
+        "Form Designer"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-12a61ac233",
+      "q": "Which three Variable Types can be added to a Service Catalog Item?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "True/False, Multiple Choice, and Ordered",
+        "True/False, Checkbox, and Number List",
+        "Number List, Single Line Text, and Reference",
+        "Multiple Choice, Select Box, and Checkbox"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-689afc3bce",
+      "q": "How are Workflows moved between instances?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Workflows are moved using Update Sets",
+        "Workflows are moved using Transform Maps",
+        "Workflows are moved using Application Sets",
+        "Workflows cannot be moved between instances"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Workflows are tracked customizations and move between instances via Update Sets.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-059f9cf272",
+      "q": "The baseline Service Catalog homepage contains links to which of the following components?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Record Producers, Order Guides, and Catalog Items",
+        "Order Guides, Item Variables, and flows",
+        "Order Guides, Catalog Items, and flows",
+        "Record Producers, Order Guides, and Item Variables"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-82b57b630d",
+      "q": "Which of the following statements is true when a new table is created by extending another table?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "The new table archives the parent table and assumed its roles in the database",
+        "The new table inherits all of the Business Rules, Client Scripts, and UI Policies of the parent table, but none of the existing fields",
+        "The new table inherits all of the fields of the parent table and can also contain new fields unique to itself",
+        "The new table inherits all of the fields, but does not inherit Access Control rules, Client Scripts, and UI Policies of the parent table"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-1ddd20caa3",
+      "q": "Where can Admins check which release is running on an ServiceNow instance?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Memory Stats module",
+        "Stats module",
+        "System.upgraded table",
+        "Transactions log"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Admins navigate to stats.do (often labeled the 'Stats' page) to see the build and release information for the instance.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-3a27b63e55",
+      "q": "A knowledge article must be which of the following states to display to a user?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Published",
+        "Drafted",
+        "Retired",
+        "Reviewed"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-74710a3669",
+      "q": "What is the name of the conversational bot platform that provides assistance to help users obtain information, make decisions, and perform common tasks?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Answer Agent",
+        "live Feed",
+        "Virtual Agent",
+        "Connect Chat"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-be9b323b99",
+      "q": "What is the purpose of a Related List?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "To create a one-to-many relationship",
+        "To dot-walk to a core table",
+        "To present related fields",
+        "To present related records"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-85654524a6",
+      "q": "Which one of the following statements describes the purpose of a Service Catalog flow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Service Catalog flow generates three basic components: item variable types, tasks, and approvals",
+        "Although a Service Catalog flow cannot send notifications, the flow drives complex fulfillment processes",
+        "A Service Catalog flow is used to drive complex fulfillment processes and sends notifications to defined users or groups",
+        "A Service Catalog flow generates three basic components: item variable types, tasks, and notifications"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-d26db4f57d",
+      "q": "Which term best describes something that is created, has worked performed upon it, and is eventually moved to a state of closed?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "report",
+        "flow",
+        "event",
+        "task"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-00b0163746",
+      "q": "Which are valid Service Now User Authentication Methods? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "XML feed",
+        "Local database",
+        "LDAP",
+        "SSO",
+        "FTP authentication"
+      ],
+      "correct": [
+        1,
+        2,
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-140cac6bd6",
+      "q": "Access Control rules may be defined with which of the following permission requirements? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Roles",
+        "Conditional Expressions",
+        "Assignment Rules",
+        "Scripts",
+        "User Criteria",
+        "Groups"
+      ],
+      "correct": [
+        0,
+        1,
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-d1316574ee",
+      "q": "Which section of the ServiceNow UI allows you to perform a global search?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Application Navigator",
+        "Banner frame",
+        "List pane",
+        "Content frame"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-71764d4f24",
+      "q": "How do you make a list filter available to everyone?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Make active, assign a name, and save",
+        "Assign a group, set visibility, and save",
+        "Assign a name, set visibility, and save",
+        "Make active, set visibility, and save"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-14ff5fb4db",
+      "q": "What would NOT appear in the Application Navigator if “service” is typed into the filter field?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Configuration > Business Services",
+        "Self-Service > Knowledge",
+        "Service Portal > Widgets",
+        "Incident > Assigned to me"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-a284790bee",
+      "q": "Which of the following is used to categorize, flag, and locate records?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Search",
+        "Favorites",
+        "Tags",
+        "Bookmarks"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-04121dd6ca",
+      "q": "Which tool should be used to populate commonly used fields in a form?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Template",
+        "Reference Qualifier",
+        "Formatter",
+        "Assignment Rule"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-ff43231980",
+      "q": "How is a group defined in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A group is one record stored in the Group Type [sys_user_group_type] table",
+        "A group is one record stored in the Group [sys_user_group] table",
+        "A group defines a set of users that share the same location",
+        "A group defines a set of users that share the same job title"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-ba6ca7b823",
+      "q": "What is a role in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A role is one record in the Role [user_sys_role] table",
+        "A role is a set of modules for a particular application",
+        "A role is one record in the Role [sys_user_role] table",
+        "A role is a persona used in Live Feed Chat"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-2bb0dff9cb",
+      "q": "What is a Notification?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A new Knowledge article created by a Business Rule",
+        "A tool for alerting users that events that concern them have occurred",
+        "A message through Connect related to a Change Request",
+        "An email file attachment"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-096134df06",
+      "q": "Which one of the following is NOT a type of Visual Task Board?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Flexible data drivren",
+        "Freeform",
+        "Feature",
+        "Guided boards"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-1c5f0ffe71",
+      "q": "What is (are) best practice(s) regarding users/groups/roles? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "You should never assign roles to groups.",
+        "You should assign roles to users.",
+        "You should add users to groups.",
+        "You should assign roles to groups."
+      ],
+      "correct": [
+        2,
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump5-7fa26f381e",
+      "q": "What are two ways to generate an Event? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Business Rule",
+        "Workflow",
+        "Log entry",
+        "Knowledge article publication"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump5-7baf3a8f22",
+      "q": "Which core table in the ServiceNow platform provides a series of standard fields used on each of the tables that extend it, such as the Incident [incident] and Problem [problem] tables?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Task [task]",
+        "Assignment [assignment]",
+        "Service [service]",
+        "Workflow [workflow]"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-0784471c9d",
+      "q": "Which of the following statements describes how data is organized in a table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A column is a field in the database and a record is one user",
+        "A column is one field and a record is one row",
+        "A column is one field and a record is one column",
+        "A column contains data from one user and a record is one set of fields"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "A column represents one field in the table and a record represents one row (one set of field values). The dump's original key (A) describes a record as 'one user', which is incorrect.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-f4fafd196f",
+      "q": "What is a sys_id?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Unique 32-character identifier that is assigned to every record",
+        "A client-side Business Rule",
+        "A server-side Business Rule",
+        "Unique 64-character identifier that is assigned to every record"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-009c299d0e",
+      "q": "When creating a global custom table named “abc”, what is the table name that is automatically assigned by the platform?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "snc_abc",
+        "abc",
+        "u_abc",
+        "sys_abc"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-84d4401307",
+      "q": "Access Control rules may provide access security for which of the following database objects?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "For a specific role, group, or user",
+        "For a specific row, column, or table",
+        "For specific groups",
+        "For a specific CMDB Configuration item"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-e2180e1b31",
+      "q": "What is the primary application used to load data into ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Service Level Management",
+        "Configuration",
+        "System Import Sets",
+        "System Update Sets"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-eaff81a7e6",
+      "q": "Which of the following steps can be used to import new data into ServiceNow from a spreadsheet?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Select Data Source, Schedule Transform",
+        "Load Data, Create Transform Map, Run Transform",
+        "Define Data Source, Select Transform Map, Run Transform",
+        "Select Import Set, Select Transform Map, Run Transform"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-3024780250",
+      "q": "Which tool is used for creating dependencies between configuration items in the CMDB?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "CI Relationship Editor",
+        "CMDB Builder",
+        "CI Service Manager",
+        "Cl Class Manager"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-9542c43da7",
+      "q": "What is the difference between a UI Policy and Data Policy?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Data Policies run when data is entered through the form, by an Import Set, or by web services, while UI Policies are set only by web services",
+        "Data Policies can be converted into UI Policies, but UI Policies cannot be converted into Data Policies",
+        "Data Policies run regardless of how data is entered into ServiceNow, while UI Policies are used for form interactions",
+        "Data Policies run only after UI Policies run successfully"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-36146118c1",
+      "q": "Which one of the following is an accurate list of changes that are captured in an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Changes made to: tables, forms, schedules, and client scripts",
+        "Changes made to: tables, forms, Business Rules, and data records",
+        "Changes made to: tables, forms, groups, and configuration items (CIs)",
+        "Changes made to: table, forms, views, and fields"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-9abc9765e4",
+      "q": "What are the steps to retrieve an Update Set?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Verify Update Set is Complete, Retrieve, Preview, Apply",
+        "Verify Update Set is Complete, Test Connection, Apply",
+        "Verify Update Set is Complete, Test Connection, Commit",
+        "Verify Update Set is Complete, Retrieve, Preview, Commit"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-8e417807f3",
+      "q": "IntegrationHub enables execution of third-party APIs as a part of a flow. These integrations are referred to as ?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "an action",
+        "a spoke",
+        "a connection",
+        "an integration step"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-e7ca288c80",
+      "q": "Which of the following protects applications by identifying and restricting access to available files and data?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Application Configuration",
+        "Verbose Log",
+        "Access Control Rules",
+        "Application Scope"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-008732acb0",
+      "q": "Which one statement correctly describes Access Control rule evaluation?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Table access rules are evaluated from the general to the specific",
+        "If more than one rule applies to a record, the older rule is evaluated first",
+        "If a row level rule and a field level rule exist, both rules must be true before an operation is allowed",
+        "The role with the most permissions evaluates the rules first."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-897dceaac2",
+      "q": "ServiceNow contains a resource which provides the following: 1. A standard and shared set of service related definitions across ServiceNow products and platform that will enable and support true service level reporting. 2. A CMDB framework across our products and platform that will enable and support multiple configuration strategies. What resource do these statements describe?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Common Services Data Model (CSDM)",
+        "Information Technology Service Management (ITSM)",
+        "Configuration Management Database (CMDB)",
+        "Information Technology Infrastructure Library (ITIL)"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-b3fcc78c26",
+      "q": "An IT manager is responsible for the Network and Hardware assignment groups, each group contains 5 team members. These team members are working on many tasks, but the manager cannot see any tasks on the Service Desk > My Groups Work list. What could explain this?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "The Service Desk > My Groups Work list shows active work tasks that are not yet assigned.",
+        "The manager does not have the itil role.",
+        "The manager is not a member of the Service Desk group.",
+        "The manager is not a member of the Network and Hardware groups.",
+        "The Assignment Group manager field is empty."
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-b1b3aa5c97",
+      "q": "What do you need to do before you can use an Application-based trigger in your flow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Activate application trigger spoke",
+        "Activate trigger security rules",
+        "Activate application spoke, and plug-ins as needed",
+        "Assign Application trigger role [sn_app_trigger_write] to SME",
+        "Activate application plugins only"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-23bc7b0dcf",
+      "q": "The ServiceNow platform includes which types of interfaces? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Now Mobile Apps",
+        "Agent Control Center",
+        "Back Office Dashboard",
+        "Service Portals",
+        "Now Platform® User Interfaces",
+        "Field Service Taskboard"
+      ],
+      "correct": [
+        0,
+        3,
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-c6c88c709b",
+      "q": "Which of the following are not included in an Update Set, by default? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Homepages",
+        "Data",
+        "Published Workflows",
+        "Business Rules",
+        "Schedules",
+        "Database changes",
+        "Related Lists",
+        "Report Definitions",
+        "Scheduled Jobs",
+        "Client Scripts",
+        "Views"
+      ],
+      "correct": [
+        1,
+        4,
+        5,
+        8
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 4,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-a9c584f617",
+      "q": "You are showing your customer a new form that you have created for their new application. They would like to add a field to the form. Where could you do that? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Select Fields and Columns module",
+        "Right click on form header, select Configure > Form Layout",
+        "Click on context menu, select Configure > Form Designer",
+        "Select Field Class Manager module"
+      ],
+      "correct": [
+        1,
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump5-6e73051ea6",
+      "q": "Which ServiceNow resource is a framework that ensures the data your ServiceNow application requires maps correctly to the appropriate CMDB tables?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Common Service Data Model (CSDM)",
+        "Service Mapping Utility (SMU)",
+        "Service Schema Map (SSM)",
+        "CMDB Class Manager (CMDBCM)",
+        "CI Class Manager (CICM)"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-65c140ef9e",
+      "q": "What do you activate when you want to add applications or functionality within your development instance?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "App Package",
+        "Updated Pack",
+        "Patch",
+        "Plugin",
+        "App Updated Set"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-50a512c806",
+      "q": "What field contains a record’s 32-character, unique identifier?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "sn_rec_id",
+        "rec_id",
+        "u_id",
+        "sys_id",
+        "sn_gu_id",
+        "sn_sys_id",
+        "id"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-788c30aca6",
+      "q": "Your company is giving all first line workers a special T-shirt as a recognition for their hard work. Management team wants a way for employees to order the T-shirt, with the ability to specify the preferred size and color. How would you ensure that only first line workers (non-managers) can submit the order?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Create Record Producer and use the Available For list to specify First Line [sn_first_line] role",
+        "Create Catalog Item and use the Not Available list to specify the Manager Group",
+        "Create Catalog Item and use the Available For list to specify ITIL [itil] role",
+        "Create Order Guide and use the User Criteria list to specify First Line [sn_first_line] role"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-a73349e5cb",
+      "q": "What is used frequently to move customizations from one instance to another?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Update Sets",
+        "Code Sets",
+        "Update Packs",
+        "Configuration Logs",
+        "Remote Sets",
+        "Local Sets",
+        "Code Packs"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-01c2c3a6c2",
+      "q": "What icon do you use to change the label on a Favorite?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Clock",
+        "Hamburger",
+        "Pencil",
+        "Three dots",
+        "Triangle.",
+        "Star"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-f79493b369",
+      "q": "What needs to be specified, when creating a Business Rule? (Choose four.)?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "UI action",
+        "Table",
+        "Fields to update",
+        "Who can run / When to run",
+        "Script to run (optional)",
+        "Application scope (auto-filled)",
+        "Update set",
+        "Timing",
+        "Condition to evaluate"
+      ],
+      "correct": [
+        1,
+        2,
+        7,
+        8
+      ],
+      "explanation": "Source dump's answer key is internally inconsistent (annotations contradict the letters). Kept as-is for parity with the dump but flagged for review.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 4,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-9c44e9ce39",
+      "q": "What feature can track the amount of time that a task has been open, to ensure that tasks are completed within an allotted time?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Task Escalation Clock",
+        "Service Level Agreements",
+        "Inactivity Monitor",
+        "Response Time Clock",
+        "Business Time Remaining"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-6ed19871a2",
+      "q": "What is a quick way to create a report from a list view?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Click on filter breadcrumb, drag and drop on the Report > Create New module",
+        "Click Funnel, define filter conditions, click Create Report",
+        "Click Context Menu, select Create Report",
+        "Apply filter, right click on column header, select Bar Chart",
+        "Apply filter, right click on column header, select Create Report"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-55d9873062",
+      "q": "What import utility do you use when the field names on the import set match the name of the fields on the Target table?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Schema Mapping",
+        "Automatic Mapping",
+        "Mapping Assist",
+        "Mapping Dashboard"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-b13ea2c6c4",
+      "q": "As an IT employee what interface would you use, if you wanted to browse internal IT documentation, like troubleshooting scripts and FAQs?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Knowledge",
+        "ServiceNow Wiki",
+        "Knowledge Now",
+        "SharePoint",
+        "Stack Overflow"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-491c882a42",
+      "q": "A new Service Desk employee in Latin America complains that the create dates and times are incorrect on their Incident list. What would you suggest to fix this issue?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Have them clear their cache.",
+        "Have them use the gear icon to set the employee’s time zone.",
+        "Recommend they use Chrome, instead of Explorer.",
+        "Use the system properties to correct the instance’s time zone.",
+        "Have them correct the time zone on their computer."
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Time zone is a per-user setting; the user should set it from the gear/user preferences. The instance time zone must not be changed for a single user.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-294e879557",
+      "q": "What are three security modules often used by the System Administrator? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "System Properties > Security",
+        "Utilities > Migrate Security",
+        "System Security > Security",
+        "Self-Service > My Access",
+        "System Security > Access Control (ACL)",
+        "Password Management > Security Questions",
+        "System Security > High Security Settings"
+      ],
+      "correct": [
+        0,
+        4,
+        6
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-409c0fa7e5",
+      "q": "When testing a catalog item, having a manager approval flows, which of these best practices would you follow? (Choose three.) ?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Make sure the latest flows are activated.",
+        "Use the instance Incognito setting to quickly toggle between requester and approver.",
+        "Impersonate the requester to ensure the form works.",
+        "Make sure the requester's user record has a manager specified.",
+        "Create and select your Testing Update Set, before starting the test cases.",
+        "Use your Admin account, so you can approve the items quickly."
+      ],
+      "correct": [
+        3,
+        4,
+        5
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-0983a52185",
+      "q": "What is a no-code approach to control the mandatory or read-only state of a form field?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "UI Action",
+        "Client Script",
+        "UI Script",
+        "UI RuIe",
+        "UI Policy"
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-0d92ea45c5",
+      "q": "When moving multiple update sets at one time, what might you do to facilitate the move?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Batch",
+        "Verify",
+        "Test",
+        "Preview"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-12565e2a5b",
+      "q": "What is specified in an Access Control rule?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Groups, Conditional Expressions and Workflows",
+        "Table Schema, CRUD, and User Authentication",
+        "Object and Operation being secured; Permissions required to access the object",
+        "security_admin"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-94f10ae315",
+      "q": "Which icon would you double click, to expand and collapse the list of all Applications and Modules?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Star",
+        "Clock",
+        "Application",
+        "Funnel"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-303be6573a",
+      "q": "What do you call any component that needs to be managed in order to deliver services?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "CSDM Items",
+        "CMDB",
+        "Configuration item",
+        "Service Offerings",
+        "Asset"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-6bd15cb409",
+      "q": "A new service catalog item is being developed, but should only be visible to managers inside the HR Department. What method would you use to fulfill this requirement?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Specify the Dept_Mgr role on the catalog content block",
+        "Add the Department Manager group to the catalog item’s user criteria",
+        "Add the Department Manager group to the catalog item’s ACL",
+        "Only publish the item in the HR service catalog",
+        "Use a Dept_Mgr ACL on the HR service catalog"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-17766cb464",
+      "q": "A user wants to create a set of filter conditions, where they want to show records which satisfy two conditions: Incidents where the state is Closed, Incidents where Assignment Group is Network, After clicking the Funnel icon, what should the user do?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Define the first condition; click AND button; define second condition; click Run",
+        "Define the first condition; click AND button; define second condition; press enter",
+        "Define the first condition; click OR button; define second condition; press enter",
+        "Define the first condition; click > icon on breadcrumb, define second condition; click Run",
+        "Define the first condition; click > icon on breadcrumb, define second condition; press enter"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-24c974034d",
+      "q": "Access Control rules are applied to a specific table, like the Incident table. What is the object name for a rule that is specific to the Incident table and the Major Incident field?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Incident.Major_Incident",
+        "incident=>major_incident",
+        "incident<=>major_incident",
+        "incident||major_incident",
+        "incident.major_incident"
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-dfd3901623",
+      "q": "Two departments (HR Onboarding and Facilities) have come to you, asking for a way for employees to request event room set up services. The requirements are the same for the form and the task routing to the Facilities’ assignment group. For HR, the item will be used primarily for the Onboarding coordinators, for employee orientation sessions. For Facilities, the item will be used for anyone in the company who needs room set up services. However, both departments have their own service catalogs. What do you do, to support these requirements?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Create one Catalog Item for HR Event Room Set Up and one for Facilities Event Room Set Up; then publish each to the appropriate Catalog.",
+        "Create one Catalog Item for Event Room Set Up; then publish to both Catalogs.",
+        "Create one Catalog Item for Event Room Set Up; then publish to the Parent Catalog, which is accessible to both HR and Facilities.",
+        "Create one Catalog Item for Event Room Set Up; then use ACLs to control access."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "the catalog item can be associated with more than one catalog. Open a catalog item, scroll to the bottom reference list, select Catalog tab, add multiple catalog references.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-727a7b75a6",
+      "q": "After finishing your work on High Security Settings, what do you do to return to normal admin security levels?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Select Normal role",
+        "Log out and back in",
+        "Use System Administration > Normal Security module",
+        "Select Global Update Set",
+        "End Impersonation"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-e4949c4f09",
+      "q": "What type of field allows you to look up values from one other table?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Reference",
+        "Verity",
+        "Options",
+        "Selections",
+        "Dot walk",
+        "Lookup"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-d5ad7bd997",
+      "q": "Which module would you use to create a new automation of business logic such as approvals, tasks, and notifications?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Process Automation > Flow Designer",
+        "Process Automation > Flow Administration",
+        "Process Automation > Workflow Editor",
+        "Process Automation > Process Flow",
+        "Process Automation > Active Flows"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-b52c5ecb12",
+      "q": "A department manager asks an analyst to build some reports. Where do you recommend the analyst start?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Report Dashboard > Create New",
+        "Reports > Getting Started",
+        "Performance Analytics > Reports",
+        "Self-Service > Reports",
+        "Reports > Create New"
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-bebdf04863",
+      "q": "What are the steps for applying an update set to an instance?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Retrieve, Preview, Commit",
+        "Specify, Transform, Apply",
+        "Retrieve, Assess, Apply",
+        "Get, Test, Push",
+        "Pull, Review, Push"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-7e7d401afb",
+      "q": "When importing spreadsheet data into ServiceNow, in which step does the data get written to the receiving table?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Run Transform",
+        "Run Import",
+        "Import Dataset",
+        "Execute Transform",
+        "Schedule Transform"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-5875287e27",
+      "q": "What would you do, on a list, if you wanted to show the records in groups, based on the column category? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "On list Context Menu, select Group By > Category",
+        "On the Filter Menu, select Group By > Category",
+        "Click Group On icon, select Category",
+        "On Navigator Filter, type tablename.group.category and press enter",
+        "On the Category column title, click Context menu > Group By Category"
+      ],
+      "correct": [
+        0,
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-307adac14d",
+      "q": "Which collaboration tool is available from the banner, using the bubble icon?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Now Messenger",
+        "Agent Chat",
+        "Connect Chat",
+        "Collaborate Now",
+        "Live Feed"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-e257dbc001",
+      "q": "On the knowledge base record, which tab would you use to define which users are not able to write articles to the knowledge base?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Can Contribute",
+        "Cannot Author",
+        "Cannot Contribute",
+        "Cannot Write",
+        "Read Only"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-aaf26f9b3f",
+      "q": "Which features allow you to update multiple records at one time? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "List Editor",
+        "Field Update Action",
+        "Bulk Record Update",
+        "Data Remediation Dashboard",
+        "Update Selected Action"
+      ],
+      "correct": [
+        0,
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-2a133605d7",
+      "q": "Categories in the knowledge base, by default, can be created and edited by which knowledge workers? (Choose two.) ?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Knowledge Authors",
+        "Knowledge Contributors",
+        "Knowledge Controller",
+        "Knowledge Managers",
+        "Knowledge Category Managers",
+        "Knowledge Submitters",
+        "Knowledge Owners",
+        "Knowledge Taxonomy Owner"
+      ],
+      "correct": [
+        1,
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-5821a30e91",
+      "q": "Which collaboration tool opens a sidebar and allows you to create new conversations with other ServiceNow users?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Skype Now",
+        "Collaborate Now",
+        "Agent Messenger",
+        "Agent Chat",
+        "Connect Chat"
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-d55ccca4f3",
+      "q": "What module would you use if you wanted to view a list of all of the fields on the Incident table? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Tables & Columns",
+        "Dictionary",
+        "Data Class Manager",
+        "Dictionary Dashboard",
+        "Database View",
+        "Schema"
+      ],
+      "correct": [
+        0,
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump5-98400925e2",
+      "q": "What component causes a flow to run after a record has been created or updated?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Date-based trigger",
+        "On-change trigger",
+        "Record-based trigger",
+        "Application-based trigger",
+        "Updated-date trigger"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Record-based triggers cause a flow to run after a record is created or updated. There is no 'Updated-date trigger' in Flow Designer.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-604aec5120",
+      "q": "What type of field is Boolean and appears as a check box?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Yes/No",
+        "True/False",
+        "On/Off",
+        "Binary",
+        "0/1"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-34d6ef6627",
+      "q": "Which module is used to access the knowledge bases which are available to you?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Knowledge > Home",
+        "Self Service > Knowledge",
+        "Knowledge > All",
+        "Knowledge > Knowledge Bases",
+        "Knowledge > Overview"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-35559fea9e",
+      "q": "A customer requests the following data quality measures be added: Incident numbers should be read only, on all lists and forms, for all users. Short Description field should be mandatory, on all records, across all applications, on Insert. Which type of policy would you use to meet this requirement?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Data Quality Policy",
+        "Dictionary Design Policy",
+        "UI Data Policy",
+        "UI Policy",
+        "Field Criteria Policy",
+        "Data Policy"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-e5d343e10b",
+      "q": "What type of user (persona) has clearly defined paths and workflows in the platform and have one or more roles (ie itil and approver_user)?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Workflow User",
+        "Request Fulfiller",
+        "ITSM User",
+        "Approving Manager",
+        "Service Desk User",
+        "Process User"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-4ee6a4d59d",
+      "q": "Which module would you use to customize your instances banner image, text and colors?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "System UI > UI Pages > Branding",
+        "Service Portal > Portals > Branding",
+        "System Properties > Basic Configuration UI16",
+        "System Properties > Branding",
+        "Homepage Admin > Pages > Branding"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-24f5bbb124",
+      "q": "Which database provides a logical model of your company infrastructure by identifying, controlling, maintaining and verifying CIs that exist?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "IMDB",
+        "ITSM",
+        "CSDM",
+        "CMDB",
+        "LDAP"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-72427629ec",
+      "q": "Which module is used as the first step for importing data?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Coalesce Data",
+        "Transform Data",
+        "Import Data",
+        "Load Data"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-adc4827e58",
+      "q": "When you need to orchestrate business processes across services with little technical user knowledge, which utility would you use?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Flow Manager",
+        "Flow Designer",
+        "Flow Editor",
+        "Workflow Editor",
+        "Workflow Designer"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-62163640ac",
+      "q": "When a user reports that they are not able to see modules on the application navigator, what can you do, to see what modules are visible to them?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Look up their password, so you can login with their account",
+        "Initiate a Connect Chat session",
+        "Install the Bomgar plug-in",
+        "Impersonate the user",
+        "Launch a NowChat window"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Use Impersonate to see the platform exactly as the affected user does. This is the standard admin debugging path; Connect Chat does not show what modules are rendered for the user.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-4cae693272",
+      "q": "What is a key difference between Reporting and Performance Analytics?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Performance Analytics contains snapshots of data taken over time; Reporting shows only the data as it is, at the moment the report is run.",
+        "Performance Analytics can show trends; Reports cannot.",
+        "Reports can be run on a scheduled basis; Performance Analytics cannot.",
+        "Performance Analytics data can be published to Dashboards; Reports cannot.",
+        "Performance Analytics shows KPIs; Reporting does not."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-4333db98ee",
+      "q": "While showing a customer their incident form, they ask to change the Priority values to display their internal terminology P1, P2, P3, P4. They want it to be consistent across all Tasks. How would you do that? Right click on Priority and select what?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Configure Lists",
+        "Show Options",
+        "Configure Task",
+        "Show Choices",
+        "Show Choice List",
+        "Configure Options"
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-5fd255f5dd",
+      "q": "Your customer would like to create a new template to notify users who are affected by network outages at their site. Which module would you use to create a new notification?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "System Notification > Email > Notifications",
+        "Administration > Notification Overview",
+        "System Properties > Email > Settings",
+        "User Preferences > Email > Notifications",
+        "Click Gear > Notifications > New"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-8eae2fcd72",
+      "q": "When designing a flow, how do you reference data from a record, in that flow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Drag the table icon onto the flow definition",
+        "Use the condition builder to specify the desired values",
+        "Specify the source table on the data pill related list",
+        "Drag the data pill onto the flow definition",
+        "Add the table reference using the slush bucket"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-441e77f51e",
+      "q": "On the Reports page, what sections allow you to see which reports are visible to different audiences? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Group",
+        "Department",
+        "My reports",
+        "Team",
+        "Dashboards",
+        "Global",
+        "Admin",
+        "Analytics",
+        "All",
+        "Company"
+      ],
+      "correct": [
+        0,
+        2,
+        5,
+        8
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 4
+    },
+    {
+      "id": "csa-dump5-cc057407c9",
+      "q": "Which tool is used to define relationships between fields in an import set table and a target table?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Transform Schema",
+        "Schema Map",
+        "Dictionary Map",
+        "Transform Map",
+        "Field Transformer",
+        "Import Designer"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-59eef15194",
+      "q": "Which ServiceNow capability provides assistance to help users obtain information, make decisions, and perform common work tasks via a messaging interface?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Agent Workspace",
+        "Chat bot",
+        "Virtual Agent",
+        "Knowledge Chat",
+        "Now Support"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-85b2ebc345",
+      "q": "Which feature allows you to automate business logic for a particular application or process such as approvals, tasks notifications, and record operations?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Flows",
+        "Action Sequences",
+        "Action Sets",
+        "Task Flows",
+        "Flow Diagrams"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-a3f6235e72",
+      "q": "From a form, what would you click to add additional fields to the form? (Choose two.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Context Menu > Form > Layout",
+        "Context Menu > Configure > Form Layout",
+        "Context Menu > Configure > Form Design",
+        "Right click on header > Add > Field",
+        "Context Menu > Form > Designer",
+        "Right click on header > Configure > UX Dashboard"
+      ],
+      "correct": [
+        1,
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-5c45ed18be",
+      "q": "What is the name of the table relationship, where two or more tables are related in a bi-directional relationship, so that the related records are visible from both tables in a related list?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Database View",
+        "Many to Many",
+        "One to Many",
+        "Extended"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-c06c9d9716",
+      "q": "On a Form header, what is the three bar icon called?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Pancake icon",
+        "Additional Actions or Context Menu",
+        "Hamburger icon",
+        "Cake icon"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-a3018688b6",
+      "q": "Group records are stored in which table?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Group [sn_user_group]",
+        "Group [sys_user_group]",
+        "Group [s_sys_group]",
+        "Group [u_sys_group]"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-a97a335ec9",
+      "q": "What function do you use to add buttons, links, and context menu items on forms and lists?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "UI Policies",
+        "UI Settings",
+        "UI Actions",
+        "UI Config"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-53a30c443f",
+      "q": "On a Business Rule, the When setting determines at what point the rule executes. What are the options for specifying that timing?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Before, After, Async, Display",
+        "Prior to, Synchronous, on Update",
+        "Insert, Update, Delete, Query",
+        "Before, Synchronous, Scheduled Job, View"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-08bd81636a",
+      "q": "What are different types of Data Sources, which may be imported into ServiceNow? (Choose four.) ?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Local Sources (i.e. XML, CSV, Excel)",
+        "Implementation Spoke",
+        "DataHub",
+        "JDBC Connection",
+        "Network Server",
+        "LDAP Connection"
+      ],
+      "correct": [
+        0,
+        3,
+        4,
+        5
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 4,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-dfb3865796",
+      "q": "What are the components that make up a filter condition? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Operator",
+        "Match Criteria",
+        "Value",
+        "Column",
+        "Field"
+      ],
+      "correct": [
+        0,
+        2,
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-520bc058d7",
+      "q": "When impersonating a user for testing purposes, what is the best way to return the instance, logged in with your user account?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Turn your computer off and on again",
+        "Clear browser cache",
+        "End Impersonation",
+        "Log out and back in"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Use the dedicated 'End Impersonation' action from the user menu. Logging out and back in works but is not the 'best' way.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-10da14f6a8",
+      "q": "What controls the publishing and retiring process for knowledge articles?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Approval Policies",
+        "Approval Definitions",
+        "Workflow Designer",
+        "Workflows",
+        "State Lifecycle"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-8986ece380",
+      "q": "What type of query allows you to filter list data using normal words, instead of the condition builder?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Natural Language Query",
+        "Alexa Query",
+        "Machine Learning Query",
+        "Predictive Intelligence Query",
+        "Auto-suggest Query"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-5302a86290",
+      "q": "Tables may have a One to Many relationships. From the Service Catalog, what are examples of tables having a one to many relationships? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "One Approval can have many Requests",
+        "One Request can have many Requested Items",
+        "One Requested Item can have many Approvals",
+        "One Requested Item can have many Catalog Tasks",
+        "One Cart can have many Requests"
+      ],
+      "correct": [
+        1,
+        2,
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-763440d160",
+      "q": "On a filter condition, which component is always a choice list?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Operator",
+        "Filter Criteria",
+        "Operation",
+        "Match Criteria"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-1172239d91",
+      "q": "A Role is defined as what?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A collection of permissions",
+        "A set of user access policies",
+        "A Persona in a workflow",
+        "A set of access control rules"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-c522e8fded",
+      "q": "A user is complaining that they are seeing a blank page, when they click Create New, from your custom Inventory application. You have confirmed that they can see the Inventory application, and the Create New module on the application navigator. What could be the cause of this issue?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Create New module has a broken link",
+        "Known intermittent issue with U115",
+        "User should be using Chrome instead of Explorer for their browser",
+        "User has read role, but not the write role on the Inventory table",
+        "User session has timed out"
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-96904d2d83",
+      "q": "What resource can you use to view details of the tables and configuration items (CIs) associated with a particular use case?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Scenario Dashboard",
+        "CI Use Case Modeler",
+        "CMDB Use Case Modeler",
+        "Common Service Data Model (CSDM) product view"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-84bb7f7298",
+      "q": "A manager wants to view a snapshot of month-end Sales performance data, as compared to Sales targets. In addition, the manager wants to be able to see those monthly numbers trended over time, and forecasted into the future. What capability do you suggest for this manager?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Scheduled Reports, a custom snapshot table, and a Trend report",
+        "Scheduled Reports and Excel",
+        "Scheduled Reports, a custom snapshot table, and a Projection report",
+        "Performance Analytics",
+        "Key Performance Indicators"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-b231331704",
+      "q": "What are advantages of using Flow Designer? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Supports advanced developers",
+        "Enables complicated scripting",
+        "Reduces technical debt",
+        "Less manual scripting",
+        "Smooth integration with 3rd party systems"
+      ],
+      "correct": [
+        2,
+        3,
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-0148d1ea15",
+      "q": "Your customer requires that they be able to monitor which users are performing impersonations in their instance. What would you do to meet that requirement?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Add the role Log Write [sn_log_write] to the Impersonator Group",
+        "Create user update set for impersonation tracking",
+        "Activate the glide.sys.log_impersonation prop",
+        "From User icon, select Elevate Roles",
+        "On the Impersonator role record, right click and select Create Log"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-c2f860f5dd",
+      "q": "When a flow runs an action, it generates a runtime value, which stays the same for the duration of the flow. What is the name of this runtime value?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Trigger runtime value",
+        "Sequence runtime value",
+        "Starting runtime value",
+        "Data pill runtime value",
+        "Input runtime value"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-f2744b0e76",
+      "q": "The wait time for end users is based on the round-trip between the client and the server. What activities are included in the round-trips?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Request + Response",
+        "Save + Update",
+        "Write + Read",
+        "Submit + Query",
+        "Insert + Verify"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-b0409c7b3c",
+      "q": "When importing data, what happens to imported rows, if no coalesce field is specified?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "All rows are rejected from the import, as coalesce field is required.",
+        "All rows are treated as new records. No existing records are updated.",
+        "Duplicate rows are rejected from the import.",
+        "All rows are treated as new records, but errors will be flagged in the import log."
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-b6f3cda372",
+      "q": "What is the most common role that has access to almost all platform features, functions, and data?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Security Admin [security_admin]",
+        "Sys Admin [sys_admin]",
+        "Admin [sn_admin]",
+        "System Administrator [admin]",
+        "Base Admin [base_admin]"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-8d8baaab81",
+      "q": "What feature do you use to specify which users are able to access a Service Catalog Item?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Can Read Role",
+        "Catalog User Role",
+        "Can Order Tab",
+        "User Criteria"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-511fd71bb6",
+      "q": "Which component of a table contains a piece of data for one record?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Factor",
+        "Field",
+        "Datapoint",
+        "Element",
+        "Item"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-8a32ccdf0a",
+      "q": "What type of field has a drop down list, from which you can pick from pre-defined options?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Choice",
+        "Picker",
+        "Drop down",
+        "Option"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-09c7c3b007",
+      "q": "User records are stored in which table?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "User [sys_user]",
+        "User [sn_user]",
+        "User [u_sys_user]",
+        "User [s_user]"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-5e1ee3eb6f",
+      "q": "What ServiceNow feature can be triggered by events, and is used to inform users about activities or updates in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Notifications",
+        "Alerts",
+        "Texts",
+        "Events",
+        "Emails"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-aeeb4631b3",
+      "q": "Which ServiceNow capability allows you to provide knowledge articles, via a conversational messaging interface?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Agent Assist",
+        "Virtual Agent",
+        "Now Messenger",
+        "Connect Agent"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-0ed1e89622",
+      "q": "Which role can manage multiple knowledge bases ?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "knowledge_base_admin",
+        "kb_admin",
+        "sn_kb_admin",
+        "knowledge_admin"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-03b230bc51",
+      "q": "Which statement correctly describes the differences between a Client Script and a Business Rule?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A Client Script executes before a record is loaded and a Business Rule executes after a record is loaded",
+        "A Client Script executes on the server and a Business Rule executes on the client",
+        "A Client Script executes on the client and a Business Rule executes on the server",
+        "A Client Script executes before a record is loaded and a Business Rule executes after a record is updated"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-3385c8f50d",
+      "q": "What are benefits of assigning work tasks to a group, rather than to an individual? (Choose four.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Group members can choose their tasks from My Groups Work",
+        "Groups can assign tasks to users based on on-call schedules",
+        "Site support members can pick tasks, based on Location",
+        "Groups can assign tasks to users based on skills",
+        "Group members can avoid tasks, which are nearing SLA breach",
+        "Groups can assign tasks to users based on availability"
+      ],
+      "correct": [
+        0,
+        1,
+        3,
+        5
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 4
+    },
+    {
+      "id": "csa-dump5-d240cb1c54",
+      "q": "What ServiceNow feature allows you to include data from a secondary related table on a report?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "SQL",
+        "Dot Walking",
+        "Outer Join",
+        "Joins"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-b8f2459248",
+      "q": "What attributes can you manage, using System Properties > Basic Configuration UI16? (Choose five.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Browser tab title",
+        "Module text color",
+        "Preferred browser",
+        "Base theme",
+        "Font style",
+        "Animation style",
+        "Header background color",
+        "Banner Image"
+      ],
+      "correct": [
+        0,
+        1,
+        3,
+        6,
+        7
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 5,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-b140fd0b5e",
+      "q": "Which field (or fields) is used as a unique key during imports?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Match Fields",
+        "Coalesce Fields",
+        "Key Fields",
+        "Sys IDs"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-9de7e51bf6",
+      "q": "You are asked to create an option in the Service Catalog, which will allow a user to click Get Help and describe the issue they are having. These forms should create incident records, which are automatically routed to the Service Desk. Which method would you use?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Create Record Producer",
+        "Create Catalog Item",
+        "Create Order Guide",
+        "Create Content Item"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-acc35487d2",
+      "q": "What is the result of the order in which access controls are evaluated?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Ensures user has access to the fields in a table, before considering their access to the table",
+        "Ensures user can get to work as quickly as possible",
+        "Ensures user has access to the application, before evaluating access to a module within the application",
+        "Ensures user has access to a table, before evaluating access to a field in the table"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-8d691d864a",
+      "q": "Which tool graphically displays an infrastructure view for a configuration item (CI) and its relationship with other CIs?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Schema Map",
+        "Dependency View",
+        "Dependency Map",
+        "Database View"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-c5075ab338",
+      "q": "What are examples of Core tables in the ServiceNow platform?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Configuration, Connect, Chat",
+        "Team, Party, Awards",
+        "User, Task, Incident",
+        "Work, Caller, Timecard"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Task, User, and Configuration Item are the canonical core tables on the platform. Incident extends Task; sys_user holds users; cmdb_ci is the base CI table.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-35d4c49147",
+      "q": "Which tab on the knowledge base record, would you use to identify the sets of users who are able to read articles in that knowledge base?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Access List",
+        "Can Access",
+        "Accessible to",
+        "Can Read"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-bacf7d4e2e",
+      "q": "What are the main components of the Form Design interface? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Field Layout",
+        "Page Header",
+        "Field Navigator",
+        "Field Picker",
+        "Form Layout"
+      ],
+      "correct": [
+        1,
+        2,
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-de4c0b4d74",
+      "q": "What is used to determine user access to knowledge bases or a knowledge article?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "sn_kb_read, sn_article_read",
+        "Privacy Settings",
+        "Read Access Flag",
+        "User Criteria"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-6e919fbcaa",
+      "q": "What are the three key tables in an enterprise CMDB? (Choose three.)",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "cmdb",
+        "sn_cmdb_bak",
+        "cmdb_rel_ci",
+        "sn_cmdb",
+        "cmdb_bak",
+        "cmdb_ci",
+        "sn_cmdb_ci"
+      ],
+      "correct": [
+        0,
+        2,
+        5
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-806cfd7bce",
+      "q": "What is the best practice related to using the Default Update Set for moving customizations between instances?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Merge Default update sets before moving between instances",
+        "Submit Default update set to application repository",
+        "You should not use the Default Update sets for moving between instances",
+        "Keep Default update set to maximum of 20 records, for troubleshooting purposes"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-b929185d22",
+      "q": "On what part of the ServiceNow instance, would you find the option to Impersonate User?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Module",
+        "Content Frame",
+        "Application Navigator",
+        "Banner"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-750867fb5b",
+      "q": "Which application is used primarily to load data into ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Import Hub",
+        "System Import Sets",
+        "Data Import Configuration",
+        "Import Management"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-8a7906a0c3",
+      "q": "If a knowledge base has no access details specified, what users are able to read articles in that knowledge base?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "itil users",
+        "Any user with an article's permalink",
+        "Any active user",
+        "No users",
+        "Users with kb_user role"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-76d5e78461",
+      "q": "Which of the following can you do using the Catalog Builder?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Configure the default value for a question in Catalog Builder.",
+        "Configure the Catalog Builder so catalogue item editors can enter custom details.",
+        "Set the minimum and maximum number of items for an order.",
+        "Administer tables and forms visually from a single user interface.",
+        "Add, remove or update multiple images of a catalogue item.",
+        "Transfer catalogue items published through Catalog Builder using exclusive update sets."
+      ],
+      "correct": [
+        0,
+        1,
+        5
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-a82778b2d4",
+      "q": "How do you enable User Experience Analytics tracking for all Service Portals in a new instance?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It is enabled by default for all Service Portals.",
+        "Manually install plugins for the Service Portals with no tracking.",
+        "Enable tracking capability for individual Service Portals.",
+        "From the Usage Overview dashboard for Service Portal."
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "User Experience Analytics > Properties. It is enables by default, you can disable by going here",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-ec906fedf0",
+      "q": "Cascade-cleanup operations apply when you enable the dependent CIs management feature. However, the recommendation is to apply the same operations to orphan dependent CIs that existed in the CMDB before enabling this feature. What are the reasons for this recommendation?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Because Cascade-cleanup of orphan dependent CIs across the CMDB might take several days to complete.",
+        "To avoid creating a scheduled job that runs nightly to clean up dependent CIs.",
+        "To ensure that the cmdb.dependent.ci.cascade.op.enabled system property is set to false.",
+        "Because Cascade-cleanup operations apply only from when the dependent CIs management is enabled.",
+        "To improve the overall performance and data integrity of the CMDB.",
+        "To avoid manually approving the CMDB Data Manager tasks that dependent CIs management generates."
+      ],
+      "correct": [
+        3,
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump5-a21efca329",
+      "q": "When a flow is triggered using particular methods, roles defined in the flow properties are retrieved, passed during the flow execution, and the flow is run with the roles. Which methods allow administrators to achieve this in Flow Designer?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "flow(String scopedFlowName)",
+        "subflow(String scopedSubflowName)",
+        "quick()",
+        "withRoles()",
+        "asUser()",
+        "run()"
+      ],
+      "correct": [
+        2,
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2,
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-82436e7209",
+      "q": "What can you do with homepages on upgraded instances when the Next Experience UI is enabled?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Convert webpages to homepages",
+        "View existing homepages",
+        "Edit existing homepages",
+        "Create new homepages"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-6813f81c76",
+      "q": "What system property needs to be set to true to activate push notifications for a better assessment- taking experience on the Now Mobile app?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "glide.sg.offline.incremental.silent_push.max_pushes_per_hour",
+        "glide.sg.universal_link_default_view_template",
+        "glide.sg.offline.incremental.silent_push.min_wait_time",
+        "glide.sg.universal_links.enabled"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-a5e4cc6d06",
+      "q": "What rules work with existing Access Control rules (ACLs) to deny access to tables and records that do not match subject attributes?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Data classification",
+        "Data separation",
+        "Data privacy",
+        "Data filtration"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-d05a44c39a",
+      "q": "Which of the following operation is a record-type access control list that restricts access to reports based on a role?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "report_admin",
+        "report_on",
+        "report_view",
+        "report_access"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-401dcd8422",
+      "q": "Administrators can create custom menus to personalise users’ access to applications and modules in the platform. How can they configure this access in the Unified Navigation",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "By department",
+        "By location",
+        "By role",
+        "By group",
+        "By user"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-cad308f2fd",
+      "q": "What feature allows you to use simple natural language queries in a search string to query for a set of CIs in the CMDB?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Multisource CMDB",
+        "Conditional Search",
+        "CMDB Data Manager",
+        "Contextual Search",
+        "Intelligent Search"
+      ],
+      "correct": [
+        4
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-b9b1d7b130",
+      "q": "Which of the following can be configured by all users in the Next Experience instances ?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Admin menu",
+        "Personalised Start Page",
+        "AI Search",
+        "Custom menus",
+        "Next Experience Readiness Checker"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-56602c41ea",
+      "q": "What details can you find in the import set record after running an import?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Concurrent Import Sets",
+        "Import Set Runs",
+        "Import Maps",
+        "Import Set API",
+        "Import Set Rows",
+        "Import Log"
+      ],
+      "correct": [
+        1,
+        4,
+        5
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-47d4e36b1a",
+      "q": "Which knowledge feedback option CANNOT be disabled at the knowledge base level?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Flagging",
+        "Marking as helpful",
+        "Rating",
+        "Commenting",
+        "All of them can be disabled."
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-34dc895f1d",
+      "q": "There is a business requirement to restrict incident reporting to specific roles for better governance. The Development team decided to add a new access control (ACL), so only those roles can view the contents of the reports on the incident table. What access control operation should they use to allow this access on the incident table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "report_on",
+        "report_view",
+        "add_to_list",
+        "read",
+        "execute"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-484c5e3f9a",
+      "q": "What dashboard enables you to monitor aggregated catalogue item data like fulfilment automation coverage, translation coverage, and conversational coverage?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Open Requested Item State Monitor",
+        "Request Management - Requested Item",
+        "Service Catalog Overview",
+        "Open Requested Items Reports"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-909d5b5e54",
+      "q": "What feature is added for tasks to give users safer and more secure access to the reports on the dashboards?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "‘report_view’ access control lists",
+        "UI policy actions to make fields ‘Visible’",
+        "‘Elevate role’ option for ‘dashboard_admin’",
+        "A form UI action to auto-generate reports",
+        "‘report_user’ role to be contained by the ‘itil’ role"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-384b87002d",
+      "q": "You can set a start page to appear when you log in to your Next Experience instance. What user preference options are available for the Current start page other than the default landing page?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Use Service Portal",
+        "Continue where I last left off",
+        "Use Workspaces",
+        "Use the page I’m on now",
+        "Continue my last session",
+        "Use Dashboards"
+      ],
+      "correct": [
+        1,
+        3,
+        5
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-278dbb5f4f",
+      "q": "What operations can you do on the homepages with the Homepage deprecation help tool ?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Edit a homepage",
+        "Create a global homepage",
+        "Duplicate a homepage",
+        "Retire a homepage",
+        "Restore retired homepages as dashboards",
+        "Convert a homepage"
+      ],
+      "correct": [
+        3,
+        4,
+        5
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-7795c9a8e2",
+      "q": "What allows agents to initiate a group discussion from a Workspace task-based or interaction-based record?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Help menu",
+        "Sidebar",
+        "Chatbot",
+        "Connect Hub",
+        "Virtual Agent"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-712299be7d",
+      "q": "When a CI is set to retire, dependent CIs management data processes attempt to cascade-update all the CIs depending on that CI to retire. What table are the dependent CIs added to when a parent CI is set to retire?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "cmdb_related_entry",
+        "cmdb_dependent_ci_extra_rels_config",
+        "cmdb_ci_related_retire",
+        "cmdb_dependent_ci_ledger",
+        "cmdb_dependent_ci_class_exclusion"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-c29f245de3",
+      "q": "You can configure a sample text for a knowledge article template field that appears when you create a knowledge article. What text do you see on the article template selector for a field with an empty ‘Preview text’ value?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Article template name",
+        "Field name",
+        "A random text",
+        "It cannot be left blank.",
+        "No text"
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "needsReview": true
+    },
+    {
+      "id": "csa-dump5-0e0a2021c7",
+      "q": "How do you verify that Dashboards work as expected after upgrades and deployments of new applications or integrations if you have customised Dashboards?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Follow the Guided Setup to reinstall and pre-configure.",
+        "Customise the out-of-the-box quick start tests.",
+        "Copy and configure the quick start tests.",
+        "Use the Dependency Assessment to explore and manage.",
+        "Out-of-the-box quick start tests can also verify the customisations.",
+        "Override the quick start tests through scripting."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-acf287424e",
+      "q": "What application enables you to understand user web and mobile experiences by visualising your metrics and interactions through an interactive dashboard?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Self-Service Analytics",
+        "Predictive Intelligence",
+        "Performance Analytics",
+        "User Experience Analytics"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-88ef0baa57",
+      "q": "End users without roles who visit a full platform URL are redirected to a portal. What is the default portal for new (zBoot) instances?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Employee Center",
+        "Service Workspace Portal",
+        "Instance Security Center",
+        "Knowledge Portal"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-925656e8d1",
+      "q": "You can select multiple knowledge articles and translate them into different languages using the ServiceNow Localization Framework application. How many knowledge articles can you translate with the bulk translation feature?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "There is no limit",
+        "Up to 200 articles",
+        "Up to 50 articles",
+        "Up to 10 articles"
+      ],
+      "correct": [
+        1
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-d168676fbe",
+      "q": "What user role can ONLY view the configuration and execution details of flows and subflows?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "fd_read",
+        "fd_read_actions",
+        "flow_report_viewer",
+        "fd_read_flows",
+        "fd_read_operations"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-416c973cda",
+      "q": "How do you ensure the uploaded attachments to a catalogue item attachment variable are deleted from the system if and when they are replaced/deleted on the form?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Running a background script after each request submission.",
+        "Utilising Table cleaner to delete unwanted attachments automatically.",
+        "Setting the ‘glide.sc.variable.attachment.delete.v2’ system property to true.",
+        "Searching for the file names in the sys_attachment table manually.",
+        "Storing the attachments on a remote table before request fulfilment."
+      ],
+      "correct": [
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
+    },
+    {
+      "id": "csa-dump5-579ae0aeba",
+      "q": "How is a catalogue item rendered in Virtual Agent ?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "In the conversation mode",
+        "As a pop-up",
+        "In a window",
+        "As an interaction",
+        "In the passive mode",
+        "Via Catalog Builder"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 3
+    },
+    {
+      "id": "csa-dump5-17c3f85a90",
+      "q": "What can agents do with the Sidebar feature in the Next Experience UI?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Communicate with the caller/requester directly.",
+        "Integrate with other Workspaces to display related records.",
+        "Have real-time collaboration with others from a Workspace interaction-based record.",
+        "Create, open and search for discussions about their work.",
+        "Broadcast a text message or initiate a conference call with other agents."
+      ],
+      "correct": [
+        2,
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5",
+      "multi": 2
+    },
+    {
+      "id": "csa-dump5-458437e1a5",
+      "q": "What do you use in CMDB Workspace to verify the existence of actual IT infrastructure and applications that you own, systematically and in bulk?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "IntegrationHub ETL",
+        "Service Graph Connectors",
+        "Identification and Reconciliation Engine",
+        "CI Attestation",
+        "Multisource Report Builder"
+      ],
+      "correct": [
+        3
+      ],
+      "explanation": "Detailed explanation not provided in the source dump.",
+      "source": "CSA_5.pdf",
+      "sourceSet": "csa_dumps_live_pdf5"
     }
   ]
 }
