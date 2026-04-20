@@ -309,6 +309,22 @@
         "desc": "60 random questions, 90s each",
         "count": 60,
         "timer": 90
+      },
+      {
+        "id": "pdf5-pack",
+        "name": "CSA PDF #5 Pack",
+        "desc": "All questions extracted from the CSA 5 dump (corrected & deduped)",
+        "count": "all",
+        "timer": 0,
+        "sourceSet": "csa_dumps_live_pdf5"
+      },
+      {
+        "id": "pdf5-quick",
+        "name": "CSA PDF #5 Quick 20",
+        "desc": "20 random questions from the CSA 5 dump, 60s each",
+        "count": 20,
+        "timer": 60,
+        "sourceSet": "csa_dumps_live_pdf5"
       }
     ]
   }
