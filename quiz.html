@@ -1323,101 +1323,14 @@ function shuffleArray(arr) {
   return a;
 }
 
-// ── OPTION HARDENING (ALL QUIZ SETS) ──
-// Some legacy banks have obvious length bias (longest option tends to be correct).
-// This display-layer balancing makes options closer in shape/length without changing
-// answer keys, so selections rely more on understanding than visual heuristics.
-const OPTION_BALANCE_FRAGMENTS = [
-  'under standard platform governance assumptions',
-  'for this implementation context and operating model',
-  'when evaluated against typical enterprise constraints',
-  'based on baseline best-practice interpretation',
-  'for most production deployment scenarios',
-  'given common auditability and maintainability requirements'
-];
-
-function stableHash(str) {
-  let hash = 2166136261;
-  for (let i = 0; i < str.length; i++) {
-    hash ^= str.charCodeAt(i);
-    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
-  }
-  return hash >>> 0;
-}
-
-function balancedDisplayOptions(q) {
-  const options = (q.options || []).map(opt => String(opt || '').trim());
-  if (options.length < 2) return options;
-
-  const lengths = options.map(opt => opt.length);
-  const maxLen = Math.max(...lengths);
-  const minLen = Math.min(...lengths);
-  const spread = maxLen - minLen;
-  if (spread <= 4) return options;
-
-  // Apply normalization to *all* MCQs (mild on low-spread, stronger on high-spread)
-  // so users cannot rely on visual length cues to infer correctness.
-  let targetLen = maxLen;
-  let maxPasses = 1;
-  if (spread >= 28) {
-    targetLen = Math.max(Math.floor(maxLen * 0.86), maxLen - 22);
-    maxPasses = 2;
-  } else if (spread >= 14) {
-    targetLen = Math.max(Math.floor(maxLen * 0.78), maxLen - 14);
-  } else {
-    targetLen = Math.max(Math.floor(maxLen * 0.72), maxLen - 8);
-  }
-
-  return options.map((opt, idx) => {
-    let out = opt;
-    let passes = 0;
-    while (out.length < targetLen && passes < maxPasses) {
-      const seed = `${q.id || 'q'}|${idx}|${passes}|${out.length}`;
-      const frag = OPTION_BALANCE_FRAGMENTS[stableHash(seed) % OPTION_BALANCE_FRAGMENTS.length];
-      const suffix = out.endsWith('.') ? ` ${frag}.` : `; ${frag}`;
-      out += suffix;
-      passes++;
-    }
-    return out;
-  });
-}
-
-function applyLongestIncorrectBias(displayOptions, q) {
-  const options = [...displayOptions];
-  if (!q || !Array.isArray(q.correct) || q.correct.length !== 1 || options.length < 4) return options;
-
-  const correctIdx = q.correct[0];
-  if (typeof correctIdx !== 'number' || correctIdx < 0 || correctIdx >= options.length) return options;
-
-  const lengths = options.map(opt => String(opt || '').length);
-  const sorted = [...lengths].sort((a, b) => b - a);
-  const longest = sorted[0];
-  const second = sorted[1];
-  const longestIdx = lengths.indexOf(longest);
-
-  // Apply only when the question is sufficiently variable and deterministically selected.
-  const spread = longest - Math.min(...lengths);
-  const shouldApply = spread >= 12 && (stableHash((q.id || 'q') + '|longest-bias') % 100) < 55;
-  if (!shouldApply) return options;
-
-  // If correct option is currently the longest, enrich a wrong option to become longest.
-  if (longestIdx === correctIdx) {
-    const wrongCandidates = options
-      .map((_, idx) => idx)
-      .filter(idx => idx !== correctIdx);
-    if (!wrongCandidates.length) return options;
-    wrongCandidates.sort((a, b) => lengths[b] - lengths[a]);
-    const targetWrongIdx = wrongCandidates[0];
-    const required = Math.max(10, (longest - lengths[targetWrongIdx]) + 2);
-    const frag = OPTION_BALANCE_FRAGMENTS[stableHash((q.id || 'q') + '|wrong-boost') % OPTION_BALANCE_FRAGMENTS.length];
-    let suffix = options[targetWrongIdx].endsWith('.') ? ` ${frag}.` : `; ${frag}`;
-    while (suffix.length < required) suffix += ` ${frag}.`;
-    options[targetWrongIdx] = options[targetWrongIdx] + suffix;
-  } else {
-    // If a wrong option is already longest by a clear margin, leave it as-is.
-    if (longest - second >= 2) return options;
-  }
-  return options;
+// ── OPTION RENDERING ──
+// Display options exactly as authored. Earlier versions injected filler
+// "balancing" phrases to mask length-based heuristics, but those fragments
+// read as unwanted hints inside the answer choices, so they are no longer
+// added. Question text, options, and correctness keys come straight from
+// the question bank.
+function getDisplayOptions(q) {
+  return (q.options || []).map(opt => String(opt == null ? '' : opt));
 }
 
 // ── MCQ RENDERING ──
@@ -1447,9 +1360,8 @@ function renderMCQ(q) {
   const list = document.getElementById('optionsList');
   list.innerHTML = '';
   const letters = 'ABCDEFGH';
-  const balanced = balancedDisplayOptions(q);
-  const displayOptions = applyLongestIncorrectBias(balanced, q);
-  
+  const displayOptions = getDisplayOptions(q);
+
   // Build shuffled options with original index tracking
   const indexed = displayOptions.map((opt, i) => ({ text: opt, origIdx: i }));
   const shuffled = shuffleArray(indexed);
@@ -1509,8 +1421,15 @@ function submitMCQ(q) {
   const selectedOriginal = [...selectedOptions].map(di => currentShuffleMap[di]);
   const correctSet = new Set(q.correct);
   const isCorrect = selectedOriginal.length === q.correct.length && selectedOriginal.every(s => correctSet.has(s));
-  
-  if (isCorrect) score++;
+
+  setAnswerAtCurrent({
+    type: 'mcq',
+    qid: q.id,
+    ok: isCorrect,
+    selected: selectedOriginal.slice(),
+    correct: q.correct.slice(),
+    answered: true
+  });
   SessionProgress.markAnswered(q.id, isCorrect);
 
   if (strictNoReveal) {
@@ -1573,11 +1492,19 @@ function submitCode() {
   const feedback = document.getElementById('codeFeedback');
   const isCorrect = result.status === 'pass';
 
+  setAnswerAtCurrent({
+    type: q.type,
+    qid: q.id,
+    ok: isCorrect,
+    code: code,
+    result: result,
+    answered: true
+  });
+
   if (strictNoReveal) {
     feedback.innerHTML = '<strong>Answer submitted (Strict Mode).</strong><ul><li>Your response is locked for this question.</li><li>Correctness is revealed only in final score summary.</li></ul>';
     feedback.className = 'code-feedback partial';
     feedback.style.display = 'block';
-    if (isCorrect) score++;
     SessionProgress.markAnswered(q.id, isCorrect);
     document.getElementById('submitCodeBtn').style.display = 'none';
     return;
@@ -1598,10 +1525,9 @@ function submitCode() {
   feedback.innerHTML = html;
   feedback.className = 'code-feedback ' + result.status;
   feedback.style.display = 'block';
-  
-  if (isCorrect) score++;
+
   SessionProgress.markAnswered(q.id, isCorrect);
-  
+
   if (q.explanation) {
     document.getElementById('explanationText').innerHTML = q.explanation;
     document.getElementById('explanationBox').style.display = 'block';
@@ -1621,6 +1547,15 @@ function autoSubmit() {
     if (selectedOptions.size > 0) submitMCQ(q);
     else {
       answered = true;
+      setAnswerAtCurrent({
+        type: 'mcq',
+        qid: q.id,
+        ok: false,
+        selected: [],
+        correct: q.correct.slice(),
+        answered: false,
+        timedOut: true
+      });
       SessionProgress.markAnswered(q.id, false);
       const buttons = document.querySelectorAll('#optionsList .option-btn');
       if (strictNoReveal) {
@@ -1638,7 +1573,30 @@ function autoSubmit() {
       }
     }
   } else {
-    submitCode();
+    const code = document.getElementById('codeEditor').value;
+    if (code.trim() === (q.code || '').trim()) {
+      answered = true;
+      setAnswerAtCurrent({
+        type: q.type,
+        qid: q.id,
+        ok: false,
+        code: code,
+        result: null,
+        answered: false,
+        timedOut: true
+      });
+      SessionProgress.markAnswered(q.id, false);
+      const feedback = document.getElementById('codeFeedback');
+      if (feedback && !strictNoReveal) {
+        feedback.innerHTML = '<strong>⏱️ Time expired</strong><ul><li>No code was submitted before the timer ran out.</li></ul>';
+        feedback.className = 'code-feedback fail';
+        feedback.style.display = 'block';
+      }
+      const btn = document.getElementById('submitCodeBtn');
+      if (btn) btn.style.display = 'none';
+    } else {
+      submitCode();
+    }
   }
 }
 
@@ -1651,16 +1609,40 @@ document.getElementById('nextBtn').addEventListener('click', () => {
         submitMCQ(q);
       } else if (selectedOptions.size === 0) {
         answered = true;
+        setAnswerAtCurrent({
+          type: 'mcq',
+          qid: q.id,
+          ok: false,
+          selected: [],
+          correct: (q.correct || []).slice(),
+          answered: false,
+          skipped: true
+        });
         SessionProgress.markAnswered(q.id, false);
       } else {
         submitMCQ(q);
       }
     } else {
-      submitCode();
-      return;
+      const code = document.getElementById('codeEditor').value;
+      if (code.trim() === (q.code || '').trim()) {
+        answered = true;
+        setAnswerAtCurrent({
+          type: q.type,
+          qid: q.id,
+          ok: false,
+          code: code,
+          result: null,
+          answered: false,
+          skipped: true
+        });
+        SessionProgress.markAnswered(q.id, false);
+      } else {
+        submitCode();
+        return;
+      }
     }
   }
-  
+
   currentIndex++;
   if (currentIndex >= currentQuestions.length) {
     showResults();
@@ -1753,41 +1735,80 @@ function showResults() {
   }
 
   if (strictNoReveal) {
-    document.getElementById('resultsSubtitle').textContent += ' Strict mode is enabled: answer key is hidden.';
+    document.getElementById('resultsSubtitle').textContent += ' Strict mode kept the answer key hidden during the test — see the per-question summary below to learn where you went right and wrong.';
   }
   if (leaderboardEntry && activeParticipant) {
     document.getElementById('resultsSubtitle').textContent += ` Attempt #${leaderboardEntry.attempts} recorded for ${activeParticipant.name}.`;
   }
   
   const reviewSection = document.getElementById('reviewSection');
-  if (strictNoReveal) {
-    if (reviewSection) reviewSection.style.display = 'none';
-    SessionProgress.updateUI();
-    return;
+  if (reviewSection) {
+    reviewSection.style.display = 'block';
+    const heading = reviewSection.querySelector('h3');
+    if (heading) {
+      heading.textContent = strictNoReveal
+        ? 'Question Summary — Where you went right & wrong'
+        : 'Review Answers';
+    }
   }
-  if (reviewSection) reviewSection.style.display = 'block';
 
-  // Build review list
   const reviewList = document.getElementById('reviewList');
   reviewList.innerHTML = '';
   currentQuestions.forEach((q, i) => {
-    const wasCorrect = SessionProgress.isAnswered(q.id) && SessionProgress.getStats().correct[q.id];
+    const ans = answerByIndex[i];
+    const attempted = !!(ans && ans.answered);
+    const wasCorrect = !!(ans && ans.ok);
     const div = document.createElement('div');
     div.className = 'review-item ' + (wasCorrect ? 'review-correct' : 'review-wrong');
+
     let answerHtml = '';
-    if (q.type === 'mcq') {
-      const correctAns = q.correct.map(c => q.options[c]).join(', ');
-      answerHtml = `<div class="review-answer"><span class="correct-ans">Answer: ${correctAns}</span></div>`;
-    } else {
-      answerHtml = `<div class="review-answer"><span class="${wasCorrect ? 'correct-ans' : 'your-ans'}">${wasCorrect ? 'Code passed all checks' : 'Code did not pass all required checks'}</span></div>`;
+    let statusBadge = wasCorrect
+      ? '<span class="badge badge-new" style="font-size:10px">Correct</span>'
+      : '<span class="badge badge-difficulty badge-hard" style="font-size:10px">Incorrect</span>';
+    if (!attempted) {
+      statusBadge = (ans && ans.timedOut)
+        ? '<span class="badge badge-difficulty badge-medium" style="font-size:10px">Time expired</span>'
+        : '<span class="badge badge-count" style="font-size:10px">Skipped</span>';
     }
-    div.innerHTML = `
-      <div class="review-q"><span class="badge badge-difficulty badge-${q.difficulty}" style="font-size:10px;vertical-align:middle;margin-right:6px">${q.difficulty}</span>Q${i+1}: ${q.q.substring(0, 120)}${q.q.length > 120 ? '...' : ''}</div>
-      ${answerHtml}
-    `;
+
+    if (q.type === 'mcq') {
+      const correctAns = (q.correct || []).map(c => q.options[c]).filter(Boolean).join(', ');
+      const yourPicks = (ans && Array.isArray(ans.selected) && ans.selected.length)
+        ? ans.selected.map(c => q.options[c]).filter(Boolean).join(', ')
+        : '—';
+      answerHtml =
+        '<div class="review-answer"><span class="' + (wasCorrect ? 'correct-ans' : 'your-ans') + '">Your answer: ' + escapeHtml(yourPicks) + '</span></div>' +
+        '<div class="review-answer"><span class="correct-ans">Correct answer: ' + escapeHtml(correctAns) + '</span></div>';
+    } else {
+      let detail;
+      if (!attempted) {
+        detail = 'No code submitted';
+      } else if (wasCorrect) {
+        detail = 'Code passed all required checks';
+      } else if (ans && ans.result) {
+        detail = 'Passed ' + ans.result.passCount + '/' + ans.result.total + ' checks (required ' + ans.result.requiredPassed + '/' + ans.result.requiredCount + ')';
+      } else {
+        detail = 'Code did not pass all required checks';
+      }
+      answerHtml = '<div class="review-answer"><span class="' + (wasCorrect ? 'correct-ans' : 'your-ans') + '">' + escapeHtml(detail) + '</span></div>';
+    }
+
+    let explanationHtml = '';
+    if (q.explanation) {
+      explanationHtml = '<div class="review-answer" style="margin-top:6px;color:var(--text2)"><strong>Why:</strong> ' + q.explanation + '</div>';
+    }
+
+    div.innerHTML =
+      '<div class="review-q">' +
+        '<span class="badge badge-difficulty badge-' + q.difficulty + '" style="font-size:10px;vertical-align:middle;margin-right:6px">' + q.difficulty + '</span>' +
+        statusBadge +
+        ' <span style="margin-left:6px">Q' + (i + 1) + ': ' + escapeHtml(q.q.substring(0, 160)) + (q.q.length > 160 ? '…' : '') + '</span>' +
+      '</div>' +
+      answerHtml +
+      explanationHtml;
     reviewList.appendChild(div);
   });
-  
+
   SessionProgress.updateUI();
 }
 
