@@ -11,8 +11,12 @@ const SITEMAP_FILE = path.join(process.cwd(), 'sitemap.xml');
 // Static pages on your site
 const STATIC_PAGES = [
   { url: '/', priority: '1.0', changefreq: 'daily' },
+  { url: '/summaverick', priority: '1.0', changefreq: 'daily' },
   { url: '/blog', priority: '0.9', changefreq: 'daily' },
   { url: '/interviews', priority: '0.9', changefreq: 'daily' },
+  { url: '/tutorials.html', priority: '0.9', changefreq: 'weekly' },
+  { url: '/quiz.html', priority: '0.8', changefreq: 'weekly' },
+  { url: '/technical-terms-quiz.html', priority: '0.8', changefreq: 'weekly' },
   { url: '/about', priority: '0.7', changefreq: 'monthly' },
   { url: '/contact', priority: '0.6', changefreq: 'monthly' },
 ];

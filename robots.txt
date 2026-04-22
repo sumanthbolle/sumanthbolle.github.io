@@ -2,9 +2,34 @@
 
 User-agent: *
 Allow: /
+Allow: /favicon.ico
+
+# Google
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+# Microsoft Bing (powers Microsoft Edge search, Copilot, ChatGPT web search)
+User-agent: bingbot
+Allow: /
+
+User-agent: msnbot
+Allow: /
+
+User-agent: AdIdxBot
+Allow: /
+
+# Yandex, DuckDuckGo, Apple
+User-agent: YandexBot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
 
 # Sitemap location
 Sitemap: https://sumanthbolle.com/sitemap.xml
-
-# Allow all crawlers to access favicon
-Allow: /favicon.ico
