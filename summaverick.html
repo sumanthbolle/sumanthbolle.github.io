@@ -1236,6 +1236,287 @@
         scroll-behavior: auto !important;
       }
     }
+
+    /* ─── Preview: threads sidebar, region selector, stocks, streaming ─── */
+
+    .sidebar-btn {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+    .sidebar-btn:hover { transform: translateY(-1px); background: var(--surface-2); color: var(--text); }
+    .sidebar-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    .sidebar {
+      position: fixed;
+      top: 76px;
+      left: 14px;
+      bottom: 14px;
+      width: 288px;
+      z-index: 50;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-110%);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 360ms var(--ease), opacity 260ms ease;
+    }
+    .shell.sidebar-open .sidebar {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sidebar-head {
+      padding: 16px 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+    .sidebar-newchat {
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-soft);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease;
+    }
+    .sidebar-newchat:hover { background: var(--surface-2); color: var(--text); }
+
+    .sidebar-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 10px 14px;
+    }
+    .sidebar-section {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 10px 12px 6px;
+    }
+    .thread {
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      margin-bottom: 2px;
+      transition: background 180ms ease, border-color 180ms ease;
+      display: block;
+      font: inherit;
+    }
+    .thread:hover { background: var(--surface); border-color: var(--border); }
+    .thread.active { background: var(--surface-2); border-color: var(--border); }
+    .thread-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .thread-meta {
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-top: 3px;
+      letter-spacing: 0.01em;
+    }
+
+    .sidebar-scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 240ms ease;
+      z-index: 49;
+    }
+    html[data-theme="light"] .sidebar-scrim { background: rgba(15, 23, 42, 0.22); }
+    .shell.sidebar-open .sidebar-scrim { opacity: 1; pointer-events: auto; }
+
+    /* Region selector */
+    .region-wrap { position: relative; }
+    .region-pill {
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+    .region-pill:hover { transform: translateY(-1px); background: var(--surface-2); color: var(--text); }
+    .region-pill svg.chev { width: 10px; height: 10px; stroke: currentColor; fill: none; stroke-width: 2.4; transition: transform 200ms ease; }
+    .region-wrap.open .region-pill svg.chev { transform: rotate(180deg); }
+
+    .region-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 220px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--panel-bg);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      z-index: 60;
+    }
+    .region-wrap.open .region-menu { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .region-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 8px 10px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-soft);
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .region-option:hover { background: var(--surface); color: var(--text); }
+    .region-option.active { background: var(--surface-2); color: var(--text); }
+    .region-option .flag { margin-right: 8px; font-size: 14px; }
+    .region-option .check { width: 12px; height: 12px; stroke: var(--text); fill: none; stroke-width: 2.4; opacity: 0; }
+    .region-option.active .check { opacity: 1; }
+
+    /* Stocks card in editorial */
+    .stocks-card {
+      padding: 16px 16px 12px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: border-color 220ms ease, background 220ms ease, transform 220ms var(--ease);
+    }
+    .stocks-card:hover { border-color: var(--border-strong); background: var(--surface-2); transform: translateY(-1px); }
+    .stocks-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .stocks-kicker { font-size: 12px; color: var(--text-faint); }
+    .stocks-index { font-size: 11px; color: var(--text-muted); letter-spacing: 0.02em; }
+    .ticker-row {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr) auto auto;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-top: 1px solid var(--border);
+    }
+    .ticker-row:first-of-type { border-top: 0; padding-top: 4px; }
+    .ticker-sym {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+    .ticker-name {
+      font-size: 12px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ticker-price {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-soft);
+      font-variant-numeric: tabular-nums;
+    }
+    .ticker-delta {
+      font-size: 11px;
+      font-weight: 600;
+      min-width: 54px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .ticker-delta.up { color: #22c55e; }
+    .ticker-delta.down { color: #ef4444; }
+
+    /* Streaming cursor for demo replay */
+    .stream-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      margin-left: 2px;
+      background: currentColor;
+      vertical-align: -2px;
+      animation: streamBlink 1.1s steps(2) infinite;
+    }
+    @keyframes streamBlink { 50% { opacity: 0; } }
+
+    @media (max-width: 760px) {
+      .sidebar {
+        top: 70px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        width: auto;
+      }
+      .sidebar-btn { padding: 0; width: 32px; justify-content: center; }
+      .sidebar-btn-label { display: none; }
+      .region-pill-label { display: none; }
+      .region-pill { padding: 0 10px; }
+    }
   </style>
 </head>
 <body>
@@ -1263,6 +1544,20 @@
           <a href="blog.html">Blog</a>
           <a href="interviews.html">Interviews</a>
 
+          <button class="sidebar-btn" id="sidebarToggle" type="button" aria-label="Conversations" aria-expanded="false" aria-controls="sidebar">
+            <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="17" x2="21" y2="17"></line></svg>
+            <span class="sidebar-btn-label">Conversations</span>
+          </button>
+
+          <div class="region-wrap" id="regionWrap">
+            <button class="region-pill" id="regionPill" type="button" aria-haspopup="listbox" aria-expanded="false">
+              <span class="flag" id="regionFlag" aria-hidden="true">🌐</span>
+              <span class="region-pill-label" id="regionLabel">Global</span>
+              <svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="region-menu" id="regionMenu" role="listbox" aria-label="Region"></div>
+          </div>
+
           <div class="theme-toggle" aria-label="Theme">
             <button class="theme-btn" type="button" data-theme="light">Light</button>
             <button class="theme-btn active" type="button" data-theme="dark">Dark</button>
@@ -1275,6 +1570,16 @@
         </nav>
       </div>
     </header>
+
+    <div class="sidebar-scrim" id="sidebarScrim" aria-hidden="true"></div>
+
+    <aside class="sidebar" id="sidebar" aria-label="Conversations" aria-hidden="true">
+      <div class="sidebar-head">
+        <div class="sidebar-title">Conversations</div>
+        <button class="sidebar-newchat" id="sidebarNewChat" type="button">+ New</button>
+      </div>
+      <div class="sidebar-list" id="sidebarList"></div>
+    </aside>
 
     <main class="page">
       <section class="landing" id="landing">
@@ -1327,6 +1632,14 @@
                     <div class="sk sk-3"></div>
                   </div>
                 </div>
+              </div>
+
+              <div class="stocks-card" id="stocksCard" style="margin-top:10px">
+                <div class="stocks-head">
+                  <span class="stocks-kicker">Markets</span>
+                  <span class="stocks-index" id="stocksIndex">—</span>
+                </div>
+                <div id="stocksRows"></div>
               </div>
             </section>
           </div>
@@ -2107,6 +2420,344 @@
       }
 
       init();
+    })();
+
+    /* ─────────── Preview: threads sidebar, region selector, stocks, demo stream ───────────
+       Static-content preview. No worker changes. Live chat/trending flow is untouched;
+       this block only layers in the new UI and wires a demo thread replay. */
+    (function () {
+      'use strict';
+
+      const REGION_KEY = 'summaverick-region';
+      const REGIONS = [
+        { code: 'GLOBAL', name: 'Global',        flag: '🌐', index: 'MSCI World' },
+        { code: 'US',     name: 'United States', flag: '🇺🇸', index: 'S&P 500' },
+        { code: 'IN',     name: 'India',         flag: '🇮🇳', index: 'NIFTY 50' },
+        { code: 'GB',     name: 'United Kingdom',flag: '🇬🇧', index: 'FTSE 100' },
+        { code: 'JP',     name: 'Japan',         flag: '🇯🇵', index: 'Nikkei 225' },
+        { code: 'DE',     name: 'Germany',       flag: '🇩🇪', index: 'DAX' },
+        { code: 'CA',     name: 'Canada',        flag: '🇨🇦', index: 'S&P/TSX' },
+        { code: 'AU',     name: 'Australia',     flag: '🇦🇺', index: 'ASX 200' },
+        { code: 'SG',     name: 'Singapore',     flag: '🇸🇬', index: 'STI' },
+      ];
+
+      /* Static per-region ticker set. Purely preview data — no API call. */
+      const STOCKS = {
+        GLOBAL: [
+          { sym: 'NVDA', name: 'NVIDIA',   price: '1,184.20', delta: '+2.14%', dir: 'up' },
+          { sym: 'MSFT', name: 'Microsoft',price: '482.55',   delta: '+0.82%', dir: 'up' },
+          { sym: 'AAPL', name: 'Apple',    price: '243.10',   delta: '−0.41%', dir: 'down' },
+          { sym: 'TSM',  name: 'TSMC ADR', price: '218.76',   delta: '+1.05%', dir: 'up' },
+        ],
+        US: [
+          { sym: 'NVDA', name: 'NVIDIA',     price: '1,184.20', delta: '+2.14%', dir: 'up' },
+          { sym: 'AAPL', name: 'Apple',      price: '243.10',   delta: '−0.41%', dir: 'down' },
+          { sym: 'MSFT', name: 'Microsoft',  price: '482.55',   delta: '+0.82%', dir: 'up' },
+          { sym: 'GOOGL',name: 'Alphabet',   price: '215.34',   delta: '+1.27%', dir: 'up' },
+        ],
+        IN: [
+          { sym: 'RELI', name: 'Reliance',   price: '₹2,948', delta: '+1.12%', dir: 'up' },
+          { sym: 'TCS',  name: 'TCS',        price: '₹4,105', delta: '−0.38%', dir: 'down' },
+          { sym: 'HDFC', name: 'HDFC Bank',  price: '₹1,732', delta: '+0.91%', dir: 'up' },
+          { sym: 'INFY', name: 'Infosys',    price: '₹1,864', delta: '+0.44%', dir: 'up' },
+        ],
+        GB: [
+          { sym: 'AZN',  name: 'AstraZeneca',price: '£124.12', delta: '+0.63%', dir: 'up' },
+          { sym: 'SHEL', name: 'Shell',      price: '£28.94',  delta: '−1.04%', dir: 'down' },
+          { sym: 'HSBA', name: 'HSBC',       price: '£7.42',   delta: '+0.28%', dir: 'up' },
+          { sym: 'ULVR', name: 'Unilever',   price: '£45.19',  delta: '+0.17%', dir: 'up' },
+        ],
+        JP: [
+          { sym: '7203', name: 'Toyota',     price: '¥3,284', delta: '+1.21%', dir: 'up' },
+          { sym: '6758', name: 'Sony',       price: '¥3,012', delta: '+0.55%', dir: 'up' },
+          { sym: '9984', name: 'SoftBank',   price: '¥9,410', delta: '−0.82%', dir: 'down' },
+          { sym: '6861', name: 'Keyence',    price: '¥66,220',delta: '+0.33%', dir: 'up' },
+        ],
+        DE: [
+          { sym: 'SAP',  name: 'SAP',        price: '€214.40', delta: '+0.72%', dir: 'up' },
+          { sym: 'SIE',  name: 'Siemens',    price: '€198.26', delta: '+1.05%', dir: 'up' },
+          { sym: 'ALV',  name: 'Allianz',    price: '€316.80', delta: '−0.41%', dir: 'down' },
+          { sym: 'BMW',  name: 'BMW',        price: '€82.14',  delta: '+0.22%', dir: 'up' },
+        ],
+        CA: [
+          { sym: 'SHOP', name: 'Shopify',    price: 'C$148.20', delta: '+1.68%', dir: 'up' },
+          { sym: 'RY',   name: 'Royal Bank', price: 'C$176.45', delta: '+0.36%', dir: 'up' },
+          { sym: 'TD',   name: 'TD Bank',    price: 'C$84.90',  delta: '−0.22%', dir: 'down' },
+          { sym: 'CNR',  name: 'CN Rail',    price: 'C$162.78', delta: '+0.41%', dir: 'up' },
+        ],
+        AU: [
+          { sym: 'BHP',  name: 'BHP',        price: 'A$42.86', delta: '+1.14%', dir: 'up' },
+          { sym: 'CBA',  name: 'Commonwealth',price: 'A$143.92',delta: '+0.58%', dir: 'up' },
+          { sym: 'CSL',  name: 'CSL',        price: 'A$272.31',delta: '−0.32%', dir: 'down' },
+          { sym: 'WES',  name: 'Wesfarmers', price: 'A$76.44', delta: '+0.27%', dir: 'up' },
+        ],
+        SG: [
+          { sym: 'D05',  name: 'DBS Group',  price: 'S$42.08', delta: '+0.85%', dir: 'up' },
+          { sym: 'O39',  name: 'OCBC',       price: 'S$16.94', delta: '+0.21%', dir: 'up' },
+          { sym: 'U11',  name: 'UOB',        price: 'S$37.62', delta: '−0.18%', dir: 'down' },
+          { sym: 'Z74',  name: 'Singtel',    price: 'S$3.44',  delta: '+0.44%', dir: 'up' },
+        ],
+      };
+
+      /* Static demo threads — shown in the sidebar for preview. */
+      const DEMO_THREADS = [
+        {
+          id: 't-latest-ai-release',
+          title: 'Biggest AI release this month, simply',
+          when: 'Today',
+          messages: [
+            { role: 'user', content: 'What is the biggest AI release this month and why does it matter?' },
+            { role: 'assistant', content: 'The headline release this month is a new generation of reasoning-focused foundation models. The short version: they are noticeably better at multi-step problems (math, code, planning), cheaper per token than the prior generation, and built to run agentic workflows without as much hand-holding.\n\nWhy it matters:\n\n- **For builders**: agents that required careful prompt chains can now be written in fewer steps.\n- **For enterprises**: cost-per-task drops, which changes the ROI math on automating support, research, and ops work.\n- **For everyone**: the quality gap between free and paid assistants is narrowing for everyday questions.' },
+            { role: 'user', content: 'Is it worth switching from my current assistant?' },
+            { role: 'assistant', content: 'Depends on what you use it for. If your use case is factual Q&A with sources, the new models help but the real unlock is the search layer on top of them — which is why Summaverick-style answer engines feel different from a plain chatbot. If your use case is coding or agents, the switch is probably worth trying this week.' },
+          ],
+        },
+        {
+          id: 't-job-switch',
+          title: 'Should I switch jobs this year?',
+          when: 'Yesterday',
+          messages: [
+            { role: 'user', content: 'Help me think through whether to switch jobs this year.' },
+            { role: 'assistant', content: 'Three questions worth answering honestly before you run a formal pros/cons:\n\n1. **What is the top thing you want that you cannot get at your current role?** Money, scope, learning, location, title, or a specific manager.\n2. **What is the risk you are walking away from?** Tenure, unvested equity, reputation capital, a known team.\n3. **If nothing changed externally, would you still want to move in 12 months?** If yes, you are probably ready.\n\nTell me which of those three is hardest to answer and we can go deeper on that one.' },
+          ],
+        },
+        {
+          id: 't-csv-python',
+          title: 'Small Python script for CSV summary',
+          when: 'Apr 18',
+          messages: [
+            { role: 'user', content: 'Write a small Python script to summarise a CSV from a URL.' },
+            { role: 'assistant', content: 'Here is a minimal version using `pandas`. It downloads the CSV, prints shape + dtypes, then `describe()` for numeric columns and top values for object columns.' },
+          ],
+        },
+      ];
+
+      /* ── Region state ── */
+      let regionCode = (localStorage.getItem(REGION_KEY) || 'GLOBAL').toUpperCase();
+      if (!REGIONS.find(function (r) { return r.code === regionCode; })) regionCode = 'GLOBAL';
+
+      const regionWrap   = document.getElementById('regionWrap');
+      const regionPill   = document.getElementById('regionPill');
+      const regionMenu   = document.getElementById('regionMenu');
+      const regionLabel  = document.getElementById('regionLabel');
+      const regionFlag   = document.getElementById('regionFlag');
+      const trendingRegion = document.getElementById('trendingRegion');
+      const stocksCard   = document.getElementById('stocksCard');
+      const stocksIndex  = document.getElementById('stocksIndex');
+      const stocksRows   = document.getElementById('stocksRows');
+
+      function renderRegionMenu() {
+        regionMenu.innerHTML = REGIONS.map(function (r) {
+          const active = r.code === regionCode ? ' active' : '';
+          return '<button type="button" class="region-option' + active + '" role="option" data-code="' + r.code + '">' +
+            '<span><span class="flag">' + r.flag + '</span>' + r.name + '</span>' +
+            '<svg class="check" viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg>' +
+          '</button>';
+        }).join('');
+      }
+
+      function applyRegion() {
+        const r = REGIONS.find(function (x) { return x.code === regionCode; }) || REGIONS[0];
+        regionLabel.textContent = r.name;
+        regionFlag.textContent  = r.flag;
+        if (trendingRegion) trendingRegion.textContent = r.code === 'GLOBAL' ? 'Worldwide' : r.name;
+        if (stocksIndex) stocksIndex.textContent = r.index;
+        renderStocks();
+        renderRegionMenu();
+      }
+
+      function renderStocks() {
+        const rows = STOCKS[regionCode] || STOCKS.GLOBAL;
+        stocksRows.innerHTML = rows.map(function (t) {
+          return '<div class="ticker-row">' +
+            '<span class="ticker-sym">' + t.sym + '</span>' +
+            '<span class="ticker-name">' + t.name + '</span>' +
+            '<span class="ticker-price">' + t.price + '</span>' +
+            '<span class="ticker-delta ' + t.dir + '">' + t.delta + '</span>' +
+          '</div>';
+        }).join('');
+      }
+
+      regionPill.addEventListener('click', function (e) {
+        e.stopPropagation();
+        regionWrap.classList.toggle('open');
+        regionPill.setAttribute('aria-expanded', regionWrap.classList.contains('open') ? 'true' : 'false');
+      });
+      regionMenu.addEventListener('click', function (e) {
+        const btn = e.target.closest('.region-option');
+        if (!btn) return;
+        regionCode = btn.dataset.code;
+        localStorage.setItem(REGION_KEY, regionCode);
+        regionWrap.classList.remove('open');
+        regionPill.setAttribute('aria-expanded', 'false');
+        applyRegion();
+      });
+      document.addEventListener('click', function (e) {
+        if (!regionWrap.contains(e.target)) {
+          regionWrap.classList.remove('open');
+          regionPill.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      applyRegion();
+
+      /* ── Sidebar state ── */
+      const appShell       = document.getElementById('appShell');
+      const sidebar        = document.getElementById('sidebar');
+      const sidebarScrim   = document.getElementById('sidebarScrim');
+      const sidebarToggle  = document.getElementById('sidebarToggle');
+      const sidebarNewChat = document.getElementById('sidebarNewChat');
+      const sidebarList    = document.getElementById('sidebarList');
+      const chatArea       = document.getElementById('chatArea');
+      const newChatBtn     = document.getElementById('newChatBtn');
+      let activeThread = null;
+
+      function renderThreads() {
+        const groups = [{ label: 'Recent', items: DEMO_THREADS }];
+        sidebarList.innerHTML = groups.map(function (g) {
+          return '<div class="sidebar-section">' + g.label + '</div>' +
+            g.items.map(function (t) {
+              const active = activeThread === t.id ? ' active' : '';
+              return '<button type="button" class="thread' + active + '" data-thread="' + t.id + '">' +
+                '<div class="thread-title">' + escHtml(t.title) + '</div>' +
+                '<div class="thread-meta">' + escHtml(t.when) + '</div>' +
+              '</button>';
+            }).join('');
+        }).join('');
+      }
+
+      function openSidebar() {
+        appShell.classList.add('sidebar-open');
+        sidebar.setAttribute('aria-hidden', 'false');
+        sidebarScrim.setAttribute('aria-hidden', 'false');
+        sidebarToggle.setAttribute('aria-expanded', 'true');
+      }
+      function closeSidebar() {
+        appShell.classList.remove('sidebar-open');
+        sidebar.setAttribute('aria-hidden', 'true');
+        sidebarScrim.setAttribute('aria-hidden', 'true');
+        sidebarToggle.setAttribute('aria-expanded', 'false');
+      }
+
+      sidebarToggle.addEventListener('click', function () {
+        if (appShell.classList.contains('sidebar-open')) closeSidebar(); else openSidebar();
+      });
+      sidebarScrim.addEventListener('click', closeSidebar);
+
+      sidebarNewChat.addEventListener('click', function () {
+        activeThread = null;
+        renderThreads();
+        if (newChatBtn) newChatBtn.click();
+        closeSidebar();
+      });
+
+      sidebarList.addEventListener('click', function (e) {
+        const btn = e.target.closest('.thread');
+        if (!btn) return;
+        const id = btn.dataset.thread;
+        const thread = DEMO_THREADS.find(function (t) { return t.id === id; });
+        if (!thread) return;
+        activeThread = id;
+        renderThreads();
+        replayThread(thread);
+        if (window.innerWidth < 980) closeSidebar();
+      });
+
+      /* Replay a static thread into the chat area using the page's existing
+         streaming-block look (no real API call). */
+      async function replayThread(thread) {
+        appShell.classList.add('app-active');
+        chatArea.innerHTML = '';
+        for (let i = 0; i < thread.messages.length; i++) {
+          const m = thread.messages[i];
+          const isLast = i === thread.messages.length - 1;
+          if (m.role === 'user') {
+            appendUser(m.content);
+            await wait(180);
+          } else {
+            await appendAssistant(m.content, isLast);
+            await wait(220);
+          }
+        }
+      }
+
+      function appendUser(text) {
+        const node = document.createElement('div');
+        node.className = 'msg user';
+        node.innerHTML = '<div class="bubble"></div>';
+        node.firstChild.textContent = text;
+        chatArea.appendChild(node);
+        node.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+
+      async function appendAssistant(markdown, withCursor) {
+        const div = document.createElement('div');
+        div.className = 'msg ai';
+        div.innerHTML = '<div class="content"></div>';
+        chatArea.appendChild(div);
+        const contentEl = div.querySelector('.content');
+        await streamBlocks(contentEl, renderMarkdownLite(markdown), 110);
+        if (withCursor) {
+          const cursor = document.createElement('span');
+          cursor.className = 'stream-cursor';
+          contentEl.appendChild(cursor);
+          setTimeout(function () { cursor.remove(); }, 1400);
+        }
+      }
+
+      async function streamBlocks(target, html, delay) {
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const nodes = Array.from(temp.childNodes);
+        if (!nodes.length) { target.innerHTML = html; return; }
+        for (const node of nodes) {
+          target.appendChild(node.cloneNode(true));
+          target.lastChild && target.lastChild.scrollIntoView && target.lastChild.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          await wait(delay);
+        }
+      }
+
+      function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+      /* Tiny markdown-ish renderer matching the page's existing formatter vibe. */
+      function renderMarkdownLite(src) {
+        let s = escHtml(src);
+        s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        const lines = s.split(/\n/);
+        const out = [];
+        let listOpen = false, olOpen = false;
+        for (const raw of lines) {
+          const line = raw.replace(/\r$/, '');
+          if (/^\d+\.\s+/.test(line)) {
+            if (listOpen) { out.push('</ul>'); listOpen = false; }
+            if (!olOpen) { out.push('<ol>'); olOpen = true; }
+            out.push('<li>' + line.replace(/^\d+\.\s+/, '') + '</li>');
+          } else if (/^-\s+/.test(line)) {
+            if (olOpen) { out.push('</ol>'); olOpen = false; }
+            if (!listOpen) { out.push('<ul>'); listOpen = true; }
+            out.push('<li>' + line.replace(/^-\s+/, '') + '</li>');
+          } else if (line.trim() === '') {
+            if (listOpen) { out.push('</ul>'); listOpen = false; }
+            if (olOpen)   { out.push('</ol>'); olOpen = false; }
+          } else {
+            if (listOpen) { out.push('</ul>'); listOpen = false; }
+            if (olOpen)   { out.push('</ol>'); olOpen = false; }
+            out.push('<p>' + line + '</p>');
+          }
+        }
+        if (listOpen) out.push('</ul>');
+        if (olOpen)   out.push('</ol>');
+        return out.join('');
+      }
+
+      function escHtml(str) {
+        if (str == null) return '';
+        const d = document.createElement('div');
+        d.textContent = String(str);
+        return d.innerHTML;
+      }
+
+      renderThreads();
     })();
   </script>
 </body>
