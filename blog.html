@@ -455,6 +455,152 @@ const CSA_MODULES=[
 ]}
 ];
 
+const CSA_TOPIC_REWRITES={
+"1.1":{
+duration:"45 min",
+content:`<h2>What is ServiceNow?</h2>
+<p>ServiceNow is a cloud platform that helps a company run work in a controlled, trackable way. In plain language, it is a shared work system where employees ask for help, teams receive those requests, rules route the work, approvals happen, and everyone can see the status.</p>
+<p>If you are new to ServiceNow, do not start by memorizing product names. Start with this sentence: <strong>ServiceNow turns messy business work into standard digital workflows.</strong></p>
+
+<h3>The everyday problem ServiceNow solves</h3>
+<p>Before a platform like ServiceNow, the same company might use email, spreadsheets, chat messages, shared drives, and separate ticketing tools. Work gets lost because there is no single place to see who asked, who owns it, what changed, and whether it is complete.</p>
+<table>
+<tr><th>Without ServiceNow</th><th>With ServiceNow</th></tr>
+<tr><td>An employee emails IT about a broken laptop.</td><td>The employee opens a request or incident in a portal.</td></tr>
+<tr><td>A manager approves in a separate email thread.</td><td>The approval is tracked on the same record.</td></tr>
+<tr><td>IT updates a spreadsheet to remember progress.</td><td>Status, assignment, notes, and history are stored automatically.</td></tr>
+<tr><td>Reporting is manual and often late.</td><td>Dashboards and reports read directly from platform tables.</td></tr>
+</table>
+
+<h3>A simple story from start to finish</h3>
+<div class="scenario-box"><h5>Beginner scenario</h5><p>An employee cannot connect to VPN. Instead of sending random emails, the employee opens the Service Portal and submits an issue. ServiceNow creates an incident record, assigns it to the Network team, notifies the user, tracks work notes, and records the final resolution. Later, a manager can report how many VPN incidents happened this month.</p></div>
+
+<h3>The core idea: records moving through workflow</h3>
+<p>Most ServiceNow work follows the same basic pattern:</p>
+<ol>
+<li><strong>Someone submits or creates something.</strong> Example: an incident, request, change, or HR case.</li>
+<li><strong>ServiceNow stores it as a record.</strong> A record is one row in a table, similar to one row in a spreadsheet.</li>
+<li><strong>Rules decide what happens next.</strong> Assignment rules, approvals, flows, notifications, and SLAs can run automatically.</li>
+<li><strong>People work the record.</strong> Agents update fields, add notes, attach files, and move the record through states.</li>
+<li><strong>The platform keeps the audit trail.</strong> You can see who changed what and when.</li>
+</ol>
+
+<h3>Words you must understand before the CSA path</h3>
+<table>
+<tr><th>Term</th><th>Layman meaning</th><th>ServiceNow example</th></tr>
+<tr><td>Instance</td><td>Your company copy of ServiceNow</td><td><code>mycompany.service-now.com</code></td></tr>
+<tr><td>Application</td><td>A group of modules for one business area</td><td>Incident, Change, Knowledge</td></tr>
+<tr><td>Module</td><td>A menu link in the left navigator</td><td>Incident &gt; All</td></tr>
+<tr><td>Table</td><td>Where one type of data is stored</td><td><code>incident</code>, <code>sys_user</code></td></tr>
+<tr><td>Record</td><td>One item inside a table</td><td>INC0010001</td></tr>
+<tr><td>Field</td><td>One piece of information on a record</td><td>Priority, State, Assigned to</td></tr>
+<tr><td>Form</td><td>The page used to view or edit one record</td><td>An incident form</td></tr>
+<tr><td>List</td><td>A table-style view of many records</td><td>All open incidents</td></tr>
+<tr><td>Role</td><td>A permission group</td><td><code>itil</code>, <code>admin</code></td></tr>
+<tr><td>Workflow or Flow</td><td>Automated steps that move work forward</td><td>Approval, assignment, notification</td></tr>
+</table>
+
+<h3>Why people call it a platform</h3>
+<p>ServiceNow is not only one ticketing application. It is a platform because many applications share the same foundation: users, groups, roles, tables, forms, lists, workflows, notifications, reporting, and security. Once you understand that foundation, the same thinking applies across IT, HR, customer service, security, and custom apps.</p>
+<table>
+<tr><th>Product area</th><th>What it helps manage</th><th>Beginner example</th></tr>
+<tr><td>ITSM</td><td>IT service work</td><td>Incidents, problems, changes, requests</td></tr>
+<tr><td>ITOM</td><td>Technology operations</td><td>Discovery, CMDB, event management</td></tr>
+<tr><td>HRSD</td><td>Employee HR services</td><td>Onboarding, employee cases</td></tr>
+<tr><td>CSM</td><td>Customer support</td><td>Customer cases and product issues</td></tr>
+<tr><td>SecOps</td><td>Security response</td><td>Vulnerabilities and security incidents</td></tr>
+<tr><td>App Engine</td><td>Custom business apps</td><td>A custom approval app for finance</td></tr>
+</table>
+
+<h3>What the CSA exam expects from this topic</h3>
+<p>The Certified System Administrator exam does not expect you to be an architect on day one. It expects you to understand how the platform is organized and how an admin performs common configuration work.</p>
+<ul>
+<li>Know that ServiceNow is cloud-based and instance-based.</li>
+<li>Understand tables, records, forms, lists, fields, users, groups, and roles.</li>
+<li>Understand that many apps use the same platform services.</li>
+<li>Know where admins configure behavior: forms, lists, UI policies, data policies, business rules, flows, notifications, reports, and update sets.</li>
+</ul>
+
+<h3>Try this in a Personal Developer Instance</h3>
+<pre>// Beginner navigation practice
+// 1. Open your PDI.
+// 2. Type incident.list in the filter navigator or browser URL.
+// 3. Open any incident record.
+// 4. Notice the difference:
+//    List = many records
+//    Form = one record
+//    Field = one value on that record
+// 5. Right-click a field label and explore configuration options.
+</pre>
+
+<div class="warn-box"><h5>CSA exam lens</h5><p>If a question asks what ServiceNow does, choose the answer about a cloud platform for digital workflows and service management, not a single-purpose spreadsheet, email tool, or on-premise ticket system.</p></div>`
+}
+};
+
+const CSA_TOPIC_GUIDANCE={
+"1.1":{plain:"Think of ServiceNow as the shared system of record for work. Requests, incidents, approvals, notes, owners, and reports all live in one controlled platform.",practice:["Open <code>incident.list</code> and compare the list view with one incident form.","Identify three fields on the form: Number, State, and Assigned to.","Explain to yourself how a VPN issue becomes a record, gets assigned, and is resolved."],exam:"Know the platform vocabulary first: instance, application, module, table, record, field, form, list, role, and workflow.",confusion:"New learners often think ServiceNow is only an IT ticketing tool. ITSM is important, but the CSA path tests the wider platform foundation."},
+"1.2":{plain:"Architecture means how ServiceNow is hosted and separated. Each customer gets its own instance so configuration, data, and upgrades are controlled separately.",practice:["Write down the difference between production, test, development, and PDI instances.","Open your PDI URL and identify the instance name before <code>.service-now.com</code>.","Review why production should not be used for experiments."],exam:"Remember multi-instance architecture. Do not confuse it with a shared multi-tenant database model.",confusion:"A PDI is for learning. It is not the same as a company development instance connected to real deployment processes."},
+"1.3":{plain:"ServiceNow releases major platform versions on a regular schedule and adds patches for fixes. Admins must understand upgrades because configuration can conflict with newer out-of-box behavior.",practice:["Open <code>stats.do</code> in your instance and find the release family.","Find Upgrade History in the navigator and review what it tracks.","Write a one-sentence definition of a skipped update."],exam:"Know that releases are named alphabetically and that skipped updates need review during upgrades.",confusion:"An upgrade does not simply overwrite everything you built. It preserves customer changes, but changed out-of-box records can require decisions."},
+"1.4":{plain:"A PDI is your practice ServiceNow instance. It lets you safely learn admin tasks without touching a real company environment.",practice:["Request or open a PDI from the ServiceNow Developer site.","Favorite <code>incident.list</code>, <code>sys_user.list</code>, and <code>sys_properties.list</code>.","Run a small read-only Background Script only after you understand what it does."],exam:"Know that hands-on practice matters because CSA questions often describe what an admin sees or configures in the UI.",confusion:"Admin access in a PDI is intentionally broad. Real customer instances usually restrict admin and security work much more tightly."},
+"1.5":{plain:"Navigation is the skill of finding the right table, module, or configuration page quickly. Most admin work starts in the Application Navigator.",practice:["Search for Incident, Users, Groups, Business Rules, and Tables in the navigator.","Try direct table URLs such as <code>incident.list</code> and <code>sys_user_group.list</code>.","Add three frequently used modules to Favorites."],exam:"Expect questions about where admins go to configure users, groups, forms, lists, business rules, and system properties.",confusion:"The left navigator shows modules, not the full database. A table may exist even if you do not see a friendly module for it."},
+"2.1":{plain:"A list is like a spreadsheet view of records from one table. It helps you sort, filter, group, and open records.",practice:["Open <code>incident.list</code> and sort by Priority.","Add or remove a column using list layout or personalization options.","Open one row and return to the list."],exam:"Know list controls: sort, filter, personalize/configure columns, group by, and open a record.",confusion:"Changing your personalized list is not always the same as changing the default list layout for everyone."},
+"2.2":{plain:"Filtering is how you ask ServiceNow to show only matching records. The visual filter builder and encoded queries represent the same idea in different forms.",practice:["Filter incidents where Active is true.","Copy the query from the breadcrumb and inspect the encoded query.","Build a filter using both AND and OR conditions."],exam:"Understand common operators such as is, is not, contains, starts with, is empty, and is one of.",confusion:"An encoded query can look like code, but it is really a compact text version of filter conditions."},
+"2.3":{plain:"A form is the page for one record. Fields on the form map to columns in the table, and related lists show connected records.",practice:["Open one incident and identify string, choice, reference, and journal fields.","Update a harmless field in a PDI and observe the activity history.","Find a related list at the bottom of the form."],exam:"Know the difference between form, field, section, related list, and activity/journal entries.",confusion:"Work notes and additional comments are journal entries. They append history instead of replacing the previous text."},
+"2.4":{plain:"Related lists show other records that are connected to the record you are viewing. They answer questions like what tasks, approvals, or affected CIs belong to this item.",practice:["Open an incident and look for related lists at the bottom.","Compare a related list with a reference field on the main form.","Configure related lists in a PDI only after noting what was visible before."],exam:"Know that related lists are based on relationships or reference fields and can be configured on forms.",confusion:"A related list is not just visual decoration. It usually represents a real table relationship."},
+"2.5":{plain:"Views control which fields and columns different audiences see. The same record can look different to different roles or channels.",practice:["Open a record and look for the view selector if available.","Compare form layout and list layout concepts.","Find System UI > Views and review existing view records."],exam:"Know that views can apply to forms and lists and are used to simplify the UI for different users.",confusion:"A view changes what is displayed; it does not create a separate copy of the record."},
+"3.1":{plain:"Tables store data. Records are rows in those tables. If you understand tables and records, most ServiceNow admin concepts become easier.",practice:["Open System Definition > Tables and find the Incident table.","Open <code>incident.list</code> and identify records as rows.","Find system fields such as Created, Updated, and Sys ID."],exam:"Know core tables such as <code>task</code>, <code>incident</code>, <code>sys_user</code>, <code>sys_user_group</code>, and <code>cmdb_ci</code>.",confusion:"The label users see may be friendly, but scripts and URLs often use the technical table name."},
+"3.2":{plain:"A field type controls what kind of value a field can hold and how it behaves. Reference, choice, date/time, and journal fields are especially important.",practice:["Find a reference field such as Caller or Assignment group.","Find a choice field such as State or Priority.","Compare displayed text with stored values where possible."],exam:"Know common field types and the difference between stored value and display value.",confusion:"A reference field shows a readable name but stores a sys_id behind the scenes."},
+"3.3":{plain:"Table inheritance means a child table reuses fields from a parent table. Incident, Problem, and Change inherit from Task.",practice:["Open the Task table and compare it with the Incident table.","Find a field that exists on Task and appears on Incident.","Review the <code>sys_class_name</code> idea in a list or form."],exam:"Know that child tables inherit fields and behavior from parent tables, especially the Task table family.",confusion:"A Business Rule on a parent table can affect many child tables, so parent-table changes have wider impact."},
+"3.4":{plain:"The Data Dictionary is the definition layer for tables and fields. It tells ServiceNow what each field is, how long it can be, whether it is mandatory, and more.",practice:["Open a table record and review its Columns related list.","Find one dictionary entry for an Incident field.","Review what a dictionary override is used for."],exam:"Know that dictionary entries define fields and dictionary overrides adjust inherited fields on child tables.",confusion:"Changing the dictionary changes configuration, not just the visual form layout."},
+"4.1":{plain:"UI Policies control form behavior in the browser without writing code. They can make fields mandatory, read-only, or visible based on conditions.",practice:["Find UI Policies in the navigator.","Create a simple PDI-only UI Policy that makes a field visible or mandatory under a condition.","Test it on a form and then disable it if it was only for practice."],exam:"Know UI Policy runs client-side on forms and is commonly compared with Data Policy and Client Script.",confusion:"A UI Policy does not protect data coming through imports or APIs unless paired with server-side enforcement."},
+"4.2":{plain:"Data Policies enforce field rules at the server level. They protect data quality no matter how the record is submitted.",practice:["Compare a UI Policy record with a Data Policy record.","Describe one rule that should be enforced server-side, such as P1 incident requires assignment group.","Review the fields available on a Data Policy."],exam:"Know Data Policy is server-side and can enforce mandatory/read-only behavior beyond the form.",confusion:"If a rule must apply to REST, import sets, and scripts, a form-only UI Policy is not enough."},
+"4.3":{plain:"Business Rules are server-side logic that run when records are inserted, updated, deleted, queried, or displayed.",practice:["Find existing Business Rules on the Incident table.","Identify whether each rule is before, after, async, or display.","Read the condition and script separately."],exam:"Know timing: before can change current before save, after runs after save, async runs later, display prepares form data.",confusion:"Calling <code>current.update()</code> inside the wrong Business Rule can cause recursion or unexpected extra updates."},
+"4.4":{plain:"Client Scripts run in the user browser and improve the form experience. They use <code>g_form</code>, not server-side GlideRecord.",practice:["Find Client Scripts for the Incident table.","Identify onLoad, onChange, and onSubmit scripts.","Look for the <code>isLoading</code> guard in onChange examples."],exam:"Know where Client Scripts run and what <code>g_form</code> is used for.",confusion:"Client Scripts cannot safely enforce data integrity by themselves because users and integrations can bypass the browser form."},
+"4.5":{plain:"UI Actions add buttons, links, and context menu actions. They let users trigger a specific action from a form or list.",practice:["Find UI Actions for the Incident table.","Identify whether an action appears on a form or list.","Check whether it uses client script, server script, or both."],exam:"Know UI Actions can be form buttons, form links, list actions, or context menu items.",confusion:"A button can look simple to the user while running server-side logic behind the scenes."},
+"4.6":{plain:"Notifications send messages when something important happens. They combine a trigger, recipients, and message content.",practice:["Open existing Incident notifications.","Identify the table, when to send, conditions, recipients, and body.","Find <code>sys_email.list</code> to see generated email records."],exam:"Know notification triggers, recipient options, templates, and event-driven notification basics.",confusion:"If an email did not send, first check whether the notification created an email record, then check conditions and email properties."},
+"5.1":{plain:"Import Sets load external data into a temporary staging table before transforming it into the real target table.",practice:["Review System Import Sets modules in your PDI.","Draw the path: Data Source to Import Set Table to Transform Map to Target Table.","Explain why staging protects the target table."],exam:"Know the purpose of staging tables and the import-transform process.",confusion:"External data should not be pushed blindly into production tables without mapping and validation."},
+"5.2":{plain:"Transform Maps decide how staged import data becomes real ServiceNow records. They map fields and decide insert versus update.",practice:["Open an existing Transform Map if demo data is available.","Identify source table, target table, field maps, and coalesce fields.","Write a simple example of coalesce using email as a unique key."],exam:"Know field mapping, transform scripts, and coalesce behavior.",confusion:"Choosing the wrong coalesce field can update the wrong records, so uniqueness matters."},
+"6.1":{plain:"The Service Catalog is the self-service shopping experience for workplace services. Behind each item are request records, approvals, and tasks.",practice:["Open Service Catalog items in your PDI if available.","Identify Request, Requested Item, and Catalog Task records.","Compare a Catalog Item with a Record Producer."],exam:"Know the request hierarchy: request, requested item, catalog task, variables, and approvals.",confusion:"A Catalog Item usually creates a request workflow, while a Record Producer creates a normal record such as an incident."},
+"6.2":{plain:"Knowledge Management stores reusable answers so users and agents do not solve the same issue from scratch every time.",practice:["Open Knowledge > Articles and inspect an article lifecycle state.","Find a knowledge base and category.","Search knowledge from a portal or agent view if available."],exam:"Know knowledge bases, categories, articles, publishing, retirement, and feedback concepts.",confusion:"Knowledge is a managed lifecycle, not just a folder of random documents."},
+"7.1":{plain:"Workflow Editor is the older visual automation tool. Many companies still have legacy workflows, but new automation usually uses Flow Designer.",practice:["Open Workflow Editor if available in your PDI.","Identify activities, transitions, and workflow context.","Compare one workflow idea with a Flow Designer version."],exam:"Know Workflow Editor as legacy and understand basic workflow parts.",confusion:"Legacy does not mean unused. It means you may maintain it, while choosing Flow Designer for most new work."},
+"7.2":{plain:"Flow Designer is the modern low-code automation tool. A flow starts with a trigger and then runs actions and logic.",practice:["Open Flow Designer and inspect sample flows.","Identify trigger, actions, data pills, and execution history.","Create a simple PDI-only flow in a safe table if you are practicing."],exam:"Know flow, trigger, action, subflow, spoke, and execution debugging concepts.",confusion:"Flow Designer is low-code, but it still needs good design: clear triggers, safe conditions, and test evidence."},
+"8.1":{plain:"Reporting turns table data into charts, lists, and dashboard information so teams can understand workload and performance.",practice:["Create a simple Incident report in a PDI.","Change the visualization type and grouping field.","Add a filter and notice that it behaves like list filtering."],exam:"Know report types, data source/table selection, grouping, filtering, sharing, and scheduling basics.",confusion:"Reports show current or queried data. Performance Analytics is for tracked indicators over time."},
+"8.2":{plain:"ACLs are the security rules that decide who can read, write, create, or delete data. They protect tables and fields.",practice:["Review ACL records only in a safe PDI environment.","Turn on security debugging in a learning instance and observe access checks.","Identify role, condition, and script on an ACL record."],exam:"Know ACL evaluation, table versus field ACLs, role/condition/script checks, admin behavior, and security_admin elevation.",confusion:"Hiding a field on a form is not security. ACLs enforce access across UI, reports, APIs, and exports."},
+"8.3":{plain:"Update Sets move configuration from one instance to another. They are the standard admin deployment packaging mechanism for many global-scope changes.",practice:["Create a named local update set in a PDI.","Make a tiny safe configuration change and see it captured.","Review Complete, Preview, and Commit concepts."],exam:"Know what update sets capture, what they do not capture, and the flow from dev to test to production.",confusion:"Update Sets move configuration, not normal operational data like incidents or users."}
+};
+
+function renderCSABullets(items){
+  return '<ul>'+items.map(function(item){return '<li>'+item+'</li>'}).join('')+'</ul>';
+}
+
+function buildCSAGuidance(topic, guide){
+  var html='<div class="tip-box"><h4>Plain-English checkpoint</h4><p>'+guide.plain+'</p></div>';
+  html+='<h3>Beginner documentation notes</h3>';
+  html+='<table><tr><th>Question</th><th>Answer</th></tr><tr><td>What should I understand?</td><td>'+guide.plain+'</td></tr><tr><td>Why does an admin care?</td><td>This topic explains what you configure, protect, route, report, or troubleshoot as a ServiceNow administrator.</td></tr><tr><td>How should I study it?</td><td>Read the concept, open the matching area in a PDI, then explain the idea using one real workplace example.</td></tr></table>';
+  html+='<h4>Hands-on practice</h4>'+renderCSABullets(guide.practice);
+  html+='<div class="warn-box"><h5>CSA exam lens</h5><p>'+guide.exam+'</p></div>';
+  if(guide.confusion)html+='<h4>Common confusion</h4><p>'+guide.confusion+'</p>';
+  return html;
+}
+
+function applyCSADocumentationEnhancements(){
+  CSA_MODULES.forEach(function(module){
+    module.topics.forEach(function(topic){
+      var rewrite=CSA_TOPIC_REWRITES[topic.id];
+      if(rewrite){
+        if(rewrite.duration)topic.duration=rewrite.duration;
+        topic.content=rewrite.content;
+      }
+      var guide=CSA_TOPIC_GUIDANCE[topic.id];
+      if(guide&&topic.content.indexOf('Beginner documentation notes')===-1){
+        topic.content+=buildCSAGuidance(topic,guide);
+      }
+    });
+  });
+}
+
+applyCSADocumentationEnhancements();
+
 const CERT_ROADMAP=[
 {name:"CSA",icon:"\ud83c\udf93",label:"Available Now",available:true},
 {name:"CAD",icon:"\ud83d\udcbb",label:"Q2 2026"},
@@ -585,7 +731,7 @@ function renderCSAWelcome(){
     mobModules+='</div></div>';
   });
   mobModules+='</div>';
-  document.getElementById('csaContent').innerHTML='<div class="csa-welcome"><h2>ServiceNow CSA Certification</h2><p>Master the platform from zero to certified.</p><div class="csa-stats"><div><div class="csa-stat-num">'+CSA_MODULES.length+'</div><div class="csa-stat-label">Modules</div></div><div><div class="csa-stat-num">'+total+'</div><div class="csa-stat-label">Topics</div></div><div><div class="csa-stat-num">'+completedTopics.length+'</div><div class="csa-stat-label">Completed</div></div></div>'+mobModules+'<h3 style="font-size:18px;font-weight:600;margin:28px 0 16px">Exam Pro Tips</h3><div class="csa-tips-grid"><div class="csa-tip"><h4>Know the Fundamentals</h4><p>60% of questions test core concepts: tables, forms, lists, basic admin.</p></div><div class="csa-tip"><h4>Hands-On Practice</h4><p>Get a free PDI. Theory alone won\'t pass.</p></div><div class="csa-tip"><h4>Time Management</h4><p>60 questions in 90 minutes. Flag difficult ones.</p></div><div class="csa-tip"><h4>UI Policy vs Client Script vs BR</h4><p>Know when to use each. Heavily tested.</p></div><div class="csa-tip"><h4>Update Sets Lifecycle</h4><p>Create, capture, transfer, preview, commit.</p></div><div class="csa-tip"><h4>Official Documentation</h4><p>Exam references docs.servicenow.com.</p></div></div></div>';
+  document.getElementById('csaContent').innerHTML='<div class="csa-welcome"><h2>ServiceNow CSA Certification Path</h2><p>This path is written for two audiences: people who have never used ServiceNow and people who have used it but need clearer CSA exam structure. Start with the foundation topics, practice each concept in a Personal Developer Instance, and treat every topic as a small admin skill you can explain in plain English.</p><div class="csa-stats"><div><div class="csa-stat-num">'+CSA_MODULES.length+'</div><div class="csa-stat-label">Modules</div></div><div><div class="csa-stat-num">'+total+'</div><div class="csa-stat-label">Topics</div></div><div><div class="csa-stat-num">'+completedTopics.length+'</div><div class="csa-stat-label">Completed</div></div></div><h3 style="font-size:18px;font-weight:600;margin:28px 0 16px">How to use this path</h3><div class="csa-tips-grid"><div class="csa-tip"><h4>1. Learn the words first</h4><p>Instance, table, record, field, form, list, role, and workflow are the base language for the rest of CSA.</p></div><div class="csa-tip"><h4>2. Open the product</h4><p>Use a PDI while reading. Each topic now includes hands-on practice so the UI becomes familiar.</p></div><div class="csa-tip"><h4>3. Connect concept to admin action</h4><p>Ask: what does an admin configure, protect, route, report, or deploy here?</p></div><div class="csa-tip"><h4>4. Study for scenarios</h4><p>CSA questions often ask what is the best tool for a situation, not just the definition of a tool.</p></div></div>'+mobModules+'<h3 style="font-size:18px;font-weight:600;margin:28px 0 16px">CSA exam focus areas</h3><div class="csa-tips-grid"><div class="csa-tip"><h4>Platform basics</h4><p>Know tables, records, forms, lists, users, groups, roles, navigation, and instances.</p></div><div class="csa-tip"><h4>Configuration tools</h4><p>Compare UI Policies, Data Policies, Business Rules, Client Scripts, UI Actions, and Flow Designer.</p></div><div class="csa-tip"><h4>Data and security</h4><p>Understand field types, table inheritance, dictionary, ACLs, imports, and update sets.</p></div><div class="csa-tip"><h4>Operational features</h4><p>Know catalog, knowledge, reporting, notifications, and the high-level lifecycle of requests and incidents.</p></div></div></div>';
 }
 
 function openCsaTopic(topicId,fromRouter){
