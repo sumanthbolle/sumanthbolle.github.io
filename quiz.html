@@ -74,6 +74,53 @@
     .sub-tab{padding:6px 20px;border:none;border-radius:20px;background:transparent;color:var(--text3);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.25s;text-decoration:none;font-family:var(--font)}
     .sub-tab:hover{background:var(--surface2);color:var(--text)}
     .sub-tab.active{background:var(--text);color:var(--bg)}
+
+    /* TOPIC PRACTICE MODE */
+    .topic-practice-layout{display:grid;grid-template-columns:280px 1fr;gap:0;min-height:calc(100vh - 200px);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+    .topic-sidebar{background:var(--bg);border-right:1px solid var(--border);overflow-y:auto;max-height:calc(100vh - 200px);padding:0}
+    .topic-sidebar-header{padding:16px 16px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:10}
+    .topic-sidebar-header h3{font-size:14px;font-weight:600;margin-bottom:8px;letter-spacing:-0.01em}
+    .topic-sidebar-header .topic-search{width:100%;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:var(--font);outline:none}
+    .topic-sidebar-header .topic-search:focus{border-color:var(--text2)}
+    .topic-sidebar-header .topic-stats{font-size:11px;color:var(--text3);margin-top:8px}
+    .topic-group{border-bottom:1px solid var(--border)}
+    .topic-group-header{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;transition:background .15s;font-size:13px;font-weight:500;color:var(--text2);user-select:none}
+    .topic-group-header:hover{background:var(--surface)}
+    .topic-group-header.active{color:var(--text);background:var(--surface2)}
+    .topic-group-header .topic-icon{font-size:16px;flex-shrink:0}
+    .topic-group-header .topic-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .topic-group-header .topic-count{font-size:11px;color:var(--text3);background:var(--surface2);padding:2px 8px;border-radius:10px;flex-shrink:0}
+    .topic-group-header .topic-chevron{font-size:10px;color:var(--text3);transition:transform .2s;flex-shrink:0}
+    .topic-group-header.expanded .topic-chevron{transform:rotate(90deg)}
+    .topic-question-list{display:none;padding:0}
+    .topic-group.expanded .topic-question-list{display:block}
+    .topic-question-item{display:flex;align-items:flex-start;gap:8px;padding:10px 16px 10px 40px;cursor:pointer;font-size:12px;color:var(--text2);line-height:1.4;transition:background .15s;border-bottom:1px solid var(--border)}
+    .topic-question-item:last-child{border-bottom:none}
+    .topic-question-item:hover{background:var(--surface)}
+    .topic-question-item.active{background:var(--surface2);color:var(--text)}
+    .topic-question-item .q-number{font-weight:600;color:var(--text3);flex-shrink:0;min-width:24px}
+    .topic-question-item .q-text{flex:1;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .topic-question-item .q-status{flex-shrink:0;width:8px;height:8px;border-radius:50%;margin-top:4px}
+    .topic-question-item .q-status.answered-correct{background:var(--green)}
+    .topic-question-item .q-status.answered-wrong{background:var(--red)}
+    .topic-question-item .q-status.unanswered{background:var(--border2)}
+    .topic-main-panel{padding:32px;overflow-y:auto;max-height:calc(100vh - 200px)}
+    .topic-main-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:400px;text-align:center;color:var(--text3)}
+    .topic-main-empty .empty-icon{font-size:48px;margin-bottom:16px;opacity:0.5}
+    .topic-main-empty h3{font-size:18px;font-weight:600;color:var(--text2);margin-bottom:8px}
+    .topic-main-empty p{font-size:14px;max-width:400px;line-height:1.6}
+    .topic-practice-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+    .topic-practice-header .tp-info{display:flex;align-items:center;gap:12px}
+    .topic-practice-header .tp-nav{display:flex;gap:8px}
+    .tp-nav-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;cursor:pointer;font-family:var(--font);transition:all .2s}
+    .tp-nav-btn:hover:not(:disabled){border-color:var(--text2);color:var(--text)}
+    .tp-nav-btn:disabled{opacity:0.3;cursor:not-allowed}
+    .tp-back-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;font-family:var(--font);transition:all .2s;margin-bottom:16px;display:inline-flex;align-items:center;gap:6px}
+    .tp-back-btn:hover{border-color:var(--text2);color:var(--text)}
+    .topic-progress-summary{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+    .topic-progress-stat{font-size:12px;color:var(--text3)}
+    .topic-progress-stat strong{color:var(--text);font-size:14px}
+
     @media(max-width:768px){.nav-links{display:none}.menu-toggle{display:block}}
 
     /* HEADER */
@@ -314,6 +361,9 @@
       .session-banner,.quiz-container{padding-left:16px;padding-right:16px}
       .mode-card{flex-direction:column;align-items:flex-start;gap:8px}
       .mode-card .mode-meta{text-align:left}
+      .topic-practice-layout{grid-template-columns:1fr;min-height:auto}
+      .topic-sidebar{max-height:50vh;border-right:none;border-bottom:1px solid var(--border)}
+      .topic-main-panel{max-height:none;padding:20px}
     }
     @media(max-width:640px){.question-card{padding:20px}.results-stats{grid-template-columns:1fr}.results-actions{flex-direction:column}.quiz-actions{flex-direction:column-reverse;gap:12px}.quiz-actions .next-btn,.quiz-actions .submit-code-btn,.quiz-actions .submit-mcq-btn{width:100%}.quiz-actions .quit-btn{width:100%}.session-banner-inner{flex-direction:column;gap:16px;text-align:center}.filter-bar{justify-content:center}.participant-form{grid-template-columns:1fr}}
   </style>
@@ -482,6 +532,54 @@
           <button class="submit-mcq-btn" id="submitMultiBtn" style="display:none" disabled>Submit Answers</button>
           <button class="submit-code-btn" id="submitCodeBtn" style="display:none">Run & Validate</button>
           <button class="next-btn" id="nextBtn">Next Question</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOPIC PRACTICE SCREEN -->
+    <div class="quiz-screen" id="topicPracticeScreen">
+      <button class="tp-back-btn" id="topicPracticeBackBtn">&larr; Back to modes</button>
+      <div class="topic-progress-summary" id="topicProgressSummary"></div>
+      <div class="topic-practice-layout">
+        <div class="topic-sidebar" id="topicSidebar">
+          <div class="topic-sidebar-header">
+            <h3>Topics</h3>
+            <input type="text" class="topic-search" id="topicSearchInput" placeholder="Search questions...">
+            <div class="topic-stats" id="topicSidebarStats"></div>
+          </div>
+          <div id="topicGroupList"></div>
+        </div>
+        <div class="topic-main-panel" id="topicMainPanel">
+          <div class="topic-main-empty" id="topicEmptyState">
+            <div class="empty-icon">&#128203;</div>
+            <h3>Select a question</h3>
+            <p>Choose a topic from the left panel, then click any question to view it here. Questions are organized by exam domain.</p>
+          </div>
+          <div id="topicQuestionView" style="display:none">
+            <div class="topic-practice-header">
+              <div class="tp-info">
+                <span id="tpTopicBadge" class="badge badge-count"></span>
+                <span id="tpQuestionIndex" style="font-size:13px;color:var(--text2)"></span>
+              </div>
+              <div class="tp-nav">
+                <button class="tp-nav-btn" id="tpPrevBtn" disabled>&larr; Prev</button>
+                <button class="tp-nav-btn" id="tpNextBtn">Next &rarr;</button>
+              </div>
+            </div>
+            <div class="question-card" id="tpQuestionCard">
+              <div class="question-meta" id="tpQuestionMeta"></div>
+              <p class="question-text" id="tpQuestionText"></p>
+              <div class="question-code" id="tpQuestionCode" style="display:none"></div>
+              <div id="tpMcqSection">
+                <div class="multi-hint" id="tpMultiHint" style="display:none"></div>
+                <div class="options-list" id="tpOptionsList"></div>
+              </div>
+              <div class="explanation-box" id="tpExplanationBox">
+                <h4>Explanation</h4>
+                <p id="tpExplanationText"></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1910,6 +2008,351 @@ window.SBShared && window.SBShared.initNavMenu({
   menuSelector: '#mobileMenu',
   menuOpenClass: 'open',
   toggleActiveClass: ''
+});
+
+// ============================================================
+//  TOPIC-BASED PRACTICE MODE
+// ============================================================
+const TopicPractice = {
+  catKey: null,
+  topics: [],
+  questionsByTopic: {},
+  allQuestions: [],
+  currentTopicId: null,
+  currentQuestionIdx: -1,
+  tpAnswered: false,
+  tpSelectedOptions: new Set(),
+  tpShuffleMap: [],
+
+  init(catKey) {
+    this.catKey = catKey;
+    const cat = CATEGORIES[catKey];
+    this.topics = cat.topics || [];
+    const questions = QUESTIONS[catKey] || [];
+    this.allQuestions = questions;
+
+    this.questionsByTopic = {};
+    this.topics.forEach(t => { this.questionsByTopic[t.id] = []; });
+    questions.forEach(q => {
+      const tid = q.topic || 'platform-overview';
+      if (!this.questionsByTopic[tid]) this.questionsByTopic[tid] = [];
+      this.questionsByTopic[tid].push(q);
+    });
+
+    this.currentTopicId = null;
+    this.currentQuestionIdx = -1;
+
+    this.buildSidebar();
+    this.updateProgressSummary();
+    this.showEmptyState();
+    showScreen('topicPracticeScreen');
+  },
+
+  buildSidebar() {
+    const container = document.getElementById('topicGroupList');
+    container.innerHTML = '';
+    const sessionData = SessionProgress.getStats();
+
+    this.topics.forEach(topic => {
+      const questions = this.questionsByTopic[topic.id] || [];
+      if (questions.length === 0) return;
+
+      let answeredCount = 0;
+      questions.forEach(q => { if (sessionData.answered[q.id]) answeredCount++; });
+
+      const group = document.createElement('div');
+      group.className = 'topic-group';
+      group.dataset.topicId = topic.id;
+
+      const header = document.createElement('div');
+      header.className = 'topic-group-header';
+      header.innerHTML =
+        '<span class="topic-icon">' + topic.icon + '</span>' +
+        '<span class="topic-name">' + topic.name + '</span>' +
+        '<span class="topic-count">' + answeredCount + '/' + questions.length + '</span>' +
+        '<span class="topic-chevron">&#9654;</span>';
+      header.addEventListener('click', () => this.toggleTopic(topic.id));
+      group.appendChild(header);
+
+      const list = document.createElement('div');
+      list.className = 'topic-question-list';
+      questions.forEach((q, idx) => {
+        const item = document.createElement('div');
+        item.className = 'topic-question-item';
+        item.dataset.questionId = q.id;
+        const statusClass = sessionData.answered[q.id]
+          ? (sessionData.correct[q.id] ? 'answered-correct' : 'answered-wrong')
+          : 'unanswered';
+        item.innerHTML =
+          '<span class="q-number">' + (idx + 1) + '</span>' +
+          '<span class="q-text">' + escapeHtml(q.q) + '</span>' +
+          '<span class="q-status ' + statusClass + '"></span>';
+        item.addEventListener('click', () => this.selectQuestion(topic.id, idx));
+        list.appendChild(item);
+      });
+      group.appendChild(list);
+      container.appendChild(group);
+    });
+
+    const total = this.allQuestions.length;
+    const answeredTotal = Object.keys(sessionData.answered).filter(id =>
+      this.allQuestions.some(q => q.id === id)
+    ).length;
+    document.getElementById('topicSidebarStats').textContent =
+      answeredTotal + ' of ' + total + ' answered (' + Math.round((answeredTotal / total) * 100) + '%)';
+  },
+
+  toggleTopic(topicId) {
+    const groups = document.querySelectorAll('#topicGroupList .topic-group');
+    groups.forEach(g => {
+      if (g.dataset.topicId === topicId) {
+        g.classList.toggle('expanded');
+        g.querySelector('.topic-group-header').classList.toggle('expanded');
+      }
+    });
+  },
+
+  selectQuestion(topicId, questionIdx) {
+    this.currentTopicId = topicId;
+    this.currentQuestionIdx = questionIdx;
+    this.renderTopicQuestion();
+
+    document.querySelectorAll('.topic-question-item').forEach(el => el.classList.remove('active'));
+    const group = document.querySelector('.topic-group[data-topic-id="' + topicId + '"]');
+    if (group) {
+      const items = group.querySelectorAll('.topic-question-item');
+      if (items[questionIdx]) items[questionIdx].classList.add('active');
+    }
+  },
+
+  showEmptyState() {
+    document.getElementById('topicEmptyState').style.display = 'flex';
+    document.getElementById('topicQuestionView').style.display = 'none';
+  },
+
+  renderTopicQuestion() {
+    const questions = this.questionsByTopic[this.currentTopicId] || [];
+    const q = questions[this.currentQuestionIdx];
+    if (!q) return;
+
+    document.getElementById('topicEmptyState').style.display = 'none';
+    document.getElementById('topicQuestionView').style.display = 'block';
+
+    const topic = this.topics.find(t => t.id === this.currentTopicId);
+    document.getElementById('tpTopicBadge').textContent = topic ? topic.icon + ' ' + topic.name : '';
+    document.getElementById('tpQuestionIndex').textContent =
+      'Question ' + (this.currentQuestionIdx + 1) + ' of ' + questions.length;
+
+    const prevBtn = document.getElementById('tpPrevBtn');
+    const nextBtn = document.getElementById('tpNextBtn');
+    prevBtn.disabled = this.currentQuestionIdx <= 0;
+    nextBtn.disabled = this.currentQuestionIdx >= questions.length - 1;
+
+    document.getElementById('tpQuestionMeta').innerHTML =
+      '<span class="badge badge-difficulty badge-' + q.difficulty + '">' + q.difficulty + '</span>' +
+      '<span class="badge badge-count">' + (q.type === 'mcq' ? 'Multiple Choice' : q.type) + '</span>' +
+      (SessionProgress.isAnswered(q.id) ? '<span class="badge badge-count" style="opacity:0.5">Previously answered</span>' : '');
+
+    document.getElementById('tpQuestionText').textContent = q.q;
+
+    const codeBlock = document.getElementById('tpQuestionCode');
+    if (q.codeContext) {
+      codeBlock.textContent = q.codeContext;
+      codeBlock.style.display = 'block';
+    } else {
+      codeBlock.style.display = 'none';
+    }
+
+    document.getElementById('tpExplanationBox').style.display = 'none';
+    this.tpAnswered = false;
+    this.tpSelectedOptions = new Set();
+    this.renderTopicMCQ(q);
+  },
+
+  renderTopicMCQ(q) {
+    const multiCount = getRequiredSelectionCount(q);
+    const isMulti = multiCount > 1;
+    const hint = document.getElementById('tpMultiHint');
+    if (isMulti) {
+      hint.textContent = 'Select ' + multiCount + ' answers, then click any selected option again to submit';
+      hint.style.display = 'block';
+    } else {
+      hint.style.display = 'none';
+    }
+
+    const list = document.getElementById('tpOptionsList');
+    list.innerHTML = '';
+    const letters = 'ABCDEFGH';
+    const displayOptions = getDisplayOptions(q);
+
+    const indexed = displayOptions.map((opt, i) => ({ text: opt, origIdx: i }));
+    const shuffled = shuffleArray(indexed);
+    this.tpShuffleMap = shuffled.map(s => s.origIdx);
+
+    shuffled.forEach((item, displayIdx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      if (isMulti) {
+        btn.innerHTML =
+          '<span class="option-main"><span class="option-letter">' + letters[displayIdx] + '</span><span>' + escapeHtml(item.text) + '</span></span>' +
+          '<span class="option-checkbox"><input type="checkbox" tabindex="-1" aria-hidden="true"></span>';
+      } else {
+        btn.innerHTML =
+          '<span class="option-letter">' + letters[displayIdx] + '</span><span>' + escapeHtml(item.text) + '</span>';
+      }
+      btn.addEventListener('click', () => this.handleTopicOptionClick(displayIdx, q));
+      list.appendChild(btn);
+    });
+  },
+
+  handleTopicOptionClick(displayIndex, q) {
+    if (this.tpAnswered) return;
+    const multiCount = getRequiredSelectionCount(q);
+    const buttons = document.querySelectorAll('#tpOptionsList .option-btn');
+
+    if (multiCount > 1) {
+      if (this.tpSelectedOptions.has(displayIndex)) {
+        this.tpSelectedOptions.delete(displayIndex);
+        buttons[displayIndex].classList.remove('selected');
+      } else {
+        this.tpSelectedOptions.add(displayIndex);
+        buttons[displayIndex].classList.add('selected');
+      }
+      const cb = buttons[displayIndex].querySelector('input[type="checkbox"]');
+      if (cb) cb.checked = this.tpSelectedOptions.has(displayIndex);
+
+      if (this.tpSelectedOptions.size >= multiCount) {
+        this.submitTopicMCQ(q);
+      }
+    } else {
+      this.tpSelectedOptions.clear();
+      buttons.forEach(btn => btn.classList.remove('selected'));
+      this.tpSelectedOptions.add(displayIndex);
+      buttons[displayIndex].classList.add('selected');
+      setTimeout(() => this.submitTopicMCQ(q), 200);
+    }
+  },
+
+  submitTopicMCQ(q) {
+    if (this.tpAnswered) return;
+    this.tpAnswered = true;
+
+    const buttons = document.querySelectorAll('#tpOptionsList .option-btn');
+    const selectedOriginal = [...this.tpSelectedOptions].map(di => this.tpShuffleMap[di]);
+    const correctSet = new Set(q.correct);
+    const isCorrect = selectedOriginal.length === q.correct.length &&
+      selectedOriginal.every(s => correctSet.has(s));
+
+    SessionProgress.markAnswered(q.id, isCorrect);
+
+    buttons.forEach((btn, displayIdx) => {
+      const origIdx = this.tpShuffleMap[displayIdx];
+      btn.classList.add('disabled');
+      if (correctSet.has(origIdx)) btn.classList.add('show-correct');
+      if (this.tpSelectedOptions.has(displayIdx) && !correctSet.has(origIdx)) btn.classList.add('incorrect');
+      if (this.tpSelectedOptions.has(displayIdx) && correctSet.has(origIdx)) {
+        btn.classList.remove('show-correct');
+        btn.classList.add('correct');
+      }
+    });
+
+    if (q.explanation) {
+      document.getElementById('tpExplanationText').innerHTML = q.explanation;
+      document.getElementById('tpExplanationBox').style.display = 'block';
+    }
+
+    this.updateQuestionStatus(q.id, isCorrect);
+    this.updateProgressSummary();
+  },
+
+  updateQuestionStatus(questionId, isCorrect) {
+    const item = document.querySelector('.topic-question-item[data-question-id="' + questionId + '"]');
+    if (item) {
+      const status = item.querySelector('.q-status');
+      if (status) {
+        status.className = 'q-status ' + (isCorrect ? 'answered-correct' : 'answered-wrong');
+      }
+    }
+
+    const sessionData = SessionProgress.getStats();
+    this.topics.forEach(topic => {
+      const questions = this.questionsByTopic[topic.id] || [];
+      let answeredCount = 0;
+      questions.forEach(q => { if (sessionData.answered[q.id]) answeredCount++; });
+      const group = document.querySelector('.topic-group[data-topic-id="' + topic.id + '"]');
+      if (group) {
+        const countBadge = group.querySelector('.topic-count');
+        if (countBadge) countBadge.textContent = answeredCount + '/' + questions.length;
+      }
+    });
+
+    const total = this.allQuestions.length;
+    const answeredTotal = Object.keys(sessionData.answered).filter(id =>
+      this.allQuestions.some(q => q.id === id)
+    ).length;
+    document.getElementById('topicSidebarStats').textContent =
+      answeredTotal + ' of ' + total + ' answered (' + Math.round((answeredTotal / total) * 100) + '%)';
+  },
+
+  updateProgressSummary() {
+    const summary = document.getElementById('topicProgressSummary');
+    if (!this.allQuestions.length) { summary.innerHTML = ''; return; }
+    const sessionData = SessionProgress.getStats();
+    let answeredCount = 0, correctCount = 0;
+    this.allQuestions.forEach(q => {
+      if (sessionData.answered[q.id]) { answeredCount++; }
+      if (sessionData.correct[q.id]) { correctCount++; }
+    });
+    summary.innerHTML =
+      '<div class="topic-progress-stat"><strong>' + this.allQuestions.length + '</strong> total questions</div>' +
+      '<div class="topic-progress-stat"><strong>' + answeredCount + '</strong> answered</div>' +
+      '<div class="topic-progress-stat"><strong style="color:var(--green)">' + correctCount + '</strong> correct</div>' +
+      '<div class="topic-progress-stat"><strong>' + this.topics.length + '</strong> topics</div>';
+  },
+
+  navigatePrev() {
+    if (this.currentQuestionIdx > 0) {
+      this.selectQuestion(this.currentTopicId, this.currentQuestionIdx - 1);
+    }
+  },
+
+  navigateNext() {
+    const questions = this.questionsByTopic[this.currentTopicId] || [];
+    if (this.currentQuestionIdx < questions.length - 1) {
+      this.selectQuestion(this.currentTopicId, this.currentQuestionIdx + 1);
+    }
+  },
+
+  filterQuestions(searchText) {
+    const query = searchText.toLowerCase().trim();
+    const groups = document.querySelectorAll('#topicGroupList .topic-group');
+    groups.forEach(group => {
+      const items = group.querySelectorAll('.topic-question-item');
+      let visibleCount = 0;
+      items.forEach(item => {
+        const text = item.querySelector('.q-text').textContent.toLowerCase();
+        const matches = !query || text.includes(query);
+        item.style.display = matches ? '' : 'none';
+        if (matches) visibleCount++;
+      });
+      group.style.display = visibleCount > 0 || !query ? '' : 'none';
+      if (query && visibleCount > 0) {
+        group.classList.add('expanded');
+        group.querySelector('.topic-group-header').classList.add('expanded');
+      }
+    });
+  }
+};
+
+document.getElementById('topicPracticeBackBtn').addEventListener('click', () => {
+  showScreen('modeScreen');
+});
+
+document.getElementById('tpPrevBtn').addEventListener('click', () => TopicPractice.navigatePrev());
+document.getElementById('tpNextBtn').addEventListener('click', () => TopicPractice.navigateNext());
+
+document.getElementById('topicSearchInput').addEventListener('input', (e) => {
+  TopicPractice.filterQuestions(e.target.value);
 });
 
 // ── INIT ──
