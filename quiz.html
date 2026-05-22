@@ -1241,7 +1241,13 @@ function selectCategory(key) {
       <div><h4>${mode.name}</h4><p>${mode.desc}${insufficient ? ` <span style="color:var(--yellow);font-size:12px">(only ${availableCount} available)</span>` : ''}</p></div>
       <div class="mode-meta">${displayCount} Q${mode.timer ? ` · ${mode.timer}s/Q` : ''}</div>
     `;
-    div.addEventListener('click', () => queueQuizStart(key, mode));
+    div.addEventListener('click', () => {
+      if (mode.topicBased && CATEGORIES[key] && CATEGORIES[key].topics) {
+        TopicPractice.init(key);
+      } else {
+        queueQuizStart(key, mode);
+      }
+    });
     modeOpts.appendChild(div);
   });
   
