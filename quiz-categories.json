@@ -69,16 +69,33 @@
   "csa": {
     "name": "CSA Certification",
     "icon": "🎯",
-    "desc": "Full-length ServiceNow Certified System Administrator exam prep. 60+ questions covering all exam domains with scenario-based challenges.",
+    "desc": "Full-length ServiceNow Certified System Administrator exam prep. 895 questions covering all exam domains, organized by topic.",
     "featured": true,
     "color": "green",
+    "topics": [
+      { "id": "platform-overview", "name": "Platform Overview & Navigation", "icon": "🧭" },
+      { "id": "user-admin", "name": "User Administration & Security", "icon": "🔐" },
+      { "id": "tables-schema", "name": "Database & Tables", "icon": "🗄️" },
+      { "id": "ui-config", "name": "UI Configuration", "icon": "🎨" },
+      { "id": "itsm", "name": "IT Service Management", "icon": "🔧" },
+      { "id": "service-catalog", "name": "Service Catalog & Requests", "icon": "🛒" },
+      { "id": "knowledge-mgmt", "name": "Knowledge Management", "icon": "📖" },
+      { "id": "self-service", "name": "Self-Service & Service Portal", "icon": "🌐" },
+      { "id": "workflow-automation", "name": "Workflow & Flow Designer", "icon": "⚡" },
+      { "id": "reporting", "name": "Reporting & Dashboards", "icon": "📊" },
+      { "id": "import-integration", "name": "Import & Integration", "icon": "🔄" },
+      { "id": "cmdb", "name": "CMDB & Asset Management", "icon": "🖥️" },
+      { "id": "update-sets", "name": "Update Sets & Development", "icon": "📦" },
+      { "id": "scripting", "name": "Scripting & APIs", "icon": "💻" }
+    ],
     "modes": [
       {
         "id": "practice",
         "name": "Practice Mode",
-        "desc": "All questions, no timer",
+        "desc": "Browse all questions by topic — no timer",
         "count": "all",
-        "timer": 0
+        "timer": 0,
+        "topicBased": true
       },
       {
         "id": "quick",
@@ -309,22 +326,6 @@
         "desc": "60 random questions, 90s each",
         "count": 60,
         "timer": 90
-      },
-      {
-        "id": "pdf5-pack",
-        "name": "CSA PDF #5 Pack",
-        "desc": "All questions extracted from the CSA 5 dump (corrected & deduped)",
-        "count": "all",
-        "timer": 0,
-        "sourceSet": "csa_dumps_live_pdf5"
-      },
-      {
-        "id": "pdf5-quick",
-        "name": "CSA PDF #5 Quick 20",
-        "desc": "20 random questions from the CSA 5 dump, 60s each",
-        "count": 20,
-        "timer": 60,
-        "sourceSet": "csa_dumps_live_pdf5"
       }
     ]
   }
