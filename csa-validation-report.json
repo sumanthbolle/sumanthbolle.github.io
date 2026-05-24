@@ -1,0 +1,1153 @@
+{
+  "generated_by": "scripts/csa_apply_fixes.py + scripts/csa_build_report.py",
+  "validation_scope": "Internal consistency checks + sampled cross-validation against docs.servicenow.com and ServiceNow community references",
+  "csa_question_count": 898,
+  "questions_changed": 70,
+  "changes_by_topic": {
+    "cmdb": 3,
+    "import-integration": 1,
+    "itsm": 3,
+    "knowledge-mgmt": 3,
+    "platform-overview": 9,
+    "reporting": 2,
+    "scripting": 2,
+    "self-service": 1,
+    "service-catalog": 4,
+    "tables-schema": 4,
+    "ui-config": 16,
+    "update-sets": 2,
+    "user-admin": 14,
+    "workflow-automation": 6
+  },
+  "categories_of_fix": {
+    "choose_n_under_marked": "Questions whose stem said 'Choose N' but only 1 option was marked correct; correct[] re-populated with full set per CSA canonical answers.",
+    "single_answer_wrong": "Questions whose marked-correct option was demonstrably wrong vs. official docs (sys_update_xml, ServiceNow Store, Access Control Rules, default Update Set capture).",
+    "duplicate_option_dedup": "Casing-only duplicate options replaced with a distinct distractor so each question has a single unambiguous correct answer."
+  },
+  "fixes": [
+    {
+      "id": "csa-snow-CSA-Q61",
+      "topic": "self-service",
+      "question": "Which storefront provides prebuilt spokes for integrations?",
+      "source": "IntegrationHub spokes are distributed via the ServiceNow Store (store.servicenow.com).",
+      "correct": {
+        "from": [
+          6
+        ],
+        "to": [
+          4
+        ]
+      },
+      "explanation_updated": true
+    },
+    {
+      "id": "csa-snow-CSA-Q255",
+      "topic": "user-admin",
+      "question": "What is the object name for an Incident Major Incident field ACL?",
+      "source": "Removed casing-only duplicate option ('Incident.Major_Incident') so the question has a single unambiguous correct answer (incident.major_incident).",
+      "options": {
+        "from": [
+          "Incident.Major_Incident",
+          "incident=>major_incident",
+          "incident<=>major_incident",
+          "incident||major_incident",
+          "incident.major_incident"
+        ],
+        "to": [
+          "Incident{Major_Incident}",
+          "incident=>major_incident",
+          "incident<=>major_incident",
+          "incident||major_incident",
+          "incident.major_incident"
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q417",
+      "topic": "platform-overview",
+      "question": "Update payload stored in",
+      "source": "sys_update_xml (Customer Updates) stores each captured XML payload; sys_update_set holds the parent set record — per ServiceNow docs and the community 'sys_update_xml' table reference.",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          1
+        ]
+      },
+      "explanation_updated": true
+    },
+    {
+      "id": "csa-snow-CSA-Q437",
+      "topic": "update-sets",
+      "question": "Default update set captures",
+      "source": "Default Update Sets capture configuration changes (forms, business rules, scripts, UI policies) but not data, scheduled jobs, schedule records, homepages, or dashboards.",
+      "correct": {
+        "from": [
+          1,
+          3
+        ],
+        "to": [
+          1
+        ]
+      },
+      "explanation_updated": true
+    },
+    {
+      "id": "csa-snow-CSA-Q5-b1",
+      "topic": "platform-overview",
+      "question": "Which components are the customer’s responsibility according to the Shared Responsibility Model? (Choose two.)",
+      "source": "ServiceNow Shared Responsibility Model white paper — customer responsibilities include identity/access management and data encryption configuration.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q8-b1",
+      "topic": "ui-config",
+      "question": "What attributes of a field can a UI Policy Action change on a form? (Choose three.)",
+      "source": "ServiceNow UI Policy Actions reference — actions can set Visible, Mandatory, Read-only (Disabled).",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q9-b1",
+      "topic": "ui-config",
+      "question": "Which roles are required to configure the form layout using Table Builder? (Choose two.)",
+      "source": "Table Builder requires admin or app_engine_admin per ServiceNow product docs.",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q17-b1",
+      "topic": "cmdb",
+      "question": "Which of the following concepts are associated with the ServiceNow CMDB? (Choose four.)",
+      "source": "CMDB concepts per ServiceNow docs: configuration items live in tables/fields backed by a database, support service processes, and can be visualized via Dependency Views.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q19-b1",
+      "topic": "ui-config",
+      "question": "What are the main components of the Form Design interface? (Choose three.)",
+      "source": "Form Designer interface: Field Navigator (left), Field Picker, Form Layout canvas.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q20-b1",
+      "topic": "workflow-automation",
+      "question": "What are the different Notification methods that can be used to alert users when events that concern them have occurred? (Choose three.)",
+      "source": "ServiceNow notification methods: Email, SMS, Meeting Invitation (push to mobile is separate).",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q24-b1",
+      "topic": "scripting",
+      "question": "What needs to be specified, when creating a Business Rule? (Choose four.)",
+      "source": "Business Rule definition requires: Table, When (timing), Condition, Script — per System Definition > Business Rules docs.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          4,
+          7,
+          8
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q28-b1",
+      "topic": "ui-config",
+      "question": "Which actions can you take to open the Context Menu on a list, form, or column? (Choose two.)",
+      "source": "Context menus open via right-click on the header OR by clicking the context-menu icon.",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q32-b1",
+      "topic": "itsm",
+      "question": "For your implementation, the following tables are extended from each other:\n• Incident table is extended from Task table.\n• Super Incident table is extended from Incident table.\n\nIn this situation, which table(s) are Parent, Child and Base ",
+      "source": "Table inheritance: Task is base; Incident extends Task (child of Task, parent of Super Incident); Super Incident extends Incident.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q37-b1",
+      "topic": "ui-config",
+      "question": "On a related list, which buttons are commonly used for managing the records on the list? (Choose three.)",
+      "source": "Common related-list buttons: New, Edit, Add.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q41-b1",
+      "topic": "knowledge-mgmt",
+      "question": "Categories in the knowledge base, by default, can be created and edited by which knowledge workers? (Choose two.)",
+      "source": "Knowledge categories: by default managed by Knowledge Managers and Knowledge Owners.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          3,
+          6
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q46-b1",
+      "topic": "platform-overview",
+      "question": "Which of the following can be customized through the Basic Configuration UI 16 module? (Choose three.)",
+      "source": "Basic Configuration UI16 settings include Banner Image, Browser Tab Title, and System Date Format.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q51-b1",
+      "topic": "knowledge-mgmt",
+      "question": "Knowledge Base Search results can be sorted by which of the following? (Choose three.)",
+      "source": "Knowledge search supports sort by Most recent update, Popularity, Relevancy.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q52-b1",
+      "topic": "ui-config",
+      "question": "Reports can be created from which different places in the platform? (Choose two.)",
+      "source": "Reports can be created from the list column heading (right-click > Bar Chart…) and from Reports > Create New / Statistics.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q55-b1",
+      "topic": "service-catalog",
+      "question": "From the User menu, which actions can a user select? (Choose three.)",
+      "source": "User menu offers Logout, Elevate Roles, Impersonate User (when permitted).",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q57-b1",
+      "topic": "ui-config",
+      "question": "When adding a related list to a form, you choose the related list from the list collector. What is an example of a related list you might see on the list collector? (Choose three.)",
+      "source": "Related list collector entries use the Table->Field syntax.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q72-b1",
+      "topic": "user-admin",
+      "question": "Access Control rules are applied to a specific table, like the Incident table. What is the object name for a rule that is specific to the Incident table and the Major\nIncident field?",
+      "source": "Same casing-only deduplication as csa-snow-CSA-Q255.",
+      "options": {
+        "from": [
+          "Incident.Major_Incident",
+          "incident=>major_incident",
+          "incident<=>major_incident",
+          "incident||major_incident",
+          "incident.major_incident"
+        ],
+        "to": [
+          "Incident{Major_Incident}",
+          "incident=>major_incident",
+          "incident<=>major_incident",
+          "incident||major_incident",
+          "incident.major_incident"
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q81-b1",
+      "topic": "platform-overview",
+      "question": "What attributes can you manage, using System Properties > Basic Configuration UI16? (Choose five.)",
+      "source": "System Properties > Basic Configuration UI16 manages Browser tab title, Module text color, Base theme, Header background color, and Banner Image.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1,
+          3,
+          6,
+          7
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q82-b1",
+      "topic": "workflow-automation",
+      "question": "Many actions are included with flow designer, what are some frequently used core actions? (Choose four.)",
+      "source": "Flow Designer common core actions include Create Record, Ask for Approval, Look Up Record, Wait for Condition.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q86-b1",
+      "topic": "user-admin",
+      "question": "A new employee joins the IT department and needs to perform work assigned to Network and Hardware groups. How would you set up their access? (Choose three.)",
+      "source": "Provisioning a new IT user means: create the account, add to the relevant groups (Hardware, Network).",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q89-b1",
+      "topic": "ui-config",
+      "question": "What are examples of UI Actions, relating to Lists? (Choose four.)",
+      "source": "List UI Action types: List Banner Button, List Bottom Button, List Choice, List Context Menu, List Link — picked here as Buttons/Choices/Context Menu/Links.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q93-b1",
+      "topic": "update-sets",
+      "question": "Which of the following are not included in an Update Set, by default? (Choose four.)",
+      "source": "Per docs.servicenow.com and ServiceNow community, default Update Sets do NOT capture: Homepages, Data, Published Workflows, Report Definitions.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1,
+          2,
+          7
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q98-b1",
+      "topic": "user-admin",
+      "question": "When a custom table is created, which access control rules are automatically created? (Choose four.)",
+      "source": "Creating a custom table auto-generates ACLs for create, read, write, delete.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q114-b1",
+      "topic": "user-admin",
+      "question": "Which role(s) are required to impersonate a user? (Choose two.)",
+      "source": "Impersonation requires admin or impersonator role (docs.servicenow.com platform administration).",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q116-b1",
+      "topic": "workflow-automation",
+      "question": "What are the benefits of building flows using Flow Designer? (Choose three.)",
+      "source": "Flow Designer benefits: natural-language flow descriptions, no-code/low-code, easy 3rd party integration via spokes.",
+      "correct": {
+        "from": [
+          3
+        ],
+        "to": [
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q130-b1",
+      "topic": "ui-config",
+      "question": "Which data consistency settings can be achieved using UI Policy? (Choose three.)",
+      "source": "UI Policy can set fields hidden, read-only, or mandatory.",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q132-b1",
+      "topic": "reporting",
+      "question": "A customer wants to be able to identify and track components of their infrastructure that support their eCommerce service. What ServiceNow products could support this requirement? (Choose three.)",
+      "source": "Service Mapping + Discovery populate CMDB; CMDB stores the model — these three products together support tracking infrastructure for a service.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q142-b1",
+      "topic": "user-admin",
+      "question": "What are benefits of assigning work tasks to a group, rather than to an individual? (Choose four.)",
+      "source": "Group-based assignment supports skill-based routing, on-call schedules, availability, and self-pickup via 'My Groups Work'.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q156-b1",
+      "topic": "tables-schema",
+      "question": "Which modules can you use to create a new table? (Choose two.)",
+      "source": "Create a new table via System Definition > Tables OR System Definition > Tables & Columns.",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q161-b1",
+      "topic": "user-admin",
+      "question": "Which of the following protects applications by identifying and restricting access to available files and data?",
+      "source": "Access Control Rules (ACLs) — not Application Scope — restrict access to tables, fields, records, and files.",
+      "correct": {
+        "from": [
+          3
+        ],
+        "to": [
+          2
+        ]
+      },
+      "explanation_updated": true
+    },
+    {
+      "id": "csa-snow-CSA-Q168-b1",
+      "topic": "workflow-automation",
+      "question": "What are two ways to generate an Event? (Choose two.)",
+      "source": "Events are generated by Business Rules (gs.eventQueue) and Workflow activities (Run Script / Event activity).",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q169-b1",
+      "topic": "platform-overview",
+      "question": "What is (are) best practice(s) regarding users/groups/roles? (Choose two.)",
+      "source": "Best practice: assign roles to groups, add users to groups.",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q176-b1",
+      "topic": "user-admin",
+      "question": "Access Control rules may be defined with which of the following permission requirements? (Choose three.)",
+      "source": "ACL permission requirements: Roles, Conditional Expressions, Scripts.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q177-b1",
+      "topic": "user-admin",
+      "question": "Which are valid Service Now User Authentication Methods? (Choose three.)",
+      "source": "Supported user authentication methods: Local database, LDAP, SSO/SAML.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q196-b1",
+      "topic": "user-admin",
+      "question": "On the Reports page, what sections allow you to see which reports are visible to different audiences? (Choose four.)",
+      "source": "Reports page audience sections: Group, My reports, Global, All.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2,
+          5,
+          8
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q201-b1",
+      "topic": "user-admin",
+      "question": "What are different types of Data Sources, which may be imported into ServiceNow? (Choose four.)",
+      "source": "Data Source types: Local file (XML/CSV/Excel), JDBC, LDAP, Network/FTP server.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q204-b1",
+      "topic": "ui-config",
+      "question": "What are examples of UI Actions relating to forms? (Choose three.)",
+      "source": "Form UI Action types: Form Button, Form Context Menu, Form Link.",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q208-b1",
+      "topic": "itsm",
+      "question": "While showing a customer their Incident form, they ask to change the Priority field title to display their internal terminology PValue. How would you do that? (Choose two.)",
+      "source": "Field label can be changed via right-click > Configure Label OR by editing the dictionary (Configure Dictionary).",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q209-b1",
+      "topic": "tables-schema",
+      "question": "When building an extended table from a base table, which fields do you need to create? (Choose two.)",
+      "source": "When extending a table, only fields not in the base table (i.e., fields specific to the extended table) need to be created.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q214-b1",
+      "topic": "platform-overview",
+      "question": "What types of entities can receive task assignments, in ServiceNow? (Choose two.)",
+      "source": "Tasks can be assigned to Users or Groups.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q224-b1",
+      "topic": "user-admin",
+      "question": "An IT user calls the service desk because they need to work on task records. All they can see is Self Service on their homepage when they login to the ServiceNow instance. What issue could explain this? (Choose two.)",
+      "source": "A user who sees only Self Service is missing the itil role — either direct or via group membership.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q235-b1",
+      "topic": "service-catalog",
+      "question": "Tables may have a One to Many relationships. From the Service Catalog, what are examples of tables having a one to many relationships? (Choose three.)",
+      "source": "Service Catalog one-to-many: Request → Requested Items, Requested Item → Approvals, Requested Item → Catalog Tasks.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q237-b1",
+      "topic": "reporting",
+      "question": "Which features allow you to update multiple records at one time? (Choose two.)",
+      "source": "Bulk update via List Editor (in-line list edit) and the Update Selected UI action.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q238-b1",
+      "topic": "workflow-automation",
+      "question": "What are advantages of using Flow Designer? (Choose three.)",
+      "source": "Flow Designer reduces technical debt, requires less manual scripting, and smoothly integrates with 3rd-party systems via spokes.",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q240-b1",
+      "topic": "platform-overview",
+      "question": "Which tables are available by default in a ServiceNow instance? (Choose three.)",
+      "source": "Default base tables include User (sys_user), Task, Incident (extends Task).",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q242-b1",
+      "topic": "platform-overview",
+      "question": "The ServiceNow platform includes which types of interfaces? (Choose three.)",
+      "source": "Platform interfaces: Now Mobile Apps, Service Portals, Now Platform UI (UI16/Next Experience).",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q249-b1",
+      "topic": "ui-config",
+      "question": "From a form, what would you click to add additional fields to the form? (Choose two.)",
+      "source": "Add fields via Configure > Form Layout (slushbucket) or Configure > Form Designer.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q257-b1",
+      "topic": "tables-schema",
+      "question": "Which tables are children of the Task table and come with the base system? (Choose three.)",
+      "source": "Out-of-box Task children include Problem, Incident, Change Request (and others).",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q260-b1",
+      "topic": "service-catalog",
+      "question": "An order from the Service Catalog has been placed. Two records in the Platform are created as a result. Which two records are associated with this newly ordered item? (Choose two.)",
+      "source": "Catalog order creates a sc_req_item (RITM) record plus a sc_task (Catalog Task) when the workflow defines one.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q266-b1",
+      "topic": "platform-overview",
+      "question": "When managing tags, you can adjust who is able to see it. What are the visibility options? (Choose three.)",
+      "source": "Tag visibility options: Me, Groups and Users, Everyone.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q270-b1",
+      "topic": "knowledge-mgmt",
+      "question": "When creating a new notification, what must you define? (Choose three.)",
+      "source": "Notification requires: When/Condition (when sent), Who (recipients), What (content).",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q274-b1",
+      "topic": "cmdb",
+      "question": "What are the three key tables in an enterprise CMDB? (Choose three.)",
+      "source": "Three CMDB key tables: cmdb (base CI), cmdb_ci (core CI), cmdb_rel_ci (relationships) — confirmed by docs.servicenow.com and the CSA exam blueprint.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2,
+          5
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q276-b1",
+      "topic": "service-catalog",
+      "question": "When testing a catalog item, having a manager approval flows, which of these best practices would you follow? (Choose three.)",
+      "source": "Catalog test best practices: activate latest flow, impersonate the requester, ensure requester has a manager set so approval routing works.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2,
+          3
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q279-b1",
+      "topic": "workflow-automation",
+      "question": "The ServiceNow platform supports a wide variety of plug-and-play applications. You can choose from the included workflows of build your own workflow: Which of these workflows are included in the platform? (Choose three.)",
+      "source": "ServiceNow workflow families: Customer Workflows, Employee Workflows, IT Workflows.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q284-b1",
+      "topic": "ui-config",
+      "question": "Which of the following are a type of client scripts supported in ServiceNow? (Choose four.)",
+      "source": "Client Script types: onLoad, onChange, onSubmit, onCellEdit.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2,
+          3,
+          5
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q288-b1",
+      "topic": "tables-schema",
+      "question": "When searching using the App Navigator search field, what can be returned? (Choose four.)",
+      "source": "App Navigator search surfaces Applications, Modules, Favorites, and History.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          1,
+          2,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q293-b1",
+      "topic": "cmdb",
+      "question": "Which ServiceNow products can be used to discover and populate the CMDB? (Choose two.)",
+      "source": "Discovery and IntegrationHub ETL are the two ServiceNow products used to discover/populate the CMDB.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q299-b1",
+      "topic": "ui-config",
+      "question": "What are the components that make up a filter condition? (Choose three.)",
+      "source": "Filter condition components: Field, Operator, Value.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          2,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q305-b1",
+      "topic": "ui-config",
+      "question": "What would you do, on a list, if you wanted to show the records in groups, based on the column category? (Choose two.)",
+      "source": "Group By Category: list Context Menu > Group By > Category, or right-click the Category column > Group By Category.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q308-b1",
+      "topic": "ui-config",
+      "question": "You are showing your customer a new form that you have created for their new application. They would like to add a field to the form. Where could you do that?\n(Choose two.)",
+      "source": "Add a field via Configure > Form Layout OR Configure > Form Designer.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q318-b1",
+      "topic": "import-integration",
+      "question": "When selecting the Target table for an import, which tables can you select? (Choose three.)",
+      "source": "Target tables for import: global scope, tables that allow writes across scopes, and tables in the existing application scope.",
+      "correct": {
+        "from": [
+          1
+        ],
+        "to": [
+          1,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q325-b1",
+      "topic": "ui-config",
+      "question": "You have been asked to configure a form so an employee could order tablet and select the standard accessory options to purchase with it. These standard options are: carrying case, screen cleaner, tablet stand, and screen protector. What app",
+      "source": "Tablet+accessories: build a Catalog Item with a variable set, separate items + Order Guide, or checkbox variables per accessory.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          3,
+          4
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q331-b1",
+      "topic": "user-admin",
+      "question": "What are three security modules often used by the System Administrator? (Choose three.)",
+      "source": "Common admin security modules: System Properties > Security, System Security > Access Control (ACL), System Security > High Security Settings.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          4,
+          6
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q335-b1",
+      "topic": "scripting",
+      "question": "What are the options that can be set to determine when a Business Rule executes? (Choose four.)",
+      "source": "Business Rule timing options (When): Before, After, Async, Display.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q342-b1",
+      "topic": "itsm",
+      "question": "What module would you use if you wanted to view a list of all of the fields on the Incident table? (Choose two.)",
+      "source": "View Incident fields via Tables & Columns module or System Dictionary.",
+      "correct": {
+        "from": [
+          0
+        ],
+        "to": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "id": "csa-snow-CSA-Q376",
+      "topic": "user-admin",
+      "question": "If users would like to locate and assign a task to themselves in the Platform, what action could they perform from the list view to make the assignment? (Choose two.)",
+      "source": "From a list: tick the row and use the 'Assign To Me' UI action header button, or double-click the Assigned to field, enter your name, and click the green check.",
+      "correct": {
+        "from": [
+          2
+        ],
+        "to": [
+          1,
+          2
+        ]
+      }
+    }
+  ]
+}

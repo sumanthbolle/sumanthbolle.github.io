@@ -3469,9 +3469,9 @@
         "Spoke store"
       ],
       "correct": [
-        6
+        4
       ],
-      "explanation": "Detailed explanation not provided for this question.",
+      "explanation": "Prebuilt IntegrationHub spokes are distributed through the ServiceNow Store.",
       "source": "snowsets.com/practice.html?id=CSA",
       "sourceSet": "snowsets_csa",
       "topic": "self-service"
@@ -7336,7 +7336,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Incident.Major_Incident",
+        "Incident{Major_Incident}",
         "incident=>major_incident",
         "incident<=>major_incident",
         "incident||major_incident",
@@ -10459,9 +10459,9 @@
         "sys_customer_update"
       ],
       "correct": [
-        2
+        1
       ],
-      "explanation": "Detailed explanation not provided for this question.",
+      "explanation": "Update payloads are stored in the Customer Updates table (sys_update_xml). Each record holds the XML payload of one configuration change captured in an update set; the parent set lives in sys_update_set.",
       "source": "snowsets.com/practice.html?id=CSA",
       "sourceSet": "snowsets_csa",
       "topic": "platform-overview"
@@ -10840,10 +10840,9 @@
         "Homepage changes"
       ],
       "correct": [
-        1,
-        3
+        1
       ],
-      "explanation": "Detailed explanation not provided for this question.",
+      "explanation": "Update Sets capture configuration changes (e.g., form layout) by default. Homepages, data, scheduled jobs and database changes are NOT captured by default — they must be manually added.",
       "source": "snowsets.com/practice.html?id=CSA",
       "sourceSet": "snowsets_csa",
       "multi": 2,
@@ -12684,7 +12683,8 @@
         "Backup and restore"
       ],
       "correct": [
-        1
+        1,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -12723,7 +12723,9 @@
         "Read Only"
       ],
       "correct": [
-        1
+        1,
+        2,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -12743,7 +12745,8 @@
         "personalize_form"
       ],
       "correct": [
-        2
+        2,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -12899,7 +12902,10 @@
         "The Dependency View"
       ],
       "correct": [
-        0
+        0,
+        2,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -12938,7 +12944,9 @@
         "Form Layout"
       ],
       "correct": [
-        1
+        2,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -12958,7 +12966,9 @@
         "SMS"
       ],
       "correct": [
-        0
+        0,
+        1,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13040,7 +13050,10 @@
         "Condition to evaluate"
       ],
       "correct": [
-        1
+        1,
+        4,
+        7,
+        8
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13117,7 +13130,8 @@
         "Select the Context Menu icon"
       ],
       "correct": [
-        2
+        2,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13180,7 +13194,11 @@
         "Task table is a Base table"
       ],
       "correct": [
-        1
+        1,
+        5,
+        6,
+        7,
+        8
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13240,7 +13258,9 @@
         "New"
       ],
       "correct": [
-        0
+        0,
+        1,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13320,7 +13340,8 @@
         "Knowledge Taxonomy Owner"
       ],
       "correct": [
-        1
+        3,
+        6
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13420,7 +13441,9 @@
         "Form Header Size"
       ],
       "correct": [
-        0
+        0,
+        2,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13517,7 +13540,9 @@
         "Number of views"
       ],
       "correct": [
-        0
+        0,
+        1,
+        2
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13536,7 +13561,8 @@
         "View / Run module"
       ],
       "correct": [
-        0
+        0,
+        2
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13595,7 +13621,9 @@
         "Approve Records"
       ],
       "correct": [
-        1
+        1,
+        2,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13615,7 +13643,9 @@
         "Release Phase==Parent"
       ],
       "correct": [
-        1
+        1,
+        2,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -13864,7 +13894,7 @@
       "type": "mcq",
       "difficulty": "medium",
       "options": [
-        "Incident.Major_Incident",
+        "Incident{Major_Incident}",
         "incident=>major_incident",
         "incident<=>major_incident",
         "incident||major_incident",
@@ -14046,7 +14076,11 @@
         "Banner Image"
       ],
       "correct": [
-        0
+        0,
+        1,
+        3,
+        6,
+        7
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14067,7 +14101,10 @@
         "Wait for Match"
       ],
       "correct": [
-        1
+        1,
+        2,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14107,7 +14144,9 @@
         "Add User Account to ACL"
       ],
       "correct": [
-        0
+        0,
+        2,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14166,7 +14205,10 @@
         "List Control"
       ],
       "correct": [
-        0
+        0,
+        1,
+        2,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14248,7 +14290,10 @@
         "Client Scripts K. Views"
       ],
       "correct": [
-        0
+        0,
+        1,
+        2,
+        7
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14307,7 +14352,10 @@
         "write"
       ],
       "correct": [
-        0
+        0,
+        1,
+        4,
+        5
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14405,7 +14453,8 @@
         "admin"
       ],
       "correct": [
-        2
+        2,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14426,7 +14475,9 @@
         "Supports easy integration with 3rd party systems"
       ],
       "correct": [
-        3
+        3,
+        4,
+        5
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14543,7 +14594,9 @@
         "Setting fields mandatory"
       ],
       "correct": [
-        2
+        2,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14563,7 +14616,9 @@
         "Performance Analytics"
       ],
       "correct": [
-        1
+        1,
+        2,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14641,7 +14696,10 @@
         "Groups can assign tasks to users based on availability"
       ],
       "correct": [
-        0
+        0,
+        1,
+        3,
+        5
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14858,7 +14916,8 @@
         "Tables & Columns"
       ],
       "correct": [
-        2
+        2,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -14938,9 +14997,9 @@
         "Application Scope"
       ],
       "correct": [
-        3
+        2
       ],
-      "explanation": "Detailed explanation not provided for this question.",
+      "explanation": "Access Control Rules (ACLs) protect applications by restricting access to specific tables, fields, records, and files based on roles, conditions, and scripts.",
       "source": "snowsets.com/practice.html?id=CSA",
       "sourceSet": "snowsets_csa",
       "topic": "user-admin"
@@ -15052,7 +15111,8 @@
         "Knowledge article publication"
       ],
       "correct": [
-        0
+        0,
+        1
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -15071,7 +15131,8 @@
         "You should assign roles to groups."
       ],
       "correct": [
-        2
+        2,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -15187,7 +15248,9 @@
         "Groups"
       ],
       "correct": [
-        0
+        0,
+        1,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -15207,7 +15270,9 @@
         "FTP authentication"
       ],
       "correct": [
-        1
+        1,
+        2,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -15518,7 +15583,10 @@
         "Company"
       ],
       "correct": [
-        0
+        0,
+        2,
+        5,
+        8
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -15617,7 +15685,10 @@
         "LDAP Connection"
       ],
       "correct": [
-        0
+        0,
+        3,
+        4,
+        5
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -15675,7 +15746,9 @@
         "Form Links"
       ],
       "correct": [
-        2
+        2,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -15752,7 +15825,8 @@
         "Right click on Priority and select Configure Column"
       ],
       "correct": [
-        0
+        0,
+        1
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -15771,7 +15845,8 @@
         "The reference fields for the base table."
       ],
       "correct": [
-        0
+        0,
+        2
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -15847,7 +15922,8 @@
         "Teams"
       ],
       "correct": [
-        0
+        0,
+        2
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16039,7 +16115,8 @@
         "Their user account does not belong to any groups, which contain the itil role"
       ],
       "correct": [
-        0
+        0,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16175,7 +16252,9 @@
         "One Cart can have many Requests"
       ],
       "correct": [
-        1
+        1,
+        2,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16215,7 +16294,8 @@
         "Update Selected Action"
       ],
       "correct": [
-        0
+        0,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16235,7 +16315,9 @@
         "Smooth integration with 3rd party systems"
       ],
       "correct": [
-        2
+        2,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16276,7 +16358,9 @@
         "Item"
       ],
       "correct": [
-        0
+        0,
+        2,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16316,7 +16400,9 @@
         "Field Service Taskboard"
       ],
       "correct": [
-        0
+        0,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16436,7 +16522,8 @@
         "Right click on header > Configure > UX Dashboard"
       ],
       "correct": [
-        1
+        1,
+        2
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16572,7 +16659,9 @@
         "Change Request"
       ],
       "correct": [
-        1
+        1,
+        4,
+        5
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16631,7 +16720,8 @@
         "A problem record"
       ],
       "correct": [
-        0
+        0,
+        1
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16747,7 +16837,9 @@
         "Admins"
       ],
       "correct": [
-        0
+        0,
+        1,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16807,7 +16899,9 @@
         "What the content of the notification"
       ],
       "correct": [
-        2
+        2,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16886,7 +16980,9 @@
         "sn_cmdb_ci"
       ],
       "correct": [
-        0
+        0,
+        2,
+        5
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16926,7 +17022,9 @@
         "Use your Admin account, so you can approve the items quickly."
       ],
       "correct": [
-        0
+        0,
+        2,
+        3
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -16986,7 +17084,9 @@
         "IT Workflows"
       ],
       "correct": [
-        1
+        1,
+        4,
+        5
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -17084,7 +17184,10 @@
         "onSave"
       ],
       "correct": [
-        0
+        0,
+        2,
+        3,
+        5
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -17144,7 +17247,10 @@
         "Titles of Dashboard Gauges"
       ],
       "correct": [
-        0
+        1,
+        2,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -17221,7 +17327,8 @@
         "CMDB Integration Dashboard"
       ],
       "correct": [
-        0
+        0,
+        1
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -17279,7 +17386,9 @@
         "Field"
       ],
       "correct": [
-        0
+        0,
+        2,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -17377,7 +17486,8 @@
         "On the Category column title, click Context menu > Group By Category"
       ],
       "correct": [
-        0
+        0,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -17435,7 +17545,8 @@
         "Select Field Class Manager module"
       ],
       "correct": [
-        1
+        1,
+        2
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -17609,7 +17720,9 @@
         "Tables within the existing application scope"
       ],
       "correct": [
-        1
+        1,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -17706,7 +17819,9 @@
         "Create Catalog Item for the tablet, and on the form, add a check box variable for each accessory option."
       ],
       "correct": [
-        0
+        0,
+        3,
+        4
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -17807,7 +17922,9 @@
         "System Security > High Security Settings"
       ],
       "correct": [
-        0
+        0,
+        4,
+        6
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -17889,7 +18006,10 @@
         "Click"
       ],
       "correct": [
-        0
+        0,
+        3,
+        4,
+        5
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -18006,7 +18126,8 @@
         "Schema"
       ],
       "correct": [
-        0
+        0,
+        1
       ],
       "explanation": "Detailed explanation not provided for this question.",
       "source": "snowsets.com/practice.html?id=CSA",
@@ -18517,6 +18638,7 @@
         "Select the Task number, and select the Assign to me UI action on the form"
       ],
       "correct": [
+        1,
         2
       ],
       "explanation": "Detailed explanation not provided for this question.",
