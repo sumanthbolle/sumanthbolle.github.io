@@ -18645,6 +18645,2417 @@
       "source": "snowsets.com/practice.html?id=CSA",
       "sourceSet": "snowsets_csa",
       "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-001",
+      "q": "Who is the founder of ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Fred Luddy",
+        "Bill McDermott",
+        "Bill Luddy",
+        "Frank Slootman"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Fred Luddy founded ServiceNow. (Note: Bill McDermott is the current CEO, not the founder.)",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-002",
+      "q": "Who is the current CEO of ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Bill McDermott",
+        "Fred Luddy",
+        "John Donahoe",
+        "Frank Slootman"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Bill McDermott is the CEO of ServiceNow; Fred Luddy is the founder.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-003",
+      "q": "Which set correctly lists the four ServiceNow workflows?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "IT, Customer, Creator, and Employee Workflows",
+        "IT, HR, Finance, and Security Workflows",
+        "Incident, Problem, Change, and Request Workflows",
+        "Now, Mobile, Portal, and Center Workflows"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The four ServiceNow workflows are IT Workflows, Customer Workflows, Creator Workflows, and Employee Workflows.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-004",
+      "q": "Which of the following are ServiceNow user interfaces?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The Next Experience (Unified Navigation)",
+        "Now Mobile App",
+        "Service Portal",
+        "Employee Center",
+        "GlideRecord Console"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "The four ServiceNow interfaces are the Next Experience (Unified Navigation), Now Mobile App, Service Portal, and Employee Center.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-005",
+      "q": "Which of these are the useful resources highlighted in the Welcome to ServiceNow module?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Now Learning",
+        "ServiceNow Community",
+        "ServiceNow Global Events",
+        "ServiceNow Developer Site",
+        "ServiceNow Store billing portal"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "The four useful resources are Now Learning, ServiceNow Community, ServiceNow Global Events, and the ServiceNow Developer Site.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-006",
+      "q": "From the All menu, how do you navigate to create a new Incident?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > Incident > Create New",
+        "All > Self-Service > New Incident",
+        "All > Service Desk > Create",
+        "All > Tasks > New"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Use All > Incident > Create New to open a new incident form from the All menu.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "itsm"
+    },
+    {
+      "id": "csa-snaf-007",
+      "q": "Which list correctly represents the Incident lifecycle states from New to Closed?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "New, In Progress, On Hold, Resolved, Closed, Canceled",
+        "New, Open, Pending, Work In Progress, Done",
+        "Draft, Assigned, Active, Complete, Archived",
+        "Open, Awaiting, Escalated, Solved, Ended"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Incident states progress through New, In Progress, On Hold, Resolved, Closed, and Canceled.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "itsm"
+    },
+    {
+      "id": "csa-snaf-008",
+      "q": "Who can view Additional Comments entered on an Incident?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "The requestor (they are customer-facing)",
+        "Only fulfillers working the task",
+        "Only system administrators",
+        "Nobody — they are internal audit only"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Additional Comments are visible to the requestor, whereas Work Notes are viewable only within the task by fulfillers.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "itsm"
+    },
+    {
+      "id": "csa-snaf-009",
+      "q": "On an Incident, who can view Work Notes?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Only users working within the task (internal)",
+        "The requestor and the public",
+        "Anyone with the ess role",
+        "Only the assignment group manager"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Work Notes are viewable only within the task (internal). Additional Comments are the requestor-facing field.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "itsm"
+    },
+    {
+      "id": "csa-snaf-010",
+      "q": "What happens when you set both Impact and Urgency to 1 on an Incident?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Priority is automatically set to 1 (Critical)",
+        "The incident is automatically resolved",
+        "The SLA is paused",
+        "Nothing — Priority must always be set manually"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Setting Impact and Urgency to 1 automatically sets Priority to 1 (Critical) via the priority lookup matrix.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "itsm"
+    },
+    {
+      "id": "csa-snaf-011",
+      "q": "Why do Incident SLAs exist?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "They provide expected timing for ticket resolution based on Priority",
+        "They automatically assign incidents to groups",
+        "They store the incident's work notes",
+        "They define which fields appear on the form"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "SLAs provide expected timing for ticket resolution, driven by the incident's Priority.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "itsm"
+    },
+    {
+      "id": "csa-snaf-012",
+      "q": "How do you navigate to the Service Operations Workspace?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Click Workspaces in the top header, then Service Operations Workspace",
+        "All > Incident > Workspace",
+        "All > Self-Service > Workspaces",
+        "Right-click the form header and choose Workspace"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Workspaces are accessed from the Workspaces menu in the top header; select Service Operations Workspace.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-013",
+      "q": "What is the All-menu path to the Employee Center portal?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > Self-Service > Employee Center",
+        "All > Service Portal > Employee",
+        "All > Now Mobile > Center",
+        "All > Workspaces > Employee Center"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Employee Center portal is reached via All > Self-Service > Employee Center.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "self-service"
+    },
+    {
+      "id": "csa-snaf-014",
+      "q": "What does a 'Baseline Implementation' refer to?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The base installation of ServiceNow prior to any configuration or customization",
+        "A fully customized production instance",
+        "The minimum number of users required to go live",
+        "A backup taken before every upgrade"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Baseline implementation is the base installation of the environment before any configuration or customization is applied.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-015",
+      "q": "Which statement best distinguishes Configuration from Customization?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Configuration uses built-in no-code functionality; customization adds functionality via plugins/scripts",
+        "Configuration requires code; customization is always no-code",
+        "Configuration is only for admins; customization is only for end users",
+        "There is no difference between the two"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Configuration is what can be done without code using built-in functionality; customization adds functionality through plugins, scripts, etc.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-016",
+      "q": "Which of these is one of the three environment types of ServiceNow instances?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Production",
+        "Read-only",
+        "Sandbox-only",
+        "Public"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The three environment types are Production, Non-Production, and Dev/QA/UAT/Staging types.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-017",
+      "q": "What does ServiceNow's single-tenant architecture mean?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Each instance has its own isolated database containing its data, applications, and customizations",
+        "All customers share a single database",
+        "Only one user can log in at a time",
+        "Each instance can host only one application"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Single-tenant means each instance features an isolated database containing its own data, applications, and customizations.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-018",
+      "q": "What is the minimum number of characters needed to start filtering results in the All menu search?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "2 characters",
+        "1 character",
+        "3 characters",
+        "5 characters"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A minimum of 2 characters is required before the All menu begins filtering applications and modules.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-019",
+      "q": "How is role Elevation visually indicated in the interface?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A red border with an up arrow",
+        "A green border with a lock",
+        "A blue banner across the top",
+        "A red border with an eye icon"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Elevation displays as a red border with an up arrow. (Impersonation shows a red border with an eye icon.)",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-020",
+      "q": "Which elevated role allows you to manage Access Controls?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "security_admin",
+        "workspace_admin",
+        "catalog_admin",
+        "knowledge_admin"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Elevating to security_admin grants the ability to manage Access Controls (ACLs).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-021",
+      "q": "Which role(s) are required to perform impersonation?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "admin or impersonator",
+        "security_admin only",
+        "itil only",
+        "ess or user_admin"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Impersonation requires either the admin or the impersonator role.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-022",
+      "q": "Which system property must be set to log impersonations in the System Log?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "glide.sys.log_impersonation",
+        "glide.ui.impersonation.enabled",
+        "glide.security.log_impersonation",
+        "glide.impersonate.audit"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Setting glide.sys.log_impersonation enables logging of impersonations in the System Log.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-023",
+      "q": "Which three roles are recommended for testing impersonation?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "admin, ess, and itil",
+        "admin, security_admin, and itil",
+        "ess, itil, and approver_user",
+        "admin, impersonator, and ess"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The recommended test roles are admin (test administrator), ess (Employee Self-Service / requester), and itil (process user).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-024",
+      "q": "Where do you navigate to update the Company logo?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "All > System Properties > My Company",
+        "All > User Administration > Companies",
+        "All > System Definition > Plugins",
+        "All > System Properties > Security"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The company logo is configured under All > System Properties > My Company.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-025",
+      "q": "Where do you navigate to update the Company name?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "All > User Administration > Companies",
+        "All > System Properties > My Company",
+        "All > System Definition > Companies",
+        "All > Self-Service > Organization"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The company name is updated under All > User Administration > Companies.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-026",
+      "q": "Which system property is set to TRUE to enable the dark theme?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "glide.ui.polaris.dark_themes_enabled",
+        "glide.ui.dark_mode_enabled",
+        "glide.theme.dark.enabled",
+        "glide.ui.polaris.theme"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Set glide.ui.polaris.dark_themes_enabled to TRUE to enable dark themes.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-027",
+      "q": "What is the All-menu path to view Plugins via System Definition?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > System Definition > Plugins",
+        "All > System Applications > Plugins",
+        "All > System Properties > Plugins",
+        "All > Plugins > Available"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Plugins are accessed via All > System Definition > Plugins.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-028",
+      "q": "Demo data should only be installed in which type of instance?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Non-production instances",
+        "Production instances",
+        "Any instance",
+        "Only the Dev instance after go-live"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Demo data should only be installed in non-production instances.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-029",
+      "q": "What does Application Scoping protect?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It restricts access to an application's files and data from other applications/services",
+        "It encrypts the instance database",
+        "It limits how many users can log in",
+        "It controls which browser can access the instance"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Application scoping restricts access to an application's files and data from other applications and services.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-030",
+      "q": "Which of the following are ServiceNow persona types?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "System Administrator",
+        "Specialized Administrator",
+        "Process User",
+        "Approver",
+        "Database Owner"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "The five persona types are System Administrator, Specialized Administrator, Process User, Approver, and Requester.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-031",
+      "q": "On which system table does a User record exist?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "sys_user",
+        "sys_user_group",
+        "sys_user_role",
+        "sys_user_has_role"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Users are records on the sys_user table.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-032",
+      "q": "On which system table does a Group record exist?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "sys_user_group",
+        "sys_user",
+        "sys_group",
+        "sys_user_role"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Groups are records on the sys_user_group table.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-033",
+      "q": "On which system table does a Role record exist?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "sys_user_role",
+        "sys_role",
+        "sys_user_group",
+        "sys_security_role"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Roles are records on the sys_user_role table.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-034",
+      "q": "What is the ServiceNow best practice for assigning roles?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Create a group, assign the role to the group, then add users to the group",
+        "Assign roles directly to each individual user",
+        "Assign all roles to the admin and impersonate as needed",
+        "Use only the itil role for everyone"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Best practice is to assign roles to a group and add users to that group rather than assigning roles directly to users.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-035",
+      "q": "When you assign a role, what else does the user receive?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "The permissions of that role and any roles contained within it",
+        "Only the single role, with no inherited permissions",
+        "Admin access to the whole instance",
+        "Access only after the next upgrade"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Assigning a role grants its permissions plus those of any contained roles (e.g., catalog_admin contains user_criteria_admin and catalog).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-036",
+      "q": "What does a List represent in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A display of a set of records from a table",
+        "The fields of a single record",
+        "A predefined set of field choices",
+        "A workflow of approval steps"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A List displays a list of records from a table.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-037",
+      "q": "Which are the three context menus available on a Classic list?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "List Control Menu",
+        "Column Options Menu",
+        "Record Context Menu",
+        "Form Design Menu"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "The three Classic list context menus are the List Control Menu, the Column Options Menu, and the Record Context Menu.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-038",
+      "q": "What three components make up a filter condition?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Field, Operator, Value",
+        "Table, Column, Row",
+        "Name, Label, Value",
+        "Trigger, Condition, Action"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A filter condition is made of a Field, an Operator, and a Value.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-039",
+      "q": "Which role is required to configure a List (add/remove/reorder columns) for all users?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "personalize_list",
+        "list_admin",
+        "ui_admin",
+        "view_admin"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The personalize_list role allows configuring a list layout for all users.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-040",
+      "q": "Where do you add new applications or modules via Application Menus?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "All > System Definition > Application Menus",
+        "All > System Properties > Menus",
+        "All > UI Builder > Menus",
+        "All > Self-Service > Applications"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Application Menus are managed under All > System Definition > Application Menus.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-041",
+      "q": "What does a View determine?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Which fields to display and in what order",
+        "Which users can read a record",
+        "The order business rules run",
+        "Which table a form belongs to"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A View determines which fields are displayed and in what order.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-042",
+      "q": "Which of the following are the available viewing options for a Workspace List?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Grid Mode",
+        "List Mode",
+        "Open List in New Tab",
+        "Schema Mode"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Workspace lists support Grid Mode, List Mode, and Open List in New Tab.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-043",
+      "q": "Which system property enables inline editing for Workspace lists?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "glide.lists.inline_editing_enabled",
+        "glide.ui.inline_edit",
+        "glide.workspace.inline_editing",
+        "glide.lists.edit_enabled"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "glide.lists.inline_editing_enabled enables inline editing on workspace lists.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-044",
+      "q": "Which application is used to add a new Category and UX List for a workspace?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "UI Builder",
+        "Form Designer",
+        "Flow Designer",
+        "Report Designer"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "UI Builder is used to add new Categories and UX Lists in a workspace.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-045",
+      "q": "What does a Form display?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Fields from a single record",
+        "A list of records from a table",
+        "A predefined choice list",
+        "A dependency map of CIs"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A Form displays the fields from a single record.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-046",
+      "q": "How do Form Design and Form Layout differ?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Form Design is a visual drag-and-drop interface; Form Layout uses a List Collector with –split– markers",
+        "Form Design requires scripting; Form Layout is visual",
+        "They are identical interfaces with different names",
+        "Form Layout supports dot-walking while Form Design does not allow any fields"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Form Design is a visual drag-and-drop interface, while Form Layout uses a List Collector with –split–/–end split– markers to control columns.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-047",
+      "q": "Which capability is NOT available in the List Collector when using Form Design?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Dot-walking",
+        "Adding fields",
+        "Reordering fields",
+        "Removing fields"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Dot-walking is not available in the List Collector when using Form Design.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-048",
+      "q": "Which system property disables Personalize Form for the itil role (restricting it to admin)?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "glide.ui.personalize_form.role = admin",
+        "glide.ui.form.personalize = false",
+        "glide.form.personalize.role = itil",
+        "glide.ui.personalize.disabled = true"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Setting glide.ui.personalize_form.role = admin limits Personalize Form to the admin role.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-049",
+      "q": "Which are the three main components of the Form Designer?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Page Header",
+        "Field Navigator",
+        "Form Layout",
+        "Activity Stream"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "The Form Designer's three main components are the Page Header, the Field Navigator, and the Form Layout.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-050",
+      "q": "What is a Formatter?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A form element that displays information that is not a field in a record",
+        "A script that formats date values",
+        "A type of reference field",
+        "A tool that exports forms to PDF"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A formatter is a form element that displays information which is not a field in the record (e.g., the activity stream).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-051",
+      "q": "What is a Choice List?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A field type that lets the user select from a predefined set of choices",
+        "A field that stores the sys_id of a referenced record",
+        "A list of all tables in the instance",
+        "A list of users in a group"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A choice list is a field type that lets a user select from a predefined set of choices.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-052",
+      "q": "What is a Reference field/list?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A field type that lets the user select a value from referenced records",
+        "A field that holds free-text only",
+        "A list of report categories",
+        "A predefined set of static choices"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A reference field lets the user select a value from records on a referenced table; clicking the magnifying glass opens the list.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-053",
+      "q": "What is the All-menu path to access and run Reports?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > Reports > View/Run",
+        "All > Self-Service > Reports",
+        "All > Reporting > Designer",
+        "All > Dashboards > Reports"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Reports are accessed via All > Reports > View/Run.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting"
+    },
+    {
+      "id": "csa-snaf-054",
+      "q": "Which are the Report visibility controls in the Reports > View/Run module?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "My Reports",
+        "Group",
+        "Global",
+        "All"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "The visibility controls are My Reports, Group, Global, and All.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-055",
+      "q": "Which are the four sections of the Report Designer (in order)?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Data, Type, Configure, Style",
+        "Source, Layout, Filter, Save",
+        "Data, Filter, Group, Style",
+        "Type, Data, Style, Share"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Report Designer has four sections: Data, Type, Configure, and Style.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting"
+    },
+    {
+      "id": "csa-snaf-056",
+      "q": "What is the key difference between standard Reporting and Performance Analytics?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Reporting shows the current state; Performance Analytics reviews historic trends and forecasts the future",
+        "Reporting is real-time; Performance Analytics cannot show any time data",
+        "Reporting forecasts the future; Performance Analytics only shows current data",
+        "There is no difference"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Reporting answers 'Where are we now?' (current state), while Performance Analytics reviews trends over time and forecasts ('Where have we been / where are we going?').",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting"
+    },
+    {
+      "id": "csa-snaf-057",
+      "q": "What is the All-menu path to access Dashboards?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > Self-Service > Dashboards",
+        "All > Reports > Dashboards",
+        "All > Dashboards > View",
+        "All > Reporting > Dashboards"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Dashboards are accessed via All > Self-Service > Dashboards.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting"
+    },
+    {
+      "id": "csa-snaf-058",
+      "q": "Which are the three options for the 'Viewable by' field on a Tag?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Me",
+        "Groups and Users",
+        "Everyone",
+        "Roles only"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "The three Viewable by options are Me, Groups and Users, and Everyone (Everyone requires a role).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-059",
+      "q": "Which role grants the ability to create and share Form Templates?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "template_editor_group",
+        "form_admin",
+        "ui_admin",
+        "personalize_form"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The template_editor_group role grants the ability to create and share form templates.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-060",
+      "q": "What is the All-menu path to the My Work module?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > Service Desk > My Work",
+        "All > Self-Service > My Work",
+        "All > Tasks > My Work",
+        "All > Incident > My Work"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "My Work is accessed via All > Service Desk > My Work (and My Group's Work alongside it).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "itsm"
+    },
+    {
+      "id": "csa-snaf-061",
+      "q": "What are the two types of Visual Task Boards (VTBs)?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Free-form and data-driven",
+        "Static and dynamic",
+        "Personal and shared",
+        "Classic and workspace"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "VTBs are either free-form (fully customizable personal organizer) or data-driven (tied to data; lane titles cannot change).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-062",
+      "q": "What is the standard syntax used to reference a field value in a Quick Message body?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "{table_name.variable_name}",
+        "${variable_name}",
+        "[table_name:variable_name]",
+        "gs.getValue(variable_name)"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Quick Messages reference field values using {table_name.variable_name}.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-063",
+      "q": "Which three methods can a Notification use to alert users?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Email",
+        "SMS",
+        "Meeting Invitation",
+        "Push to MID Server"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Notifications can be sent via Email, SMS, or Meeting Invitation.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-064",
+      "q": "What is the All-menu path to Email Notifications?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > System Notifications > Email > Notifications",
+        "All > System Policy > Email > Notifications",
+        "All > Email Client > Notifications",
+        "All > System Properties > Notifications"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Email notifications are managed at All > System Notifications > Email > Notifications.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting"
+    },
+    {
+      "id": "csa-snaf-065",
+      "q": "Which are the three tabs required to create a Notification?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "When to send",
+        "Who will receive",
+        "What it will contain",
+        "Where to log"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "The three notification tabs are When to send, Who will receive, and What it will contain.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-066",
+      "q": "How many characters make up a Notification Watermark label?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "31 characters",
+        "21 characters",
+        "20 characters",
+        "7 characters"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A watermark is 31 characters: a 3-char customizable prefix, a 7-char source record identifier, and an underscore plus a 20-char random string.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting"
+    },
+    {
+      "id": "csa-snaf-067",
+      "q": "From which release onward is the Sidebar available?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Tokyo or later",
+        "San Diego or later",
+        "Rome or later",
+        "Quebec or later"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Sidebar is only available in Tokyo or later releases.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "reporting"
+    },
+    {
+      "id": "csa-snaf-068",
+      "q": "Which are the four types of Instance Scan Checks?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Table check",
+        "Column Type check",
+        "Script Only check",
+        "Linter Check",
+        "Form check"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "Instance Scan checks come in four types: Table, Column Type, Script Only, and Linter checks.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-069",
+      "q": "On an Instance Scan, what does a Check score of 100 indicate?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The check passed and there is no record on the findings list",
+        "The check failed with the maximum number of exceptions",
+        "The scan has not yet run",
+        "All 100 records were scanned successfully"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A score of 100 means the check passed (no finding). A score below 100 means there are exceptions and a finding record exists.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-070",
+      "q": "What is a ServiceNow 'Family'?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A set of releases named after a major city (e.g., Tokyo)",
+        "A group of related plugins",
+        "A collection of user roles",
+        "A set of tables that extend Task"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A family is a set of releases named after a major city, such as Tokyo.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-071",
+      "q": "What is the difference between Upgrading and Updating?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Upgrading moves to a release in a different family; updating moves between patches/hotfixes within the same family",
+        "Upgrading is for patches; updating moves between families",
+        "They are the same operation",
+        "Upgrading only changes the UI theme"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Upgrading is moving to a release in a different family; updating is moving from one patch/hotfix to another within the same family.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-072",
+      "q": "What is the default Rollback window for a ServiceNow upgrade?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "10 days",
+        "30 days",
+        "7 days",
+        "There is no time limit"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The rollback window is 10 days by default; ServiceNow does not provide a universal rollback option, so you must contact Support.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "platform-overview"
+    },
+    {
+      "id": "csa-snaf-073",
+      "q": "Which role is required to administer Knowledge Bases?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "knowledge_admin",
+        "knowledge_manager",
+        "kb_admin",
+        "knowledge"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The knowledge_admin role is required to administer Knowledge Bases.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "knowledge-mgmt"
+    },
+    {
+      "id": "csa-snaf-074",
+      "q": "What is the All-menu path to access Knowledge?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > Self-Service > Knowledge",
+        "All > Knowledge > View",
+        "All > Self-Service > Knowledge Bases",
+        "All > Service Desk > Knowledge"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Knowledge is accessed at All > Self-Service > Knowledge.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "knowledge-mgmt"
+    },
+    {
+      "id": "csa-snaf-075",
+      "q": "How many Knowledge Bases can a single article be associated with?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "One",
+        "Two",
+        "Unlimited",
+        "As many as its categories"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Only one article can be associated to a Knowledge Base relationship — each article belongs to a single KB, while a KB can have many categories.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "knowledge-mgmt"
+    },
+    {
+      "id": "csa-snaf-076",
+      "q": "Which are the four basic outcomes when managing access through User Criteria records?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "canRead",
+        "cantRead",
+        "canContribute",
+        "cantContribute",
+        "canRetire"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "User Criteria outcomes are canRead, cantRead, canContribute, and cantContribute.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "knowledge-mgmt",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-077",
+      "q": "Which system property ensures all logged-in users have access to Knowledge Bases when no user criteria are defined?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "glide.knowman.block_access_with_no_user_criteria",
+        "glide.knowman.public_access",
+        "glide.kb.all_users_access",
+        "glide.knowman.default_read"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "glide.knowman.block_access_with_no_user_criteria controls KB access when no user criteria exist.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "knowledge-mgmt"
+    },
+    {
+      "id": "csa-snaf-078",
+      "q": "What is the All-menu path to the Service Catalog?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > Self-Service > Service Catalog",
+        "All > Service Catalog > View",
+        "All > Self-Service > Catalog Builder",
+        "All > Catalog > Items"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Service Catalog is accessed at All > Self-Service > Service Catalog.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "service-catalog"
+    },
+    {
+      "id": "csa-snaf-079",
+      "q": "Which role is required to manage a Service Catalog?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "catalog_admin",
+        "catalog_manager",
+        "sc_admin",
+        "itil_admin"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The catalog_admin role is required to manage a Service Catalog.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "service-catalog"
+    },
+    {
+      "id": "csa-snaf-080",
+      "q": "Which records are created once a Service Catalog order is placed?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "REQ (Request)",
+        "RITM (Request Item)",
+        "SCTASK (Catalog Task)",
+        "INC (Incident)"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Placing an order creates a REQ (Request), one or more RITM (Request Items), and SCTASK (Catalog Tasks).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "service-catalog",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-081",
+      "q": "Which table prefix/name pairing is correct?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Request → REQ → sc_request",
+        "Request Item → RITM → sc_task",
+        "Catalog Task → SCTASK → sc_req_item",
+        "Request → REQ → sc_req_item"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Request = REQ = sc_request; Request Item = RITM = sc_req_item; Catalog Task = SCTASK = sc_task.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "service-catalog"
+    },
+    {
+      "id": "csa-snaf-082",
+      "q": "What is a Record Producer used for?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A simplified form that translates user input into task-based records",
+        "A report that produces records on a schedule",
+        "A business rule that inserts records",
+        "A workflow that approves records"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A record producer is a simplified form that lets a user enter information that is translated into task-based records.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "service-catalog"
+    },
+    {
+      "id": "csa-snaf-083",
+      "q": "What is the benefit of an Order Guide?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It lets you order multiple related items as a single request",
+        "It restricts who can view a catalog item",
+        "It generates SLAs for catalog tasks",
+        "It validates variables on submit"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "An order guide provides the ability to order multiple, related items as a single request.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "service-catalog"
+    },
+    {
+      "id": "csa-snaf-084",
+      "q": "Which of the following are major components of the Service Catalog?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Catalog Items",
+        "Variables",
+        "Variable Sets",
+        "Record Producers",
+        "Business Rules"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "The five major components are Catalog Items, Variables, Variable Sets, Record Producers, and Flows.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "service-catalog",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-085",
+      "q": "What is the All-menu path to Flow Designer?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > Process Automation > Flow Designer",
+        "All > Workflow > Flow Designer",
+        "All > Flow Designer > Designer",
+        "All > Self-Service > Flow Designer"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Flow Designer is accessed at All > Process Automation > Flow Designer.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "workflow-automation"
+    },
+    {
+      "id": "csa-snaf-086",
+      "q": "Which three roles are used to work with Flow Designer?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "flow_designer",
+        "flow_operator",
+        "action_designer",
+        "flow_admin"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "The three Flow Designer roles are flow_designer, flow_operator, and action_designer.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "workflow-automation",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-087",
+      "q": "What are the four main components of a Flow?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Triggers, Conditions, Actions, Data",
+        "Tables, Records, Fields, Views",
+        "When, Who, What, Where",
+        "Inputs, Steps, Outputs, Logs"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A flow's four main components are Triggers, Conditions, Actions, and Data.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "workflow-automation"
+    },
+    {
+      "id": "csa-snaf-088",
+      "q": "What is the Virtual Agent?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "A conversational platform that helps users get information and perform tasks via a messaging interface",
+        "A scheduled job that closes incidents",
+        "A reporting dashboard",
+        "A MID Server component"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Virtual Agent is a conversational platform that helps users obtain information, make decisions, and perform common tasks within a messaging interface.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "workflow-automation"
+    },
+    {
+      "id": "csa-snaf-089",
+      "q": "Which three elements make up the ServiceNow data infrastructure?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Tables, Records, Fields",
+        "Forms, Lists, Views",
+        "Applications, Modules, Menus",
+        "Triggers, Conditions, Actions"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The ServiceNow infrastructure includes Tables, Records, and Fields.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "tables-schema"
+    },
+    {
+      "id": "csa-snaf-090",
+      "q": "How are records uniquely identified in ServiceNow, and where is the System Dictionary?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "By a sys_id; All > System Definition > Dictionary",
+        "By a number field; All > System Properties > Dictionary",
+        "By a sys_id; All > System Security > Dictionary",
+        "By their name; All > System Definition > Tables & Columns"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Records are identified by a sys_id, and the System Dictionary is at All > System Definition > Dictionary.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "tables-schema"
+    },
+    {
+      "id": "csa-snaf-091",
+      "q": "Which of the following are forms of table relationships?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "One-to-many",
+        "Many-to-many",
+        "Database View",
+        "Extensions",
+        "One-to-one mirror"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "The four forms of table relationships are One-to-many, Many-to-many, Database View, and Extensions.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "tables-schema",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-092",
+      "q": "What does a Reference field store?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The sys_id of a record on another table",
+        "The display value of a record as text",
+        "A list of choices",
+        "A JSON payload"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A reference field stores the sys_id of a record on another table, establishing the reference relationship.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "tables-schema"
+    },
+    {
+      "id": "csa-snaf-093",
+      "q": "In table inheritance, what is true of a child table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "It extends the parent table and inherits all of its fields",
+        "It cannot have any of the parent's fields",
+        "It must be in a different application scope",
+        "It replaces the parent table"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A child table extends from the parent and inherits all of the parent's fields.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "tables-schema"
+    },
+    {
+      "id": "csa-snaf-094",
+      "q": "Which statement correctly describes Base, Core, and Custom tables?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "Base: can have children but no parent; Core: can have both parent and child; Custom: created by admins/developers",
+        "Base: created by developers; Core: no relationships; Custom: ships with the platform",
+        "Base and Core are identical; Custom tables cannot be extended",
+        "Core tables cannot have child tables"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A Base table can have children but no parent; a Core table (ships in base system) can have both parent and child relationships; Custom tables are created by admins/developers.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "tables-schema"
+    },
+    {
+      "id": "csa-snaf-095",
+      "q": "Which are the three levels of security checked before an end user can perform CRUD operations on a table?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "User Authentication",
+        "Application/Module access (Roles)",
+        "Database access (ACLs)",
+        "Network firewall"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "The three levels are User Authentication, Application/Module access (Roles), and Database access (Access Control Rules).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-096",
+      "q": "Which role is required to manage the Access Control List (ACL)?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "security_admin",
+        "admin",
+        "user_admin",
+        "acl_admin"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Managing the ACL at All > System Security > Access Control requires the security_admin role (via elevation).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-097",
+      "q": "Which three elements define an Access Control?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Operation",
+        "Object",
+        "Permissions",
+        "Trigger"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "An Access Control is defined by an Operation, an Object, and Permissions.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-098",
+      "q": "Which four Access Controls are generated by default when a custom table is created?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Create",
+        "Read",
+        "Write",
+        "Delete",
+        "Query"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "Creating a custom table generates Create, Read, Write, and Delete access controls (plus an associated role).",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-099",
+      "q": "Which ACL rule type applies to all fields that do NOT have a specific table.field rule?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "table.*",
+        "table.–none–",
+        "table.field",
+        "table.all"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "table.* applies to all fields without a specific table.field rule; table.–none– applies to the whole table; table.field applies to a specific field.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-100",
+      "q": "When writing ACLs, which rule type actually grants access to records?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "The –none– (whole table) access control",
+        "The table.* access control",
+        "The table.field access control",
+        "Any active ACL on the table"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Only the –none– access control grants access to records, which is why a –none– rule should accompany a table.* rule.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "user-admin"
+    },
+    {
+      "id": "csa-snaf-101",
+      "q": "Which of the following are supported Import Set data sources?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "CSV",
+        "XML",
+        "Excel",
+        "JDBC",
+        "PDF"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "Supported data sources are CSV, XML, Excel, JDBC, and HTTP/FTP. (PDF is not a supported import source.)",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "import-integration",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-102",
+      "q": "What is the difference between an Import Set Table and a Transform Map?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "The Import Set Table is a staging area for imported records; the Transform Map guides moving data to the target table",
+        "The Import Set Table is the target table; the Transform Map is the source file",
+        "They are two names for the same object",
+        "The Transform Map stores raw data; the Import Set Table maps fields"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The Import Set Table is a staging area for imported records, and the Transform Map provides the guide for moving data from the import set to the target table.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "import-integration"
+    },
+    {
+      "id": "csa-snaf-103",
+      "q": "Why would you use Coalesce during a transform?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "To specify a field as a unique key so existing records update instead of creating duplicates",
+        "To merge two tables into one",
+        "To delete the import set after transform",
+        "To convert Excel to CSV automatically"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Coalesce designates a field (or fields) as a unique key so existing records are updated rather than inserted as duplicates.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "import-integration"
+    },
+    {
+      "id": "csa-snaf-104",
+      "q": "Which three system tables pertain to the CMDB?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "cmdb",
+        "cmdb_ci",
+        "cmdb_rel_ci",
+        "cmdb_model"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "The three key CMDB tables are cmdb, cmdb_ci, and cmdb_rel_ci.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "cmdb",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-105",
+      "q": "What does CMDB stand for?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "Configuration Management Database",
+        "Change Management Database",
+        "Customer Management Database",
+        "Cloud Management Database"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CMDB stands for Configuration Management Database.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "cmdb"
+    },
+    {
+      "id": "csa-snaf-106",
+      "q": "What is the All-menu path to the CI Class Manager?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > Configuration > CI Class Manager",
+        "All > CMDB > CI Class Manager",
+        "All > Configuration > Class Manager",
+        "All > System Definition > CI Class Manager"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The CI Class Manager is at All > Configuration > CI Class Manager.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "cmdb"
+    },
+    {
+      "id": "csa-snaf-107",
+      "q": "What is the CSDM model?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A set of standard terms and conditions governing a CMDB-based framework",
+        "An automatic fix for past CMDB implementations",
+        "A process and implementation guide for ITSM",
+        "A SKU/product you purchase from ServiceNow"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "CSDM is a set of terms and conditions (standard definitions and best practices) governing a CMDB-based framework. It is not a process guide, not code to install, and not a product to buy.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "cmdb"
+    },
+    {
+      "id": "csa-snaf-108",
+      "q": "What is the difference between top-down (Service) Mapping and horizontal Discovery?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Top-down mapping overlays service maps to connect CIs underlying a service; horizontal discovery inventories devices/apps without showing dependencies",
+        "Top-down mapping inventories devices; horizontal discovery connects services",
+        "They produce identical results",
+        "Horizontal discovery only works in non-production"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Top-down (service) mapping overlays service maps to connect the CIs underlying a service, while horizontal discovery creates an inventory of devices/applications without showing how they are connected.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "cmdb"
+    },
+    {
+      "id": "csa-snaf-109",
+      "q": "Which of the following are the four types of Client Scripts?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "onCellEdit()",
+        "onChange()",
+        "onLoad()",
+        "onSubmit()",
+        "onDisplay()"
+      ],
+      "correct": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "explanation": "The four client script types are onCellEdit(), onChange(), onLoad(), and onSubmit().",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "scripting",
+      "multi": 4
+    },
+    {
+      "id": "csa-snaf-110",
+      "q": "What scripting language is used in ServiceNow?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "JavaScript",
+        "Python",
+        "Java",
+        "Groovy"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ServiceNow scripting is performed in JavaScript.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "scripting"
+    },
+    {
+      "id": "csa-snaf-111",
+      "q": "Where do client-side and server-side scripts execute, respectively?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Client-side runs in the web browser; server-side runs on the ServiceNow database",
+        "Client-side runs on the database; server-side runs in the browser",
+        "Both run only in the browser",
+        "Both run only on the MID Server"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Client-side scripts run in the web browser; server-side scripts run on the ServiceNow database/server.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "scripting"
+    },
+    {
+      "id": "csa-snaf-112",
+      "q": "Which three UI Policy Actions can be applied with a UI Policy?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Mandatory or Optional",
+        "Hidden or Visible",
+        "Read-only or Editable",
+        "Locked or Unlocked"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "A UI Policy can set fields Mandatory/Optional, Hidden/Visible, and Read-only/Editable.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-113",
+      "q": "How does a Data Policy differ from a UI Policy?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "UI Policies are enforced only on data entered into a form; Data Policies are enforced on all data entered into the platform",
+        "Data Policies only work in workspaces; UI Policies only work in Classic",
+        "UI Policies enforce all data; Data Policies enforce only form data",
+        "They are functionally identical"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "UI Policies are enforced only on data entered into a form, whereas Data Policies enforce data consistency on all data entered into the platform.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "ui-config"
+    },
+    {
+      "id": "csa-snaf-114",
+      "q": "A Business Rule can be configured to run when a record is...?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "displayed, inserted, updated, or deleted (or when the table is queried)",
+        "only inserted",
+        "only when a user logs in",
+        "only on a schedule"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "A Business Rule can run when a record is displayed, inserted, updated, deleted, or when a table is queried.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "scripting"
+    },
+    {
+      "id": "csa-snaf-115",
+      "q": "Which are the three 'When to Run' options for a Catalog UI Policy?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "onLoad()",
+        "onChange()",
+        "onSubmit()",
+        "onCellEdit()"
+      ],
+      "correct": [
+        0,
+        1,
+        2
+      ],
+      "explanation": "Catalog UI Policies run onLoad(), onChange(), or onSubmit().",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "service-catalog",
+      "multi": 3
+    },
+    {
+      "id": "csa-snaf-116",
+      "q": "What is an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "A group of configuration changes that can be moved from one instance to another",
+        "A backup of the entire instance database",
+        "A set of user roles bundled together",
+        "A collection of scheduled jobs"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "An Update Set is a group of configuration changes that can be moved from one instance to another.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "update-sets"
+    },
+    {
+      "id": "csa-snaf-117",
+      "q": "Which system table stores all the tracked configuration changes for update sets?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "sys_update_xml",
+        "sys_update_set",
+        "sys_metadata",
+        "sys_audit"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Tracked table changes are stored in sys_update_xml.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "update-sets"
+    },
+    {
+      "id": "csa-snaf-118",
+      "q": "What is the All-menu path to view existing (local) Update Sets?",
+      "type": "mcq",
+      "difficulty": "easy",
+      "options": [
+        "All > System Update Sets > Local Update Sets",
+        "All > System Definition > Update Sets",
+        "All > System Update Sets > Retrieved Update Sets",
+        "All > Update Sets > Local"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Local update sets are viewed at All > System Update Sets > Local Update Sets.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "update-sets"
+    },
+    {
+      "id": "csa-snaf-119",
+      "q": "What is and is not captured within an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Process (configuration) records are captured; data is not",
+        "Data is captured; configuration records are not",
+        "Both data and configuration are always captured",
+        "Neither data nor configuration is captured"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "Update Sets capture process/configuration records but not data; use the Export XML function to move data manually.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "update-sets"
+    },
+    {
+      "id": "csa-snaf-120",
+      "q": "What is the typical three-step process for retrieving an Update Set?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "Retrieve, Preview, Commit",
+        "Import, Validate, Publish",
+        "Load, Transform, Commit",
+        "Export, Retrieve, Apply"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "The retrieval process is Retrieve, Preview, then Commit.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "update-sets"
+    },
+    {
+      "id": "csa-snaf-121",
+      "q": "During Preview of an Update Set, which field is matched on platform records?",
+      "type": "mcq",
+      "difficulty": "hard",
+      "options": [
+        "sys_id",
+        "number",
+        "sys_created_on",
+        "name"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "During preview, sys_id fields are matched on the platform records.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "update-sets"
+    },
+    {
+      "id": "csa-snaf-122",
+      "q": "What is the primary purpose of the Automated Test Framework (ATF)?",
+      "type": "mcq",
+      "difficulty": "medium",
+      "options": [
+        "To create and run automated tests on your instance after modifying it",
+        "To automatically upgrade the instance",
+        "To import data from external sources",
+        "To generate reports and dashboards"
+      ],
+      "correct": [
+        0
+      ],
+      "explanation": "ATF lets you create and run automated tests after modifying an instance, reducing manual testing and keeping test instances clean via rollback.",
+      "source": "ServiceNow CSA Study Items Checklist (SNAF)",
+      "sourceSet": "snaf_checklist",
+      "topic": "scripting"
     }
   ],
   "csm": [
