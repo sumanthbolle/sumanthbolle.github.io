@@ -73,20 +73,76 @@
     "featured": true,
     "color": "green",
     "topics": [
-      { "id": "platform-overview", "name": "Platform Overview & Navigation", "icon": "🧭" },
-      { "id": "user-admin", "name": "User Administration & Security", "icon": "🔐" },
-      { "id": "tables-schema", "name": "Database & Tables", "icon": "🗄️" },
-      { "id": "ui-config", "name": "UI Configuration", "icon": "🎨" },
-      { "id": "itsm", "name": "IT Service Management", "icon": "🔧" },
-      { "id": "service-catalog", "name": "Service Catalog & Requests", "icon": "🛒" },
-      { "id": "knowledge-mgmt", "name": "Knowledge Management", "icon": "📖" },
-      { "id": "self-service", "name": "Self-Service & Service Portal", "icon": "🌐" },
-      { "id": "workflow-automation", "name": "Workflow & Flow Designer", "icon": "⚡" },
-      { "id": "reporting", "name": "Reporting & Dashboards", "icon": "📊" },
-      { "id": "import-integration", "name": "Import & Integration", "icon": "🔄" },
-      { "id": "cmdb", "name": "CMDB & Asset Management", "icon": "🖥️" },
-      { "id": "update-sets", "name": "Update Sets & Development", "icon": "📦" },
-      { "id": "scripting", "name": "Scripting & APIs", "icon": "💻" }
+      {
+        "id": "platform-overview",
+        "name": "Platform Overview & Navigation",
+        "icon": "🧭"
+      },
+      {
+        "id": "user-admin",
+        "name": "User Administration & Security",
+        "icon": "🔐"
+      },
+      {
+        "id": "tables-schema",
+        "name": "Database & Tables",
+        "icon": "🗄️"
+      },
+      {
+        "id": "ui-config",
+        "name": "UI Configuration",
+        "icon": "🎨"
+      },
+      {
+        "id": "itsm",
+        "name": "IT Service Management",
+        "icon": "🔧"
+      },
+      {
+        "id": "service-catalog",
+        "name": "Service Catalog & Requests",
+        "icon": "🛒"
+      },
+      {
+        "id": "knowledge-mgmt",
+        "name": "Knowledge Management",
+        "icon": "📖"
+      },
+      {
+        "id": "self-service",
+        "name": "Self-Service & Service Portal",
+        "icon": "🌐"
+      },
+      {
+        "id": "workflow-automation",
+        "name": "Workflow & Flow Designer",
+        "icon": "⚡"
+      },
+      {
+        "id": "reporting",
+        "name": "Reporting & Dashboards",
+        "icon": "📊"
+      },
+      {
+        "id": "import-integration",
+        "name": "Import & Integration",
+        "icon": "🔄"
+      },
+      {
+        "id": "cmdb",
+        "name": "CMDB & Asset Management",
+        "icon": "🖥️"
+      },
+      {
+        "id": "update-sets",
+        "name": "Update Sets & Development",
+        "icon": "📦"
+      },
+      {
+        "id": "scripting",
+        "name": "Scripting & APIs",
+        "icon": "💻"
+      }
     ],
     "modes": [
       {
@@ -125,6 +181,14 @@
         "count": "all",
         "timer": 75,
         "sourceSet": "snowsets_csa"
+      },
+      {
+        "id": "snaf-pack",
+        "name": "SNAF Study Checklist",
+        "desc": "Knowledge-item quiz built from the ServiceNow CSA Study Items Checklist (SNAF course)",
+        "count": "all",
+        "timer": 0,
+        "sourceSet": "snaf_checklist"
       }
     ]
   },
