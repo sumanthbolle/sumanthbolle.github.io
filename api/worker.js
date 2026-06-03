@@ -411,8 +411,202 @@ async function callSonarWithTimeout(apiKey, payload, timeoutMs) {
     });
     if (!res.ok) throw new Error('Sonar ' + res.status);
     return await res.json();
-  } finally {
+  }   finally {
     clearTimeout(timer);
+  }
+}
+
+/* ───────────── Flight Search ───────────── */
+
+const FLIGHT_SYSTEM_PROMPT = 'You are a real-time flight search and travel pricing assistant. Your task is to find current publicly available flight options for the provided route, dates, passenger count, cabin class, budget, and preferences.\n\nYou must:\n- Search current web results for flight prices.\n- Prefer airline official websites and reputable travel providers (Google Flights, Kayak, Skyscanner, Expedia, etc.).\n- Return only structured JSON. No markdown, no code fences, no explanation text outside JSON.\n- Do not invent flights, prices, booking links, or airlines.\n- If exact prices are not available, mark the confidence as "low" and explain why in the notes field.\n- Include source URLs wherever possible.\n- Include a freshness note indicating when the data was retrieved.\n- Compare flights based on price, duration, stops, layovers, and budget fit.\n- Do not claim that a booking is confirmed.\n- Treat results as price-discovery only.\n- Each flight must have a unique "id" field (e.g., "flight_1", "flight_2").\n- The "badges" array can include values like "Cheapest", "Fastest", "Best Value", "Under Budget", "Nonstop".\n- The "score" field should be your best estimate from 0-100 based on overall value.';
+
+const FLIGHT_TIMEOUT_MS = 55000;
+
+function buildFlightPrompt(p) {
+  var preferred = p.preferredAirlines && p.preferredAirlines.length > 0 ? p.preferredAirlines.join(', ') : 'No preference';
+  var avoid = p.avoidAirlines && p.avoidAirlines.length > 0 ? p.avoidAirlines.join(', ') : 'None';
+  var budget = p.maxBudget ? p.maxBudget + ' ' + p.currency : 'No limit';
+  return 'Find current flight options using the following search criteria:\n\n'
+    + 'Origin: ' + p.origin + '\nDestination: ' + p.destination + '\n'
+    + 'Departure date: ' + p.departureDate + '\nReturn date: ' + (p.returnDate || 'N/A (one-way)') + '\n'
+    + 'Trip type: ' + p.tripType + '\nPassengers: ' + p.passengers + '\n'
+    + 'Cabin class: ' + p.cabinClass + '\nFlexible date range: +/- ' + (p.flexibleDays || 0) + ' days\n'
+    + 'Maximum budget: ' + budget + '\nPreferred airlines: ' + preferred + '\n'
+    + 'Avoid airlines: ' + avoid + '\nMaximum stops: ' + p.maxStops + '\n'
+    + 'Priority mode: ' + p.priorityMode + '\n\n'
+    + 'Return the result in this exact JSON structure (no markdown, no code fences, just raw JSON):\n\n'
+    + '{"search_summary":{"origin":"","destination":"","departure_date":"","return_date":"","trip_type":"","passengers":0,"cabin_class":"","currency":"","budget":0,"freshness_note":"","result_confidence":"high | medium | low"},"recommendation":{"best_overall_flight_id":"","cheapest_flight_id":"","fastest_flight_id":"","best_under_budget_flight_id":"","explanation":""},"flights":[{"id":"","airline":"","flight_numbers":[],"provider":"","price":0,"currency":"","is_under_budget":true,"departure_airport":"","arrival_airport":"","departure_time":"","arrival_time":"","total_duration_minutes":0,"stops":0,"layovers":[{"airport":"","duration_minutes":0}],"booking_url":"","source_url":"","source_name":"","confidence":"high | medium | low","notes":"","score":0,"badges":[]}],"warnings":[]}';
+}
+
+function extractFlightJson(text) {
+  var fence = text.match(/```(?:json)?\s*\n?([\s\S]*?)```/);
+  if (fence) return fence[1].trim();
+  var start = text.indexOf('{');
+  var end = text.lastIndexOf('}');
+  if (start !== -1 && end > start) return text.substring(start, end + 1);
+  return text.trim();
+}
+
+function normalizeFlightResponse(raw, params) {
+  if (!raw.search_summary) {
+    raw.search_summary = {
+      origin: params.origin, destination: params.destination,
+      departure_date: params.departureDate, return_date: params.returnDate || '',
+      trip_type: params.tripType, passengers: params.passengers,
+      cabin_class: params.cabinClass, currency: params.currency,
+      budget: params.maxBudget || 0, freshness_note: 'Data freshness unknown',
+      result_confidence: 'low'
+    };
+  }
+  if (!raw.recommendation) {
+    raw.recommendation = { best_overall_flight_id: '', cheapest_flight_id: '', fastest_flight_id: '', best_under_budget_flight_id: '', explanation: '' };
+  }
+  if (!Array.isArray(raw.flights)) raw.flights = [];
+  if (!Array.isArray(raw.warnings)) raw.warnings = [];
+  raw.flights = raw.flights.map(function(f, i) {
+    return {
+      id: f.id || 'flight_' + (i + 1),
+      airline: f.airline || 'Unknown Airline',
+      flight_numbers: Array.isArray(f.flight_numbers) ? f.flight_numbers : [],
+      provider: f.provider || '',
+      price: typeof f.price === 'number' ? f.price : 0,
+      currency: f.currency || params.currency,
+      is_under_budget: typeof f.is_under_budget === 'boolean' ? f.is_under_budget : (params.maxBudget ? f.price <= params.maxBudget : true),
+      departure_airport: f.departure_airport || params.origin,
+      arrival_airport: f.arrival_airport || params.destination,
+      departure_time: f.departure_time || '',
+      arrival_time: f.arrival_time || '',
+      total_duration_minutes: typeof f.total_duration_minutes === 'number' ? f.total_duration_minutes : 0,
+      stops: typeof f.stops === 'number' ? f.stops : 0,
+      layovers: Array.isArray(f.layovers) ? f.layovers : [],
+      booking_url: f.booking_url || '',
+      source_url: f.source_url || '',
+      source_name: f.source_name || '',
+      confidence: ['high', 'medium', 'low'].indexOf(f.confidence) >= 0 ? f.confidence : 'low',
+      notes: f.notes || '',
+      score: typeof f.score === 'number' ? f.score : 0,
+      badges: Array.isArray(f.badges) ? f.badges : [],
+    };
+  });
+  return raw;
+}
+
+function flightNorm100(val, min, max) {
+  if (max === min) return 100;
+  return Math.round(((max - val) / (max - min)) * 100);
+}
+
+function scoreFlights(response, priorityMode, maxBudget) {
+  var flights = response.flights;
+  if (flights.length === 0) return response;
+  var prices = flights.map(function(f) { return f.price; }).filter(function(p) { return p > 0; });
+  var durs = flights.map(function(f) { return f.total_duration_minutes; }).filter(function(d) { return d > 0; });
+  var stopsArr = flights.map(function(f) { return f.stops; });
+  var minP = Math.min.apply(null, prices), maxP = Math.max.apply(null, prices);
+  var minD = Math.min.apply(null, durs), maxD = Math.max.apply(null, durs);
+  var minS = Math.min.apply(null, stopsArr), maxS = Math.max.apply(null, stopsArr);
+  var confMap = { high: 100, medium: 60, low: 25 };
+  flights.forEach(function(f) {
+    var ps = f.price > 0 ? flightNorm100(f.price, minP, maxP) : 50;
+    var ds = f.total_duration_minutes > 0 ? flightNorm100(f.total_duration_minutes, minD, maxD) : 50;
+    var ss = flightNorm100(f.stops, minS, maxS);
+    var bs = 50;
+    if (maxBudget && maxBudget > 0) {
+      bs = f.price <= maxBudget ? 100 : Math.max(0, 100 - ((f.price - maxBudget) / maxBudget) * 200);
+    }
+    var cs = confMap[f.confidence] || 10;
+    f.score = Math.round(ps * 0.4 + ds * 0.25 + ss * 0.15 + bs * 0.1 + cs * 0.1);
+    f.is_under_budget = maxBudget ? f.price <= maxBudget : true;
+    f.badges = [];
+  });
+  var cheapest = flights.reduce(function(a, b) { return a.price > 0 && (b.price <= 0 || a.price < b.price) ? a : b; });
+  var fastest = flights.reduce(function(a, b) { return a.total_duration_minutes > 0 && (b.total_duration_minutes <= 0 || a.total_duration_minutes < b.total_duration_minutes) ? a : b; });
+  var best = flights.reduce(function(a, b) { return a.score >= b.score ? a : b; });
+  var underBudget = flights.filter(function(f) { return f.is_under_budget; });
+  var bestUB = underBudget.length > 0 ? underBudget.reduce(function(a, b) { return a.score >= b.score ? a : b; }) : null;
+  function addFlightBadge(id, badge) {
+    var f = flights.find(function(fl) { return fl.id === id; });
+    if (f && f.badges.indexOf(badge) < 0) f.badges.push(badge);
+  }
+  addFlightBadge(cheapest.id, 'Cheapest');
+  addFlightBadge(fastest.id, 'Fastest');
+  addFlightBadge(best.id, 'Best Value');
+  if (bestUB) addFlightBadge(bestUB.id, 'Under Budget');
+  flights.filter(function(f) { return f.stops === 0; }).forEach(function(f) { addFlightBadge(f.id, 'Nonstop'); });
+  var sorted;
+  switch (priorityMode) {
+    case 'cheapest': sorted = flights.slice().sort(function(a, b) { return a.price - b.price; }); break;
+    case 'fastest': sorted = flights.slice().sort(function(a, b) { return a.total_duration_minutes - b.total_duration_minutes; }); break;
+    case 'best_under_budget':
+      sorted = underBudget.slice().sort(function(a, b) { return b.score - a.score; })
+        .concat(flights.filter(function(f) { return !f.is_under_budget; }).sort(function(a, b) { return b.score - a.score; }));
+      break;
+    default: sorted = flights.slice().sort(function(a, b) { return b.score - a.score; });
+  }
+  var rec = response.recommendation;
+  rec.cheapest_flight_id = cheapest.id;
+  rec.fastest_flight_id = fastest.id;
+  rec.best_overall_flight_id = best.id;
+  rec.best_under_budget_flight_id = bestUB ? bestUB.id : '';
+  if (!rec.explanation) {
+    var parts = [best.airline + ' at ' + best.currency + ' ' + best.price + ' offers the best overall value.'];
+    if (cheapest.id !== best.id) parts.push(cheapest.airline + ' is cheapest at ' + cheapest.currency + ' ' + cheapest.price + '.');
+    if (fastest.id !== best.id) parts.push(fastest.airline + ' is fastest at ' + fastest.total_duration_minutes + ' min.');
+    rec.explanation = parts.join(' ');
+  }
+  response.flights = sorted;
+  response.recommendation = rec;
+  return response;
+}
+
+async function handleFlightSearch(request, env, origin) {
+  try {
+    var body;
+    try { body = await request.json(); } catch (e) {
+      return jsonResponse({ success: false, error: 'Invalid request body.' }, origin);
+    }
+    var p = {
+      origin: sanitize(String(body.origin || '')),
+      destination: sanitize(String(body.destination || '')),
+      departureDate: sanitize(String(body.departureDate || '')),
+      returnDate: sanitize(String(body.returnDate || '')),
+      tripType: sanitize(String(body.tripType || 'one-way')),
+      passengers: parseInt(body.passengers) || 1,
+      cabinClass: sanitize(String(body.cabinClass || 'economy')),
+      flexibleDays: Math.min(Math.max(parseInt(body.flexibleDays) || 0, 0), 7),
+      maxBudget: body.maxBudget ? parseInt(body.maxBudget) : null,
+      currency: sanitize(String(body.currency || 'USD')),
+      preferredAirlines: Array.isArray(body.preferredAirlines) ? body.preferredAirlines.map(function(a) { return sanitize(String(a)); }).filter(Boolean) : [],
+      avoidAirlines: Array.isArray(body.avoidAirlines) ? body.avoidAirlines.map(function(a) { return sanitize(String(a)); }).filter(Boolean) : [],
+      maxStops: sanitize(String(body.maxStops || '2+')),
+      priorityMode: sanitize(String(body.priorityMode || 'best_balance')),
+    };
+    if (!p.origin) return jsonResponse({ success: false, error: 'Origin is required.' }, origin);
+    if (!p.destination) return jsonResponse({ success: false, error: 'Destination is required.' }, origin);
+    if (!p.departureDate) return jsonResponse({ success: false, error: 'Departure date is required.' }, origin);
+    var apiKey = env.PERPLEXITY_API_KEY;
+    if (!apiKey) return jsonResponse({ success: false, error: 'Flight search service is not configured.' }, origin);
+    var payload = {
+      model: 'sonar-pro',
+      messages: [
+        { role: 'system', content: FLIGHT_SYSTEM_PROMPT },
+        { role: 'user', content: buildFlightPrompt(p) },
+      ],
+      temperature: 0.1,
+      max_tokens: 4096,
+      web_search_options: { search_context_size: 'high' },
+    };
+    var data = await callSonarWithTimeout(apiKey, payload, FLIGHT_TIMEOUT_MS);
+    var content = data && data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : null;
+    if (!content || typeof content !== 'string') throw new Error('Empty response from search engine.');
+    var jsonStr = extractFlightJson(content);
+    var parsed;
+    try { parsed = JSON.parse(jsonStr); } catch (e) { throw new Error('Failed to parse flight data.'); }
+    var normalized = normalizeFlightResponse(parsed, p);
+    var scored = scoreFlights(normalized, p.priorityMode, p.maxBudget);
+    return jsonResponse({ success: true, data: scored }, origin);
+  } catch (e) {
+    return jsonResponse({ success: false, error: 'Unable to search for flights right now. Please try again later.' }, origin);
   }
 }
 
