@@ -74,6 +74,10 @@ export default {
       return handleTrending(request, env, ctx, origin);
     }
 
+    if (request.method === 'POST' && url.pathname === '/flights') {
+      return handleFlightSearch(request, env, origin);
+    }
+
     if (request.method !== 'POST') {
       return new Response('Method not allowed', { status: 405 });
     }
