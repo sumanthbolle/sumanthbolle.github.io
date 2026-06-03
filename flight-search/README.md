@@ -1,6 +1,6 @@
 # SkyFare — AI Flight Search & Comparison
 
-A premium flight discovery and comparison interface powered by the Perplexity API. Search for flights across airlines and booking providers, compare options ranked by price, speed, stops, and value — all presented in a clean, Apple-inspired UI.
+A premium flight discovery and comparison interface powered by the Perplexity API. Search for flights across airlines and booking providers, compare options ranked by price, speed, stops, and value — all presented in a clean UI.
 
 > **Note:** This is a flight discovery tool, not a booking system. "View Deal" buttons redirect to the provider's website.
 
