@@ -606,7 +606,14 @@ async function handleFlightSearch(request, env, origin) {
     var scored = scoreFlights(normalized, p.priorityMode, p.maxBudget);
     return jsonResponse({ success: true, data: scored }, origin);
   } catch (e) {
-    return jsonResponse({ success: false, error: 'Unable to search for flights right now. Please try again later.' }, origin);
+    var msg = 'Unable to search for flights right now. Please try again later.';
+    if (e && e.message) {
+      if (e.message.indexOf('abort') >= 0) msg = 'The search timed out. AI flight searches can take up to a minute — please try again.';
+      else if (e.message.indexOf('parse') >= 0) msg = 'The AI returned an unexpected response format. Please try a different route or try again.';
+      else if (e.message.indexOf('Sonar') >= 0) msg = 'The AI search service returned an error. This may be a temporary issue — please try again in a moment.';
+      else if (e.message.indexOf('Empty') >= 0) msg = 'The AI search returned no content. Please try a more specific route (e.g. use airport codes like SIN, NRT).';
+    }
+    return jsonResponse({ success: false, error: msg }, origin);
   }
 }
 
