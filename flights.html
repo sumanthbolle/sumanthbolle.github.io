@@ -210,6 +210,17 @@
     .empty-state h3{font-size:17px;font-weight:600;margin-bottom:4px}
     .empty-state p{font-size:14px;color:var(--gray);max-width:380px;margin:0 auto}
 
+    /* ─── Autocomplete ─── */
+    .field{position:relative}
+    .ac-list{position:absolute;top:100%;left:0;right:0;background:var(--white);border:1px solid rgba(0,0,0,0.1);border-radius:var(--radius-xs);box-shadow:0 8px 30px rgba(0,0,0,0.12);max-height:240px;overflow-y:auto;z-index:50;margin-top:2px;display:none}
+    .ac-list.open{display:block}
+    .ac-item{padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s}
+    .ac-item:hover,.ac-item.highlighted{background:rgba(0,102,204,0.06)}
+    .ac-code{font-size:14px;font-weight:700;color:var(--blue);min-width:36px;font-family:SFMono-Regular,Menlo,monospace}
+    .ac-info{flex:1;min-width:0}
+    .ac-city{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ac-country{font-size:11px;color:var(--gray)}
+
     /* ─── Animations ─── */
     @keyframes fadeSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
     .fade-in{animation:fadeSlide .3s ease}
@@ -280,8 +291,8 @@
 
       <!-- Row 1: Route + Dates -->
       <div class="form-row r1">
-        <div class="field"><label for="origin">From</label><input id="origin" type="text" placeholder="City or airport" required></div>
-        <div class="field"><label for="destination">To</label><input id="destination" type="text" placeholder="City or airport" required></div>
+        <div class="field"><label for="origin">From</label><input id="origin" type="text" placeholder="City or airport code" required autocomplete="off"><div class="ac-list" id="acOrigin"></div></div>
+        <div class="field"><label for="destination">To</label><input id="destination" type="text" placeholder="City or airport code" required autocomplete="off"><div class="ac-list" id="acDest"></div></div>
         <div class="field"><label for="departureDate">Depart</label><input id="departureDate" type="date" required></div>
         <div class="field" id="returnField"><label for="returnDate">Return</label><input id="returnDate" type="date"></div>
       </div>
@@ -342,7 +353,203 @@
 (function() {
   'use strict';
 
-  const API_URL = 'https://wandering-haze-b394.sumanthbolle312.workers.dev/flights';
+
+  /* ─── Airport Database ─── */
+  const AIRPORTS = [
+    {code:'JFK',city:'New York',name:'John F. Kennedy Intl',country:'USA'},
+    {code:'LAX',city:'Los Angeles',name:'Los Angeles Intl',country:'USA'},
+    {code:'ORD',city:'Chicago',name:"O'Hare Intl",country:'USA'},
+    {code:'ATL',city:'Atlanta',name:'Hartsfield-Jackson Intl',country:'USA'},
+    {code:'DFW',city:'Dallas',name:'Dallas/Fort Worth Intl',country:'USA'},
+    {code:'SFO',city:'San Francisco',name:'San Francisco Intl',country:'USA'},
+    {code:'MIA',city:'Miami',name:'Miami Intl',country:'USA'},
+    {code:'SEA',city:'Seattle',name:'Seattle-Tacoma Intl',country:'USA'},
+    {code:'BOS',city:'Boston',name:'Logan Intl',country:'USA'},
+    {code:'EWR',city:'Newark',name:'Newark Liberty Intl',country:'USA'},
+    {code:'IAD',city:'Washington DC',name:'Dulles Intl',country:'USA'},
+    {code:'DEN',city:'Denver',name:'Denver Intl',country:'USA'},
+    {code:'LAS',city:'Las Vegas',name:'Harry Reid Intl',country:'USA'},
+    {code:'MCO',city:'Orlando',name:'Orlando Intl',country:'USA'},
+    {code:'HNL',city:'Honolulu',name:'Daniel K. Inouye Intl',country:'USA'},
+    {code:'PHX',city:'Phoenix',name:'Sky Harbor Intl',country:'USA'},
+    {code:'IAH',city:'Houston',name:'George Bush Intl',country:'USA'},
+    {code:'MSP',city:'Minneapolis',name:'Minneapolis-Saint Paul Intl',country:'USA'},
+    {code:'DTW',city:'Detroit',name:'Detroit Metro Wayne County',country:'USA'},
+    {code:'PHL',city:'Philadelphia',name:'Philadelphia Intl',country:'USA'},
+    {code:'LHR',city:'London',name:'Heathrow',country:'UK'},
+    {code:'LGW',city:'London',name:'Gatwick',country:'UK'},
+    {code:'STN',city:'London',name:'Stansted',country:'UK'},
+    {code:'MAN',city:'Manchester',name:'Manchester',country:'UK'},
+    {code:'EDI',city:'Edinburgh',name:'Edinburgh',country:'UK'},
+    {code:'CDG',city:'Paris',name:'Charles de Gaulle',country:'France'},
+    {code:'ORY',city:'Paris',name:'Orly',country:'France'},
+    {code:'NCE',city:'Nice',name:'Nice Cote d Azur',country:'France'},
+    {code:'FRA',city:'Frankfurt',name:'Frankfurt am Main',country:'Germany'},
+    {code:'MUC',city:'Munich',name:'Munich',country:'Germany'},
+    {code:'BER',city:'Berlin',name:'Berlin Brandenburg',country:'Germany'},
+    {code:'AMS',city:'Amsterdam',name:'Schiphol',country:'Netherlands'},
+    {code:'MAD',city:'Madrid',name:'Adolfo Suarez Madrid-Barajas',country:'Spain'},
+    {code:'BCN',city:'Barcelona',name:'El Prat',country:'Spain'},
+    {code:'FCO',city:'Rome',name:'Fiumicino',country:'Italy'},
+    {code:'MXP',city:'Milan',name:'Malpensa',country:'Italy'},
+    {code:'VCE',city:'Venice',name:'Marco Polo',country:'Italy'},
+    {code:'ZRH',city:'Zurich',name:'Zurich',country:'Switzerland'},
+    {code:'GVA',city:'Geneva',name:'Geneva',country:'Switzerland'},
+    {code:'VIE',city:'Vienna',name:'Vienna Intl',country:'Austria'},
+    {code:'CPH',city:'Copenhagen',name:'Copenhagen',country:'Denmark'},
+    {code:'OSL',city:'Oslo',name:'Gardermoen',country:'Norway'},
+    {code:'ARN',city:'Stockholm',name:'Arlanda',country:'Sweden'},
+    {code:'HEL',city:'Helsinki',name:'Helsinki-Vantaa',country:'Finland'},
+    {code:'IST',city:'Istanbul',name:'Istanbul',country:'Turkey'},
+    {code:'SAW',city:'Istanbul',name:'Sabiha Gokcen',country:'Turkey'},
+    {code:'ATH',city:'Athens',name:'Eleftherios Venizelos',country:'Greece'},
+    {code:'LIS',city:'Lisbon',name:'Humberto Delgado',country:'Portugal'},
+    {code:'DUB',city:'Dublin',name:'Dublin',country:'Ireland'},
+    {code:'BRU',city:'Brussels',name:'Brussels',country:'Belgium'},
+    {code:'WAW',city:'Warsaw',name:'Chopin',country:'Poland'},
+    {code:'PRG',city:'Prague',name:'Vaclav Havel',country:'Czech Republic'},
+    {code:'BUD',city:'Budapest',name:'Budapest Ferenc Liszt',country:'Hungary'},
+    {code:'DXB',city:'Dubai',name:'Dubai Intl',country:'UAE'},
+    {code:'AUH',city:'Abu Dhabi',name:'Zayed Intl',country:'UAE'},
+    {code:'DOH',city:'Doha',name:'Hamad Intl',country:'Qatar'},
+    {code:'RUH',city:'Riyadh',name:'King Khalid Intl',country:'Saudi Arabia'},
+    {code:'JED',city:'Jeddah',name:'King Abdulaziz Intl',country:'Saudi Arabia'},
+    {code:'BAH',city:'Bahrain',name:'Bahrain Intl',country:'Bahrain'},
+    {code:'MCT',city:'Muscat',name:'Muscat Intl',country:'Oman'},
+    {code:'AMM',city:'Amman',name:'Queen Alia Intl',country:'Jordan'},
+    {code:'TLV',city:'Tel Aviv',name:'Ben Gurion',country:'Israel'},
+    {code:'CAI',city:'Cairo',name:'Cairo Intl',country:'Egypt'},
+    {code:'NRT',city:'Tokyo',name:'Narita',country:'Japan'},
+    {code:'HND',city:'Tokyo',name:'Haneda',country:'Japan'},
+    {code:'KIX',city:'Osaka',name:'Kansai',country:'Japan'},
+    {code:'ICN',city:'Seoul',name:'Incheon',country:'South Korea'},
+    {code:'GMP',city:'Seoul',name:'Gimpo',country:'South Korea'},
+    {code:'PEK',city:'Beijing',name:'Capital Intl',country:'China'},
+    {code:'PKX',city:'Beijing',name:'Daxing',country:'China'},
+    {code:'PVG',city:'Shanghai',name:'Pudong',country:'China'},
+    {code:'CAN',city:'Guangzhou',name:'Baiyun',country:'China'},
+    {code:'HKG',city:'Hong Kong',name:'Hong Kong Intl',country:'Hong Kong'},
+    {code:'TPE',city:'Taipei',name:'Taoyuan',country:'Taiwan'},
+    {code:'SIN',city:'Singapore',name:'Changi',country:'Singapore'},
+    {code:'KUL',city:'Kuala Lumpur',name:'KL Intl',country:'Malaysia'},
+    {code:'BKK',city:'Bangkok',name:'Suvarnabhumi',country:'Thailand'},
+    {code:'DMK',city:'Bangkok',name:'Don Mueang',country:'Thailand'},
+    {code:'CGK',city:'Jakarta',name:'Soekarno-Hatta',country:'Indonesia'},
+    {code:'DPS',city:'Bali',name:'Ngurah Rai',country:'Indonesia'},
+    {code:'MNL',city:'Manila',name:'Ninoy Aquino',country:'Philippines'},
+    {code:'SGN',city:'Ho Chi Minh City',name:'Tan Son Nhat',country:'Vietnam'},
+    {code:'HAN',city:'Hanoi',name:'Noi Bai',country:'Vietnam'},
+    {code:'DEL',city:'New Delhi',name:'Indira Gandhi Intl',country:'India'},
+    {code:'BOM',city:'Mumbai',name:'Chhatrapati Shivaji Intl',country:'India'},
+    {code:'BLR',city:'Bangalore',name:'Kempegowda Intl',country:'India'},
+    {code:'MAA',city:'Chennai',name:'Chennai Intl',country:'India'},
+    {code:'HYD',city:'Hyderabad',name:'Rajiv Gandhi Intl',country:'India'},
+    {code:'CCU',city:'Kolkata',name:'Netaji Subhas Chandra Bose',country:'India'},
+    {code:'CMB',city:'Colombo',name:'Bandaranaike Intl',country:'Sri Lanka'},
+    {code:'DAC',city:'Dhaka',name:'Hazrat Shahjalal Intl',country:'Bangladesh'},
+    {code:'KTM',city:'Kathmandu',name:'Tribhuvan Intl',country:'Nepal'},
+    {code:'SYD',city:'Sydney',name:'Kingsford Smith',country:'Australia'},
+    {code:'MEL',city:'Melbourne',name:'Melbourne',country:'Australia'},
+    {code:'BNE',city:'Brisbane',name:'Brisbane',country:'Australia'},
+    {code:'PER',city:'Perth',name:'Perth',country:'Australia'},
+    {code:'AKL',city:'Auckland',name:'Auckland',country:'New Zealand'},
+    {code:'YYZ',city:'Toronto',name:'Pearson Intl',country:'Canada'},
+    {code:'YVR',city:'Vancouver',name:'Vancouver Intl',country:'Canada'},
+    {code:'YUL',city:'Montreal',name:'Trudeau Intl',country:'Canada'},
+    {code:'MEX',city:'Mexico City',name:'Benito Juarez Intl',country:'Mexico'},
+    {code:'CUN',city:'Cancun',name:'Cancun Intl',country:'Mexico'},
+    {code:'GRU',city:'Sao Paulo',name:'Guarulhos',country:'Brazil'},
+    {code:'GIG',city:'Rio de Janeiro',name:'Galeao',country:'Brazil'},
+    {code:'EZE',city:'Buenos Aires',name:'Ezeiza',country:'Argentina'},
+    {code:'SCL',city:'Santiago',name:'Arturo Merino Benitez',country:'Chile'},
+    {code:'BOG',city:'Bogota',name:'El Dorado',country:'Colombia'},
+    {code:'LIM',city:'Lima',name:'Jorge Chavez',country:'Peru'},
+    {code:'JNB',city:'Johannesburg',name:'O.R. Tambo',country:'South Africa'},
+    {code:'CPT',city:'Cape Town',name:'Cape Town Intl',country:'South Africa'},
+    {code:'NBO',city:'Nairobi',name:'Jomo Kenyatta',country:'Kenya'},
+    {code:'ADD',city:'Addis Ababa',name:'Bole Intl',country:'Ethiopia'},
+    {code:'CMN',city:'Casablanca',name:'Mohammed V',country:'Morocco'},
+    {code:'LOS',city:'Lagos',name:'Murtala Muhammed',country:'Nigeria'},
+    {code:'ACC',city:'Accra',name:'Kotoka Intl',country:'Ghana'},
+    {code:'MRU',city:'Mauritius',name:'Sir S. Ramgoolam',country:'Mauritius'},
+  ];
+
+  /* ─── Autocomplete logic ─── */
+  function initAutocomplete(inputId, listId) {
+    var input = document.getElementById(inputId);
+    var list = document.getElementById(listId);
+    var highlighted = -1;
+    var items = [];
+
+    function search(q) {
+      q = q.toLowerCase().trim();
+      if (q.length < 1) { close(); return; }
+      items = AIRPORTS.filter(function(a) {
+        return a.code.toLowerCase().indexOf(q) >= 0
+          || a.city.toLowerCase().indexOf(q) >= 0
+          || a.name.toLowerCase().indexOf(q) >= 0
+          || a.country.toLowerCase().indexOf(q) >= 0;
+      }).slice(0, 8);
+      render();
+    }
+
+    function render() {
+      if (items.length === 0) { close(); return; }
+      highlighted = -1;
+      list.innerHTML = items.map(function(a, i) {
+        return '<div class="ac-item" data-idx="' + i + '">'
+          + '<span class="ac-code">' + a.code + '</span>'
+          + '<div class="ac-info"><div class="ac-city">' + a.city + ' — ' + a.name + '</div>'
+          + '<div class="ac-country">' + a.country + '</div></div></div>';
+      }).join('');
+      list.classList.add('open');
+      list.querySelectorAll('.ac-item').forEach(function(el) {
+        el.addEventListener('mousedown', function(e) {
+          e.preventDefault();
+          pick(parseInt(el.dataset.idx));
+        });
+      });
+    }
+
+    function pick(idx) {
+      var a = items[idx];
+      if (!a) return;
+      input.value = a.city + ' (' + a.code + ')';
+      close();
+    }
+
+    function close() {
+      list.classList.remove('open');
+      list.innerHTML = '';
+      items = [];
+      highlighted = -1;
+    }
+
+    input.addEventListener('input', function() { search(this.value); });
+    input.addEventListener('focus', function() { if (this.value.length >= 1) search(this.value); });
+    input.addEventListener('blur', function() { setTimeout(close, 150); });
+    input.addEventListener('keydown', function(e) {
+      if (!list.classList.contains('open')) return;
+      var els = list.querySelectorAll('.ac-item');
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        highlighted = Math.min(highlighted + 1, els.length - 1);
+        els.forEach(function(el, i) { el.classList.toggle('highlighted', i === highlighted); });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        highlighted = Math.max(highlighted - 1, 0);
+        els.forEach(function(el, i) { el.classList.toggle('highlighted', i === highlighted); });
+      } else if (e.key === 'Enter' && highlighted >= 0) {
+        e.preventDefault();
+        pick(highlighted);
+      } else if (e.key === 'Escape') {
+        close();
+      }
+    });
+  }
+
+
+    const API_URL = 'https://wandering-haze-b394.sumanthbolle312.workers.dev/flights';
 
   /* ─── State ─── */
   let tripType = 'round-trip';
@@ -363,7 +570,11 @@
     $('#mobileMenu').classList.toggle('active');
   });
 
-  /* ─── Date defaults ─── */
+  /* ─── Autocomplete init ─── */
+  initAutocomplete('origin', 'acOrigin');
+  initAutocomplete('destination', 'acDest');
+
+    /* ─── Date defaults ─── */
   const today = new Date().toISOString().split('T')[0];
   $('#departureDate').min = today;
 
@@ -428,20 +639,47 @@
     renderLoading();
 
     try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params)
-      });
-      const json = await res.json();
+      var controller = new AbortController();
+      var timeout = setTimeout(function() { controller.abort(); }, 65000);
 
-      if (!json.success || !json.data) throw new Error(json.error || 'Failed to fetch flight results.');
-      if (!json.data.flights || json.data.flights.length === 0) throw new Error('No flights found for your search. Try adjusting dates, route, or budget.');
+      var res;
+      try {
+        res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(params),
+          signal: controller.signal
+        });
+      } catch (fetchErr) {
+        clearTimeout(timeout);
+        if (fetchErr.name === 'AbortError') {
+          throw new Error('The search took too long. Flight searches with AI can take up to a minute — please try again.');
+        }
+        throw new Error('Could not connect to the flight search service. Please check your internet connection and try again.');
+      }
+      clearTimeout(timeout);
+
+      if (!res.ok) {
+        if (res.status === 405) throw new Error('The flight search API is not yet deployed. The Cloudflare Worker needs to be redeployed with the /flights route.');
+        if (res.status === 429) throw new Error('Too many requests. Please wait a moment and try again.');
+        if (res.status >= 500) throw new Error('The search service is temporarily unavailable. Please try again in a few minutes.');
+        throw new Error('Search failed (HTTP ' + res.status + '). Please try again.');
+      }
+
+      var json;
+      try {
+        json = await res.json();
+      } catch (parseErr) {
+        throw new Error('Received an invalid response from the search service. The worker may need to be redeployed.');
+      }
+
+      if (!json.success || !json.data) throw new Error(json.error || 'The search did not return results. Try different dates or a broader route.');
+      if (!json.data.flights || json.data.flights.length === 0) throw new Error('No flights found for your search criteria. Try adjusting your dates, route, or budget.');
 
       resultData = json.data;
       renderResults();
     } catch (err) {
-      renderError(err.message || 'An unexpected error occurred.');
+      renderError(err.message || 'An unexpected error occurred. Please try again.');
     } finally {
       isLoading = false;
       updateSearchBtn(false);
