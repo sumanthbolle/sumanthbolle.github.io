@@ -4,6 +4,8 @@
  *
  * Routes:
  *   POST /              — chat completion (existing); body: { query, context }
+ *   POST /flights       — SkyFare flight discovery + "best time to book" advisory;
+ *                         body: { origin, destination, departureDate, ... }
  *   GET  /trending      — landing-page widgets (news / market / tech),
  *                         country-aware via cf.country (or ?country=XX override),
  *                         cached per country in Cloudflare Cache API
@@ -76,6 +78,10 @@ export default {
 
     if (request.method !== 'POST') {
       return new Response('Method not allowed', { status: 405 });
+    }
+
+    if (url.pathname === '/flights') {
+      return handleFlightSearch(request, env, origin);
     }
 
     return handleChat(request, env, origin);
@@ -422,6 +428,233 @@ const FLIGHT_SYSTEM_PROMPT = 'You are a real-time flight search and travel prici
 
 const FLIGHT_TIMEOUT_MS = 55000;
 
+/* ── "Best time to book" engine ──────────────────────────────────────────
+ * A deterministic advance-purchase model that runs even when the AI omits
+ * timing guidance. Sweet-spot windows are derived from widely-cited fare
+ * studies (Google Flights / Hopper / CheapAir): the cheapest fares cluster
+ * a few weeks out for short/domestic trips and a few months out for
+ * long-haul international ones. The AI's live price read (low/typical/high
+ * + rising/falling) is layered on top of this skeleton in mergeBookingAdvice.
+ */
+const BOOKING_WINDOWS = {
+  domestic:      { tooEarly: 120, sweetStart: 21, sweetEnd: 60, late: 14, lastMin: 3 },
+  international: { tooEarly: 300, sweetStart: 60, sweetEnd: 150, late: 30, lastMin: 7 },
+};
+
+/* Northern-hemisphere peak travel months by rough demand. Used only as a
+ * fallback hint; the AI provides the route-specific seasonality note. */
+const PEAK_MONTHS = [6, 7, 8, 12];      // Jun, Jul, Aug, Dec
+const SHOULDER_MONTHS = [4, 5, 9, 10];  // Apr, May, Sep, Oct
+
+/* IATA code → country, mirroring the airport DB used by the SkyFare UI.
+ * Lets the timing engine tell domestic from international trips so it can
+ * pick the right advance-purchase window. */
+var AIRPORT_COUNTRY = {
+  JFK:'USA',LAX:'USA',ORD:'USA',ATL:'USA',DFW:'USA',SFO:'USA',MIA:'USA',SEA:'USA',BOS:'USA',EWR:'USA',
+  IAD:'USA',DEN:'USA',LAS:'USA',MCO:'USA',HNL:'USA',PHX:'USA',IAH:'USA',MSP:'USA',DTW:'USA',PHL:'USA',
+  LHR:'UK',LGW:'UK',STN:'UK',MAN:'UK',EDI:'UK',CDG:'France',ORY:'France',NCE:'France',
+  FRA:'Germany',MUC:'Germany',BER:'Germany',AMS:'Netherlands',MAD:'Spain',BCN:'Spain',
+  FCO:'Italy',MXP:'Italy',VCE:'Italy',ZRH:'Switzerland',GVA:'Switzerland',VIE:'Austria',
+  CPH:'Denmark',OSL:'Norway',ARN:'Sweden',HEL:'Finland',IST:'Turkey',SAW:'Turkey',ATH:'Greece',
+  LIS:'Portugal',DUB:'Ireland',BRU:'Belgium',WAW:'Poland',PRG:'Czech Republic',BUD:'Hungary',
+  DXB:'UAE',AUH:'UAE',DOH:'Qatar',RUH:'Saudi Arabia',JED:'Saudi Arabia',BAH:'Bahrain',MCT:'Oman',
+  AMM:'Jordan',TLV:'Israel',CAI:'Egypt',NRT:'Japan',HND:'Japan',KIX:'Japan',ICN:'South Korea',
+  GMP:'South Korea',PEK:'China',PKX:'China',PVG:'China',CAN:'China',HKG:'Hong Kong',TPE:'Taiwan',
+  SIN:'Singapore',KUL:'Malaysia',BKK:'Thailand',DMK:'Thailand',CGK:'Indonesia',DPS:'Indonesia',
+  MNL:'Philippines',SGN:'Vietnam',HAN:'Vietnam',DEL:'India',BOM:'India',BLR:'India',MAA:'India',
+  HYD:'India',CCU:'India',CMB:'Sri Lanka',DAC:'Bangladesh',KTM:'Nepal',SYD:'Australia',MEL:'Australia',
+  BNE:'Australia',PER:'Australia',AKL:'New Zealand',YYZ:'Canada',YVR:'Canada',YUL:'Canada',
+  MEX:'Mexico',CUN:'Mexico',GRU:'Brazil',GIG:'Brazil',EZE:'Argentina',SCL:'Chile',BOG:'Colombia',
+  LIM:'Peru',JNB:'South Africa',CPT:'South Africa',NBO:'Kenya',ADD:'Ethiopia',CMN:'Morocco',
+  LOS:'Nigeria',ACC:'Ghana',MRU:'Mauritius',
+};
+
+var CITY_COUNTRY = {
+  'new york':'USA','los angeles':'USA','chicago':'USA','atlanta':'USA','dallas':'USA','san francisco':'USA',
+  'miami':'USA','seattle':'USA','boston':'USA','newark':'USA','washington':'USA','denver':'USA',
+  'las vegas':'USA','orlando':'USA','honolulu':'USA','phoenix':'USA','houston':'USA',
+  london:'UK','manchester':'UK','edinburgh':'UK','paris':'France','nice':'France','frankfurt':'Germany',
+  munich:'Germany','berlin':'Germany','amsterdam':'Netherlands','madrid':'Spain','barcelona':'Spain',
+  rome:'Italy','milan':'Italy','venice':'Italy','zurich':'Switzerland','geneva':'Switzerland',
+  vienna:'Austria','copenhagen':'Denmark','oslo':'Norway','stockholm':'Sweden','helsinki':'Finland',
+  istanbul:'Turkey',athens:'Greece',lisbon:'Portugal',dublin:'Ireland',brussels:'Belgium',
+  warsaw:'Poland',prague:'Czech Republic',budapest:'Hungary',dubai:'UAE','abu dhabi':'UAE',doha:'Qatar',
+  riyadh:'Saudi Arabia',jeddah:'Saudi Arabia',muscat:'Oman',amman:'Jordan','tel aviv':'Israel',cairo:'Egypt',
+  tokyo:'Japan',osaka:'Japan',seoul:'South Korea',beijing:'China',shanghai:'China',guangzhou:'China',
+  'hong kong':'Hong Kong',taipei:'Taiwan',singapore:'Singapore','kuala lumpur':'Malaysia',bangkok:'Thailand',
+  jakarta:'Indonesia',bali:'Indonesia',manila:'Philippines','ho chi minh city':'Vietnam',hanoi:'Vietnam',
+  'new delhi':'India',delhi:'India',mumbai:'India',bangalore:'India',chennai:'India',hyderabad:'India',
+  kolkata:'India',colombo:'Sri Lanka',dhaka:'Bangladesh',kathmandu:'Nepal',sydney:'Australia',
+  melbourne:'Australia',brisbane:'Australia',perth:'Australia',auckland:'New Zealand',toronto:'Canada',
+  vancouver:'Canada',montreal:'Canada','mexico city':'Mexico',cancun:'Mexico','sao paulo':'Brazil',
+  'rio de janeiro':'Brazil','buenos aires':'Argentina',santiago:'Chile',bogota:'Colombia',lima:'Peru',
+  johannesburg:'South Africa','cape town':'South Africa',nairobi:'Kenya','addis ababa':'Ethiopia',
+  casablanca:'Morocco',lagos:'Nigeria',accra:'Ghana',mauritius:'Mauritius',
+};
+
+/* Resolve a free-text place ("Tokyo (NRT)", "SIN", "singapore") to a country. */
+function countryForPlace(place) {
+  if (!place) return null;
+  var s = String(place).trim();
+  var paren = s.match(/\(([A-Za-z]{3})\)/);
+  if (paren && AIRPORT_COUNTRY[paren[1].toUpperCase()]) return AIRPORT_COUNTRY[paren[1].toUpperCase()];
+  var bare = s.match(/\b([A-Za-z]{3})\b/);
+  if (bare && AIRPORT_COUNTRY[bare[1].toUpperCase()]) return AIRPORT_COUNTRY[bare[1].toUpperCase()];
+  var lower = s.toLowerCase();
+  for (var city in CITY_COUNTRY) {
+    if (lower.indexOf(city) >= 0) return CITY_COUNTRY[city];
+  }
+  return null;
+}
+
+function daysBetween(fromISO, toISO) {
+  var a = Date.parse(fromISO + 'T00:00:00Z');
+  var b = Date.parse(toISO + 'T00:00:00Z');
+  if (isNaN(a) || isNaN(b)) return null;
+  return Math.round((b - a) / 86400000);
+}
+
+/* Infer whether the trip crosses an international border, using the airport
+ * DB country tags when we can resolve the codes; defaults to international
+ * (the more conservative, longer window) when unknown. */
+function inferScope(origin, destination) {
+  var oc = countryForPlace(origin);
+  var dc = countryForPlace(destination);
+  if (oc && dc) return oc === dc ? 'domestic' : 'international';
+  return 'international';
+}
+
+function computeBookingTiming(p, todayISO) {
+  var today = todayISO || new Date().toISOString().split('T')[0];
+  var daysOut = p.departureDate ? daysBetween(today, p.departureDate) : null;
+  var scope = inferScope(p.origin, p.destination);
+  var w = BOOKING_WINDOWS[scope];
+
+  var recommendation, urgency, headline, window;
+
+  if (daysOut === null) {
+    recommendation = 'monitor';
+    urgency = 'info';
+    headline = 'Add a departure date for booking-timing advice';
+    window = '';
+  } else if (daysOut < 0) {
+    recommendation = 'book_now';
+    urgency = 'high';
+    headline = 'This date is in the past — pick an upcoming date';
+    window = '';
+  } else if (daysOut <= w.lastMin) {
+    recommendation = 'book_now';
+    urgency = 'high';
+    headline = 'Book now — last-minute fares rarely fall';
+    window = 'Book today';
+  } else if (daysOut <= w.late) {
+    recommendation = 'book_soon';
+    urgency = 'elevated';
+    headline = 'Book soon — prices usually climb in the final weeks';
+    window = 'Within the next few days';
+  } else if (daysOut < w.sweetStart) {
+    recommendation = 'book_soon';
+    urgency = 'elevated';
+    headline = 'Good to book — you are approaching the cheapest window';
+    window = 'Within 1–2 weeks';
+  } else if (daysOut <= w.sweetEnd) {
+    recommendation = 'book_now';
+    urgency = 'good';
+    headline = "You're in the sweet spot — a strong time to book";
+    window = 'Now through the next couple of weeks';
+  } else if (daysOut <= w.tooEarly) {
+    recommendation = 'monitor';
+    urgency = 'info';
+    headline = 'Plenty of time — track the price and book in the sweet spot';
+    window = 'Aim for ' + w.sweetStart + '–' + w.sweetEnd + ' days before departure';
+  } else {
+    recommendation = 'wait';
+    urgency = 'info';
+    headline = 'Very early — fares are often not optimized yet';
+    window = 'Revisit around ' + w.sweetEnd + ' days before departure';
+  }
+
+  var month = p.departureDate ? (parseInt(p.departureDate.slice(5, 7), 10) || 0) : 0;
+  var season = PEAK_MONTHS.indexOf(month) >= 0 ? 'peak'
+    : SHOULDER_MONTHS.indexOf(month) >= 0 ? 'shoulder'
+    : month ? 'off-peak' : 'unknown';
+
+  return {
+    days_until_departure: daysOut,
+    route_scope: scope,
+    season: season,
+    recommendation: recommendation,   // book_now | book_soon | wait | monitor
+    urgency: urgency,                  // good | elevated | high | info
+    headline: headline,
+    best_booking_window: window,
+    sweet_spot_days: { start: w.sweetStart, end: w.sweetEnd },
+  };
+}
+
+/* Merge the deterministic timing skeleton with the AI's live price read.
+ * The AI is authoritative on price level / trend / seasonality (it can see
+ * current fares); our engine is authoritative on advance-purchase position. */
+function mergeBookingAdvice(timing, aiAdvice) {
+  var a = aiAdvice && typeof aiAdvice === 'object' ? aiAdvice : {};
+  var priceLevel = ['low', 'typical', 'high'].indexOf(a.price_assessment) >= 0 ? a.price_assessment : 'unknown';
+  var trend = ['rising', 'stable', 'falling'].indexOf(a.expected_trend) >= 0 ? a.expected_trend : 'unknown';
+  var confidence = ['high', 'medium', 'low'].indexOf(a.confidence) >= 0 ? a.confidence : 'low';
+
+  var rec = timing.recommendation;
+  var urgency = timing.urgency;
+  var hasDate = typeof timing.days_until_departure === 'number' && timing.days_until_departure >= 0;
+
+  // Let a strong live price signal override the calendar-only verdict
+  // (only when we have a valid future departure date to reason about).
+  if (hasDate && priceLevel === 'low' && (rec === 'monitor' || rec === 'wait')) {
+    rec = 'book_now'; urgency = 'good';
+  } else if (hasDate && priceLevel === 'high' && trend === 'falling' && rec === 'book_now' && timing.urgency !== 'high') {
+    rec = 'wait'; urgency = 'info';
+  } else if (hasDate && trend === 'rising' && rec === 'monitor') {
+    rec = 'book_soon'; urgency = 'elevated';
+  }
+
+  var summaryBits = [];
+  if (typeof timing.days_until_departure === 'number' && timing.days_until_departure >= 0) {
+    summaryBits.push(timing.days_until_departure + ' days out (' + timing.route_scope + ' route)');
+  }
+  if (priceLevel !== 'unknown') summaryBits.push('current fares look ' + priceLevel);
+  if (trend !== 'unknown') summaryBits.push('prices trending ' + trend);
+
+  var summary = a.summary && typeof a.summary === 'string'
+    ? a.summary.slice(0, 300)
+    : (timing.headline + (summaryBits.length ? '. ' + capitalize(summaryBits.join(', ')) + '.' : '.'));
+
+  return {
+    recommendation: rec,                       // book_now | book_soon | wait | monitor
+    urgency: urgency,                          // good | elevated | high | info
+    headline: REC_HEADLINE[rec] || timing.headline,
+    summary: summary,
+    price_assessment: priceLevel,              // low | typical | high | unknown
+    expected_trend: trend,                     // rising | stable | falling | unknown
+    confidence: confidence,
+    days_until_departure: timing.days_until_departure,
+    route_scope: timing.route_scope,
+    season: timing.season,
+    best_booking_window: (a.best_booking_window && typeof a.best_booking_window === 'string')
+      ? a.best_booking_window.slice(0, 120) : timing.best_booking_window,
+    seasonality_note: (a.seasonality_note && typeof a.seasonality_note === 'string')
+      ? a.seasonality_note.slice(0, 240) : '',
+    cheaper_alternative_dates: (a.cheaper_alternative_dates && typeof a.cheaper_alternative_dates === 'string')
+      ? a.cheaper_alternative_dates.slice(0, 240) : '',
+    sweet_spot_days: timing.sweet_spot_days,
+  };
+}
+
+var REC_HEADLINE = {
+  book_now:  'Book now',
+  book_soon: 'Book soon',
+  wait:      'Consider waiting',
+  monitor:  'Track the price',
+};
+
+function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
 function buildFlightPrompt(p) {
   var preferred = p.preferredAirlines && p.preferredAirlines.length > 0 ? p.preferredAirlines.join(', ') : 'No preference';
   var avoid = p.avoidAirlines && p.avoidAirlines.length > 0 ? p.avoidAirlines.join(', ') : 'None';
@@ -434,8 +667,13 @@ function buildFlightPrompt(p) {
     + 'Maximum budget: ' + budget + '\nPreferred airlines: ' + preferred + '\n'
     + 'Avoid airlines: ' + avoid + '\nMaximum stops: ' + p.maxStops + '\n'
     + 'Priority mode: ' + p.priorityMode + '\n\n'
+    + 'In addition to listing flights, give booking-timing guidance for THIS route and date. '
+    + 'Assess whether current fares are low/typical/high versus the usual price for this route and season, '
+    + 'whether prices are likely rising/stable/falling between now and departure, the best window to book, '
+    + 'a short seasonality note, and (if helpful) nearby cheaper dates. Base this on real fare-trend and '
+    + 'seasonality information from your web search; if unsure, say so and use a lower confidence.\n\n'
     + 'Return the result in this exact JSON structure (no markdown, no code fences, just raw JSON):\n\n'
-    + '{"search_summary":{"origin":"","destination":"","departure_date":"","return_date":"","trip_type":"","passengers":0,"cabin_class":"","currency":"","budget":0,"freshness_note":"","result_confidence":"high | medium | low"},"recommendation":{"best_overall_flight_id":"","cheapest_flight_id":"","fastest_flight_id":"","best_under_budget_flight_id":"","explanation":""},"flights":[{"id":"","airline":"","flight_numbers":[],"provider":"","price":0,"currency":"","is_under_budget":true,"departure_airport":"","arrival_airport":"","departure_time":"","arrival_time":"","total_duration_minutes":0,"stops":0,"layovers":[{"airport":"","duration_minutes":0}],"booking_url":"","source_url":"","source_name":"","confidence":"high | medium | low","notes":"","score":0,"badges":[]}],"warnings":[]}';
+    + '{"search_summary":{"origin":"","destination":"","departure_date":"","return_date":"","trip_type":"","passengers":0,"cabin_class":"","currency":"","budget":0,"freshness_note":"","result_confidence":"high | medium | low"},"booking_advice":{"price_assessment":"low | typical | high","expected_trend":"rising | stable | falling","confidence":"high | medium | low","best_booking_window":"","seasonality_note":"","cheaper_alternative_dates":"","summary":""},"recommendation":{"best_overall_flight_id":"","cheapest_flight_id":"","fastest_flight_id":"","best_under_budget_flight_id":"","explanation":""},"flights":[{"id":"","airline":"","flight_numbers":[],"provider":"","price":0,"currency":"","is_under_budget":true,"departure_airport":"","arrival_airport":"","departure_time":"","arrival_time":"","total_duration_minutes":0,"stops":0,"layovers":[{"airport":"","duration_minutes":0}],"booking_url":"","source_url":"","source_name":"","confidence":"high | medium | low","notes":"","score":0,"badges":[]}],"warnings":[]}';
 }
 
 function extractFlightJson(text) {
@@ -604,6 +842,8 @@ async function handleFlightSearch(request, env, origin) {
     try { parsed = JSON.parse(jsonStr); } catch (e) { throw new Error('Failed to parse flight data.'); }
     var normalized = normalizeFlightResponse(parsed, p);
     var scored = scoreFlights(normalized, p.priorityMode, p.maxBudget);
+    var timing = computeBookingTiming(p);
+    scored.booking_advice = mergeBookingAdvice(timing, parsed.booking_advice);
     return jsonResponse({ success: true, data: scored }, origin);
   } catch (e) {
     var msg = 'Unable to search for flights right now. Please try again later.';
