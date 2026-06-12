@@ -54,6 +54,48 @@ export interface Flight {
   badges: string[];
 }
 
+export type BookingRecommendation =
+  | "book_now"
+  | "book_soon"
+  | "wait"
+  | "monitor";
+
+export type BookingUrgency = "good" | "elevated" | "high" | "info";
+
+export type PriceAssessment = "low" | "typical" | "high" | "unknown";
+
+export type PriceTrend = "rising" | "stable" | "falling" | "unknown";
+
+export type RouteScope = "domestic" | "international";
+
+export interface BookingAdvice {
+  recommendation: BookingRecommendation;
+  urgency: BookingUrgency;
+  headline: string;
+  summary: string;
+  price_assessment: PriceAssessment;
+  expected_trend: PriceTrend;
+  confidence: Confidence;
+  days_until_departure: number | null;
+  route_scope: RouteScope;
+  season: string;
+  best_booking_window: string;
+  seasonality_note: string;
+  cheaper_alternative_dates: string;
+  sweet_spot_days: { start: number; end: number };
+}
+
+/** AI-provided subset of BookingAdvice (the rest is computed locally). */
+export interface AIBookingAdvice {
+  price_assessment?: string;
+  expected_trend?: string;
+  confidence?: string;
+  best_booking_window?: string;
+  seasonality_note?: string;
+  cheaper_alternative_dates?: string;
+  summary?: string;
+}
+
 export interface SearchSummary {
   origin: string;
   destination: string;
@@ -79,8 +121,14 @@ export interface Recommendation {
 export interface FlightSearchResponse {
   search_summary: SearchSummary;
   recommendation: Recommendation;
+  booking_advice?: BookingAdvice;
   flights: Flight[];
   warnings: string[];
+}
+
+/** Raw AI response may include the partial AI booking advice. */
+export interface RawFlightSearchResponse extends FlightSearchResponse {
+  booking_advice?: BookingAdvice & AIBookingAdvice;
 }
 
 export interface FlightSearchAPIResponse {

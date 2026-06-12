@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo } from "react";
 import FlightSearchForm from "@/components/flights/FlightSearchForm";
 import FlightResultCard from "@/components/flights/FlightResultCard";
 import FlightSummaryPanel from "@/components/flights/FlightSummaryPanel";
+import FlightBookingAdvice from "@/components/flights/FlightBookingAdvice";
 import FlightFilters from "@/components/flights/FlightFilters";
 import FlightLoadingState from "@/components/flights/FlightLoadingState";
 import FlightErrorState from "@/components/flights/FlightErrorState";
@@ -152,6 +153,11 @@ export default function FlightSearchPage() {
 
         {data && !isLoading && !error && (
           <section className="mt-8 space-y-6">
+            {/* Best Time to Book */}
+            {data.booking_advice && (
+              <FlightBookingAdvice advice={data.booking_advice} />
+            )}
+
             {/* Summary Panel */}
             <FlightSummaryPanel data={data} />
 
