@@ -1,4 +1,7 @@
-import type { FlightSearchRequest, FlightSearchResponse } from "@/types/flights";
+import type {
+  FlightSearchRequest,
+  RawFlightSearchResponse,
+} from "@/types/flights";
 
 const PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions";
 const PERPLEXITY_MODEL = "sonar-pro";
@@ -50,6 +53,8 @@ Avoid airlines: ${avoidAirlines}
 Maximum stops: ${params.maxStops}
 Priority mode: ${params.priorityMode}
 
+In addition to listing flights, give booking-timing guidance for THIS route and date. Assess whether current fares are low/typical/high versus the usual price for this route and season, whether prices are likely rising/stable/falling between now and departure, the best window to book, a short seasonality note, and (if helpful) nearby cheaper dates. Base this on real fare-trend and seasonality information from your web search; if unsure, say so and use a lower confidence.
+
 Return the result in this exact JSON structure (no markdown, no code fences, just raw JSON):
 
 {
@@ -65,6 +70,15 @@ Return the result in this exact JSON structure (no markdown, no code fences, jus
     "budget": 0,
     "freshness_note": "",
     "result_confidence": "high | medium | low"
+  },
+  "booking_advice": {
+    "price_assessment": "low | typical | high",
+    "expected_trend": "rising | stable | falling",
+    "confidence": "high | medium | low",
+    "best_booking_window": "",
+    "seasonality_note": "",
+    "cheaper_alternative_dates": "",
+    "summary": ""
   },
   "recommendation": {
     "best_overall_flight_id": "",
@@ -122,7 +136,7 @@ function extractJSON(text: string): string {
 
 export async function searchFlightsWithPerplexity(
   params: FlightSearchRequest
-): Promise<FlightSearchResponse> {
+): Promise<RawFlightSearchResponse> {
   const apiKey = process.env.PERPLEXITY_API_KEY;
   if (!apiKey) {
     throw new Error("PERPLEXITY_API_KEY is not configured on the server.");
@@ -165,7 +179,7 @@ export async function searchFlightsWithPerplexity(
     }
 
     const jsonStr = extractJSON(content);
-    let parsed: FlightSearchResponse;
+    let parsed: RawFlightSearchResponse;
 
     try {
       parsed = JSON.parse(jsonStr);
@@ -182,9 +196,9 @@ export async function searchFlightsWithPerplexity(
 }
 
 function normalizeResponse(
-  raw: FlightSearchResponse,
+  raw: RawFlightSearchResponse,
   params: FlightSearchRequest
-): FlightSearchResponse {
+): RawFlightSearchResponse {
   if (!raw.search_summary) {
     raw.search_summary = {
       origin: params.origin,

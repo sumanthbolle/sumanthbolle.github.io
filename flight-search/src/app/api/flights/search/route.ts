@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { searchFlightsWithPerplexity } from "@/lib/perplexity";
 import { scoreAndRankFlights } from "@/lib/flightScoring";
+import { computeBookingTiming, mergeBookingAdvice } from "@/lib/bookingTiming";
 import type {
   FlightSearchRequest,
   FlightSearchAPIResponse,
@@ -165,6 +166,12 @@ export async function POST(request: NextRequest) {
       rawResponse,
       searchParams.priorityMode,
       searchParams.maxBudget
+    );
+
+    const timing = computeBookingTiming(searchParams);
+    scoredResponse.booking_advice = mergeBookingAdvice(
+      timing,
+      rawResponse.booking_advice
     );
 
     return NextResponse.json<FlightSearchAPIResponse>({
