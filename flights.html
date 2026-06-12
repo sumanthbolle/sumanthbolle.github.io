@@ -684,7 +684,7 @@
         if (fetchErr.name === 'AbortError') {
           throw new Error('The search took too long. Flight searches with AI can take up to a minute — please try again.');
         }
-        throw new Error('Could not connect to the flight search service. Please check your internet connection and try again.');
+        throw new Error('Couldn\'t reach the flight search service. It looks like the API is offline or still deploying (the request was blocked before a response came back). Please try again shortly — if it keeps failing, the search worker needs to be redeployed.');
       }
       clearTimeout(timeout);
 
