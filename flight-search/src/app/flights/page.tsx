@@ -5,6 +5,7 @@ import FlightSearchForm from "@/components/flights/FlightSearchForm";
 import FlightResultCard from "@/components/flights/FlightResultCard";
 import FlightSummaryPanel from "@/components/flights/FlightSummaryPanel";
 import FlightBookingAdvice from "@/components/flights/FlightBookingAdvice";
+import FlightPriceInsights from "@/components/flights/FlightPriceInsights";
 import FlightFilters from "@/components/flights/FlightFilters";
 import FlightLoadingState from "@/components/flights/FlightLoadingState";
 import FlightErrorState from "@/components/flights/FlightErrorState";
@@ -15,6 +16,28 @@ import type {
   FilterState,
   Flight,
 } from "@/types/flights";
+
+function depTimeMinutes(t: string): number | null {
+  if (!t) return null;
+  const ampm = t.match(/(\d{1,2}):(\d{2})\s*([AaPp][Mm])/);
+  if (ampm) {
+    let h = parseInt(ampm[1], 10) % 12;
+    if (/[Pp]/.test(ampm[3])) h += 12;
+    return h * 60 + parseInt(ampm[2], 10);
+  }
+  const m = t.match(/(\d{1,2}):(\d{2})/);
+  return m ? (parseInt(m[1], 10) % 24) * 60 + parseInt(m[2], 10) : null;
+}
+
+function inDepBucket(t: string, bucket: string): boolean {
+  const m = depTimeMinutes(t);
+  if (m === null) return true;
+  if (bucket === "morning") return m >= 300 && m < 720;
+  if (bucket === "afternoon") return m >= 720 && m < 1080;
+  if (bucket === "evening") return m >= 1080 && m < 1440;
+  if (bucket === "night") return m >= 0 && m < 300;
+  return true;
+}
 
 function applyFilters(flights: Flight[], filters: FilterState): Flight[] {
   let result = [...flights];
@@ -31,6 +54,24 @@ function applyFilters(flights: Flight[], filters: FilterState): Flight[] {
     result = result.filter((f) => f.price <= filters.maxPrice!);
   }
 
+  if (filters.maxDuration !== null) {
+    result = result.filter(
+      (f) => !f.total_duration_minutes || f.total_duration_minutes <= filters.maxDuration!
+    );
+  }
+
+  if (filters.depTime && filters.depTime !== "any") {
+    result = result.filter((f) => inDepBucket(f.departure_time, filters.depTime));
+  }
+
+  if (filters.carryOnOnly) {
+    result = result.filter((f) => f.carry_on_included === true);
+  }
+
+  if (filters.lowEmissionsOnly) {
+    result = result.filter((f) => f.emissions_level === "low");
+  }
+
   switch (filters.sortBy) {
     case "price":
       result.sort((a, b) => a.price - b.price);
@@ -39,7 +80,16 @@ function applyFilters(flights: Flight[], filters: FilterState): Flight[] {
       result.sort((a, b) => a.total_duration_minutes - b.total_duration_minutes);
       break;
     case "departure":
-      result.sort((a, b) => a.departure_time.localeCompare(b.departure_time));
+      result.sort(
+        (a, b) =>
+          (depTimeMinutes(a.departure_time) ?? 9999) -
+          (depTimeMinutes(b.departure_time) ?? 9999)
+      );
+      break;
+    case "emissions":
+      result.sort(
+        (a, b) => (a.co2_kg ?? Infinity) - (b.co2_kg ?? Infinity)
+      );
       break;
     case "score":
     default:
@@ -60,6 +110,10 @@ export default function FlightSearchPage() {
     airlines: [],
     maxStops: null,
     maxPrice: null,
+    depTime: "any",
+    maxDuration: null,
+    carryOnOnly: false,
+    lowEmissionsOnly: false,
   });
 
   const handleSearch = useCallback(async (params: FlightSearchRequest) => {
@@ -67,7 +121,16 @@ export default function FlightSearchPage() {
     setError(null);
     setData(null);
     setLastSearch(params);
-    setFilters({ sortBy: "score", airlines: [], maxStops: null, maxPrice: null });
+    setFilters({
+      sortBy: "score",
+      airlines: [],
+      maxStops: null,
+      maxPrice: null,
+      depTime: "any",
+      maxDuration: null,
+      carryOnOnly: false,
+      lowEmissionsOnly: false,
+    });
 
     try {
       const response = await fetch("/api/flights/search", {
@@ -106,6 +169,18 @@ export default function FlightSearchPage() {
     if (!data) return [];
     return [...new Set(data.flights.map((f) => f.airline))].sort();
   }, [data]);
+
+  const hasEmissions = useMemo(
+    () =>
+      !!data &&
+      data.flights.some((f) => typeof f.co2_kg === "number" && f.co2_kg > 0),
+    [data]
+  );
+
+  const hasBaggage = useMemo(
+    () => !!data && data.flights.some((f) => f.carry_on_included !== null),
+    [data]
+  );
 
   const filteredFlights = useMemo(() => {
     if (!data) return [];
@@ -161,11 +236,18 @@ export default function FlightSearchPage() {
             {/* Summary Panel */}
             <FlightSummaryPanel data={data} />
 
+            {/* Price Insights */}
+            {data.price_insights && (
+              <FlightPriceInsights insights={data.price_insights} />
+            )}
+
             {/* Filters & Sort */}
             <FlightFilters
               filters={filters}
               onChange={setFilters}
               availableAirlines={availableAirlines}
+              hasEmissions={hasEmissions}
+              hasBaggage={hasBaggage}
             />
 
             {/* Result Cards */}

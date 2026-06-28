@@ -21,8 +21,17 @@ You must:
 - Do not claim that a booking is confirmed.
 - Treat results as price-discovery only.
 - Each flight must have a unique "id" field (e.g., "flight_1", "flight_2").
-- The "badges" array can include values like "Cheapest", "Fastest", "Best Value", "Under Budget", "Nonstop".
-- The "score" field should be your best estimate from 0-100 based on overall value.`;
+- The "badges" array can include values like "Cheapest", "Fastest", "Best Value", "Under Budget", "Nonstop", "Low CO2", "Great Deal".
+- The "score" field should be your best estimate from 0-100 based on overall value.
+
+For every flight also estimate, where known:
+- "co2_kg": estimated carbon emissions per passenger for the whole itinerary, in kilograms (number). Use typical aircraft/route emissions if a precise figure is unavailable; otherwise omit.
+- "fare_brand": the fare family / branded fare (e.g. "Basic Economy", "Main Cabin", "Economy Flex", "Business Saver").
+- "carry_on_included": true/false — whether a full-size cabin bag is included.
+- "checked_bags_included": number of checked bags included in the quoted fare (0 if none).
+- "refundable": true/false if known.
+- "self_transfer": true if the itinerary mixes separate tickets / virtual-interline / non-protected connections (Kiwi-style self-transfer) where the traveller must re-check bags and missed connections are not protected.
+Be honest: prefer omitting a field over guessing a specific figure. Basic Economy / "light" fares usually do not include a carry-on or checked bag — reflect that.`;
 
 function buildUserPrompt(params: FlightSearchRequest): string {
   const preferredAirlines =
@@ -108,6 +117,12 @@ Return the result in this exact JSON structure (no markdown, no code fences, jus
           "duration_minutes": 0
         }
       ],
+      "co2_kg": 0,
+      "fare_brand": "",
+      "carry_on_included": true,
+      "checked_bags_included": 0,
+      "refundable": false,
+      "self_transfer": false,
       "booking_url": "",
       "source_url": "",
       "source_name": "",
@@ -258,6 +273,29 @@ function normalizeResponse(
         : 0,
     stops: typeof flight.stops === "number" ? flight.stops : 0,
     layovers: Array.isArray(flight.layovers) ? flight.layovers : [],
+    co2_kg:
+      typeof flight.co2_kg === "number" && flight.co2_kg > 0
+        ? Math.round(flight.co2_kg)
+        : null,
+    fare_brand:
+      typeof flight.fare_brand === "string"
+        ? flight.fare_brand.slice(0, 60)
+        : "",
+    carry_on_included:
+      typeof flight.carry_on_included === "boolean"
+        ? flight.carry_on_included
+        : null,
+    checked_bags_included:
+      typeof flight.checked_bags_included === "number"
+        ? Math.max(0, Math.round(flight.checked_bags_included))
+        : null,
+    refundable:
+      typeof flight.refundable === "boolean" ? flight.refundable : null,
+    self_transfer: flight.self_transfer === true,
+    emissions_level: "unknown",
+    deal_quality: "unknown",
+    day_offset: 0,
+    overnight: false,
     booking_url: flight.booking_url || "",
     source_url: flight.source_url || "",
     source_name: flight.source_name || "",

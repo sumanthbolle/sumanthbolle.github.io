@@ -156,7 +156,7 @@
     .flight-card.highlighted{border-color:rgba(0,102,204,0.2);box-shadow:0 2px 12px rgba(0,102,204,0.06)}
     .fc-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
     .badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.2px}
-    .badge-cheapest{background:#dcfce7;color:#166534}.badge-fastest{background:#f3e8ff;color:#6b21a8}.badge-bestvalue{background:#dbeafe;color:#1e40af}.badge-underbudget{background:#d1fae5;color:#065f46}.badge-nonstop{background:#fef3c7;color:#92400e}
+    .badge-cheapest{background:#dcfce7;color:#166534}.badge-fastest{background:#f3e8ff;color:#6b21a8}.badge-bestvalue{background:#dbeafe;color:#1e40af}.badge-underbudget{background:#d1fae5;color:#065f46}.badge-nonstop{background:#fef3c7;color:#92400e}.badge-lowco2{background:#d1fae5;color:#047857}.badge-greatdeal{background:#dcfce7;color:#15803d}
     .fc-body{display:flex;align-items:center;gap:16px}
     .fc-airline{flex:0 0 auto;display:flex;align-items:center;gap:10px;min-width:140px}
     .fc-airline-icon{width:36px;height:36px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gray);flex-shrink:0}
@@ -188,6 +188,81 @@
     .fc-layover{font-size:11px;color:var(--gray);background:var(--bg);padding:2px 8px;border-radius:4px}
     .fc-notes{font-size:12px;color:var(--gray);font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.04)}
     .fc-score{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid}
+
+    /* ─── Price insights bar ─── */
+    .price-insights{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:16px}
+    .pi-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+    .pi-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text)}
+    .pi-title svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2}
+    .pi-deal{font-size:11px;font-weight:700;padding:4px 11px;border-radius:20px;white-space:nowrap}
+    .pi-deal.d-great{background:#dcfce7;color:#15803d}.pi-deal.d-good{background:#d1fae5;color:#047857}.pi-deal.d-typical{background:#eef0f2;color:#52525b}.pi-deal.d-high{background:#fee2e2;color:#991b1b}
+    .pi-bar{position:relative;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--green) 0%,var(--orange) 55%,var(--red) 100%);margin:22px 4px 8px}
+    .pi-marker{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--white);border:3px solid var(--blue);transform:translate(-50%,-50%);box-shadow:0 1px 4px rgba(0,0,0,0.2)}
+    .pi-marker .pi-flag{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:700;color:var(--blue)}
+    .pi-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--gray);padding:0 2px}
+    .pi-scale strong{color:var(--text);font-weight:600}
+    .pi-foot{font-size:12px;color:var(--gray);margin-top:12px;line-height:1.5;display:flex;align-items:center;gap:6px}
+    .pi-foot svg{width:13px;height:13px;stroke:var(--green);fill:none;stroke-width:2;flex-shrink:0}
+
+    /* ─── Deal & emissions chips on cards ─── */
+    .fc-tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+    .deal-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px}
+    .deal-tag svg{width:11px;height:11px;fill:none;stroke-width:2}
+    .deal-tag.d-great{background:#dcfce7;color:#15803d}.deal-tag.d-great svg{stroke:#15803d}
+    .deal-tag.d-good{background:#ecfdf5;color:#047857}.deal-tag.d-good svg{stroke:#047857}
+    .deal-tag.d-typical{background:var(--bg);color:var(--gray)}.deal-tag.d-typical svg{stroke:var(--gray)}
+    .deal-tag.d-high{background:#fef2f2;color:#b91c1c}.deal-tag.d-high svg{stroke:#b91c1c}
+    .co2-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;background:var(--bg);color:var(--gray)}
+    .co2-chip svg{width:12px;height:12px;fill:none;stroke-width:2;stroke:var(--gray)}
+    .co2-chip.e-low{background:#ecfdf5;color:#047857}.co2-chip.e-low svg{stroke:#047857}
+    .co2-chip.e-high{background:#fef2f2;color:#b91c1c}.co2-chip.e-high svg{stroke:#b91c1c}
+    .fare-chip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:6px;background:var(--bg);color:var(--text)}
+    .fare-chip svg{width:11px;height:11px;fill:none;stroke-width:2;stroke:var(--gray)}
+    .fare-chip.basic{background:#fff7ed;color:#9a3412}.fare-chip.basic svg{stroke:#9a3412}
+
+    /* ─── Day offset & overnight ─── */
+    .fc-day-offset{font-size:10px;font-weight:700;color:var(--red);vertical-align:super;margin-left:2px}
+    .fc-redeye{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#7c3aed}
+    .fc-redeye svg{width:10px;height:10px;fill:none;stroke:#7c3aed;stroke-width:2}
+
+    /* ─── Self-transfer warning ─── */
+    .fc-self-transfer{display:flex;gap:7px;align-items:flex-start;margin-top:8px;padding:8px 10px;border-radius:var(--radius-xs);background:#fffbeb;border:1px solid #fde68a;font-size:12px;color:#92400e;line-height:1.4}
+    .fc-self-transfer svg{width:14px;height:14px;flex-shrink:0;margin-top:1px;stroke:#d97706;fill:none;stroke-width:2}
+
+    /* ─── More filters ─── */
+    .more-filters-toggle{background:none;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:500;color:var(--text);font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
+    .more-filters-toggle:hover{border-color:rgba(0,0,0,0.2)}
+    .more-filters-toggle.active{background:rgba(0,102,204,0.06);border-color:rgba(0,102,204,0.25);color:var(--blue)}
+    .more-filters-toggle .mf-count{background:var(--blue);color:#fff;border-radius:10px;font-size:10px;font-weight:700;padding:1px 6px}
+    .more-filters-toggle svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2}
+    .more-filters{display:none;background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:16px;animation:fadeSlide .2s ease}
+    .more-filters.show{display:grid;grid-template-columns:1fr 1fr;gap:18px 28px}
+    .mf-group .mf-label{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;display:block}
+    .mf-time-pills{display:flex;flex-wrap:wrap;gap:6px}
+    .mf-time-pill{padding:6px 12px;border:1px solid rgba(0,0,0,0.1);border-radius:8px;background:var(--white);font-size:12px;font-weight:500;color:var(--text);font-family:inherit;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+    .mf-time-pill:hover{border-color:rgba(0,0,0,0.2)}
+    .mf-time-pill.active{background:rgba(0,102,204,0.06);border-color:rgba(0,102,204,0.3);color:var(--blue)}
+    .mf-range{display:flex;align-items:center;gap:10px}
+    .mf-range input[type=range]{flex:1;accent-color:var(--blue)}
+    .mf-range .mf-val{font-size:13px;font-weight:600;color:var(--text);min-width:64px;text-align:right}
+    .mf-toggles{display:flex;flex-direction:column;gap:10px}
+    .mf-check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);cursor:pointer}
+    .mf-check input{width:16px;height:16px;accent-color:var(--blue);cursor:pointer}
+    .mf-airlines{display:flex;flex-wrap:wrap;gap:6px;max-height:120px;overflow-y:auto}
+    .mf-airline-chip{padding:5px 11px;border:1px solid rgba(0,0,0,0.1);border-radius:20px;background:var(--white);font-size:12px;color:var(--text);font-family:inherit;cursor:pointer;transition:all .15s}
+    .mf-airline-chip:hover{border-color:rgba(0,0,0,0.2)}
+    .mf-airline-chip.active{background:rgba(0,102,204,0.06);border-color:rgba(0,102,204,0.3);color:var(--blue);font-weight:600}
+    .mf-reset{grid-column:1/-1;justify-self:start;background:none;border:none;color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;padding:0}
+    .results-count{font-size:12px;color:var(--gray);margin-bottom:10px}
+
+    /* ─── Route quick-pick chips (recent / popular) ─── */
+    .route-chips-wrap{margin-top:18px}
+    .route-chips-label{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .route-chips-label svg{width:13px;height:13px;fill:none;stroke:var(--gray);stroke-width:2}
+    .route-chips{display:flex;flex-wrap:wrap;gap:8px}
+    .route-chip{padding:7px 13px;border:1px solid rgba(0,0,0,0.1);border-radius:20px;background:var(--white);font-size:12px;font-weight:500;color:var(--text);font-family:inherit;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+    .route-chip:hover{border-color:var(--blue);color:var(--blue);box-shadow:0 2px 8px rgba(0,102,204,0.1)}
+    .route-chip svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;opacity:.6}
 
     /* ─── Warnings ─── */
     .warnings{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius-sm);padding:14px 16px;margin-top:20px}
@@ -265,6 +340,7 @@
       .fc-right{text-align:left;align-items:flex-start;flex-direction:row;flex-wrap:wrap;gap:8px}
       .fc-score{top:12px;right:12px;width:32px;height:32px;font-size:10px}
       .search-card{padding:20px}
+      .more-filters.show{grid-template-columns:1fr}
     }
     @media(max-width:480px){
       .form-row.r1,.form-row.r2,.form-row.r3,.adv-fields.show{grid-template-columns:1fr}
@@ -586,7 +662,35 @@
   let isLoading = false;
   let lastParams = null;
   let resultData = null;
-  let filters = { sortBy: 'score', airlines: [], maxStops: null };
+  let filters = { sortBy: 'score', airlines: [], maxStops: null, depTime: 'any', maxDuration: null, maxPrice: null, carryOnOnly: false, lowEmissionsOnly: false };
+  let moreFiltersOpen = false;
+
+  /* Popular routes for the empty-state inspiration grid (Skyscanner-style). */
+  const POPULAR_ROUTES = [
+    { from: 'New York (JFK)', to: 'London (LHR)' },
+    { from: 'Los Angeles (LAX)', to: 'Tokyo (HND)' },
+    { from: 'Singapore (SIN)', to: 'Bangkok (BKK)' },
+    { from: 'Dubai (DXB)', to: 'London (LHR)' },
+    { from: 'San Francisco (SFO)', to: 'New York (JFK)' },
+    { from: 'Sydney (SYD)', to: 'Singapore (SIN)' },
+    { from: 'Paris (CDG)', to: 'New York (JFK)' },
+    { from: 'New Delhi (DEL)', to: 'Dubai (DXB)' },
+  ];
+
+  const RECENT_KEY = 'skyfare_recent_routes';
+  function loadRecentRoutes() {
+    try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function saveRecentRoute(p) {
+    if (!p || !p.origin || !p.destination) return;
+    try {
+      let list = loadRecentRoutes().filter(function(r) {
+        return !(r.from === p.origin && r.to === p.destination);
+      });
+      list.unshift({ from: p.origin, to: p.destination });
+      localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 6)));
+    } catch (e) { /* storage unavailable */ }
+  }
 
   /* ─── DOM refs ─── */
   const $ = s => document.querySelector(s);
@@ -657,9 +761,68 @@
     if (!params.origin || !params.destination || !params.departureDate) return;
 
     lastParams = params;
-    filters = { sortBy: 'score', airlines: [], maxStops: null };
+    filters = { sortBy: 'score', airlines: [], maxStops: null, depTime: 'any', maxDuration: null, maxPrice: null, carryOnOnly: false, lowEmissionsOnly: false };
+    moreFiltersOpen = false;
     await search(params);
   });
+
+  /* ─── Route quick-pick (recent / popular) ─── */
+  function applyRoute(from, to) {
+    $('#origin').value = from;
+    $('#destination').value = to;
+    if (!$('#departureDate').value) {
+      var d = new Date(); d.setDate(d.getDate() + 21);
+      $('#departureDate').value = d.toISOString().split('T')[0];
+    }
+    if (tripType === 'round-trip' && !$('#returnDate').value) {
+      var r = new Date($('#departureDate').value); r.setDate(r.getDate() + 7);
+      $('#returnDate').value = r.toISOString().split('T')[0];
+    }
+    document.getElementById('searchCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (typeof $('#searchForm').requestSubmit === 'function') $('#searchForm').requestSubmit();
+    else $('#searchForm').dispatchEvent(new Event('submit', { cancelable: true }));
+  }
+
+  function routeChipsHtml() {
+    var recent = loadRecentRoutes();
+    var h = '';
+    if (recent.length) {
+      h += '<div class="route-chips-wrap"><div class="route-chips-label">'
+        + '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Recent searches</div><div class="route-chips">';
+      recent.forEach(function(r) {
+        h += '<button type="button" class="route-chip" data-from="' + escHtml(r.from) + '" data-to="' + escHtml(r.to) + '">'
+          + escHtml(shortPlace(r.from)) + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg> ' + escHtml(shortPlace(r.to)) + '</button>';
+      });
+      h += '</div></div>';
+    }
+    h += '<div class="route-chips-wrap"><div class="route-chips-label">'
+      + '<svg viewBox="0 0 24 24"><path d="M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 0 0 0 18M12.5 3a17 17 0 0 1 0 18"/><circle cx="12" cy="12" r="9"/></svg>Popular routes</div><div class="route-chips">';
+    POPULAR_ROUTES.forEach(function(r) {
+      h += '<button type="button" class="route-chip" data-from="' + escHtml(r.from) + '" data-to="' + escHtml(r.to) + '">'
+        + escHtml(shortPlace(r.from)) + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg> ' + escHtml(shortPlace(r.to)) + '</button>';
+    });
+    h += '</div></div>';
+    return h;
+  }
+
+  function shortPlace(s) {
+    if (!s) return '';
+    var m = String(s).match(/\(([A-Za-z]{3})\)/);
+    if (m) return s.replace(/\s*\([A-Za-z]{3}\)/, '').trim() + ' (' + m[1] + ')';
+    return s;
+  }
+
+  function bindRouteChips() {
+    $$('.route-chip').forEach(function(btn) {
+      btn.addEventListener('click', function() { applyRoute(btn.dataset.from, btn.dataset.to); });
+    });
+  }
+
+  function renderInitial() {
+    resultsArea.innerHTML = '<div class="fade-in">' + routeChipsHtml() + '</div>';
+    bindRouteChips();
+  }
+  renderInitial();
 
   async function search(params) {
     isLoading = true;
@@ -706,6 +869,7 @@
       if (!json.data.flights || json.data.flights.length === 0) throw new Error('No flights found for your search criteria. Try adjusting your dates, route, or budget.');
 
       resultData = json.data;
+      saveRecentRoute(params);
       renderResults();
     } catch (err) {
       renderError(err.message || 'An unexpected error occurred. Please try again.');
@@ -781,6 +945,9 @@
     });
     html += '</div>';
 
+    /* Price insights (Google-Flights-style low / median / high range) */
+    if (d.price_insights) html += priceInsightsHtml(d.price_insights);
+
     /* Stats */
     html += '<div class="stats-row"><span>' + d.flights.length + ' flights found</span>';
     if (avgPrice) html += '<span>Avg price: <strong>' + escHtml(d.search_summary.currency) + ' ' + avgPrice.toLocaleString() + '</strong></span>';
@@ -789,10 +956,13 @@
     /* Explanation */
     if (rec.explanation) html += '<div class="explanation">' + escHtml(rec.explanation) + '</div>';
 
-    /* Filters */
+    /* Filters bar */
+    const hasEmissions = d.flights.some(f => typeof f.co2_kg === 'number' && f.co2_kg > 0);
+    const sortOpts = [{v:'score',l:'Best Match'},{v:'price',l:'Price'},{v:'duration',l:'Duration'},{v:'departure',l:'Departure'}];
+    if (hasEmissions) sortOpts.push({v:'emissions',l:'Emissions'});
     html += '<div class="filters-bar">';
     html += '<div class="filter-group"><span class="filter-label">Sort</span><div class="pill-group">';
-    [{v:'score',l:'Best Match'},{v:'price',l:'Price'},{v:'duration',l:'Duration'},{v:'departure',l:'Departure'}].forEach(o => {
+    sortOpts.forEach(o => {
       html += '<button class="pill flt-sort' + (filters.sortBy === o.v ? ' active' : '') + '" data-sort="' + o.v + '">' + o.l + '</button>';
     });
     html += '</div></div>';
@@ -802,18 +972,24 @@
       html += '<button class="pill flt-stops' + (act ? ' active' : '') + '" data-stops="' + o.v + '">' + o.l + '</button>';
     });
     html += '</div></div>';
-    if (airlines.length > 1) {
-      html += '<div class="filter-group"><span class="filter-label">Airline</span><select class="filter-select" id="fltAirline"><option value="">All</option>';
-      airlines.forEach(a => { html += '<option value="' + escHtml(a) + '"' + (filters.airlines.includes(a) ? ' selected' : '') + '>' + escHtml(a) + '</option>'; });
-      html += '</select></div>';
-    }
+    const activeMoreCount = moreFilterCount();
+    html += '<button class="more-filters-toggle' + (moreFiltersOpen || activeMoreCount ? ' active' : '') + '" id="moreFiltersToggle">'
+      + '<svg viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M11 18h2"/></svg>More filters'
+      + (activeMoreCount ? '<span class="mf-count">' + activeMoreCount + '</span>' : '') + '</button>';
     html += '</div>';
+
+    /* More filters panel */
+    html += moreFiltersHtml(d.flights, airlines);
+
+    /* Results count */
+    html += '<div class="results-count">Showing <strong>' + flights.length + '</strong> of ' + d.flights.length + ' flights</div>';
 
     /* Flight cards */
     if (flights.length > 0) {
-      flights.forEach(f => { html += flightCardHtml(f, f.id === rec.best_overall_flight_id); });
+      const passengers = d.search_summary.passengers || 1;
+      flights.forEach(f => { html += flightCardHtml(f, f.id === rec.best_overall_flight_id, passengers, d.price_insights); });
     } else {
-      html += '<div style="text-align:center;padding:40px;color:var(--gray);font-size:14px">No flights match your current filters.</div>';
+      html += '<div style="text-align:center;padding:40px;color:var(--gray);font-size:14px">No flights match your current filters. <button class="mf-reset" id="resetInline">Reset filters</button></div>';
     }
 
     /* Warnings */
@@ -841,11 +1017,133 @@
       filters.maxStops = btn.dataset.stops === 'any' ? null : parseInt(btn.dataset.stops);
       renderResults();
     }));
-    const airlineSelect = $('#fltAirline');
-    if (airlineSelect) airlineSelect.addEventListener('change', () => {
-      filters.airlines = airlineSelect.value ? [airlineSelect.value] : [];
+    const moreToggle = $('#moreFiltersToggle');
+    if (moreToggle) moreToggle.addEventListener('click', () => { moreFiltersOpen = !moreFiltersOpen; renderResults(); });
+
+    $$('.mf-time-pill').forEach(btn => btn.addEventListener('click', () => {
+      filters.depTime = btn.dataset.time;
       renderResults();
+    }));
+    $$('.mf-airline-chip').forEach(btn => btn.addEventListener('click', () => {
+      const a = btn.dataset.airline;
+      if (filters.airlines.includes(a)) filters.airlines = filters.airlines.filter(x => x !== a);
+      else filters.airlines = filters.airlines.concat([a]);
+      renderResults();
+    }));
+    const durRange = $('#mfDuration');
+    if (durRange) {
+      durRange.addEventListener('input', () => { const el = $('#mfDurationVal'); if (el) el.textContent = fmtDur(parseInt(durRange.value)); });
+      durRange.addEventListener('change', () => { filters.maxDuration = parseInt(durRange.value) >= parseInt(durRange.max) ? null : parseInt(durRange.value); renderResults(); });
+    }
+    const priceRange = $('#mfPrice');
+    if (priceRange) {
+      priceRange.addEventListener('input', () => { const el = $('#mfPriceVal'); if (el) el.textContent = priceRange.dataset.cur + ' ' + parseInt(priceRange.value).toLocaleString(); });
+      priceRange.addEventListener('change', () => { filters.maxPrice = parseInt(priceRange.value) >= parseInt(priceRange.max) ? null : parseInt(priceRange.value); renderResults(); });
+    }
+    const carryOn = $('#mfCarryOn');
+    if (carryOn) carryOn.addEventListener('change', () => { filters.carryOnOnly = carryOn.checked; renderResults(); });
+    const lowEm = $('#mfLowEmissions');
+    if (lowEm) lowEm.addEventListener('change', () => { filters.lowEmissionsOnly = lowEm.checked; renderResults(); });
+    const resetBtn = $('#mfReset');
+    if (resetBtn) resetBtn.addEventListener('click', resetFilters);
+    const resetInline = $('#resetInline');
+    if (resetInline) resetInline.addEventListener('click', resetFilters);
+  }
+
+  function resetFilters() {
+    filters = { sortBy: filters.sortBy, airlines: [], maxStops: null, depTime: 'any', maxDuration: null, maxPrice: null, carryOnOnly: false, lowEmissionsOnly: false };
+    renderResults();
+  }
+
+  function moreFilterCount() {
+    let n = 0;
+    if (filters.airlines.length) n += filters.airlines.length;
+    if (filters.depTime && filters.depTime !== 'any') n++;
+    if (filters.maxDuration !== null) n++;
+    if (filters.maxPrice !== null) n++;
+    if (filters.carryOnOnly) n++;
+    if (filters.lowEmissionsOnly) n++;
+    return n;
+  }
+
+  /* ─── More filters panel HTML ─── */
+  function moreFiltersHtml(allFlights, airlines) {
+    if (!moreFiltersOpen) return '';
+    const durs = allFlights.map(f => f.total_duration_minutes).filter(d => d > 0);
+    const prices = allFlights.map(f => f.price).filter(p => p > 0);
+    const maxDur = durs.length ? Math.max.apply(null, durs) : 0;
+    const minDur = durs.length ? Math.min.apply(null, durs) : 0;
+    const maxPr = prices.length ? Math.max.apply(null, prices) : 0;
+    const minPr = prices.length ? Math.min.apply(null, prices) : 0;
+    const cur = resultData.search_summary.currency || '';
+    const hasEmissions = allFlights.some(f => typeof f.co2_kg === 'number' && f.co2_kg > 0);
+    const hasBaggage = allFlights.some(f => f.carry_on_included !== null && f.carry_on_included !== undefined);
+
+    let h = '<div class="more-filters show">';
+
+    /* Departure time */
+    h += '<div class="mf-group"><span class="mf-label">Departure time</span><div class="mf-time-pills">';
+    [{v:'any',l:'Any'},{v:'morning',l:'🌅 5a–12p'},{v:'afternoon',l:'☀️ 12–6p'},{v:'evening',l:'🌆 6p–12a'},{v:'night',l:'🌙 12–5a'}].forEach(o => {
+      h += '<button type="button" class="mf-time-pill' + (filters.depTime === o.v ? ' active' : '') + '" data-time="' + o.v + '">' + o.l + '</button>';
     });
+    h += '</div></div>';
+
+    /* Max duration */
+    if (maxDur > minDur) {
+      const curVal = filters.maxDuration !== null ? filters.maxDuration : maxDur;
+      h += '<div class="mf-group"><span class="mf-label">Max trip duration</span><div class="mf-range">'
+        + '<input type="range" id="mfDuration" min="' + minDur + '" max="' + maxDur + '" step="15" value="' + curVal + '">'
+        + '<span class="mf-val" id="mfDurationVal">' + fmtDur(curVal) + '</span></div></div>';
+    }
+
+    /* Max price */
+    if (maxPr > minPr) {
+      const curVal = filters.maxPrice !== null ? filters.maxPrice : maxPr;
+      h += '<div class="mf-group"><span class="mf-label">Max price</span><div class="mf-range">'
+        + '<input type="range" id="mfPrice" min="' + minPr + '" max="' + maxPr + '" step="' + Math.max(1, Math.round((maxPr - minPr) / 50)) + '" value="' + curVal + '" data-cur="' + escHtml(cur) + '">'
+        + '<span class="mf-val" id="mfPriceVal">' + escHtml(cur) + ' ' + curVal.toLocaleString() + '</span></div></div>';
+    }
+
+    /* Toggles */
+    if (hasBaggage || hasEmissions) {
+      h += '<div class="mf-group"><span class="mf-label">Quick filters</span><div class="mf-toggles">';
+      if (hasBaggage) h += '<label class="mf-check"><input type="checkbox" id="mfCarryOn"' + (filters.carryOnOnly ? ' checked' : '') + '> Carry-on bag included</label>';
+      if (hasEmissions) h += '<label class="mf-check"><input type="checkbox" id="mfLowEmissions"' + (filters.lowEmissionsOnly ? ' checked' : '') + '> Lower-emission flights only</label>';
+      h += '</div></div>';
+    }
+
+    /* Airlines */
+    if (airlines.length > 1) {
+      h += '<div class="mf-group" style="grid-column:1/-1"><span class="mf-label">Airlines</span><div class="mf-airlines">';
+      airlines.forEach(a => {
+        h += '<button type="button" class="mf-airline-chip' + (filters.airlines.includes(a) ? ' active' : '') + '" data-airline="' + escHtml(a) + '">' + escHtml(a) + '</button>';
+      });
+      h += '</div></div>';
+    }
+
+    if (moreFilterCount()) h += '<button class="mf-reset" id="mfReset">Reset all filters</button>';
+    h += '</div>';
+    return h;
+  }
+
+  /* ─── Price insights HTML ─── */
+  function priceInsightsHtml(pi) {
+    if (!pi || !pi.low || !pi.high || pi.high <= pi.low) return '';
+    const cur = pi.currency || '';
+    const pct = Math.round(((pi.median - pi.low) / (pi.high - pi.low)) * 100);
+    const dealMap = { great: ['d-great', 'Great deal'], good: ['d-good', 'Good price'], typical: ['d-typical', 'Typical price'], high: ['d-high', 'Above typical'] };
+    const deal = dealMap[pi.cheapest_deal_quality] || null;
+    let h = '<div class="price-insights">';
+    h += '<div class="pi-head"><div class="pi-title"><svg viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg>Price range across results</div>';
+    if (deal) h += '<span class="pi-deal ' + deal[0] + '">Cheapest fare: ' + deal[1] + '</span>';
+    h += '</div>';
+    h += '<div class="pi-bar"><div class="pi-marker" style="left:' + Math.min(98, Math.max(2, pct)) + '%"><span class="pi-flag">Median ' + escHtml(cur) + ' ' + pi.median.toLocaleString() + '</span></div></div>';
+    h += '<div class="pi-scale"><span>Low <strong>' + escHtml(cur) + ' ' + pi.low.toLocaleString() + '</strong></span><span>High <strong>' + escHtml(cur) + ' ' + pi.high.toLocaleString() + '</strong></span></div>';
+    if (pi.co2_low && pi.co2_high) {
+      h += '<div class="pi-foot"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>Carbon footprint ranges from <strong style="color:var(--text)">&nbsp;' + pi.co2_low.toLocaleString() + ' kg</strong>&nbsp;to ' + pi.co2_high.toLocaleString() + ' kg CO₂ per traveller.</div>';
+    }
+    h += '</div>';
+    return h;
   }
 
   /* ─── Best Time to Book panel HTML ─── */
@@ -909,8 +1207,8 @@
   }
 
   /* ─── Flight card HTML ─── */
-  function flightCardHtml(f, highlighted) {
-    const badgeMap = { 'Cheapest': 'cheapest', 'Fastest': 'fastest', 'Best Value': 'bestvalue', 'Under Budget': 'underbudget', 'Nonstop': 'nonstop' };
+  function flightCardHtml(f, highlighted, passengers, priceInsights) {
+    const badgeMap = { 'Cheapest': 'cheapest', 'Fastest': 'fastest', 'Best Value': 'bestvalue', 'Under Budget': 'underbudget', 'Nonstop': 'nonstop', 'Low CO2': 'lowco2', 'Great Deal': 'greatdeal' };
     let h = '<div class="flight-card' + (highlighted ? ' highlighted' : '') + '">';
 
     /* Badges */
@@ -933,9 +1231,12 @@
     h += '</div></div>';
 
     /* Route */
+    const dayOffset = f.day_offset || 0;
     h += '<div class="fc-route">';
     h += '<div class="fc-time"><div class="fc-time-val">' + fmtTime(f.departure_time) + '</div><div class="fc-time-code">' + escHtml(f.departure_airport) + '</div></div>';
-    h += '<div class="fc-line"><div class="fc-dur">' + fmtDur(f.total_duration_minutes) + '</div><div class="fc-track"><div class="fc-track-line"></div>';
+    h += '<div class="fc-line"><div class="fc-dur">' + fmtDur(f.total_duration_minutes);
+    if (f.overnight) h += ' <span class="fc-redeye"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Red-eye</span>';
+    h += '</div><div class="fc-track"><div class="fc-track-line"></div>';
     if (f.stops > 0) {
       for (let i = 0; i < Math.min(f.stops, 3); i++) h += '<div class="fc-stop-dot"></div>';
       h += '<div class="fc-track-line"></div>';
@@ -945,12 +1246,13 @@
     h += '</div>';
     const stopsLabel = f.stops === 0 ? 'Nonstop' : f.stops === 1 ? '1 stop' : f.stops + ' stops';
     h += '<div class="fc-stops">' + stopsLabel + '</div></div>';
-    h += '<div class="fc-time"><div class="fc-time-val">' + fmtTime(f.arrival_time) + '</div><div class="fc-time-code">' + escHtml(f.arrival_airport) + '</div></div>';
+    h += '<div class="fc-time"><div class="fc-time-val">' + fmtTime(f.arrival_time) + (dayOffset > 0 ? '<span class="fc-day-offset">+' + dayOffset + '</span>' : '') + '</div><div class="fc-time-code">' + escHtml(f.arrival_airport) + '</div></div>';
     h += '</div>';
 
     /* Price / action */
     h += '<div class="fc-right">';
     h += '<div class="fc-price">' + escHtml(f.currency) + ' ' + (f.price > 0 ? f.price.toLocaleString() : 'N/A') + '</div>';
+    if (passengers && passengers > 1 && f.price > 0) h += '<div class="fc-provider">' + escHtml(f.currency) + ' ' + (f.price * passengers).toLocaleString() + ' total · ' + passengers + ' travellers</div>';
     if (f.provider) h += '<div class="fc-provider">via ' + escHtml(f.provider) + '</div>';
     h += confHtml(f.confidence);
     if (f.booking_url || f.source_url) {
@@ -958,10 +1260,23 @@
     }
     h += '</div></div>';
 
+    /* Deal / emissions / baggage tags */
+    const tags = flightTagsHtml(f);
+    if (tags) h += '<div class="fc-tags">' + tags + '</div>';
+
+    /* Self-transfer warning (Kiwi-style virtual interline caution) */
+    if (f.self_transfer) {
+      h += '<div class="fc-self-transfer"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>'
+        + '<span><strong>Self-transfer itinerary.</strong> Separate tickets — you may need to re-check bags and clear security between flights, and a missed connection is not protected. Verify before booking.</span></div>';
+    }
+
     /* Layovers */
     if (f.layovers && f.layovers.length) {
       h += '<div class="fc-layovers">';
-      f.layovers.forEach(l => { h += '<span class="fc-layover">' + escHtml(l.airport) + ' · ' + fmtDur(l.duration_minutes) + '</span>'; });
+      f.layovers.forEach(l => {
+        const long = l.duration_minutes >= 240;
+        h += '<span class="fc-layover"' + (long ? ' style="color:#9a3412"' : '') + '>' + escHtml(l.airport) + ' · ' + fmtDur(l.duration_minutes) + (long ? ' (long)' : '') + '</span>';
+      });
       h += '</div>';
     }
 
@@ -972,15 +1287,87 @@
     return h;
   }
 
+  /* ─── Deal / emissions / baggage tag chips ─── */
+  function flightTagsHtml(f) {
+    let t = '';
+
+    /* Deal quality */
+    const dealMap = {
+      great: ['d-great', 'Great deal', '<path d="M20 6 9 17l-5-5"/>'],
+      good: ['d-good', 'Good price', '<path d="M20 6 9 17l-5-5"/>'],
+      high: ['d-high', 'Above typical', '<path d="M12 19V5M5 12l7-7 7 7"/>'],
+    };
+    if (f.deal_quality && dealMap[f.deal_quality]) {
+      const dq = dealMap[f.deal_quality];
+      t += '<span class="deal-tag ' + dq[0] + '"><svg viewBox="0 0 24 24">' + dq[2] + '</svg>' + dq[1] + '</span>';
+    }
+
+    /* Emissions */
+    if (typeof f.co2_kg === 'number' && f.co2_kg > 0) {
+      const lvl = f.emissions_level === 'low' ? 'e-low' : f.emissions_level === 'high' ? 'e-high' : '';
+      const lblMap = { low: ' · less CO₂', high: ' · more CO₂', typical: '', unknown: '' };
+      t += '<span class="co2-chip ' + lvl + '"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>'
+        + f.co2_kg.toLocaleString() + ' kg CO₂' + (lblMap[f.emissions_level] || '') + '</span>';
+    }
+
+    /* Fare brand */
+    if (f.fare_brand) {
+      const isBasic = /basic|light|saver|economy basic/i.test(f.fare_brand);
+      t += '<span class="fare-chip' + (isBasic ? ' basic' : '') + '"><svg viewBox="0 0 24 24"><path d="M3 7h18v13H3zM8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' + escHtml(f.fare_brand) + '</span>';
+    }
+
+    /* Baggage */
+    if (f.carry_on_included !== null && f.carry_on_included !== undefined) {
+      if (f.carry_on_included) {
+        let lbl = 'Carry-on included';
+        if (typeof f.checked_bags_included === 'number' && f.checked_bags_included > 0) lbl += ' + ' + f.checked_bags_included + ' checked';
+        t += '<span class="fare-chip"><svg viewBox="0 0 24 24"><path d="M6 7h12v14H6zM9 7V4h6v3"/></svg>' + lbl + '</span>';
+      } else {
+        t += '<span class="fare-chip basic"><svg viewBox="0 0 24 24"><path d="M6 7h12v14H6zM9 7V4h6v3M4 4l16 16"/></svg>No carry-on</span>';
+      }
+    } else if (typeof f.checked_bags_included === 'number' && f.checked_bags_included > 0) {
+      t += '<span class="fare-chip"><svg viewBox="0 0 24 24"><path d="M6 7h12v14H6zM9 7V4h6v3"/></svg>' + f.checked_bags_included + ' checked bag' + (f.checked_bags_included > 1 ? 's' : '') + '</span>';
+    }
+
+    /* Refundable */
+    if (f.refundable === true) {
+      t += '<span class="fare-chip"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.3 2.6L3 8"/><path d="M3 4v4h4"/></svg>Refundable</span>';
+    }
+
+    return t;
+  }
+
   /* ─── Filter / sort ─── */
+  function timeToMin(t) {
+    if (!t) return null;
+    const ap = String(t).match(/(\d{1,2}):(\d{2})\s*([AaPp][Mm])/);
+    if (ap) { let h = parseInt(ap[1]) % 12; if (/[Pp]/.test(ap[3])) h += 12; return h * 60 + parseInt(ap[2]); }
+    const m = String(t).match(/(\d{1,2}):(\d{2})/);
+    return m ? (parseInt(m[1]) % 24) * 60 + parseInt(m[2]) : null;
+  }
+  function inDepBucket(t, bucket) {
+    const m = timeToMin(t);
+    if (m === null) return true; // don't hide flights with unknown times
+    if (bucket === 'morning') return m >= 300 && m < 720;
+    if (bucket === 'afternoon') return m >= 720 && m < 1080;
+    if (bucket === 'evening') return m >= 1080 && m < 1440;
+    if (bucket === 'night') return m >= 0 && m < 300;
+    return true;
+  }
   function applyFilters(flights) {
     let r = [...flights];
     if (filters.airlines.length) r = r.filter(f => filters.airlines.includes(f.airline));
     if (filters.maxStops !== null) r = r.filter(f => f.stops <= filters.maxStops);
+    if (filters.depTime && filters.depTime !== 'any') r = r.filter(f => inDepBucket(f.departure_time, filters.depTime));
+    if (filters.maxDuration !== null) r = r.filter(f => !f.total_duration_minutes || f.total_duration_minutes <= filters.maxDuration);
+    if (filters.maxPrice !== null) r = r.filter(f => !f.price || f.price <= filters.maxPrice);
+    if (filters.carryOnOnly) r = r.filter(f => f.carry_on_included === true);
+    if (filters.lowEmissionsOnly) r = r.filter(f => f.emissions_level === 'low');
     switch (filters.sortBy) {
       case 'price': r.sort((a, b) => a.price - b.price); break;
       case 'duration': r.sort((a, b) => a.total_duration_minutes - b.total_duration_minutes); break;
-      case 'departure': r.sort((a, b) => (a.departure_time || '').localeCompare(b.departure_time || '')); break;
+      case 'departure': r.sort((a, b) => (timeToMin(a.departure_time) ?? 9999) - (timeToMin(b.departure_time) ?? 9999)); break;
+      case 'emissions': r.sort((a, b) => (a.co2_kg || Infinity) - (b.co2_kg || Infinity)); break;
       default: r.sort((a, b) => b.score - a.score);
     }
     return r;

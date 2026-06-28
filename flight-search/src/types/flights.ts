@@ -30,6 +30,10 @@ export interface Layover {
   duration_minutes: number;
 }
 
+export type EmissionsLevel = "low" | "typical" | "high" | "unknown";
+
+export type DealQuality = "great" | "good" | "typical" | "high" | "unknown";
+
 export interface Flight {
   id: string;
   airline: string;
@@ -45,6 +49,16 @@ export interface Flight {
   total_duration_minutes: number;
   stops: number;
   layovers: Layover[];
+  co2_kg: number | null;
+  fare_brand: string;
+  carry_on_included: boolean | null;
+  checked_bags_included: number | null;
+  refundable: boolean | null;
+  self_transfer: boolean;
+  emissions_level: EmissionsLevel;
+  deal_quality: DealQuality;
+  day_offset: number;
+  overnight: boolean;
   booking_url: string;
   source_url: string;
   source_name: string;
@@ -52,6 +66,18 @@ export interface Flight {
   notes: string;
   score: number;
   badges: string[];
+}
+
+export interface PriceInsights {
+  currency: string;
+  low: number;
+  median: number;
+  high: number;
+  cheapest_deal_quality: DealQuality;
+  co2_low: number;
+  co2_median: number;
+  co2_high: number;
+  greenest_flight_id: string;
 }
 
 export type BookingRecommendation =
@@ -122,6 +148,7 @@ export interface FlightSearchResponse {
   search_summary: SearchSummary;
   recommendation: Recommendation;
   booking_advice?: BookingAdvice;
+  price_insights?: PriceInsights;
   flights: Flight[];
   warnings: string[];
 }
@@ -137,11 +164,27 @@ export interface FlightSearchAPIResponse {
   error?: string;
 }
 
-export type SortOption = "score" | "price" | "duration" | "departure";
+export type SortOption =
+  | "score"
+  | "price"
+  | "duration"
+  | "departure"
+  | "emissions";
+
+export type DepartureTimeBucket =
+  | "any"
+  | "morning"
+  | "afternoon"
+  | "evening"
+  | "night";
 
 export interface FilterState {
   sortBy: SortOption;
   airlines: string[];
   maxStops: number | null;
   maxPrice: number | null;
+  depTime: DepartureTimeBucket;
+  maxDuration: number | null;
+  carryOnOnly: boolean;
+  lowEmissionsOnly: boolean;
 }

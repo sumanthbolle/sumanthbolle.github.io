@@ -7,8 +7,34 @@ Single Cloudflare Worker that powers both the Summaverick chat and the landing-p
 | Method | Path         | Purpose                                                                 |
 |--------|--------------|-------------------------------------------------------------------------|
 | POST   | `/`          | Chat completion. Body: `{ query: string, context?: Array<{role,content}> }` |
+| POST   | `/flights`   | SkyFare flight discovery + "best time to book" advisory. See below.     |
 | GET    | `/trending`  | Landing widgets (news / market / tech), country-aware + cached          |
 | OPTIONS| any          | CORS preflight                                                          |
+
+## `/flights` — SkyFare
+
+Powers the SkyFare flight-search UI (`/flights.html`). The Worker prompts Sonar
+(`sonar-pro`, high search context) for live fares, then post-processes the result
+server-side to make it comparable across booking sites:
+
+- **Scoring & ranking** — each flight is scored 0–100 from price, duration, stops,
+  budget fit, confidence and (when comparable data exists) **carbon emissions**.
+- **Deal quality** — every fare is tagged `great` / `good` / `typical` / `high`
+  relative to the median fare in the result set (Kayak/Hopper-style read).
+- **Emissions** — per-passenger `co2_kg` is normalised to a `low` / `typical` /
+  `high` level vs. the median, and the greenest option earns a **Low CO2** badge.
+- **Baggage & fare transparency** — `fare_brand`, `carry_on_included`,
+  `checked_bags_included`, `refundable`, and a `self_transfer` (virtual-interline)
+  risk flag.
+- **Arrival day offset & red-eye** — `day_offset` (`+1`/`+2`) and `overnight` are
+  derived from local times and total duration.
+- **Price insights** — a `price_insights` block (low / median / high + CO₂ range)
+  for the Google-Flights-style price bar.
+- **Best time to book** — a deterministic advance-purchase engine
+  (`computeBookingTiming`) merged with the AI's live price read
+  (`mergeBookingAdvice`).
+
+Response: `{ success: boolean, data?: {...}, error?: string }`.
 
 ## Environment variables
 

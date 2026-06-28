@@ -424,7 +424,7 @@ async function callSonarWithTimeout(apiKey, payload, timeoutMs) {
 
 /* ───────────── Flight Search ───────────── */
 
-const FLIGHT_SYSTEM_PROMPT = 'You are a real-time flight search and travel pricing assistant. Your task is to find current publicly available flight options for the provided route, dates, passenger count, cabin class, budget, and preferences.\n\nYou must:\n- Search current web results for flight prices.\n- Prefer airline official websites and reputable travel providers (Google Flights, Kayak, Skyscanner, Expedia, etc.).\n- Return only structured JSON. No markdown, no code fences, no explanation text outside JSON.\n- Do not invent flights, prices, booking links, or airlines.\n- If exact prices are not available, mark the confidence as "low" and explain why in the notes field.\n- Include source URLs wherever possible.\n- Include a freshness note indicating when the data was retrieved.\n- Compare flights based on price, duration, stops, layovers, and budget fit.\n- Do not claim that a booking is confirmed.\n- Treat results as price-discovery only.\n- Each flight must have a unique "id" field (e.g., "flight_1", "flight_2").\n- The "badges" array can include values like "Cheapest", "Fastest", "Best Value", "Under Budget", "Nonstop".\n- The "score" field should be your best estimate from 0-100 based on overall value.';
+const FLIGHT_SYSTEM_PROMPT = 'You are a real-time flight search and travel pricing assistant. Your task is to find current publicly available flight options for the provided route, dates, passenger count, cabin class, budget, and preferences.\n\nYou must:\n- Search current web results for flight prices.\n- Prefer airline official websites and reputable travel providers (Google Flights, Kayak, Skyscanner, Expedia, etc.).\n- Return only structured JSON. No markdown, no code fences, no explanation text outside JSON.\n- Do not invent flights, prices, booking links, or airlines.\n- If exact prices are not available, mark the confidence as "low" and explain why in the notes field.\n- Include source URLs wherever possible.\n- Include a freshness note indicating when the data was retrieved.\n- Compare flights based on price, duration, stops, layovers, budget fit, baggage, and carbon emissions.\n- Do not claim that a booking is confirmed.\n- Treat results as price-discovery only.\n- Each flight must have a unique "id" field (e.g., "flight_1", "flight_2").\n- The "badges" array can include values like "Cheapest", "Fastest", "Best Value", "Under Budget", "Nonstop", "Low CO2", "Great Deal".\n- The "score" field should be your best estimate from 0-100 based on overall value.\n\nFor every flight also estimate, where known:\n- "co2_kg": estimated carbon emissions per passenger for the whole itinerary, in kilograms (number). Use typical aircraft/route emissions if a precise figure is unavailable; otherwise omit.\n- "fare_brand": the fare family / branded fare (e.g. "Basic Economy", "Main Cabin", "Economy Flex", "Business Saver").\n- "carry_on_included": true/false — whether a full-size cabin bag is included.\n- "checked_bags_included": number of checked bags included in the quoted fare (0 if none).\n- "refundable": true/false if known.\n- "self_transfer": true if the itinerary mixes separate tickets / virtual-interline / non-protected connections (Kiwi-style self-transfer) where the traveller must re-check bags and missed connections are not protected.\nBe honest: prefer omitting a field over guessing a specific figure. Basic Economy / "light" fares usually do not include a carry-on or checked bag — reflect that.';
 
 const FLIGHT_TIMEOUT_MS = 55000;
 
@@ -673,7 +673,7 @@ function buildFlightPrompt(p) {
     + 'a short seasonality note, and (if helpful) nearby cheaper dates. Base this on real fare-trend and '
     + 'seasonality information from your web search; if unsure, say so and use a lower confidence.\n\n'
     + 'Return the result in this exact JSON structure (no markdown, no code fences, just raw JSON):\n\n'
-    + '{"search_summary":{"origin":"","destination":"","departure_date":"","return_date":"","trip_type":"","passengers":0,"cabin_class":"","currency":"","budget":0,"freshness_note":"","result_confidence":"high | medium | low"},"booking_advice":{"price_assessment":"low | typical | high","expected_trend":"rising | stable | falling","confidence":"high | medium | low","best_booking_window":"","seasonality_note":"","cheaper_alternative_dates":"","summary":""},"recommendation":{"best_overall_flight_id":"","cheapest_flight_id":"","fastest_flight_id":"","best_under_budget_flight_id":"","explanation":""},"flights":[{"id":"","airline":"","flight_numbers":[],"provider":"","price":0,"currency":"","is_under_budget":true,"departure_airport":"","arrival_airport":"","departure_time":"","arrival_time":"","total_duration_minutes":0,"stops":0,"layovers":[{"airport":"","duration_minutes":0}],"booking_url":"","source_url":"","source_name":"","confidence":"high | medium | low","notes":"","score":0,"badges":[]}],"warnings":[]}';
+    + '{"search_summary":{"origin":"","destination":"","departure_date":"","return_date":"","trip_type":"","passengers":0,"cabin_class":"","currency":"","budget":0,"freshness_note":"","result_confidence":"high | medium | low"},"booking_advice":{"price_assessment":"low | typical | high","expected_trend":"rising | stable | falling","confidence":"high | medium | low","best_booking_window":"","seasonality_note":"","cheaper_alternative_dates":"","summary":""},"recommendation":{"best_overall_flight_id":"","cheapest_flight_id":"","fastest_flight_id":"","best_under_budget_flight_id":"","explanation":""},"flights":[{"id":"","airline":"","flight_numbers":[],"provider":"","price":0,"currency":"","is_under_budget":true,"departure_airport":"","arrival_airport":"","departure_time":"","arrival_time":"","total_duration_minutes":0,"stops":0,"layovers":[{"airport":"","duration_minutes":0}],"co2_kg":0,"fare_brand":"","carry_on_included":true,"checked_bags_included":0,"refundable":false,"self_transfer":false,"booking_url":"","source_url":"","source_name":"","confidence":"high | medium | low","notes":"","score":0,"badges":[]}],"warnings":[]}';
 }
 
 function extractFlightJson(text) {
@@ -717,6 +717,16 @@ function normalizeFlightResponse(raw, params) {
       total_duration_minutes: typeof f.total_duration_minutes === 'number' ? f.total_duration_minutes : 0,
       stops: typeof f.stops === 'number' ? f.stops : 0,
       layovers: Array.isArray(f.layovers) ? f.layovers : [],
+      co2_kg: typeof f.co2_kg === 'number' && f.co2_kg > 0 ? Math.round(f.co2_kg) : null,
+      fare_brand: typeof f.fare_brand === 'string' ? f.fare_brand.slice(0, 60) : '',
+      carry_on_included: typeof f.carry_on_included === 'boolean' ? f.carry_on_included : null,
+      checked_bags_included: typeof f.checked_bags_included === 'number' ? Math.max(0, Math.round(f.checked_bags_included)) : null,
+      refundable: typeof f.refundable === 'boolean' ? f.refundable : null,
+      self_transfer: f.self_transfer === true,
+      emissions_level: 'unknown',
+      deal_quality: 'unknown',
+      day_offset: 0,
+      overnight: false,
       booking_url: f.booking_url || '',
       source_url: f.source_url || '',
       source_name: f.source_name || '',
@@ -734,32 +744,110 @@ function flightNorm100(val, min, max) {
   return Math.round(((max - val) / (max - min)) * 100);
 }
 
+function flightMedian(arr) {
+  if (!arr.length) return 0;
+  var s = arr.slice().sort(function(a, b) { return a - b; });
+  var mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+
+/* "HH:MM" (24h) or "8:00 AM" -> minutes since midnight, or null. */
+function flightTimeToMinutes(t) {
+  if (!t || typeof t !== 'string') return null;
+  var ampm = t.match(/(\d{1,2}):(\d{2})\s*([AaPp][Mm])/);
+  if (ampm) {
+    var h = parseInt(ampm[1], 10) % 12;
+    if (/[Pp]/.test(ampm[3])) h += 12;
+    return h * 60 + parseInt(ampm[2], 10);
+  }
+  var m = t.match(/(\d{1,2}):(\d{2})/);
+  if (!m) return null;
+  return (parseInt(m[1], 10) % 24) * 60 + parseInt(m[2], 10);
+}
+
+/* Derive arrival day offset (+1, +2…) and red-eye flag from local clock
+ * times and the total duration, the way Google Flights shows "11:05 +1". */
+function flightDayShape(f) {
+  var dep = flightTimeToMinutes(f.departure_time);
+  var arr = flightTimeToMinutes(f.arrival_time);
+  var dur = f.total_duration_minutes;
+  var offset = 0;
+  if (dep !== null && dur > 0) {
+    offset = Math.floor((dep + dur) / 1440);
+  } else if (dep !== null && arr !== null && arr < dep) {
+    offset = 1;
+  }
+  // Red-eye: departs late evening / overnight and lands the next day, or a
+  // long-haul that flies through the night.
+  var overnight = offset >= 1 && dep !== null && (dep >= 18 * 60 || dep <= 5 * 60);
+  return { day_offset: offset, overnight: overnight };
+}
+
 function scoreFlights(response, priorityMode, maxBudget) {
   var flights = response.flights;
   if (flights.length === 0) return response;
   var prices = flights.map(function(f) { return f.price; }).filter(function(p) { return p > 0; });
   var durs = flights.map(function(f) { return f.total_duration_minutes; }).filter(function(d) { return d > 0; });
   var stopsArr = flights.map(function(f) { return f.stops; });
+  var co2s = flights.map(function(f) { return f.co2_kg; }).filter(function(c) { return typeof c === 'number' && c > 0; });
   var minP = Math.min.apply(null, prices), maxP = Math.max.apply(null, prices);
   var minD = Math.min.apply(null, durs), maxD = Math.max.apply(null, durs);
   var minS = Math.min.apply(null, stopsArr), maxS = Math.max.apply(null, stopsArr);
+  var minC = co2s.length ? Math.min.apply(null, co2s) : 0;
+  var maxC = co2s.length ? Math.max.apply(null, co2s) : 0;
+  var medP = flightMedian(prices);
+  var medC = flightMedian(co2s);
+  var hasEmissions = co2s.length >= 2 && maxC > minC;
   var confMap = { high: 100, medium: 60, low: 25 };
+
+  // Weighted factors. Emissions only participate when we have comparable
+  // data for several flights; otherwise their weight folds back into price.
+  var W = hasEmissions
+    ? { price: 0.34, dur: 0.22, stops: 0.13, budget: 0.08, conf: 0.08, co2: 0.15 }
+    : { price: 0.45, dur: 0.25, stops: 0.13, budget: 0.09, conf: 0.08, co2: 0 };
+
   flights.forEach(function(f) {
     var ps = f.price > 0 ? flightNorm100(f.price, minP, maxP) : 50;
     var ds = f.total_duration_minutes > 0 ? flightNorm100(f.total_duration_minutes, minD, maxD) : 50;
     var ss = flightNorm100(f.stops, minS, maxS);
+    var es = (hasEmissions && typeof f.co2_kg === 'number' && f.co2_kg > 0) ? flightNorm100(f.co2_kg, minC, maxC) : 50;
     var bs = 50;
     if (maxBudget && maxBudget > 0) {
       bs = f.price <= maxBudget ? 100 : Math.max(0, 100 - ((f.price - maxBudget) / maxBudget) * 200);
     }
     var cs = confMap[f.confidence] || 10;
-    f.score = Math.round(ps * 0.4 + ds * 0.25 + ss * 0.15 + bs * 0.1 + cs * 0.1);
+    f.score = Math.round(ps * W.price + ds * W.dur + ss * W.stops + bs * W.budget + cs * W.conf + es * W.co2);
     f.is_under_budget = maxBudget ? f.price <= maxBudget : true;
+
+    // Emissions level relative to the result set's median.
+    if (typeof f.co2_kg === 'number' && f.co2_kg > 0 && medC > 0) {
+      f.emissions_level = f.co2_kg <= medC * 0.88 ? 'low' : (f.co2_kg >= medC * 1.12 ? 'high' : 'typical');
+    } else {
+      f.emissions_level = 'unknown';
+    }
+
+    // Deal quality vs the median fare (Kayak/Hopper-style read).
+    if (f.price > 0 && medP > 0) {
+      f.deal_quality = f.price <= medP * 0.82 ? 'great'
+        : f.price <= medP * 0.96 ? 'good'
+        : f.price <= medP * 1.18 ? 'typical' : 'high';
+    } else {
+      f.deal_quality = 'unknown';
+    }
+
+    var shape = flightDayShape(f);
+    f.day_offset = shape.day_offset;
+    f.overnight = shape.overnight;
     f.badges = [];
   });
   var cheapest = flights.reduce(function(a, b) { return a.price > 0 && (b.price <= 0 || a.price < b.price) ? a : b; });
   var fastest = flights.reduce(function(a, b) { return a.total_duration_minutes > 0 && (b.total_duration_minutes <= 0 || a.total_duration_minutes < b.total_duration_minutes) ? a : b; });
   var best = flights.reduce(function(a, b) { return a.score >= b.score ? a : b; });
+  var greenest = co2s.length ? flights.reduce(function(a, b) {
+    var av = typeof a.co2_kg === 'number' && a.co2_kg > 0 ? a.co2_kg : Infinity;
+    var bv = typeof b.co2_kg === 'number' && b.co2_kg > 0 ? b.co2_kg : Infinity;
+    return av <= bv ? a : b;
+  }) : null;
   var underBudget = flights.filter(function(f) { return f.is_under_budget; });
   var bestUB = underBudget.length > 0 ? underBudget.reduce(function(a, b) { return a.score >= b.score ? a : b; }) : null;
   function addFlightBadge(id, badge) {
@@ -771,6 +859,11 @@ function scoreFlights(response, priorityMode, maxBudget) {
   addFlightBadge(best.id, 'Best Value');
   if (bestUB) addFlightBadge(bestUB.id, 'Under Budget');
   flights.filter(function(f) { return f.stops === 0; }).forEach(function(f) { addFlightBadge(f.id, 'Nonstop'); });
+  // "Great Deal" for fares meaningfully below the median (only meaningful with a few quotes).
+  if (flights.length >= 3) {
+    flights.filter(function(f) { return f.deal_quality === 'great'; }).forEach(function(f) { addFlightBadge(f.id, 'Great Deal'); });
+  }
+  if (hasEmissions && greenest) addFlightBadge(greenest.id, 'Low CO2');
   var sorted;
   switch (priorityMode) {
     case 'cheapest': sorted = flights.slice().sort(function(a, b) { return a.price - b.price; }); break;
@@ -781,6 +874,18 @@ function scoreFlights(response, priorityMode, maxBudget) {
       break;
     default: sorted = flights.slice().sort(function(a, b) { return b.score - a.score; });
   }
+  // Price-insights summary (Google-Flights-style low / median / high range).
+  response.price_insights = {
+    currency: flights[0] ? flights[0].currency : '',
+    low: prices.length ? Math.round(minP) : 0,
+    median: prices.length ? Math.round(medP) : 0,
+    high: prices.length ? Math.round(maxP) : 0,
+    cheapest_deal_quality: cheapest.deal_quality || 'unknown',
+    co2_low: co2s.length ? Math.round(minC) : 0,
+    co2_median: co2s.length ? Math.round(medC) : 0,
+    co2_high: co2s.length ? Math.round(maxC) : 0,
+    greenest_flight_id: greenest ? greenest.id : '',
+  };
   var rec = response.recommendation;
   rec.cheapest_flight_id = cheapest.id;
   rec.fastest_flight_id = fastest.id;
