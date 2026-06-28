@@ -152,19 +152,43 @@ flight-search/
 }
 ```
 
+## Features
+
+SkyFare brings the signature tools of the best 2026 flight-search sites into one clean view:
+
+- **Carbon emissions** — per-passenger CO₂ estimate per flight, a `low`/`typical`/`high`
+  level vs. the median, a **Low CO2** badge for the greenest option, an *Emissions* sort,
+  and a *Lower emissions only* filter (Google Flights).
+- **Deal quality** — each fare is tagged *Great deal* / *Good price* / *Typical* / *Above
+  typical* relative to the result-set median, with a **Great Deal** badge (Kayak/Hopper).
+- **Baggage & fare transparency** — fare brand (with Basic-Economy highlighting), carry-on
+  and checked-bag inclusion, and refundability (Momondo Fee Assistant).
+- **Self-transfer warnings** — flags virtual-interline / separate-ticket itineraries where a
+  missed connection isn't protected (Kiwi-style caution).
+- **Arrival +1 day & red-eye** indicators derived from times and duration.
+- **Price insights bar** — Google-style low / median / high range with the cheapest fare's
+  deal quality and the CO₂ range.
+- **Rich filters** — sort, stops, departure time-of-day, max duration, max price, airlines,
+  carry-on, and lower-emissions (Kayak's strong filter set).
+- **Best time to book** — advance-purchase + seasonality engine merged with the AI's live
+  price read.
+- **Discovery** — recent searches (saved locally) and popular-route quick-picks.
+
 ## Scoring Logic
 
-Each flight is scored 0–100 based on weighted factors:
+Each flight is scored 0–100 based on weighted factors. When comparable emissions data is
+available across results, emissions participate in the score and the other weights adjust:
 
-| Factor     | Weight |
-| ---------- | ------ |
-| Price      | 40%    |
-| Duration   | 25%    |
-| Stops      | 15%    |
-| Budget fit | 10%    |
-| Confidence | 10%    |
+| Factor     | Weight (with emissions) | Weight (no emissions) |
+| ---------- | ----------------------- | --------------------- |
+| Price      | 34%                     | 45%                   |
+| Duration   | 22%                     | 25%                   |
+| Stops      | 13%                     | 13%                   |
+| Emissions  | 15%                     | —                     |
+| Budget fit | 8%                      | 9%                    |
+| Confidence | 8%                      | 8%                    |
 
-Results are sorted by the selected priority mode: **Best Balance** (by score), **Cheapest** (by price), **Fastest** (by duration), or **Best Under Budget** (budget-first, then score).
+Results are sorted by the selected priority mode: **Best Balance** (by score), **Cheapest** (by price), **Fastest** (by duration), or **Best Under Budget** (budget-first, then score). The results list can additionally be re-sorted and filtered client-side (including by emissions).
 
 ## Security
 

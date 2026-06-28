@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import type { Flight } from "@/types/flights";
 
 interface Props {
@@ -13,6 +14,14 @@ const BADGE_STYLES: Record<string, string> = {
   "Best Value": "bg-blue-100 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/30",
   "Under Budget": "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30",
   Nonstop: "bg-amber-100 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/30",
+  "Low CO2": "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30",
+  "Great Deal": "bg-green-100 dark:bg-green-500/15 text-green-700 dark:text-green-300 border-green-200 dark:border-green-500/30",
+};
+
+const DEAL_TAG_STYLES: Record<string, { cls: string; label: string }> = {
+  great: { cls: "bg-green-100 dark:bg-green-500/15 text-green-700 dark:text-green-300", label: "Great deal" },
+  good: { cls: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300", label: "Good price" },
+  high: { cls: "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-300", label: "Above typical" },
 };
 
 function formatDuration(minutes: number): string {
@@ -50,6 +59,95 @@ function confidenceIndicator(confidence: string) {
       <span className={`text-xs ${level.color} ml-0.5`}>{level.label}</span>
     </div>
   );
+}
+
+function renderTags(flight: Flight) {
+  const tags: ReactNode[] = [];
+  const baseChip =
+    "inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-md";
+
+  const deal = DEAL_TAG_STYLES[flight.deal_quality];
+  if (deal) {
+    tags.push(
+      <span key="deal" className={`${baseChip} ${deal.cls}`}>
+        {deal.label}
+      </span>
+    );
+  }
+
+  if (typeof flight.co2_kg === "number" && flight.co2_kg > 0) {
+    const cls =
+      flight.emissions_level === "low"
+        ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+        : flight.emissions_level === "high"
+          ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-300"
+          : "bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400";
+    const suffix =
+      flight.emissions_level === "low"
+        ? " · less CO₂"
+        : flight.emissions_level === "high"
+          ? " · more CO₂"
+          : "";
+    tags.push(
+      <span key="co2" className={`${baseChip} ${cls}`}>
+        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M11 20A7 7 0 019.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2 21c0-3 1.85-5.36 5.08-6" />
+        </svg>
+        {flight.co2_kg.toLocaleString()} kg CO₂{suffix}
+      </span>
+    );
+  }
+
+  if (flight.fare_brand) {
+    const isBasic = /basic|light|saver|economy basic/i.test(flight.fare_brand);
+    tags.push(
+      <span
+        key="fare"
+        className={`${baseChip} ${
+          isBasic
+            ? "bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-300"
+            : "bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400"
+        }`}
+      >
+        {flight.fare_brand}
+      </span>
+    );
+  }
+
+  if (flight.carry_on_included !== null) {
+    if (flight.carry_on_included) {
+      let lbl = "Carry-on included";
+      if (
+        typeof flight.checked_bags_included === "number" &&
+        flight.checked_bags_included > 0
+      ) {
+        lbl += ` + ${flight.checked_bags_included} checked`;
+      }
+      tags.push(
+        <span key="bag" className={`${baseChip} bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400`}>
+          {lbl}
+        </span>
+      );
+    } else {
+      tags.push(
+        <span key="bag" className={`${baseChip} bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-300`}>
+          No carry-on
+        </span>
+      );
+    }
+  }
+
+  if (flight.refundable === true) {
+    tags.push(
+      <span key="ref" className={`${baseChip} bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400`}>
+        Refundable
+      </span>
+    );
+  }
+
+  if (tags.length === 0) return null;
+  return <div className="mt-3 flex flex-wrap items-center gap-1.5">{tags}</div>;
 }
 
 export default function FlightResultCard({ flight, isHighlighted }: Props) {
@@ -115,8 +213,16 @@ export default function FlightResultCard({ flight, isHighlighted }: Props) {
             </div>
 
             <div className="flex-1 flex flex-col items-center px-2">
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">
+              <p className="text-xs text-gray-400 dark:text-gray-500 mb-1 flex items-center gap-1">
                 {formatDuration(flight.total_duration_minutes)}
+                {flight.overnight && (
+                  <span className="inline-flex items-center gap-0.5 text-violet-500 dark:text-violet-400 font-medium">
+                    <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                    Red-eye
+                  </span>
+                )}
               </p>
               <div className="w-full flex items-center gap-1">
                 <div className="h-px flex-1 bg-gray-300 dark:bg-gray-600" />
@@ -144,12 +250,34 @@ export default function FlightResultCard({ flight, isHighlighted }: Props) {
             <div className="text-center">
               <p className="text-lg font-semibold text-gray-900 dark:text-white leading-tight">
                 {formatTime(flight.arrival_time)}
+                {flight.day_offset > 0 && (
+                  <sup className="text-[10px] font-bold text-red-500 ml-0.5">
+                    +{flight.day_offset}
+                  </sup>
+                )}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                 {flight.arrival_airport}
               </p>
             </div>
           </div>
+
+          {/* Deal / emissions / baggage tags */}
+          {renderTags(flight)}
+
+          {/* Self-transfer warning */}
+          {flight.self_transfer && (
+            <div className="mt-2 flex gap-2 items-start rounded-lg bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 px-3 py-2 text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+              <svg className="w-3.5 h-3.5 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              </svg>
+              <span>
+                <strong>Self-transfer itinerary.</strong> Separate tickets — you may need
+                to re-check bags and a missed connection is not protected. Verify
+                before booking.
+              </span>
+            </div>
+          )}
 
           {/* Layovers */}
           {flight.layovers.length > 0 && (
