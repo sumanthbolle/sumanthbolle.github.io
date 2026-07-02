@@ -71,12 +71,13 @@ export function scoreAndRankFlights(
     .map((f) => f.co2_kg)
     .filter((c): c is number => typeof c === "number" && c > 0);
 
-  const minPrice = Math.min(...prices);
-  const maxPrice = Math.max(...prices);
-  const minDuration = Math.min(...durations);
-  const maxDuration = Math.max(...durations);
-  const minStops = Math.min(...stops);
-  const maxStops = Math.max(...stops);
+  // Guard empty arrays: Math.min/max of [] give ±Infinity → NaN scores.
+  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const maxPrice = prices.length ? Math.max(...prices) : 0;
+  const minDuration = durations.length ? Math.min(...durations) : 0;
+  const maxDuration = durations.length ? Math.max(...durations) : 0;
+  const minStops = stops.length ? Math.min(...stops) : 0;
+  const maxStops = stops.length ? Math.max(...stops) : 0;
   const minCo2 = co2s.length ? Math.min(...co2s) : 0;
   const maxCo2 = co2s.length ? Math.max(...co2s) : 0;
   const medPrice = median(prices);
@@ -168,15 +169,13 @@ export function scoreAndRankFlights(
     return updatedFlight;
   });
 
-  const cheapest = scored.reduce((a, b) =>
-    a.price > 0 && (b.price <= 0 || a.price < b.price) ? a : b
+  const pricedFlights = scored.filter((f) => f.price > 0);
+  const timedFlights = scored.filter((f) => f.total_duration_minutes > 0);
+  const cheapest = (pricedFlights.length ? pricedFlights : scored).reduce(
+    (a, b) => (a.price <= b.price ? a : b)
   );
-  const fastest = scored.reduce((a, b) =>
-    a.total_duration_minutes > 0 &&
-    (b.total_duration_minutes <= 0 ||
-      a.total_duration_minutes < b.total_duration_minutes)
-      ? a
-      : b
+  const fastest = (timedFlights.length ? timedFlights : scored).reduce((a, b) =>
+    a.total_duration_minutes <= b.total_duration_minutes ? a : b
   );
   const bestScore = scored.reduce((a, b) => (a.score >= b.score ? a : b));
   const greenest = co2s.length

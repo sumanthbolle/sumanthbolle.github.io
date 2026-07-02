@@ -34,6 +34,13 @@ function formatDuration(minutes: number): string {
 
 function formatTime(timeStr: string): string {
   if (!timeStr) return "--:--";
+  // Handle 12-hour input so "2:30 PM" renders as 14:30, not 02:30.
+  const ampm = timeStr.match(/(\d{1,2}):(\d{2})\s*([AaPp][Mm])/);
+  if (ampm) {
+    let h = parseInt(ampm[1], 10) % 12;
+    if (/[Pp]/.test(ampm[3])) h += 12;
+    return `${String(h).padStart(2, "0")}:${ampm[2]}`;
+  }
   const match = timeStr.match(/(\d{1,2}):(\d{2})/);
   if (match) return `${match[1].padStart(2, "0")}:${match[2]}`;
   return timeStr;
