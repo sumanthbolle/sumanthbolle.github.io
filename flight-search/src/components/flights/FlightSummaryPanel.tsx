@@ -61,10 +61,12 @@ export default function FlightSummaryPanel({ data }: Props) {
     recommendation.best_under_budget_flight_id
   );
 
+  const pricedFlights = flights.filter((f) => f.price > 0);
   const avgPrice =
-    flights.length > 0
+    pricedFlights.length > 0
       ? Math.round(
-          flights.reduce((sum, f) => sum + f.price, 0) / flights.length
+          pricedFlights.reduce((sum, f) => sum + f.price, 0) /
+            pricedFlights.length
         )
       : 0;
 

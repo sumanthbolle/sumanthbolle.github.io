@@ -603,9 +603,9 @@
       highlighted = -1;
       list.innerHTML = items.map(function(a, i) {
         return '<div class="ac-item" data-idx="' + i + '">'
-          + '<span class="ac-code">' + a.code + '</span>'
-          + '<div class="ac-info"><div class="ac-city">' + a.city + ' — ' + a.name + '</div>'
-          + '<div class="ac-country">' + a.country + '</div></div></div>';
+          + '<span class="ac-code">' + escHtml(a.code) + '</span>'
+          + '<div class="ac-info"><div class="ac-city">' + escHtml(a.city) + ' — ' + escHtml(a.name) + '</div>'
+          + '<div class="ac-country">' + escHtml(a.country) + '</div></div></div>';
       }).join('');
       list.classList.add('open');
       list.querySelectorAll('.ac-item').forEach(function(el) {
@@ -708,8 +708,15 @@
   initAutocomplete('destination', 'acDest');
 
     /* ─── Date defaults ─── */
-  const today = new Date().toISOString().split('T')[0];
+  const today = localTodayISO();
   $('#departureDate').min = today;
+  $('#returnDate').min = today;
+  // Keep the return date on/after the departure date.
+  $('#departureDate').addEventListener('change', function() {
+    const dep = this.value || today;
+    $('#returnDate').min = dep;
+    if ($('#returnDate').value && $('#returnDate').value < dep) $('#returnDate').value = dep;
+  });
 
   /* ─── Trip type ─── */
   $$('.trip-btn').forEach(btn => {
@@ -760,6 +767,11 @@
 
     if (!params.origin || !params.destination || !params.departureDate) return;
 
+    if (params.tripType === 'round-trip') {
+      if (!params.returnDate) { renderError('Please choose a return date, or switch to One Way.'); return; }
+      if (params.returnDate < params.departureDate) { renderError('Your return date is before your departure date. Please fix the dates.'); return; }
+    }
+
     lastParams = params;
     filters = { sortBy: 'score', airlines: [], maxStops: null, depTime: 'any', maxDuration: null, maxPrice: null, carryOnOnly: false, lowEmissionsOnly: false };
     moreFiltersOpen = false;
@@ -772,11 +784,11 @@
     $('#destination').value = to;
     if (!$('#departureDate').value) {
       var d = new Date(); d.setDate(d.getDate() + 21);
-      $('#departureDate').value = d.toISOString().split('T')[0];
+      $('#departureDate').value = localISO(d);
     }
     if (tripType === 'round-trip' && !$('#returnDate').value) {
-      var r = new Date($('#departureDate').value); r.setDate(r.getDate() + 7);
-      $('#returnDate').value = r.toISOString().split('T')[0];
+      var r = new Date($('#departureDate').value + 'T00:00:00'); r.setDate(r.getDate() + 7);
+      $('#returnDate').value = localISO(r);
     }
     document.getElementById('searchCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
     if (typeof $('#searchForm').requestSubmit === 'function') $('#searchForm').requestSubmit();
@@ -922,7 +934,8 @@
     const rec = d.recommendation;
     const find = id => d.flights.find(f => f.id === id);
     const airlines = [...new Set(d.flights.map(f => f.airline))].sort();
-    const avgPrice = d.flights.length > 0 ? Math.round(d.flights.reduce((s, f) => s + f.price, 0) / d.flights.length) : 0;
+    const pricedFlights = d.flights.filter(f => f.price > 0);
+    const avgPrice = pricedFlights.length > 0 ? Math.round(pricedFlights.reduce((s, f) => s + f.price, 0) / pricedFlights.length) : 0;
 
     let html = '<div class="fade-in">';
 
@@ -1051,7 +1064,7 @@
   }
 
   function resetFilters() {
-    filters = { sortBy: filters.sortBy, airlines: [], maxStops: null, depTime: 'any', maxDuration: null, maxPrice: null, carryOnOnly: false, lowEmissionsOnly: false };
+    filters = { sortBy: 'score', airlines: [], maxStops: null, depTime: 'any', maxDuration: null, maxPrice: null, carryOnOnly: false, lowEmissionsOnly: false };
     renderResults();
   }
 
@@ -1077,6 +1090,7 @@
     const minPr = prices.length ? Math.min.apply(null, prices) : 0;
     const cur = resultData.search_summary.currency || '';
     const hasEmissions = allFlights.some(f => typeof f.co2_kg === 'number' && f.co2_kg > 0);
+    const hasLowEmissions = allFlights.some(f => f.emissions_level === 'low');
     const hasBaggage = allFlights.some(f => f.carry_on_included !== null && f.carry_on_included !== undefined);
 
     let h = '<div class="more-filters show">';
@@ -1105,10 +1119,10 @@
     }
 
     /* Toggles */
-    if (hasBaggage || hasEmissions) {
+    if (hasBaggage || hasLowEmissions) {
       h += '<div class="mf-group"><span class="mf-label">Quick filters</span><div class="mf-toggles">';
       if (hasBaggage) h += '<label class="mf-check"><input type="checkbox" id="mfCarryOn"' + (filters.carryOnOnly ? ' checked' : '') + '> Carry-on bag included</label>';
-      if (hasEmissions) h += '<label class="mf-check"><input type="checkbox" id="mfLowEmissions"' + (filters.lowEmissionsOnly ? ' checked' : '') + '> Lower-emission flights only</label>';
+      if (hasLowEmissions) h += '<label class="mf-check"><input type="checkbox" id="mfLowEmissions"' + (filters.lowEmissionsOnly ? ' checked' : '') + '> Lower-emission flights only</label>';
       h += '</div></div>';
     }
 
@@ -1364,8 +1378,8 @@
     if (filters.carryOnOnly) r = r.filter(f => f.carry_on_included === true);
     if (filters.lowEmissionsOnly) r = r.filter(f => f.emissions_level === 'low');
     switch (filters.sortBy) {
-      case 'price': r.sort((a, b) => a.price - b.price); break;
-      case 'duration': r.sort((a, b) => a.total_duration_minutes - b.total_duration_minutes); break;
+      case 'price': r.sort((a, b) => (a.price > 0 ? a.price : Infinity) - (b.price > 0 ? b.price : Infinity)); break;
+      case 'duration': r.sort((a, b) => (a.total_duration_minutes > 0 ? a.total_duration_minutes : Infinity) - (b.total_duration_minutes > 0 ? b.total_duration_minutes : Infinity)); break;
       case 'departure': r.sort((a, b) => (timeToMin(a.departure_time) ?? 9999) - (timeToMin(b.departure_time) ?? 9999)); break;
       case 'emissions': r.sort((a, b) => (a.co2_kg || Infinity) - (b.co2_kg || Infinity)); break;
       default: r.sort((a, b) => b.score - a.score);
@@ -1374,6 +1388,11 @@
   }
 
   /* ─── Helpers ─── */
+  function localISO(d) {
+    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+  }
+  function localTodayISO() { return localISO(new Date()); }
   function fmtDur(m) {
     if (!m || m <= 0) return 'N/A';
     const h = Math.floor(m / 60), r = m % 60;
@@ -1381,8 +1400,11 @@
   }
   function fmtTime(t) {
     if (!t) return '--:--';
-    const m = t.match(/(\d{1,2}):(\d{2})/);
-    return m ? m[1].padStart(2, '0') + ':' + m[2] : t;
+    // Convert to 24h so "2:30 PM" renders as 14:30, not 02:30.
+    const mins = timeToMin(t);
+    if (mins === null) return t;
+    const h = Math.floor(mins / 60) % 24, m = mins % 60;
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
   }
   function confHtml(c) {
     const levels = { high: [3, 'High'], medium: [2, 'Medium'], low: [1, 'Low'] };

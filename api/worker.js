@@ -685,6 +685,33 @@ function extractFlightJson(text) {
   return text.trim();
 }
 
+/* Coerce a possibly-string numeric value; fall back to `fallback` if not finite. */
+function flightNum(v, fallback) {
+  if (typeof v === 'number') return Number.isFinite(v) ? v : fallback;
+  if (typeof v === 'string') {
+    var n = parseFloat(v.replace(/[^0-9.\-]/g, ''));
+    return Number.isFinite(n) ? n : fallback;
+  }
+  return fallback;
+}
+
+/* Like flightNum but returns null (not a default) when there is no usable value. */
+function flightNumOrNull(v) {
+  if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+  if (typeof v === 'string') {
+    var n = parseFloat(v.replace(/[^0-9.\-]/g, ''));
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
+/* Enforce the user's max-stops preference in case the model ignores it. */
+function enforceMaxStops(flights, maxStops) {
+  if (maxStops === 'nonstop') return flights.filter(function(f) { return f.stops === 0; });
+  if (maxStops === '1') return flights.filter(function(f) { return f.stops <= 1; });
+  return flights;
+}
+
 function normalizeFlightResponse(raw, params) {
   if (!raw.search_summary) {
     raw.search_summary = {
@@ -702,37 +729,44 @@ function normalizeFlightResponse(raw, params) {
   if (!Array.isArray(raw.flights)) raw.flights = [];
   if (!Array.isArray(raw.warnings)) raw.warnings = [];
   raw.flights = raw.flights.map(function(f, i) {
+    // Models frequently return numbers as strings ("450"); coerce safely so
+    // scoring, deal quality, budget checks and filters don't silently break.
+    var price = flightNum(f.price, 0);
+    var checkedBags = flightNumOrNull(f.checked_bags_included);
+    var co2 = flightNumOrNull(f.co2_kg);
     return {
       id: f.id || 'flight_' + (i + 1),
       airline: f.airline || 'Unknown Airline',
       flight_numbers: Array.isArray(f.flight_numbers) ? f.flight_numbers : [],
       provider: f.provider || '',
-      price: typeof f.price === 'number' ? f.price : 0,
+      price: price,
       currency: f.currency || params.currency,
-      is_under_budget: typeof f.is_under_budget === 'boolean' ? f.is_under_budget : (params.maxBudget ? f.price <= params.maxBudget : true),
+      is_under_budget: typeof f.is_under_budget === 'boolean' ? f.is_under_budget : (params.maxBudget ? price <= params.maxBudget : true),
       departure_airport: f.departure_airport || params.origin,
       arrival_airport: f.arrival_airport || params.destination,
       departure_time: f.departure_time || '',
       arrival_time: f.arrival_time || '',
-      total_duration_minutes: typeof f.total_duration_minutes === 'number' ? f.total_duration_minutes : 0,
-      stops: typeof f.stops === 'number' ? f.stops : 0,
-      layovers: Array.isArray(f.layovers) ? f.layovers : [],
-      co2_kg: typeof f.co2_kg === 'number' && f.co2_kg > 0 ? Math.round(f.co2_kg) : null,
+      total_duration_minutes: flightNum(f.total_duration_minutes, 0),
+      stops: flightNum(f.stops, 0),
+      layovers: Array.isArray(f.layovers) ? f.layovers.map(function(l) {
+        return { airport: (l && l.airport) || '', duration_minutes: flightNum(l && l.duration_minutes, 0) };
+      }) : [],
+      co2_kg: co2 !== null && co2 > 0 ? Math.round(co2) : null,
       fare_brand: typeof f.fare_brand === 'string' ? f.fare_brand.slice(0, 60) : '',
       carry_on_included: typeof f.carry_on_included === 'boolean' ? f.carry_on_included : null,
-      checked_bags_included: typeof f.checked_bags_included === 'number' ? Math.max(0, Math.round(f.checked_bags_included)) : null,
+      checked_bags_included: checkedBags !== null ? Math.max(0, Math.round(checkedBags)) : null,
       refundable: typeof f.refundable === 'boolean' ? f.refundable : null,
       self_transfer: f.self_transfer === true,
       emissions_level: 'unknown',
       deal_quality: 'unknown',
       day_offset: 0,
       overnight: false,
-      booking_url: f.booking_url || '',
-      source_url: f.source_url || '',
+      booking_url: safeUrl(f.booking_url) || '',
+      source_url: safeUrl(f.source_url) || '',
       source_name: f.source_name || '',
       confidence: ['high', 'medium', 'low'].indexOf(f.confidence) >= 0 ? f.confidence : 'low',
       notes: f.notes || '',
-      score: typeof f.score === 'number' ? f.score : 0,
+      score: flightNum(f.score, 0),
       badges: Array.isArray(f.badges) ? f.badges : [],
     };
   });
@@ -790,9 +824,11 @@ function scoreFlights(response, priorityMode, maxBudget) {
   var durs = flights.map(function(f) { return f.total_duration_minutes; }).filter(function(d) { return d > 0; });
   var stopsArr = flights.map(function(f) { return f.stops; });
   var co2s = flights.map(function(f) { return f.co2_kg; }).filter(function(c) { return typeof c === 'number' && c > 0; });
-  var minP = Math.min.apply(null, prices), maxP = Math.max.apply(null, prices);
-  var minD = Math.min.apply(null, durs), maxD = Math.max.apply(null, durs);
-  var minS = Math.min.apply(null, stopsArr), maxS = Math.max.apply(null, stopsArr);
+  // Guard against empty arrays: Math.min/max of [] yield Infinity/-Infinity,
+  // which propagate NaN into every score. Fall back to neutral bounds.
+  var minP = prices.length ? Math.min.apply(null, prices) : 0, maxP = prices.length ? Math.max.apply(null, prices) : 0;
+  var minD = durs.length ? Math.min.apply(null, durs) : 0, maxD = durs.length ? Math.max.apply(null, durs) : 0;
+  var minS = stopsArr.length ? Math.min.apply(null, stopsArr) : 0, maxS = stopsArr.length ? Math.max.apply(null, stopsArr) : 0;
   var minC = co2s.length ? Math.min.apply(null, co2s) : 0;
   var maxC = co2s.length ? Math.max.apply(null, co2s) : 0;
   var medP = flightMedian(prices);
@@ -840,8 +876,12 @@ function scoreFlights(response, priorityMode, maxBudget) {
     f.overnight = shape.overnight;
     f.badges = [];
   });
-  var cheapest = flights.reduce(function(a, b) { return a.price > 0 && (b.price <= 0 || a.price < b.price) ? a : b; });
-  var fastest = flights.reduce(function(a, b) { return a.total_duration_minutes > 0 && (b.total_duration_minutes <= 0 || a.total_duration_minutes < b.total_duration_minutes) ? a : b; });
+  // Only consider flights with a usable value; the previous reduce could
+  // "walk off" to the last flight when no flight had a valid price/duration.
+  var pricedFlights = flights.filter(function(f) { return f.price > 0; });
+  var timedFlights = flights.filter(function(f) { return f.total_duration_minutes > 0; });
+  var cheapest = (pricedFlights.length ? pricedFlights : flights).reduce(function(a, b) { return a.price <= b.price ? a : b; });
+  var fastest = (timedFlights.length ? timedFlights : flights).reduce(function(a, b) { return a.total_duration_minutes <= b.total_duration_minutes ? a : b; });
   var best = flights.reduce(function(a, b) { return a.score >= b.score ? a : b; });
   var greenest = co2s.length ? flights.reduce(function(a, b) {
     var av = typeof a.co2_kg === 'number' && a.co2_kg > 0 ? a.co2_kg : Infinity;
@@ -946,6 +986,7 @@ async function handleFlightSearch(request, env, origin) {
     var parsed;
     try { parsed = JSON.parse(jsonStr); } catch (e) { throw new Error('Failed to parse flight data.'); }
     var normalized = normalizeFlightResponse(parsed, p);
+    normalized.flights = enforceMaxStops(normalized.flights, p.maxStops);
     var scored = scoreFlights(normalized, p.priorityMode, p.maxBudget);
     var timing = computeBookingTiming(p);
     scored.booking_advice = mergeBookingAdvice(timing, parsed.booking_advice);

@@ -175,6 +175,7 @@ export async function searchFlightsWithPerplexity(
         ],
         temperature: 0.1,
         max_tokens: 4096,
+        web_search_options: { search_context_size: "high" },
       }),
       signal: controller.signal,
     });
@@ -207,6 +208,36 @@ export async function searchFlightsWithPerplexity(
     return normalizeResponse(parsed, params);
   } finally {
     clearTimeout(timeout);
+  }
+}
+
+/* Coerce possibly-string numeric values that models often return as strings. */
+function num(v: unknown, fallback: number): number {
+  if (typeof v === "number") return Number.isFinite(v) ? v : fallback;
+  if (typeof v === "string") {
+    const n = parseFloat(v.replace(/[^0-9.\-]/g, ""));
+    return Number.isFinite(n) ? n : fallback;
+  }
+  return fallback;
+}
+
+function numOrNull(v: unknown): number | null {
+  if (typeof v === "number") return Number.isFinite(v) ? v : null;
+  if (typeof v === "string") {
+    const n = parseFloat(v.replace(/[^0-9.\-]/g, ""));
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
+/* Only allow http/https links; drop javascript: and other unsafe schemes. */
+function validUrl(v: unknown): string {
+  if (typeof v !== "string" || !v) return "";
+  try {
+    const u = new URL(v);
+    return u.protocol === "http:" || u.protocol === "https:" ? u.toString() : "";
+  } catch {
+    return "";
   }
 }
 
@@ -248,64 +279,66 @@ function normalizeResponse(
     raw.warnings = [];
   }
 
-  raw.flights = raw.flights.map((flight, index) => ({
-    id: flight.id || `flight_${index + 1}`,
-    airline: flight.airline || "Unknown Airline",
-    flight_numbers: Array.isArray(flight.flight_numbers)
-      ? flight.flight_numbers
-      : [],
-    provider: flight.provider || "",
-    price: typeof flight.price === "number" ? flight.price : 0,
-    currency: flight.currency || params.currency,
-    is_under_budget:
-      typeof flight.is_under_budget === "boolean"
-        ? flight.is_under_budget
-        : params.maxBudget
-          ? flight.price <= params.maxBudget
-          : true,
-    departure_airport: flight.departure_airport || params.origin,
-    arrival_airport: flight.arrival_airport || params.destination,
-    departure_time: flight.departure_time || "",
-    arrival_time: flight.arrival_time || "",
-    total_duration_minutes:
-      typeof flight.total_duration_minutes === "number"
-        ? flight.total_duration_minutes
-        : 0,
-    stops: typeof flight.stops === "number" ? flight.stops : 0,
-    layovers: Array.isArray(flight.layovers) ? flight.layovers : [],
-    co2_kg:
-      typeof flight.co2_kg === "number" && flight.co2_kg > 0
-        ? Math.round(flight.co2_kg)
-        : null,
-    fare_brand:
-      typeof flight.fare_brand === "string"
-        ? flight.fare_brand.slice(0, 60)
-        : "",
-    carry_on_included:
-      typeof flight.carry_on_included === "boolean"
-        ? flight.carry_on_included
-        : null,
-    checked_bags_included:
-      typeof flight.checked_bags_included === "number"
-        ? Math.max(0, Math.round(flight.checked_bags_included))
-        : null,
-    refundable:
-      typeof flight.refundable === "boolean" ? flight.refundable : null,
-    self_transfer: flight.self_transfer === true,
-    emissions_level: "unknown",
-    deal_quality: "unknown",
-    day_offset: 0,
-    overnight: false,
-    booking_url: flight.booking_url || "",
-    source_url: flight.source_url || "",
-    source_name: flight.source_name || "",
-    confidence: (["high", "medium", "low"].includes(flight.confidence)
-      ? flight.confidence
-      : "low") as "high" | "medium" | "low",
-    notes: flight.notes || "",
-    score: typeof flight.score === "number" ? flight.score : 0,
-    badges: Array.isArray(flight.badges) ? flight.badges : [],
-  }));
+  raw.flights = raw.flights.map((flight, index) => {
+    const price = num(flight.price, 0);
+    const co2 = numOrNull(flight.co2_kg);
+    const checkedBags = numOrNull(flight.checked_bags_included);
+    return {
+      id: flight.id || `flight_${index + 1}`,
+      airline: flight.airline || "Unknown Airline",
+      flight_numbers: Array.isArray(flight.flight_numbers)
+        ? flight.flight_numbers
+        : [],
+      provider: flight.provider || "",
+      price,
+      currency: flight.currency || params.currency,
+      is_under_budget:
+        typeof flight.is_under_budget === "boolean"
+          ? flight.is_under_budget
+          : params.maxBudget
+            ? price <= params.maxBudget
+            : true,
+      departure_airport: flight.departure_airport || params.origin,
+      arrival_airport: flight.arrival_airport || params.destination,
+      departure_time: flight.departure_time || "",
+      arrival_time: flight.arrival_time || "",
+      total_duration_minutes: num(flight.total_duration_minutes, 0),
+      stops: num(flight.stops, 0),
+      layovers: Array.isArray(flight.layovers)
+        ? flight.layovers.map((l) => ({
+            airport: l?.airport || "",
+            duration_minutes: num(l?.duration_minutes, 0),
+          }))
+        : [],
+      co2_kg: co2 !== null && co2 > 0 ? Math.round(co2) : null,
+      fare_brand:
+        typeof flight.fare_brand === "string"
+          ? flight.fare_brand.slice(0, 60)
+          : "",
+      carry_on_included:
+        typeof flight.carry_on_included === "boolean"
+          ? flight.carry_on_included
+          : null,
+      checked_bags_included:
+        checkedBags !== null ? Math.max(0, Math.round(checkedBags)) : null,
+      refundable:
+        typeof flight.refundable === "boolean" ? flight.refundable : null,
+      self_transfer: flight.self_transfer === true,
+      emissions_level: "unknown" as const,
+      deal_quality: "unknown" as const,
+      day_offset: 0,
+      overnight: false,
+      booking_url: validUrl(flight.booking_url),
+      source_url: validUrl(flight.source_url),
+      source_name: flight.source_name || "",
+      confidence: (["high", "medium", "low"].includes(flight.confidence)
+        ? flight.confidence
+        : "low") as "high" | "medium" | "low",
+      notes: flight.notes || "",
+      score: num(flight.score, 0),
+      badges: Array.isArray(flight.badges) ? flight.badges : [],
+    };
+  });
 
   return raw;
 }

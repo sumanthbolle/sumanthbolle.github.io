@@ -162,6 +162,14 @@ export async function POST(request: NextRequest) {
 
     const searchParams = validation.data;
     const rawResponse = await searchFlightsWithPerplexity(searchParams);
+
+    // Enforce the user's max-stops preference in case the model ignores it.
+    if (searchParams.maxStops === "nonstop") {
+      rawResponse.flights = rawResponse.flights.filter((f) => f.stops === 0);
+    } else if (searchParams.maxStops === "1") {
+      rawResponse.flights = rawResponse.flights.filter((f) => f.stops <= 1);
+    }
+
     const scoredResponse = scoreAndRankFlights(
       rawResponse,
       searchParams.priorityMode,

@@ -74,10 +74,18 @@ function applyFilters(flights: Flight[], filters: FilterState): Flight[] {
 
   switch (filters.sortBy) {
     case "price":
-      result.sort((a, b) => a.price - b.price);
+      result.sort(
+        (a, b) =>
+          (a.price > 0 ? a.price : Infinity) -
+          (b.price > 0 ? b.price : Infinity)
+      );
       break;
     case "duration":
-      result.sort((a, b) => a.total_duration_minutes - b.total_duration_minutes);
+      result.sort(
+        (a, b) =>
+          (a.total_duration_minutes > 0 ? a.total_duration_minutes : Infinity) -
+          (b.total_duration_minutes > 0 ? b.total_duration_minutes : Infinity)
+      );
       break;
     case "departure":
       result.sort(
