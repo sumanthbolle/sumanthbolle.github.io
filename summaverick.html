@@ -1163,6 +1163,159 @@
 
     .footer-space { height: calc(var(--composer-h) + 8px); }
 
+    /* ─── Chat history drawer (Copilot / ChatGPT style) ─── */
+    .icon-btn {
+      height: 32px;
+      width: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease, border-color 180ms ease;
+    }
+
+    .icon-btn:hover { transform: translateY(-1px); color: var(--text); }
+    .icon-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 55;
+      background: rgba(0, 0, 0, 0.42);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 260ms var(--ease);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 60;
+      height: 100%;
+      width: 320px;
+      max-width: 86vw;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-2);
+      border-right: 1px solid var(--border);
+      box-shadow: var(--shadow-xl);
+      transform: translateX(-102%);
+      transition: transform 320ms var(--ease);
+    }
+
+    .drawer.open { transform: translateX(0); }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .drawer-title { font-size: 15px; font-weight: 620; letter-spacing: -0.01em; }
+
+    .drawer-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 10px 16px;
+    }
+
+    .chat-list { display: flex; flex-direction: column; gap: 4px; }
+
+    .chat-item {
+      position: relative;
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 11px 40px 11px 13px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+
+    .chat-item:hover { background: var(--surface); }
+    .chat-item.active { background: var(--surface-2); border-color: var(--border-strong); }
+
+    .chat-item-title {
+      font-size: 13.5px;
+      line-height: 1.35;
+      font-weight: 550;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-item-time { margin-top: 3px; font-size: 11px; color: var(--text-faint); }
+
+    .chat-del {
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      border: 0;
+      background: transparent;
+      color: var(--text-faint);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      transition: opacity 150ms ease, background 150ms ease, color 150ms ease;
+    }
+
+    .chat-item:hover .chat-del,
+    .chat-item:focus-within .chat-del { opacity: 1; }
+    .chat-del:hover { background: var(--surface-3); color: var(--rgb-red); }
+    .chat-del svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    .chat-empty {
+      padding: 34px 16px;
+      text-align: center;
+      color: var(--text-faint);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .drawer-foot {
+      border-top: 1px solid var(--border);
+      padding: 12px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .clear-all {
+      width: 100%;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+    }
+
+    .clear-all:hover { color: var(--rgb-red); border-color: var(--border-strong); }
+    .drawer-note { font-size: 11px; color: var(--text-faint); line-height: 1.5; text-align: center; }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
@@ -1268,6 +1421,10 @@
             <button class="theme-btn" type="button" data-theme="light">Light</button>
             <button class="theme-btn active" type="button" data-theme="dark">Dark</button>
           </div>
+
+          <button class="icon-btn" id="historyBtn" type="button" aria-label="Chat history" title="Chat history" aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-8 5"></path><path d="M3 4v4h4"></path><path d="M12 8v4l3 2"></path></svg>
+          </button>
 
           <button class="new-btn" id="newChatBtn" type="button" aria-label="New conversation" title="New conversation">
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -1376,6 +1533,23 @@
         </div>
       </div>
     </div>
+
+    <div class="drawer-overlay" id="drawerOverlay" hidden></div>
+    <aside class="drawer" id="chatDrawer" aria-label="Chat history" aria-hidden="true">
+      <div class="drawer-head">
+        <div class="drawer-title">Chats</div>
+        <button class="icon-btn" id="drawerClose" type="button" aria-label="Close history">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="drawer-body">
+        <div class="chat-list" id="chatList"></div>
+      </div>
+      <div class="drawer-foot">
+        <button class="clear-all" id="clearAllBtn" type="button">Clear all chats</button>
+        <div class="drawer-note">Saved on this device only. Clears when you clear your browser data.</div>
+      </div>
+    </aside>
   </div>
 
   <script>
@@ -1387,6 +1561,8 @@
       const ENDPOINT = window.SB_AI_SEARCH_ENDPOINT;
       const MAX_CONTEXT_MESSAGES = 10;
       const THEME_KEY = 'summaverick-theme';
+      const CHATS_KEY = 'summaverick-chats';
+      const MAX_CHATS = 60;
 
       const PHRASES = [
         'Ask anything',
@@ -1437,6 +1613,8 @@
 
       const state = {
         history: [],
+        messages: [],
+        currentId: null,
         loading: false,
         mode: 'quick',
         loadingTimer: null,
@@ -1463,6 +1641,12 @@
       const heroPhrase = document.getElementById('heroPhrase');
       const composerPhrase = document.getElementById('composerPhrase');
       const themeButtons = Array.from(document.querySelectorAll('.theme-btn'));
+      const historyBtn = document.getElementById('historyBtn');
+      const chatDrawer = document.getElementById('chatDrawer');
+      const drawerOverlay = document.getElementById('drawerOverlay');
+      const chatList = document.getElementById('chatList');
+      const drawerClose = document.getElementById('drawerClose');
+      const clearAllBtn = document.getElementById('clearAllBtn');
 
       function init() {
         applyInitialTheme();
@@ -1475,6 +1659,7 @@
         setMode('quick');
         loadTrending();
         startPhraseCycle();
+        renderChatList();
       }
 
       function bindEvents() {
@@ -1532,6 +1717,26 @@
         });
 
         newChatBtn.addEventListener('click', resetChat);
+
+        historyBtn.addEventListener('click', toggleDrawer);
+        drawerClose.addEventListener('click', closeDrawer);
+        drawerOverlay.addEventListener('click', closeDrawer);
+        clearAllBtn.addEventListener('click', clearAllChats);
+
+        chatList.addEventListener('click', function (e) {
+          const del = e.target.closest('[data-del]');
+          if (del) {
+            e.stopPropagation();
+            deleteConversation(del.getAttribute('data-del'));
+            return;
+          }
+          const item = e.target.closest('[data-open]');
+          if (item) loadConversation(item.getAttribute('data-open'));
+        });
+
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && chatDrawer.classList.contains('open')) closeDrawer();
+        });
 
         themeButtons.forEach(function (btn) {
           btn.addEventListener('click', function () {
@@ -1613,8 +1818,11 @@
       }
 
       function resetChat() {
+        persistCurrent();
         clearLoadingCycle();
         state.history = [];
+        state.messages = [];
+        state.currentId = null;
         state.loading = false;
         chatArea.innerHTML = '';
         appShell.classList.remove('app-active');
@@ -1624,8 +1832,177 @@
         updateComposerState();
         resizeTextarea();
         updateSendState();
+        renderChatList();
+        closeDrawer();
         loadTrending();
         window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      /* ─── Chat history (persisted in localStorage; clears with browser data) ─── */
+      function loadChats() {
+        try {
+          const raw = localStorage.getItem(CHATS_KEY);
+          const parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveChats(chats) {
+        try {
+          localStorage.setItem(CHATS_KEY, JSON.stringify(chats.slice(0, MAX_CHATS)));
+        } catch (e) { /* storage unavailable / full */ }
+      }
+
+      function chatTitle(text) {
+        const t = String(text || '').replace(/\s+/g, ' ').trim();
+        if (!t) return 'New chat';
+        return t.length > 64 ? t.slice(0, 61) + '…' : t;
+      }
+
+      /* Persist the in-progress conversation, creating an id on first save and
+       * moving it to the top of the list on every update. */
+      function persistCurrent() {
+        if (!state.messages.length) return;
+        const firstUser = state.messages.find(function (m) { return m.role === 'user'; });
+        if (!firstUser) return;
+
+        if (!state.currentId) {
+          state.currentId = 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        }
+
+        const chats = loadChats().filter(function (c) { return c.id !== state.currentId; });
+        const existing = loadChats().find(function (c) { return c.id === state.currentId; });
+        chats.unshift({
+          id: state.currentId,
+          title: chatTitle(firstUser.content),
+          createdAt: existing ? existing.createdAt : Date.now(),
+          updatedAt: Date.now(),
+          messages: state.messages
+        });
+        saveChats(chats);
+        renderChatList();
+      }
+
+      function renderChatList() {
+        const chats = loadChats();
+        if (!chats.length) {
+          chatList.innerHTML = '<div class="chat-empty">No saved chats yet.<br>Your conversations will appear here.</div>';
+          return;
+        }
+        chatList.innerHTML = chats.map(function (c) {
+          const active = c.id === state.currentId ? ' active' : '';
+          return '' +
+            '<div class="chat-item' + active + '" data-open="' + escAttr(c.id) + '" role="button" tabindex="0">' +
+              '<div class="chat-item-title">' + esc(c.title) + '</div>' +
+              '<div class="chat-item-time">' + esc(relativeTime(c.updatedAt)) + '</div>' +
+              '<button class="chat-del" type="button" data-del="' + escAttr(c.id) + '" aria-label="Delete chat" title="Delete">' +
+                '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path></svg>' +
+              '</button>' +
+            '</div>';
+        }).join('');
+      }
+
+      function relativeTime(ts) {
+        if (!ts) return '';
+        const diff = Date.now() - ts;
+        const min = Math.round(diff / 60000);
+        if (min < 1) return 'just now';
+        if (min < 60) return min + ' min ago';
+        const hr = Math.round(min / 60);
+        if (hr < 24) return hr + (hr === 1 ? ' hour ago' : ' hours ago');
+        const day = Math.round(hr / 24);
+        if (day < 7) return day + (day === 1 ? ' day ago' : ' days ago');
+        try { return new Date(ts).toLocaleDateString(); } catch (e) { return ''; }
+      }
+
+      function openDrawer() {
+        drawerOverlay.hidden = false;
+        requestAnimationFrame(function () {
+          chatDrawer.classList.add('open');
+          drawerOverlay.classList.add('open');
+        });
+        chatDrawer.setAttribute('aria-hidden', 'false');
+        historyBtn.setAttribute('aria-expanded', 'true');
+        renderChatList();
+      }
+
+      function closeDrawer() {
+        chatDrawer.classList.remove('open');
+        drawerOverlay.classList.remove('open');
+        chatDrawer.setAttribute('aria-hidden', 'true');
+        historyBtn.setAttribute('aria-expanded', 'false');
+        window.setTimeout(function () {
+          if (!chatDrawer.classList.contains('open')) drawerOverlay.hidden = true;
+        }, 320);
+      }
+
+      function toggleDrawer() {
+        if (chatDrawer.classList.contains('open')) closeDrawer();
+        else openDrawer();
+      }
+
+      function loadConversation(id) {
+        const chats = loadChats();
+        const convo = chats.find(function (c) { return c.id === id; });
+        if (!convo) return;
+
+        // Save any in-progress conversation before switching away.
+        if (state.currentId !== id) persistCurrent();
+
+        clearLoadingCycle();
+        state.loading = false;
+        body.classList.remove('loading-active');
+        state.currentId = id;
+        state.messages = Array.isArray(convo.messages) ? convo.messages.slice() : [];
+        state.history = [];
+        state.messages.forEach(function (m) {
+          if (m.role === 'user') {
+            state.history.push({ role: 'user', content: m.content });
+          } else if (m.role === 'assistant' && m.result) {
+            state.history.push({ role: 'assistant', content: m.result.answer || '' });
+          }
+        });
+
+        enterConversationMode();
+        chatArea.innerHTML = '';
+        state.messages.forEach(function (m) {
+          if (m.role === 'user') appendUserMessage(m.content);
+          else if (m.role === 'assistant' && m.result) appendAIMessage(m.result, false);
+        });
+
+        queryInput.value = '';
+        updateComposerState();
+        resizeTextarea();
+        updateSendState();
+        renderChatList();
+        closeDrawer();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function deleteConversation(id) {
+        const chats = loadChats().filter(function (c) { return c.id !== id; });
+        saveChats(chats);
+        if (state.currentId === id) {
+          state.currentId = null;
+          state.history = [];
+          state.messages = [];
+          chatArea.innerHTML = '';
+          appShell.classList.remove('app-active');
+          inputMeta.classList.remove('faded');
+          loadTrending();
+        }
+        renderChatList();
+      }
+
+      function clearAllChats() {
+        if (!loadChats().length) return;
+        const ok = window.confirm('Clear all saved chats? This cannot be undone.');
+        if (!ok) return;
+        saveChats([]);
+        state.currentId = null;
+        renderChatList();
       }
 
       function submitQuery(query) {
@@ -1647,6 +2024,8 @@
         logQuery(query);
         appendUserMessage(query);
         state.history.push({ role: 'user', content: query });
+        state.messages.push({ role: 'user', content: query });
+        persistCurrent();
 
         queryInput.value = '';
         updateComposerState();
@@ -1749,6 +2128,8 @@
           if (data.success && data.result) {
             const answer = data.result.answer || 'No answer available.';
             state.history.push({ role: 'assistant', content: answer });
+            state.messages.push({ role: 'assistant', result: data.result });
+            persistCurrent();
             appendAIMessage(data.result);
           } else {
             appendErrorMessage('No results found. Try rephrasing your question.');
@@ -1760,7 +2141,8 @@
         }
       }
 
-      function appendAIMessage(result) {
+      function appendAIMessage(result, stream) {
+        if (stream === undefined) stream = true;
         const answer = result.answer || '';
         const sources = result.sources || [];
         const related = result.relatedQuestions || [];
@@ -1817,6 +2199,13 @@
 
         const contentEl = div.querySelector('.content');
         const tailEl = div.querySelector('.tail');
+
+        if (!stream) {
+          // Instant render when replaying a saved conversation.
+          contentEl.innerHTML = formattedAnswer;
+          tailEl.innerHTML = sourcesHtml + relatedHtml;
+          return;
+        }
 
         streamHTMLInto(contentEl, formattedAnswer, 95).then(function () {
           tailEl.innerHTML = sourcesHtml + relatedHtml;
