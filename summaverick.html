@@ -107,6 +107,7 @@
     :root {
       --max: 1180px;
       --chat: 780px;
+      --drawer-w: 300px;
       --composer-h: 168px;
       --ease: cubic-bezier(.22, 1, .36, 1);
       --shadow-xl: 0 28px 90px rgba(0, 0, 0, 0.22);
@@ -1201,7 +1202,7 @@
       left: 0;
       z-index: 60;
       height: 100%;
-      width: 320px;
+      width: var(--drawer-w);
       max-width: 86vw;
       display: flex;
       flex-direction: column;
@@ -1219,7 +1220,8 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 16px 18px;
+      min-height: 60px;
+      padding: 12px 18px;
       border-bottom: 1px solid var(--border);
     }
 
@@ -1315,6 +1317,21 @@
 
     .clear-all:hover { color: var(--rgb-red); border-color: var(--border-strong); }
     .drawer-note { font-size: 11px; color: var(--text-faint); line-height: 1.5; text-align: center; }
+
+    /* On wider screens the history panel is docked open permanently
+       (ChatGPT / Copilot style) and the rest of the app shifts right. */
+    @media (min-width: 1024px) {
+      .shell { padding-left: var(--drawer-w); }
+      .drawer {
+        transform: none;
+        box-shadow: none;
+        background: var(--bg);
+      }
+      .drawer-overlay { display: none !important; }
+      #historyBtn,
+      #drawerClose { display: none; }
+      .composer-wrap { left: var(--drawer-w); }
+    }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(8px); }
@@ -1660,6 +1677,13 @@
         loadTrending();
         startPhraseCycle();
         renderChatList();
+        syncDrawerMode();
+        if (window.matchMedia) {
+          const dockMql = window.matchMedia('(min-width: 1024px)');
+          const onDockChange = function () { syncDrawerMode(); };
+          if (dockMql.addEventListener) dockMql.addEventListener('change', onDockChange);
+          else if (dockMql.addListener) dockMql.addListener(onDockChange);
+        }
       }
 
       function bindEvents() {
@@ -1928,7 +1952,13 @@
         renderChatList();
       }
 
+      function isDrawerDocked() {
+        return window.matchMedia && window.matchMedia('(min-width: 1024px)').matches;
+      }
+
       function closeDrawer() {
+        // When docked (desktop), the panel stays open permanently.
+        if (isDrawerDocked()) return;
         chatDrawer.classList.remove('open');
         drawerOverlay.classList.remove('open');
         chatDrawer.setAttribute('aria-hidden', 'true');
@@ -1936,6 +1966,20 @@
         window.setTimeout(function () {
           if (!chatDrawer.classList.contains('open')) drawerOverlay.hidden = true;
         }, 320);
+      }
+
+      function syncDrawerMode() {
+        if (isDrawerDocked()) {
+          // Docked open: reflect state for assistive tech and clear overlay.
+          chatDrawer.classList.remove('open');
+          chatDrawer.setAttribute('aria-hidden', 'false');
+          drawerOverlay.classList.remove('open');
+          drawerOverlay.hidden = true;
+          historyBtn.setAttribute('aria-expanded', 'true');
+        } else if (!chatDrawer.classList.contains('open')) {
+          chatDrawer.setAttribute('aria-hidden', 'true');
+          historyBtn.setAttribute('aria-expanded', 'false');
+        }
       }
 
       function toggleDrawer() {
