@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5489116590667279" crossorigin="anonymous"></script>
   <meta charset="UTF-8">
@@ -42,147 +42,259 @@
   }
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Instrument+Sans:wght@400;500;600;700&display=swap');
-    :root{--bg:#0a0a0a;--surface:#111;--surface2:#1a1a1a;--surface3:#222;--border:#2a2a2a;--border2:#333;--text:#e8e8e8;--text2:#999;--text3:#666;--accent:#fff;--green:#22c55e;--green-bg:rgba(34,197,94,0.1);--red:#ef4444;--blue:#3b82f6;--blue-bg:rgba(59,130,246,0.1);--orange:#f97316;--purple:#a855f7;--pink:#ec4899;--cyan:#22d3ee;--font:'Instrument Sans',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;--radius:14px;--radius-sm:8px;--radius-lg:20px;--shadow:0 1px 3px rgba(0,0,0,0.4)}
-    [data-theme="light"]{--bg:#fafafa;--surface:#fff;--surface2:#f5f5f5;--surface3:#ebebeb;--border:#e6e6e6;--border2:#d6d6d6;--text:#141414;--text2:#5a5a5a;--text3:#8a8a8a;--accent:#000;--blue-bg:rgba(59,130,246,0.08);--shadow:0 1px 3px rgba(0,0,0,0.08)}
     *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth;scroll-padding-top:80px}
-    body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
-    a{color:inherit;text-decoration:none}
+    :root{--blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000;
+      --card-shadow:0 2px 12px rgba(0,0,0,0.06);--card-shadow-hover:0 12px 40px rgba(0,0,0,0.12);
+      --radius:18px;--radius-sm:12px;--ease:cubic-bezier(.22,1,.36,1)}
+    html{scroll-behavior:smooth;scroll-padding-top:64px}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:var(--white);color:var(--text);-webkit-font-smoothing:antialiased}
+    a{text-decoration:none;color:inherit}
+    .skip-nav{position:absolute;top:-100px;left:0;background:var(--blue);color:#fff;padding:12px 24px;z-index:10000;transition:top .3s}
+    .skip-nav:focus{top:0}
+    a:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
-    /* NAV */
-    nav{position:fixed;top:0;width:100%;z-index:100;background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--border);backdrop-filter:blur(20px)}
-    .nav-c{max-width:1200px;margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
-    .nav-logo{font-weight:700;font-size:16px;letter-spacing:-0.02em}
-    .nav-links{display:flex;list-style:none;gap:26px;align-items:center}
-    .nav-links a{font-size:14px;color:var(--text2);transition:color .2s}
-    .nav-links a:hover,.nav-links a.active{color:var(--text)}
-    .theme-toggle{background:none;border:1px solid var(--border);border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s}
-    .theme-toggle svg{width:16px;height:16px;fill:var(--text2)}
-    .theme-toggle:hover{border-color:var(--text2)}
-    [data-theme="dark"] .sun{display:none}[data-theme="light"] .moon{display:none}
-    .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px}
-    .menu-toggle span{display:block;width:20px;height:2px;background:var(--text);margin:4px 0;transition:.3s}
-    .mobile-menu{display:none;position:absolute;top:56px;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);padding:16px 24px;flex-direction:column;gap:16px}
-    .mobile-menu.open{display:flex}
-    .mobile-menu a{font-size:15px;color:var(--text2)}
+    /* ── NAV (shared component, identical to index/blog) ── */
+    nav{position:fixed;top:0;width:100%;height:48px;background:rgba(251,251,253,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid rgba(0,0,0,0.1)}
+    .nav-c{max-width:1080px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+    .nav-logo{font-size:20px;font-weight:600;color:var(--text)}
+    .nav-links{display:flex;gap:28px;list-style:none}
+    .nav-links a{color:var(--text);font-size:13px;opacity:.8;transition:opacity .3s,color .3s}
+    .nav-links a:hover,.nav-links a.active{opacity:1;color:var(--blue)}
+    .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
+    .menu-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:.3s}
+    .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+    .menu-toggle.active span:nth-child(2){opacity:0}
+    .menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+    .mobile-menu{display:none;position:fixed;top:48px;left:0;width:100%;background:rgba(251,251,253,0.98);backdrop-filter:blur(20px);padding:20px;border-bottom:1px solid rgba(0,0,0,0.1);z-index:9998}
+    .mobile-menu.active{display:block}
+    .mobile-menu a{display:block;padding:12px 0;color:var(--text);font-size:16px;border-bottom:1px solid rgba(0,0,0,0.05)}
 
-    .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+    /* ── SECTION SYSTEM (shared component) ── */
+    .section{padding:100px 0;background:var(--white)}
+    .section-dark{background:var(--black);color:var(--white)}
+    .section-gray{background:var(--bg)}
+    .section-c{max-width:1080px;margin:0 auto;padding:0 22px}
+    .section-h{text-align:center;margin-bottom:64px}
+    .section-eye{font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;opacity:0;transform:translateY(20px);transition:all .6s}
+    .section-eye.animate{opacity:1;transform:translateY(0)}
+    .section-title{font-size:clamp(28px,5vw,48px);font-weight:600;letter-spacing:-.02em;opacity:0;transform:translateX(-40px);transition:all .8s}
+    .section-title.animate{opacity:1;transform:translateX(0)}
+    .section-dark .section-title{color:var(--white)}
+    .section-sub{font-size:19px;color:var(--gray);margin-top:16px;opacity:0;transition:all .6s ease .2s;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.5}
+    .section-sub.animate{opacity:1}
 
-    /* HERO */
-    .hero{position:relative;overflow:hidden;padding:118px 24px 60px;text-align:center}
-    .hero::before{content:"";position:absolute;inset:0;z-index:-1;background:
-      radial-gradient(760px 380px at 50% -8%,rgba(168,85,247,0.20),transparent 60%),
-      radial-gradient(620px 300px at 82% 12%,rgba(34,211,238,0.14),transparent 62%),
-      radial-gradient(600px 300px at 14% 30%,rgba(59,130,246,0.14),transparent 64%)}
-    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);border:1px solid var(--border);border-radius:999px;padding:7px 16px;margin-bottom:22px;background:var(--surface)}
-    .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px var(--green-bg);animation:pulse 2.4s ease-in-out infinite}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-    .hero h1{font-size:clamp(38px,7vw,68px);font-weight:700;line-height:1.03;letter-spacing:-0.03em;margin-bottom:20px}
-    .hero h1 .grad{background:linear-gradient(120deg,#a855f7,#3b82f6 45%,#22d3ee);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-    .hero p{font-size:clamp(16px,2.4vw,20px);color:var(--text2);max-width:680px;margin:0 auto 30px;line-height:1.6}
-    .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-    .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 24px;border-radius:999px;font-size:15px;font-weight:600;border:1px solid var(--border2);transition:transform .18s ease,box-shadow .18s ease,border-color .2s;cursor:pointer}
-    .btn:hover{transform:translateY(-2px)}
-    .btn-primary{background:linear-gradient(120deg,#a855f7,#3b82f6);color:#fff;border-color:transparent;box-shadow:0 10px 30px rgba(99,102,241,0.35)}
-    .btn-ghost{background:var(--surface);color:var(--text)}
-    .btn-ghost:hover{border-color:var(--text2)}
+    /* ── ICON TILES (shared component, index.html vocabulary) ── */
+    .icon{width:56px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:16px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,0.15);flex-shrink:0}
+    .icon svg{width:28px;height:28px;stroke-width:1.5;stroke:currentColor;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .icon-sm{width:44px;height:44px;border-radius:13px;margin-bottom:0}
+    .icon-sm svg{width:22px;height:22px}
+    .icon-ai{background:linear-gradient(135deg,#bf5af2,#5856d6);color:#fff}
+    .icon-agents{background:linear-gradient(135deg,#0a84ff,#5ac8fa);color:#fff}
+    .icon-llm{background:linear-gradient(135deg,#34c759,#00c853);color:#fff}
+    .icon-cost{background:linear-gradient(135deg,#ff9500,#ffcc00);color:#1d1d1f}
+    .icon-live{background:linear-gradient(135deg,#ff375f,#ff2d55);color:#fff}
+    .icon-blog{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+    .icon-tutorials{background:linear-gradient(135deg,#ff9500,#ff2d55);color:#fff}
+    .icon-interviews{background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff}
+    .icon-quiz{background:linear-gradient(135deg,#ff8787,#fa5252);color:#fff}
+    .icon-ask{background:linear-gradient(135deg,#64d2ff,#0055ff);color:#fff}
 
-    /* SECTION HEADS */
-    section{padding:56px 0}
-    .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:30px}
-    .sec-head h2{font-size:clamp(26px,4vw,38px);font-weight:700;letter-spacing:-0.02em}
-    .sec-head p{color:var(--text2);font-size:15px;margin-top:8px;max-width:620px;line-height:1.55}
-    .sec-badge{font-size:12px;font-weight:600;color:var(--text2);border:1px solid var(--border);border-radius:999px;padding:6px 14px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+    /* ── BUTTONS (shared pill component) ── */
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:980px;font-size:16px;font-weight:500;min-height:44px;cursor:pointer;transition:all .3s var(--ease);border:none;font-family:inherit}
+    .btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .btn-p{background:var(--blue);color:#fff}
+    .btn-p:hover{background:#0055aa;transform:translateY(-2px)}
+    .btn-s{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.35)}
+    .btn-s:hover{border-color:#fff;background:rgba(255,255,255,0.08)}
 
-    /* LIVE FEED */
-    .feed-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
-    .chip{padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;display:inline-flex;align-items:center;gap:7px}
-    .chip:hover{border-color:var(--text2);color:var(--text)}
-    .chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}
-    .feed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
-    .track{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;position:relative;overflow:hidden}
-    .track::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--track-accent,var(--blue))}
-    .track[data-track="ai"]{--track-accent:linear-gradient(90deg,#a855f7,#ec4899)}
-    .track[data-track="agents"]{--track-accent:linear-gradient(90deg,#3b82f6,#22d3ee)}
-    .track[data-track="llm"]{--track-accent:linear-gradient(90deg,#22c55e,#22d3ee)}
-    .track[data-track="cost"]{--track-accent:linear-gradient(90deg,#f97316,#eab308)}
-    .track-head{display:flex;align-items:center;gap:11px;margin-bottom:18px}
-    .track-emoji{width:40px;height:40px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-    .track-title{font-size:17px;font-weight:700}
-    .track-sub{font-size:12px;color:var(--text3)}
-    .article{display:block;padding:14px 0;border-top:1px solid var(--border)}
+    /* ── HERO ── */
+    .hero{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 20px 90px;background:var(--black);position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 45%,rgba(29,78,216,0.18) 0%,transparent 70%)}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .hero-eye{position:relative;z-index:1;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.65);border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.04);backdrop-filter:blur(20px);border-radius:980px;padding:9px 18px;margin-bottom:26px;opacity:0;animation:fadeInUp .8s ease .2s forwards}
+    .hero-eye .dot{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 0 rgba(52,211,153,0.5);animation:heroPulse 2.4s ease infinite}
+    @keyframes heroPulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.5)}70%{box-shadow:0 0 0 9px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+    .hero-title{position:relative;z-index:1;font-size:clamp(44px,9vw,84px);font-weight:600;letter-spacing:-.025em;color:var(--white);line-height:1.05;opacity:0;animation:fadeInUp .8s ease .5s forwards}
+    .hero-title .grad{background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .hero-desc{position:relative;z-index:1;font-size:19px;color:var(--gray);margin-top:24px;max-width:620px;line-height:1.5;opacity:0;animation:fadeInUp .8s ease .9s forwards}
+    .hero-links{position:relative;z-index:1;display:flex;gap:16px;margin-top:36px;flex-wrap:wrap;justify-content:center;opacity:0;animation:fadeInUp .8s ease 1.3s forwards}
+
+    /* ── 3D PLATFORM EXPLORER ──
+       Flat, accessible buttons on the left drive a decorative exploded 3D stack
+       on the right (pointer-events:none — no 3D hit-testing involved). */
+    .explorer-grid{display:grid;grid-template-columns:400px 1fr;gap:56px;align-items:center}
+    .explorer-list{display:flex;flex-direction:column;gap:12px}
+    .layer-row{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:14px 18px;min-height:64px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .25s,border-color .25s,transform .25s var(--ease)}
+    .layer-row:hover,.layer-row:focus-visible,.layer-row.hot{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);transform:translateX(4px)}
+    .layer-row .icon-sm{margin:0}
+    .layer-row .row-label small{display:block;font-size:12px;font-weight:400;color:rgba(255,255,255,0.5);margin-top:2px}
+    .layer-row svg.chev{width:16px;height:16px;margin-left:auto;stroke:rgba(255,255,255,0.5);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s var(--ease)}
+    .layer-row:hover svg.chev{transform:translateX(3px)}
+    .explorer-stage{position:relative;height:440px;perspective:1300px;perspective-origin:50% 32%}
+    .stack3d{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(58deg) rotateZ(-42deg);transition:transform .5s var(--ease)}
+    /* no filter/backdrop-filter here: they flatten preserve-3d */
+    .layer3d{position:absolute;left:50%;top:50%;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:26px;border:1px solid rgba(255,255,255,0.18);background:linear-gradient(135deg,rgba(52,56,68,0.94),rgba(26,28,34,0.9));pointer-events:none;transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .3s}
+    .layer3d::after{content:'';position:absolute;inset:0;border-radius:26px;background:var(--layer-tint);opacity:.2;transition:opacity .3s}
+    .layer3d[data-layer="experiences"]{--layer-tint:linear-gradient(135deg,#5ac8fa,#0a84ff);transform:translateZ(174px)}
+    .layer3d[data-layer="ai"]{--layer-tint:linear-gradient(135deg,#bf5af2,#5856d6);transform:translateZ(116px)}
+    .layer3d[data-layer="automation"]{--layer-tint:linear-gradient(135deg,#ff9500,#ff2d55);transform:translateZ(58px)}
+    .layer3d[data-layer="data"]{--layer-tint:linear-gradient(135deg,#34c759,#00c853);transform:translateZ(0)}
+    .layer3d.hot{border-color:rgba(255,255,255,0.55);box-shadow:0 0 70px rgba(96,165,250,0.3)}
+    .layer3d.hot::after{opacity:.42}
+    .layer3d[data-layer="experiences"].hot{transform:translateZ(206px)}
+    .layer3d[data-layer="ai"].hot{transform:translateZ(148px)}
+    .layer3d[data-layer="automation"].hot{transform:translateZ(90px)}
+    .layer3d[data-layer="data"].hot{transform:translateZ(32px)}
+    .explorer-hint{font-size:13px;color:var(--gray);margin-top:20px;display:flex;align-items:center;gap:8px}
+    .explorer-hint svg{width:15px;height:15px;stroke:var(--gray);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+    /* ── LIVE FEED ── */
+    .feed-head{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:36px}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;min-height:44px;border-radius:980px;border:1px solid rgba(0,0,0,0.08);background:var(--white);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .25s var(--ease)}
+    .chip svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .chip:hover{border-color:rgba(0,0,0,0.25);transform:translateY(-1px)}
+    .chip.active{background:var(--text);color:var(--white);border-color:var(--text)}
+    .feed-status{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--gray);border:1px solid rgba(0,0,0,0.08);background:var(--white);border-radius:980px;padding:8px 16px}
+    .feed-status .dot{width:7px;height:7px;border-radius:50%;background:var(--gray)}
+    .feed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:24px}
+    .track{background:var(--white);border-radius:var(--radius);padding:26px;box-shadow:var(--card-shadow);opacity:0;transform:translateY(30px);transition:opacity .5s,transform .5s,box-shadow .3s}
+    .track.animate{opacity:1;transform:translateY(0)}
+    .track:hover{box-shadow:var(--card-shadow-hover)}
+    .track-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+    .track-title{font-size:17px;font-weight:600}
+    .track-sub{font-size:12px;color:var(--gray);margin-top:2px}
+    .article{display:block;padding:15px 0;border-top:1px solid rgba(0,0,0,0.06)}
     .article:first-of-type{border-top:none;padding-top:0}
-    .article-title{font-size:14.5px;font-weight:600;line-height:1.4;margin-bottom:5px;transition:color .2s}
+    .article-title{font-size:15px;font-weight:600;line-height:1.4;margin-bottom:5px;transition:color .2s}
     .article:hover .article-title{color:var(--blue)}
-    .article-summary{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:7px}
-    .article-meta{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text3);font-family:var(--mono)}
-    .article-meta .src{color:var(--text2);font-weight:500}
-    .article-ask{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--purple);font-weight:600;margin-top:6px}
-    .track-skeleton{height:13px;border-radius:6px;background:linear-gradient(90deg,var(--surface2),var(--surface3),var(--surface2));background-size:200% 100%;animation:shimmer 1.3s infinite;margin:9px 0}
+    .article-summary{font-size:13.5px;color:var(--gray);line-height:1.5;margin-bottom:7px}
+    .article-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray);font-family:'SF Mono',Menlo,monospace}
+    .article-meta .src{font-weight:600;color:#6e6e73}
+    .article-ask{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--blue);font-weight:600;margin-top:8px;padding:4px 0;cursor:pointer}
+    .article-ask svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .article-ask:hover{text-decoration:underline}
+    .track-skeleton{height:13px;border-radius:6px;background:linear-gradient(90deg,#f0f0f2,#e6e6e9,#f0f0f2);background-size:200% 100%;animation:shimmer 1.3s infinite;margin:11px 0}
     @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-    .track-empty{font-size:13px;color:var(--text3);padding:8px 0}
-    .feed-note{margin-top:22px;font-size:12.5px;color:var(--text3);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .feed-note a{color:var(--text2);border-bottom:1px solid var(--border2)}
-    .feed-fallback{display:none;background:var(--surface);border:1px dashed var(--border2);border-radius:var(--radius);padding:22px;text-align:center;color:var(--text2);font-size:14px;line-height:1.6}
+    .track-empty{font-size:13.5px;color:var(--gray);padding:8px 0}
+    .feed-note{margin-top:28px;font-size:13px;color:var(--gray);display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+    .feed-note svg{width:14px;height:14px;stroke:var(--gray);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-2px}
+    .feed-note a{color:var(--blue);font-weight:500}
+    .feed-note a:hover{text-decoration:underline}
+    .feed-fallback{display:none;background:var(--white);border:1px dashed rgba(0,0,0,0.15);border-radius:var(--radius);padding:28px;text-align:center;color:var(--gray);font-size:15px;line-height:1.6}
     .feed-fallback.show{display:block}
+    .feed-fallback a{color:var(--blue);font-weight:500}
 
-    /* SOURCE DIRECTORY */
-    .source-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
-    .source-card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px;transition:transform .2s ease,border-color .2s;overflow:hidden;display:flex;flex-direction:column;min-height:200px}
-    .source-card:hover{transform:translateY(-4px);border-color:var(--border2)}
-    .source-card .sc-icon{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;background:var(--surface2)}
-    .source-card h3{font-size:19px;font-weight:700;margin-bottom:8px}
-    .source-card p{font-size:14px;color:var(--text2);line-height:1.55;flex:1}
-    .source-card .sc-go{margin-top:16px;font-size:13px;font-weight:600;color:var(--blue);display:inline-flex;align-items:center;gap:6px}
-    .source-card .sc-tag{position:absolute;top:20px;right:20px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
+    /* ── LIBRARY ── */
+    .library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+    .lib-card{position:relative;background:var(--white);border-radius:var(--radius);padding:32px 28px;box-shadow:var(--card-shadow);display:flex;flex-direction:column;min-height:220px;cursor:pointer;opacity:0;transform:translateY(30px);transition:opacity .5s,transform .5s var(--ease),box-shadow .35s}
+    .lib-card.animate{opacity:1;transform:translateY(0)}
+    .lib-card.animate:hover{transform:translateY(-8px);box-shadow:var(--card-shadow-hover)}
+    .lib-card h3{font-size:20px;font-weight:600;margin-bottom:8px}
+    .lib-card p{font-size:14.5px;color:var(--gray);line-height:1.55;flex:1}
+    .lib-card .lib-go{margin-top:18px;font-size:14px;font-weight:600;color:var(--blue);display:inline-flex;align-items:center;gap:6px;transition:gap .25s var(--ease)}
+    .lib-card:hover .lib-go{gap:10px}
+    .lib-card .lib-go svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .lib-card .lib-tag{position:absolute;top:26px;right:26px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gray);background:var(--bg);border-radius:6px;padding:5px 10px}
 
-    /* PILLARS */
-    .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
-    .pillar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
-    .pillar .num{font-family:var(--mono);font-size:12px;color:var(--text3);margin-bottom:10px}
-    .pillar h4{font-size:16px;font-weight:700;margin-bottom:7px}
-    .pillar p{font-size:13.5px;color:var(--text2);line-height:1.55}
+    /* ── PILLARS ── */
+    .pillar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+    .pillar{background:var(--bg);border-radius:var(--radius);padding:40px 32px;opacity:0;transform:translateY(30px);transition:all .6s}
+    .pillar.animate{opacity:1;transform:translateY(0)}
+    .pillar:hover{transform:scale(1.02)}
+    .pillar .num{font-family:'SF Mono',Menlo,monospace;font-size:12px;color:var(--gray);margin-bottom:12px;letter-spacing:.08em}
+    .pillar h3{font-size:22px;font-weight:600;margin-bottom:12px}
+    .pillar p{font-size:16px;color:var(--gray);line-height:1.6}
 
-    /* CTA BANNER */
-    .cta{position:relative;overflow:hidden;border-radius:var(--radius-lg);padding:48px 32px;text-align:center;background:var(--surface);border:1px solid var(--border)}
-    .cta::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(600px 260px at 50% 0%,rgba(168,85,247,0.16),transparent 65%)}
-    .cta > *{position:relative;z-index:1}
-    .cta h2{font-size:clamp(24px,4vw,34px);font-weight:700;margin-bottom:12px}
-    .cta p{color:var(--text2);max-width:560px;margin:0 auto 26px;line-height:1.6}
+    /* ── POP-UP NOTES (term definitions) ── */
+    .term{display:inline;background:none;border:none;padding:0;font:inherit;color:inherit;font-weight:600;cursor:pointer;border-bottom:1.5px dotted var(--blue);transition:color .2s}
+    .pillar .term,.section-sub .term{color:var(--text)}
+    .section-dark .term{color:#e8e8ed;border-bottom-color:#60a5fa}
+    .term:hover{color:var(--blue)}
+    .section-dark .term:hover{color:#60a5fa}
+    .popnote{position:absolute;z-index:10010;max-width:340px;background:rgba(255,255,255,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(0,0,0,0.08);border-radius:16px;padding:18px 20px;box-shadow:0 20px 60px rgba(0,0,0,0.18);opacity:0;transform:translateY(6px) scale(.98);pointer-events:none;transition:opacity .22s var(--ease),transform .22s var(--ease)}
+    .popnote.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+    .popnote h4{font-size:14px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+    .popnote h4 svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .popnote p{font-size:13px;color:#515154;line-height:1.55}
+    .popnote a{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12.5px;font-weight:600;color:var(--blue)}
+    .popnote a:hover{text-decoration:underline}
+    .popnote a svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-    footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center;margin-top:20px}
-    .footer-text{font-size:12.5px;color:var(--text3)}
+    /* ── FLY-OUT PANEL ── */
+    .scrim{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:10000;opacity:0;pointer-events:none;transition:opacity .35s var(--ease)}
+    .scrim.show{opacity:1;pointer-events:auto}
+    .flyout{position:fixed;top:0;right:0;bottom:0;width:min(440px,92vw);background:rgba(251,251,253,0.94);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-left:1px solid rgba(0,0,0,0.08);box-shadow:-24px 0 80px rgba(0,0,0,0.25);z-index:10001;transform:translateX(105%);transition:transform .45s var(--ease);display:flex;flex-direction:column;visibility:hidden}
+    .flyout.open{transform:translateX(0);visibility:visible}
+    .flyout-head{display:flex;align-items:center;gap:16px;padding:26px 28px 20px;border-bottom:1px solid rgba(0,0,0,0.06)}
+    .flyout-head h3{font-size:21px;font-weight:600;letter-spacing:-.01em;flex:1}
+    .flyout-close{width:36px;height:36px;min-width:36px;border-radius:50%;border:none;background:rgba(0,0,0,0.05);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+    .flyout-close:hover{background:rgba(0,0,0,0.1)}
+    .flyout-close svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+    .flyout-body{padding:24px 28px 32px;overflow-y:auto;flex:1}
+    .flyout-body p.lead{font-size:15.5px;line-height:1.65;color:#3a3a3c;margin-bottom:22px}
+    .flyout-kicker{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:12px}
+    .flyout-items{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+    .flyout-items li{display:flex;gap:12px;align-items:flex-start;background:var(--white);border-radius:14px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+    .flyout-items li svg{width:17px;height:17px;margin-top:2px;flex-shrink:0;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .flyout-items li strong{display:block;font-size:14px;font-weight:600;margin-bottom:2px}
+    .flyout-items li span{font-size:13px;color:var(--gray);line-height:1.5}
+    .flyout-links{display:flex;flex-direction:column;gap:8px}
+    .flyout-links a{display:flex;align-items:center;justify-content:space-between;background:var(--white);border-radius:14px;padding:14px 16px;font-size:14px;font-weight:600;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.05);transition:transform .25s var(--ease),box-shadow .25s}
+    .flyout-links a:hover{transform:translateX(4px);box-shadow:0 4px 14px rgba(0,0,0,0.1);color:var(--blue)}
+    .flyout-links a svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    /* ── CTA ── */
+    .cta-wrap{text-align:center;position:relative;z-index:1}
+    .cta-wrap h2{font-size:clamp(28px,5vw,44px);font-weight:600;letter-spacing:-.02em;color:var(--white);margin-bottom:14px}
+    .cta-wrap p{font-size:18px;color:var(--gray);max-width:560px;margin:0 auto 32px;line-height:1.6}
+    .cta-section{position:relative;overflow:hidden}
+    .cta-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(29,78,216,0.16) 0%,transparent 70%)}
+
+    .back-to-top{position:fixed;bottom:30px;right:30px;width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;border:none;cursor:pointer;opacity:0;visibility:hidden;transition:all .3s;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,102,204,0.3);z-index:999}
+    .back-to-top.visible{opacity:1;visibility:visible}
+    .back-to-top:hover{transform:translateY(-4px)}
+    .back-to-top svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    footer{background:var(--bg);padding:24px;text-align:center}
+    .footer-text{font-size:12px;color:var(--gray)}
 
     @media(max-width:768px){
       .nav-links{display:none}
       .menu-toggle{display:block}
-      section{padding:44px 0}
-      .hero{padding:100px 20px 44px}
+      .section{padding:72px 0}
+      .hero{min-height:78vh;padding:110px 20px 70px}
+      .pillar-grid{grid-template-columns:1fr}
+      /* 3D stage hides on small screens; the layer list stays as the control */
+      .explorer-grid{grid-template-columns:1fr;gap:0}
+      .explorer-stage{display:none}
+      .explorer-hint{display:none}
+      .explorer-list{max-width:480px;margin:0 auto;width:100%}
+    }
+    @media (prefers-reduced-motion: reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation:none!important;transition:none!important}
+      .hero-eye,.hero-title,.hero-desc,.hero-links{opacity:1;transform:none}
+      .section-eye,.section-title,.section-sub,.track,.lib-card,.pillar{opacity:1;transform:none}
     }
   </style>
   <script>window.SB_AI_SEARCH_ENDPOINT='https://wandering-haze-b394.sumanthbolle312.workers.dev'</script>
 </head>
 <body>
-  <nav>
+  <a href="#main" class="skip-nav">Skip to main content</a>
+  <nav aria-label="Primary">
     <div class="nav-c">
       <a href="index.html" class="nav-logo">Sumanth Bolle</a>
       <ul class="nav-links">
         <li><a href="index.html#about">About</a></li>
-        <li><a href="servicenow.html" class="active">ServiceNow</a></li>
+        <li><a href="servicenow.html" class="active" aria-current="page">ServiceNow</a></li>
         <li><a href="blog.html">Blog</a></li>
         <li><a href="tutorials.html">Tutorials</a></li>
         <li><a href="interviews.html">Interviews</a></li>
         <li><a href="quiz.html">Quiz</a></li>
         <li><a href="summaverick.html">Summaverick</a></li>
-        <li>
-          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-            <svg class="sun" viewBox="0 0 24 24"><path d="M12 17.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zm0 1.5a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-17a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 2zm0 18a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 20zM4.22 4.22a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06L4.22 5.28a.75.75 0 0 1 0-1.06zm13.44 13.44a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.06zM2 12a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 2 12zm18 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 20 12zM5.28 18.72a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 1 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0zm13.44-13.44a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 1 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0z"/></svg>
-            <svg class="moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
-          </button>
-        </li>
+        <li><a href="index.html#contact">Contact</a></li>
       </ul>
-      <button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <a href="index.html">Home</a>
@@ -193,78 +305,175 @@
       <a href="quiz.html">Quiz</a>
       <a href="summaverick.html">Summaverick</a>
       <a href="flights.html">SkyFare</a>
+      <a href="index.html#contact">Contact</a>
     </div>
   </nav>
 
   <header class="hero">
-    <div class="eyebrow"><span class="dot"></span> The single source of truth for ServiceNow</div>
-    <h1>ServiceNow <span class="grad">Central</span></h1>
-    <p>One place for the ServiceNow community — live, sourced articles on platform AI, AI Agents, LLMs and cost optimization, alongside deep tutorials, real interview prep, and 1,300+ practice questions.</p>
-    <div class="hero-cta">
-      <a class="btn btn-primary" href="#live">Explore the live feed</a>
-      <a class="btn btn-ghost" href="#source">Browse the library</a>
+    <div class="hero-eye"><span class="dot" aria-hidden="true"></span> The single source of truth for ServiceNow</div>
+    <h1 class="hero-title">ServiceNow <span class="grad">Central</span></h1>
+    <p class="hero-desc">One place for the ServiceNow community — live, sourced articles on platform AI, AI Agents, LLMs and cost optimization, alongside deep tutorials, real interview prep, and 1,300+ practice questions.</p>
+    <div class="hero-links">
+      <a class="btn btn-p" href="#live">Explore the live feed</a>
+      <a class="btn btn-s" href="#library">Browse the library</a>
     </div>
   </header>
 
-  <main>
-    <section id="live" class="wrap">
-      <div class="sec-head">
-        <div>
-          <h2>ServiceNow, live</h2>
-          <p>The latest real, citable articles across the four topics moving the platform right now — refreshed automatically and powered by live web research.</p>
+  <main id="main">
+    <!-- 3D PLATFORM EXPLORER -->
+    <section class="section section-dark" id="platform">
+      <div class="section-c">
+        <div class="section-h">
+          <p class="section-eye" data-animate>Understand the platform</p>
+          <h2 class="section-title" data-animate>One platform, four layers</h2>
+          <p class="section-sub" data-animate>ServiceNow is easiest to understand as a stack: experiences on top of
+            <button class="term" data-term="nowassist" aria-expanded="false">Now Assist</button> and
+            <button class="term" data-term="aiagents" aria-expanded="false">AI Agents</button>, running on workflows and scripts, all grounded in one data model built around the
+            <button class="term" data-term="cmdb" aria-expanded="false">CMDB</button>. Select a layer to see what lives there.</p>
         </div>
-        <span class="sec-badge" id="feedStatus"><span class="dot" style="width:7px;height:7px;border-radius:50%;background:var(--text3)"></span> Loading…</span>
-      </div>
 
-      <div class="feed-controls" id="feedControls">
-        <button class="chip active" data-track="all">All</button>
-        <button class="chip" data-track="ai">✨ Platform AI</button>
-        <button class="chip" data-track="agents">🤖 AI Agents</button>
-        <button class="chip" data-track="llm">🧠 LLM &amp; GenAI</button>
-        <button class="chip" data-track="cost">💰 Cost Optimization</button>
-      </div>
+        <div class="explorer-grid">
+          <div class="explorer-list">
+            <button class="layer-row" data-layer="experiences" aria-haspopup="dialog">
+              <span class="icon icon-sm icon-agents" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></span>
+              <span class="row-label">Experiences<small>Portals · Virtual Agent · Now Assist panel</small></span>
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <button class="layer-row" data-layer="ai" aria-haspopup="dialog">
+              <span class="icon icon-sm icon-ai" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg></span>
+              <span class="row-label">AI &amp; Agents<small>Now Assist · Agent Studio · Control Tower</small></span>
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <button class="layer-row" data-layer="automation" aria-haspopup="dialog">
+              <span class="icon icon-sm icon-tutorials" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2L4.9 12.6a.5.5 0 0 0 .4.8H11l-1 8 8.1-10.6a.5.5 0 0 0-.4-.8H13z"/></svg></span>
+              <span class="row-label">Workflows &amp; Scripts<small>Flow Designer · GlideRecord · Business rules</small></span>
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <button class="layer-row" data-layer="data" aria-haspopup="dialog">
+              <span class="icon icon-sm icon-llm" aria-hidden="true"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></span>
+              <span class="row-label">One Data Model<small>Tables · CMDB · Integrations</small></span>
+              <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+            <p class="explorer-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg> Hover to lift a layer · select for the full story</p>
+          </div>
 
-      <div class="feed-grid" id="feedGrid"></div>
-
-      <div class="feed-fallback" id="feedFallback">
-        The live feed is warming up or temporarily unavailable. In the meantime, ask
-        <a href="summaverick.html">Summaverick</a> anything about ServiceNow, or explore the curated library below.
-      </div>
-
-      <div class="feed-note">
-        <span>🔎 Live research via Perplexity Sonar · every item links to its original source.</span>
-        <a href="#" id="refreshFeed">Refresh</a>
-      </div>
-    </section>
-
-    <section id="source" class="wrap">
-      <div class="sec-head">
-        <div>
-          <h2>The ServiceNow library</h2>
-          <p>Everything on this site, organized into one canonical path — from first principles to certification and interview readiness.</p>
+          <div class="explorer-stage" id="explorerStage" aria-hidden="true">
+            <!-- decorative exploded stack; DOM order bottom→top so paint order matches depth -->
+            <div class="stack3d" id="stack3d">
+              <div class="layer3d" data-layer="data"></div>
+              <div class="layer3d" data-layer="automation"></div>
+              <div class="layer3d" data-layer="ai"></div>
+              <div class="layer3d" data-layer="experiences"></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="source-grid" id="sourceGrid"></div>
     </section>
 
-    <section class="wrap">
-      <div class="sec-head"><div><h2>Why one source of truth</h2><p>Built on four principles so the community always knows what to trust.</p></div></div>
-      <div class="pillars">
-        <div class="pillar"><div class="num">01</div><h4>Always current</h4><p>The live feed researches the web on every refresh, so AI, Agents, LLM and cost topics stay up to date without manual curation.</p></div>
-        <div class="pillar"><div class="num">02</div><h4>Always sourced</h4><p>Every headline links to its original publication. Nothing is invented — if it can't be cited, it isn't shown.</p></div>
-        <div class="pillar"><div class="num">03</div><h4>Learn by doing</h4><p>Tutorials, scenario interviews and 1,300+ validated quiz questions turn reading into real, retained skill.</p></div>
-        <div class="pillar"><div class="num">04</div><h4>Answers on demand</h4><p>Summaverick, backed by the same live-research engine, explains any question or headline the moment you need it.</p></div>
+    <!-- LIVE FEED -->
+    <section class="section section-gray" id="live">
+      <div class="section-c">
+        <div class="section-h">
+          <p class="section-eye" data-animate>ServiceNow, live</p>
+          <h2 class="section-title" data-animate>The latest, always sourced</h2>
+          <p class="section-sub" data-animate>Real, citable articles across the four topics moving the platform right now — refreshed automatically and powered by live web research.</p>
+        </div>
+
+        <div class="feed-head">
+          <div id="feedControls" role="group" aria-label="Filter live feed">
+            <button class="chip active" data-track="all">All topics</button>
+            <button class="chip" data-track="ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>Platform AI</button>
+            <button class="chip" data-track="agents"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7" width="14" height="11" rx="3"/><path d="M12 4v3M9 12h.01M15 12h.01M2 12v3M22 12v3"/></svg>AI Agents</button>
+            <button class="chip" data-track="llm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a4 4 0 0 0-4 4 4 4 0 0 0-2 7.5V17a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-1.5A4 4 0 0 0 16 8a4 4 0 0 0-4-4z"/></svg>LLM &amp; GenAI</button>
+            <button class="chip" data-track="cost"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M15 9.5c-.6-1-1.7-1.5-3-1.5-1.8 0-3 1-3 2.2 0 3 6 1.6 6 4.6 0 1.2-1.2 2.2-3 2.2-1.3 0-2.4-.5-3-1.5"/></svg>Cost Optimization</button>
+          </div>
+          <span class="feed-status" id="feedStatus" role="status" aria-live="polite"><span class="dot"></span> Loading…</span>
+        </div>
+
+        <div class="feed-grid" id="feedGrid"></div>
+
+        <div class="feed-fallback" id="feedFallback">
+          The live feed is warming up or temporarily unavailable. In the meantime, ask
+          <a href="summaverick.html">Summaverick</a> anything about ServiceNow, or explore the curated library below.
+        </div>
+
+        <div class="feed-note">
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg> Live research via Perplexity Sonar — every item links to its original source.</span>
+          <a href="#" id="refreshFeed">Refresh feed</a>
+        </div>
       </div>
     </section>
 
-    <section class="wrap">
-      <div class="cta">
+    <!-- LIBRARY -->
+    <section class="section" id="library">
+      <div class="section-c">
+        <div class="section-h">
+          <p class="section-eye" data-animate>The ServiceNow library</p>
+          <h2 class="section-title" data-animate>One canonical path</h2>
+          <p class="section-sub" data-animate>Everything on this site, organized from first principles to certification and interview readiness.</p>
+        </div>
+        <div class="library-grid" id="libraryGrid"></div>
+      </div>
+    </section>
+
+    <!-- PILLARS -->
+    <section class="section section-gray">
+      <div class="section-c">
+        <div class="section-h">
+          <p class="section-eye" data-animate>Principles</p>
+          <h2 class="section-title" data-animate>Why one source of truth</h2>
+          <p class="section-sub" data-animate>Built on four principles so the community always knows what to trust.</p>
+        </div>
+        <div class="pillar-grid">
+          <div class="pillar" data-animate>
+            <div class="num">01</div>
+            <h3>Always current</h3>
+            <p>The live feed researches the web on every refresh, so AI, Agents, LLM and cost topics stay up to date without manual curation.</p>
+          </div>
+          <div class="pillar" data-animate>
+            <div class="num">02</div>
+            <h3>Always sourced</h3>
+            <p>Every headline links to its original publication. Nothing is invented — if it can't be cited, it isn't shown.</p>
+          </div>
+          <div class="pillar" data-animate>
+            <div class="num">03</div>
+            <h3>Learn by doing</h3>
+            <p>Tutorials, scenario interviews and 1,300+ validated quiz questions — from <button class="term" data-term="gliderecord" aria-expanded="false">GlideRecord</button> scripting to architecture — turn reading into real, retained skill.</p>
+          </div>
+          <div class="pillar" data-animate>
+            <div class="num">04</div>
+            <h3>Answers on demand</h3>
+            <p>Summaverick, backed by the same live-research engine, explains any question or headline the moment you need it.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section section-dark cta-section">
+      <div class="section-c cta-wrap">
         <h2>Have a ServiceNow question right now?</h2>
         <p>Summaverick is a live-research AI assistant. Ask about Now Assist, AI Agents, licensing, scripting — anything — and get a grounded, sourced answer.</p>
-        <a class="btn btn-primary" href="summaverick.html">Ask Summaverick →</a>
+        <a class="btn btn-p" href="summaverick.html">Ask Summaverick <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </div>
     </section>
   </main>
+
+  <!-- FLY-OUT PANEL -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="flyout" id="flyout" role="dialog" aria-modal="true" aria-labelledby="flyoutTitle">
+    <div class="flyout-head">
+      <span class="icon icon-sm" id="flyoutIcon" aria-hidden="true"></span>
+      <h3 id="flyoutTitle"></h3>
+      <button class="flyout-close" id="flyoutClose" aria-label="Close panel"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="flyout-body" id="flyoutBody"></div>
+  </aside>
+
+  <!-- POP-UP NOTE -->
+  <div class="popnote" id="popnote" role="note" aria-hidden="true"></div>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 
   <footer><p class="footer-text">© 2026 Sumanth Bolle. ServiceNow Central — built for the community.</p></footer>
 
@@ -273,13 +482,52 @@
   (function () {
     'use strict';
     var ENDPOINT = window.SB_AI_SEARCH_ENDPOINT || '';
+    var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /* ── Shared SVG icon set (Lucide-style strokes, one family) ── */
+    var ICONS = {
+      spark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>',
+      bot: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="7" width="14" height="11" rx="3"/><path d="M12 4v3M9 12h.01M15 12h.01M2 12v3M22 12v3"/></svg>',
+      brain: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a4 4 0 0 0-4 4 4 4 0 0 0-2 7.5V17a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-1.5A4 4 0 0 0 16 8a4 4 0 0 0-4-4z"/></svg>',
+      coin: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M15 9.5c-.6-1-1.7-1.5-3-1.5-1.8 0-3 1-3 2.2 0 3 6 1.6 6 4.6 0 1.2-1.2 2.2-3 2.2-1.3 0-2.4-.5-3-1.5"/></svg>',
+      feed: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.5"/></svg>',
+      book: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>',
+      wrench: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4.5 4.5 0 0 0-6 6L3 18l3 3 5.7-5.7a4.5 4.5 0 0 0 6-6L14 13l-3-3z"/></svg>',
+      chat: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-8 8H4l2.5-2.5A8 8 0 1 1 21 12z"/></svg>',
+      target: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+      ask: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.7-2.5 2.2-2.5 3.7M12 17h.01"/></svg>',
+      screen: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>',
+      bolt: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4.9 12.6a.5.5 0 0 0 .4.8H11l-1 8 8.1-10.6a.5.5 0 0 0-.4-.8H13z"/></svg>',
+      db: '<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>',
+      arrow: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+      check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>',
+      external: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>'
+    };
+
+    /* ── Scroll-in animation (same pattern as index.html) ── */
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('animate'); });
+    }, { threshold: 0.1 });
+    function observeAll(scope) {
+      (scope || document).querySelectorAll('[data-animate], .track, .lib-card').forEach(function (el) {
+        if (REDUCED) { el.classList.add('animate'); } else { observer.observe(el); }
+      });
+    }
+    observeAll();
+
+    /* ══ LIVE FEED ══ */
     var TRACK_ORDER = ['ai', 'agents', 'llm', 'cost'];
     var TRACK_META = {
-      ai:     { emoji: '✨', label: 'Platform AI',      sub: 'Now Assist · GenAI features' },
-      agents: { emoji: '🤖', label: 'AI Agents',        sub: 'Orchestrator · Agent Studio' },
-      llm:    { emoji: '🧠', label: 'LLM & GenAI',       sub: 'Now LLM · model partners' },
-      cost:   { emoji: '💰', label: 'Cost Optimization', sub: 'Licensing · FinOps · TCO' }
+      ai:     { icon: ICONS.spark, tile: 'icon-ai',     label: 'Platform AI',       sub: 'Now Assist · GenAI features' },
+      agents: { icon: ICONS.bot,   tile: 'icon-agents', label: 'AI Agents',         sub: 'Orchestrator · Agent Studio' },
+      llm:    { icon: ICONS.brain, tile: 'icon-llm',    label: 'LLM & GenAI',       sub: 'Now LLM · model partners' },
+      cost:   { icon: ICONS.coin,  tile: 'icon-cost',   label: 'Cost Optimization', sub: 'Licensing · FinOps · TCO' }
     };
 
     var feedGrid = document.getElementById('feedGrid');
@@ -289,12 +537,6 @@
 
     var currentTrack = 'all';
     var lastData = null;
-
-    function esc(s) {
-      return String(s == null ? '' : s)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
 
     function feedUrl(track) {
       if (!ENDPOINT) return null;
@@ -313,12 +555,15 @@
       return 'summaverick.html?q=' + encodeURIComponent(prompt);
     }
 
-    function skeletonTrack(key) {
-      var meta = TRACK_META[key] || { emoji: '📰', label: key, sub: '' };
-      return '<div class="track" data-track="' + esc(key) + '">' +
-        '<div class="track-head"><div class="track-emoji">' + meta.emoji + '</div>' +
+    function trackHeadHtml(meta) {
+      return '<div class="track-head"><span class="icon icon-sm ' + meta.tile + '" aria-hidden="true">' + meta.icon + '</span>' +
         '<div><div class="track-title">' + esc(meta.label) + '</div>' +
-        '<div class="track-sub">' + esc(meta.sub) + '</div></div></div>' +
+        '<div class="track-sub">' + esc(meta.sub) + '</div></div></div>';
+    }
+
+    function skeletonTrack(key) {
+      var meta = TRACK_META[key] || { icon: ICONS.feed, tile: 'icon-live', label: key, sub: '' };
+      return '<div class="track" data-track="' + esc(key) + '">' + trackHeadHtml(meta) +
         '<div class="track-skeleton" style="width:92%"></div>' +
         '<div class="track-skeleton" style="width:78%"></div>' +
         '<div class="track-skeleton" style="width:85%"></div>' +
@@ -328,6 +573,7 @@
     function renderSkeletons() {
       var keys = currentTrack === 'all' ? TRACK_ORDER : [currentTrack];
       feedGrid.innerHTML = keys.map(skeletonTrack).join('');
+      observeAll(feedGrid);
     }
 
     function articleHtml(a, trackLabel) {
@@ -339,19 +585,19 @@
         (a.summary ? '<div class="article-summary">' + esc(a.summary) + '</div>' : '') +
         (meta.length ? '<div class="article-meta">' + meta.join(' · ') + '</div>' : '') +
         '</a>' +
-        '<a class="article-ask" href="' + esc(askUrl(a, trackLabel)) + '" target="_blank" rel="noopener">✨ Explain with Summaverick</a>';
+        '<a class="article-ask" href="' + esc(askUrl(a, trackLabel)) + '" target="_blank" rel="noopener">' + ICONS.spark + ' Explain with Summaverick</a>';
     }
 
     function trackHtml(track) {
-      var meta = TRACK_META[track.key] || { emoji: track.emoji || '📰', label: track.label, sub: '' };
+      var meta = TRACK_META[track.key] || { icon: ICONS.feed, tile: 'icon-live', label: track.label, sub: '' };
       var body = (track.articles && track.articles.length)
         ? track.articles.map(function (a) { return articleHtml(a, meta.label); }).join('')
         : '<div class="track-empty">No fresh items right now — check back soon.</div>';
-      return '<div class="track" data-track="' + esc(track.key) + '">' +
-        '<div class="track-head"><div class="track-emoji">' + (meta.emoji || '📰') + '</div>' +
-        '<div><div class="track-title">' + esc(meta.label) + '</div>' +
-        '<div class="track-sub">' + esc(meta.sub) + '</div></div></div>' +
-        body + '</div>';
+      return '<div class="track" data-track="' + esc(track.key) + '">' + trackHeadHtml(meta) + body + '</div>';
+    }
+
+    function setStatus(text, color) {
+      feedStatus.innerHTML = '<span class="dot" style="background:' + (color || 'var(--gray)') + '"></span> ' + esc(text);
     }
 
     function renderFeed(data) {
@@ -360,19 +606,15 @@
       if (!tracks.length) {
         feedGrid.innerHTML = '';
         feedFallback.classList.add('show');
-        setStatus('Unavailable', 'var(--red)');
+        setStatus('Unavailable', '#ff3b30');
         return;
       }
       feedFallback.classList.remove('show');
       tracks.sort(function (a, b) { return TRACK_ORDER.indexOf(a.key) - TRACK_ORDER.indexOf(b.key); });
       feedGrid.innerHTML = tracks.map(trackHtml).join('');
+      observeAll(feedGrid);
       var count = tracks.reduce(function (n, t) { return n + ((t.articles && t.articles.length) || 0); }, 0);
-      setStatus(count + ' fresh article' + (count === 1 ? '' : 's'), 'var(--green)');
-    }
-
-    function setStatus(text, color) {
-      feedStatus.innerHTML = '<span class="dot" style="width:7px;height:7px;border-radius:50%;background:' +
-        (color || 'var(--text3)') + '"></span> ' + esc(text);
+      setStatus(count + ' fresh article' + (count === 1 ? '' : 's'), '#34c759');
     }
 
     function loadFeed(force) {
@@ -380,12 +622,12 @@
       if (!url) {
         feedGrid.innerHTML = '';
         feedFallback.classList.add('show');
-        setStatus('Offline', 'var(--text3)');
+        setStatus('Offline', 'var(--gray)');
         return;
       }
       if (lastData && !force) { renderFeed(lastData); return; }
       renderSkeletons();
-      setStatus('Loading…', 'var(--text3)');
+      setStatus('Loading…', 'var(--gray)');
       var ctrl = new AbortController();
       var timer = setTimeout(function () { ctrl.abort(); }, 20000);
       fetch(url, { signal: ctrl.signal })
@@ -399,7 +641,7 @@
           clearTimeout(timer);
           feedGrid.innerHTML = '';
           feedFallback.classList.add('show');
-          setStatus('Unavailable', 'var(--red)');
+          setStatus('Unavailable', '#ff3b30');
         });
     }
 
@@ -422,33 +664,252 @@
     var refresh = document.getElementById('refreshFeed');
     if (refresh) refresh.addEventListener('click', function (e) { e.preventDefault(); lastData = null; loadFeed(true); });
 
-    // ── Curated library (single source of truth directory) ──
+    /* ══ LIBRARY (single source of truth directory) ══ */
     var SOURCES = [
-      { icon: '📰', tag: 'Live', title: 'Live Feed', href: '#live', desc: 'Auto-refreshing ServiceNow AI, Agents, LLM and cost-optimization headlines — every item sourced.' },
-      { icon: '📚', tag: 'Read', title: 'Blog', href: 'blog.html', desc: 'Deep dives on ServiceNow, GenAI, LLMs and agentic automation — practical, opinionated, and current.' },
-      { icon: '🛠️', tag: 'Learn', title: 'Tutorials', href: 'tutorials.html', desc: 'Hands-on, step-by-step guides across scripting, integrations, CSA prep and platform architecture.' },
-      { icon: '💬', tag: 'Prep', title: 'Interviews', href: 'interviews.html', desc: 'Real ServiceNow interview questions with model answers and .NET-to-ServiceNow analogies.' },
-      { icon: '🎯', tag: 'Practice', title: 'Quiz', href: 'quiz.html', desc: '1,300+ validated questions — CSA, CSM, GRC, scripting and scenarios, with instant AI explanations.' },
-      { icon: '✨', tag: 'Ask', title: 'Summaverick', href: 'summaverick.html', desc: 'A live-research AI assistant. Ask anything about ServiceNow and get a grounded, cited answer.' }
+      { icon: ICONS.feed,   tile: 'icon-live',       tag: 'Live',     title: 'Live Feed',   href: '#live',            desc: 'Auto-refreshing ServiceNow AI, Agents, LLM and cost-optimization headlines — every item sourced.' },
+      { icon: ICONS.book,   tile: 'icon-blog',       tag: 'Read',     title: 'Blog',        href: 'blog.html',        desc: 'Deep dives on ServiceNow, GenAI, LLMs and agentic automation — practical, opinionated, and current.' },
+      { icon: ICONS.wrench, tile: 'icon-tutorials',  tag: 'Learn',    title: 'Tutorials',   href: 'tutorials.html',   desc: 'Hands-on, step-by-step guides across scripting, integrations, CSA prep and platform architecture.' },
+      { icon: ICONS.chat,   tile: 'icon-interviews', tag: 'Prep',     title: 'Interviews',  href: 'interviews.html',  desc: 'Real ServiceNow interview questions with model answers and .NET-to-ServiceNow analogies.' },
+      { icon: ICONS.target, tile: 'icon-quiz',       tag: 'Practice', title: 'Quiz',        href: 'quiz.html',        desc: '1,300+ validated questions — CSA, CSM, GRC, scripting and scenarios, with instant AI explanations.' },
+      { icon: ICONS.ask,    tile: 'icon-ask',        tag: 'Ask',      title: 'Summaverick', href: 'summaverick.html', desc: 'A live-research AI assistant. Ask anything about ServiceNow and get a grounded, cited answer.' }
     ];
-    var sg = document.getElementById('sourceGrid');
-    if (sg) {
-      sg.innerHTML = SOURCES.map(function (s) {
-        return '<a class="source-card" href="' + esc(s.href) + '">' +
-          '<span class="sc-tag">' + esc(s.tag) + '</span>' +
-          '<div class="sc-icon">' + s.icon + '</div>' +
+    var lg = document.getElementById('libraryGrid');
+    if (lg) {
+      lg.innerHTML = SOURCES.map(function (s) {
+        return '<a class="lib-card" href="' + esc(s.href) + '">' +
+          '<span class="lib-tag">' + esc(s.tag) + '</span>' +
+          '<span class="icon ' + s.tile + '" aria-hidden="true">' + s.icon + '</span>' +
           '<h3>' + esc(s.title) + '</h3>' +
           '<p>' + esc(s.desc) + '</p>' +
-          '<span class="sc-go">Open →</span>' +
+          '<span class="lib-go">Open ' + ICONS.arrow + '</span>' +
           '</a>';
       }).join('');
+      observeAll(lg);
     }
 
-    window.SBShared && window.SBShared.initThemeToggle({
-      toggleSelector: '#themeToggle', storageKey: 'theme', darkValue: 'dark', lightValue: 'light'
+    /* ══ 3D PLATFORM EXPLORER ══ */
+    var stage = document.getElementById('explorerStage');
+    var stack = document.getElementById('stack3d');
+    if (stage && stack && !REDUCED) {
+      var baseX = 58, baseZ = -42;
+      stage.addEventListener('pointermove', function (e) {
+        var r = stage.getBoundingClientRect();
+        var dx = (e.clientX - r.left) / r.width - 0.5;
+        var dy = (e.clientY - r.top) / r.height - 0.5;
+        stack.style.transform = 'rotateX(' + (baseX - dy * 10) + 'deg) rotateZ(' + (baseZ + dx * 12) + 'deg)';
+      });
+      stage.addEventListener('pointerleave', function () {
+        stack.style.transform = 'rotateX(' + baseX + 'deg) rotateZ(' + baseZ + 'deg)';
+      });
+    }
+
+    // hover/focus on a layer row lifts the matching 3D layer
+    function setHot(key, on) {
+      document.querySelectorAll('.layer3d[data-layer="' + key + '"], .layer-row[data-layer="' + key + '"]').forEach(function (el) {
+        el.classList.toggle('hot', on);
+      });
+    }
+    document.querySelectorAll('.layer-row').forEach(function (row) {
+      var key = row.getAttribute('data-layer');
+      row.addEventListener('mouseenter', function () { setHot(key, true); });
+      row.addEventListener('mouseleave', function () { setHot(key, false); });
+      row.addEventListener('focus', function () { setHot(key, true); });
+      row.addEventListener('blur', function () { setHot(key, false); });
     });
+
+    /* ══ FLY-OUT PANEL ══ */
+    var LAYERS = {
+      experiences: {
+        title: 'Experiences',
+        tile: 'icon-agents',
+        icon: ICONS.screen,
+        lead: 'The layer people actually touch: portals, workspaces and conversational interfaces. Because everything below is shared, one request looks the same in a portal, a chat, or the Now Assist panel.',
+        items: [
+          { name: 'Service Portal & UI Builder', desc: 'Self-service front doors, themed with SCSS variables and brand tokens — audited for WCAG AA contrast.' },
+          { name: 'Virtual Agent', desc: 'Conversational experiences that resolve requests directly in chat, escalating to humans with full context.' },
+          { name: 'Now Assist panel', desc: 'The in-context generative AI surface — summaries, drafting and Q&A right where work happens.' }
+        ],
+        links: [
+          { label: 'Portal & platform tutorials', href: 'tutorials.html' },
+          { label: 'CSA practice questions', href: 'quiz.html' }
+        ]
+      },
+      ai: {
+        title: 'AI & Agents',
+        tile: 'icon-ai',
+        icon: ICONS.spark,
+        lead: 'The intelligence layer. Now Assist brings generative AI skills into every workflow, while AI Agents — autonomous digital workers built in AI Agent Studio — reason, plan and act, coordinated by the AI Agent Orchestrator and governed through AI Control Tower.',
+        items: [
+          { name: 'Now Assist', desc: 'Generative AI purpose-built for the platform: summarization, generation and agentic conversations.' },
+          { name: 'AI Agent Studio & Orchestrator', desc: 'Create task-specific agents and orchestrate teams of them across ITSM, HR and CSM.' },
+          { name: 'AI Control Tower', desc: 'Centralized governance for models, agents, risk and compliance across the AI Platform.' }
+        ],
+        links: [
+          { label: 'Live Platform AI headlines', href: '#live' },
+          { label: 'AI deep dives on the blog', href: 'blog.html' }
+        ]
+      },
+      automation: {
+        title: 'Workflows & Scripts',
+        tile: 'icon-tutorials',
+        icon: ICONS.bolt,
+        lead: 'Where work gets automated. Flow Designer handles no-code logic; JavaScript takes over when you need precision — business rules, script includes and client scripts running on the shared Glide APIs.',
+        items: [
+          { name: 'Flow Designer', desc: 'Visual, reusable automation: triggers, actions and subflows without leaving the platform.' },
+          { name: 'Server scripting', desc: 'Business rules and script includes using GlideRecord and GlideSystem — the core of the 36-lesson JavaScript path.' },
+          { name: 'Client scripting', desc: 'Form-side logic with GlideForm and UI policies for instant, safe user feedback.' }
+        ],
+        links: [
+          { label: 'Scripting tutorials', href: 'tutorials.html' },
+          { label: 'Scripting interview prep', href: 'interviews.html' }
+        ]
+      },
+      data: {
+        title: 'One Data Model',
+        tile: 'icon-llm',
+        icon: ICONS.db,
+        lead: 'The foundation everything shares: one database of tables and records. The CMDB keeps a single, trusted map of your services and infrastructure, so every app, workflow and AI skill reasons over the same truth.',
+        items: [
+          { name: 'Tables & records', desc: 'Every incident, request and asset is a record on a table — inherited, extended and queried consistently.' },
+          { name: 'CMDB', desc: 'The configuration management database: services, infrastructure and the relationships between them.' },
+          { name: 'Integrations', desc: 'REST, IntegrationHub and MID Servers keep external systems synchronized with the single data model.' }
+        ],
+        links: [
+          { label: 'Data model quiz drills', href: 'quiz.html' },
+          { label: 'Architecture interview prep', href: 'interviews.html' }
+        ]
+      }
+    };
+
+    var scrim = document.getElementById('scrim');
+    var flyout = document.getElementById('flyout');
+    var flyoutIcon = document.getElementById('flyoutIcon');
+    var flyoutTitle = document.getElementById('flyoutTitle');
+    var flyoutBody = document.getElementById('flyoutBody');
+    var flyoutClose = document.getElementById('flyoutClose');
+    var lastFocus = null;
+
+    function openFlyout(key) {
+      var d = LAYERS[key];
+      if (!d) return;
+      lastFocus = document.activeElement;
+      flyoutIcon.className = 'icon icon-sm ' + d.tile;
+      flyoutIcon.innerHTML = d.icon;
+      flyoutTitle.textContent = d.title;
+      flyoutBody.innerHTML =
+        '<p class="lead">' + esc(d.lead) + '</p>' +
+        '<p class="flyout-kicker">What lives here</p>' +
+        '<ul class="flyout-items">' + d.items.map(function (it) {
+          return '<li>' + ICONS.check + '<div><strong>' + esc(it.name) + '</strong><span>' + esc(it.desc) + '</span></div></li>';
+        }).join('') + '</ul>' +
+        '<p class="flyout-kicker">Go deeper</p>' +
+        '<div class="flyout-links">' + d.links.map(function (l) {
+          return '<a href="' + esc(l.href) + '">' + esc(l.label) + ICONS.arrow + '</a>';
+        }).join('') + '</div>';
+      scrim.classList.add('show');
+      flyout.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      flyoutClose.focus();
+      flyoutBody.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', closeFlyout);
+      });
+    }
+
+    function closeFlyout() {
+      scrim.classList.remove('show');
+      flyout.classList.remove('open');
+      document.body.style.overflow = '';
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    document.querySelectorAll('.layer-row').forEach(function (btn) {
+      btn.addEventListener('click', function () { openFlyout(btn.getAttribute('data-layer')); });
+    });
+    flyoutClose.addEventListener('click', closeFlyout);
+    scrim.addEventListener('click', closeFlyout);
+
+    /* ══ POP-UP NOTES (term definitions, grounded in the Now Platform glossary) ══ */
+    var TERMS = {
+      nowassist: {
+        title: 'Now Assist',
+        body: 'The generative AI experience purpose-built for the ServiceNow AI Platform — skills like summarization, generation and Q&A embedded directly in workflows, with citations back to the source.',
+        link: { label: 'See live Platform AI news', href: '#live' }
+      },
+      aiagents: {
+        title: 'AI Agents',
+        body: 'Autonomous digital workers that use LLMs, tools and workflows to complete tasks across ITSM, HR and CSM. Built in AI Agent Studio and coordinated by the AI Agent Orchestrator.',
+        link: { label: 'Follow AI Agent headlines', href: '#live' }
+      },
+      cmdb: {
+        title: 'CMDB',
+        body: 'The configuration management database: the single system of record for services, infrastructure and their relationships — the map every workflow and AI skill relies on.',
+        link: { label: 'Practice CMDB questions', href: 'quiz.html' }
+      },
+      gliderecord: {
+        title: 'GlideRecord',
+        body: 'The server-side JavaScript API for querying, inserting and updating records on the Now Platform — the first API every ServiceNow scripter masters.',
+        link: { label: 'Learn scripting step by step', href: 'tutorials.html' }
+      }
+    };
+
+    var popnote = document.getElementById('popnote');
+    var activeTerm = null;
+
+    function hidePopnote() {
+      popnote.classList.remove('show');
+      popnote.setAttribute('aria-hidden', 'true');
+      if (activeTerm) { activeTerm.setAttribute('aria-expanded', 'false'); activeTerm = null; }
+    }
+
+    function showPopnote(btn) {
+      var d = TERMS[btn.getAttribute('data-term')];
+      if (!d) return;
+      if (activeTerm === btn) { hidePopnote(); return; }
+      if (activeTerm) activeTerm.setAttribute('aria-expanded', 'false');
+      activeTerm = btn;
+      btn.setAttribute('aria-expanded', 'true');
+      popnote.innerHTML = '<h4>' + ICONS.ask + esc(d.title) + '</h4><p>' + esc(d.body) + '</p>' +
+        (d.link ? '<a href="' + esc(d.link.href) + '">' + esc(d.link.label) + ICONS.arrow + '</a>' : '');
+      popnote.setAttribute('aria-hidden', 'false');
+      popnote.classList.add('show');
+      var r = btn.getBoundingClientRect();
+      var noteW = Math.min(340, window.innerWidth - 32);
+      var left = Math.min(Math.max(16, r.left + r.width / 2 - noteW / 2), window.innerWidth - noteW - 16);
+      var top = r.bottom + window.scrollY + 10;
+      popnote.style.left = left + 'px';
+      popnote.style.top = top + 'px';
+      popnote.style.width = noteW + 'px';
+      var pl = popnote.querySelector('a[href^="#"]');
+      if (pl) pl.addEventListener('click', hidePopnote);
+    }
+
+    document.querySelectorAll('.term').forEach(function (btn) {
+      btn.addEventListener('click', function (e) { e.stopPropagation(); showPopnote(btn); });
+    });
+    document.addEventListener('click', function (e) {
+      if (activeTerm && !popnote.contains(e.target)) hidePopnote();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (flyout.classList.contains('open')) closeFlyout();
+      hidePopnote();
+    });
+    window.addEventListener('scroll', function () { if (activeTerm) hidePopnote(); }, { passive: true });
+
+    /* ── Back to top (shared component) ── */
+    var backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', function () {
+      backToTop.classList.toggle('visible', window.scrollY > 600);
+    }, { passive: true });
+    backToTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' }); });
+
+    /* ── Mobile nav (shared) ── */
     window.SBShared && window.SBShared.initNavMenu({
-      toggleSelector: '#menuToggle', menuSelector: '#mobileMenu', menuOpenClass: 'open', toggleActiveClass: ''
+      toggleSelector: '#menuToggle', menuSelector: '#mobileMenu'
+    });
+    var mt = document.getElementById('menuToggle');
+    if (mt) mt.addEventListener('click', function () {
+      mt.setAttribute('aria-expanded', mt.classList.contains('active') ? 'true' : 'false');
     });
 
     loadFeed(true);
