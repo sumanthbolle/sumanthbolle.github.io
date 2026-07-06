@@ -1173,6 +1173,28 @@
       letter-spacing: -0.01em;
     }
 
+    .trunc-note {
+      margin-top: 18px;
+      font-size: 12.5px;
+      color: #d97706;
+      letter-spacing: -0.01em;
+    }
+
+    html[data-theme="dark"] .trunc-note { color: #fbbf24; }
+
+    .act-accent {
+      border-color: rgba(217, 119, 6, 0.45);
+      color: #d97706;
+    }
+
+    html[data-theme="dark"] .act-accent {
+      border-color: rgba(251, 191, 36, 0.4);
+      color: #fbbf24;
+    }
+
+    .act-accent:hover { color: #b45309; }
+    html[data-theme="dark"] .act-accent:hover { color: #fcd34d; }
+
     /* ── Jump to latest (shown when new content lands below the fold) ── */
     .jump-latest {
       position: fixed;
@@ -1845,7 +1867,7 @@
        * `run` submits immediately; `fill` drops a template into the composer
        * with the [blank] pre-selected so typing replaces it. */
       const starters = [
-        { kicker: 'Today', run: 'What are the most important news stories today? Explain each one in plain language.', text: 'Catch me up on today’s news, in plain language.' },
+        { kicker: 'Today', run: 'What are the 5 most important news stories today? Explain each one briefly, in plain language.', text: 'Catch me up on today’s news, in plain language.' },
         { kicker: 'Before you buy', fill: 'Compare [thing one] and [thing two] — price, reliability, and which is better value for me.', text: 'Compare <em>two products</em> — price, reliability, value.' },
         { kicker: 'Fact-check', fill: 'Is it true that [something you heard or saw online]? Check it against reliable sources.', text: 'Is it true that <em>something you saw online</em>?' },
         { kicker: 'Learn something', fill: 'Explain [a topic] in simple words, like I’m completely new to it.', text: 'Explain <em>a topic</em> in simple words.' },
@@ -1855,8 +1877,14 @@
 
       const followUps = {
         simpler: 'Explain your last answer again in plain, simple words for someone completely new to the topic. Keep the sources.',
-        deeper: 'Go deeper on your last answer — more detail, the trade-offs, and where sources or experts disagree.'
+        deeper: 'Go deeper on your last answer — more detail, the trade-offs, and where sources or experts disagree.',
+        continue: 'Continue your previous answer from exactly where it stopped. Do not repeat what you already covered.'
       };
+
+      /* Sent with every query (never shown in the user's bubble): keeps
+       * answers human-readable and stops the model from over-committing to
+       * long template lists that hit the response limit mid-sentence. */
+      const STYLE_GUIDE = ' (Formatting: write for a general reader in plain English. Use short headings and short paragraphs or simple bullets only where they help. Never use label templates like "The Story:" or "Plain Explanation:". Cover fewer points fully rather than many points cut short, and always finish your final sentence.)';
 
       const modeMeta = {
         quick: {
@@ -2444,7 +2472,7 @@
         const prior = state.history.slice(-MAX_CONTEXT_MESSAGES);
         const context = prior.length > 1 ? prior.slice(0, -1) : [];
         return {
-          query: modeMeta[state.mode].prefix + query,
+          query: modeMeta[state.mode].prefix + query + STYLE_GUIDE,
           context
         };
       }
@@ -2593,8 +2621,16 @@
           `;
         }
 
+        const truncated = looksTruncated(answer);
+
         const actionsHtml =
+          (truncated
+            ? '<div class="trunc-note">This answer looks cut off — continue it below.</div>'
+            : '') +
           '<div class="answer-actions">' +
+            (truncated
+              ? '<button class="act-btn act-accent" type="button" data-followup="continue">' + icons.layers + 'Continue the answer</button>'
+              : '') +
             '<button class="act-btn" type="button" data-followup="simpler">' + icons.simple + 'Explain simpler</button>' +
             '<button class="act-btn" type="button" data-followup="deeper">' + icons.layers + 'Go deeper</button>' +
             '<button class="act-btn" type="button" data-copy-answer>' + icons.copy + 'Copy answer</button>' +
@@ -2619,7 +2655,7 @@
 
         function finalize() {
           tailEl.innerHTML = actionsHtml + relatedHtml;
-          bindCopyAnswer(tailEl, answer);
+          bindCopyAnswer(tailEl, contentEl);
           addPreCopyButtons(contentEl);
           updateJumpPill();
         }
@@ -2634,12 +2670,45 @@
         streamHTMLInto(contentEl, formattedAnswer, 110).then(finalize);
       }
 
-      function bindCopyAnswer(scope, answer) {
+      function bindCopyAnswer(scope, contentEl) {
         const btn = scope.querySelector('[data-copy-answer]');
         if (!btn) return;
         btn.addEventListener('click', function () {
-          copyText(answer, btn);
+          copyText(renderedAnswerText(contentEl), btn);
         });
+      }
+
+      /* Human-readable plain text of the rendered answer — what someone
+       * pastes into a chat or email. Never the raw markdown source. */
+      function renderedAnswerText(contentEl) {
+        const parts = [];
+        Array.from(contentEl.children).forEach(function (block) {
+          const clone = block.cloneNode(true);
+          Array.from(clone.querySelectorAll('.pre-copy')).forEach(function (b) { b.remove(); });
+          Array.from(clone.querySelectorAll('.cite')).forEach(function (c) { c.textContent = ' [' + c.textContent + ']'; });
+          const tag = clone.tagName;
+          if (tag === 'UL' || tag === 'OL') {
+            parts.push(Array.from(clone.querySelectorAll('li')).map(function (li, i) {
+              return (tag === 'OL' ? (i + 1) + '. ' : '• ') + li.textContent.trim();
+            }).join('\n'));
+          } else {
+            const text = clone.textContent.trim();
+            if (text) parts.push(text);
+          }
+        });
+        return parts.join('\n\n');
+      }
+
+      /* Heuristic: an answer whose last line is prose that stops without
+       * terminal punctuation most likely hit the response limit. */
+      function looksTruncated(answer) {
+        const t = String(answer || '').trim();
+        if (!t) return false;
+        const lastLine = t.split('\n').pop().trim();
+        if (!lastLine) return false;
+        if (/^([-*•]|\d+\.)\s/.test(lastLine)) return false; // list items often end unpunctuated
+        if (/^```/.test(lastLine) || /^#{1,4}\s*$/.test(lastLine)) return false;
+        return !/[.!?…]["')\]]*\s*$/.test(lastLine);
       }
 
       function addPreCopyButtons(contentEl) {
