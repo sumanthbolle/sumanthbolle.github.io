@@ -76,6 +76,10 @@ export default {
       return handleTrending(request, env, ctx, origin);
     }
 
+    if (request.method === 'GET' && url.pathname === '/servicenow') {
+      return handleServiceNowFeed(request, env, ctx, origin);
+    }
+
     if (request.method !== 'POST') {
       return new Response('Method not allowed', { status: 405 });
     }
@@ -420,6 +424,161 @@ async function callSonarWithTimeout(apiKey, payload, timeoutMs) {
   }   finally {
     clearTimeout(timer);
   }
+}
+
+/* ───────────────────── ServiceNow live article feed ─────────────────────
+ * GET /servicenow[?track=ai|agents|llm|cost|all&fresh=week|month]
+ *
+ * Uses the same Perplexity Sonar key as the rest of the worker to surface the
+ * latest, real, citable ServiceNow articles across four editorial tracks that
+ * matter most to the community right now: platform AI, AI Agents, LLMs, and
+ * cost / licensing optimization. Results are cached per (track, recency) in the
+ * Cloudflare Cache API so the page loads instantly and we stay well within API
+ * limits. Every item carries a real source URL — nothing is invented.
+ */
+const SNOW_TRACKS = {
+  ai: {
+    label: 'Platform AI',
+    emoji: '\u2728',
+    query:
+      'List the most recent, notable news and articles about ServiceNow platform AI — Now Assist, Now Intelligence, generative AI features, AI Search, and predictive intelligence. Prefer official ServiceNow announcements, blog.servicenow.com, community.servicenow.com, and reputable tech/enterprise-IT outlets.',
+  },
+  agents: {
+    label: 'AI Agents',
+    emoji: '\uD83E\uDD16',
+    query:
+      'List the most recent, notable news and articles about ServiceNow AI Agents and agentic AI — the AI Agent Orchestrator, AI Agent Studio, autonomous agents, and agentic workflows on the Now Platform. Prefer official ServiceNow sources and reputable enterprise-IT outlets.',
+  },
+  llm: {
+    label: 'LLM & GenAI',
+    emoji: '\uD83E\uDDE0',
+    query:
+      'List the most recent, notable news and articles about ServiceNow large language models and generative AI — the Now LLM, domain-specific models, partnerships with model providers (e.g. Nvidia, Microsoft, Google), and LLM governance on the Now Platform. Prefer official ServiceNow sources and reputable outlets.',
+  },
+  cost: {
+    label: 'Cost Optimization',
+    emoji: '\uD83D\uDCB0',
+    query:
+      'List the most recent, notable articles and guidance about ServiceNow cost optimization — licensing and subscription optimization, entitlement management, platform efficiency, reducing technical debt, FinOps for ServiceNow, and lowering total cost of ownership. Prefer official ServiceNow sources, established ServiceNow partners, and reputable enterprise-IT outlets.',
+  },
+};
+
+const SNOW_TTL_SECONDS = 3600;          // 1 hour when the fetch fully succeeds
+const SNOW_PARTIAL_TTL_SECONDS = 300;   // 5 min when one or more tracks failed
+const SNOW_REQUEST_TIMEOUT_MS = 12000;
+
+const SNOW_FEED_SCHEMA = {
+  type: 'object',
+  properties: {
+    articles: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          title: { type: 'string' },
+          summary: { type: 'string' },
+          source: { type: 'string' },
+          url: { type: 'string' },
+          date: { type: 'string' },
+        },
+        required: ['title', 'summary', 'source', 'url'],
+      },
+    },
+  },
+  required: ['articles'],
+};
+
+async function fetchServiceNowTrack(apiKey, key, recency) {
+  const track = SNOW_TRACKS[key];
+  if (!track) return null;
+  const payload = {
+    model: 'sonar',
+    messages: [
+      { role: 'system', content: 'You return strict JSON only. Do not invent articles, titles, or URLs. Only include real, citable articles you found via web search, each with a working source URL. Order by most recent first.' },
+      { role: 'user', content: `${track.query}\n\nReturn JSON: { "articles": [ { "title", "summary" (one neutral sentence), "source" (publication name), "url" (article URL), "date" (ISO or human date if known) } ] }. Return up to 5 articles, most recent first. Only include items you can cite with a real URL.` },
+    ],
+    temperature: 0.1,
+    max_tokens: 900,
+    search_recency_filter: recency,
+    web_search_options: { search_context_size: 'medium' },
+    response_format: { type: 'json_schema', json_schema: { schema: SNOW_FEED_SCHEMA } },
+  };
+
+  const data = await callSonarWithTimeout(apiKey, payload, SNOW_REQUEST_TIMEOUT_MS);
+  const parsed = parseStructured(data);
+  if (!parsed || !Array.isArray(parsed.articles)) return null;
+
+  const articles = parsed.articles
+    .map((a) => ({
+      title: String(a.title || '').slice(0, 200),
+      summary: String(a.summary || '').slice(0, 300),
+      source: String(a.source || '').slice(0, 80),
+      url: safeUrl(a.url),
+      date: a.date ? String(a.date).slice(0, 40) : null,
+    }))
+    .filter((a) => a.title && a.url);
+
+  if (articles.length === 0) return null;
+
+  return { key, label: track.label, emoji: track.emoji, articles: articles.slice(0, 5) };
+}
+
+async function handleServiceNowFeed(request, env, ctx, origin) {
+  const url = new URL(request.url);
+  const trackParam = (url.searchParams.get('track') || 'all').toLowerCase();
+  const recency = url.searchParams.get('fresh') === 'month' ? 'month' : 'week';
+  const requested = trackParam === 'all'
+    ? Object.keys(SNOW_TRACKS)
+    : trackParam.split(',').map((t) => t.trim()).filter((t) => SNOW_TRACKS[t]);
+  const keys = requested.length ? requested : Object.keys(SNOW_TRACKS);
+
+  const cache = caches.default;
+  const cacheKey = new Request(
+    `https://cache.summaverick.internal/servicenow/${keys.join('-')}/${recency}`,
+    { method: 'GET' }
+  );
+
+  const cached = await cache.match(cacheKey);
+  if (cached) {
+    const body = await cached.text();
+    return jsonResponseRaw(body, origin, { 'X-Summaverick-Cache': 'HIT' });
+  }
+
+  const apiKey = env.PERPLEXITY_API_KEY;
+  if (!apiKey) {
+    return jsonResponse({ success: false, error: 'API key not configured' }, origin);
+  }
+
+  const settled = await Promise.allSettled(
+    keys.map((k) => fetchServiceNowTrack(apiKey, k, recency))
+  );
+
+  const tracks = settled
+    .map((s) => (s.status === 'fulfilled' ? s.value : null))
+    .filter(Boolean);
+
+  const successCount = tracks.length;
+  const payload = {
+    success: successCount > 0,
+    recency,
+    generatedAt: new Date().toISOString(),
+    tracks,
+  };
+
+  const ttl = successCount >= keys.length ? SNOW_TTL_SECONDS : SNOW_PARTIAL_TTL_SECONDS;
+  const responseBody = JSON.stringify(payload);
+
+  if (successCount > 0 && ctx && typeof ctx.waitUntil === 'function') {
+    const toCache = new Response(responseBody, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': `public, max-age=${ttl}`,
+      },
+    });
+    ctx.waitUntil(cache.put(cacheKey, toCache));
+  }
+
+  return jsonResponseRaw(responseBody, origin, { 'X-Summaverick-Cache': 'MISS' });
 }
 
 /* ───────────── Flight Search ───────────── */

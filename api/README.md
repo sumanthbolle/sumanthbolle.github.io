@@ -9,7 +9,26 @@ Single Cloudflare Worker that powers both the Summaverick chat and the landing-p
 | POST   | `/`          | Chat completion. Body: `{ query: string, context?: Array<{role,content}> }` |
 | POST   | `/flights`   | SkyFare flight discovery + "best time to book" advisory. See below.     |
 | GET    | `/trending`  | Landing widgets (news / market / tech), country-aware + cached          |
+| GET    | `/servicenow`| Latest ServiceNow articles across 4 tracks (AI / Agents / LLM / cost), cached |
 | OPTIONS| any          | CORS preflight                                                          |
+
+## `/servicenow` — ServiceNow live article feed
+
+Powers the "ServiceNow Central" hub (`/servicenow.html`). Uses the same
+`PERPLEXITY_API_KEY` to pull the latest **real, citable** ServiceNow articles
+across four editorial tracks: **Platform AI**, **AI Agents**, **LLM & GenAI**,
+and **Cost Optimization**. Each track runs a `sonar` call with
+`search_recency_filter` + a JSON schema and returns up to 5 items, each with a
+working source URL (nothing is invented).
+
+- Query params: `?track=ai|agents|llm|cost|all` (default `all`, comma-separated
+  allowed) and `?fresh=week|month` (default `week`).
+- Tracks are fetched in parallel with `Promise.allSettled` + a 12 s per-track
+  timeout, so one slow track can never block the others.
+- Cached per `(tracks, recency)` in the Cloudflare Cache API for **3600 s**
+  (1 h) on full success and **300 s** (5 min) on a partial response.
+- Response: `{ success, recency, generatedAt, tracks: [{ key, label, emoji, articles: [{ title, summary, source, url, date }] }] }`.
+- `X-Summaverick-Cache: HIT | MISS` is returned for observability.
 
 ## `/flights` — SkyFare
 
