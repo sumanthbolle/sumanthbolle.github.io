@@ -189,6 +189,61 @@
     .fc-notes{font-size:12px;color:var(--gray);font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.04)}
     .fc-score{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid}
 
+    /* ─── Day planner strip (find the cheapest day to fly) ─── */
+    .day-strip{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:16px}
+    .ds-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+    .ds-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text)}
+    .ds-title svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .ds-sub{font-size:12px;color:var(--gray)}
+    .ds-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:14px}
+    .ds-cell{border:1px solid rgba(0,0,0,0.08);border-radius:var(--radius-xs);padding:10px 6px;text-align:center;background:var(--white);cursor:pointer;transition:all .2s;font-family:inherit;position:relative;min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+    .ds-cell:hover{border-color:var(--blue);box-shadow:0 2px 8px rgba(0,102,204,0.1)}
+    .ds-cell:disabled{opacity:.45;cursor:not-allowed}
+    .ds-cell .ds-dow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray)}
+    .ds-cell .ds-date{font-size:13px;font-weight:600;color:var(--text)}
+    .ds-cell .ds-price{font-size:12px;font-weight:700;color:var(--text)}
+    .ds-cell .ds-check{font-size:11px;font-weight:600;color:var(--blue)}
+    .ds-cell.selected{border-color:var(--blue);box-shadow:0 0 0 2px rgba(0,102,204,0.15)}
+    .ds-cell.cheapest{border-color:var(--green);background:rgba(52,199,89,0.06)}
+    .ds-cell.cheapest .ds-price{color:#15803d}
+    .ds-cell.cheapest::after{content:'Cheapest found';position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;background:var(--green);color:#fff;padding:2px 7px;border-radius:10px;white-space:nowrap}
+    .ds-foot{font-size:11px;color:var(--gray);margin-top:12px;line-height:1.5}
+
+    /* ─── Currency notice ─── */
+    .cur-note{display:flex;align-items:flex-start;gap:8px;background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:16px;font-size:13px;color:#92400e;line-height:1.5}
+    .cur-note svg{width:15px;height:15px;flex-shrink:0;margin-top:2px;stroke:#d97706;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    /* ─── Flight details fly-out (shared site component) ─── */
+    .fly-scrim{position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s ease}
+    .fly-scrim.show{opacity:1;pointer-events:auto}
+    .flyout{position:fixed;top:0;right:0;bottom:0;width:min(430px,92vw);background:rgba(251,251,253,0.97);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-left:1px solid rgba(0,0,0,0.08);box-shadow:-24px 0 70px rgba(0,0,0,0.22);z-index:10001;transform:translateX(105%);transition:transform .4s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;visibility:hidden}
+    .flyout.open{transform:translateX(0);visibility:visible}
+    .flyout-head{display:flex;align-items:center;gap:14px;padding:22px 24px 16px;border-bottom:1px solid rgba(0,0,0,0.06)}
+    .flyout-head .fh-icon{width:42px;height:42px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--gray);flex-shrink:0}
+    .flyout-head .fh-title{flex:1;min-width:0}
+    .flyout-head .fh-airline{font-size:17px;font-weight:600;letter-spacing:-.01em}
+    .flyout-head .fh-sub{font-size:12px;color:var(--gray);margin-top:1px}
+    .flyout-close{width:34px;height:34px;min-width:34px;border-radius:50%;border:none;background:rgba(0,0,0,0.05);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+    .flyout-close:hover{background:rgba(0,0,0,0.1)}
+    .flyout-close svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+    .flyout-body{padding:20px 24px 28px;overflow-y:auto;flex:1}
+    .fd-price-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px}
+    .fd-price{font-size:28px;font-weight:700;letter-spacing:-.02em}
+    .fd-total{font-size:12px;color:var(--gray)}
+    .fd-section{margin-top:20px}
+    .fd-kicker{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);margin-bottom:9px}
+    .fd-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:13.5px}
+    .fd-row .k{color:var(--gray)}
+    .fd-row .v{font-weight:600;text-align:right}
+    .fd-cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;margin-top:22px;background:var(--blue);color:#fff;border-radius:var(--radius-sm);font-size:15px;font-weight:600;text-decoration:none;transition:background .2s}
+    .fd-cta:hover{background:#0055aa}
+    .fd-cta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .fc-details-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border:1px solid rgba(0,0,0,0.12);border-radius:var(--radius-xs);background:var(--white);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;margin-top:2px}
+    .fc-details-btn:hover{border-color:var(--blue);color:var(--blue)}
+    .fc-details-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .fc-date-chip{display:inline-block;font-size:10.5px;font-weight:600;color:var(--gray);background:var(--bg);border-radius:5px;padding:2px 7px;margin-top:3px}
+    @media(max-width:760px){.ds-grid{grid-template-columns:repeat(4,1fr)}.ds-cell:nth-child(n+5){display:flex}}
+
     /* ─── Price insights bar ─── */
     .price-insights{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:16px}
     .pi-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
@@ -455,6 +510,22 @@
 
 </div>
 
+<!-- Flight details fly-out -->
+<div class="fly-scrim" id="flyScrim"></div>
+<aside class="flyout" id="flightFlyout" role="dialog" aria-modal="true" aria-labelledby="fhAirline">
+  <div class="flyout-head">
+    <div class="fh-icon" id="fhIcon"></div>
+    <div class="fh-title">
+      <div class="fh-airline" id="fhAirline"></div>
+      <div class="fh-sub" id="fhSub"></div>
+    </div>
+    <button class="flyout-close" id="flyoutClose" type="button" aria-label="Close details">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="flyout-body" id="flyoutBody"></div>
+</aside>
+
 <script>
 (function() {
   'use strict';
@@ -666,6 +737,41 @@
   let filters = { sortBy: 'score', airlines: [], maxStops: null, depTime: 'any', maxDuration: null, maxPrice: null, carryOnOnly: false, lowEmissionsOnly: false };
   let moreFiltersOpen = false;
 
+  /* ─── Money formatting (single source of truth for every price shown) ─── */
+  function fmtMoney(amount, code) {
+    if (amount == null || !(amount > 0)) return 'N/A';
+    code = String(code || 'USD').toUpperCase().slice(0, 3);
+    try {
+      return new Intl.NumberFormat('en', { style: 'currency', currency: code, maximumFractionDigits: 0 }).format(amount);
+    } catch (e) {
+      return code + ' ' + Math.round(amount).toLocaleString();
+    }
+  }
+  /* The currency the results are actually priced in (what the worker returned),
+     falling back to what the user asked for. Never mix the two silently. */
+  function displayCurrency() {
+    if (resultData && resultData.search_summary && resultData.search_summary.currency) return resultData.search_summary.currency;
+    return (lastParams && lastParams.currency) || 'USD';
+  }
+
+  /* ─── Day-planner grid: cheapest fare found per departure date ───
+     One AI search covers one date, so the calendar fills in as you explore.
+     Persisted per route + cabin + currency so it survives reloads. */
+  function dayGridKey(p) {
+    return 'skyfare_days_' + [p.origin, p.destination, p.cabinClass, p.currency, p.tripType].join('|').toLowerCase();
+  }
+  function loadDayGrid(p) {
+    try { return JSON.parse(localStorage.getItem(dayGridKey(p)) || '{}'); } catch (e) { return {}; }
+  }
+  function recordDayPrice(p, dateISO, price, cur) {
+    if (!(price > 0) || !dateISO) return;
+    try {
+      const g = loadDayGrid(p);
+      if (!g[dateISO] || price < g[dateISO].price) g[dateISO] = { price: price, cur: cur, at: new Date().toISOString().slice(0, 10) };
+      localStorage.setItem(dayGridKey(p), JSON.stringify(g));
+    } catch (e) { /* storage unavailable */ }
+  }
+
   /* Popular routes for the empty-state inspiration grid (Skyscanner-style). */
   const POPULAR_ROUTES = [
     { from: 'New York (JFK)', to: 'London (LHR)' },
@@ -744,6 +850,22 @@
     $('#advFields').classList.toggle('show');
   });
 
+  /* ─── Currency behavior ───
+     The budget field is denominated in the selected currency, and changing
+     currency after a search re-runs it so prices actually update. */
+  function syncBudgetLabel() {
+    const lbl = document.querySelector('label[for="maxBudget"]');
+    if (lbl) lbl.textContent = 'Max Budget (' + $('#currency').value + ')';
+  }
+  syncBudgetLabel();
+  $('#currency').addEventListener('change', function() {
+    syncBudgetLabel();
+    if (lastParams && resultData && !isLoading) {
+      lastParams = Object.assign({}, lastParams, { currency: this.value });
+      search(lastParams);
+    }
+  });
+
   /* ─── Form submit ─── */
   $('#searchForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -766,7 +888,19 @@
       priorityMode
     };
 
-    if (!params.origin || !params.destination || !params.departureDate) return;
+    if (!params.origin || !params.destination || !params.departureDate) {
+      renderError('Please fill in where you\'re flying from, where to, and when.');
+      return;
+    }
+    const codeOf = s => { const m = String(s).match(/\(([A-Za-z]{3})\)/); return m ? m[1].toUpperCase() : String(s).trim().toUpperCase(); };
+    if (codeOf(params.origin) === codeOf(params.destination)) {
+      renderError('Origin and destination are the same. Pick two different airports.');
+      return;
+    }
+    if (params.departureDate < localTodayISO()) {
+      renderError('Your departure date is in the past. Please pick a future date.');
+      return;
+    }
 
     if (params.tripType === 'round-trip') {
       if (!params.returnDate) { renderError('Please choose a return date, or switch to One Way.'); return; }
@@ -883,6 +1017,12 @@
 
       resultData = json.data;
       saveRecentRoute(params);
+      /* Feed the day-planner: remember the cheapest fare found for this date. */
+      const priced = json.data.flights.filter(f => f.price > 0);
+      if (priced.length) {
+        const cheapest = Math.min.apply(null, priced.map(f => f.price));
+        recordDayPrice(params, params.departureDate, cheapest, displayCurrency());
+      }
       renderResults();
     } catch (err) {
       renderError(err.message || 'An unexpected error occurred. Please try again.');
@@ -940,8 +1080,20 @@
 
     let html = '<div class="fade-in">';
 
+    /* Currency mismatch notice — never silently relabel prices. */
+    const requestedCur = (lastParams && lastParams.currency || '').toUpperCase();
+    const gotCur = (displayCurrency() || '').toUpperCase();
+    if (requestedCur && gotCur && requestedCur !== gotCur) {
+      html += '<div class="cur-note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>'
+        + '<span>You asked for prices in <strong>' + escHtml(requestedCur) + '</strong>, but this search returned fares in <strong>'
+        + escHtml(gotCur) + '</strong>. Amounts below are shown in ' + escHtml(gotCur) + ' — convert before comparing with other sites.</span></div>';
+    }
+
     /* Best Time to Book */
     if (d.booking_advice) html += bookingAdviceHtml(d.booking_advice);
+
+    /* Day planner: which departure day is cheapest? */
+    html += dayStripHtml();
 
     /* Summary cards */
     const cards = [
@@ -955,7 +1107,7 @@
       if (!c.flight) { html += '<div class="summary-card"><div class="sc-label"><span class="sc-dot ' + c.dot + '"></span>' + c.label + '</div><div class="sc-meta">N/A</div></div>'; return; }
       const f = c.flight;
       const stops = f.stops === 0 ? 'Nonstop' : f.stops + ' stop' + (f.stops > 1 ? 's' : '');
-      html += '<div class="summary-card"><div class="sc-label"><span class="sc-dot ' + c.dot + '"></span>' + c.label + '</div><div class="sc-airline">' + escHtml(f.airline) + '</div><div class="sc-meta">' + stops + ' · ' + fmtDur(f.total_duration_minutes) + '</div><div class="sc-price">' + escHtml(f.currency) + ' ' + (f.price > 0 ? f.price.toLocaleString() : 'N/A') + '</div></div>';
+      html += '<div class="summary-card"><div class="sc-label"><span class="sc-dot ' + c.dot + '"></span>' + c.label + '</div><div class="sc-airline">' + escHtml(f.airline) + '</div><div class="sc-meta">' + stops + ' · ' + fmtDur(f.total_duration_minutes) + '</div><div class="sc-price">' + fmtMoney(f.price, f.currency || gotCur) + '</div></div>';
     });
     html += '</div>';
 
@@ -964,7 +1116,7 @@
 
     /* Stats */
     html += '<div class="stats-row"><span>' + d.flights.length + ' flights found</span>';
-    if (avgPrice) html += '<span>Avg price: <strong>' + escHtml(d.search_summary.currency) + ' ' + avgPrice.toLocaleString() + '</strong></span>';
+    if (avgPrice) html += '<span>Avg price: <strong>' + fmtMoney(avgPrice, gotCur) + '</strong></span>';
     html += '</div>';
 
     /* Explanation */
@@ -1051,7 +1203,7 @@
     }
     const priceRange = $('#mfPrice');
     if (priceRange) {
-      priceRange.addEventListener('input', () => { const el = $('#mfPriceVal'); if (el) el.textContent = priceRange.dataset.cur + ' ' + parseInt(priceRange.value).toLocaleString(); });
+      priceRange.addEventListener('input', () => { const el = $('#mfPriceVal'); if (el) el.textContent = fmtMoney(parseInt(priceRange.value), priceRange.dataset.cur); });
       priceRange.addEventListener('change', () => { filters.maxPrice = parseInt(priceRange.value) >= parseInt(priceRange.max) ? null : parseInt(priceRange.value); renderResults(); });
     }
     const carryOn = $('#mfCarryOn');
@@ -1062,7 +1214,152 @@
     if (resetBtn) resetBtn.addEventListener('click', resetFilters);
     const resetInline = $('#resetInline');
     if (resetInline) resetInline.addEventListener('click', resetFilters);
+
+    /* Day-planner cells: click a day to search it */
+    $$('.ds-cell').forEach(cell => cell.addEventListener('click', () => {
+      if (cell.disabled) return;
+      searchForDate(cell.dataset.date);
+    }));
+
+    /* Flight details fly-out */
+    $$('.fc-details-btn').forEach(btn => btn.addEventListener('click', () => {
+      const f = d.flights.find(x => String(x.id) === btn.dataset.fid);
+      if (f) openFlyout(f);
+    }));
   }
+
+  /* ─── Day planner: search a different departure date, keep trip length ─── */
+  function searchForDate(dateISO) {
+    if (!lastParams || isLoading || !dateISO) return;
+    const p = Object.assign({}, lastParams, { departureDate: dateISO });
+    if (p.tripType === 'round-trip' && lastParams.returnDate) {
+      const oldDep = new Date(lastParams.departureDate + 'T00:00:00');
+      const oldRet = new Date(lastParams.returnDate + 'T00:00:00');
+      const nights = Math.max(0, Math.round((oldRet - oldDep) / 86400000));
+      const newRet = new Date(dateISO + 'T00:00:00');
+      newRet.setDate(newRet.getDate() + nights);
+      p.returnDate = localISO(newRet);
+    }
+    $('#departureDate').value = p.departureDate;
+    if (p.returnDate) { $('#returnDate').min = p.departureDate; $('#returnDate').value = p.returnDate; }
+    lastParams = p;
+    search(p);
+  }
+
+  function dayStripHtml() {
+    if (!lastParams) return '';
+    const grid = loadDayGrid(lastParams);
+    const center = new Date(lastParams.departureDate + 'T00:00:00');
+    const todayISO = localTodayISO();
+    const dows = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    /* 7 days centred on the chosen departure, clamped to today or later */
+    const days = [];
+    for (let off = -3; off <= 3; off++) {
+      const dd = new Date(center); dd.setDate(dd.getDate() + off);
+      const iso = localISO(dd);
+      if (iso < todayISO) continue;
+      days.push({ iso, dd });
+    }
+    while (days.length < 7) {
+      const last = days[days.length - 1].dd;
+      const nd = new Date(last); nd.setDate(nd.getDate() + 1);
+      days.push({ iso: localISO(nd), dd: nd });
+    }
+
+    const known = days.filter(x => grid[x.iso]);
+    const cheapestISO = known.length
+      ? known.reduce((a, b) => (grid[a.iso].price <= grid[b.iso].price ? a : b)).iso
+      : null;
+    const checkedCount = known.length;
+
+    let h = '<div class="day-strip">';
+    h += '<div class="ds-head"><div class="ds-title"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Which day is cheapest to fly?</div>';
+    h += '<span class="ds-sub">' + checkedCount + ' of ' + days.length + ' days checked</span></div>';
+    h += '<div class="ds-grid">';
+    days.forEach(x => {
+      const entry = grid[x.iso];
+      const isSel = x.iso === lastParams.departureDate;
+      const isCheapest = cheapestISO && x.iso === cheapestISO && checkedCount > 1;
+      h += '<button type="button" class="ds-cell' + (isSel ? ' selected' : '') + (isCheapest ? ' cheapest' : '') + '" data-date="' + x.iso + '">';
+      h += '<span class="ds-dow">' + dows[x.dd.getDay()] + '</span>';
+      h += '<span class="ds-date">' + x.dd.getDate() + ' ' + months[x.dd.getMonth()] + '</span>';
+      if (entry) h += '<span class="ds-price">' + fmtMoney(entry.price, entry.cur) + '</span>';
+      else h += '<span class="ds-check">' + (isSel ? 'This search' : 'Check') + '</span>';
+      h += '</button>';
+    });
+    h += '</div>';
+    h += '<div class="ds-foot">Each search checks one departure day — tap a day to see its fares and build your own price calendar for this route. '
+       + (lastParams.tripType === 'round-trip' ? 'Trip length stays the same when you shift days. ' : '')
+       + 'Prices are the cheapest fare found on the day you checked, so re-check before booking.</div>';
+    h += '</div>';
+    return h;
+  }
+
+  /* ─── Flight details fly-out ─── */
+  const flyScrim = $('#flyScrim');
+  const flightFlyout = $('#flightFlyout');
+  const flyoutClose = $('#flyoutClose');
+  let flyoutLastFocus = null;
+
+  function openFlyout(f) {
+    flyoutLastFocus = document.activeElement;
+    const cur = f.currency || displayCurrency();
+    const passengers = (resultData && resultData.search_summary && resultData.search_summary.passengers) || 1;
+    $('#fhIcon').textContent = (f.airline || '??').slice(0, 2).toUpperCase();
+    $('#fhAirline').textContent = f.airline || 'Flight';
+    $('#fhSub').textContent = (f.flight_numbers && f.flight_numbers.length ? f.flight_numbers.join(' · ') + ' · ' : '')
+      + f.departure_airport + ' → ' + f.arrival_airport;
+
+    let b = '<div class="fd-price-row"><div class="fd-price">' + fmtMoney(f.price, cur) + '</div>';
+    if (passengers > 1 && f.price > 0) b += '<div class="fd-total">' + fmtMoney(f.price * passengers, cur) + ' total · ' + passengers + ' travellers</div>';
+    b += '</div>';
+    if (f.provider) b += '<div class="fd-total">via ' + escHtml(f.provider) + '</div>';
+
+    b += '<div class="fd-section"><div class="fd-kicker">Itinerary</div>';
+    b += '<div class="fd-row"><span class="k">Departs</span><span class="v">' + fmtTime(f.departure_time) + ' · ' + escHtml(f.departure_airport) + (f.departure_date ? ' · ' + escHtml(f.departure_date) : '') + '</span></div>';
+    b += '<div class="fd-row"><span class="k">Arrives</span><span class="v">' + fmtTime(f.arrival_time) + ((f.day_offset || 0) > 0 ? ' (+' + f.day_offset + 'd)' : '') + ' · ' + escHtml(f.arrival_airport) + '</span></div>';
+    b += '<div class="fd-row"><span class="k">Duration</span><span class="v">' + fmtDur(f.total_duration_minutes) + (f.overnight ? ' · red-eye' : '') + '</span></div>';
+    b += '<div class="fd-row"><span class="k">Stops</span><span class="v">' + (f.stops === 0 ? 'Nonstop' : f.stops + ' stop' + (f.stops > 1 ? 's' : '')) + '</span></div>';
+    if (f.layovers && f.layovers.length) {
+      f.layovers.forEach(l => {
+        const long = l.duration_minutes >= 240;
+        b += '<div class="fd-row"><span class="k">Layover</span><span class="v"' + (long ? ' style="color:#9a3412"' : '') + '>' + escHtml(l.airport) + ' · ' + fmtDur(l.duration_minutes) + (long ? ' (long)' : '') + '</span></div>';
+      });
+    }
+    b += '</div>';
+
+    const tags = flightTagsHtml(f);
+    if (tags) b += '<div class="fd-section"><div class="fd-kicker">Fare &amp; footprint</div><div class="fc-tags" style="margin-top:0">' + tags + '</div></div>';
+
+    if (f.self_transfer) {
+      b += '<div class="fd-section"><div class="fc-self-transfer" style="margin-top:0"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>'
+        + '<span><strong>Self-transfer itinerary.</strong> Separate tickets — you may need to re-check bags and clear security between flights, and a missed connection is not protected. Verify before booking.</span></div></div>';
+    }
+
+    if (f.notes) b += '<div class="fd-section"><div class="fd-kicker">Notes</div><div style="font-size:13px;color:var(--gray);line-height:1.6">' + escHtml(f.notes) + '</div></div>';
+
+    if (f.booking_url || f.source_url) {
+      b += '<a class="fd-cta" href="' + escHtml(f.booking_url || f.source_url) + '" target="_blank" rel="noopener noreferrer">View this deal <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>';
+    }
+
+    $('#flyoutBody').innerHTML = b;
+    flyScrim.classList.add('show');
+    flightFlyout.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    flyoutClose.focus();
+  }
+
+  function closeFlyout() {
+    flyScrim.classList.remove('show');
+    flightFlyout.classList.remove('open');
+    document.body.style.overflow = '';
+    if (flyoutLastFocus && flyoutLastFocus.focus) flyoutLastFocus.focus();
+  }
+  flyoutClose.addEventListener('click', closeFlyout);
+  flyScrim.addEventListener('click', closeFlyout);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && flightFlyout.classList.contains('open')) closeFlyout(); });
 
   function resetFilters() {
     filters = { sortBy: 'score', airlines: [], maxStops: null, depTime: 'any', maxDuration: null, maxPrice: null, carryOnOnly: false, lowEmissionsOnly: false };
@@ -1116,7 +1413,7 @@
       const curVal = filters.maxPrice !== null ? filters.maxPrice : maxPr;
       h += '<div class="mf-group"><span class="mf-label">Max price</span><div class="mf-range">'
         + '<input type="range" id="mfPrice" min="' + minPr + '" max="' + maxPr + '" step="' + Math.max(1, Math.round((maxPr - minPr) / 50)) + '" value="' + curVal + '" data-cur="' + escHtml(cur) + '">'
-        + '<span class="mf-val" id="mfPriceVal">' + escHtml(cur) + ' ' + curVal.toLocaleString() + '</span></div></div>';
+        + '<span class="mf-val" id="mfPriceVal">' + fmtMoney(curVal, cur) + '</span></div></div>';
     }
 
     /* Toggles */
@@ -1152,8 +1449,8 @@
     h += '<div class="pi-head"><div class="pi-title"><svg viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg>Price range across results</div>';
     if (deal) h += '<span class="pi-deal ' + deal[0] + '">Cheapest fare: ' + deal[1] + '</span>';
     h += '</div>';
-    h += '<div class="pi-bar"><div class="pi-marker" style="left:' + Math.min(98, Math.max(2, pct)) + '%"><span class="pi-flag">Median ' + escHtml(cur) + ' ' + pi.median.toLocaleString() + '</span></div></div>';
-    h += '<div class="pi-scale"><span>Low <strong>' + escHtml(cur) + ' ' + pi.low.toLocaleString() + '</strong></span><span>High <strong>' + escHtml(cur) + ' ' + pi.high.toLocaleString() + '</strong></span></div>';
+    h += '<div class="pi-bar"><div class="pi-marker" style="left:' + Math.min(98, Math.max(2, pct)) + '%"><span class="pi-flag">Median ' + fmtMoney(pi.median, cur) + '</span></div></div>';
+    h += '<div class="pi-scale"><span>Low <strong>' + fmtMoney(pi.low, cur) + '</strong></span><span>High <strong>' + fmtMoney(pi.high, cur) + '</strong></span></div>';
     if (pi.co2_low && pi.co2_high) {
       h += '<div class="pi-foot"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>Carbon footprint ranges from <strong style="color:var(--text)">&nbsp;' + pi.co2_low.toLocaleString() + ' kg</strong>&nbsp;to ' + pi.co2_high.toLocaleString() + ' kg CO₂ per traveller.</div>';
     }
@@ -1265,38 +1562,24 @@
     h += '</div>';
 
     /* Price / action */
+    const cur = f.currency || (resultData && resultData.search_summary && resultData.search_summary.currency) || '';
     h += '<div class="fc-right">';
-    h += '<div class="fc-price">' + escHtml(f.currency) + ' ' + (f.price > 0 ? f.price.toLocaleString() : 'N/A') + '</div>';
-    if (passengers && passengers > 1 && f.price > 0) h += '<div class="fc-provider">' + escHtml(f.currency) + ' ' + (f.price * passengers).toLocaleString() + ' total · ' + passengers + ' travellers</div>';
+    h += '<div class="fc-price">' + fmtMoney(f.price, cur) + '</div>';
+    if (passengers && passengers > 1 && f.price > 0) h += '<div class="fc-provider">' + fmtMoney(f.price * passengers, cur) + ' total · ' + passengers + ' travellers</div>';
     if (f.provider) h += '<div class="fc-provider">via ' + escHtml(f.provider) + '</div>';
-    h += confHtml(f.confidence);
-    if (f.booking_url || f.source_url) {
-      h += '<a href="' + escHtml(f.booking_url || f.source_url) + '" target="_blank" rel="noopener noreferrer" class="view-deal">View Deal <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>';
+    if (f.departure_date && lastParams && f.departure_date !== lastParams.departureDate) {
+      h += '<span class="fc-date-chip">Departs ' + escHtml(f.departure_date) + '</span>';
     }
+    h += confHtml(f.confidence);
+    h += '<button type="button" class="fc-details-btn" data-fid="' + escHtml(String(f.id)) + '">Details <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
     h += '</div></div>';
 
-    /* Deal / emissions / baggage tags */
-    const tags = flightTagsHtml(f);
-    if (tags) h += '<div class="fc-tags">' + tags + '</div>';
-
-    /* Self-transfer warning (Kiwi-style virtual interline caution) */
+    /* Card stays scannable: only critical caution surfaces inline; the rest
+       (tags, layovers, notes, booking link) lives in the details fly-out. */
     if (f.self_transfer) {
       h += '<div class="fc-self-transfer"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>'
-        + '<span><strong>Self-transfer itinerary.</strong> Separate tickets — you may need to re-check bags and clear security between flights, and a missed connection is not protected. Verify before booking.</span></div>';
+        + '<span><strong>Self-transfer itinerary</strong> — separate tickets, unprotected connection. See details.</span></div>';
     }
-
-    /* Layovers */
-    if (f.layovers && f.layovers.length) {
-      h += '<div class="fc-layovers">';
-      f.layovers.forEach(l => {
-        const long = l.duration_minutes >= 240;
-        h += '<span class="fc-layover"' + (long ? ' style="color:#9a3412"' : '') + '>' + escHtml(l.airport) + ' · ' + fmtDur(l.duration_minutes) + (long ? ' (long)' : '') + '</span>';
-      });
-      h += '</div>';
-    }
-
-    /* Notes */
-    if (f.notes) h += '<div class="fc-notes">' + escHtml(f.notes) + '</div>';
 
     h += '</div>';
     return h;
