@@ -33,6 +33,8 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="summaverick.webmanifest" />
+  <meta name="theme-color" content="#050608" />
 
   <script type="application/ld+json">
   {
@@ -419,12 +421,13 @@
     }
 
     .hero {
-      padding: 78px 0 36px;
+      padding: 54px 0 34px;
       display: grid;
       grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
       gap: 48px;
       align-items: end;
-      min-height: calc(100vh - 60px - var(--composer-h));
+      /* leave room below for the task starters to stay above the fold */
+      min-height: calc(100vh - 60px - var(--composer-h) - 170px);
     }
 
     .hero-copy { max-width: 680px; }
@@ -440,11 +443,10 @@
     }
 
     .hero-title {
-      font-size: clamp(48px, 7vw, 94px);
-      line-height: 0.92;
-      letter-spacing: -0.062em;
+      font-size: clamp(44px, 5.4vw, 72px);
+      line-height: 0.94;
+      letter-spacing: -0.055em;
       font-weight: 620;
-      max-width: 8.6ch;
     }
 
     .hero-line { display: block; }
@@ -705,17 +707,26 @@
       50% { opacity: 0.9; }
     }
 
-    .starter-wrap { padding-bottom: 36px; }
+    .starter-wrap { padding-bottom: calc(var(--composer-h) + 24px); }
+
+    .starter-head {
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-faint);
+    }
 
     .starter-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
     }
 
     .starter {
       text-align: left;
-      padding: 16px 16px 18px;
+      padding: 15px 16px 16px;
       border-radius: 18px;
       border: 1px solid var(--border);
       background: var(--surface);
@@ -732,11 +743,27 @@
       outline: none;
     }
 
+    .starter-kicker {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 11px;
+      font-weight: 650;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-faint);
+    }
+
     .starter span {
       display: block;
-      font-size: 14px;
-      line-height: 1.42;
+      font-size: 13.5px;
+      line-height: 1.45;
       letter-spacing: -0.012em;
+      color: var(--text-muted);
+    }
+
+    .starter span em {
+      font-style: normal;
+      color: var(--link);
     }
 
     .conversation {
@@ -1691,9 +1718,10 @@
             </p>
 
             <div class="hero-notes">
-              <div class="hero-note">source-backed answers</div>
+              <div class="hero-note">free — no account needed</div>
+              <div class="hero-note">every answer shows its sources</div>
+              <div class="hero-note">nothing stored on servers</div>
               <div class="hero-note">keeps context across turns</div>
-              <div class="hero-note">built for deeper follow-ups</div>
             </div>
           </div>
 
@@ -1728,6 +1756,7 @@
         </section>
 
         <section class="starter-wrap">
+          <div class="starter-head">What do you want to do?</div>
           <div class="starter-grid" id="starterGrid"></div>
         </section>
       </section>
@@ -1771,7 +1800,7 @@
         </div>
 
         <div class="composer-meta" id="inputMeta">
-          <span>Built by <a href="https://www.linkedin.com/in/sumanthbolle/" target="_blank" rel="noopener">Sumanth Bolle</a></span>
+          <span>Free · sources shown · no account · built by <a href="https://www.linkedin.com/in/sumanthbolle/" target="_blank" rel="noopener">Sumanth Bolle</a></span>
         </div>
       </div>
     </div>
@@ -1812,12 +1841,22 @@
         'Understand more'
       ];
 
+      /* Task-shaped starters: everyday jobs rather than example questions.
+       * `run` submits immediately; `fill` drops a template into the composer
+       * with the [blank] pre-selected so typing replaces it. */
       const starters = [
-        { query: 'What just happened in the world today?' },
-        { query: 'Explain the most important AI release this month, simply.' },
-        { query: 'Write a small Python script to summarise a CSV from a URL.' },
-        { query: 'Help me think through whether to switch jobs this year.' },
+        { kicker: 'Today', run: 'What are the most important news stories today? Explain each one in plain language.', text: 'Catch me up on today’s news, in plain language.' },
+        { kicker: 'Before you buy', fill: 'Compare [thing one] and [thing two] — price, reliability, and which is better value for me.', text: 'Compare <em>two products</em> — price, reliability, value.' },
+        { kicker: 'Fact-check', fill: 'Is it true that [something you heard or saw online]? Check it against reliable sources.', text: 'Is it true that <em>something you saw online</em>?' },
+        { kicker: 'Learn something', fill: 'Explain [a topic] in simple words, like I’m completely new to it.', text: 'Explain <em>a topic</em> in simple words.' },
+        { kicker: 'Plan it', fill: 'Help me plan [a trip, a budget, a week of meals] — give me clear steps and options.', text: 'Plan <em>a trip, a budget, a week of meals</em> step by step.' },
+        { kicker: 'Decide carefully', fill: 'Give me the full picture on [a decision you’re weighing]: trade-offs, evidence, and where experts disagree.', text: 'Get the full picture on <em>a decision</em> before you commit.' }
       ];
+
+      const followUps = {
+        simpler: 'Explain your last answer again in plain, simple words for someone completely new to the topic. Keep the sources.',
+        deeper: 'Go deeper on your last answer — more detail, the trade-offs, and where sources or experts disagree.'
+      };
 
       const modeMeta = {
         quick: {
@@ -1843,7 +1882,9 @@
       const icons = {
         externalLink: '<svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>',
         check: '<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>',
-        copy: '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>'
+        copy: '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+        simple: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M8.5 14.5a4.5 4.5 0 0 0 7 0"/></svg>',
+        layers: '<svg viewBox="0 0 24 24"><path d="M12 2l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg>'
       };
 
       const REDUCED_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -1887,6 +1928,9 @@
       const jumpLatest = document.getElementById('jumpLatest');
 
       function init() {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('sw.js').catch(function () {});
+        }
         applyInitialTheme();
         renderStarters();
         bindEvents();
@@ -1965,9 +2009,12 @@
         });
 
         starterGrid.addEventListener('click', function (e) {
-          const btn = e.target.closest('[data-query]');
+          const btn = e.target.closest('[data-starter]');
           if (!btn) return;
-          submitQuery(btn.dataset.query);
+          const item = starters[Number(btn.dataset.starter)];
+          if (!item) return;
+          if (item.run) submitQuery(item.run);
+          else if (item.fill) fillComposer(item.fill);
         });
 
         depthModes.addEventListener('click', function (e) {
@@ -1980,6 +2027,12 @@
           const related = e.target.closest('[data-related]');
           if (related) {
             submitQuery(related.dataset.related);
+            return;
+          }
+
+          const followup = e.target.closest('[data-followup]');
+          if (followup && followUps[followup.dataset.followup]) {
+            submitQuery(followUps[followup.dataset.followup]);
             return;
           }
 
@@ -2099,13 +2152,29 @@
       }
 
       function renderStarters() {
-        starterGrid.innerHTML = starters.map(function (item) {
+        starterGrid.innerHTML = starters.map(function (item, i) {
           return `
-            <button class="starter" type="button" data-query="${escAttr(item.query)}">
-              <span>${esc(item.query)}</span>
+            <button class="starter" type="button" data-starter="${i}">
+              <span class="starter-kicker">${esc(item.kicker)}</span>
+              <span>${item.text}</span>
             </button>
           `;
         }).join('');
+      }
+
+      /* Drop a template into the composer with its [blank] selected so the
+       * user's first keystroke replaces it — prompting without the jargon. */
+      function fillComposer(template) {
+        queryInput.value = template;
+        updateComposerState();
+        resizeTextarea();
+        updateSendState();
+        queryInput.focus();
+        const start = template.indexOf('[');
+        const end = template.indexOf(']');
+        if (start >= 0 && end > start) {
+          try { queryInput.setSelectionRange(start, end + 1); } catch (e) { /* ignore */ }
+        }
       }
 
       function enterConversationMode() {
@@ -2526,6 +2595,8 @@
 
         const actionsHtml =
           '<div class="answer-actions">' +
+            '<button class="act-btn" type="button" data-followup="simpler">' + icons.simple + 'Explain simpler</button>' +
+            '<button class="act-btn" type="button" data-followup="deeper">' + icons.layers + 'Go deeper</button>' +
             '<button class="act-btn" type="button" data-copy-answer>' + icons.copy + 'Copy answer</button>' +
             '<span class="answer-meta">' +
               (sources.length ? sources.length + ' source' + (sources.length === 1 ? '' : 's') + ' · ' : '') +
