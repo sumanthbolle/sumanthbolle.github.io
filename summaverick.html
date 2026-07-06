@@ -1684,6 +1684,35 @@
           if (dockMql.addEventListener) dockMql.addEventListener('change', onDockChange);
           else if (dockMql.addListener) dockMql.addListener(onDockChange);
         }
+        maybeHandleQueryParam();
+      }
+
+      // Deep-link support: /summaverick?q=... prefills the composer and, when
+      // valid, auto-submits. Used by the quiz "Explain with Summaverick AI"
+      // buttons and any shared link. The query is cleared from the URL so a
+      // refresh doesn't resubmit.
+      function maybeHandleQueryParam() {
+        var raw = '';
+        try {
+          raw = new URLSearchParams(window.location.search).get('q') || '';
+        } catch (e) {
+          return;
+        }
+        var q = raw.trim();
+        if (!q) return;
+        if (q.length > 1000) q = q.slice(0, 1000);
+        try {
+          var clean = window.location.pathname + window.location.hash;
+          window.history.replaceState(null, '', clean);
+        } catch (e) { /* ignore */ }
+        if (q.length < 2) {
+          queryInput.value = q;
+          updateComposerState();
+          resizeTextarea();
+          updateSendState();
+          return;
+        }
+        submitQuery(q);
       }
 
       function bindEvents() {

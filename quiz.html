@@ -289,6 +289,9 @@
     .explanation-box h4{font-size:13px;font-weight:600;margin-bottom:8px;color:var(--text2)}
     .explanation-box p{font-size:14px;line-height:1.6;color:var(--text2)}
     .explanation-box code{font-family:var(--mono);font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px}
+    .explanation-box.explanation-box--ai{background:linear-gradient(135deg,rgba(88,86,214,0.08),rgba(0,102,204,0.06));border-color:rgba(88,86,214,0.28)}
+    .ai-explain-btn{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:9px 16px;border-radius:999px;background:linear-gradient(135deg,#5856d6,#0066cc);color:#fff;font-size:13px;font-weight:600;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease;box-shadow:0 6px 18px rgba(88,86,214,0.28)}
+    .ai-explain-btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(88,86,214,0.36)}
 
     /* QUIZ ACTIONS */
     .quiz-actions{display:flex;justify-content:space-between;align-items:center}
@@ -1207,6 +1210,52 @@ function getRequiredSelectionCount(q) {
   return Number(q.multi || (Array.isArray(q.correct) ? q.correct.length : 0) || 1);
 }
 
+// ── EXPLANATIONS ──
+// A large slice of the imported CSA bank ships with a placeholder explanation
+// ("Detailed explanation not provided for this question."). Rather than show
+// that dead-end text (a frequent complaint), we treat it as "no explanation"
+// and offer an on-demand, sourced breakdown from Summaverick (Perplexity-backed).
+const PLACEHOLDER_EXPLANATION_RE = /detailed explanation not provided/i;
+
+function hasRealExplanation(q) {
+  const e = (q && q.explanation ? String(q.explanation) : '').trim();
+  return e !== '' && !PLACEHOLDER_EXPLANATION_RE.test(e);
+}
+
+function buildAiExplainUrl(q) {
+  const letters = 'ABCDEFGH';
+  const opts = (q.options || []).map((o, i) => `${letters[i]}) ${o}`).join('   ');
+  const correct = (q.correct || [])
+    .map(i => (q.options || [])[i])
+    .filter(Boolean)
+    .join('; ');
+  const prompt =
+    'Explain this ServiceNow certification question with a concise, exam-focused breakdown. ' +
+    'State why the correct answer is right and why the common distractors are wrong, and cite official ServiceNow docs where possible.\n\n' +
+    'Question: ' + (q.q || '') + '\n' +
+    'Options: ' + opts + '\n' +
+    'Correct answer: ' + correct;
+  return 'summaverick.html?q=' + encodeURIComponent(prompt);
+}
+
+function renderExplanation(q, boxId, textId) {
+  const box = document.getElementById(boxId || 'explanationBox');
+  const text = document.getElementById(textId || 'explanationText');
+  if (!box || !text) return;
+  if (hasRealExplanation(q)) {
+    text.innerHTML = q.explanation;
+    box.classList.remove('explanation-box--ai');
+    box.style.display = 'block';
+  } else {
+    text.innerHTML =
+      'No written explanation is available for this question yet. ' +
+      'Get an instant, sourced breakdown from Summaverick AI — it explains why the answer is correct and cites official ServiceNow docs.' +
+      '<br><a class="ai-explain-btn" href="' + buildAiExplainUrl(q) + '" target="_blank" rel="noopener">✨ Explain with Summaverick AI</a>';
+    box.classList.add('explanation-box--ai');
+    box.style.display = 'block';
+  }
+}
+
 function isMultiSelectQuestion(q) {
   return getRequiredSelectionCount(q) > 1;
 }
@@ -1588,10 +1637,7 @@ function submitMCQ(q) {
   });
   
   // Show explanation
-  if (q.explanation) {
-    document.getElementById('explanationText').innerHTML = q.explanation;
-    document.getElementById('explanationBox').style.display = 'block';
-  }
+  renderExplanation(q);
 }
 
 // ── CODE EDITOR RENDERING ──
@@ -1666,11 +1712,8 @@ function submitCode() {
 
   SessionProgress.markAnswered(q.id, isCorrect);
 
-  if (q.explanation) {
-    document.getElementById('explanationText').innerHTML = q.explanation;
-    document.getElementById('explanationBox').style.display = 'block';
-  }
-  
+  renderExplanation(q);
+
   document.getElementById('submitCodeBtn').style.display = 'none';
 }
 
@@ -1705,10 +1748,7 @@ function autoSubmit() {
         btn.classList.add('disabled');
         if (q.correct.includes(origIdx)) btn.classList.add('show-correct');
       });
-      if (q.explanation) {
-        document.getElementById('explanationText').innerHTML = q.explanation;
-        document.getElementById('explanationBox').style.display = 'block';
-      }
+      renderExplanation(q);
     }
   } else {
     const code = document.getElementById('codeEditor').value;
@@ -1932,8 +1972,10 @@ function showResults() {
     }
 
     let explanationHtml = '';
-    if (q.explanation) {
+    if (hasRealExplanation(q)) {
       explanationHtml = '<div class="review-answer" style="margin-top:6px;color:var(--text2)"><strong>Why:</strong> ' + q.explanation + '</div>';
+    } else {
+      explanationHtml = '<div class="review-answer" style="margin-top:6px;color:var(--text2)"><a class="ai-explain-btn" href="' + buildAiExplainUrl(q) + '" target="_blank" rel="noopener">✨ Explain with Summaverick AI</a></div>';
     }
 
     div.innerHTML =
@@ -2256,10 +2298,7 @@ const TopicPractice = {
       }
     });
 
-    if (q.explanation) {
-      document.getElementById('tpExplanationText').innerHTML = q.explanation;
-      document.getElementById('tpExplanationBox').style.display = 'block';
-    }
+    renderExplanation(q, 'tpExplanationBox', 'tpExplanationText');
 
     this.updateQuestionStatus(q.id, isCorrect);
     this.updateProgressSummary();
