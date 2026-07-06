@@ -22,14 +22,14 @@
     property="og:description"
     content="AI-powered search assistant. Ask anything — get source-backed AI answers on news, code, research, and career decisions. A free conversational AI alternative to Perplexity, ChatGPT, and Google AI."
   />
-  <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg" />
-  <meta property="og:image:alt" content="Summaverick AI search assistant by Sumanth Bolle" />
+  <meta property="og:image" content="https://sumanthbolle.com/summaverick-og.png" />
+  <meta property="og:image:alt" content="Summaverick — glass arrow logo with flowing light trails" />
   <meta property="og:url" content="https://sumanthbolle.com/summaverick" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Summaverick — AI Search Assistant | Source-Backed AI Answers" />
   <meta name="twitter:description" content="Conversational AI search that shows its sources. Ask anything about news, code, research, and careers." />
-  <meta name="twitter:image" content="https://sumanthbolle.com/profile.jpeg" />
+  <meta name="twitter:image" content="https://sumanthbolle.com/summaverick-og.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
@@ -327,6 +327,22 @@
       font-size: 11px;
       color: var(--text-faint);
       letter-spacing: -0.01em;
+    }
+
+    .brand-logo {
+      display: block;
+      height: 40px;
+      width: auto;
+      transition: transform 220ms var(--ease);
+    }
+
+    .brand:hover .brand-logo { transform: translateY(-1px); }
+
+    .hero-logo {
+      display: block;
+      height: 70px;
+      width: auto;
+      margin-bottom: 20px;
     }
 
     .topnav {
@@ -1682,18 +1698,8 @@
   <div class="shell" id="appShell">
     <header class="topbar">
       <div class="topbar-inner">
-        <a class="brand" href="index.html" aria-label="Back to portfolio">
-          <div class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9"></circle>
-              <path d="M3 12h18"></path>
-              <path d="M12 3c2.4 2.3 4 5.5 4 9s-1.6 6.7-4 9c-2.4-2.3-4-5.5-4-9s1.6-6.7 4-9z"></path>
-            </svg>
-          </div>
-          <div class="brand-copy">
-            <div class="brand-name">Summaverick</div>
-            <div class="brand-sub">understand more</div>
-          </div>
+        <a class="brand" href="index.html" aria-label="Summaverick — back to portfolio">
+          <img class="brand-logo" src="summaverick-logo.svg" alt="Summaverick" width="152" height="40" />
         </a>
 
         <nav class="topnav" aria-label="Primary">
@@ -1724,7 +1730,7 @@
       <section class="landing" id="landing">
         <section class="hero">
           <div class="hero-copy">
-            <span class="eyebrow">Summaverick</span>
+            <img class="hero-logo" src="summaverick-logo.svg" alt="Summaverick" width="266" height="70" />
 
             <h1 class="hero-title">
               <span class="hero-line hero-static">Search less.</span>
