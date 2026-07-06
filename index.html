@@ -108,6 +108,7 @@
     .sm-announce-aurora{position:absolute;inset:-40%;width:180%;height:180%;background:conic-gradient(from 180deg at 50% 50%,rgba(120,168,255,0.55),rgba(167,139,250,0.6),rgba(192,132,252,0.55),rgba(244,114,182,0.55),rgba(251,146,60,0.4),rgba(52,211,153,0.45),rgba(6,182,212,0.55),rgba(120,168,255,0.55));animation:smAuroraRotate 8s linear infinite;filter:blur(36px);opacity:0.85;pointer-events:none}
     @keyframes smAuroraRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     .sm-announce-edge{position:absolute;inset:0;border-radius:22px 22px 22px 4px;padding:1px;background:linear-gradient(135deg,rgba(120,168,255,0.55),rgba(167,139,250,0.45),rgba(244,114,182,0.45),rgba(52,211,153,0.5),rgba(6,182,212,0.55));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:0.85}
+    .sm-announce-logo{position:relative;z-index:2;height:64px;width:auto;border-radius:14px;flex-shrink:0}
     .sm-announce-content{position:relative;z-index:2;flex:1;min-width:0}
     .sm-announce-text{font-size:clamp(22px,4vw,34px);font-weight:600;letter-spacing:-0.03em;color:var(--white);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .sm-announce-sub{font-size:13px;color:rgba(255,255,255,0.55);margin-top:6px;letter-spacing:0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -123,6 +124,7 @@
     @media(max-width:640px){
       .sm-announce{padding:32px 16px}
       .sm-announce-shape{padding:18px 16px 18px 36px;gap:12px}
+      .sm-announce-logo{height:44px;border-radius:10px}
       .sm-announce-pointer{width:32px;height:32px}
       .sm-announce-pointer svg{width:14px;height:14px}
       .sm-announce-pulse{left:14px;width:7px;height:7px}
@@ -523,6 +525,7 @@
           <div class="sm-announce-aurora"></div>
           <div class="sm-announce-edge"></div>
           <div class="sm-announce-pulse"></div>
+          <img class="sm-announce-logo" src="summaverick-logo.png" alt="" aria-hidden="true" width="122" height="64" />
           <div class="sm-announce-content">
             <div class="sm-announce-text">Meet Summaverick</div>
             <div class="sm-announce-sub">AI-powered research assistant — try it now</div>

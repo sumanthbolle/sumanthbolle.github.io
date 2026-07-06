@@ -257,6 +257,8 @@
 
     /* ── CTA ── */
     .cta-wrap{text-align:center;position:relative;z-index:1}
+    .cta-logo{display:block;height:72px;width:auto;border-radius:16px;margin:0 auto 20px}
+    .lib-logo{display:block;height:56px;width:auto;border-radius:14px;margin-bottom:16px}
     .cta-wrap h2{font-size:clamp(28px,5vw,44px);font-weight:600;letter-spacing:-.02em;color:var(--white);margin-bottom:14px}
     .cta-wrap p{font-size:18px;color:var(--gray);max-width:560px;margin:0 auto 32px;line-height:1.6}
     .cta-section{position:relative;overflow:hidden}
@@ -464,6 +466,7 @@
     <!-- CTA -->
     <section class="section section-dark cta-section">
       <div class="section-c cta-wrap">
+        <img class="cta-logo" src="summaverick-logo.png" alt="Summaverick" width="137" height="72" loading="lazy" />
         <h2>Have a ServiceNow question right now?</h2>
         <p>Summaverick is a live-research AI assistant. Ask about Now Assist, AI Agents, licensing, scripting — anything — and get a grounded, sourced answer.</p>
         <a class="btn btn-p" href="summaverick.html">Ask Summaverick <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
@@ -688,14 +691,17 @@
       { icon: ICONS.wrench, tile: 'icon-tutorials',  tag: 'Learn',    title: 'Tutorials',   href: 'tutorials.html',   desc: 'Hands-on, step-by-step guides across scripting, integrations, CSA prep and platform architecture.' },
       { icon: ICONS.chat,   tile: 'icon-interviews', tag: 'Prep',     title: 'Interviews',  href: 'interviews.html',  desc: 'Real ServiceNow interview questions with model answers and .NET-to-ServiceNow analogies.' },
       { icon: ICONS.target, tile: 'icon-quiz',       tag: 'Practice', title: 'Quiz',        href: 'quiz.html',        desc: '1,300+ validated questions — CSA, CSM, GRC, scripting and scenarios, with instant AI explanations.' },
-      { icon: ICONS.ask,    tile: 'icon-ask',        tag: 'Ask',      title: 'Summaverick', href: 'summaverick.html', desc: 'A live-research AI assistant. Ask anything about ServiceNow and get a grounded, cited answer.' }
+      { img: 'summaverick-logo.png', tag: 'Ask',      title: 'Summaverick', href: 'summaverick.html', desc: 'A live-research AI assistant. Ask anything about ServiceNow and get a grounded, cited answer.' }
     ];
     var lg = document.getElementById('libraryGrid');
     if (lg) {
       lg.innerHTML = SOURCES.map(function (s) {
+        var visual = s.img
+          ? '<img class="lib-logo" src="' + esc(s.img) + '" alt="" aria-hidden="true" width="107" height="56" loading="lazy">'
+          : '<span class="icon ' + s.tile + '" aria-hidden="true">' + s.icon + '</span>';
         return '<a class="lib-card" href="' + esc(s.href) + '">' +
           '<span class="lib-tag">' + esc(s.tag) + '</span>' +
-          '<span class="icon ' + s.tile + '" aria-hidden="true">' + s.icon + '</span>' +
+          visual +
           '<h3>' + esc(s.title) + '</h3>' +
           '<p>' + esc(s.desc) + '</p>' +
           '<span class="lib-go">Open ' + ICONS.arrow + '</span>' +
