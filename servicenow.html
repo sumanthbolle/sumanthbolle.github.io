@@ -149,22 +149,34 @@
     .explorer-hint svg{width:15px;height:15px;stroke:var(--gray);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 
     /* ── LIVE FEED ── */
+    .section-c.wide{max-width:1320px}
     .feed-head{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:36px}
+    #feedControls{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
     .chip{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;min-height:44px;border-radius:980px;border:1px solid rgba(0,0,0,0.08);background:var(--white);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .25s var(--ease)}
     .chip svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     .chip:hover{border-color:rgba(0,0,0,0.25);transform:translateY(-1px)}
     .chip.active{background:var(--text);color:var(--white);border-color:var(--text)}
     .feed-status{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--gray);border:1px solid rgba(0,0,0,0.08);background:var(--white);border-radius:980px;padding:8px 16px}
     .feed-status .dot{width:7px;height:7px;border-radius:50%;background:var(--gray)}
-    .feed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:24px}
+    /* all four topics sit side by side on desktop; 2-up on tablet, 1-up on phones */
+    .feed-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+    @media(max-width:1140px){.feed-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:680px){.feed-grid{grid-template-columns:1fr}}
+    .feed-grid.single{grid-template-columns:1fr}
     .track{background:var(--white);border-radius:var(--radius);padding:26px;box-shadow:var(--card-shadow);opacity:0;transform:translateY(30px);transition:opacity .5s,transform .5s,box-shadow .3s}
     .track.animate{opacity:1;transform:translateY(0)}
     .track:hover{box-shadow:var(--card-shadow-hover)}
     .track-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
     .track-title{font-size:17px;font-weight:600}
     .track-sub{font-size:12px;color:var(--gray);margin-top:2px}
-    .article{display:block;padding:15px 0;border-top:1px solid rgba(0,0,0,0.06)}
-    .article:first-of-type{border-top:none;padding-top:0}
+    .article-cell{padding:15px 0;border-top:1px solid rgba(0,0,0,0.06)}
+    .article-cell:first-child{border-top:none;padding-top:0}
+    /* single-topic view: articles become side-by-side cards instead of one tall column */
+    .track.wide .track-articles{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+    .track.wide .article-cell{background:var(--bg);border-top:none;border-radius:14px;padding:18px;display:flex;flex-direction:column}
+    .track.wide .article-cell .article{flex:1}
+    .track.wide .article-ask{margin-top:12px}
+    .article{display:block}
     .article-title{font-size:15px;font-weight:600;line-height:1.4;margin-bottom:5px;transition:color .2s}
     .article:hover .article-title{color:var(--blue)}
     .article-summary{font-size:13.5px;color:var(--gray);line-height:1.5;margin-bottom:7px}
@@ -372,7 +384,7 @@
 
     <!-- LIVE FEED -->
     <section class="section section-gray" id="live">
-      <div class="section-c">
+      <div class="section-c wide">
         <div class="section-h">
           <p class="section-eye" data-animate>ServiceNow, live</p>
           <h2 class="section-title" data-animate>The latest, always sourced</h2>
@@ -572,6 +584,7 @@
 
     function renderSkeletons() {
       var keys = currentTrack === 'all' ? TRACK_ORDER : [currentTrack];
+      feedGrid.classList.toggle('single', currentTrack !== 'all');
       feedGrid.innerHTML = keys.map(skeletonTrack).join('');
       observeAll(feedGrid);
     }
@@ -580,20 +593,22 @@
       var meta = [];
       if (a.source) meta.push('<span class="src">' + esc(a.source) + '</span>');
       if (a.date) meta.push('<span>' + esc(a.date) + '</span>');
-      return '<a class="article" href="' + esc(a.url) + '" target="_blank" rel="noopener">' +
+      return '<div class="article-cell">' +
+        '<a class="article" href="' + esc(a.url) + '" target="_blank" rel="noopener">' +
         '<div class="article-title">' + esc(a.title) + '</div>' +
         (a.summary ? '<div class="article-summary">' + esc(a.summary) + '</div>' : '') +
         (meta.length ? '<div class="article-meta">' + meta.join(' · ') + '</div>' : '') +
         '</a>' +
-        '<a class="article-ask" href="' + esc(askUrl(a, trackLabel)) + '" target="_blank" rel="noopener">' + ICONS.spark + ' Explain with Summaverick</a>';
+        '<a class="article-ask" href="' + esc(askUrl(a, trackLabel)) + '" target="_blank" rel="noopener">' + ICONS.spark + ' Explain with Summaverick</a>' +
+        '</div>';
     }
 
-    function trackHtml(track) {
+    function trackHtml(track, wide) {
       var meta = TRACK_META[track.key] || { icon: ICONS.feed, tile: 'icon-live', label: track.label, sub: '' };
       var body = (track.articles && track.articles.length)
-        ? track.articles.map(function (a) { return articleHtml(a, meta.label); }).join('')
+        ? '<div class="track-articles">' + track.articles.map(function (a) { return articleHtml(a, meta.label); }).join('') + '</div>'
         : '<div class="track-empty">No fresh items right now — check back soon.</div>';
-      return '<div class="track" data-track="' + esc(track.key) + '">' + trackHeadHtml(meta) + body + '</div>';
+      return '<div class="track' + (wide ? ' wide' : '') + '" data-track="' + esc(track.key) + '">' + trackHeadHtml(meta) + body + '</div>';
     }
 
     function setStatus(text, color) {
@@ -611,7 +626,9 @@
       }
       feedFallback.classList.remove('show');
       tracks.sort(function (a, b) { return TRACK_ORDER.indexOf(a.key) - TRACK_ORDER.indexOf(b.key); });
-      feedGrid.innerHTML = tracks.map(trackHtml).join('');
+      var wide = currentTrack !== 'all';
+      feedGrid.classList.toggle('single', wide);
+      feedGrid.innerHTML = tracks.map(function (t) { return trackHtml(t, wide); }).join('');
       observeAll(feedGrid);
       var count = tracks.reduce(function (n, t) { return n + ((t.articles && t.articles.length) || 0); }, 0);
       setStatus(count + ' fresh article' + (count === 1 ? '' : 's'), '#34c759');
