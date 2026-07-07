@@ -277,6 +277,11 @@
     .fd-cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;margin-top:22px;background:var(--blue);color:#fff;border-radius:var(--radius-sm);font-size:15px;font-weight:600;text-decoration:none;transition:background .2s}
     .fd-cta:hover{background:#0055aa}
     .fd-cta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .dg-loading{font-size:13px;color:var(--gray)}
+    .dg-card{display:flex;gap:12px;align-items:flex-start}
+    .dg-thumb{width:78px;height:78px;border-radius:var(--radius-xs);object-fit:cover;flex-shrink:0}
+    .dg-text{font-size:13px;color:var(--gray);line-height:1.6}
+    .dg-text a{color:var(--blue);font-weight:600;white-space:nowrap}
     .fc-details-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border:1px solid rgba(0,0,0,0.12);border-radius:var(--radius-xs);background:var(--white);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;margin-top:2px}
     .fc-details-btn:hover{border-color:var(--blue);color:var(--blue)}
     .fc-details-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -1638,11 +1643,63 @@
       b += '<a class="fd-cta" href="' + escHtml(f.booking_url || f.source_url) + '" target="_blank" rel="noopener noreferrer">View this deal <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>';
     }
 
+    /* Destination guide loads into this slot after the panel opens. */
+    const city = airportCity(f.arrival_airport);
+    if (city) b += '<div class="fd-section" id="destGuide" data-city="' + escHtml(city) + '"></div>';
+
     $('#flyoutBody').innerHTML = b;
     flyScrim.classList.add('show');
     flightFlyout.classList.add('open');
     document.body.style.overflow = 'hidden';
     flyoutClose.focus();
+    if (city) loadDestinationGuide(city);
+  }
+
+  /* Airport code → city name, from the local database (no network). */
+  function airportCity(code) {
+    if (!code) return '';
+    const a = AIRPORTS.find(x => x.code === String(code).toUpperCase());
+    return a ? a.city : '';
+  }
+
+  /* Destination guide via Wikipedia's public REST summary — keyless,
+     CORS-enabled, cached per city, and it hides itself if anything is off. */
+  const destCache = {};
+  function loadDestinationGuide(city) {
+    const slot = $('#destGuide');
+    if (!slot) return;
+    slot.innerHTML = '<div class="fd-kicker">About ' + escHtml(city) + '</div><div class="dg-loading">Loading a quick guide…</div>';
+
+    const render = (data) => {
+      const live = $('#destGuide');
+      if (!live || live.dataset.city !== city) return; // panel moved on
+      if (!data) { live.innerHTML = ''; return; }       // fail silently
+      let h = '<div class="fd-kicker">About ' + escHtml(city) + '</div><div class="dg-card">';
+      if (data.thumb) h += '<img class="dg-thumb" src="' + escHtml(data.thumb) + '" alt="" loading="lazy">';
+      h += '<div class="dg-text">' + escHtml(data.extract);
+      if (data.url) h += ' <a href="' + escHtml(data.url) + '" target="_blank" rel="noopener noreferrer">Read more</a>';
+      h += '</div></div>';
+      live.innerHTML = h;
+    };
+
+    if (destCache[city] !== undefined) { render(destCache[city]); return; }
+
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(city), { signal: ctrl.signal })
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(j => {
+        clearTimeout(timer);
+        // Only trust a real article summary with prose.
+        if (!j || j.type !== 'standard' || !j.extract || j.extract.length < 40) { destCache[city] = null; render(null); return; }
+        destCache[city] = {
+          extract: j.extract,
+          thumb: (j.thumbnail && /^https:/.test(j.thumbnail.source || '')) ? j.thumbnail.source : '',
+          url: (j.content_urls && j.content_urls.desktop && j.content_urls.desktop.page) || ''
+        };
+        render(destCache[city]);
+      })
+      .catch(() => { clearTimeout(timer); destCache[city] = null; render(null); });
   }
 
   function closeFlyout() {
