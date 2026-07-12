@@ -1,0 +1,9 @@
+# Cloudflare Worker for SkyFare (/flights) and Summaverick (/, /trending, /servicenow).
+# This is the versioned source of truth for the deployed Worker.
+name = "wandering-haze-b394"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# Secrets (set with `wrangler secret put ...`, never commit values):
+#   PERPLEXITY_API_KEY  — https://www.perplexity.ai/settings/api
+#   ALLOWED_ORIGIN      — e.g. https://sumanthbolle.com
