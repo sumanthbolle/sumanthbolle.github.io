@@ -172,6 +172,7 @@
     .fc-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
     .badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.2px}
     .badge-cheapest{background:#dcfce7;color:#166534}.badge-fastest{background:#f3e8ff;color:#6b21a8}.badge-bestvalue{background:#dbeafe;color:#1e40af}.badge-underbudget{background:#d1fae5;color:#065f46}.badge-nonstop{background:#fef3c7;color:#92400e}.badge-lowco2{background:#d1fae5;color:#047857}.badge-greatdeal{background:#dcfce7;color:#15803d}
+    .badge-unverified{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
     .fc-body{display:flex;align-items:center;gap:16px}
     .fc-airline{flex:0 0 auto;display:flex;align-items:center;gap:10px;min-width:140px}
     .fc-airline-icon{width:36px;height:36px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gray);flex-shrink:0}
@@ -208,11 +209,15 @@
     .hero-pill strong{color:#fff;font-weight:600}
     .book-trust{display:flex;align-items:flex-start;gap:10px;background:rgba(0,102,204,0.05);border:1px solid rgba(0,102,204,0.12);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;color:#1a56db;line-height:1.5}
     .book-trust svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .unverified-note{display:flex;align-items:flex-start;gap:10px;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:16px;font-size:13px;color:#b91c1c;line-height:1.5}
+    .unverified-note svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .fd-book-stack{display:flex;flex-direction:column;gap:8px;margin-top:18px}
     .fd-book-stack .fd-cta{margin-top:0}
     .fd-book-stack .fd-cta.alt{background:var(--white);color:var(--text);border:1px solid rgba(0,0,0,0.12)}
     .fd-book-stack .fd-cta.alt:hover{border-color:var(--blue);color:var(--blue);background:rgba(0,102,204,0.04)}
     .fd-book-note{font-size:12px;color:var(--gray);line-height:1.5;margin-top:4px}
+    .fd-unverified{display:flex;align-items:flex-start;gap:9px;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:16px;font-size:13px;color:#b91c1c;line-height:1.5}
+    .fd-unverified svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .fc-layovers{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
     .fc-layover{font-size:11px;color:var(--gray);background:var(--bg);padding:2px 8px;border-radius:4px}
     .fc-notes{font-size:12px;color:var(--gray);font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.04)}
@@ -433,6 +438,13 @@
     .error-state p{font-size:14px;color:var(--gray);max-width:400px;margin:0 auto 20px}
     .retry-btn{padding:9px 22px;background:var(--text);color:var(--white);border:none;border-radius:var(--radius-xs);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:background .2s}
     .retry-btn:hover{background:#333}
+    .retry-btn.ghost{background:transparent;color:var(--blue);border:1px solid rgba(0,102,204,0.3)}
+    .retry-btn.ghost:hover{background:rgba(0,102,204,0.06)}
+    .err-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .err-demo-note{font-size:12px;color:var(--gray);max-width:420px;margin:14px auto 0;line-height:1.5}
+    .demo-banner{display:flex;align-items:flex-start;gap:10px;background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;color:#92400e;line-height:1.5}
+    .demo-banner svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .demo-retry{background:none;border:none;color:var(--blue);font-weight:600;cursor:pointer;font-family:inherit;font-size:13px;padding:0;text-decoration:underline}
 
     /* ─── Empty state ─── */
     .empty-state{text-align:center;padding:70px 20px}
@@ -447,6 +459,7 @@
     .ac-list.open{display:block}
     .ac-item{padding:10px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s}
     .ac-item:hover,.ac-item.highlighted{background:rgba(0,102,204,0.06)}
+    .ac-head{font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;padding:8px 12px 4px}
     .ac-code{font-size:14px;font-weight:700;color:var(--blue);min-width:36px;font-family:SFMono-Regular,Menlo,monospace}
     .ac-info{flex:1;min-width:0}
     .ac-city{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -616,16 +629,153 @@
 
   /* ─── Airport Database ─── */
   const AIRPORTS = [
-    {code:'JFK',city:'New York',name:'John F. Kennedy Intl',country:'USA'},
-    {code:'LAX',city:'Los Angeles',name:'Los Angeles Intl',country:'USA'},
-    {code:'ORD',city:'Chicago',name:"O'Hare Intl",country:'USA'},
+    {code:'DEL',city:'New Delhi',name:'Indira Gandhi Intl',country:'India',popular:true},
+    {code:'BOM',city:'Mumbai',name:'Chhatrapati Shivaji Maharaj Intl',country:'India',popular:true},
+    {code:'BLR',city:'Bangalore',name:'Kempegowda Intl',country:'India',popular:true},
+    {code:'MAA',city:'Chennai',name:'Chennai Intl',country:'India',popular:true},
+    {code:'HYD',city:'Hyderabad',name:'Rajiv Gandhi Intl',country:'India',popular:true},
+    {code:'CCU',city:'Kolkata',name:'Netaji Subhas Chandra Bose Intl',country:'India',popular:true},
+    {code:'COK',city:'Kochi',name:'Cochin Intl',country:'India',popular:true},
+    {code:'GOX',city:'Goa (Mopa)',name:'Manohar Intl',country:'India',popular:true},
+    {code:'GOI',city:'Goa (Dabolim)',name:'Dabolim',country:'India',popular:true},
+    {code:'PNQ',city:'Pune',name:'Pune Intl',country:'India',popular:true},
+    {code:'AMD',city:'Ahmedabad',name:'Sardar Vallabhbhai Patel Intl',country:'India',popular:true},
+    {code:'JAI',city:'Jaipur',name:'Jaipur Intl',country:'India'},
+    {code:'LKO',city:'Lucknow',name:'Chaudhary Charan Singh Intl',country:'India'},
+    {code:'PAT',city:'Patna',name:'Jay Prakash Narayan',country:'India'},
+    {code:'IXC',city:'Chandigarh',name:'Chandigarh Intl',country:'India'},
+    {code:'GAU',city:'Guwahati',name:'Lokpriya Gopinath Bordoloi Intl',country:'India'},
+    {code:'BBI',city:'Bhubaneswar',name:'Biju Patnaik Intl',country:'India'},
+    {code:'TRV',city:'Thiruvananthapuram',name:'Trivandrum Intl',country:'India'},
+    {code:'CCJ',city:'Kozhikode',name:'Calicut Intl',country:'India'},
+    {code:'IXE',city:'Mangalore',name:'Mangalore Intl',country:'India'},
+    {code:'VNS',city:'Varanasi',name:'Lal Bahadur Shastri Intl',country:'India'},
+    {code:'NAG',city:'Nagpur',name:'Dr. Babasaheb Ambedkar Intl',country:'India'},
+    {code:'IDR',city:'Indore',name:'Devi Ahilyabai Holkar',country:'India'},
+    {code:'BDQ',city:'Vadodara',name:'Vadodara',country:'India'},
+    {code:'STV',city:'Surat',name:'Surat',country:'India'},
+    {code:'RPR',city:'Raipur',name:'Swami Vivekananda',country:'India'},
+    {code:'VTZ',city:'Visakhapatnam',name:'Visakhapatnam Intl',country:'India'},
+    {code:'IXB',city:'Bagdogra',name:'Bagdogra',country:'India'},
+    {code:'SXR',city:'Srinagar',name:'Srinagar Intl',country:'India'},
+    {code:'IXJ',city:'Jammu',name:'Jammu',country:'India'},
+    {code:'ATQ',city:'Amritsar',name:'Sri Guru Ram Dass Jee Intl',country:'India'},
+    {code:'IXR',city:'Ranchi',name:'Birsa Munda',country:'India'},
+    {code:'IXL',city:'Leh',name:'Kushok Bakula Rimpochee',country:'India'},
+    {code:'IXA',city:'Agartala',name:'Maharaja Bir Bikram',country:'India'},
+    {code:'IMF',city:'Imphal',name:'Bir Tikendrajit Intl',country:'India'},
+    {code:'DIB',city:'Dibrugarh',name:'Dibrugarh',country:'India'},
+    {code:'TIR',city:'Tirupati',name:'Tirupati',country:'India'},
+    {code:'TRZ',city:'Tiruchirappalli',name:'Tiruchirappalli Intl',country:'India'},
+    {code:'IXM',city:'Madurai',name:'Madurai',country:'India'},
+    {code:'IXZ',city:'Port Blair',name:'Veer Savarkar Intl',country:'India'},
+    {code:'HBX',city:'Hubli',name:'Hubli',country:'India'},
+    {code:'JLR',city:'Jabalpur',name:'Jabalpur',country:'India'},
+    {code:'DED',city:'Dehradun',name:'Jolly Grant',country:'India'},
+    {code:'KNU',city:'Kanpur',name:'Kanpur',country:'India'},
+    {code:'RAJ',city:'Rajkot',name:'Rajkot',country:'India'},
+    {code:'UDR',city:'Udaipur',name:'Maharana Pratap',country:'India'},
+    {code:'JDH',city:'Jodhpur',name:'Jodhpur',country:'India'},
+    {code:'AGR',city:'Agra',name:'Agra',country:'India'},
+    {code:'GAY',city:'Gaya',name:'Gaya Intl',country:'India'},
+    {code:'VGA',city:'Vijayawada',name:'Vijayawada',country:'India'},
+    {code:'CJB',city:'Coimbatore',name:'Coimbatore Intl',country:'India'},
+    {code:'CMB',city:'Colombo',name:'Bandaranaike Intl',country:'Sri Lanka'},
+    {code:'DAC',city:'Dhaka',name:'Hazrat Shahjalal Intl',country:'Bangladesh'},
+    {code:'KTM',city:'Kathmandu',name:'Tribhuvan Intl',country:'Nepal'},
+    {code:'MLE',city:'Male',name:'Velana Intl',country:'Maldives'},
+    {code:'ISB',city:'Islamabad',name:'Islamabad Intl',country:'Pakistan'},
+    {code:'KHI',city:'Karachi',name:'Jinnah Intl',country:'Pakistan'},
+    {code:'LHE',city:'Lahore',name:'Allama Iqbal Intl',country:'Pakistan'},
+    {code:'DXB',city:'Dubai',name:'Dubai Intl',country:'UAE',popular:true},
+    {code:'DWC',city:'Dubai',name:'Al Maktoum Intl',country:'UAE'},
+    {code:'AUH',city:'Abu Dhabi',name:'Zayed Intl',country:'UAE'},
+    {code:'SHJ',city:'Sharjah',name:'Sharjah Intl',country:'UAE'},
+    {code:'DOH',city:'Doha',name:'Hamad Intl',country:'Qatar',popular:true},
+    {code:'RUH',city:'Riyadh',name:'King Khalid Intl',country:'Saudi Arabia'},
+    {code:'JED',city:'Jeddah',name:'King Abdulaziz Intl',country:'Saudi Arabia'},
+    {code:'BAH',city:'Bahrain',name:'Bahrain Intl',country:'Bahrain'},
+    {code:'MCT',city:'Muscat',name:'Muscat Intl',country:'Oman'},
+    {code:'KWI',city:'Kuwait City',name:'Kuwait Intl',country:'Kuwait'},
+    {code:'AMM',city:'Amman',name:'Queen Alia Intl',country:'Jordan'},
+    {code:'TLV',city:'Tel Aviv',name:'Ben Gurion',country:'Israel'},
+    {code:'IST',city:'Istanbul',name:'Istanbul',country:'Turkey',popular:true},
+    {code:'SAW',city:'Istanbul',name:'Sabiha Gokcen',country:'Turkey'},
+    {code:'CAI',city:'Cairo',name:'Cairo Intl',country:'Egypt'},
+    {code:'SIN',city:'Singapore',name:'Changi',country:'Singapore',popular:true},
+    {code:'KUL',city:'Kuala Lumpur',name:'KL Intl',country:'Malaysia',popular:true},
+    {code:'BKK',city:'Bangkok',name:'Suvarnabhumi',country:'Thailand',popular:true},
+    {code:'DMK',city:'Bangkok',name:'Don Mueang',country:'Thailand'},
+    {code:'HKT',city:'Phuket',name:'Phuket Intl',country:'Thailand'},
+    {code:'CGK',city:'Jakarta',name:'Soekarno-Hatta',country:'Indonesia'},
+    {code:'DPS',city:'Bali',name:'Ngurah Rai',country:'Indonesia'},
+    {code:'MNL',city:'Manila',name:'Ninoy Aquino',country:'Philippines'},
+    {code:'CEB',city:'Cebu',name:'Mactan-Cebu Intl',country:'Philippines'},
+    {code:'SGN',city:'Ho Chi Minh City',name:'Tan Son Nhat',country:'Vietnam'},
+    {code:'HAN',city:'Hanoi',name:'Noi Bai',country:'Vietnam'},
+    {code:'HKG',city:'Hong Kong',name:'Hong Kong Intl',country:'Hong Kong',popular:true},
+    {code:'TPE',city:'Taipei',name:'Taoyuan',country:'Taiwan'},
+    {code:'NRT',city:'Tokyo',name:'Narita',country:'Japan',popular:true},
+    {code:'HND',city:'Tokyo',name:'Haneda',country:'Japan',popular:true},
+    {code:'KIX',city:'Osaka',name:'Kansai',country:'Japan'},
+    {code:'NGO',city:'Nagoya',name:'Chubu Centrair',country:'Japan'},
+    {code:'ICN',city:'Seoul',name:'Incheon',country:'South Korea',popular:true},
+    {code:'GMP',city:'Seoul',name:'Gimpo',country:'South Korea'},
+    {code:'PEK',city:'Beijing',name:'Capital Intl',country:'China',popular:true},
+    {code:'PKX',city:'Beijing',name:'Daxing',country:'China'},
+    {code:'PVG',city:'Shanghai',name:'Pudong',country:'China',popular:true},
+    {code:'SHA',city:'Shanghai',name:'Hongqiao',country:'China'},
+    {code:'CAN',city:'Guangzhou',name:'Baiyun',country:'China'},
+    {code:'SZX',city:'Shenzhen',name:'Bao\'an',country:'China'},
+    {code:'CTU',city:'Chengdu',name:'Tianfu',country:'China'},
+    {code:'RGN',city:'Yangon',name:'Yangon Intl',country:'Myanmar'},
+    {code:'PNH',city:'Phnom Penh',name:'Phnom Penh Intl',country:'Cambodia'},
+    {code:'LHR',city:'London',name:'Heathrow',country:'UK',popular:true},
+    {code:'LGW',city:'London',name:'Gatwick',country:'UK'},
+    {code:'STN',city:'London',name:'Stansted',country:'UK'},
+    {code:'LTN',city:'London',name:'Luton',country:'UK'},
+    {code:'MAN',city:'Manchester',name:'Manchester',country:'UK'},
+    {code:'EDI',city:'Edinburgh',name:'Edinburgh',country:'UK'},
+    {code:'BHX',city:'Birmingham',name:'Birmingham',country:'UK'},
+    {code:'CDG',city:'Paris',name:'Charles de Gaulle',country:'France',popular:true},
+    {code:'ORY',city:'Paris',name:'Orly',country:'France'},
+    {code:'NCE',city:'Nice',name:'Nice Cote d\'Azur',country:'France'},
+    {code:'FRA',city:'Frankfurt',name:'Frankfurt am Main',country:'Germany',popular:true},
+    {code:'MUC',city:'Munich',name:'Munich',country:'Germany'},
+    {code:'BER',city:'Berlin',name:'Berlin Brandenburg',country:'Germany'},
+    {code:'DUS',city:'Dusseldorf',name:'Dusseldorf',country:'Germany'},
+    {code:'AMS',city:'Amsterdam',name:'Schiphol',country:'Netherlands',popular:true},
+    {code:'MAD',city:'Madrid',name:'Adolfo Suarez Madrid-Barajas',country:'Spain',popular:true},
+    {code:'BCN',city:'Barcelona',name:'El Prat',country:'Spain'},
+    {code:'FCO',city:'Rome',name:'Fiumicino',country:'Italy',popular:true},
+    {code:'MXP',city:'Milan',name:'Malpensa',country:'Italy'},
+    {code:'VCE',city:'Venice',name:'Marco Polo',country:'Italy'},
+    {code:'ZRH',city:'Zurich',name:'Zurich',country:'Switzerland'},
+    {code:'GVA',city:'Geneva',name:'Geneva',country:'Switzerland'},
+    {code:'VIE',city:'Vienna',name:'Vienna Intl',country:'Austria'},
+    {code:'CPH',city:'Copenhagen',name:'Copenhagen',country:'Denmark'},
+    {code:'OSL',city:'Oslo',name:'Gardermoen',country:'Norway'},
+    {code:'ARN',city:'Stockholm',name:'Arlanda',country:'Sweden'},
+    {code:'HEL',city:'Helsinki',name:'Helsinki-Vantaa',country:'Finland'},
+    {code:'ATH',city:'Athens',name:'Eleftherios Venizelos',country:'Greece'},
+    {code:'LIS',city:'Lisbon',name:'Humberto Delgado',country:'Portugal'},
+    {code:'DUB',city:'Dublin',name:'Dublin',country:'Ireland'},
+    {code:'BRU',city:'Brussels',name:'Brussels',country:'Belgium'},
+    {code:'WAW',city:'Warsaw',name:'Chopin',country:'Poland'},
+    {code:'PRG',city:'Prague',name:'Vaclav Havel',country:'Czech Republic'},
+    {code:'BUD',city:'Budapest',name:'Budapest Ferenc Liszt',country:'Hungary'},
+    {code:'SVO',city:'Moscow',name:'Sheremetyevo',country:'Russia'},
+    {code:'JFK',city:'New York',name:'John F. Kennedy Intl',country:'USA',popular:true},
+    {code:'EWR',city:'Newark',name:'Newark Liberty Intl',country:'USA'},
+    {code:'LGA',city:'New York',name:'LaGuardia',country:'USA'},
+    {code:'LAX',city:'Los Angeles',name:'Los Angeles Intl',country:'USA',popular:true},
+    {code:'SFO',city:'San Francisco',name:'San Francisco Intl',country:'USA',popular:true},
+    {code:'ORD',city:'Chicago',name:'O\'Hare Intl',country:'USA',popular:true},
     {code:'ATL',city:'Atlanta',name:'Hartsfield-Jackson Intl',country:'USA'},
     {code:'DFW',city:'Dallas',name:'Dallas/Fort Worth Intl',country:'USA'},
-    {code:'SFO',city:'San Francisco',name:'San Francisco Intl',country:'USA'},
     {code:'MIA',city:'Miami',name:'Miami Intl',country:'USA'},
     {code:'SEA',city:'Seattle',name:'Seattle-Tacoma Intl',country:'USA'},
     {code:'BOS',city:'Boston',name:'Logan Intl',country:'USA'},
-    {code:'EWR',city:'Newark',name:'Newark Liberty Intl',country:'USA'},
     {code:'IAD',city:'Washington DC',name:'Dulles Intl',country:'USA'},
     {code:'DEN',city:'Denver',name:'Denver Intl',country:'USA'},
     {code:'LAS',city:'Las Vegas',name:'Harry Reid Intl',country:'USA'},
@@ -636,88 +786,16 @@
     {code:'MSP',city:'Minneapolis',name:'Minneapolis-Saint Paul Intl',country:'USA'},
     {code:'DTW',city:'Detroit',name:'Detroit Metro Wayne County',country:'USA'},
     {code:'PHL',city:'Philadelphia',name:'Philadelphia Intl',country:'USA'},
-    {code:'LHR',city:'London',name:'Heathrow',country:'UK'},
-    {code:'LGW',city:'London',name:'Gatwick',country:'UK'},
-    {code:'STN',city:'London',name:'Stansted',country:'UK'},
-    {code:'MAN',city:'Manchester',name:'Manchester',country:'UK'},
-    {code:'EDI',city:'Edinburgh',name:'Edinburgh',country:'UK'},
-    {code:'CDG',city:'Paris',name:'Charles de Gaulle',country:'France'},
-    {code:'ORY',city:'Paris',name:'Orly',country:'France'},
-    {code:'NCE',city:'Nice',name:'Nice Cote d Azur',country:'France'},
-    {code:'FRA',city:'Frankfurt',name:'Frankfurt am Main',country:'Germany'},
-    {code:'MUC',city:'Munich',name:'Munich',country:'Germany'},
-    {code:'BER',city:'Berlin',name:'Berlin Brandenburg',country:'Germany'},
-    {code:'AMS',city:'Amsterdam',name:'Schiphol',country:'Netherlands'},
-    {code:'MAD',city:'Madrid',name:'Adolfo Suarez Madrid-Barajas',country:'Spain'},
-    {code:'BCN',city:'Barcelona',name:'El Prat',country:'Spain'},
-    {code:'FCO',city:'Rome',name:'Fiumicino',country:'Italy'},
-    {code:'MXP',city:'Milan',name:'Malpensa',country:'Italy'},
-    {code:'VCE',city:'Venice',name:'Marco Polo',country:'Italy'},
-    {code:'ZRH',city:'Zurich',name:'Zurich',country:'Switzerland'},
-    {code:'GVA',city:'Geneva',name:'Geneva',country:'Switzerland'},
-    {code:'VIE',city:'Vienna',name:'Vienna Intl',country:'Austria'},
-    {code:'CPH',city:'Copenhagen',name:'Copenhagen',country:'Denmark'},
-    {code:'OSL',city:'Oslo',name:'Gardermoen',country:'Norway'},
-    {code:'ARN',city:'Stockholm',name:'Arlanda',country:'Sweden'},
-    {code:'HEL',city:'Helsinki',name:'Helsinki-Vantaa',country:'Finland'},
-    {code:'IST',city:'Istanbul',name:'Istanbul',country:'Turkey'},
-    {code:'SAW',city:'Istanbul',name:'Sabiha Gokcen',country:'Turkey'},
-    {code:'ATH',city:'Athens',name:'Eleftherios Venizelos',country:'Greece'},
-    {code:'LIS',city:'Lisbon',name:'Humberto Delgado',country:'Portugal'},
-    {code:'DUB',city:'Dublin',name:'Dublin',country:'Ireland'},
-    {code:'BRU',city:'Brussels',name:'Brussels',country:'Belgium'},
-    {code:'WAW',city:'Warsaw',name:'Chopin',country:'Poland'},
-    {code:'PRG',city:'Prague',name:'Vaclav Havel',country:'Czech Republic'},
-    {code:'BUD',city:'Budapest',name:'Budapest Ferenc Liszt',country:'Hungary'},
-    {code:'DXB',city:'Dubai',name:'Dubai Intl',country:'UAE'},
-    {code:'AUH',city:'Abu Dhabi',name:'Zayed Intl',country:'UAE'},
-    {code:'DOH',city:'Doha',name:'Hamad Intl',country:'Qatar'},
-    {code:'RUH',city:'Riyadh',name:'King Khalid Intl',country:'Saudi Arabia'},
-    {code:'JED',city:'Jeddah',name:'King Abdulaziz Intl',country:'Saudi Arabia'},
-    {code:'BAH',city:'Bahrain',name:'Bahrain Intl',country:'Bahrain'},
-    {code:'MCT',city:'Muscat',name:'Muscat Intl',country:'Oman'},
-    {code:'AMM',city:'Amman',name:'Queen Alia Intl',country:'Jordan'},
-    {code:'TLV',city:'Tel Aviv',name:'Ben Gurion',country:'Israel'},
-    {code:'CAI',city:'Cairo',name:'Cairo Intl',country:'Egypt'},
-    {code:'NRT',city:'Tokyo',name:'Narita',country:'Japan'},
-    {code:'HND',city:'Tokyo',name:'Haneda',country:'Japan'},
-    {code:'KIX',city:'Osaka',name:'Kansai',country:'Japan'},
-    {code:'ICN',city:'Seoul',name:'Incheon',country:'South Korea'},
-    {code:'GMP',city:'Seoul',name:'Gimpo',country:'South Korea'},
-    {code:'PEK',city:'Beijing',name:'Capital Intl',country:'China'},
-    {code:'PKX',city:'Beijing',name:'Daxing',country:'China'},
-    {code:'PVG',city:'Shanghai',name:'Pudong',country:'China'},
-    {code:'CAN',city:'Guangzhou',name:'Baiyun',country:'China'},
-    {code:'HKG',city:'Hong Kong',name:'Hong Kong Intl',country:'Hong Kong'},
-    {code:'TPE',city:'Taipei',name:'Taoyuan',country:'Taiwan'},
-    {code:'SIN',city:'Singapore',name:'Changi',country:'Singapore'},
-    {code:'KUL',city:'Kuala Lumpur',name:'KL Intl',country:'Malaysia'},
-    {code:'BKK',city:'Bangkok',name:'Suvarnabhumi',country:'Thailand'},
-    {code:'DMK',city:'Bangkok',name:'Don Mueang',country:'Thailand'},
-    {code:'CGK',city:'Jakarta',name:'Soekarno-Hatta',country:'Indonesia'},
-    {code:'DPS',city:'Bali',name:'Ngurah Rai',country:'Indonesia'},
-    {code:'MNL',city:'Manila',name:'Ninoy Aquino',country:'Philippines'},
-    {code:'SGN',city:'Ho Chi Minh City',name:'Tan Son Nhat',country:'Vietnam'},
-    {code:'HAN',city:'Hanoi',name:'Noi Bai',country:'Vietnam'},
-    {code:'DEL',city:'New Delhi',name:'Indira Gandhi Intl',country:'India'},
-    {code:'BOM',city:'Mumbai',name:'Chhatrapati Shivaji Intl',country:'India'},
-    {code:'BLR',city:'Bangalore',name:'Kempegowda Intl',country:'India'},
-    {code:'MAA',city:'Chennai',name:'Chennai Intl',country:'India'},
-    {code:'HYD',city:'Hyderabad',name:'Rajiv Gandhi Intl',country:'India'},
-    {code:'CCU',city:'Kolkata',name:'Netaji Subhas Chandra Bose',country:'India'},
-    {code:'CMB',city:'Colombo',name:'Bandaranaike Intl',country:'Sri Lanka'},
-    {code:'DAC',city:'Dhaka',name:'Hazrat Shahjalal Intl',country:'Bangladesh'},
-    {code:'KTM',city:'Kathmandu',name:'Tribhuvan Intl',country:'Nepal'},
-    {code:'SYD',city:'Sydney',name:'Kingsford Smith',country:'Australia'},
-    {code:'MEL',city:'Melbourne',name:'Melbourne',country:'Australia'},
-    {code:'BNE',city:'Brisbane',name:'Brisbane',country:'Australia'},
-    {code:'PER',city:'Perth',name:'Perth',country:'Australia'},
-    {code:'AKL',city:'Auckland',name:'Auckland',country:'New Zealand'},
     {code:'YYZ',city:'Toronto',name:'Pearson Intl',country:'Canada'},
     {code:'YVR',city:'Vancouver',name:'Vancouver Intl',country:'Canada'},
     {code:'YUL',city:'Montreal',name:'Trudeau Intl',country:'Canada'},
     {code:'MEX',city:'Mexico City',name:'Benito Juarez Intl',country:'Mexico'},
     {code:'CUN',city:'Cancun',name:'Cancun Intl',country:'Mexico'},
+    {code:'SYD',city:'Sydney',name:'Kingsford Smith',country:'Australia',popular:true},
+    {code:'MEL',city:'Melbourne',name:'Melbourne',country:'Australia'},
+    {code:'BNE',city:'Brisbane',name:'Brisbane',country:'Australia'},
+    {code:'PER',city:'Perth',name:'Perth',country:'Australia'},
+    {code:'AKL',city:'Auckland',name:'Auckland',country:'New Zealand'},
     {code:'GRU',city:'Sao Paulo',name:'Guarulhos',country:'Brazil'},
     {code:'GIG',city:'Rio de Janeiro',name:'Galeao',country:'Brazil'},
     {code:'EZE',city:'Buenos Aires',name:'Ezeiza',country:'Argentina'},
@@ -731,8 +809,45 @@
     {code:'CMN',city:'Casablanca',name:'Mohammed V',country:'Morocco'},
     {code:'LOS',city:'Lagos',name:'Murtala Muhammed',country:'Nigeria'},
     {code:'ACC',city:'Accra',name:'Kotoka Intl',country:'Ghana'},
-    {code:'MRU',city:'Mauritius',name:'Sir S. Ramgoolam',country:'Mauritius'},
+    {code:'MRU',city:'Mauritius',name:'Sir Seewoosagur Ramgoolam Intl',country:'Mauritius'},
   ];
+
+  /* ─── City name aliases so common spellings resolve to the right airport ─── */
+  var CITY_ALIASES = {
+    bengaluru: 'bangalore', bombay: 'mumbai', calcutta: 'kolkata', madras: 'chennai',
+    trivandrum: 'thiruvananthapuram', calicut: 'kozhikode', pondicherry: 'puducherry',
+    gurgaon: 'new delhi', ncr: 'new delhi', vizag: 'visakhapatnam', vizac: 'visakhapatnam',
+    baroda: 'vadodara', cochin: 'kochi', poona: 'pune', benaras: 'varanasi', banaras: 'varanasi',
+    saigon: 'ho chi minh city', peking: 'beijing', nyc: 'new york', 'sf': 'san francisco',
+    'ny': 'new york', dxb: 'dubai'
+  };
+
+  /* Ranked airport search: exact code > code prefix > city > alias > name > country. */
+  function searchAirports(q, limit) {
+    limit = limit || 8;
+    q = String(q || '').toLowerCase().trim();
+    if (!q) return AIRPORTS.filter(function(a) { return a.popular; }).slice(0, limit);
+    var alias = CITY_ALIASES[q];
+    var scored = [];
+    AIRPORTS.forEach(function(a) {
+      var code = a.code.toLowerCase(), city = a.city.toLowerCase(),
+          name = a.name.toLowerCase(), country = a.country.toLowerCase();
+      var s = -1;
+      if (code === q) s = 100;
+      else if (code.indexOf(q) === 0) s = 90;
+      else if (city === q) s = 85;
+      else if (alias && city === alias) s = 84;
+      else if (city.indexOf(q) === 0) s = 80;
+      else if (alias && city.indexOf(alias) === 0) s = 78;
+      else if (city.indexOf(q) >= 0) s = 60;
+      else if (name.indexOf(q) >= 0) s = 45;
+      else if (country.indexOf(q) === 0) s = 30;
+      else if (country.indexOf(q) >= 0) s = 20;
+      if (s >= 0) { if (a.popular) s += 3; scored.push({ a: a, s: s }); }
+    });
+    scored.sort(function(x, y) { return y.s - x.s; });
+    return scored.slice(0, limit).map(function(x) { return x.a; });
+  }
 
   /* ─── Autocomplete logic ─── */
   function initAutocomplete(inputId, listId) {
@@ -742,21 +857,15 @@
     var items = [];
 
     function search(q) {
-      q = q.toLowerCase().trim();
-      if (q.length < 1) { close(); return; }
-      items = AIRPORTS.filter(function(a) {
-        return a.code.toLowerCase().indexOf(q) >= 0
-          || a.city.toLowerCase().indexOf(q) >= 0
-          || a.name.toLowerCase().indexOf(q) >= 0
-          || a.country.toLowerCase().indexOf(q) >= 0;
-      }).slice(0, 8);
-      render();
+      items = searchAirports(q, 8);
+      render(!String(q || '').trim());
     }
 
-    function render() {
+    function render(isPopular) {
       if (items.length === 0) { close(); return; }
       highlighted = -1;
-      list.innerHTML = items.map(function(a, i) {
+      var head = isPopular ? '<div class="ac-head">Popular airports</div>' : '';
+      list.innerHTML = head + items.map(function(a, i) {
         return '<div class="ac-item" data-idx="' + i + '">'
           + '<span class="ac-code">' + escHtml(a.code) + '</span>'
           + '<div class="ac-info"><div class="ac-city">' + escHtml(a.city) + ' — ' + escHtml(a.name) + '</div>'
@@ -775,6 +884,7 @@
       var a = items[idx];
       if (!a) return;
       input.value = a.city + ' (' + a.code + ')';
+      var fc = input.parentElement; if (fc) fc.classList.add('has-value');
       close();
     }
 
@@ -786,7 +896,7 @@
     }
 
     input.addEventListener('input', function() { search(this.value); });
-    input.addEventListener('focus', function() { if (this.value.length >= 1) search(this.value); });
+    input.addEventListener('focus', function() { search(this.value); });
     input.addEventListener('blur', function() { setTimeout(close, 150); });
     input.addEventListener('keydown', function(e) { if (e.key === 'Tab') close(); });
     input.addEventListener('keydown', function(e) {
@@ -955,6 +1065,56 @@
   function stripCites(str) {
     return String(str).replace(/\s*\[\d+(?:\s*,\s*\d+)*\]/g, '');
   }
+  /* ─── DEF-003: validate AI results before we let anyone act on them ───
+     Perplexity can hallucinate flights, prices, or schedules. We never hard-hide
+     a card silently; instead we flag anything implausible as `_unverified` so the
+     UI can warn, and drop only results that are structurally unusable. */
+  var IATA_SET = null;
+  function iataSet() {
+    if (!IATA_SET) { IATA_SET = {}; AIRPORTS.forEach(function(a) { IATA_SET[a.code] = true; }); }
+    return IATA_SET;
+  }
+  function knownIata(airport) {
+    var c = extractIata(airport);
+    return c && iataSet()[c] ? c : '';
+  }
+  function validateFlights(data, params) {
+    if (!data || !Array.isArray(data.flights)) return data;
+    var set = iataSet();
+    var todayISO = localTodayISO ? localTodayISO() : new Date().toISOString().slice(0, 10);
+    data.flights = data.flights.map(function(f) {
+      var reasons = [];
+      var depCode = extractIata(f.departure_airport);
+      var arrCode = extractIata(f.arrival_airport);
+      if (!depCode || !arrCode) reasons.push('missing airport code');
+      if (depCode && !set[depCode]) reasons.push('unknown departure airport ' + depCode);
+      if (arrCode && !set[arrCode]) reasons.push('unknown arrival airport ' + arrCode);
+      if (depCode && arrCode && depCode === arrCode) reasons.push('origin equals destination');
+      if (!(f.price > 0)) reasons.push('no usable price');
+      else if (f.price > 0 && f.price < 5) reasons.push('implausibly low price');
+      else if (f.price > 100000) reasons.push('implausibly high price');
+      if (typeof f.total_duration_minutes === 'number' && f.total_duration_minutes > 0) {
+        if (f.total_duration_minutes < 20) reasons.push('duration too short');
+        if (f.total_duration_minutes > 3000) reasons.push('duration too long');
+      }
+      var depDate = String(f.departure_date || (params && params.departureDate) || '').slice(0, 10);
+      if (depDate && depDate < todayISO) reasons.push('departure in the past');
+      if (typeof f.stops === 'number' && f.stops > 5) reasons.push('too many stops');
+      f._unverified = reasons.length > 0;
+      f._issues = reasons;
+      if (f._unverified) { try { console.warn('SkyFare: unverified flight', f.id, reasons, f); } catch (e) {} }
+      return f;
+    });
+    // Drop only the structurally unusable (no price AND no airports); keep the rest flagged.
+    var usable = data.flights.filter(function(f) {
+      var hard = !(f.price > 0) && (!extractIata(f.departure_airport) || !extractIata(f.arrival_airport));
+      return !hard;
+    });
+    data._unverifiedCount = usable.filter(function(f) { return f._unverified; }).length;
+    data.flights = usable;
+    return data;
+  }
+
   function sanitizeAI(node) {
     if (typeof node === 'string') return stripCites(node);
     if (Array.isArray(node)) return node.map(sanitizeAI);
@@ -1302,7 +1462,8 @@
       if (!json.success || !json.data) throw new Error(json.error || 'The search did not return results. Try different dates or a broader route.');
       if (!json.data.flights || json.data.flights.length === 0) throw new Error('No flights found for your search criteria. Try adjusting your dates, route, or budget.');
 
-      resultData = sanitizeAI(json.data);
+      resultData = validateFlights(sanitizeAI(json.data), params);
+      if (!resultData.flights || resultData.flights.length === 0) throw new Error('No usable flights were returned. Try adjusting your dates, route, or budget.');
       saveRecentRoute(params);
       updateShareUrl(params);
       /* Feed the day-planner: remember the cheapest fare found for this date,
@@ -1374,17 +1535,109 @@
     }, 1000);
   }
 
+  /* ─── DEF-002: demo / offline fallback ───
+     When the live search service is unreachable, users should never hit a dead
+     end. We build a clearly-labelled DEMO itinerary set (illustrative, not live)
+     for the requested route so the product stays explorable and every Book link
+     still deep-links to a real partner search. */
+  function buildDemoData(params) {
+    params = params || lastParams || {};
+    var cur = (params.currency || 'USD').toUpperCase();
+    var pax = Math.max(1, parseInt(params.passengers, 10) || 1);
+    var depCode = extractIata(params.origin) || 'DEL';
+    var arrCode = extractIata(params.destination) || 'BOM';
+    var dep = String(params.departureDate || localTodayISO()).slice(0, 10);
+    var base = { USD: 320, EUR: 300, GBP: 260, SGD: 430, AUD: 480, CAD: 440, JPY: 48000, INR: 12500, AED: 1180, CHF: 290 }[cur] || 320;
+    var templates = [
+      { airline: 'Demo Airways', dur: 165, stops: 0, mult: 1.18, brand: 'Economy', bags: 1, co2: 210 },
+      { airline: 'SampleJet', dur: 150, stops: 0, mult: 1.0, brand: 'Economy Saver', bags: 0, co2: 195 },
+      { airline: 'Placeholder Air', dur: 320, stops: 1, mult: 0.82, brand: 'Economy', bags: 1, co2: 240 }
+    ];
+    var flights = templates.map(function (t, i) {
+      var price = Math.round(base * t.mult);
+      var depH = 6 + i * 4;
+      var f = {
+        id: 'demo_' + (i + 1),
+        airline: t.airline,
+        flight_numbers: ['DM' + (100 + i)],
+        provider: 'Demo data',
+        price: price,
+        currency: cur,
+        is_under_budget: params.maxBudget ? price <= params.maxBudget : true,
+        departure_airport: depCode,
+        arrival_airport: arrCode,
+        departure_date: dep,
+        departure_time: (depH < 10 ? '0' + depH : depH) + ':10',
+        arrival_time: ((depH + Math.floor(t.dur / 60)) % 24 < 10 ? '0' : '') + ((depH + Math.floor(t.dur / 60)) % 24) + ':' + (10 + (t.dur % 60) % 50),
+        total_duration_minutes: t.dur,
+        stops: t.stops,
+        layovers: t.stops ? [{ airport: 'HUB', duration_minutes: 95 }] : [],
+        co2_kg: t.co2,
+        fare_brand: t.brand,
+        carry_on_included: true,
+        checked_bags_included: t.bags,
+        refundable: false,
+        self_transfer: false,
+        emissions_level: 'unknown',
+        deal_quality: i === 1 ? 'good' : 'typical',
+        day_offset: 0,
+        overnight: false,
+        confidence: 'low',
+        notes: 'Illustrative demo fare — not a live price.',
+        score: 82 - i * 9,
+        badges: i === 1 ? ['Cheapest'] : (i === 0 ? ['Fastest'] : []),
+        booking_url: '',
+        source_url: ''
+      };
+      var links = buildPartnerBookLinks(f, params);
+      f.booking_url = links.length ? links[0].href : '';
+      return f;
+    });
+    return {
+      _demo: true,
+      search_summary: {
+        origin: depCode, destination: arrCode, departure_date: dep,
+        return_date: params.tripType === 'round-trip' ? (params.returnDate || '') : '',
+        trip_type: params.tripType || 'one-way', passengers: pax,
+        cabin_class: params.cabinClass || 'economy', currency: cur, budget: params.maxBudget || 0,
+        freshness_note: 'Demo mode — these are illustrative sample flights, not live fares.',
+        result_confidence: 'low'
+      },
+      recommendation: {
+        best_overall_flight_id: 'demo_1', cheapest_flight_id: 'demo_2',
+        fastest_flight_id: 'demo_1', best_under_budget_flight_id: 'demo_2',
+        explanation: 'Demo ranking shown because the live search service was unavailable.'
+      },
+      flights: flights,
+      warnings: []
+    };
+  }
+
+  function showDemoResults() {
+    if (!lastParams) return;
+    resultData = validateFlights(buildDemoData(lastParams), lastParams);
+    searchCompletedAt = new Date();
+    renderResults(true);
+  }
+
   /* ─── Render: Error ─── */
   function renderError(msg) {
+    var canDemo = !!lastParams;
     resultsArea.innerHTML = `
       <div class="error-state fade-in">
         <div class="err-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg></div>
-        <h3>Something went wrong</h3>
+        <h3>Live search is unavailable right now</h3>
         <p>${escHtml(msg)}</p>
-        <button class="retry-btn" id="retryBtn">Try Again</button>
+        <div class="err-actions">
+          <button class="retry-btn" id="retryBtn">Try again</button>
+          ${canDemo ? '<button class="retry-btn ghost" id="demoBtn">View demo results</button>' : ''}
+        </div>
+        ${canDemo ? '<p class="err-demo-note">Demo results are illustrative sample flights (not live fares) so you can still explore the experience.</p>' : ''}
       </div>`;
     const retryBtn = $('#retryBtn');
     if (retryBtn && lastParams) retryBtn.addEventListener('click', () => search(lastParams));
+    const demoBtn = $('#demoBtn');
+    if (demoBtn) demoBtn.addEventListener('click', showDemoResults);
   }
 
   /* ─── Render: Results ─── */
@@ -1399,6 +1652,13 @@
     const avgPrice = pricedFlights.length > 0 ? Math.round(pricedFlights.reduce((s, f) => s + f.price, 0) / pricedFlights.length) : 0;
 
     let html = '<div class="fade-in">';
+
+    /* Demo-mode banner — make it unmistakable these are not live fares. */
+    if (d._demo) {
+      html += '<div class="demo-banner"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>'
+        + '<div><strong>Demo mode.</strong> The live search service was unavailable, so these are illustrative sample flights — not real prices. '
+        + '<button type="button" class="demo-retry" id="demoRetry">Retry live search</button></div></div>';
+    }
 
     /* Currency mismatch notice — never silently relabel prices. */
     const requestedCur = (lastParams && lastParams.currency || '').toUpperCase();
@@ -1478,8 +1738,11 @@
     /* More filters panel */
     html += moreFiltersHtml(d.flights, airlines);
 
-    /* Results count + book trust */
-    html += '<div class="book-trust"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg><div><strong>Book from every result.</strong> SkyFare finds and ranks live fares — tap <strong>Book</strong> to finish checkout on Google Flights, Kayak, Skyscanner, or the airline. We never charge a booking fee.</div></div>';
+    /* Results count + book trust + AI-fare disclaimer (permanent) */
+    html += '<div class="book-trust"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg><div><strong>AI-estimated fares — always confirm the price on the booking site before you pay.</strong> SkyFare researches and ranks live fares, then sends you to Google Flights, Kayak, Skyscanner, or the airline to book. We never charge a booking fee.</div></div>';
+    if (d._unverifiedCount > 0) {
+      html += '<div class="unverified-note"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span><strong>' + d._unverifiedCount + ' result' + (d._unverifiedCount > 1 ? 's' : '') + ' flagged “Unverified.”</strong> The AI returned details we could not sanity-check (airport, price, or timing). Treat these as leads and verify on the booking site.</span></div>';
+    }
     html += '<div class="results-count">Showing <strong>' + flights.length + '</strong> of ' + d.flights.length + ' flights</div>';
 
     /* Flight cards */
@@ -1592,6 +1855,10 @@
       const f = d.flights.find(x => String(x.id) === btn.dataset.fid);
       if (f) openFlyout(f);
     }));
+
+    /* Demo-mode: retry the live search */
+    const demoRetry = $('#demoRetry');
+    if (demoRetry && lastParams) demoRetry.addEventListener('click', () => search(lastParams));
 
     /* Fresh search: tell screen readers and move focus to the results */
     if (freshSearch) {
@@ -1746,7 +2013,12 @@
     $('#fhSub').textContent = (f.flight_numbers && f.flight_numbers.length ? f.flight_numbers.join(' · ') + ' · ' : '')
       + f.departure_airport + ' → ' + f.arrival_airport;
 
-    let b = '<div class="fd-price-row"><div class="fd-price">' + fmtMoney(f.price, cur) + '</div>';
+    let b = '';
+    if (f._unverified) {
+      b += '<div class="fd-unverified"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>'
+        + '<span><strong>Unverified result.</strong> SkyFare could not sanity-check ' + escHtml((f._issues || []).join(', ') || 'some details') + '. Confirm everything on the booking site before paying.</span></div>';
+    }
+    b += '<div class="fd-price-row"><div class="fd-price">' + fmtMoney(f.price, cur) + '</div>';
     if (passengers > 1 && f.price > 0) b += '<div class="fd-total">' + fmtMoney(f.price * passengers, cur) + ' total · ' + passengers + ' travellers</div>';
     b += '</div>';
     if (f.provider) b += '<div class="fd-total">via ' + escHtml(f.provider) + '</div>';
@@ -2038,9 +2310,10 @@
     let h = '<div class="flight-card' + (highlighted ? ' highlighted' : '') + '">';
 
     /* Badges */
-    if (f.badges && f.badges.length) {
+    if ((f.badges && f.badges.length) || f._unverified) {
       h += '<div class="fc-badges">';
-      f.badges.forEach(b => { h += '<span class="badge badge-' + (badgeMap[b] || 'bestvalue') + '">' + escHtml(b) + '</span>'; });
+      if (f._unverified) h += '<span class="badge badge-unverified" title="' + escHtml((f._issues || []).join('; ')) + '">⚠ Unverified — confirm on booking site</span>';
+      (f.badges || []).forEach(b => { h += '<span class="badge badge-' + (badgeMap[b] || 'bestvalue') + '">' + escHtml(b) + '</span>'; });
       h += '</div>';
     }
 
