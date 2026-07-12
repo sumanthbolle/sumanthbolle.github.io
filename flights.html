@@ -540,15 +540,15 @@
   <div class="search-card" id="searchCard">
     <form id="searchForm" autocomplete="off" role="search" aria-label="Flight search">
       <!-- Trip type -->
-      <div class="trip-toggle">
-        <button type="button" class="trip-btn active" data-trip="round-trip">Round Trip</button>
-        <button type="button" class="trip-btn" data-trip="one-way">One Way</button>
+      <div class="trip-toggle" role="group" aria-label="Trip type">
+        <button type="button" class="trip-btn active" data-trip="round-trip" aria-pressed="true">Round Trip</button>
+        <button type="button" class="trip-btn" data-trip="one-way" aria-pressed="false">One Way</button>
       </div>
 
       <!-- Row 1: Route + Dates -->
       <div class="form-row r1">
-        <div class="field"><label for="origin">From</label><input id="origin" type="text" placeholder="City or airport code" required autocomplete="off"><button type="button" class="field-clear" data-clears="origin" aria-label="Clear origin">&times;</button><div class="ac-list" id="acOrigin"></div></div>
-        <div class="field"><label for="destination">To</label><input id="destination" type="text" placeholder="City or airport code" required autocomplete="off"><button type="button" class="field-clear" data-clears="destination" aria-label="Clear destination">&times;</button><div class="ac-list" id="acDest"></div></div>
+        <div class="field"><label for="origin">From</label><input id="origin" type="text" placeholder="City or airport code" required autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="acOrigin" aria-haspopup="listbox"><button type="button" class="field-clear" data-clears="origin" aria-label="Clear origin">&times;</button><div class="ac-list" id="acOrigin" role="listbox" aria-label="Origin airport suggestions"></div></div>
+        <div class="field"><label for="destination">To</label><input id="destination" type="text" placeholder="City or airport code" required autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="acDest" aria-haspopup="listbox"><button type="button" class="field-clear" data-clears="destination" aria-label="Clear destination">&times;</button><div class="ac-list" id="acDest" role="listbox" aria-label="Destination airport suggestions"></div></div>
         <div class="field"><label for="departureDate">Depart</label><input id="departureDate" type="date" required></div>
         <div class="field" id="returnField"><label for="returnDate">Return</label><input id="returnDate" type="date"></div>
       </div>
@@ -579,7 +579,7 @@
       </div>
 
       <!-- Advanced toggle -->
-      <button type="button" class="adv-toggle" id="advToggle">
+      <button type="button" class="adv-toggle" id="advToggle" aria-expanded="false" aria-controls="advFields">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
         Advanced Options
       </button>
@@ -861,17 +861,31 @@
       render(!String(q || '').trim());
     }
 
+    function optionId(i) { return listId + '-opt-' + i; }
+
+    function setActive(idx) {
+      highlighted = idx;
+      var els = list.querySelectorAll('.ac-item');
+      els.forEach(function(el, i) {
+        var on = i === idx;
+        el.classList.toggle('highlighted', on);
+        el.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      input.setAttribute('aria-activedescendant', idx >= 0 ? optionId(idx) : '');
+    }
+
     function render(isPopular) {
       if (items.length === 0) { close(); return; }
       highlighted = -1;
-      var head = isPopular ? '<div class="ac-head">Popular airports</div>' : '';
+      var head = isPopular ? '<div class="ac-head" role="presentation">Popular airports</div>' : '';
       list.innerHTML = head + items.map(function(a, i) {
-        return '<div class="ac-item" data-idx="' + i + '">'
+        return '<div class="ac-item" id="' + optionId(i) + '" role="option" aria-selected="false" data-idx="' + i + '">'
           + '<span class="ac-code">' + escHtml(a.code) + '</span>'
           + '<div class="ac-info"><div class="ac-city">' + escHtml(a.city) + ' — ' + escHtml(a.name) + '</div>'
           + '<div class="ac-country">' + escHtml(a.country) + '</div></div></div>';
       }).join('');
       list.classList.add('open');
+      input.setAttribute('aria-expanded', 'true');
       list.querySelectorAll('.ac-item').forEach(function(el) {
         el.addEventListener('mousedown', function(e) {
           e.preventDefault();
@@ -893,6 +907,8 @@
       list.innerHTML = '';
       items = [];
       highlighted = -1;
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
     }
 
     input.addEventListener('input', function() { search(this.value); });
@@ -904,12 +920,10 @@
       var els = list.querySelectorAll('.ac-item');
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        highlighted = Math.min(highlighted + 1, els.length - 1);
-        els.forEach(function(el, i) { el.classList.toggle('highlighted', i === highlighted); });
+        setActive(Math.min(highlighted + 1, els.length - 1));
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        highlighted = Math.max(highlighted - 1, 0);
-        els.forEach(function(el, i) { el.classList.toggle('highlighted', i === highlighted); });
+        setActive(Math.max(highlighted - 1, 0));
       } else if (e.key === 'Enter' && highlighted >= 0) {
         e.preventDefault();
         pick(highlighted);
@@ -921,6 +935,20 @@
 
 
     const API_URL = 'https://wandering-haze-b394.sumanthbolle312.workers.dev/flights';
+
+  /* ─── Analytics (privacy-safe, no external scripts / no PII) ───
+     Pushes structured events to window.dataLayer (GA4/GTM-ready) and fires a
+     matching CustomEvent so any tag manager or first-party collector can
+     subscribe later without changing this code. Safe no-op until a consumer
+     is attached. Only search parameters and result/click metadata are sent —
+     never names, emails, or payment data. */
+  window.dataLayer = window.dataLayer || [];
+  function trackFlightEvent(eventName, payload) {
+    payload = payload || {};
+    var evt = Object.assign({ event: eventName, page_type: 'flight_search', product: 'SkyFare' }, payload);
+    try { window.dataLayer.push(evt); } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent('skyfare:' + eventName, { detail: evt })); } catch (e) {}
+  }
 
   /* ─── State ─── */
   let tripType = 'round-trip';
@@ -1184,6 +1212,28 @@
   const $$ = s => document.querySelectorAll(s);
   const resultsArea = $('#resultsArea');
 
+  /* Attribution: capture every click-out to a booking partner (card + details). */
+  function partnerFromUrl(u) {
+    try {
+      var h = new URL(u).hostname.replace(/^www\./, '');
+      if (/google\./i.test(h)) return 'google_flights';
+      if (/kayak\./i.test(h)) return 'kayak';
+      if (/skyscanner\./i.test(h)) return 'skyscanner';
+      if (/expedia\./i.test(h)) return 'expedia';
+      if (/booking\./i.test(h)) return 'booking';
+      return h;
+    } catch (e) { return 'unknown'; }
+  }
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest && e.target.closest('.view-deal, .fd-cta');
+    if (!a || !a.href) return;
+    trackFlightEvent('flight_partner_click', {
+      partner: partnerFromUrl(a.href),
+      demo: !!(resultData && resultData._demo),
+      currency: displayCurrency()
+    });
+  }, true);
+
   /* ─── Nav toggle ─── */
   $('#menuToggle').addEventListener('click', function() {
     this.classList.toggle('active');
@@ -1208,8 +1258,9 @@
   /* ─── Trip type ─── */
   $$('.trip-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      $$('.trip-btn').forEach(b => b.classList.remove('active'));
+      $$('.trip-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
       tripType = btn.dataset.trip;
       $('#returnField').style.display = tripType === 'round-trip' ? '' : 'none';
     });
@@ -1217,9 +1268,11 @@
 
   /* ─── Priority chips ─── */
   $$('.priority-chip').forEach(chip => {
+    chip.setAttribute('aria-pressed', chip.classList.contains('active') ? 'true' : 'false');
     chip.addEventListener('click', () => {
-      $$('.priority-chip').forEach(c => c.classList.remove('active'));
+      $$('.priority-chip').forEach(c => { c.classList.remove('active'); c.setAttribute('aria-pressed', 'false'); });
       chip.classList.add('active');
+      chip.setAttribute('aria-pressed', 'true');
       priorityMode = chip.dataset.priority;
     });
   });
@@ -1227,7 +1280,8 @@
   /* ─── Advanced toggle ─── */
   $('#advToggle').addEventListener('click', function() {
     this.classList.toggle('open');
-    $('#advFields').classList.toggle('show');
+    var open = $('#advFields').classList.toggle('show');
+    this.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 
   /* ─── Currency behavior ───
@@ -1292,6 +1346,17 @@
     moreFiltersOpen = false;
     dayGridOffset = 0;
     savePrefs(params);
+    trackFlightEvent('flight_search_submit', {
+      origin: extractIata(params.origin) || params.origin,
+      destination: extractIata(params.destination) || params.destination,
+      departure_date: params.departureDate,
+      return_date: params.returnDate || '',
+      trip_type: params.tripType,
+      passengers: params.passengers,
+      cabin_class: params.cabinClass,
+      priority: params.priorityMode,
+      currency: params.currency
+    });
     await search(params);
   });
 
@@ -1479,8 +1544,18 @@
         recordDayPrice(params, params.departureDate, cheapest, displayCurrency());
       }
       searchCompletedAt = new Date();
+      var pr = resultData.flights.filter(f => f.price > 0).map(f => f.price);
+      trackFlightEvent('flight_search_results', {
+        origin: extractIata(params.origin) || params.origin,
+        destination: extractIata(params.destination) || params.destination,
+        results_count: resultData.flights.length,
+        unverified_count: resultData._unverifiedCount || 0,
+        min_price: pr.length ? Math.min.apply(null, pr) : null,
+        currency: displayCurrency()
+      });
       renderResults(true);
     } catch (err) {
+      trackFlightEvent('flight_search_error', { message: String(err && err.message || err).slice(0, 140) });
       renderError(err.message || 'An unexpected error occurred. Please try again.');
     } finally {
       stopLoadingTicker();
@@ -1617,6 +1692,10 @@
     if (!lastParams) return;
     resultData = validateFlights(buildDemoData(lastParams), lastParams);
     searchCompletedAt = new Date();
+    trackFlightEvent('flight_demo_shown', {
+      origin: extractIata(lastParams.origin) || lastParams.origin,
+      destination: extractIata(lastParams.destination) || lastParams.destination
+    });
     renderResults(true);
   }
 
