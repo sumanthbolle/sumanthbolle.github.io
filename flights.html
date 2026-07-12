@@ -3,21 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkyFare — AI Flight Search &amp; Comparison | Sumanth Bolle</title>
-  <meta name="description" content="AI-powered flight search and comparison. Discover and compare flights across airlines and providers, ranked by price, speed, and value.">
-  <meta name="keywords" content="flight search, flight comparison, cheap flights, AI travel, flight deals, airline comparison, SkyFare">
+  <title>SkyFare — Search Flights, Compare Fares &amp; Book | Sumanth Bolle</title>
+  <meta name="description" content="SkyFare: search live flights, compare by price and speed, then book directly on Google Flights, Kayak, Skyscanner, or the airline — one click from every result.">
+  <meta name="keywords" content="SkyFare, flight search, book flights, cheap flights, Google Flights, Kayak, flight comparison, airline booking">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://sumanthbolle.com/flights">
-  <meta property="og:title" content="SkyFare — AI Flight Search & Comparison">
-  <meta property="og:description" content="AI-powered flight discovery. Compare flights across airlines, ranked by price, speed, and value.">
+  <meta property="og:title" content="SkyFare — Search Flights. Compare. Book.">
+  <meta property="og:description" content="Find live fares and book in one click on Google Flights, Kayak, Skyscanner, or the airline.">
   <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
   <meta property="og:url" content="https://sumanthbolle.com/flights">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SkyFare — Search Flights. Compare. Book.">
+  <meta name="twitter:description" content="Live flight search with direct book redirects to Google Flights, Kayak, and airlines.">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SkyFare",
+    "url": "https://sumanthbolle.com/flights",
+    "applicationCategory": "TravelApplication",
+    "operatingSystem": "Web",
+    "description": "Search live flights, compare fares by price and speed, and book directly on Google Flights, Kayak, Skyscanner, or the airline.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
+  }
+  </script>
 
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
@@ -151,7 +166,7 @@
     .filter-select{padding:5px 10px;border:none;border-radius:6px;background:var(--bg);font-size:12px;font-weight:500;color:var(--text);font-family:inherit;cursor:pointer}
 
     /* ─── Flight card ─── */
-    .flight-card{background:var(--white);border-radius:var(--radius);padding:20px 24px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:10px;transition:all .2s;position:relative}
+    .flight-card{background:var(--white);border-radius:var(--radius);padding:20px 24px 20px 62px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:10px;transition:all .2s;position:relative}
     .flight-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);border-color:rgba(0,0,0,0.08)}
     .flight-card.highlighted{border-color:rgba(0,102,204,0.2);box-shadow:0 2px 12px rgba(0,102,204,0.06)}
     .fc-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
@@ -173,7 +188,7 @@
     .fc-stop-dot{width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,0.2);flex-shrink:0}
     .fc-plane{width:14px;height:14px;fill:var(--gray);flex-shrink:0}
     .fc-stops{font-size:11px;color:var(--gray)}
-    .fc-right{flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:120px}
+    .fc-right{flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:132px}
     .fc-price{font-size:22px;font-weight:700;color:var(--text)}
     .fc-provider{font-size:11px;color:var(--gray)}
     .fc-confidence{display:flex;align-items:center;gap:3px}
@@ -181,13 +196,27 @@
     .fc-conf-dot.on-high{background:var(--green)}.fc-conf-dot.on-med{background:var(--orange)}.fc-conf-dot.on-low{background:var(--red)}
     .fc-conf-dot.off{background:rgba(0,0,0,0.1)}
     .fc-conf-label{font-size:10px;color:var(--gray)}
-    .view-deal{display:inline-flex;align-items:center;gap:4px;padding:7px 14px;background:var(--text);color:var(--white);border-radius:var(--radius-xs);font-size:12px;font-weight:500;text-decoration:none;transition:background .2s;margin-top:2px}
-    .view-deal:hover{background:#333}
-    .view-deal svg{width:11px;height:11px}
+    .view-deal{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;min-height:40px;background:var(--blue);color:var(--white);border-radius:var(--radius-xs);font-size:13px;font-weight:600;text-decoration:none;transition:background .2s,transform .2s;margin-top:2px;width:100%;box-sizing:border-box}
+    .view-deal:hover{background:#0055aa;transform:translateY(-1px)}
+    .view-deal svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+    .view-deal.secondary{background:transparent;color:var(--blue);border:1px solid rgba(0,102,204,0.25);box-shadow:none}
+    .view-deal.secondary:hover{background:rgba(0,102,204,0.06);border-color:rgba(0,102,204,0.45)}
+    .fc-actions{display:flex;flex-direction:column;align-items:stretch;gap:6px;width:100%;margin-top:4px}
+    .hero-brand{font-size:clamp(40px,8vw,64px);font-weight:700;letter-spacing:-.04em;margin-bottom:8px;position:relative}
+    .hero-promise{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px;position:relative}
+    .hero-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:980px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);font-size:12px;font-weight:500}
+    .hero-pill strong{color:#fff;font-weight:600}
+    .book-trust{display:flex;align-items:flex-start;gap:10px;background:rgba(0,102,204,0.05);border:1px solid rgba(0,102,204,0.12);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;color:#1a56db;line-height:1.5}
+    .book-trust svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .fd-book-stack{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+    .fd-book-stack .fd-cta{margin-top:0}
+    .fd-book-stack .fd-cta.alt{background:var(--white);color:var(--text);border:1px solid rgba(0,0,0,0.12)}
+    .fd-book-stack .fd-cta.alt:hover{border-color:var(--blue);color:var(--blue);background:rgba(0,102,204,0.04)}
+    .fd-book-note{font-size:12px;color:var(--gray);line-height:1.5;margin-top:4px}
     .fc-layovers{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
     .fc-layover{font-size:11px;color:var(--gray);background:var(--bg);padding:2px 8px;border-radius:4px}
     .fc-notes{font-size:12px;color:var(--gray);font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.04)}
-    .fc-score{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid}
+    .fc-score{position:absolute;top:18px;left:16px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid;background:var(--white)}
 
     /* ─── Day planner strip (find the cheapest day to fly) ─── */
     .day-strip{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:16px}
@@ -436,7 +465,10 @@
       .summary-grid,.skel-summary{grid-template-columns:1fr 1fr}
       .fc-body{flex-direction:column;align-items:stretch}
       .fc-airline{min-width:0}
-      .fc-right{text-align:left;align-items:flex-start;flex-direction:row;flex-wrap:wrap;gap:8px}
+      .fc-right{text-align:left;align-items:stretch;flex-direction:column;flex-wrap:nowrap;gap:8px;width:100%;min-width:0}
+      .fc-actions{max-width:280px}
+      .flight-card{padding-left:24px}
+      .fc-score{display:none}
       .fc-score{top:12px;right:12px;width:32px;height:32px;font-size:10px}
       .search-card{padding:20px}
       .more-filters.show{grid-template-columns:1fr}
@@ -477,10 +509,16 @@
 <header class="page-header">
   <span class="eyebrow">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3.64 14.26l2.86.95 4.02-4.02-8-4.59 1.16-1.16 9.37 2.51 3.18-3.18c.58-.58 1.53-.58 2.12 0 .58.59.58 1.53 0 2.12l-3.18 3.18 2.51 9.37-1.16 1.16-4.59-8-4.02 4.02.95 2.86-1.07 1.07-2.53-3.9-3.9-2.53 1.07-1.07z"/></svg>
-    AI-Powered Flight Discovery
+    Flight search with direct book links
   </span>
-  <h1>Find Your Perfect Flight</h1>
-  <p>Compare flights across airlines and providers. Discover the best options ranked by price, speed, and value.</p>
+  <div class="hero-brand">SkyFare</div>
+  <h1>Search flights. Compare. Book.</h1>
+  <p>Find live fares ranked by price, speed, and value — then book in one click on Google Flights, Kayak, Skyscanner, or the airline.</p>
+  <div class="hero-promise" aria-label="How SkyFare works">
+    <span class="hero-pill"><strong>1.</strong> Search</span>
+    <span class="hero-pill"><strong>2.</strong> Compare</span>
+    <span class="hero-pill"><strong>3.</strong> Book on partner sites</span>
+  </div>
 </header>
 
 <div class="main-wrap">
@@ -544,7 +582,7 @@
       <!-- Search button -->
       <button type="submit" class="search-btn" id="searchBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        Search Flights
+        Search flights
       </button>
     </form>
   </div>
@@ -816,6 +854,101 @@
       return code + ' ' + Math.round(amount).toLocaleString();
     }
   }
+
+  /* ─── Book redirects: every result must open a real search/book page ─── */
+  function extractIata(str) {
+    const s = String(str || '').trim();
+    const m = s.match(/\(([A-Za-z]{3})\)/);
+    if (m) return m[1].toUpperCase();
+    if (/^[A-Za-z]{3}$/.test(s)) return s.toUpperCase();
+    const bare = s.match(/\b([A-Za-z]{3})\b/);
+    return bare ? bare[1].toUpperCase() : '';
+  }
+  function skyDateCompact(iso) {
+    const p = String(iso || '').replace(/-/g, '');
+    return p.length === 8 ? p.slice(2) : '';
+  }
+  function isHttpUrl(u) {
+    try {
+      const x = new URL(u);
+      return x.protocol === 'https:' || x.protocol === 'http:';
+    } catch (e) { return false; }
+  }
+  function hostLabel(u) {
+    try {
+      const h = new URL(u).hostname.replace(/^www\./, '');
+      if (/google\./i.test(h)) return 'Google Flights';
+      if (/kayak\./i.test(h)) return 'Kayak';
+      if (/skyscanner\./i.test(h)) return 'Skyscanner';
+      if (/expedia\./i.test(h)) return 'Expedia';
+      if (/booking\./i.test(h)) return 'Booking.com';
+      return h;
+    } catch (e) { return 'Provider'; }
+  }
+  function buildPartnerBookLinks(f, params) {
+    params = params || lastParams || {};
+    const origin = extractIata(f && f.departure_airport) || extractIata(params.origin);
+    const dest = extractIata(f && f.arrival_airport) || extractIata(params.destination);
+    const dep = String((f && f.departure_date) || params.departureDate || '').slice(0, 10);
+    const ret = params.tripType === 'round-trip' ? String(params.returnDate || '').slice(0, 10) : '';
+    const pax = Math.max(1, parseInt(params.passengers, 10) || 1);
+    const links = [];
+    if (!origin || !dest || !dep) return links;
+
+    let gq = 'Flights from ' + origin + ' to ' + dest + ' on ' + dep;
+    if (ret) gq += ' through ' + ret;
+    if (pax > 1) gq += ' for ' + pax + ' adults';
+    links.push({
+      id: 'google',
+      label: 'Book on Google Flights',
+      short: 'Google Flights',
+      href: 'https://www.google.com/travel/flights?hl=en&curr=' + encodeURIComponent(params.currency || 'USD') + '&q=' + encodeURIComponent(gq)
+    });
+
+    let kayak = 'https://www.kayak.com/flights/' + origin + '-' + dest + '/' + dep;
+    if (ret) kayak += '/' + ret;
+    kayak += '?sort=bestflight_a&adults=' + pax;
+    links.push({ id: 'kayak', label: 'Book on Kayak', short: 'Kayak', href: kayak });
+
+    const d1 = skyDateCompact(dep);
+    const d2 = ret ? skyDateCompact(ret) : '';
+    if (d1) {
+      let sky = 'https://www.skyscanner.net/transport/flights/' + origin.toLowerCase() + '/' + dest.toLowerCase() + '/' + d1 + '/';
+      if (d2) sky += d2 + '/';
+      sky += '?adults=' + pax;
+      links.push({ id: 'skyscanner', label: 'Book on Skyscanner', short: 'Skyscanner', href: sky });
+    }
+    return links;
+  }
+  function resolveBookLinks(f, params) {
+    params = params || lastParams || {};
+    const partners = buildPartnerBookLinks(f, params);
+    const primaryRaw = (f && (f.booking_url || f.source_url)) || '';
+    const primary = isHttpUrl(primaryRaw) ? primaryRaw : '';
+    const out = [];
+    if (primary) {
+      const already = partners.some(p => {
+        try { return new URL(p.href).hostname === new URL(primary).hostname; } catch (e) { return false; }
+      });
+      if (!already) {
+        out.push({ id: 'primary', label: 'Book on ' + hostLabel(primary), short: hostLabel(primary), href: primary, preferred: true });
+      } else {
+        partners.forEach(p => {
+          try {
+            if (new URL(p.href).hostname === new URL(primary).hostname) p.preferred = true;
+          } catch (e) {}
+        });
+      }
+    }
+    if (!out.some(x => x.preferred) && partners[0]) partners[0].preferred = true;
+    return out.concat(partners);
+  }
+  function primaryBookHref(f, params) {
+    const links = resolveBookLinks(f, params);
+    const pref = links.find(l => l.preferred) || links[0];
+    return pref ? pref.href : '';
+  }
+
   /* The AI search engine (Perplexity-backed) embeds citation markers like
      [1][2] in its prose. There is no source list to point at, so they are
      noise — strip them from every text field before rendering. */
@@ -1345,7 +1478,8 @@
     /* More filters panel */
     html += moreFiltersHtml(d.flights, airlines);
 
-    /* Results count */
+    /* Results count + book trust */
+    html += '<div class="book-trust"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg><div><strong>Book from every result.</strong> SkyFare finds and ranks live fares — tap <strong>Book</strong> to finish checkout on Google Flights, Kayak, Skyscanner, or the airline. We never charge a booking fee.</div></div>';
     html += '<div class="results-count">Showing <strong>' + flights.length + '</strong> of ' + d.flights.length + ' flights</div>';
 
     /* Flight cards */
@@ -1366,11 +1500,12 @@
     /* Disclaimer + how-it-works + privacy */
     html += '<div class="disclaimer">';
     if (d.search_summary.freshness_note) html += '<p>' + escHtml(d.search_summary.freshness_note) + '</p>';
-    html += '<p>Prices are estimates and may change. Always confirm the final fare on the provider\'s website before booking.</p>';
-    html += '<details class="how-it-works"><summary><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.7-2.5 2.2-2.5 3.7M12 17h.01"/></svg>How SkyFare finds and ranks these flights</summary>'
-      + '<div class="hiw-body"><p><strong>Search:</strong> your route, dates and preferences are sent to our AI search service, which researches live fares across airline and travel sites — that\'s why a search can take up to a minute.</p>'
-      + '<p><strong>Ranking:</strong> each flight gets a score from price, duration, stops, layover quality and cabin/baggage fit against your priority. "Best overall" is the highest score, not a paid placement — SkyFare has no booking partnerships.</p>'
-      + '<p><strong>Privacy:</strong> only the search itself (route, dates, preferences) is sent to the service. No account, no personal data stored; your recent routes and day-price history live only in this browser.</p></div></details>';
+    html += '<p>Prices are estimates and can change until you complete checkout on the booking site. SkyFare redirects you to book — always confirm the final fare and baggage rules before paying.</p>';
+    html += '<details class="how-it-works"><summary><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.7-2.5 2.2-2.5 3.7M12 17h.01"/></svg>How SkyFare search &amp; book works</summary>'
+      + '<div class="hiw-body"><p><strong>Search:</strong> your route, dates and preferences are researched live across airline and travel sites — that can take up to a minute.</p>'
+      + '<p><strong>Compare:</strong> each flight is scored on price, duration, stops and fit for your priority. "Best overall" is the highest score, not a paid placement.</p>'
+      + '<p><strong>Book:</strong> every card has a Book button that opens Google Flights, Kayak, Skyscanner, or the original provider so you can buy the ticket there. SkyFare does not process payments.</p>'
+      + '<p><strong>Privacy:</strong> only the search itself (route, dates, preferences) is sent to the service. No account; recent routes stay in this browser only.</p></div></details>';
     html += '</div>';
 
     html += '</div>';
@@ -1639,8 +1774,17 @@
 
     if (f.notes) b += '<div class="fd-section"><div class="fd-kicker">Notes</div><div style="font-size:13px;color:var(--gray);line-height:1.6">' + escHtml(f.notes) + '</div></div>';
 
-    if (f.booking_url || f.source_url) {
-      b += '<a class="fd-cta" href="' + escHtml(f.booking_url || f.source_url) + '" target="_blank" rel="noopener noreferrer">View this deal <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>';
+    const bookLinks = resolveBookLinks(f, lastParams);
+    if (bookLinks.length) {
+      b += '<div class="fd-book-stack">';
+      bookLinks.forEach(function (link, idx) {
+        const cls = idx === 0 || link.preferred ? 'fd-cta' : 'fd-cta alt';
+        b += '<a class="' + cls + '" href="' + escHtml(link.href) + '" target="_blank" rel="noopener noreferrer">'
+          + escHtml(link.label)
+          + ' <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>';
+      });
+      b += '<p class="fd-book-note">You\'ll complete payment on the partner site. Fares can change until checkout.</p>';
+      b += '</div>';
     }
 
     /* Destination guide loads into this slot after the panel opens. */
@@ -1946,11 +2090,17 @@
       h += '<span class="fc-date-chip">Departs ' + escHtml(f.departure_date) + '</span>';
     }
     h += confHtml(f.confidence);
+    const bookHref = primaryBookHref(f, lastParams);
+    h += '<div class="fc-actions">';
+    if (bookHref) {
+      h += '<a class="view-deal" href="' + escHtml(bookHref) + '" target="_blank" rel="noopener noreferrer" aria-label="Book ' + escHtml(f.airline || 'flight') + '">'
+        + 'Book <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a>';
+    }
     h += '<button type="button" class="fc-details-btn" data-fid="' + escHtml(String(f.id)) + '">Details <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
+    h += '</div>';
     h += '</div></div>';
 
-    /* Card stays scannable: only critical caution surfaces inline; the rest
-       (tags, layovers, notes, booking link) lives in the details fly-out. */
+    /* Critical caution only; booking CTAs stay on the card + details panel. */
     if (f.self_transfer) {
       h += '<div class="fc-self-transfer"><svg viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>'
         + '<span><strong>Self-transfer itinerary</strong> — separate tickets, unprotected connection. See details.</span></div>';
