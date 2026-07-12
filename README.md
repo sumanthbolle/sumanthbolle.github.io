@@ -6,12 +6,20 @@ Feel free to explore, learn, or fork for your own site!
 ## 📂 What’s Inside?
 
 - `index.html` – The homepage
+- `servicenow.html` – ServiceNow Central (searchable hub: paths, live feed, library, FAQ)
 - `blog.html` – My blog posts
+- `tutorials.html` – Hands-on ServiceNow developer tutorials
 - `interviews.html` – Interview experiences
+- `quiz.html` – ServiceNow practice quizzes
 - `posts.json` & `interviews.json` – Data for the blog and interviews
+- `data/sn-hub-index.json` – Slim search index for ServiceNow Central (`node scripts/generate-sn-hub-index.js`)
 - `profile.jpeg` – My profile picture
-- `quiz.html` – A little quiz fun
+- `summaverick.html` / `flights.html` – Product surfaces
 - `scripts/` – Scripts used in the site
+
+## ServiceNow Central
+
+Open `servicenow.html` for the canonical ServiceNow entry point: search the library (⌘K), pick a learning path, follow live sourced AI news, then drill into tutorials, interviews, and quizzes.
 
 ##  Getting Started
 

@@ -174,6 +174,17 @@ Ordered for impact without boiling the ocean:
 7. **Products index** — Summaverick + SkyFare under one Lab/Products page; demote from top-level nav.
 8. **Live `/design-review` + `/qa`** (gstack) against production after each visual milestone.
 
+### Implemented in this pass (non-breaking)
+
+Shipped on ServiceNow Central without removing existing pages or products:
+
+- Hero **site search** (Cmd/Ctrl+K + hero control) over a slim hub index (`data/sn-hub-index.json`)
+- **Start-here learning paths** into existing tutorials / quiz / interviews / live AI / Summaverick
+- **Authority inventory** strip with live counts (articles, tutorials, interviews, quiz questions)
+- **FAQ** section + `FAQPage` / `ItemList` JSON-LD for discoverability
+- Soft homepage CTA: **ServiceNow Central →** alongside LinkedIn / GitHub
+- Regenerator: `node scripts/generate-sn-hub-index.js`
+
 ---
 
 ## Skill repos (keep in memory for future work)

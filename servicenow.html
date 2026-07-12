@@ -4,22 +4,22 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5489116590667279" crossorigin="anonymous"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ServiceNow Central — The Single Source of Truth | Sumanth Bolle</title>
-  <meta name="description" content="ServiceNow Central: a curated, always-fresh hub for the ServiceNow community. Live articles on platform AI, AI Agents, LLMs and cost optimization, plus tutorials, interview prep, and quizzes.">
-  <meta name="keywords" content="ServiceNow, ServiceNow AI, Now Assist, AI Agents, AI Agent Orchestrator, Now LLM, ServiceNow cost optimization, ServiceNow community, ServiceNow news, Sumanth Bolle">
+  <title>ServiceNow Central — Tutorials, CSA Quiz, Interview Prep &amp; Live AI News | Sumanth Bolle</title>
+  <meta name="description" content="The single source of truth for ServiceNow: search 50+ articles, 30+ tutorials, 50+ interview questions, and 1,300+ CSA/quiz drills — plus live sourced news on Now Assist, AI Agents, and cost optimization.">
+  <meta name="keywords" content="ServiceNow, ServiceNow Central, ServiceNow tutorial, ServiceNow CSA, ServiceNow quiz, ServiceNow interview questions, GlideRecord, Now Assist, AI Agents, ServiceNow learning path, Sumanth Bolle">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="googlebot" content="index, follow">
-  <meta property="og:site_name" content="Sumanth Bolle">
+  <meta property="og:site_name" content="ServiceNow Central">
   <link rel="canonical" href="https://sumanthbolle.com/servicenow">
   <meta property="og:title" content="ServiceNow Central — The Single Source of Truth">
-  <meta property="og:description" content="A curated, always-fresh hub for the ServiceNow community: live AI, Agents, LLM and cost-optimization articles plus tutorials, interviews and quizzes.">
+  <meta property="og:description" content="Search tutorials, CSA practice, interview prep, and live sourced ServiceNow AI news — one canonical hub for the community.">
   <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
   <meta property="og:url" content="https://sumanthbolle.com/servicenow">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ServiceNow Central — The Single Source of Truth">
-  <meta name="twitter:description" content="Live ServiceNow AI, Agents, LLM and cost-optimization articles, plus tutorials, interviews and quizzes.">
+  <meta name="twitter:description" content="Search tutorials, CSA practice, interview prep, and live sourced ServiceNow AI news in one hub.">
   <meta name="twitter:image" content="https://sumanthbolle.com/profile.jpeg">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -27,20 +27,96 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "@id": "https://sumanthbolle.com/servicenow#hub",
-    "url": "https://sumanthbolle.com/servicenow",
-    "name": "ServiceNow Central — The Single Source of Truth",
-    "description": "A curated, always-fresh hub for the ServiceNow community: live AI, Agents, LLM and cost-optimization articles plus tutorials, interviews and quizzes.",
-    "inLanguage": "en",
-    "about": ["ServiceNow", "ServiceNow AI", "Now Assist", "AI Agents", "Now LLM", "ServiceNow cost optimization"],
-    "author": {
-      "@type": "Person",
-      "name": "Sumanth Bolle",
-      "url": "https://sumanthbolle.com/"
-    }
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": "https://sumanthbolle.com/servicenow#hub",
+        "url": "https://sumanthbolle.com/servicenow",
+        "name": "ServiceNow Central — The Single Source of Truth",
+        "description": "Search tutorials, CSA practice, interview prep, and live sourced ServiceNow AI news — one canonical hub for the community.",
+        "inLanguage": "en",
+        "isPartOf": { "@id": "https://sumanthbolle.com/#website" },
+        "about": ["ServiceNow", "ServiceNow CSA", "Now Assist", "AI Agents", "GlideRecord", "ServiceNow interview questions"],
+        "author": { "@id": "https://sumanthbolle.com/#person" },
+        "publisher": { "@id": "https://sumanthbolle.com/#person" },
+        "mainEntity": { "@id": "https://sumanthbolle.com/servicenow#paths" }
+      },
+      {
+        "@type": "ItemList",
+        "@id": "https://sumanthbolle.com/servicenow#paths",
+        "name": "ServiceNow learning paths",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "New to ServiceNow", "url": "https://sumanthbolle.com/tutorials.html" },
+          { "@type": "ListItem", "position": 2, "name": "Pass the CSA exam", "url": "https://sumanthbolle.com/quiz.html" },
+          { "@type": "ListItem", "position": 3, "name": "Scripting & automation", "url": "https://sumanthbolle.com/tutorials.html" },
+          { "@type": "ListItem", "position": 4, "name": "Interview ready", "url": "https://sumanthbolle.com/interviews" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://sumanthbolle.com/servicenow#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is ServiceNow Central?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "ServiceNow Central is a single source of truth for the ServiceNow community: live sourced headlines, deep tutorials, interview prep, 1,300+ practice questions, and AI answers via Summaverick."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I prepare for the ServiceNow CSA exam?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Use the CSA quiz track on this site together with beginner platform tutorials and certification articles in the blog."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Where can I learn GlideRecord scripting?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Start with the scripting tutorials, then practice with interview questions and quiz scenarios focused on GlideRecord and server-side APIs."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What are ServiceNow AI Agents?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "AI Agents are autonomous digital workers on the Now Platform. Follow the live AI Agents feed and AI deep dives on ServiceNow Central for current, sourced coverage."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I get a sourced answer to a ServiceNow question?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ask Summaverick from ServiceNow Central. It researches live sources and returns grounded answers with citations."
+            }
+          }
+        ]
+      },
+      {
+        "@type": "Person",
+        "@id": "https://sumanthbolle.com/#person",
+        "name": "Sumanth Bolle",
+        "url": "https://sumanthbolle.com/",
+        "jobTitle": "ServiceNow AI Engineer"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://sumanthbolle.com/#website",
+        "url": "https://sumanthbolle.com/",
+        "name": "Sumanth Bolle",
+        "publisher": { "@id": "https://sumanthbolle.com/#person" }
+      }
+    ]
   }
   </script>
+  <script>window.SB_AI_SEARCH_ENDPOINT='https://wandering-haze-b394.sumanthbolle312.workers.dev'</script>
+  <script defer src="assets/js/shared/search.js?v=5"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{--blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000;
@@ -115,9 +191,45 @@
     .hero-eye .dot{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 0 rgba(52,211,153,0.5);animation:heroPulse 2.4s ease infinite}
     @keyframes heroPulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.5)}70%{box-shadow:0 0 0 9px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
     .hero-title{position:relative;z-index:1;font-size:clamp(44px,9vw,84px);font-weight:600;letter-spacing:-.025em;color:var(--white);line-height:1.05;opacity:0;animation:fadeInUp .8s ease .5s forwards}
-    .hero-title .grad{background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-    .hero-desc{position:relative;z-index:1;font-size:19px;color:var(--gray);margin-top:24px;max-width:620px;line-height:1.5;opacity:0;animation:fadeInUp .8s ease .9s forwards}
-    .hero-links{position:relative;z-index:1;display:flex;gap:16px;margin-top:36px;flex-wrap:wrap;justify-content:center;opacity:0;animation:fadeInUp .8s ease 1.3s forwards}
+    .hero-title .grad{background:linear-gradient(90deg,#81d742,#34d399,#60a5fa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .hero-desc{position:relative;z-index:1;font-size:19px;color:var(--gray);margin-top:24px;max-width:640px;line-height:1.5;opacity:0;animation:fadeInUp .8s ease .9s forwards}
+    .hero-search{position:relative;z-index:2;width:min(640px,100%);margin-top:32px;opacity:0;animation:fadeInUp .8s ease 1.1s forwards}
+    .hero-search-btn{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:14px 18px;border-radius:16px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:rgba(255,255,255,0.55);font-size:16px;font-family:inherit;cursor:pointer;text-align:left;transition:border-color .25s,background .25s,transform .25s var(--ease)}
+    .hero-search-btn:hover,.hero-search-btn:focus-visible{border-color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.9);transform:translateY(-1px)}
+    .hero-search-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+    .hero-search-btn .hint{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:12px;opacity:.7}
+    .hero-search-btn kbd{font-family:inherit;font-size:11px;padding:3px 7px;border-radius:6px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06)}
+    .hero-links{position:relative;z-index:1;display:flex;gap:16px;margin-top:28px;flex-wrap:wrap;justify-content:center;opacity:0;animation:fadeInUp .8s ease 1.35s forwards}
+
+    /* ── AUTHORITY STRIP ── */
+    .authority{background:var(--black);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);padding:28px 0}
+    .authority-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1080px;margin:0 auto;padding:0 22px}
+    .authority-item{text-align:center;padding:8px 10px}
+    .authority-num{font-size:clamp(28px,4vw,40px);font-weight:600;letter-spacing:-.03em;color:#fff;font-variant-numeric:tabular-nums}
+    .authority-label{font-size:12px;color:var(--gray);margin-top:6px;letter-spacing:.04em;text-transform:uppercase}
+    .authority-item a{color:inherit;text-decoration:none}
+    .authority-item a:hover .authority-num{color:#81d742}
+
+    /* ── LEARNING PATHS ── */
+    .paths-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .path-card{display:flex;flex-direction:column;gap:14px;background:var(--white);border:1px solid rgba(0,0,0,0.06);border-radius:var(--radius);padding:28px 26px;text-decoration:none;color:inherit;min-height:180px;opacity:0;transform:translateY(24px);transition:opacity .5s,transform .5s var(--ease),box-shadow .3s,border-color .3s}
+    .path-card.animate{opacity:1;transform:translateY(0)}
+    .path-card:hover{transform:translateY(-4px);box-shadow:var(--card-shadow-hover);border-color:rgba(0,102,204,0.2)}
+    .path-kicker{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue)}
+    .path-card h3{font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.25}
+    .path-card p{font-size:15px;color:var(--gray);line-height:1.55;flex:1}
+    .path-go{font-size:14px;font-weight:600;color:var(--blue);display:inline-flex;align-items:center;gap:6px}
+    .path-go svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+    /* ── FAQ ── */
+    .faq-list{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+    .faq-item{background:var(--white);border:1px solid rgba(0,0,0,0.06);border-radius:14px;overflow:hidden}
+    .faq-item summary{list-style:none;cursor:pointer;padding:18px 22px;font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px}
+    .faq-item summary::-webkit-details-marker{display:none}
+    .faq-item summary::after{content:'';width:10px;height:10px;border-right:2px solid var(--gray);border-bottom:2px solid var(--gray);transform:rotate(45deg);transition:transform .25s var(--ease);flex-shrink:0;margin-top:-4px}
+    .faq-item[open] summary::after{transform:rotate(225deg);margin-top:4px}
+    .faq-item .faq-body{padding:0 22px 20px;font-size:15px;color:var(--gray);line-height:1.6}
+    .faq-item .faq-body a{color:var(--blue);font-weight:600}
 
     /* ── 3D PLATFORM EXPLORER ──
        Flat, accessible buttons on the left drive a decorative exploded 3D stack
@@ -272,12 +384,16 @@
     footer{background:var(--bg);padding:24px;text-align:center}
     .footer-text{font-size:12px;color:var(--gray)}
 
+    @media(max-width:1024px){.paths-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:768px){
       .nav-links{display:none}
       .menu-toggle{display:block}
       .section{padding:72px 0}
       .hero{min-height:78vh;padding:110px 20px 70px}
       .pillar-grid{grid-template-columns:1fr}
+      .paths-grid{grid-template-columns:1fr}
+      .authority-row{grid-template-columns:repeat(2,1fr);gap:8px}
+      .hero-search-btn .hint{display:none}
       /* 3D stage hides on small screens; the layer list stays as the control */
       .explorer-grid{grid-template-columns:1fr;gap:0}
       .explorer-stage{display:none}
@@ -287,11 +403,10 @@
     @media (prefers-reduced-motion: reduce){
       html{scroll-behavior:auto}
       *,*::before,*::after{animation:none!important;transition:none!important}
-      .hero-eye,.hero-title,.hero-desc,.hero-links{opacity:1;transform:none}
-      .section-eye,.section-title,.section-sub,.track,.lib-card,.pillar{opacity:1;transform:none}
+      .hero-eye,.hero-title,.hero-desc,.hero-links,.hero-search{opacity:1;transform:none}
+      .section-eye,.section-title,.section-sub,.track,.lib-card,.pillar,.path-card{opacity:1;transform:none}
     }
   </style>
-  <script>window.SB_AI_SEARCH_ENDPOINT='https://wandering-haze-b394.sumanthbolle312.workers.dev'</script>
 </head>
 <body>
   <a href="#main" class="skip-nav">Skip to main content</a>
@@ -326,14 +441,42 @@
   <header class="hero">
     <div class="hero-eye"><span class="dot" aria-hidden="true"></span> The single source of truth for ServiceNow</div>
     <h1 class="hero-title">ServiceNow <span class="grad">Central</span></h1>
-    <p class="hero-desc">One place for the ServiceNow community — live, sourced articles on platform AI, AI Agents, LLMs and cost optimization, alongside deep tutorials, real interview prep, and 1,300+ practice questions.</p>
+    <p class="hero-desc">Search the canonical ServiceNow library — live sourced AI news, deep tutorials, real interview prep, and 1,300+ practice questions — then follow a clear path from beginner to production-ready.</p>
+    <div class="hero-search">
+      <button type="button" class="hero-search-btn" id="heroSearchBtn" aria-label="Search ServiceNow Central">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+        <span>Search tutorials, quizzes, interviews, articles…</span>
+        <span class="hint" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+      </button>
+    </div>
     <div class="hero-links">
-      <a class="btn btn-p" href="#live">Explore the live feed</a>
-      <a class="btn btn-s" href="#library">Browse the library</a>
+      <a class="btn btn-p" href="#paths">Start a learning path</a>
+      <a class="btn btn-s" href="#live">Explore the live feed</a>
     </div>
   </header>
 
+  <div class="authority" aria-label="ServiceNow Central inventory">
+    <div class="authority-row" id="authorityRow">
+      <div class="authority-item"><a href="blog.html"><div class="authority-num" data-stat="articles">52</div><div class="authority-label">Articles</div></a></div>
+      <div class="authority-item"><a href="tutorials.html"><div class="authority-num" data-stat="tutorials">34</div><div class="authority-label">Tutorials</div></a></div>
+      <div class="authority-item"><a href="interviews.html"><div class="authority-num" data-stat="interviews">57</div><div class="authority-label">Interview Qs</div></a></div>
+      <div class="authority-item"><a href="quiz.html"><div class="authority-num" data-stat="quizQuestions">1,318</div><div class="authority-label">Quiz questions</div></a></div>
+    </div>
+  </div>
+
   <main id="main">
+    <!-- LEARNING PATHS -->
+    <section class="section" id="paths">
+      <div class="section-c">
+        <div class="section-h">
+          <p class="section-eye" data-animate>Start here</p>
+          <h2 class="section-title" data-animate>One path for every goal</h2>
+          <p class="section-sub" data-animate>Pick where you are. Each path opens the best existing tutorials, quizzes, and prep on this site — no new accounts, no fluff.</p>
+        </div>
+        <div class="paths-grid" id="pathsGrid"></div>
+      </div>
+    </section>
+
     <!-- 3D PLATFORM EXPLORER -->
     <section class="section section-dark" id="platform">
       <div class="section-c">
@@ -463,6 +606,18 @@
       </div>
     </section>
 
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="section-c">
+        <div class="section-h">
+          <p class="section-eye" data-animate>Common questions</p>
+          <h2 class="section-title" data-animate>Answers before you ask</h2>
+          <p class="section-sub" data-animate>Straight paths into the library. Still stuck? Ask Summaverick with sources.</p>
+        </div>
+        <div class="faq-list" id="faqList"></div>
+      </div>
+    </section>
+
     <!-- CTA -->
     <section class="section section-dark cta-section">
       <div class="section-c cta-wrap">
@@ -530,11 +685,202 @@
       entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('animate'); });
     }, { threshold: 0.1 });
     function observeAll(scope) {
-      (scope || document).querySelectorAll('[data-animate], .track, .lib-card').forEach(function (el) {
+      (scope || document).querySelectorAll('[data-animate], .track, .lib-card, .path-card').forEach(function (el) {
         if (REDUCED) { el.classList.add('animate'); } else { observer.observe(el); }
       });
     }
     observeAll();
+
+    /* ══ HUB SEARCH + AUTHORITY INDEX ══ */
+    var HUB_INDEX_URL = 'data/sn-hub-index.json';
+    var TYPE_COLOR = {
+      hub: '#0066CC', path: '#0a7a3e', article: '#5856d6', interview: '#11998e',
+      tutorial: '#ff9500', quiz: '#ff3b30', faq: '#1d1d1f'
+    };
+    var TYPE_ICON = {
+      hub: 'SN', path: '→', article: 'A', interview: 'Q', tutorial: 'T', quiz: '✓', faq: '?'
+    };
+
+    function formatCount(n) {
+      return Number(n || 0).toLocaleString('en-US');
+    }
+
+    function applyStats(stats) {
+      if (!stats) return;
+      document.querySelectorAll('[data-stat]').forEach(function (el) {
+        var key = el.getAttribute('data-stat');
+        if (stats[key] != null) el.textContent = formatCount(stats[key]);
+      });
+    }
+
+    function initHubSearch(items) {
+      if (!items || !items.length) return;
+      function run() {
+        if (!window.SBSearch) return false;
+        var opts = {
+          items: items,
+          fields: [
+            { name: 'title', weight: 5 },
+            { name: 'excerpt', weight: 2 },
+            { name: 'keywords', weight: 3 },
+            { name: 'meta', weight: 2 },
+            { name: 'category', weight: 2 },
+            { name: 'type', weight: 1 }
+          ],
+          placeholder: 'Search ServiceNow Central…',
+          aiSearchEndpoint: window.SB_AI_SEARCH_ENDPOINT || null,
+          onSelect: function (item) {
+            if (item && item.href) window.location.href = item.href;
+          },
+          renderTitle: function (item) { return item.title || ''; },
+          renderExcerpt: function (item) { return item.excerpt || ''; },
+          renderMeta: function (item) { return '<span>' + (item.meta || item.type || '') + '</span>'; },
+          getColor: function (item) { return TYPE_COLOR[item.type] || '#0066CC'; },
+          getIcon: function (item) { return TYPE_ICON[item.type] || 'SN'; }
+        };
+        if (window.__snSearchReady) {
+          window.SBSearch.refresh(items);
+        } else {
+          window.SBSearch.init(opts);
+          window.__snSearchReady = true;
+        }
+        return true;
+      }
+      if (run()) return;
+      var tries = 0;
+      var timer = setInterval(function () {
+        tries += 1;
+        if (run() || tries > 40) clearInterval(timer);
+      }, 50);
+    }
+
+    var heroSearchBtn = document.getElementById('heroSearchBtn');
+    if (heroSearchBtn) {
+      heroSearchBtn.addEventListener('click', function () {
+        if (window.SBSearch && typeof window.SBSearch.open === 'function') window.SBSearch.open();
+      });
+    }
+
+    // Seed search immediately so ⌘K / hero search work before the full index loads.
+    initHubSearch([
+      { id: 'seed-live', type: 'hub', title: 'Live ServiceNow feed', excerpt: 'AI, Agents, LLM and cost headlines with sources.', href: '#live', meta: 'Hub' },
+      { id: 'seed-paths', type: 'path', title: 'Learning paths', excerpt: 'Beginner, CSA, scripting, interview, and AI paths.', href: '#paths', meta: 'Path', keywords: 'start here CSA beginner' },
+      { id: 'seed-blog', type: 'hub', title: 'Blog & deep dives', excerpt: 'ServiceNow, GenAI and architecture articles.', href: 'blog.html', meta: 'Hub' },
+      { id: 'seed-tutorials', type: 'hub', title: 'Developer tutorials', excerpt: 'Hands-on scripting and platform guides.', href: 'tutorials.html', meta: 'Hub' },
+      { id: 'seed-interviews', type: 'hub', title: 'Interview prep', excerpt: 'Real ServiceNow interview questions.', href: 'interviews.html', meta: 'Hub' },
+      { id: 'seed-quiz', type: 'hub', title: 'Practice quiz', excerpt: '1,300+ CSA and scenario questions.', href: 'quiz.html', meta: 'Hub' },
+      { id: 'seed-ask', type: 'hub', title: 'Ask Summaverick', excerpt: 'Sourced ServiceNow answers on demand.', href: 'summaverick.html', meta: 'Ask' }
+    ]);
+
+    /* ══ LEARNING PATHS ══ */
+    var PATHS = [
+      {
+        kicker: 'Beginner',
+        title: 'New to ServiceNow',
+        desc: 'Platform foundations, the data model, and your first scripts — the cleanest on-ramp on this site.',
+        href: 'tutorials.html',
+        go: 'Open tutorials'
+      },
+      {
+        kicker: 'Certification',
+        title: 'Pass the CSA exam',
+        desc: 'Validated CSA drills and scenario practice so you study the exam you will actually sit.',
+        href: 'quiz.html',
+        go: 'Start CSA practice'
+      },
+      {
+        kicker: 'Developer',
+        title: 'Scripting & automation',
+        desc: 'GlideRecord, business rules, client scripts, and Flow Designer — build muscle memory, not slides.',
+        href: 'tutorials.html#javascript-rhino',
+        go: 'Learn scripting'
+      },
+      {
+        kicker: 'Career',
+        title: 'Interview ready',
+        desc: 'Real ServiceNow questions with model answers, plus a standalone technical-terms quiz.',
+        href: 'interviews.html',
+        go: 'Practice interviews'
+      },
+      {
+        kicker: 'AI',
+        title: 'AI on the Now Platform',
+        desc: 'Now Assist, AI Agents, LLMs, and cost optimization — live sourced headlines plus deep dives.',
+        href: '#live',
+        go: 'Open live AI feed'
+      },
+      {
+        kicker: 'Ask',
+        title: 'Get a sourced answer now',
+        desc: 'Summaverick researches live ServiceNow sources and answers with citations when you are stuck mid-task.',
+        href: 'summaverick.html',
+        go: 'Ask Summaverick'
+      }
+    ];
+    var pathsGrid = document.getElementById('pathsGrid');
+    if (pathsGrid) {
+      pathsGrid.innerHTML = PATHS.map(function (p) {
+        return '<a class="path-card" href="' + esc(p.href) + '">' +
+          '<span class="path-kicker">' + esc(p.kicker) + '</span>' +
+          '<h3>' + esc(p.title) + '</h3>' +
+          '<p>' + esc(p.desc) + '</p>' +
+          '<span class="path-go">' + esc(p.go) + ' ' + ICONS.arrow + '</span>' +
+          '</a>';
+      }).join('');
+      observeAll(pathsGrid);
+    }
+
+    /* ══ FAQ ══ */
+    var FAQS = [
+      {
+        q: 'What is ServiceNow Central?',
+        a: 'The single source of truth for this site’s ServiceNow content — live sourced headlines, tutorials, interview prep, quizzes, and AI answers in one hub.',
+        href: '#library',
+        link: 'Browse the library'
+      },
+      {
+        q: 'How do I prepare for the CSA exam?',
+        a: 'Use the CSA quiz track for timed practice, then reinforce gaps with beginner tutorials and certification articles on the blog.',
+        href: 'quiz.html',
+        link: 'Open CSA quiz'
+      },
+      {
+        q: 'Where should I learn GlideRecord?',
+        a: 'Start in the scripting tutorials, then drill interview questions and quiz scenarios until the API feels automatic.',
+        href: 'tutorials.html',
+        link: 'Open tutorials'
+      },
+      {
+        q: 'What are ServiceNow AI Agents?',
+        a: 'Autonomous digital workers on the Now Platform. Follow the live AI Agents feed for current, citable coverage, then read the AI deep dives.',
+        href: '#live',
+        link: 'See live AI news'
+      },
+      {
+        q: 'How do I get a sourced answer right now?',
+        a: 'Ask Summaverick from this hub. It researches live sources and returns grounded answers with citations.',
+        href: 'summaverick.html',
+        link: 'Ask Summaverick'
+      }
+    ];
+    var faqList = document.getElementById('faqList');
+    if (faqList) {
+      faqList.innerHTML = FAQS.map(function (f, i) {
+        return '<details class="faq-item"' + (i === 0 ? ' open' : '') + '>' +
+          '<summary>' + esc(f.q) + '</summary>' +
+          '<div class="faq-body"><p>' + esc(f.a) + '</p>' +
+          '<p><a href="' + esc(f.href) + '">' + esc(f.link) + ' ' + ICONS.arrow + '</a></p></div>' +
+          '</details>';
+      }).join('');
+    }
+
+    fetch(HUB_INDEX_URL)
+      .then(function (r) { if (!r.ok) throw new Error('index'); return r.json(); })
+      .then(function (data) {
+        applyStats(data.stats);
+        initHubSearch(data.items || []);
+      })
+      .catch(function () { /* seed index already active */ });
 
     /* ══ LIVE FEED ══ */
     var TRACK_ORDER = ['ai', 'agents', 'llm', 'cost'];
