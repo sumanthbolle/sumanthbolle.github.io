@@ -7,7 +7,7 @@ Single Cloudflare Worker that powers both the Summaverick chat and the landing-p
 | Method | Path         | Purpose                                                                 |
 |--------|--------------|-------------------------------------------------------------------------|
 | POST   | `/`          | Chat completion. Body: `{ query: string, context?: Array<{role,content}> }` |
-| POST   | `/flights`   | SkyFare flight discovery + "best time to book" advisory. See below.     |
+| POST   | `/flights`   | SkyFare flight search + book-redirect enrichment + "best time to book" advisory. See below. |
 | GET    | `/trending`  | Landing widgets (news / market / tech), country-aware + cached          |
 | GET    | `/servicenow`| Latest ServiceNow articles across 4 tracks (AI / Agents / LLM / cost), cached |
 | OPTIONS| any          | CORS preflight                                                          |

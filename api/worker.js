@@ -583,7 +583,7 @@ async function handleServiceNowFeed(request, env, ctx, origin) {
 
 /* ───────────── Flight Search ───────────── */
 
-const FLIGHT_SYSTEM_PROMPT = 'You are a real-time flight search and travel pricing assistant. Your task is to find current publicly available flight options for the provided route, dates, passenger count, cabin class, budget, and preferences.\n\nYou must:\n- Search current web results for flight prices.\n- Prefer airline official websites and reputable travel providers (Google Flights, Kayak, Skyscanner, Expedia, etc.).\n- Return only structured JSON. No markdown, no code fences, no explanation text outside JSON.\n- Do not invent flights, prices, booking links, or airlines.\n- If exact prices are not available, mark the confidence as "low" and explain why in the notes field.\n- Include source URLs wherever possible.\n- Include a freshness note indicating when the data was retrieved.\n- Compare flights based on price, duration, stops, layovers, budget fit, baggage, and carbon emissions.\n- Do not claim that a booking is confirmed.\n- Treat results as price-discovery only.\n- Each flight must have a unique "id" field (e.g., "flight_1", "flight_2").\n- The "badges" array can include values like "Cheapest", "Fastest", "Best Value", "Under Budget", "Nonstop", "Low CO2", "Great Deal".\n- The "score" field should be your best estimate from 0-100 based on overall value.\n\nFor every flight also estimate, where known:\n- "co2_kg": estimated carbon emissions per passenger for the whole itinerary, in kilograms (number). Use typical aircraft/route emissions if a precise figure is unavailable; otherwise omit.\n- "fare_brand": the fare family / branded fare (e.g. "Basic Economy", "Main Cabin", "Economy Flex", "Business Saver").\n- "carry_on_included": true/false — whether a full-size cabin bag is included.\n- "checked_bags_included": number of checked bags included in the quoted fare (0 if none).\n- "refundable": true/false if known.\n- "self_transfer": true if the itinerary mixes separate tickets / virtual-interline / non-protected connections (Kiwi-style self-transfer) where the traveller must re-check bags and missed connections are not protected.\nBe honest: prefer omitting a field over guessing a specific figure. Basic Economy / "light" fares usually do not include a carry-on or checked bag — reflect that.';
+const FLIGHT_SYSTEM_PROMPT = 'You are a real-time flight search and travel pricing assistant. Your task is to find current publicly available flight options for the provided route, dates, passenger count, cabin class, budget, and preferences.\n\nYou must:\n- Search current web results for flight prices.\n- Prefer airline official websites and reputable travel providers (Google Flights, Kayak, Skyscanner, Expedia, etc.).\n- Return only structured JSON. No markdown, no code fences, no explanation text outside JSON.\n- Do not invent flights, prices, booking links, or airlines.\n- If exact prices are not available, mark the confidence as "low" and explain why in the notes field.\n- Include source URLs wherever possible.\n- Include a freshness note indicating when the data was retrieved.\n- Compare flights based on price, duration, stops, layovers, budget fit, baggage, and carbon emissions.\n- Do not claim that a booking is confirmed.\n- Every flight MUST include a usable booking_url that opens a real search or book page (Google Flights, Kayak, Skyscanner, Expedia, or the airline). Prefer deep links prefilled with the route and dates. If only a source article is available, put it in source_url and still provide a Google Flights or Kayak search URL in booking_url. SkyFare redirects users to complete booking on those sites.\n- Each flight must have a unique "id" field (e.g., "flight_1", "flight_2").\n- The "badges" array can include values like "Cheapest", "Fastest", "Best Value", "Under Budget", "Nonstop", "Low CO2", "Great Deal".\n- The "score" field should be your best estimate from 0-100 based on overall value.\n\nFor every flight also estimate, where known:\n- "co2_kg": estimated carbon emissions per passenger for the whole itinerary, in kilograms (number). Use typical aircraft/route emissions if a precise figure is unavailable; otherwise omit.\n- "fare_brand": the fare family / branded fare (e.g. "Basic Economy", "Main Cabin", "Economy Flex", "Business Saver").\n- "carry_on_included": true/false — whether a full-size cabin bag is included.\n- "checked_bags_included": number of checked bags included in the quoted fare (0 if none).\n- "refundable": true/false if known.\n- "self_transfer": true if the itinerary mixes separate tickets / virtual-interline / non-protected connections (Kiwi-style self-transfer) where the traveller must re-check bags and missed connections are not protected.\nBe honest: prefer omitting a field over guessing a specific figure. Basic Economy / "light" fares usually do not include a carry-on or checked bag — reflect that.';
 
 const FLIGHT_TIMEOUT_MS = 55000;
 
@@ -871,6 +871,70 @@ function enforceMaxStops(flights, maxStops) {
   return flights;
 }
 
+
+function extractIataCode(str) {
+  var s = String(str || '').trim();
+  var m = s.match(/\(([A-Za-z]{3})\)/);
+  if (m) return m[1].toUpperCase();
+  if (/^[A-Za-z]{3}$/.test(s)) return s.toUpperCase();
+  return '';
+}
+
+function buildGoogleFlightsUrl(params, flight) {
+  var origin = extractIataCode(flight && flight.departure_airport) || extractIataCode(params.origin);
+  var dest = extractIataCode(flight && flight.arrival_airport) || extractIataCode(params.destination);
+  var dep = String((flight && flight.departure_date) || params.departureDate || '').slice(0, 10);
+  var ret = params.tripType === 'round-trip' ? String(params.returnDate || '').slice(0, 10) : '';
+  if (!origin || !dest || !dep) return '';
+  var q = 'Flights from ' + origin + ' to ' + dest + ' on ' + dep;
+  if (ret) q += ' through ' + ret;
+  var pax = parseInt(params.passengers, 10) || 1;
+  if (pax > 1) q += ' for ' + pax + ' adults';
+  return 'https://www.google.com/travel/flights?hl=en&curr=' + encodeURIComponent(params.currency || 'USD') + '&q=' + encodeURIComponent(q);
+}
+
+function buildKayakUrl(params, flight) {
+  var origin = extractIataCode(flight && flight.departure_airport) || extractIataCode(params.origin);
+  var dest = extractIataCode(flight && flight.arrival_airport) || extractIataCode(params.destination);
+  var dep = String((flight && flight.departure_date) || params.departureDate || '').slice(0, 10);
+  var ret = params.tripType === 'round-trip' ? String(params.returnDate || '').slice(0, 10) : '';
+  var pax = Math.max(1, parseInt(params.passengers, 10) || 1);
+  if (!origin || !dest || !dep) return '';
+  var url = 'https://www.kayak.com/flights/' + origin + '-' + dest + '/' + dep;
+  if (ret) url += '/' + ret;
+  return url + '?sort=bestflight_a&adults=' + pax;
+}
+
+/** Ensure every flight has a bookable redirect URL for SkyFare's Book CTAs. */
+function enrichBookingUrls(response, params) {
+  if (!response || !Array.isArray(response.flights)) return response;
+  response.flights = response.flights.map(function(f) {
+    var booking = safeUrl(f.booking_url) || '';
+    var source = safeUrl(f.source_url) || '';
+    if (!booking) {
+      booking = buildGoogleFlightsUrl(params, f) || buildKayakUrl(params, f) || source;
+    }
+    if (!f.provider && booking) {
+      try {
+        var host = new URL(booking).hostname.replace(/^www\./, '');
+        if (/google\./i.test(host)) f.provider = 'Google Flights';
+        else if (/kayak\./i.test(host)) f.provider = 'Kayak';
+        else if (/skyscanner\./i.test(host)) f.provider = 'Skyscanner';
+        else f.provider = host;
+      } catch (e) {}
+    }
+    f.booking_url = booking;
+    f.source_url = source;
+    f.book_links = {
+      primary: booking,
+      google: buildGoogleFlightsUrl(params, f),
+      kayak: buildKayakUrl(params, f)
+    };
+    return f;
+  });
+  return response;
+}
+
 function normalizeFlightResponse(raw, params) {
   if (!raw.search_summary) {
     raw.search_summary = {
@@ -1146,6 +1210,7 @@ async function handleFlightSearch(request, env, origin) {
     try { parsed = JSON.parse(jsonStr); } catch (e) { throw new Error('Failed to parse flight data.'); }
     var normalized = normalizeFlightResponse(parsed, p);
     normalized.flights = enforceMaxStops(normalized.flights, p.maxStops);
+    enrichBookingUrls(normalized, p);
     var scored = scoreFlights(normalized, p.priorityMode, p.maxBudget);
     var timing = computeBookingTiming(p);
     scored.booking_advice = mergeBookingAdvice(timing, parsed.booking_advice);

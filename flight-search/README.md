@@ -1,15 +1,25 @@
-# SkyFare — AI Flight Search & Comparison
+# SkyFare — Search Flights. Compare. Book.
 
-A premium flight discovery and comparison interface powered by the Perplexity API. Search for flights across airlines and booking providers, compare options ranked by price, speed, stops, and value — all presented in a clean UI.
+A flight search and comparison interface powered by live AI research. Search across airlines and OTAs, compare by price/speed/value, then **book via redirect** to Google Flights, Kayak, Skyscanner, or the airline.
 
-> **Note:** This is a flight discovery tool, not a booking system. "View Deal" buttons redirect to the provider's website.
+> SkyFare finds and ranks fares. Checkout happens on the partner site — every result exposes a **Book** button with a deep link.
 
 ## Tech Stack
 
-- **Frontend:** Next.js (App Router) + React + TypeScript
-- **Styling:** Tailwind CSS
-- **Backend:** Next.js API Route (`/api/flights/search`)
+- **Frontend:** Next.js (App Router) + React + TypeScript (prototype in `flight-search/`)
+- **Production UI:** `flights.html` on the GitHub Pages site
+- **Backend:** Cloudflare Worker (`api/worker.js` → `POST /flights`)
 - **AI Provider:** Perplexity API (`sonar-pro` model)
+
+## Booking redirects
+
+When a provider URL is missing from the model response, the worker and client build fallback deep links:
+
+- Google Flights (prefilled route + dates)
+- Kayak
+- Skyscanner
+
+Primary CTA on each card: **Book** (opens in a new tab). Details panel lists multiple book destinations.
 
 ## Getting Started
 
