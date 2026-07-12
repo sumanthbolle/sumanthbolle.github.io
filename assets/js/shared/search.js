@@ -882,6 +882,17 @@
     refresh: function(items) {
       if (config) config.items = items;
       searchIndexCache = null;
+    },
+    /** Open the search modal. Optional query prefills and runs local search. */
+    open: function(query) {
+      if (!config) return;
+      if (!overlayEl) createDOM();
+      if (!overlayEl) return;
+      openSearch();
+      if (typeof query === 'string' && query.trim()) {
+        inputEl.value = query.trim();
+        inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+      }
     }
   };
 })();
