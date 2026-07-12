@@ -12,6 +12,8 @@ const SITEMAP_FILE = path.join(process.cwd(), 'sitemap.xml');
 const STATIC_PAGES = [
   { url: '/', priority: '1.0', changefreq: 'daily' },
   { url: '/summaverick', priority: '1.0', changefreq: 'daily' },
+  { url: '/servicenow', priority: '1.0', changefreq: 'hourly' },
+  { url: '/flights', priority: '1.0', changefreq: 'daily' },
   { url: '/blog', priority: '0.9', changefreq: 'daily' },
   { url: '/interviews', priority: '0.9', changefreq: 'daily' },
   { url: '/tutorials.html', priority: '0.9', changefreq: 'weekly' },
