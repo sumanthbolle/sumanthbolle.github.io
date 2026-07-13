@@ -32,9 +32,17 @@ working source URL (nothing is invented).
 
 ## `/flights` — SkyFare
 
-Powers the SkyFare flight-search UI (`/flights.html`). The Worker prompts Sonar
-(`sonar-pro`, high search context) for live fares, then post-processes the result
-server-side to make it comparable across booking sites:
+Powers the SkyFare flight-search UI (`/flights.html`).
+
+**Fare source priority:**
+1. **Amadeus Self-Service** (real inventory) when `AMADEUS_CLIENT_ID` /
+   `AMADEUS_CLIENT_SECRET` are set and origin/destination resolve to IATA codes.
+   Uses Flight Offers Search v2, mapped into the SkyFare schema.
+2. **Perplexity Sonar** (`sonar-pro`) as the AI-researched fallback.
+
+The response includes `data.source` (`"amadeus"` | `"ai"`). After the source
+returns offers, the Worker post-processes them server-side to make them
+comparable across booking sites:
 
 - **Scoring & ranking** — each flight is scored 0–100 from price, duration, stops,
   budget fit, confidence and (when comparable data exists) **carbon emissions**.
@@ -61,8 +69,11 @@ Set these as **secrets** in the Cloudflare Workers dashboard (Settings → Varia
 
 | Name                 | Required | Notes                                                                                                                                          |
 |----------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------|
-| `PERPLEXITY_API_KEY` | yes      | From https://www.perplexity.ai/settings/api. Used for both chat and the news + market widgets (structured-output Sonar calls).                 |
+| `PERPLEXITY_API_KEY` | yes      | From https://www.perplexity.ai/settings/api. Used for chat, widgets, and the AI-researched `/flights` fallback.                                |
 | `ALLOWED_ORIGIN`     | yes      | Exact origin allowed by CORS, e.g. `https://sumanthbolle.com`. Use `*` only for local dev.                                                     |
+| `AMADEUS_CLIENT_ID`  | no       | Amadeus Self-Service key. When set (with the secret), `/flights` uses real Amadeus inventory as the primary source. Free test quota available. |
+| `AMADEUS_CLIENT_SECRET` | no    | Amadeus Self-Service secret. Required alongside `AMADEUS_CLIENT_ID`.                                                                            |
+| `AMADEUS_ENV`        | no       | `test` (default, free quota) or `production`. Optionally override the host entirely with `AMADEUS_BASE_URL`.                                    |
 
 No other keys are required. The tech widget uses the public Hacker News API (no auth).
 
