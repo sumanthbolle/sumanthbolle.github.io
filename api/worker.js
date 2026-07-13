@@ -12,8 +12,16 @@
  *   OPTIONS *           — CORS preflight
  *
  * Environment variables:
- *   PERPLEXITY_API_KEY — from perplexity.ai/settings/api
- *   ALLOWED_ORIGIN     — e.g. https://sumanthbolle.com (or * for dev)
+ *   PERPLEXITY_API_KEY   — from perplexity.ai/settings/api (chat + AI fallback fares)
+ *   ALLOWED_ORIGIN       — e.g. https://sumanthbolle.com (or * for dev)
+ *   AMADEUS_CLIENT_ID    — Amadeus Self-Service key (primary /flights inventory)
+ *   AMADEUS_CLIENT_SECRET— Amadeus Self-Service secret
+ *   AMADEUS_ENV          — 'test' (default) or 'production'
+ *   AMADEUS_BASE_URL     — optional override of the Amadeus host
+ *
+ * /flights source priority: Amadeus real inventory (when keys set & IATA codes
+ * resolvable) → Perplexity Sonar fallback. Each response includes data.source
+ * ('amadeus' | 'ai') so the UI can label fare provenance.
  */
 
 const SYSTEM_PROMPT = `You are Summaverick, a general-purpose AI research assistant. You answer questions on any topic — world news, science, technology, business, culture, code, careers, personal decisions, and everyday curiosity — by synthesizing real sources into clear, grounded answers.
@@ -1165,6 +1173,178 @@ function scoreFlights(response, priorityMode, maxBudget) {
   return response;
 }
 
+/* ───────────── Amadeus Self-Service connector (real inventory) ─────────────
+ * Primary flight source when AMADEUS_CLIENT_ID / AMADEUS_CLIENT_SECRET are set.
+ * Falls back to the Perplexity Sonar path on any error so search never breaks.
+ * Docs: https://developers.amadeus.com (Flight Offers Search v2). */
+
+var _amadeusToken = { value: null, exp: 0 };
+
+function amadeusHost(env) {
+  if (env.AMADEUS_BASE_URL) return env.AMADEUS_BASE_URL.replace(/\/$/, '');
+  return env.AMADEUS_ENV === 'production' ? 'https://api.amadeus.com' : 'https://test.api.amadeus.com';
+}
+
+function mapAmadeusCabin(cabinClass) {
+  switch (String(cabinClass || '').toLowerCase()) {
+    case 'premium_economy': return 'PREMIUM_ECONOMY';
+    case 'business': return 'BUSINESS';
+    case 'first': return 'FIRST';
+    default: return 'ECONOMY';
+  }
+}
+
+function isoDurationToMinutes(str) {
+  if (!str || typeof str !== 'string') return 0;
+  var m = str.match(/P(?:(\d+)D)?T(?:(\d+)H)?(?:(\d+)M)?/);
+  if (!m) return 0;
+  return (parseInt(m[1] || 0, 10) * 1440) + (parseInt(m[2] || 0, 10) * 60) + parseInt(m[3] || 0, 10);
+}
+
+function atTime(at) { return typeof at === 'string' && at.length >= 16 ? at.slice(11, 16) : ''; }
+function atDate(at) { return typeof at === 'string' && at.length >= 10 ? at.slice(0, 10) : ''; }
+function minutesBetweenAt(a, b) {
+  var ta = Date.parse(a), tb = Date.parse(b);
+  if (isNaN(ta) || isNaN(tb)) return 0;
+  return Math.max(0, Math.round((tb - ta) / 60000));
+}
+
+async function getAmadeusToken(env) {
+  var now = Date.now();
+  if (_amadeusToken.value && _amadeusToken.exp > now + 30000) return _amadeusToken.value;
+  var body = 'grant_type=client_credentials'
+    + '&client_id=' + encodeURIComponent(env.AMADEUS_CLIENT_ID)
+    + '&client_secret=' + encodeURIComponent(env.AMADEUS_CLIENT_SECRET);
+  var res = await fetch(amadeusHost(env) + '/v1/security/oauth2/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body
+  });
+  if (!res.ok) throw new Error('Amadeus auth ' + res.status);
+  var j = await res.json();
+  if (!j || !j.access_token) throw new Error('Amadeus auth: no token');
+  _amadeusToken = { value: j.access_token, exp: now + ((j.expires_in || 1500) * 1000) };
+  return _amadeusToken.value;
+}
+
+async function amadeusFetch(url, token, timeoutMs) {
+  var controller = new AbortController();
+  var t = setTimeout(function () { controller.abort(); }, timeoutMs || 20000);
+  try {
+    return await fetch(url, { headers: { 'Authorization': 'Bearer ' + token }, signal: controller.signal });
+  } finally { clearTimeout(t); }
+}
+
+/* Map an Amadeus Flight Offers Search response to the SkyFare `raw` shape that
+ * normalizeFlightResponse() / scoreFlights() already understand. */
+function amadeusOffersToRaw(json, p, depIata, arrIata) {
+  var carriers = (json && json.dictionaries && json.dictionaries.carriers) || {};
+  var offers = (json && Array.isArray(json.data)) ? json.data : [];
+  var flights = offers.map(function (offer, i) {
+    var itin = (offer.itineraries && offer.itineraries[0]) || { segments: [] };
+    var segs = itin.segments || [];
+    if (!segs.length) return null;
+    var first = segs[0], last = segs[segs.length - 1];
+
+    var layovers = [];
+    for (var s = 0; s < segs.length - 1; s++) {
+      layovers.push({
+        airport: segs[s].arrival && segs[s].arrival.iataCode || '',
+        duration_minutes: minutesBetweenAt(segs[s].arrival && segs[s].arrival.at, segs[s + 1].departure && segs[s + 1].departure.at)
+      });
+    }
+
+    // Per-traveller price (SkyFare price is per person; card multiplies for totals).
+    var tp = (offer.travelerPricings && offer.travelerPricings[0]) || null;
+    var perPerson = tp && tp.price && tp.price.total ? parseFloat(tp.price.total)
+      : (offer.price && offer.price.grandTotal ? parseFloat(offer.price.grandTotal) / Math.max(1, (offer.travelerPricings || []).length || 1) : 0);
+
+    var fd = tp && tp.fareDetailsBySegment && tp.fareDetailsBySegment[0] ? tp.fareDetailsBySegment[0] : {};
+    var checkedBags = fd.includedCheckedBags && typeof fd.includedCheckedBags.quantity === 'number' ? fd.includedCheckedBags.quantity : null;
+    var carryOn = fd.includedCabinBags && typeof fd.includedCabinBags.quantity === 'number' ? fd.includedCabinBags.quantity > 0 : null;
+
+    var co2 = 0;
+    (tp && tp.fareDetailsBySegment || []).forEach(function (seg) {
+      if (seg.co2Emissions && seg.co2Emissions[0] && typeof seg.co2Emissions[0].weight === 'number') co2 += seg.co2Emissions[0].weight;
+    });
+
+    var carrierCode = (offer.validatingAirlineCodes && offer.validatingAirlineCodes[0]) || first.carrierCode || '';
+    var airline = carriers[carrierCode] ? titleCaseAirline(carriers[carrierCode]) : (carrierCode || 'Airline');
+
+    return {
+      id: offer.id ? ('amadeus_' + offer.id) : ('amadeus_' + (i + 1)),
+      airline: airline,
+      flight_numbers: segs.map(function (sg) { return (sg.carrierCode || '') + (sg.number || ''); }).filter(Boolean),
+      provider: 'Amadeus',
+      price: Math.round(perPerson),
+      currency: (offer.price && offer.price.currency) || p.currency,
+      is_under_budget: p.maxBudget ? perPerson <= p.maxBudget : true,
+      departure_airport: (first.departure && first.departure.iataCode) || depIata,
+      arrival_airport: (last.arrival && last.arrival.iataCode) || arrIata,
+      departure_date: atDate(first.departure && first.departure.at) || p.departureDate,
+      departure_time: atTime(first.departure && first.departure.at),
+      arrival_time: atTime(last.arrival && last.arrival.at),
+      total_duration_minutes: isoDurationToMinutes(itin.duration),
+      stops: Math.max(0, segs.length - 1),
+      layovers: layovers,
+      co2_kg: co2 > 0 ? Math.round(co2) : 0,
+      fare_brand: fd.brandedFare || fd.fareBasis || (fd.cabin ? titleCaseAirline(fd.cabin) : ''),
+      carry_on_included: carryOn,
+      checked_bags_included: checkedBags,
+      refundable: null,
+      self_transfer: false,
+      booking_url: '',
+      source_url: '',
+      source_name: 'Amadeus',
+      confidence: 'high',
+      notes: '',
+      score: 0,
+      badges: []
+    };
+  }).filter(Boolean);
+
+  return {
+    search_summary: {
+      origin: depIata, destination: arrIata,
+      departure_date: p.departureDate, return_date: p.tripType === 'round-trip' ? p.returnDate : '',
+      trip_type: p.tripType, passengers: p.passengers, cabin_class: p.cabinClass,
+      currency: p.currency, budget: p.maxBudget || 0,
+      freshness_note: 'Live fares from Amadeus, retrieved ' + new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC.',
+      result_confidence: 'high'
+    },
+    recommendation: { best_overall_flight_id: '', cheapest_flight_id: '', fastest_flight_id: '', best_under_budget_flight_id: '', explanation: '' },
+    flights: flights,
+    warnings: []
+  };
+}
+
+function titleCaseAirline(name) {
+  return String(name || '').toLowerCase().replace(/\b([a-z])/g, function (m0, c) { return c.toUpperCase(); });
+}
+
+async function searchAmadeus(env, p, depIata, arrIata) {
+  var token = await getAmadeusToken(env);
+  var qs = new URLSearchParams();
+  qs.set('originLocationCode', depIata);
+  qs.set('destinationLocationCode', arrIata);
+  qs.set('departureDate', p.departureDate);
+  if (p.tripType === 'round-trip' && p.returnDate) qs.set('returnDate', p.returnDate);
+  qs.set('adults', String(Math.max(1, p.passengers)));
+  qs.set('travelClass', mapAmadeusCabin(p.cabinClass));
+  qs.set('currencyCode', p.currency);
+  qs.set('max', '20');
+  if (p.maxStops === 'nonstop') qs.set('nonStop', 'true');
+  if (p.maxBudget) qs.set('maxPrice', String(Math.floor(p.maxBudget)));
+  var res = await amadeusFetch(amadeusHost(env) + '/v2/shopping/flight-offers?' + qs.toString(), token, 20000);
+  if (!res.ok) {
+    var body = '';
+    try { body = await res.text(); } catch (e) {}
+    throw new Error('Amadeus search ' + res.status + ' ' + body.slice(0, 160));
+  }
+  var json = await res.json();
+  return amadeusOffersToRaw(json, p, depIata, arrIata);
+}
+
 async function handleFlightSearch(request, env, origin) {
   try {
     var body;
@@ -1190,6 +1370,28 @@ async function handleFlightSearch(request, env, origin) {
     if (!p.origin) return jsonResponse({ success: false, error: 'Origin is required.' }, origin);
     if (!p.destination) return jsonResponse({ success: false, error: 'Destination is required.' }, origin);
     if (!p.departureDate) return jsonResponse({ success: false, error: 'Departure date is required.' }, origin);
+
+    /* ── Primary source: Amadeus real inventory (when configured) ── */
+    var depIata = extractIataCode(p.origin);
+    var arrIata = extractIataCode(p.destination);
+    if (env.AMADEUS_CLIENT_ID && env.AMADEUS_CLIENT_SECRET && depIata && arrIata) {
+      try {
+        var amRaw = await searchAmadeus(env, p, depIata, arrIata);
+        if (amRaw && amRaw.flights && amRaw.flights.length) {
+          var an = normalizeFlightResponse(amRaw, p);
+          an.flights = enforceMaxStops(an.flights, p.maxStops);
+          enrichBookingUrls(an, p);
+          var aScored = scoreFlights(an, p.priorityMode, p.maxBudget);
+          aScored.booking_advice = mergeBookingAdvice(computeBookingTiming(p), null);
+          aScored.source = 'amadeus';
+          return jsonResponse({ success: true, data: aScored }, origin);
+        }
+        // No offers from Amadeus → fall through to Sonar (broader, if configured).
+      } catch (amErr) {
+        try { console.log('Amadeus failed; falling back to Sonar:', amErr && amErr.message); } catch (e) {}
+      }
+    }
+
     var apiKey = env.PERPLEXITY_API_KEY;
     if (!apiKey) return jsonResponse({ success: false, error: 'Flight search service is not configured.' }, origin);
     var payload = {
@@ -1214,6 +1416,7 @@ async function handleFlightSearch(request, env, origin) {
     var scored = scoreFlights(normalized, p.priorityMode, p.maxBudget);
     var timing = computeBookingTiming(p);
     scored.booking_advice = mergeBookingAdvice(timing, parsed.booking_advice);
+    scored.source = 'ai';
     return jsonResponse({ success: true, data: scored }, origin);
   } catch (e) {
     var msg = 'Unable to search for flights right now. Please try again later.';
