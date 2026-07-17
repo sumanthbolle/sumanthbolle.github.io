@@ -10,7 +10,25 @@ Single Cloudflare Worker that powers both the Summaverick chat and the landing-p
 | POST   | `/flights`   | SkyFare flight search + book-redirect enrichment + "best time to book" advisory. See below. |
 | GET    | `/trending`  | Landing widgets (news / market / tech), country-aware + cached          |
 | GET    | `/servicenow`| Latest ServiceNow articles across 4 tracks (AI / Agents / LLM / cost), cached |
+| GET    | `/metals`    | Live gold/silver spot references, local FX, and 30-day daily context |
 | OPTIONS| any          | CORS preflight                                                          |
+
+## `/metals` — Gold and silver market report
+
+Powers the human-first market report at `/metals.html`.
+
+- Query param: `?currency=USD` (supports the currencies listed by the page).
+- Live USD XAU/XAG spot references come from the public [Gold API](https://gold-api.com/).
+- Daily history and current FX conversion come from the public, open-source
+  [Frankfurter](https://frankfurter.dev/) service.
+- Responses distinguish `sourceUpdatedAt` from `generatedAt` and label freshness
+  as `live` or `delayed`.
+- The Cloudflare Cache API stores each currency response for **60 seconds**.
+- If FX is unavailable, USD prices still return with
+  `conversionAvailable: false`; if either live metal quote is unavailable, the
+  route returns a non-cacheable failure so the client can use its last success.
+
+No AI or generated explanation is used for prices or market-causality claims.
 
 ## `/servicenow` — ServiceNow live article feed
 

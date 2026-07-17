@@ -14,7 +14,7 @@ Feel free to explore, learn, or fork for your own site!
 - `posts.json` & `interviews.json` – Data for the blog and interviews
 - `data/sn-hub-index.json` – Slim search index for ServiceNow Central (`node scripts/generate-sn-hub-index.js`)
 - `profile.jpeg` – My profile picture
-- `summaverick.html` / `flights.html` – Product surfaces
+- `summaverick.html` / `flights.html` / `metals.html` – Product surfaces
 - `scripts/` – Scripts used in the site
 
 ## ServiceNow Central

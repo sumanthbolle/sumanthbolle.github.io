@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gold &amp; Silver Prices — Clear Market Context | Sumanth Bolle</title>
+  <meta name="description" content="Live gold and silver spot prices in your currency, with recent movement, regional reference weights, and clear market context.">
+  <meta name="author" content="Sumanth Bolle">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sumanthbolle.com/metals">
+  <meta property="og:title" content="Gold &amp; Silver Prices — Clear Market Context">
+  <meta property="og:description" content="Live gold and silver prices, clearly explained in your currency.">
+  <meta property="og:url" content="https://sumanthbolle.com/metals">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Gold & Silver Prices",
+    "url": "https://sumanthbolle.com/metals",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "description": "Live gold and silver spot prices with local-currency conversions and educational market context.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
+  }
+  </script>
+  <style>
+    *{box-sizing:border-box}
+    :root{
+      color-scheme:dark;
+      --bg:#1d1b19;
+      --surface:#24211e;
+      --surface-raised:#292622;
+      --line:#423d36;
+      --line-soft:#34302b;
+      --text:#f2eee7;
+      --muted:#aca59b;
+      --faint:#7f786f;
+      --gold:#c5a35b;
+      --gold-soft:#9e8249;
+      --silver:#bcc1c7;
+      --green:#78a982;
+      --red:#c47d76;
+      --max:1080px;
+    }
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+    button,select{font:inherit}
+    a{color:inherit}
+    .skip-link{position:fixed;left:16px;top:-80px;z-index:10000;background:var(--text);color:var(--bg);padding:10px 14px;text-decoration:none}
+    .skip-link:focus{top:12px}
+    :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+    nav{position:fixed;top:0;left:0;width:100%;height:48px;background:rgba(29,27,25,.94);backdrop-filter:blur(16px);z-index:9999;border-bottom:1px solid var(--line-soft)}
+    .nav-c{max-width:var(--max);height:100%;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{font-size:19px;font-weight:600;letter-spacing:-.02em;text-decoration:none}
+    .nav-links{display:flex;gap:27px;list-style:none;margin:0;padding:0}
+    .nav-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+    .nav-links a:hover,.nav-links a.active{color:var(--text)}
+    .menu-toggle{display:none;width:44px;height:44px;border:0;background:transparent;padding:10px;cursor:pointer}
+    .menu-toggle span{display:block;width:22px;height:1px;background:var(--text);margin:5px 0;transition:transform .2s,opacity .2s}
+    .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
+    .menu-toggle.active span:nth-child(2){opacity:0}
+    .menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
+    .mobile-menu{display:none;position:fixed;top:48px;left:0;width:100%;padding:14px 22px 20px;background:var(--surface);border-bottom:1px solid var(--line);z-index:9998}
+    .mobile-menu.active{display:block}
+    .mobile-menu a{display:block;min-height:44px;padding:12px 0;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line-soft)}
+    .mobile-menu a.active{color:var(--text)}
+
+    main{display:block}
+    .masthead{max-width:var(--max);margin:0 auto;padding:118px 22px 56px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:end;border-bottom:1px solid var(--line)}
+    .kicker,.section-label{margin:0 0 13px;color:var(--gold);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+    h1{max-width:650px;margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(38px,6vw,62px);font-weight:400;line-height:1.02;letter-spacing:-.035em}
+    .lede{max-width:640px;margin:20px 0 0;color:var(--muted);font-size:17px;line-height:1.65}
+    .controls{min-width:180px}
+    .controls label{display:block;margin-bottom:8px;color:var(--muted);font-size:12px}
+    select{width:100%;min-height:44px;padding:0 38px 0 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--text);cursor:pointer}
+    .control-note{margin:8px 0 0;color:var(--faint);font-size:11px;line-height:1.4}
+
+    .report{max-width:var(--max);margin:0 auto;padding:0 22px 72px}
+    .status-bar{min-height:54px;display:flex;align-items:center;justify-content:space-between;gap:18px;border-bottom:1px solid var(--line-soft);color:var(--muted);font-size:12px}
+    .status-copy{display:flex;align-items:center;gap:9px;line-height:1.45}
+    .status-dot{width:7px;height:7px;border-radius:50%;background:var(--faint);flex:0 0 auto}
+    .status-dot.live{background:var(--green)}
+    .status-dot.delayed,.status-dot.cached{background:var(--gold)}
+    .refresh-button,.share-button{min-height:40px;padding:0;border:0;background:transparent;color:var(--muted);cursor:pointer;text-decoration:underline;text-decoration-color:transparent;text-underline-offset:4px}
+    .refresh-button:hover,.share-button:hover{color:var(--text);text-decoration-color:currentColor}
+
+    .notice{display:none;margin:20px 0 0;padding:13px 15px;border-left:2px solid var(--gold);background:var(--surface);color:var(--muted);font-size:13px;line-height:1.55}
+    .notice.visible{display:block}
+    .notice.error{border-left-color:var(--red)}
+
+    .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--line)}
+    .metal{padding:48px 42px 46px 0}
+    .metal+.metal{padding-left:42px;border-left:1px solid var(--line)}
+    .metal-head{display:flex;justify-content:space-between;gap:20px;align-items:baseline}
+    .metal-name{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:27px;font-weight:400}
+    .metal-symbol{color:var(--faint);font-size:11px;letter-spacing:.1em}
+    .spot-label{margin:25px 0 8px;color:var(--muted);font-size:12px}
+    .spot-value{margin:0;font-size:clamp(38px,5vw,56px);font-weight:550;line-height:1;font-variant-numeric:tabular-nums lining-nums;letter-spacing:-.04em}
+    .spot-value.placeholder,.data-value.placeholder{color:var(--faint)}
+    .per-unit{margin-left:5px;color:var(--muted);font-size:13px;letter-spacing:0}
+    .move{min-height:24px;margin:13px 0 26px;font-size:13px;font-variant-numeric:tabular-nums}
+    .positive{color:var(--green)}.negative{color:var(--red)}.neutral{color:var(--muted)}
+    .local-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 26px;padding-top:22px;border-top:1px solid var(--line-soft)}
+    .data-label{display:block;margin-bottom:6px;color:var(--faint);font-size:11px;line-height:1.35}
+    .data-value{font-size:17px;font-weight:550;font-variant-numeric:tabular-nums}
+    .update-meta{margin:23px 0 0;color:var(--faint);font-size:11px;line-height:1.65}
+    .flash-up{animation:flashUp .7s ease-out}.flash-down{animation:flashDown .7s ease-out}
+    @keyframes flashUp{0%{color:var(--green)}100%{color:var(--text)}}
+    @keyframes flashDown{0%{color:var(--red)}100%{color:var(--text)}}
+
+    .section{padding:54px 0;border-bottom:1px solid var(--line)}
+    .section-heading{display:grid;grid-template-columns:minmax(220px,.75fr) minmax(0,1.25fr);gap:60px}
+    .section h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(26px,3vw,35px);font-weight:400;line-height:1.15;letter-spacing:-.02em}
+    .section-intro{margin:0;color:var(--muted);font-size:15px;line-height:1.65}
+    .change-summary{margin-top:27px;padding:18px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);font-size:17px;line-height:1.55}
+
+    .context-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:34px;border-top:1px solid var(--line-soft)}
+    .context-metal{padding:27px 34px 0 0}
+    .context-metal+.context-metal{padding-left:34px;border-left:1px solid var(--line-soft)}
+    .context-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 22px;font-size:15px}
+    .range-track{position:relative;height:2px;margin:35px 4px 15px;background:var(--line)}
+    .range-marker{position:absolute;top:50%;width:10px;height:10px;border:2px solid var(--bg);border-radius:50%;background:var(--gold);transform:translate(-50%,-50%)}
+    .silver .range-marker{background:var(--silver)}
+    .range-labels{display:flex;justify-content:space-between;color:var(--faint);font-size:10px;font-variant-numeric:tabular-nums}
+    .performance{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:27px}
+    .metric{padding-top:13px;border-top:1px solid var(--line-soft)}
+    .metric span{display:block;color:var(--faint);font-size:10px}
+    .metric strong{display:block;margin-top:6px;font-size:14px;font-weight:550;font-variant-numeric:tabular-nums}
+    .momentum{margin:23px 0 0;color:var(--muted);font-size:12px}
+    .ratio-row{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:35px;padding-top:28px;border-top:1px solid var(--line-soft)}
+    .ratio-number{font-size:30px;font-variant-numeric:tabular-nums}
+    .ratio-copy{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.55}
+
+    .factor-list{display:grid;grid-template-columns:1fr 1fr;gap:0 46px;margin:32px 0 0;padding:0;list-style:none;border-top:1px solid var(--line-soft)}
+    .factor-list li{padding:18px 0;border-bottom:1px solid var(--line-soft)}
+    .factor-list strong{display:block;font-size:14px;font-weight:550}
+    .factor-list span{display:block;margin-top:6px;color:var(--muted);font-size:12px;line-height:1.5}
+    .context-note{margin:24px 0 0;color:var(--faint);font-size:12px;line-height:1.6}
+
+    .explain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:34px}
+    .explain-grid h3{margin:0 0 10px;font-size:14px;font-weight:600}
+    .explain-grid p{margin:0;color:var(--muted);font-size:13px;line-height:1.65}
+    .disclaimer{margin:34px 0 0;padding-top:22px;border-top:1px solid var(--line-soft);color:var(--muted);font-size:12px;line-height:1.65}
+
+    details{margin-top:28px;border-top:1px solid var(--line-soft)}
+    summary{min-height:52px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:var(--text);font-size:13px}
+    summary::after{content:"+";color:var(--muted);font-size:18px;font-weight:300}
+    details[open] summary::after{content:"−"}
+    .method-copy{max-width:760px;padding:0 0 25px;color:var(--muted);font-size:12px;line-height:1.7}
+    .method-copy a{text-underline-offset:3px}
+    .share-row{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:26px;padding-top:24px;border-top:1px solid var(--line-soft)}
+    .share-row p{margin:0;color:var(--muted);font-size:12px}
+
+    footer{border-top:1px solid var(--line);background:#191715}
+    .footer-inner{max-width:var(--max);margin:0 auto;padding:34px 22px;display:flex;justify-content:space-between;gap:28px;color:var(--faint);font-size:11px;line-height:1.6}
+    .attribution{max-width:430px;text-align:right}
+
+    @media(max-width:768px){
+      .nav-links{display:none}.menu-toggle{display:block}
+      .masthead{padding-top:96px;grid-template-columns:1fr;gap:29px}.controls{width:100%;max-width:280px}
+      .status-bar{align-items:flex-start;padding:15px 0}.status-copy{align-items:flex-start}
+      .price-grid{grid-template-columns:1fr}.metal{padding:38px 0}.metal+.metal{padding:38px 0;border-left:0;border-top:1px solid var(--line)}
+      .section-heading{grid-template-columns:1fr;gap:17px}
+      .context-grid{grid-template-columns:1fr}.context-metal{padding:27px 0}.context-metal+.context-metal{padding:27px 0 0;border-left:0;border-top:1px solid var(--line-soft)}
+      .factor-list{grid-template-columns:1fr}.explain-grid{grid-template-columns:1fr;gap:28px}
+      .footer-inner{display:block}.attribution{margin-top:14px;text-align:left}
+    }
+    @media(max-width:480px){
+      .masthead,.report{padding-left:18px;padding-right:18px}
+      .local-grid{grid-template-columns:1fr 1fr;gap:18px 14px}
+      .ratio-row{grid-template-columns:1fr}.performance{gap:8px}
+      .share-row{align-items:flex-start;flex-direction:column}
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to prices</a>
+  <nav aria-label="Portfolio navigation">
+    <div class="nav-c">
+      <a href="index.html" class="nav-logo">Sumanth Bolle</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="servicenow.html">ServiceNow</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="summaverick.html">Summaverick</a></li>
+        <li><a href="flights.html">SkyFare</a></li>
+        <li><a href="metals.html" class="active" aria-current="page">Metals</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+    <div class="mobile-menu">
+      <a href="index.html">Home</a>
+      <a href="servicenow.html">ServiceNow</a>
+      <a href="blog.html">Blog</a>
+      <a href="summaverick.html">Summaverick</a>
+      <a href="flights.html">SkyFare</a>
+      <a href="metals.html" class="active" aria-current="page">Metals</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+
+  <main id="main">
+    <header class="masthead">
+      <div>
+        <p class="kicker">Precious metals market report</p>
+        <h1>Gold and silver, clearly.</h1>
+        <p class="lede">Live gold and silver prices, clearly explained in your currency. Check current spot prices, compare recent movement, and understand the market factors worth watching—without unnecessary financial jargon.</p>
+      </div>
+      <div class="controls">
+        <label for="currency">Display currency</label>
+        <select id="currency" aria-describedby="currencyNote"></select>
+        <p class="control-note" id="currencyNote">Your selection is remembered on this device.</p>
+      </div>
+    </header>
+
+    <div class="report">
+      <div class="status-bar" role="status" aria-live="polite">
+        <div class="status-copy"><span class="status-dot" id="statusDot"></span><span id="statusText">Fetching the latest market price</span></div>
+        <button class="refresh-button" id="refreshButton" type="button">Refresh</button>
+      </div>
+      <div class="notice" id="notice" role="alert"></div>
+
+      <section class="price-grid" aria-label="Current metal prices">
+        <article class="metal gold" data-metal="gold">
+          <div class="metal-head"><h2 class="metal-name">Gold</h2><span class="metal-symbol">XAU</span></div>
+          <p class="spot-label">USD spot price per troy ounce</p>
+          <p class="spot-value placeholder" data-field="usd">—<span class="per-unit">/ oz</span></p>
+          <p class="move neutral" data-field="move">Waiting for the latest reference</p>
+          <div class="local-grid">
+            <div><span class="data-label">Selected currency / oz</span><strong class="data-value placeholder" data-field="localOz">—</strong></div>
+            <div><span class="data-label">Selected currency / gram</span><strong class="data-value placeholder" data-field="localGram">—</strong></div>
+            <div><span class="data-label">24K reference / gram</span><strong class="data-value placeholder" data-field="pureGram">—</strong></div>
+            <div><span class="data-label">Estimated 22K metal value / gram</span><strong class="data-value placeholder" data-field="karat22">—</strong></div>
+            <div data-region-field="gold10g"><span class="data-label">24K reference / 10 grams</span><strong class="data-value placeholder" data-field="tenGram">—</strong></div>
+          </div>
+          <p class="update-meta" data-field="updated">Exact update time will appear here.</p>
+        </article>
+
+        <article class="metal silver" data-metal="silver">
+          <div class="metal-head"><h2 class="metal-name">Silver</h2><span class="metal-symbol">XAG</span></div>
+          <p class="spot-label">USD spot price per troy ounce</p>
+          <p class="spot-value placeholder" data-field="usd">—<span class="per-unit">/ oz</span></p>
+          <p class="move neutral" data-field="move">Waiting for the latest reference</p>
+          <div class="local-grid">
+            <div><span class="data-label">Selected currency / oz</span><strong class="data-value placeholder" data-field="localOz">—</strong></div>
+            <div><span class="data-label">Selected currency / gram</span><strong class="data-value placeholder" data-field="localGram">—</strong></div>
+            <div data-region-field="silverKg"><span class="data-label">Selected currency / kilogram</span><strong class="data-value placeholder" data-field="kilogram">—</strong></div>
+          </div>
+          <p class="update-meta" data-field="updated">Exact update time will appear here.</p>
+        </article>
+      </section>
+
+      <section class="section" aria-labelledby="changedTitle">
+        <div class="section-heading">
+          <div><p class="section-label">Since the previous reading</p><h2 id="changedTitle">What changed since the last update</h2></div>
+          <p class="section-intro" id="changeIntro">Once prices arrive, this section compares them with your previous successful visit or the latest daily reference.</p>
+        </div>
+        <div class="change-summary" id="changeSummary">Fetching the latest market price.</div>
+      </section>
+
+      <section class="section" aria-labelledby="compareTitle">
+        <div class="section-heading">
+          <div><p class="section-label">Price context</p><h2 id="compareTitle">How today compares</h2></div>
+          <p class="section-intro">Factual indicators place the current quote within its recent daily range. They describe direction—not whether anyone should buy or sell.</p>
+        </div>
+        <div class="context-grid">
+          <div class="context-metal gold" data-context="gold">
+            <h3 class="context-title"><span>Gold</span><span data-field="rangePosition">—</span></h3>
+            <div class="range-track" aria-hidden="true"><span class="range-marker" style="left:50%"></span></div>
+            <div class="range-labels"><span data-field="rangeLow">30-day low</span><span data-field="rangeHigh">30-day high</span></div>
+            <div class="performance">
+              <div class="metric"><span>1 day</span><strong data-field="day1">—</strong></div>
+              <div class="metric"><span>7 days</span><strong data-field="day7">—</strong></div>
+              <div class="metric"><span>30 days</span><strong data-field="day30">—</strong></div>
+            </div>
+            <p class="momentum" data-field="momentum">Short-term momentum: —</p>
+          </div>
+          <div class="context-metal silver" data-context="silver">
+            <h3 class="context-title"><span>Silver</span><span data-field="rangePosition">—</span></h3>
+            <div class="range-track" aria-hidden="true"><span class="range-marker" style="left:50%"></span></div>
+            <div class="range-labels"><span data-field="rangeLow">30-day low</span><span data-field="rangeHigh">30-day high</span></div>
+            <div class="performance">
+              <div class="metric"><span>1 day</span><strong data-field="day1">—</strong></div>
+              <div class="metric"><span>7 days</span><strong data-field="day7">—</strong></div>
+              <div class="metric"><span>30 days</span><strong data-field="day30">—</strong></div>
+            </div>
+            <p class="momentum" data-field="momentum">Short-term momentum: —</p>
+          </div>
+        </div>
+        <div class="ratio-row">
+          <div><span class="data-label">Gold / silver ratio</span><div class="ratio-number" id="ratioValue">—</div><p class="ratio-copy" id="ratioCopy">How many ounces of silver equal the value of one ounce of gold.</p></div>
+          <div><span class="data-label">30-day ratio reference</span><div class="ratio-number" id="ratioReference">—</div><p class="ratio-copy">Calculated from the oldest available daily prices in this 30-day window.</p></div>
+        </div>
+        <p class="disclaimer">This information is provided for education and general market context. It is not financial advice or a recommendation to trade or purchase precious metals.</p>
+      </section>
+
+      <section class="section" aria-labelledby="factorsTitle">
+        <div class="section-heading">
+          <div><p class="section-label">General market context</p><h2 id="factorsTitle">Market factors worth watching</h2></div>
+          <p class="section-intro">Precious-metal prices are influenced by several connected markets. These are the factors investors commonly monitor when interpreting current movement.</p>
+        </div>
+        <ul class="factor-list">
+          <li><strong>US dollar direction</strong><span>A stronger dollar can make dollar-priced metals more expensive in other currencies.</span></li>
+          <li><strong>Interest rates and real yields</strong><span>Expectations for inflation-adjusted returns can affect demand for assets that do not pay interest.</span></li>
+          <li><strong>Inflation expectations</strong><span>Longer-term concerns about purchasing power often shape interest in gold.</span></li>
+          <li><strong>Central-bank demand</strong><span>Official-sector buying and reserve decisions can influence underlying gold demand.</span></li>
+          <li><strong>Geopolitical uncertainty</strong><span>Periods of heightened uncertainty can change demand for perceived stores of value.</span></li>
+          <li><strong>ETF and institutional flows</strong><span>Large fund inflows or outflows can add to short-term market demand or supply.</span></li>
+          <li><strong>Industrial demand for silver</strong><span>Solar, electronics, and manufacturing demand give silver an industrial dimension.</span></li>
+          <li><strong>Mining supply and costs</strong><span>Production, energy, labour, and refining costs influence longer-run supply conditions.</span></li>
+        </ul>
+        <p class="context-note">These factors are educational context, not a claim about the cause of today’s movement. No live causal analysis is being presented.</p>
+      </section>
+
+      <section class="section" aria-labelledby="understandTitle">
+        <div class="section-heading">
+          <div><p class="section-label">A short guide</p><h2 id="understandTitle">Understanding these prices</h2></div>
+          <p class="section-intro">A spot quote is a market reference. The amount paid at a jeweller or bullion dealer will usually differ.</p>
+        </div>
+        <div class="explain-grid">
+          <div><h3>What is a troy ounce?</h3><p>Precious metals are quoted in troy ounces. One troy ounce is 31.1035 grams, slightly heavier than the everyday ounce used for food and household goods.</p></div>
+          <div><h3>24K and 22K gold</h3><p>24K is the near-pure gold reference. A 22K metal-value estimate uses 22/24 of the 24K price. It does not include making charges, tax, or a dealer margin.</p></div>
+          <div><h3>Spot price and retail price</h3><p>Spot is the wholesale market reference for immediate settlement. Coins, bars, and jewellery may trade above it because they are finished retail products.</p></div>
+        </div>
+        <p class="disclaimer">These are spot-market reference prices. Retail jewellery and bullion prices may include taxes, dealer premiums, fabrication costs, making charges and local market spreads.</p>
+      </section>
+
+      <section class="section" aria-labelledby="methodTitle">
+        <div class="section-heading">
+          <div><p class="section-label">Transparency</p><h2 id="methodTitle">Methodology and data sources</h2></div>
+          <p class="section-intro">Live quotes and daily context are kept separate so the interface does not imply more certainty than the source data supports.</p>
+        </div>
+        <details>
+          <summary>How prices and comparisons are calculated</summary>
+          <div class="method-copy">
+            Current USD spot references come from <a href="https://gold-api.com/" target="_blank" rel="noopener noreferrer">Gold API</a>. Currency conversion and daily historical references come from <a href="https://frankfurter.dev/" target="_blank" rel="noopener noreferrer">Frankfurter</a>, an open-source service aggregating official and institutional exchange-rate sources. Local prices multiply the USD quote by the latest available FX rate. Grams use 31.1034768 grams per troy ounce; 22K uses 22/24 of the 24K metal value. One-, seven-, and thirty-day comparisons use the nearest available daily observation. “Strengthening” means the seven-day change is above 0.5%; “Weakening” means below −0.5%; values between those thresholds are “Stable.” Data may be delayed by source or cache intervals.
+          </div>
+        </details>
+        <div class="share-row">
+          <p>Copy a clean text summary without promotional language.</p>
+          <button class="share-button" id="shareButton" type="button">Copy current rates</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>© 2026 Sumanth Bolle.</div>
+      <div class="attribution">Designed and built by Sumanth Bolle.<br>A focused experiment in making precious-metal market data easier to understand.</div>
+    </div>
+  </footer>
+
+  <script src="assets/js/shared/nav-theme.js"></script>
+  <script>
+  (function(){
+    'use strict';
+
+    var ENDPOINT='https://wandering-haze-b394.sumanthbolle312.workers.dev/metals';
+    var OUNCE_GRAMS=31.1034768;
+    var CACHE_KEY='metals_last_success_v1';
+    var PREF_KEY='metals_currency_v1';
+    var currencies=['USD','EUR','GBP','INR','AED','AUD','CAD','CHF','CNY','HKD','JPY','KRW','SGD','ZAR','BRL','MXN','NZD','SEK','NOK','DKK','PLN','TRY','THB','MYR','IDR','PHP','ILS','CZK','HUF','RON','ISK'];
+    var currencyNames={USD:'US dollar',EUR:'Euro',GBP:'British pound',INR:'Indian rupee',AED:'UAE dirham',AUD:'Australian dollar',CAD:'Canadian dollar',CHF:'Swiss franc',CNY:'Chinese yuan',HKD:'Hong Kong dollar',JPY:'Japanese yen',KRW:'South Korean won',SGD:'Singapore dollar',ZAR:'South African rand',BRL:'Brazilian real',MXN:'Mexican peso',NZD:'New Zealand dollar',SEK:'Swedish krona',NOK:'Norwegian krone',DKK:'Danish krone',PLN:'Polish złoty',TRY:'Turkish lira',THB:'Thai baht',MYR:'Malaysian ringgit',IDR:'Indonesian rupiah',PHP:'Philippine peso',ILS:'Israeli new shekel',CZK:'Czech koruna',HUF:'Hungarian forint',RON:'Romanian leu',ISK:'Icelandic króna'};
+    var regionCurrency={IN:'INR',GB:'GBP',AE:'AED',AU:'AUD',CA:'CAD',CH:'CHF',CN:'CNY',HK:'HKD',JP:'JPY',KR:'KRW',SG:'SGD',ZA:'ZAR',BR:'BRL',MX:'MXN',NZ:'NZD',SE:'SEK',NO:'NOK',DK:'DKK',PL:'PLN',TR:'TRY',TH:'THB',MY:'MYR',ID:'IDR',PH:'PHP',IL:'ILS',CZ:'CZK',HU:'HUF',RO:'RON',IS:'ISK',DE:'EUR',FR:'EUR',IT:'EUR',ES:'EUR',NL:'EUR',IE:'EUR',AT:'EUR',BE:'EUR',PT:'EUR',FI:'EUR',GR:'EUR'};
+    var currentData=null;
+    var previousData=readJson(CACHE_KEY);
+    var previousRendered=null;
+
+    if(window.SBShared) window.SBShared.initNavMenu();
+    var toggle=document.querySelector('.menu-toggle');
+    if(toggle){
+      toggle.addEventListener('click',function(){
+        var expanded=toggle.classList.contains('active');
+        toggle.setAttribute('aria-expanded',String(expanded));
+        toggle.setAttribute('aria-label',expanded?'Close navigation':'Open navigation');
+      });
+    }
+
+    var currencySelect=document.getElementById('currency');
+    currencies.forEach(function(code){
+      var option=document.createElement('option');
+      option.value=code;
+      option.textContent=code+' — '+(currencyNames[code]||code);
+      currencySelect.appendChild(option);
+    });
+    currencySelect.value=getInitialCurrency();
+    currencySelect.addEventListener('change',function(){
+      localStorage.setItem(PREF_KEY,currencySelect.value);
+      loadPrices(false);
+    });
+    document.getElementById('refreshButton').addEventListener('click',function(){loadPrices(false)});
+    document.getElementById('shareButton').addEventListener('click',copyRates);
+
+    if(previousData&&previousData.currency===currencySelect.value){
+      render(previousData,{cached:true});
+    }
+    loadPrices(true);
+    window.setInterval(function(){loadPrices(false)},120000);
+
+    function getInitialCurrency(){
+      var saved=localStorage.getItem(PREF_KEY);
+      if(currencies.indexOf(saved)!==-1) return saved;
+      var locale=(navigator.languages&&navigator.languages[0])||navigator.language||'en-US';
+      var region=(locale.match(/[-_]([A-Z]{2})\b/i)||[])[1];
+      return regionCurrency[String(region||'').toUpperCase()]||'USD';
+    }
+
+    function readJson(key){
+      try{return JSON.parse(localStorage.getItem(key)||'null')}catch(e){return null}
+    }
+
+    function setStatus(kind,text){
+      var dot=document.getElementById('statusDot');
+      dot.className='status-dot '+(kind||'');
+      document.getElementById('statusText').textContent=text;
+    }
+
+    function setNotice(message,isError){
+      var notice=document.getElementById('notice');
+      notice.textContent=message||'';
+      notice.className='notice'+(message?' visible':'')+(isError?' error':'');
+    }
+
+    async function loadPrices(initial){
+      var button=document.getElementById('refreshButton');
+      button.disabled=true;
+      if(!currentData) setStatus('','Fetching the latest market price');
+      setNotice('',false);
+      try{
+        var data=await fetchWorker(currencySelect.value);
+        previousRendered=currentData;
+        currentData=data;
+        render(data,{initial:initial});
+        localStorage.setItem(CACHE_KEY,JSON.stringify(data));
+        previousData=data;
+      }catch(error){
+        var fallback=await fetchDirect(currencySelect.value).catch(function(){return null});
+        if(fallback){
+          previousRendered=currentData;
+          currentData=fallback;
+          render(fallback,{direct:true,initial:initial});
+          localStorage.setItem(CACHE_KEY,JSON.stringify(fallback));
+          previousData=fallback;
+        }else{
+          var cached=readJson(CACHE_KEY);
+          if(cached&&cached.currency===currencySelect.value){
+            currentData=cached;
+            render(cached,{cached:true,error:true});
+          }else{
+            setStatus('','Market data unavailable');
+            setNotice('Live data is temporarily unavailable, and there is no previous successful update stored for this currency.',true);
+          }
+        }
+      }finally{
+        button.disabled=false;
+      }
+    }
+
+    async function fetchWithTimeout(url,timeout){
+      var controller=new AbortController();
+      var timer=setTimeout(function(){controller.abort()},timeout||9000);
+      try{
+        var response=await fetch(url,{signal:controller.signal,headers:{Accept:'application/json'}});
+        if(!response.ok) throw new Error('Request failed');
+        return await response.json();
+      }finally{clearTimeout(timer)}
+    }
+
+    async function fetchWorker(currency){
+      var data=await fetchWithTimeout(ENDPOINT+'?currency='+encodeURIComponent(currency));
+      if(!data||!data.success) throw new Error(data&&data.error||'Market data unavailable');
+      return data;
+    }
+
+    async function fetchDirect(currency){
+      var now=new Date();
+      var start=new Date(now.getTime()-35*86400000).toISOString().slice(0,10);
+      var end=now.toISOString().slice(0,10);
+      var query='from='+start+'&to='+end+'&quotes=USD';
+      var requests=[
+        fetchWithTimeout('https://api.gold-api.com/price/XAU'),
+        fetchWithTimeout('https://api.gold-api.com/price/XAG'),
+        fetchWithTimeout('https://api.frankfurter.dev/v2/rates?base=XAU&'+query),
+        fetchWithTimeout('https://api.frankfurter.dev/v2/rates?base=XAG&'+query)
+      ];
+      if(currency!=='USD') requests.push(fetchWithTimeout('https://api.frankfurter.dev/v2/rate/USD/'+currency));
+      var results=await Promise.allSettled(requests);
+      var gold=fulfilled(results[0]),silver=fulfilled(results[1]);
+      if(!gold||!silver) throw new Error('Live prices unavailable');
+      var fxPayload=currency==='USD'?null:fulfilled(results[4]);
+      var fx=currency==='USD'?1:Number(fxPayload&&fxPayload.rate);
+      var times=[gold.updatedAt,silver.updatedAt].map(function(value){return new Date(value).getTime()}).filter(Number.isFinite);
+      var sourceTime=times.length?new Date(Math.min.apply(null,times)).toISOString():new Date().toISOString();
+      return {
+        success:true,currency:currency,fxRate:Number.isFinite(fx)?fx:null,conversionAvailable:Number.isFinite(fx),
+        generatedAt:new Date().toISOString(),sourceUpdatedAt:sourceTime,
+        freshness:(Date.now()-new Date(sourceTime).getTime())<300000?'live':'delayed',
+        metals:{
+          gold:{symbol:'XAU',usdPerOunce:Number(gold.price),history:normalizeHistory(fulfilled(results[2]))},
+          silver:{symbol:'XAG',usdPerOunce:Number(silver.price),history:normalizeHistory(fulfilled(results[3]))}
+        },
+        sources:{live:{name:'Gold API',url:'https://gold-api.com/'},historyAndFx:{name:'Frankfurter',url:'https://frankfurter.dev/'}}
+      };
+    }
+
+    function fulfilled(result){return result&&result.status==='fulfilled'?result.value:null}
+    function normalizeHistory(rows){
+      return Array.isArray(rows)?rows.map(function(row){return{date:String(row.date||'').slice(0,10),usdPerOunce:Number(row.rate)}}).filter(function(row){return row.date&&Number.isFinite(row.usdPerOunce)}):[];
+    }
+
+    function render(data,options){
+      options=options||{};
+      var exact=new Date(data.sourceUpdatedAt);
+      var age=relativeTime(exact);
+      var status=options.cached?'cached':(data.freshness||'delayed');
+      var statusLabel=status==='live'?'Live market reference':status==='cached'?'Using the last available price':'Delayed market reference';
+      setStatus(status,statusLabel+' · Updated '+age);
+      if(options.error){
+        setNotice('Live data is temporarily unavailable. Showing the last successful update from '+formatDateTime(exact)+'.',true);
+      }else if(!data.conversionAvailable){
+        setNotice('The USD spot price is available, but local currency conversion could not be refreshed.',true);
+      }
+
+      renderMetal('gold',data.metals.gold,data,exact);
+      renderMetal('silver',data.metals.silver,data,exact);
+      renderChanges(data);
+      renderContext('gold',data.metals.gold);
+      renderContext('silver',data.metals.silver);
+      renderRatio(data);
+    }
+
+    function renderMetal(key,metal,data,exact){
+      var root=document.querySelector('[data-metal="'+key+'"]');
+      var fx=data.fxRate;
+      var local=Number.isFinite(fx)?metal.usdPerOunce*fx:null;
+      var gram=local/OUNCE_GRAMS;
+      var prior=pointNear(metal.history,1);
+      var change=prior?metal.usdPerOunce-prior.usdPerOunce:0;
+      var pct=prior?change/prior.usdPerOunce*100:0;
+      var movementCurrency=Number.isFinite(fx)?data.currency:'USD';
+      setHtml(root,'usd',escapeHtml(formatMoney(metal.usdPerOunce,'USD',key==='silver'?2:2))+'<span class="per-unit">/ oz</span>');
+      setText(root,'localOz',local===null?'Unavailable':formatMoney(local,data.currency,key==='silver'?2:2));
+      setText(root,'localGram',local===null?'Unavailable':formatMoney(gram,data.currency,key==='silver'?3:2));
+      if(key==='gold'){
+        setText(root,'pureGram',local===null?'Unavailable':formatMoney(gram,data.currency,2));
+        setText(root,'karat22',local===null?'Unavailable':formatMoney(gram*(22/24),data.currency,2));
+        setText(root,'tenGram',local===null?'Unavailable':formatMoney(gram*10,data.currency,0));
+      }else{
+        setText(root,'kilogram',local===null?'Unavailable':formatMoney(gram*1000,data.currency,0));
+      }
+      var move=root.querySelector('[data-field="move"]');
+      if(prior){
+        move.textContent=(change>0?'Up ':change<0?'Down ':'Unchanged ')+formatSignedMoney(Math.abs(change)*(Number.isFinite(fx)?fx:1),movementCurrency)+' ('+formatPct(pct)+') since the previous daily reference';
+        move.className='move '+directionClass(change);
+      }else{
+        move.textContent='Daily comparison is temporarily unavailable';
+        move.className='move neutral';
+      }
+      setText(root,'updated','Updated '+formatDateTime(exact)+' · '+relativeTime(exact)+' · '+freshnessCopy(data.freshness));
+      var gold10g=root.querySelector('[data-region-field="gold10g"]');
+      if(gold10g) gold10g.hidden=data.currency!=='INR';
+      root.querySelectorAll('.placeholder').forEach(function(el){el.classList.remove('placeholder')});
+      var old=previousRendered&&previousRendered.metals&&previousRendered.metals[key];
+      var spot=root.querySelector('[data-field="usd"]');
+      spot.classList.remove('flash-up','flash-down');
+      if(old&&old.usdPerOunce!==metal.usdPerOunce){
+        void spot.offsetWidth;
+        spot.classList.add(metal.usdPerOunce>old.usdPerOunce?'flash-up':'flash-down');
+      }
+    }
+
+    function renderChanges(data){
+      var stored=previousData&&previousData.currency===data.currency&&previousData.metals?previousData:null;
+      var intro=document.getElementById('changeIntro');
+      var summary=document.getElementById('changeSummary');
+      if(stored&&stored.sourceUpdatedAt!==data.sourceUpdatedAt){
+        intro.textContent='Compared with the last successful prices stored on this device from '+formatDateTime(new Date(stored.sourceUpdatedAt))+'.';
+        var goldDiff=data.metals.gold.usdPerOunce-stored.metals.gold.usdPerOunce;
+        var silverDiff=data.metals.silver.usdPerOunce-stored.metals.silver.usdPerOunce;
+        if(Math.abs(goldDiff)<.0001&&Math.abs(silverDiff)<.0001){
+          summary.textContent='Prices have not changed since the previous refresh.';
+        }else{
+          summary.innerHTML='Gold is <span class="'+directionClass(goldDiff)+'">'+wordDirection(goldDiff)+' '+escapeHtml(formatSignedMoney(Math.abs(goldDiff),'USD'))+'</span> per ounce; silver is <span class="'+directionClass(silverDiff)+'">'+wordDirection(silverDiff)+' '+escapeHtml(formatSignedMoney(Math.abs(silverDiff),'USD'))+'</span>.';
+        }
+      }else{
+        var goldPoint=pointNear(data.metals.gold.history,1);
+        var silverPoint=pointNear(data.metals.silver.history,1);
+        intro.textContent='No earlier visit is stored for comparison, so this uses the previous available daily reference.';
+        if(goldPoint&&silverPoint){
+          var gd=data.metals.gold.usdPerOunce-goldPoint.usdPerOunce;
+          var sd=data.metals.silver.usdPerOunce-silverPoint.usdPerOunce;
+          summary.innerHTML='Gold is <span class="'+directionClass(gd)+'">'+wordDirection(gd)+' '+escapeHtml(formatSignedMoney(Math.abs(gd),'USD'))+'</span> per ounce; silver is <span class="'+directionClass(sd)+'">'+wordDirection(sd)+' '+escapeHtml(formatSignedMoney(Math.abs(sd),'USD'))+'</span>.';
+        }else summary.textContent='Recent comparison data is temporarily unavailable.';
+      }
+    }
+
+    function renderContext(key,metal){
+      var root=document.querySelector('[data-context="'+key+'"]');
+      var values=metal.history.slice(-31).map(function(point){return point.usdPerOunce}).concat([metal.usdPerOunce]);
+      if(values.length<2) return;
+      var low=Math.min.apply(null,values),high=Math.max.apply(null,values);
+      var position=high===low?50:(metal.usdPerOunce-low)/(high-low)*100;
+      position=Math.max(0,Math.min(100,position));
+      root.querySelector('.range-marker').style.left=position+'%';
+      setText(root,'rangePosition',position>72?'Upper range':position<28?'Lower range':'Middle range');
+      setText(root,'rangeLow',formatMoney(low,'USD',key==='silver'?2:0)+' low');
+      setText(root,'rangeHigh',formatMoney(high,'USD',key==='silver'?2:0)+' high');
+      [1,7,30].forEach(function(days){
+        var point=pointNear(metal.history,days);
+        var pct=point?(metal.usdPerOunce-point.usdPerOunce)/point.usdPerOunce*100:null;
+        var field=root.querySelector('[data-field="day'+days+'"]');
+        field.textContent=pct===null?'—':formatPct(pct);
+        field.className=pct===null?'neutral':directionClass(pct);
+      });
+      var week=pointNear(metal.history,7);
+      var weekPct=week?(metal.usdPerOunce-week.usdPerOunce)/week.usdPerOunce*100:0;
+      var label=weekPct>.5?'Strengthening':weekPct<-.5?'Weakening':'Stable';
+      setText(root,'momentum','Short-term directional momentum: '+label);
+    }
+
+    function renderRatio(data){
+      var ratio=data.metals.gold.usdPerOunce/data.metals.silver.usdPerOunce;
+      document.getElementById('ratioValue').textContent=formatNumber(ratio,1);
+      var gold30=pointNear(data.metals.gold.history,30);
+      var silver30=pointNear(data.metals.silver.history,30);
+      document.getElementById('ratioReference').textContent=gold30&&silver30?formatNumber(gold30.usdPerOunce/silver30.usdPerOunce,1):'Unavailable';
+      document.getElementById('ratioCopy').textContent='One ounce of gold currently equals about '+formatNumber(ratio,1)+' ounces of silver by spot value.';
+    }
+
+    function pointNear(history,days){
+      if(!Array.isArray(history)||!history.length) return null;
+      var target=Date.now()-days*86400000;
+      return history.reduce(function(best,point){
+        var distance=Math.abs(new Date(point.date+'T12:00:00Z').getTime()-target);
+        return !best||distance<best.distance?{distance:distance,point:point}:best;
+      },null).point;
+    }
+
+    function setText(root,field,value){var el=root.querySelector('[data-field="'+field+'"]');if(el)el.textContent=value}
+    function setHtml(root,field,value){var el=root.querySelector('[data-field="'+field+'"]');if(el)el.innerHTML=value}
+    function directionClass(value){return value>0?'positive':value<0?'negative':'neutral'}
+    function wordDirection(value){return value>0?'up':value<0?'down':'unchanged by'}
+    function freshnessCopy(value){return value==='live'?'live source':'delayed source'}
+    function formatPct(value){return (value>0?'+':'')+formatNumber(value,2)+'%'}
+    function formatNumber(value,digits){return new Intl.NumberFormat(undefined,{minimumFractionDigits:digits,maximumFractionDigits:digits}).format(value)}
+    function formatMoney(value,currency,digits){
+      try{return new Intl.NumberFormat(undefined,{style:'currency',currency:currency,minimumFractionDigits:digits,maximumFractionDigits:digits}).format(value)}
+      catch(e){return currency+' '+formatNumber(value,digits)}
+    }
+    function formatSignedMoney(value,currency){return formatMoney(value,currency,currency==='JPY'?0:2)}
+    function formatDateTime(date){return new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'medium'}).format(date)}
+    function relativeTime(date){
+      var seconds=Math.max(0,Math.round((Date.now()-date.getTime())/1000));
+      if(seconds<10)return'a few seconds ago';
+      if(seconds<60)return seconds+' seconds ago';
+      var minutes=Math.round(seconds/60);
+      if(minutes<60)return minutes+' minute'+(minutes===1?'':'s')+' ago';
+      var hours=Math.round(minutes/60);
+      return hours+' hour'+(hours===1?'':'s')+' ago';
+    }
+    function escapeHtml(value){
+      return String(value).replace(/[&<>"']/g,function(char){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]});
+    }
+
+    async function copyRates(){
+      if(!currentData)return;
+      var gold=currentData.metals.gold,silver=currentData.metals.silver,fx=currentData.fxRate||1;
+      var text='Gold: '+formatMoney(gold.usdPerOunce,'USD',2)+'/oz · '+formatMoney(gold.usdPerOunce*fx/OUNCE_GRAMS,currentData.currency,2)+'/g\n'
+        +'Silver: '+formatMoney(silver.usdPerOunce,'USD',2)+'/oz · '+formatMoney(silver.usdPerOunce*fx/OUNCE_GRAMS,currentData.currency,3)+'/g\n'
+        +'Updated '+formatDateTime(new Date(currentData.sourceUpdatedAt))+' · Rates are spot-market references.';
+      var button=document.getElementById('shareButton');
+      try{
+        await navigator.clipboard.writeText(text);
+        button.textContent='Copied';
+      }catch(e){
+        window.prompt('Copy current rates',text);
+      }
+      setTimeout(function(){button.textContent='Copy current rates'},1800);
+    }
+  })();
+  </script>
+</body>
+</html>
