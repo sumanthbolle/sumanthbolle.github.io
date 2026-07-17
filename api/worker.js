@@ -52,7 +52,7 @@ const TRENDING_REQUEST_TIMEOUT_MS = 9000;
 const METALS_TTL_SECONDS = 60;
 const METALS_REQUEST_TIMEOUT_MS = 8000;
 const METALS_CURRENCIES = new Set([
-  'USD', 'AUD', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP',
+  'USD', 'AED', 'AUD', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP',
   'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'ISK', 'JPY', 'KRW', 'MXN', 'MYR',
   'NOK', 'NZD', 'PHP', 'PLN', 'RON', 'SEK', 'SGD', 'THB', 'TRY', 'ZAR',
 ]);
@@ -683,7 +683,8 @@ async function handleMetals(request, ctx, origin) {
   const silverQuote = settledValue(results[1]);
 
   if (!goldQuote || !silverQuote || !Number.isFinite(Number(goldQuote.price))
-      || !Number.isFinite(Number(silverQuote.price))) {
+      || !Number.isFinite(Number(silverQuote.price)) || Number(goldQuote.price) <= 0
+      || Number(silverQuote.price) <= 0) {
     return jsonResponse({
       success: false,
       error: 'Live metal prices are temporarily unavailable',
@@ -699,19 +700,26 @@ async function handleMetals(request, ctx, origin) {
   const quoteTimes = [goldQuote.updatedAt, silverQuote.updatedAt]
     .map((time) => new Date(time).getTime())
     .filter(Number.isFinite);
+  const hasQuoteTimestamps = quoteTimes.length === 2;
   const sourceUpdatedAt = quoteTimes.length
     ? new Date(Math.min(...quoteTimes)).toISOString()
-    : new Date().toISOString();
-  const ageSeconds = Math.max(0, Math.round((Date.now() - new Date(sourceUpdatedAt).getTime()) / 1000));
+    : null;
+  const ageSeconds = sourceUpdatedAt
+    ? Math.max(0, Math.round((Date.now() - new Date(sourceUpdatedAt).getTime()) / 1000))
+    : null;
 
   const payload = {
     success: true,
     currency: requestedCurrency,
     fxRate: hasConversion ? fxRate : null,
+    fxDate: requestedCurrency === 'USD'
+      ? endDate
+      : String(fxPayload && (Array.isArray(fxPayload) ? fxPayload[0] && fxPayload[0].date : fxPayload.date) || '').slice(0, 10) || null,
     conversionAvailable: hasConversion,
     generatedAt: new Date().toISOString(),
     sourceUpdatedAt,
-    freshness: ageSeconds <= 300 ? 'live' : 'delayed',
+    quoteTimestampAvailable: hasQuoteTimestamps,
+    freshness: hasQuoteTimestamps && ageSeconds <= 300 ? 'live' : 'delayed',
     metals: {
       gold: {
         symbol: 'XAU',

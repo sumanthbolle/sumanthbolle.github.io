@@ -40,7 +40,7 @@
       --line-soft:#34302b;
       --text:#f2eee7;
       --muted:#aca59b;
-      --faint:#7f786f;
+      --faint:#958e84;
       --gold:#c5a35b;
       --gold-soft:#9e8249;
       --silver:#bcc1c7;
@@ -56,7 +56,7 @@
     .skip-link:focus{top:12px}
     :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
-    nav{position:fixed;top:0;left:0;width:100%;height:48px;background:rgba(29,27,25,.94);backdrop-filter:blur(16px);z-index:9999;border-bottom:1px solid var(--line-soft)}
+    nav{position:fixed;top:0;left:0;width:100%;height:48px;background:#1d1b19;z-index:9999;border-bottom:1px solid var(--line-soft)}
     .nav-c{max-width:var(--max);height:100%;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between}
     .nav-logo{font-size:19px;font-weight:600;letter-spacing:-.02em;text-decoration:none}
     .nav-links{display:flex;gap:27px;list-style:none;margin:0;padding:0}
@@ -100,7 +100,7 @@
     .metal+.metal{padding-left:42px;border-left:1px solid var(--line)}
     .metal-head{display:flex;justify-content:space-between;gap:20px;align-items:baseline}
     .metal-name{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:27px;font-weight:400}
-    .metal-symbol{color:var(--faint);font-size:11px;letter-spacing:.1em}
+    .metal-symbol{color:var(--faint);font-size:12px;letter-spacing:.1em}
     .spot-label{margin:25px 0 8px;color:var(--muted);font-size:12px}
     .spot-value{margin:0;font-size:clamp(38px,5vw,56px);font-weight:550;line-height:1;font-variant-numeric:tabular-nums lining-nums;letter-spacing:-.04em}
     .spot-value.placeholder,.data-value.placeholder{color:var(--faint)}
@@ -108,9 +108,9 @@
     .move{min-height:24px;margin:13px 0 26px;font-size:13px;font-variant-numeric:tabular-nums}
     .positive{color:var(--green)}.negative{color:var(--red)}.neutral{color:var(--muted)}
     .local-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 26px;padding-top:22px;border-top:1px solid var(--line-soft)}
-    .data-label{display:block;margin-bottom:6px;color:var(--faint);font-size:11px;line-height:1.35}
+    .data-label{display:block;margin-bottom:6px;color:var(--faint);font-size:12px;line-height:1.35}
     .data-value{font-size:17px;font-weight:550;font-variant-numeric:tabular-nums}
-    .update-meta{margin:23px 0 0;color:var(--faint);font-size:11px;line-height:1.65}
+    .update-meta{margin:23px 0 0;color:var(--faint);font-size:12px;line-height:1.65}
     .flash-up{animation:flashUp .7s ease-out}.flash-down{animation:flashDown .7s ease-out}
     @keyframes flashUp{0%{color:var(--green)}100%{color:var(--text)}}
     @keyframes flashDown{0%{color:var(--red)}100%{color:var(--text)}}
@@ -164,7 +164,7 @@
 
     @media(max-width:768px){
       .nav-links{display:none}.menu-toggle{display:block}
-      .masthead{padding-top:96px;grid-template-columns:1fr;gap:29px}.controls{width:100%;max-width:280px}
+      .masthead{padding-top:82px;padding-bottom:42px;grid-template-columns:1fr;gap:25px}.masthead h1{font-size:36px}.lede{font-size:16px;line-height:1.55}.controls{width:100%}
       .status-bar{align-items:flex-start;padding:15px 0}.status-copy{align-items:flex-start}
       .price-grid{grid-template-columns:1fr}.metal{padding:38px 0}.metal+.metal{padding:38px 0;border-left:0;border-top:1px solid var(--line)}
       .section-heading{grid-template-columns:1fr;gap:17px}
@@ -198,9 +198,9 @@
         <li><a href="metals.html" class="active" aria-current="page">Metals</a></li>
         <li><a href="index.html#contact">Contact</a></li>
       </ul>
-      <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+      <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
     </div>
-    <div class="mobile-menu">
+    <div class="mobile-menu" id="mobileMenu">
       <a href="index.html">Home</a>
       <a href="servicenow.html">ServiceNow</a>
       <a href="blog.html">Blog</a>
@@ -225,9 +225,9 @@
       </div>
     </header>
 
-    <div class="report">
-      <div class="status-bar" role="status" aria-live="polite">
-        <div class="status-copy"><span class="status-dot" id="statusDot"></span><span id="statusText">Fetching the latest market price</span></div>
+    <div class="report" id="marketReport" aria-busy="true">
+      <div class="status-bar">
+        <div class="status-copy" role="status" aria-live="polite"><span class="status-dot" id="statusDot"></span><span id="statusText">Fetching the latest market price</span></div>
         <button class="refresh-button" id="refreshButton" type="button">Refresh</button>
       </div>
       <div class="notice" id="notice" role="alert"></div>
@@ -378,6 +378,7 @@
     var currentData=null;
     var previousData=readJson(CACHE_KEY);
     var previousRendered=null;
+    var requestVersion=0;
 
     if(window.SBShared) window.SBShared.initNavMenu();
     var toggle=document.querySelector('.menu-toggle');
@@ -386,6 +387,15 @@
         var expanded=toggle.classList.contains('active');
         toggle.setAttribute('aria-expanded',String(expanded));
         toggle.setAttribute('aria-label',expanded?'Close navigation':'Open navigation');
+      });
+      document.addEventListener('keydown',function(event){
+        if(event.key==='Escape'&&toggle.classList.contains('active')){
+          toggle.classList.remove('active');
+          document.getElementById('mobileMenu').classList.remove('active');
+          toggle.setAttribute('aria-expanded','false');
+          toggle.setAttribute('aria-label','Open navigation');
+          toggle.focus();
+        }
       });
     }
 
@@ -404,8 +414,8 @@
     document.getElementById('refreshButton').addEventListener('click',function(){loadPrices(false)});
     document.getElementById('shareButton').addEventListener('click',copyRates);
 
-    if(previousData&&previousData.currency===currencySelect.value){
-      render(previousData,{cached:true});
+    if(isValidPayload(previousData)&&previousData.currency===currencySelect.value){
+      try{render(previousData,{cached:true})}catch(e){previousData=null}
     }
     loadPrices(true);
     window.setInterval(function(){loadPrices(false)},120000);
@@ -422,6 +432,13 @@
       try{return JSON.parse(localStorage.getItem(key)||'null')}catch(e){return null}
     }
 
+    function isValidPayload(data){
+      return !!(data&&data.metals&&data.metals.gold&&data.metals.silver
+        &&Number.isFinite(Number(data.metals.gold.usdPerOunce))&&Number(data.metals.gold.usdPerOunce)>0
+        &&Number.isFinite(Number(data.metals.silver.usdPerOunce))&&Number(data.metals.silver.usdPerOunce)>0
+        &&typeof data.currency==='string');
+    }
+
     function setStatus(kind,text){
       var dot=document.getElementById('statusDot');
       dot.className='status-dot '+(kind||'');
@@ -435,19 +452,26 @@
     }
 
     async function loadPrices(initial){
+      var requestId=++requestVersion;
+      var requestedCurrency=currencySelect.value;
       var button=document.getElementById('refreshButton');
+      var report=document.getElementById('marketReport');
       button.disabled=true;
-      if(!currentData) setStatus('','Fetching the latest market price');
+      button.textContent='Refreshing…';
+      report.setAttribute('aria-busy','true');
+      setStatus('','Fetching the latest market price');
       setNotice('',false);
       try{
-        var data=await fetchWorker(currencySelect.value);
+        var data=await fetchWorker(requestedCurrency);
+        if(requestId!==requestVersion)return;
         previousRendered=currentData;
         currentData=data;
         render(data,{initial:initial});
         localStorage.setItem(CACHE_KEY,JSON.stringify(data));
         previousData=data;
       }catch(error){
-        var fallback=await fetchDirect(currencySelect.value).catch(function(){return null});
+        var fallback=await fetchDirect(requestedCurrency).catch(function(){return null});
+        if(requestId!==requestVersion)return;
         if(fallback){
           previousRendered=currentData;
           currentData=fallback;
@@ -456,7 +480,7 @@
           previousData=fallback;
         }else{
           var cached=readJson(CACHE_KEY);
-          if(cached&&cached.currency===currencySelect.value){
+          if(isValidPayload(cached)&&cached.currency===requestedCurrency){
             currentData=cached;
             render(cached,{cached:true,error:true});
           }else{
@@ -465,7 +489,11 @@
           }
         }
       }finally{
-        button.disabled=false;
+        if(requestId===requestVersion){
+          button.disabled=false;
+          button.textContent='Refresh';
+          report.setAttribute('aria-busy','false');
+        }
       }
     }
 
@@ -499,15 +527,18 @@
       if(currency!=='USD') requests.push(fetchWithTimeout('https://api.frankfurter.dev/v2/rate/USD/'+currency));
       var results=await Promise.allSettled(requests);
       var gold=fulfilled(results[0]),silver=fulfilled(results[1]);
-      if(!gold||!silver) throw new Error('Live prices unavailable');
+      if(!gold||!silver||!Number.isFinite(Number(gold.price))||Number(gold.price)<=0
+        ||!Number.isFinite(Number(silver.price))||Number(silver.price)<=0) throw new Error('Live prices unavailable');
       var fxPayload=currency==='USD'?null:fulfilled(results[4]);
       var fx=currency==='USD'?1:Number(fxPayload&&fxPayload.rate);
       var times=[gold.updatedAt,silver.updatedAt].map(function(value){return new Date(value).getTime()}).filter(Number.isFinite);
-      var sourceTime=times.length?new Date(Math.min.apply(null,times)).toISOString():new Date().toISOString();
+      var sourceTime=times.length?new Date(Math.min.apply(null,times)).toISOString():null;
+      var hasQuoteTimestamps=times.length===2;
       return {
-        success:true,currency:currency,fxRate:Number.isFinite(fx)?fx:null,conversionAvailable:Number.isFinite(fx),
-        generatedAt:new Date().toISOString(),sourceUpdatedAt:sourceTime,
-        freshness:(Date.now()-new Date(sourceTime).getTime())<300000?'live':'delayed',
+        success:true,currency:currency,fxRate:Number.isFinite(fx)&&fx>0?fx:null,conversionAvailable:Number.isFinite(fx)&&fx>0,
+        fxDate:currency==='USD'?end:String(fxPayload&&fxPayload.date||'').slice(0,10)||null,
+        generatedAt:new Date().toISOString(),sourceUpdatedAt:sourceTime,quoteTimestampAvailable:hasQuoteTimestamps,
+        freshness:hasQuoteTimestamps&&(Date.now()-new Date(sourceTime).getTime())<300000?'live':'delayed',
         metals:{
           gold:{symbol:'XAU',usdPerOunce:Number(gold.price),history:normalizeHistory(fulfilled(results[2]))},
           silver:{symbol:'XAG',usdPerOunce:Number(silver.price),history:normalizeHistory(fulfilled(results[3]))}
@@ -523,34 +554,34 @@
 
     function render(data,options){
       options=options||{};
-      var exact=new Date(data.sourceUpdatedAt);
+      var exact=data.sourceUpdatedAt?new Date(data.sourceUpdatedAt):new Date(data.generatedAt);
+      if(!Number.isFinite(exact.getTime())) exact=new Date();
       var age=relativeTime(exact);
       var status=options.cached?'cached':(data.freshness||'delayed');
       var statusLabel=status==='live'?'Live market reference':status==='cached'?'Using the last available price':'Delayed market reference';
-      setStatus(status,statusLabel+' · Updated '+age);
+      setStatus(status,statusLabel+' · '+(data.sourceUpdatedAt?'Updated '+age:'Source time unavailable'));
       if(options.error){
         setNotice('Live data is temporarily unavailable. Showing the last successful update from '+formatDateTime(exact)+'.',true);
       }else if(!data.conversionAvailable){
         setNotice('The USD spot price is available, but local currency conversion could not be refreshed.',true);
       }
 
-      renderMetal('gold',data.metals.gold,data,exact);
-      renderMetal('silver',data.metals.silver,data,exact);
+      renderMetal('gold',data.metals.gold,data,exact,status);
+      renderMetal('silver',data.metals.silver,data,exact,status);
       renderChanges(data);
-      renderContext('gold',data.metals.gold);
-      renderContext('silver',data.metals.silver);
+      renderContext('gold',data.metals.gold,data.sourceUpdatedAt);
+      renderContext('silver',data.metals.silver,data.sourceUpdatedAt);
       renderRatio(data);
     }
 
-    function renderMetal(key,metal,data,exact){
+    function renderMetal(key,metal,data,exact,effectiveFreshness){
       var root=document.querySelector('[data-metal="'+key+'"]');
       var fx=data.fxRate;
       var local=Number.isFinite(fx)?metal.usdPerOunce*fx:null;
       var gram=local/OUNCE_GRAMS;
-      var prior=pointNear(metal.history,1);
+      var prior=pointNear(metal.history,1,data.sourceUpdatedAt);
       var change=prior?metal.usdPerOunce-prior.usdPerOunce:0;
       var pct=prior?change/prior.usdPerOunce*100:0;
-      var movementCurrency=Number.isFinite(fx)?data.currency:'USD';
       setHtml(root,'usd',escapeHtml(formatMoney(metal.usdPerOunce,'USD',key==='silver'?2:2))+'<span class="per-unit">/ oz</span>');
       setText(root,'localOz',local===null?'Unavailable':formatMoney(local,data.currency,key==='silver'?2:2));
       setText(root,'localGram',local===null?'Unavailable':formatMoney(gram,data.currency,key==='silver'?3:2));
@@ -563,13 +594,17 @@
       }
       var move=root.querySelector('[data-field="move"]');
       if(prior){
-        move.textContent=(change>0?'Up ':change<0?'Down ':'Unchanged ')+formatSignedMoney(Math.abs(change)*(Number.isFinite(fx)?fx:1),movementCurrency)+' ('+formatPct(pct)+') since the previous daily reference';
+        move.textContent=(change>0?'Up ':change<0?'Down ':'Unchanged ')+formatSignedMoney(Math.abs(change),'USD')+' ('+formatPct(pct)+') since the previous daily reference';
         move.className='move '+directionClass(change);
       }else{
         move.textContent='Daily comparison is temporarily unavailable';
         move.className='move neutral';
       }
-      setText(root,'updated','Updated '+formatDateTime(exact)+' · '+relativeTime(exact)+' · '+freshnessCopy(data.freshness));
+      var updateText=data.sourceUpdatedAt
+        ?'Spot updated '+formatDateTime(exact)+' · '+relativeTime(exact)
+        :'Spot update time unavailable';
+      if(data.fxDate&&data.currency!=='USD') updateText+=' · FX reference '+data.fxDate;
+      setText(root,'updated',updateText+' · '+freshnessCopy(effectiveFreshness));
       var gold10g=root.querySelector('[data-region-field="gold10g"]');
       if(gold10g) gold10g.hidden=data.currency!=='INR';
       root.querySelectorAll('.placeholder').forEach(function(el){el.classList.remove('placeholder')});
@@ -586,8 +621,8 @@
       var stored=previousData&&previousData.currency===data.currency&&previousData.metals?previousData:null;
       var intro=document.getElementById('changeIntro');
       var summary=document.getElementById('changeSummary');
-      if(stored&&stored.sourceUpdatedAt!==data.sourceUpdatedAt){
-        intro.textContent='Compared with the last successful prices stored on this device from '+formatDateTime(new Date(stored.sourceUpdatedAt))+'.';
+      if(stored){
+        intro.textContent='Compared with the last successful prices stored on this device from '+formatDateTime(new Date(stored.sourceUpdatedAt||stored.generatedAt))+'.';
         var goldDiff=data.metals.gold.usdPerOunce-stored.metals.gold.usdPerOunce;
         var silverDiff=data.metals.silver.usdPerOunce-stored.metals.silver.usdPerOunce;
         if(Math.abs(goldDiff)<.0001&&Math.abs(silverDiff)<.0001){
@@ -596,8 +631,8 @@
           summary.innerHTML='Gold is <span class="'+directionClass(goldDiff)+'">'+wordDirection(goldDiff)+' '+escapeHtml(formatSignedMoney(Math.abs(goldDiff),'USD'))+'</span> per ounce; silver is <span class="'+directionClass(silverDiff)+'">'+wordDirection(silverDiff)+' '+escapeHtml(formatSignedMoney(Math.abs(silverDiff),'USD'))+'</span>.';
         }
       }else{
-        var goldPoint=pointNear(data.metals.gold.history,1);
-        var silverPoint=pointNear(data.metals.silver.history,1);
+        var goldPoint=pointNear(data.metals.gold.history,1,data.sourceUpdatedAt);
+        var silverPoint=pointNear(data.metals.silver.history,1,data.sourceUpdatedAt);
         intro.textContent='No earlier visit is stored for comparison, so this uses the previous available daily reference.';
         if(goldPoint&&silverPoint){
           var gd=data.metals.gold.usdPerOunce-goldPoint.usdPerOunce;
@@ -607,7 +642,7 @@
       }
     }
 
-    function renderContext(key,metal){
+    function renderContext(key,metal,anchorTime){
       var root=document.querySelector('[data-context="'+key+'"]');
       var values=metal.history.slice(-31).map(function(point){return point.usdPerOunce}).concat([metal.usdPerOunce]);
       if(values.length<2) return;
@@ -619,13 +654,13 @@
       setText(root,'rangeLow',formatMoney(low,'USD',key==='silver'?2:0)+' low');
       setText(root,'rangeHigh',formatMoney(high,'USD',key==='silver'?2:0)+' high');
       [1,7,30].forEach(function(days){
-        var point=pointNear(metal.history,days);
+        var point=pointNear(metal.history,days,anchorTime);
         var pct=point?(metal.usdPerOunce-point.usdPerOunce)/point.usdPerOunce*100:null;
         var field=root.querySelector('[data-field="day'+days+'"]');
         field.textContent=pct===null?'—':formatPct(pct);
         field.className=pct===null?'neutral':directionClass(pct);
       });
-      var week=pointNear(metal.history,7);
+      var week=pointNear(metal.history,7,anchorTime);
       var weekPct=week?(metal.usdPerOunce-week.usdPerOunce)/week.usdPerOunce*100:0;
       var label=weekPct>.5?'Strengthening':weekPct<-.5?'Weakening':'Stable';
       setText(root,'momentum','Short-term directional momentum: '+label);
@@ -634,26 +669,30 @@
     function renderRatio(data){
       var ratio=data.metals.gold.usdPerOunce/data.metals.silver.usdPerOunce;
       document.getElementById('ratioValue').textContent=formatNumber(ratio,1);
-      var gold30=pointNear(data.metals.gold.history,30);
-      var silver30=pointNear(data.metals.silver.history,30);
+      var gold30=pointNear(data.metals.gold.history,30,data.sourceUpdatedAt);
+      var silver30=gold30&&data.metals.silver.history.find(function(point){return point.date===gold30.date});
       document.getElementById('ratioReference').textContent=gold30&&silver30?formatNumber(gold30.usdPerOunce/silver30.usdPerOunce,1):'Unavailable';
       document.getElementById('ratioCopy').textContent='One ounce of gold currently equals about '+formatNumber(ratio,1)+' ounces of silver by spot value.';
     }
 
-    function pointNear(history,days){
+    function pointNear(history,days,anchorTime){
       if(!Array.isArray(history)||!history.length) return null;
-      var target=Date.now()-days*86400000;
-      return history.reduce(function(best,point){
+      var anchor=anchorTime?new Date(anchorTime).getTime():Date.now();
+      if(!Number.isFinite(anchor))anchor=Date.now();
+      var target=anchor-days*86400000;
+      var best=history.reduce(function(best,point){
         var distance=Math.abs(new Date(point.date+'T12:00:00Z').getTime()-target);
         return !best||distance<best.distance?{distance:distance,point:point}:best;
-      },null).point;
+      },null);
+      var tolerance=(days<=7?3:6)*86400000;
+      return best&&best.distance<=tolerance?best.point:null;
     }
 
     function setText(root,field,value){var el=root.querySelector('[data-field="'+field+'"]');if(el)el.textContent=value}
     function setHtml(root,field,value){var el=root.querySelector('[data-field="'+field+'"]');if(el)el.innerHTML=value}
     function directionClass(value){return value>0?'positive':value<0?'negative':'neutral'}
     function wordDirection(value){return value>0?'up':value<0?'down':'unchanged by'}
-    function freshnessCopy(value){return value==='live'?'live source':'delayed source'}
+    function freshnessCopy(value){return value==='live'?'live source':value==='cached'?'cached source':'delayed source'}
     function formatPct(value){return (value>0?'+':'')+formatNumber(value,2)+'%'}
     function formatNumber(value,digits){return new Intl.NumberFormat(undefined,{minimumFractionDigits:digits,maximumFractionDigits:digits}).format(value)}
     function formatMoney(value,currency,digits){
@@ -677,10 +716,14 @@
 
     async function copyRates(){
       if(!currentData)return;
-      var gold=currentData.metals.gold,silver=currentData.metals.silver,fx=currentData.fxRate||1;
-      var text='Gold: '+formatMoney(gold.usdPerOunce,'USD',2)+'/oz · '+formatMoney(gold.usdPerOunce*fx/OUNCE_GRAMS,currentData.currency,2)+'/g\n'
-        +'Silver: '+formatMoney(silver.usdPerOunce,'USD',2)+'/oz · '+formatMoney(silver.usdPerOunce*fx/OUNCE_GRAMS,currentData.currency,3)+'/g\n'
-        +'Updated '+formatDateTime(new Date(currentData.sourceUpdatedAt))+' · Rates are spot-market references.';
+      var gold=currentData.metals.gold,silver=currentData.metals.silver,fx=currentData.fxRate;
+      var goldLocal=Number.isFinite(fx)?' · '+formatMoney(gold.usdPerOunce*fx/OUNCE_GRAMS,currentData.currency,2)+'/g':'';
+      var silverLocal=Number.isFinite(fx)?' · '+formatMoney(silver.usdPerOunce*fx/OUNCE_GRAMS,currentData.currency,3)+'/g':'';
+      var updated=currentData.sourceUpdatedAt?formatDateTime(new Date(currentData.sourceUpdatedAt)):'time unavailable';
+      var fxNote=currentData.currency!=='USD'&&currentData.fxDate?' · FX reference '+currentData.fxDate:'';
+      var text='Gold: '+formatMoney(gold.usdPerOunce,'USD',2)+'/oz'+goldLocal+'\n'
+        +'Silver: '+formatMoney(silver.usdPerOunce,'USD',2)+'/oz'+silverLocal+'\n'
+        +'Updated '+updated+fxNote+' · Rates are spot-market references.';
       var button=document.getElementById('shareButton');
       try{
         await navigator.clipboard.writeText(text);
