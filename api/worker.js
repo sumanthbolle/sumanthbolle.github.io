@@ -9,6 +9,8 @@
  *   GET  /trending      — landing-page widgets (news / market / tech),
  *                         country-aware via cf.country (or ?country=XX override),
  *                         cached per country in Cloudflare Cache API
+ *   GET  /metals        — live gold/silver spot references, FX conversion,
+ *                         and 30-day daily context
  *   OPTIONS *           — CORS preflight
  *
  * Environment variables:
@@ -47,6 +49,13 @@ const RETRY_DELAY_MS = 800;
 const TRENDING_TTL_SECONDS = 600;        // 10 min for full-success responses
 const TRENDING_PARTIAL_TTL_SECONDS = 60; // 1 min when one or more widgets failed
 const TRENDING_REQUEST_TIMEOUT_MS = 9000;
+const METALS_TTL_SECONDS = 60;
+const METALS_REQUEST_TIMEOUT_MS = 8000;
+const METALS_CURRENCIES = new Set([
+  'USD', 'AED', 'AUD', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP',
+  'HKD', 'HUF', 'IDR', 'ILS', 'INR', 'ISK', 'JPY', 'KRW', 'MXN', 'MYR',
+  'NOK', 'NZD', 'PHP', 'PLN', 'RON', 'SEK', 'SGD', 'THB', 'TRY', 'ZAR',
+]);
 
 /* Country → local stock index. Used to bias the markets widget query.
  * "Top mover" is defined as the largest absolute % move (gainer or loser)
@@ -86,6 +95,10 @@ export default {
 
     if (request.method === 'GET' && url.pathname === '/servicenow') {
       return handleServiceNowFeed(request, env, ctx, origin);
+    }
+
+    if (request.method === 'GET' && url.pathname === '/metals') {
+      return handleMetals(request, ctx, origin);
     }
 
     if (request.method !== 'POST') {
@@ -587,6 +600,159 @@ async function handleServiceNowFeed(request, env, ctx, origin) {
   }
 
   return jsonResponseRaw(responseBody, origin, { 'X-Summaverick-Cache': 'MISS' });
+}
+
+/* ───────────────── Precious-metal market report ───────────────── */
+
+async function fetchMarketJson(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), METALS_REQUEST_TIMEOUT_MS);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+      cf: { cacheTtl: METALS_TTL_SECONDS, cacheEverything: true },
+    });
+    if (!response.ok) throw new Error(`Market data source returned ${response.status}`);
+    return response.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function settledValue(result) {
+  return result.status === 'fulfilled' ? result.value : null;
+}
+
+function normalizeHistory(rows) {
+  if (!Array.isArray(rows)) return [];
+  return rows
+    .map((row) => ({
+      date: String(row && row.date || '').slice(0, 10),
+      usdPerOunce: Number(row && row.rate),
+    }))
+    .filter((row) => /^\d{4}-\d{2}-\d{2}$/.test(row.date) && Number.isFinite(row.usdPerOunce))
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+async function handleMetals(request, ctx, origin) {
+  const url = new URL(request.url);
+  const requestedCurrency = (url.searchParams.get('currency') || 'USD').toUpperCase();
+  if (!METALS_CURRENCIES.has(requestedCurrency)) {
+    return jsonResponse({
+      success: false,
+      error: 'Unsupported currency',
+      supportedCurrencies: Array.from(METALS_CURRENCIES),
+    }, origin, { 'Cache-Control': 'no-store' });
+  }
+
+  const cache = caches.default;
+  const cacheKey = new Request(
+    `https://cache.summaverick.internal/metals/${requestedCurrency}`,
+    { method: 'GET' }
+  );
+  const cached = await cache.match(cacheKey);
+  if (cached) {
+    const body = await cached.text();
+    return jsonResponseRaw(body, origin, {
+      'Cache-Control': `public, max-age=${METALS_TTL_SECONDS}`,
+      'X-Summaverick-Cache': 'HIT',
+    });
+  }
+
+  const endDate = new Date().toISOString().slice(0, 10);
+  const start = new Date();
+  start.setUTCDate(start.getUTCDate() - 35);
+  const startDate = start.toISOString().slice(0, 10);
+  const historyQuery = `from=${startDate}&to=${endDate}&quotes=USD`;
+
+  const jobs = [
+    fetchMarketJson('https://api.gold-api.com/price/XAU'),
+    fetchMarketJson('https://api.gold-api.com/price/XAG'),
+    fetchMarketJson(`https://api.frankfurter.dev/v2/rates?base=XAU&${historyQuery}`),
+    fetchMarketJson(`https://api.frankfurter.dev/v2/rates?base=XAG&${historyQuery}`),
+  ];
+  if (requestedCurrency !== 'USD') {
+    jobs.push(fetchMarketJson(
+      `https://api.frankfurter.dev/v2/rate/USD/${encodeURIComponent(requestedCurrency)}`
+    ));
+  }
+
+  const results = await Promise.allSettled(jobs);
+  const goldQuote = settledValue(results[0]);
+  const silverQuote = settledValue(results[1]);
+
+  if (!goldQuote || !silverQuote || !Number.isFinite(Number(goldQuote.price))
+      || !Number.isFinite(Number(silverQuote.price)) || Number(goldQuote.price) <= 0
+      || Number(silverQuote.price) <= 0) {
+    return jsonResponse({
+      success: false,
+      error: 'Live metal prices are temporarily unavailable',
+      generatedAt: new Date().toISOString(),
+    }, origin, { 'Cache-Control': 'no-store' });
+  }
+
+  const fxPayload = requestedCurrency === 'USD' ? null : settledValue(results[4]);
+  const fxRate = requestedCurrency === 'USD'
+    ? 1
+    : Number(fxPayload && (Array.isArray(fxPayload) ? fxPayload[0] && fxPayload[0].rate : fxPayload.rate));
+  const hasConversion = Number.isFinite(fxRate) && fxRate > 0;
+  const quoteTimes = [goldQuote.updatedAt, silverQuote.updatedAt]
+    .map((time) => new Date(time).getTime())
+    .filter(Number.isFinite);
+  const hasQuoteTimestamps = quoteTimes.length === 2;
+  const sourceUpdatedAt = quoteTimes.length
+    ? new Date(Math.min(...quoteTimes)).toISOString()
+    : null;
+  const ageSeconds = sourceUpdatedAt
+    ? Math.max(0, Math.round((Date.now() - new Date(sourceUpdatedAt).getTime()) / 1000))
+    : null;
+
+  const payload = {
+    success: true,
+    currency: requestedCurrency,
+    fxRate: hasConversion ? fxRate : null,
+    fxDate: requestedCurrency === 'USD'
+      ? endDate
+      : String(fxPayload && (Array.isArray(fxPayload) ? fxPayload[0] && fxPayload[0].date : fxPayload.date) || '').slice(0, 10) || null,
+    conversionAvailable: hasConversion,
+    generatedAt: new Date().toISOString(),
+    sourceUpdatedAt,
+    quoteTimestampAvailable: hasQuoteTimestamps,
+    freshness: hasQuoteTimestamps && ageSeconds <= 300 ? 'live' : 'delayed',
+    metals: {
+      gold: {
+        symbol: 'XAU',
+        usdPerOunce: Number(goldQuote.price),
+        history: normalizeHistory(settledValue(results[2])),
+      },
+      silver: {
+        symbol: 'XAG',
+        usdPerOunce: Number(silverQuote.price),
+        history: normalizeHistory(settledValue(results[3])),
+      },
+    },
+    sources: {
+      live: { name: 'Gold API', url: 'https://gold-api.com/' },
+      historyAndFx: { name: 'Frankfurter', url: 'https://frankfurter.dev/' },
+    },
+  };
+  const responseBody = JSON.stringify(payload);
+
+  if (ctx && typeof ctx.waitUntil === 'function') {
+    const toCache = new Response(responseBody, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': `public, max-age=${METALS_TTL_SECONDS}`,
+      },
+    });
+    ctx.waitUntil(cache.put(cacheKey, toCache));
+  }
+
+  return jsonResponseRaw(responseBody, origin, {
+    'Cache-Control': `public, max-age=${METALS_TTL_SECONDS}`,
+    'X-Summaverick-Cache': 'MISS',
+  });
 }
 
 /* ───────────── Flight Search ───────────── */
