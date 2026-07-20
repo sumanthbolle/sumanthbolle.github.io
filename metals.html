@@ -195,6 +195,9 @@
     .hs-card .lbl{color:var(--gray);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
     .hs-card .val{margin-top:6px;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
     .hs-card .val.small{font-size:16px;font-weight:600}
+    .hs-breakdown{margin-top:8px;color:var(--gray);font-size:12px;font-variant-numeric:tabular-nums;line-height:1.5}
+    .example-chip{border:1px solid var(--input-line);background:var(--chip-bg);color:var(--text);border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;margin:2px 2px 0 0}
+    .example-chip:hover{border-color:var(--blue);color:var(--blue)}
     .holding-form{display:grid;grid-template-columns:1.4fr .8fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:16px}
     .holding-form label{display:block;font-size:11px;font-weight:600;color:var(--gray);margin-bottom:4px}
     .holding-form input,.holding-form select{width:100%;min-width:0}
@@ -276,6 +279,11 @@
       .coin-thumb{width:60px;height:60px}
       .holding-form{grid-template-columns:1fr 1fr}
       .calc-fields{grid-template-columns:1fr}
+    }
+    @media(max-width:768px){
+      select,input[type=number],input[type=text]{min-height:48px;font-size:16px}
+      .holding-form .btn,.calc-card .btn{min-height:48px}
+      .calc-fields label,.holding-form label{font-size:12px}
     }
     @media(max-width:480px){
       .main-wrap{padding:0 16px}.page-header{padding:96px 16px 64px}
@@ -452,7 +460,7 @@
         <p class="section-intro">Save a few items once — they stay in this browser only, with no account and no server. Come back any time to see today’s value and how it has moved.</p>
       </div>
       <div class="holdings-summary">
-        <div class="hs-card"><div class="lbl">Total value today</div><div class="val" id="holdTotal">—</div></div>
+        <div class="hs-card"><div class="lbl">Total value today</div><div class="val" id="holdTotal">—</div><div class="hs-breakdown" id="holdBreakdown"></div></div>
         <div class="hs-card"><div class="lbl">Since your last visit</div><div class="val small" id="holdVisit">—</div></div>
         <div class="hs-card"><div class="lbl">Vs 30 days ago</div><div class="val small" id="holdMonth">—</div></div>
       </div>
@@ -465,7 +473,7 @@
       </form>
       <input id="hLabelInput" type="text" placeholder="Optional label (e.g. Mum's chain)" style="width:100%;margin-bottom:14px">
       <ul class="holdings-list" id="holdingsList"></ul>
-      <p class="empty-note" id="holdingsEmpty">No items yet. Add your first piece above to start tracking.</p>
+      <p class="empty-note" id="holdingsEmpty">No items yet — add your first piece above. For example: <button type="button" class="example-chip" data-ex="chain">50 g · 22K chain</button> <button type="button" class="example-chip" data-ex="tola">10 tola · 24K bar</button> <button type="button" class="example-chip" data-ex="silver">1 kg silver coins</button></p>
     </section>
 
     <section class="section" aria-labelledby="historyTitle">
@@ -578,6 +586,16 @@
         <div><p class="section-label">Where to buy</p><h2 id="sellersTitle">Local market &amp; popular sellers</h2></div>
         <p class="section-intro" id="sellerIntro">Well-known sellers for your region, plus the local pricing realities — taxes, duties and the forms people actually buy.</p>
       </div>
+      <div class="tf-row">
+        <div class="tf-group region-tabs" id="regionTabs" role="group" aria-label="Region">
+          <button class="tf-btn active" data-region="auto" type="button">Auto</button>
+          <button class="tf-btn" data-region="SGD" type="button">Singapore</button>
+          <button class="tf-btn" data-region="INR" type="button">India</button>
+          <button class="tf-btn" data-region="AED" type="button">UAE</button>
+          <button class="tf-btn" data-region="USD" type="button">United States</button>
+          <button class="tf-btn" data-region="DEFAULT" type="button">Other</button>
+        </div>
+      </div>
       <div class="region-panel" id="regionPanel"></div>
       <div class="seller-grid" id="sellerGrid"></div>
       <p class="disclaimer">These sellers are listed for general reference only — not endorsements, and not live quotes. Estimated bands apply a typical premium to the current spot price and will differ from each seller’s actual price, which reflects live premiums, availability, taxes, import duties and (for jewellery) making charges. Always confirm the current price on the seller’s own website.</p>
@@ -658,6 +676,7 @@
     var HOLD_KEY='metals_holdings_v1';
     var HOLD_SNAP_KEY='metals_holdings_snap_v1';
     var ALERT_KEY='metals_alerts_v1';
+    var REGION_KEY='metals_region_v1';
 
     var UNIT_GRAMS={gram:1,tengram:10,tola:11.6638038,sovereign:8,baht:15.244,ounce:OUNCE_GRAMS,kilogram:1000};
     var UNIT_LABELS={gram:'Gram',tengram:'10 grams',tola:'Tola (11.66 g)',sovereign:'Sovereign (8 g)',baht:'Baht (15.24 g)',ounce:'Troy ounce',kilogram:'Kilogram'};
@@ -833,6 +852,24 @@
     ['bsAmount','bsUnit','bsDate'].forEach(function(id){document.getElementById(id).addEventListener('input',renderBuySim)});
     document.querySelectorAll('#tfGroup .tf-btn').forEach(function(b){b.addEventListener('click',function(){setTimeframe(b.getAttribute('data-tf'))})});
     document.querySelectorAll('#histMetalToggle button').forEach(function(b){b.addEventListener('click',function(){setHistMetal(b.getAttribute('data-hm'))})});
+    (function(){
+      var saved=localStorage.getItem(REGION_KEY)||'auto';
+      document.querySelectorAll('#regionTabs .tf-btn').forEach(function(b){
+        b.classList.toggle('active',b.getAttribute('data-region')===saved);
+        b.addEventListener('click',function(){
+          localStorage.setItem(REGION_KEY,b.getAttribute('data-region'));
+          document.querySelectorAll('#regionTabs .tf-btn').forEach(function(x){x.classList.toggle('active',x===b)});
+          if(currentData)renderSellers(currentData);
+        });
+      });
+    })();
+    document.getElementById('holdingsEmpty').addEventListener('click',function(e){
+      var t=e.target;if(!t||!t.getAttribute)return;var ex=t.getAttribute('data-ex');if(!ex)return;
+      var presets={chain:{metal:'gold',weight:50,unit:'gram',purity:'0.9167'},tola:{metal:'gold',weight:10,unit:'tola',purity:'0.999'},silver:{metal:'silver',weight:1,unit:'kilogram',purity:'0.999'}};
+      var p=presets[ex];if(!p)return;
+      document.getElementById('hMetal').value=p.metal;document.getElementById('hWeight').value=p.weight;document.getElementById('hUnit').value=p.unit;document.getElementById('hPurity').value=p.purity;
+      document.getElementById('hWeight').focus();
+    });
     document.getElementById('alSave').addEventListener('click',saveAlert);
     document.getElementById('alSave2').addEventListener('click',saveAlert);
     document.getElementById('alEnable').addEventListener('click',enableNotifications);
@@ -1120,10 +1157,10 @@
       list.innerHTML='';
       if(!items.length){empty.style.display='block';}else{empty.style.display='none';}
       var fx=currentData?fxOf(currentData):1;var ccy=currentData?ccyOf(currentData):'USD';
-      var total=0,total30=0;
+      var total=0,total30=0;var byMetal={gold:0,silver:0};
       items.forEach(function(item){
         var pure=holdingValueUSDgram(item);var perGramUSD=currentData?spotGramUSD(currentData,item.metal):0;
-        var valUSD=pure*perGramUSD;var val=valUSD*fx;total+=val;
+        var valUSD=pure*perGramUSD;var val=valUSD*fx;total+=val;if(byMetal[item.metal]!=null)byMetal[item.metal]+=val;
         if(currentData){var p30=pointNear(currentData.metals[item.metal].history,30,currentData.sourceUpdatedAt);if(p30){total30+=pure*(p30.usdPerOunce/OUNCE_GRAMS)*fx;}else{total30+=val;}}
         var li=document.createElement('li');li.className='holding-item';
         var karat=purityLabel(item.purity);
@@ -1133,6 +1170,9 @@
       });
       list.querySelectorAll('.hi-del').forEach(function(b){b.addEventListener('click',function(){deleteHolding(b.getAttribute('data-id'))})});
       document.getElementById('holdTotal').textContent=items.length&&currentData?formatMoney(total,ccy,0):'—';
+      var bd=document.getElementById('holdBreakdown');
+      if(items.length&&currentData){var parts=[];if(byMetal.gold>0)parts.push('Gold: '+formatMoney(byMetal.gold,ccy,0));if(byMetal.silver>0)parts.push('Silver: '+formatMoney(byMetal.silver,ccy,0));bd.textContent=parts.join(' · ');}
+      else bd.textContent='';
       var snap=readJson(HOLD_SNAP_KEY);var visitEl=document.getElementById('holdVisit');
       if(items.length&&currentData&&snap&&snap.currency===ccy&&Number.isFinite(snap.total)){
         var dv=total-snap.total;visitEl.innerHTML='<span class="'+directionClass(dv)+'">'+escapeHtml((dv>=0?'+':'')+formatMoney(dv,ccy,0))+'</span>';visitEl.title='Since '+(snap.date||'last visit');
@@ -1187,10 +1227,16 @@
       var g=data.metals.gold.usdPerOunce,s=data.metals.silver.usdPerOunce,gram=g/OUNCE_GRAMS,sgram=s/OUNCE_GRAMS;
       switch(product){case 'goldBar1oz':return{usd:g,label:'1 oz gold bar',digits:0};case 'gold10g24k':return{usd:gram*10,label:'10 g · 24K gold',digits:0};case 'gold10g22k':return{usd:gram*10*0.9167,label:'10 g · 22K gold',digits:0};case 'gold1g24k':return{usd:gram,label:'1 g · 24K gold',digits:2};case 'silver1oz':return{usd:s,label:'1 oz silver',digits:2};case 'silver1kg':return{usd:sgram*1000,label:'1 kg silver',digits:0};default:return{usd:g,label:'1 oz gold coin',digits:0}}
     }
+    function resolvedRegionKey(data){
+      var pref=localStorage.getItem(REGION_KEY)||'auto';
+      if(pref!=='auto'&&(SELLERS[pref]||pref==='DEFAULT'))return pref;
+      return SELLERS[data.currency]?data.currency:'DEFAULT';
+    }
     function renderSellers(data){
-      var grid=document.getElementById('sellerGrid');if(!grid)return;var config=SELLERS[data.currency]||SELLERS.DEFAULT;
-      var intro=document.getElementById('sellerIntro');if(intro)intro.textContent='Well-known sellers for '+config.region+', plus the local pricing realities — taxes, duties and the forms people actually buy.';
-      renderRegion(data);
+      var grid=document.getElementById('sellerGrid');if(!grid)return;
+      var rk=resolvedRegionKey(data);var config=SELLERS[rk]||SELLERS.DEFAULT;
+      var intro=document.getElementById('sellerIntro');if(intro)intro.textContent='Well-known sellers for '+config.region+', plus the local pricing realities — taxes, duties and the forms people actually buy. Prices shown in '+ccyOf(data)+'.';
+      renderRegion(rk);
       var fx=fxOf(data);var ccy=ccyOf(data);
       var minAvg=config.list.reduce(function(m,s){var a=(s.premium[0]+s.premium[1])/2;return a<m?a:m},Infinity);
       grid.innerHTML=config.list.slice().sort(function(a,b){return (a.premium[0]+a.premium[1])-(b.premium[0]+b.premium[1])}).map(function(s){
@@ -1200,8 +1246,8 @@
         return '<div class="seller-card"><div class="seller-top"><span class="seller-name">'+escapeHtml(s.name)+'</span><span class="seller-chip">'+escapeHtml(s.type)+'</span></div>'+(best?'<span class="seller-badge">Often lowest premium</span>':'')+'<p class="seller-note">'+escapeHtml(s.note)+'</p><p class="seller-est">'+escapeHtml(est)+'<small>Est. '+escapeHtml(pd.label)+' · typical premium '+pp+' over spot</small></p><a class="seller-link" href="'+escapeHtml(s.url)+'" target="_blank" rel="noopener noreferrer">Check live price<svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></a></div>';
       }).join('');
     }
-    function renderRegion(data){
-      var panel=document.getElementById('regionPanel');var notes=MARKET_NOTES[data.currency];
+    function renderRegion(rk){
+      var panel=document.getElementById('regionPanel');var notes=MARKET_NOTES[rk];
       if(!notes){panel.innerHTML='';panel.style.display='none';return;}
       panel.style.display='';
       panel.innerHTML=notes.map(function(n){return '<div class="region-card"><div class="lbl">'+escapeHtml(n.lbl)+'</div><p>'+escapeHtml(n.text)+'</p></div>'}).join('');
