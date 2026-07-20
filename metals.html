@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gold &amp; Silver Prices — Clear Market Context | Sumanth Bolle</title>
-  <meta name="description" content="Live gold and silver spot prices in your currency, with recent movement, regional reference weights, and clear market context.">
+  <meta name="description" content="Live gold and silver spot prices in your currency, with tola/sovereign/baht converters, calculators, a holdings tracker, history charts, and clear market context.">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#f5f5f7">
   <link rel="canonical" href="https://sumanthbolle.com/metals">
   <meta property="og:title" content="Gold &amp; Silver Prices — Clear Market Context">
   <meta property="og:description" content="Live gold and silver prices, clearly explained in your currency.">
@@ -24,7 +25,7 @@
     "url": "https://sumanthbolle.com/metals",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web",
-    "description": "Live gold and silver spot prices with local-currency conversions and educational market context.",
+    "description": "Live gold and silver spot prices with local-currency conversions, unit calculators, a holdings tracker and educational market context.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
   }
@@ -33,66 +34,86 @@
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
       --blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000;
-      --green:#34c759;--red:#ff3b30;--gold:#b0892d;--silver:#8e97a4;
+      --green:#1f7a3a;--red:#c32b23;--gold:#b0892d;--silver:#8e97a4;
+      --card-line:rgba(0,0,0,0.06);--card-shadow:0 1px 8px rgba(0,0,0,0.04);
+      --input-bg:#fff;--input-line:rgba(0,0,0,0.12);--chip-bg:#fff;
       --radius:16px;--radius-sm:12px;--radius-xs:8px;--max:1080px;
     }
+    :root[data-theme="dark"]{
+      --blue:#4c9cff;--text:#f2f2f7;--gray:#9a9aa2;--bg:#0d0d10;--white:#17171b;--black:#fff;
+      --green:#4cc26a;--red:#ff6b60;--gold:#d4b062;--silver:#b6bdc7;
+      --card-line:rgba(255,255,255,0.08);--card-shadow:0 1px 10px rgba(0,0,0,0.5);
+      --input-bg:#1f1f24;--input-line:rgba(255,255,255,0.16);--chip-bg:#22222a;
+    }
     html{scroll-behavior:smooth}
-    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-    button,select{font:inherit}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:background .3s,color .3s}
+    button,select,input{font:inherit;color:inherit}
     a{color:inherit}
-    .skip-link{position:absolute;left:16px;top:-80px;z-index:10000;background:var(--text);color:var(--white);padding:10px 14px;border-radius:8px;text-decoration:none}
+    .skip-link{position:absolute;left:16px;top:-80px;z-index:10000;background:var(--text);color:var(--bg);padding:10px 14px;border-radius:8px;text-decoration:none}
     .skip-link:focus{top:12px}
     :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 
-    nav{position:fixed;top:0;width:100%;height:48px;background:rgba(251,251,253,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid rgba(0,0,0,0.1)}
+    nav{position:fixed;top:0;width:100%;height:48px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid var(--card-line)}
     .nav-c{max-width:var(--max);margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
     .nav-logo{font-size:20px;font-weight:600;color:var(--text);text-decoration:none}
+    .nav-right{display:flex;align-items:center;gap:18px}
     .nav-links{display:flex;gap:28px;list-style:none}
     .nav-links a{color:var(--text);text-decoration:none;font-size:13px;opacity:.8;transition:opacity .3s,color .3s}
     .nav-links a:hover,.nav-links a.active{opacity:1;color:var(--blue)}
+    .theme-toggle{background:none;border:0;cursor:pointer;padding:8px;min-width:40px;min-height:40px;color:var(--text);display:flex;align-items:center;justify-content:center;border-radius:8px}
+    .theme-toggle:hover{background:var(--card-line)}
+    .theme-toggle svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    :root:not([data-theme="dark"]) .theme-toggle .moon{display:none}
+    :root[data-theme="dark"] .theme-toggle .sun{display:none}
     .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;min-width:44px;min-height:44px}
     .menu-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:.3s}
     .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
     .menu-toggle.active span:nth-child(2){opacity:0}
     .menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
-    .mobile-menu{display:none;position:fixed;top:48px;left:0;width:100%;background:rgba(251,251,253,0.98);backdrop-filter:blur(20px);padding:20px;border-bottom:1px solid rgba(0,0,0,0.1);z-index:9998}
+    .mobile-menu{display:none;position:fixed;top:48px;left:0;width:100%;background:var(--white);backdrop-filter:blur(20px);padding:20px;border-bottom:1px solid var(--card-line);z-index:9998}
     .mobile-menu.active{display:block}
-    .mobile-menu a{display:block;padding:12px 0;color:var(--text);text-decoration:none;font-size:16px;border-bottom:1px solid rgba(0,0,0,0.05)}
+    .mobile-menu a{display:block;padding:12px 0;color:var(--text);text-decoration:none;font-size:16px;border-bottom:1px solid var(--card-line)}
     .mobile-menu a.active{color:var(--blue)}
 
-    .page-header{padding:108px 22px 72px;text-align:center;background:linear-gradient(180deg,#111 0%,#000 100%);color:var(--white);position:relative;overflow:hidden}
+    .page-header{padding:108px 22px 72px;text-align:center;background:linear-gradient(180deg,#111 0%,#000 100%);color:#fff;position:relative;overflow:hidden}
     .page-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 45% at 50% 20%,rgba(176,137,45,0.16) 0%,transparent 70%)}
     .page-header .eyebrow{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.78);font-size:12px;font-weight:600;letter-spacing:.4px;margin-bottom:16px;position:relative}
     .page-header h1{font-size:clamp(34px,7vw,56px);font-weight:600;letter-spacing:-.03em;margin-bottom:12px;position:relative}
-    .page-header p{font-size:17px;color:var(--gray);max-width:560px;margin:0 auto;line-height:1.55;position:relative}
+    .page-header p{font-size:17px;color:#c7c7cc;max-width:560px;margin:0 auto;line-height:1.55;position:relative}
     .hero-visuals{position:relative;display:flex;justify-content:center;gap:28px;margin-top:34px}
-    .hero-coin{width:148px;height:148px;object-fit:cover;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.12),rgba(255,255,255,0) 55%);box-shadow:0 18px 36px rgba(0,0,0,.45);transform:translateY(0);animation:floatCoin 5.5s ease-in-out infinite}
+    .hero-coin{width:148px;height:148px;object-fit:cover;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.12),rgba(255,255,255,0) 55%);box-shadow:0 18px 36px rgba(0,0,0,.45);animation:floatCoin 5.5s ease-in-out infinite}
     .hero-coin.silver{animation-delay:1.1s}
     @keyframes floatCoin{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
     .main-wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
-    .toolbar{background:var(--white);border-radius:22px;padding:18px 20px;box-shadow:0 4px 24px rgba(0,0,0,0.06);margin-top:-36px;position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+    .toolbar{background:var(--white);border-radius:22px;padding:16px 20px;box-shadow:0 4px 24px rgba(0,0,0,0.08);margin-top:-36px;position:sticky;top:56px;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border:1px solid var(--card-line)}
     .status-copy{display:flex;align-items:center;gap:9px;color:var(--gray);font-size:13px;line-height:1.4}
     .status-dot{width:8px;height:8px;border-radius:50%;background:#c7c7cc;flex:0 0 auto}
     .status-dot.live{background:var(--green)}
-    .status-dot.delayed,.status-dot.cached{background:#ff9f0a}
-    .toolbar-actions{display:flex;align-items:end;gap:12px;flex-wrap:wrap}
+    .status-dot.delayed,.status-dot.cached{background:#e0972a}
+    .toolbar-actions{display:flex;align-items:end;gap:10px;flex-wrap:wrap}
     .field label{display:block;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
-    .field select{min-width:180px;min-height:42px;padding:0 36px 0 12px;border:1px solid rgba(0,0,0,0.1);border-radius:var(--radius-xs);background:var(--white);color:var(--text)}
-    .field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,0.12);outline:none}
-    .refresh-button,.share-button{min-height:42px;padding:0 16px;border:1px solid rgba(0,0,0,0.1);border-radius:var(--radius-xs);background:var(--bg);color:var(--text);cursor:pointer;transition:background .2s,border-color .2s}
-    .refresh-button:hover,.share-button:hover{background:#ebebed;border-color:rgba(0,0,0,0.16)}
+    select,input[type=number],input[type=text]{min-height:42px;padding:0 12px;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--input-bg);color:var(--text)}
+    select{padding-right:34px;min-width:160px;cursor:pointer}
+    select:focus,input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,0.14);outline:none}
+    .btn{min-height:42px;padding:0 16px;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--bg);color:var(--text);cursor:pointer;transition:background .2s,border-color .2s;font-weight:500}
+    .btn:hover{border-color:var(--blue);color:var(--blue)}
+    .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .btn-primary:hover{background:#0055aa;color:#fff}
+    .btn-sm{min-height:36px;padding:0 12px;font-size:13px}
     .control-note{width:100%;color:var(--gray);font-size:12px}
 
     .notice{display:none;margin:18px 0 0;padding:12px 14px;border-radius:var(--radius-sm);background:#fff8e8;border:1px solid #f2dfb0;color:#8a6a1f;font-size:13px;line-height:1.5}
+    :root[data-theme="dark"] .notice{background:#2a2410;border-color:#5a4a1e;color:#e8c877}
     .notice.visible{display:block}
     .notice.error{background:#fff2f1;border-color:#ffd0cc;color:#b42318}
+    :root[data-theme="dark"] .notice.error{background:#2c1512;border-color:#6a2b25;color:#ff9a90}
 
-    .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0 28px}
-    .metal{background:var(--white);border-radius:22px;padding:24px;box-shadow:0 1px 8px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);position:relative;overflow:hidden}
+    .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0 16px}
+    .metal{background:var(--white);border-radius:22px;padding:24px;box-shadow:var(--card-shadow);border:1px solid var(--card-line);position:relative;overflow:hidden}
     .metal-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:8px}
     .metal-identity{display:flex;align-items:center;gap:14px}
-    .coin-thumb{width:72px;height:72px;object-fit:cover;border-radius:50%;background:#f5f5f7;box-shadow:0 8px 18px rgba(0,0,0,.12);transform:perspective(600px) rotateY(-14deg) rotateX(8deg);transition:transform .35s ease}
+    .coin-thumb{width:72px;height:72px;object-fit:cover;border-radius:50%;background:var(--bg);box-shadow:0 8px 18px rgba(0,0,0,.12);transform:perspective(600px) rotateY(-14deg) rotateX(8deg);transition:transform .35s ease}
     .metal:hover .coin-thumb{transform:perspective(600px) rotateY(-4deg) rotateX(2deg) scale(1.03)}
     .metal-name{font-size:28px;font-weight:600;letter-spacing:-.02em}
     .metal-symbol{display:block;margin-top:2px;color:var(--gray);font-size:12px;letter-spacing:.08em}
@@ -101,15 +122,15 @@
     .spot-value.placeholder,.data-value.placeholder{color:#c7c7cc}
     .per-unit{margin-left:4px;color:var(--gray);font-size:14px;font-weight:500;letter-spacing:0}
     .move{min-height:22px;margin:10px 0 16px;font-size:13px;font-variant-numeric:tabular-nums}
-    .positive{color:#1f7a3a}.negative{color:#c32b23}.neutral{color:var(--gray)}
-    .chart-panel{margin:4px 0 18px;padding:12px 10px 8px;border-radius:14px;background:linear-gradient(180deg,#fbfbfd 0%,#f3f3f6 100%);border:1px solid rgba(0,0,0,0.04)}
+    .positive{color:var(--green)}.negative{color:var(--red)}.neutral{color:var(--gray)}
+    .chart-panel{margin:4px 0 18px;padding:12px 10px 8px;border-radius:14px;background:var(--bg);border:1px solid var(--card-line)}
     .chart-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 8px 6px;color:var(--gray);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
     .chart-wrap{position:relative;height:168px}
     .chart-wrap svg{width:100%;height:100%;display:block;overflow:visible}
-    .chart-tooltip{position:absolute;top:10px;left:10px;min-width:118px;padding:8px 10px;border-radius:10px;background:rgba(29,29,31,.92);color:#fff;font-size:12px;line-height:1.35;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+    .chart-tooltip{position:absolute;top:10px;left:10px;min-width:120px;padding:8px 10px;border-radius:10px;background:rgba(29,29,31,.92);color:#fff;font-size:12px;line-height:1.35;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s;box-shadow:0 8px 20px rgba(0,0,0,.2)}
     .chart-tooltip.visible{opacity:1;transform:translateY(0)}
     .chart-tooltip strong{display:block;font-size:13px;font-variant-numeric:tabular-nums}
-    .local-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.06)}
+    .local-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;padding-top:16px;border-top:1px solid var(--card-line)}
     .data-label{display:block;margin-bottom:5px;color:var(--gray);font-size:11px;line-height:1.35}
     .data-value{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
     .update-meta{margin-top:16px;color:var(--gray);font-size:12px;line-height:1.55}
@@ -117,46 +138,115 @@
     @keyframes flashUp{0%{color:var(--green)}100%{color:var(--text)}}
     @keyframes flashDown{0%{color:var(--red)}100%{color:var(--text)}}
 
-    .section{background:var(--white);border-radius:22px;padding:28px;margin-bottom:16px;box-shadow:0 1px 8px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04)}
+    .section{background:var(--white);border-radius:22px;padding:28px;margin-bottom:16px;box-shadow:var(--card-shadow);border:1px solid var(--card-line)}
+    .section.highlight{border-color:rgba(0,102,204,0.28);box-shadow:0 2px 16px rgba(0,102,204,0.08)}
     .section-label{margin:0 0 8px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
     .section h2{font-size:clamp(24px,3vw,32px);font-weight:600;letter-spacing:-.02em;margin-bottom:8px}
     .section-intro{color:var(--gray);font-size:15px;line-height:1.6;max-width:720px}
     .section-heading{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.2fr);gap:28px;align-items:start;margin-bottom:22px}
-    .change-summary{padding:16px 18px;border-radius:var(--radius-sm);background:var(--bg);font-size:16px;line-height:1.55}
+    .change-summary{padding:16px 18px;border-radius:var(--radius-sm);background:var(--bg);font-size:17px;line-height:1.55}
+    .ask{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:13px;font-weight:600;color:var(--blue);text-decoration:none}
+    .ask:hover{text-decoration:underline}
+    .ask svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
     .context-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .context-metal{padding:18px;border-radius:var(--radius);background:var(--bg);border:1px solid rgba(0,0,0,0.04)}
+    .context-metal{padding:18px;border-radius:var(--radius);background:var(--bg);border:1px solid var(--card-line)}
     .context-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;font-size:15px;font-weight:600}
-    .range-track{position:relative;height:4px;margin:28px 2px 12px;background:rgba(0,0,0,0.08);border-radius:999px}
-    .range-marker{position:absolute;top:50%;width:12px;height:12px;border:2px solid #fff;border-radius:50%;background:var(--gold);box-shadow:0 1px 4px rgba(0,0,0,.18);transform:translate(-50%,-50%)}
+    .range-track{position:relative;height:4px;margin:28px 2px 12px;background:var(--card-line);border-radius:999px}
+    .range-marker{position:absolute;top:50%;width:12px;height:12px;border:2px solid var(--white);border-radius:50%;background:var(--gold);box-shadow:0 1px 4px rgba(0,0,0,.18);transform:translate(-50%,-50%)}
     .silver .range-marker{background:var(--silver)}
     .range-labels{display:flex;justify-content:space-between;color:var(--gray);font-size:11px;font-variant-numeric:tabular-nums}
     .performance{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
-    .metric{padding:10px 10px 12px;border-radius:10px;background:var(--white);border:1px solid rgba(0,0,0,0.04)}
+    .metric{padding:10px 10px 12px;border-radius:10px;background:var(--white);border:1px solid var(--card-line)}
     .metric span{display:block;color:var(--gray);font-size:11px}
     .metric strong{display:block;margin-top:5px;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
     .momentum{margin-top:14px;color:var(--gray);font-size:13px}
     .ratio-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
-    .ratio-card{padding:16px 18px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid rgba(0,0,0,0.04)}
+    .ratio-card{padding:16px 18px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
     .ratio-number{margin-top:6px;font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
     .ratio-copy{margin-top:6px;color:var(--gray);font-size:12px;line-height:1.5}
 
     .factor-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;list-style:none;margin-top:8px}
-    .factor-list li{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid rgba(0,0,0,0.04)}
+    .factor-list li{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
     .factor-list strong{display:block;font-size:14px;font-weight:600}
     .factor-list span{display:block;margin-top:5px;color:var(--gray);font-size:13px;line-height:1.5}
     .context-note,.disclaimer{margin-top:18px;color:var(--gray);font-size:13px;line-height:1.6}
     .explain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-    .explain-grid div{padding:16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid rgba(0,0,0,0.04)}
+    .explain-grid div{padding:16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
     .explain-grid h3{margin-bottom:8px;font-size:14px}
     .explain-grid p{color:var(--gray);font-size:13px;line-height:1.6}
 
+    /* Calculators */
+    .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .calc-card{padding:18px;border-radius:var(--radius);background:var(--bg);border:1px solid var(--card-line)}
+    .calc-card h3{font-size:15px;margin-bottom:4px}
+    .calc-card .hint{color:var(--gray);font-size:12px;line-height:1.5;margin-bottom:14px}
+    .calc-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .calc-fields .full{grid-column:1/-1}
+    .calc-fields label{display:block;font-size:11px;font-weight:600;color:var(--gray);margin-bottom:4px}
+    .calc-fields select,.calc-fields input{width:100%;min-width:0}
+    .calc-out{margin-top:14px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--white);border:1px solid var(--card-line)}
+    .calc-out .big{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+    .calc-out .sub{color:var(--gray);font-size:13px;margin-top:4px;line-height:1.5}
+
+    /* Holdings */
+    .holdings-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+    .hs-card{padding:16px 18px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
+    .hs-card .lbl{color:var(--gray);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+    .hs-card .val{margin-top:6px;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+    .hs-card .val.small{font-size:16px;font-weight:600}
+    .holding-form{display:grid;grid-template-columns:1.4fr .8fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:16px}
+    .holding-form label{display:block;font-size:11px;font-weight:600;color:var(--gray);margin-bottom:4px}
+    .holding-form input,.holding-form select{width:100%;min-width:0}
+    .holdings-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+    .holding-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
+    .holding-item .hi-main{font-size:14px;font-weight:600}
+    .holding-item .hi-sub{color:var(--gray);font-size:12px;margin-top:2px}
+    .holding-item .hi-val{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+    .holding-item .hi-del{border:0;background:none;color:var(--gray);cursor:pointer;font-size:18px;line-height:1;padding:4px 6px;border-radius:6px}
+    .holding-item .hi-del:hover{color:var(--red);background:var(--card-line)}
+    .empty-note{color:var(--gray);font-size:13px;padding:14px 0}
+
+    /* History section */
+    .tf-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+    .tf-group{display:inline-flex;gap:2px;padding:3px;background:var(--bg);border-radius:10px;border:1px solid var(--card-line)}
+    .tf-btn{padding:7px 13px;border:none;border-radius:8px;background:transparent;color:var(--gray);font-size:13px;font-weight:600;cursor:pointer}
+    .tf-btn.active{background:var(--white);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+    .metal-toggle{display:inline-flex;gap:2px;padding:3px;background:var(--bg);border-radius:10px;border:1px solid var(--card-line);margin-left:auto}
+    .metal-toggle button{padding:7px 14px;border:0;border-radius:8px;background:transparent;color:var(--gray);font-size:13px;font-weight:600;cursor:pointer}
+    .metal-toggle button.active{background:var(--white);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+    .history-chart{position:relative;height:280px}
+    .history-chart svg{width:100%;height:100%;display:block;overflow:visible}
+    .buy-sim{margin-top:18px;padding:16px 18px;border-radius:var(--radius);background:var(--bg);border:1px solid var(--card-line)}
+    .buy-sim .bs-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:12px}
+    .buy-sim label{display:block;font-size:11px;font-weight:600;color:var(--gray);margin-bottom:4px}
+    .buy-sim input[type=range]{width:100%;accent-color:var(--blue)}
+    .buy-sim .bs-out{font-size:15px;line-height:1.6}
+    .buy-sim .bs-out strong{font-variant-numeric:tabular-nums}
+
+    /* Alerts */
+    .alert-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .alert-card{padding:18px;border-radius:var(--radius);background:var(--bg);border:1px solid var(--card-line)}
+    .alert-card h3{font-size:15px;margin-bottom:12px}
+    .alert-fields{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+    .alert-fields label{display:block;font-size:11px;font-weight:600;color:var(--gray);margin-bottom:4px}
+    .alert-log{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+    .alert-item{padding:10px 12px;border-radius:var(--radius-sm);background:var(--white);border:1px solid var(--card-line);font-size:13px}
+    .alert-status{margin-top:12px;color:var(--gray);font-size:12px}
+
+    /* Region market reality */
+    .region-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+    .region-card{padding:16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
+    .region-card .lbl{color:var(--gray);font-size:11px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+    .region-card p{font-size:13px;line-height:1.55}
+
+    /* Sellers */
     .seller-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
-    .seller-card{display:flex;flex-direction:column;gap:9px;padding:16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid rgba(0,0,0,0.04)}
+    .seller-card{display:flex;flex-direction:column;gap:9px;padding:16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
     .seller-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
     .seller-name{font-size:15px;font-weight:600;line-height:1.25}
-    .seller-chip{flex:0 0 auto;font-size:10px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:999px;background:var(--white);border:1px solid rgba(0,0,0,0.06);white-space:nowrap}
-    .seller-badge{align-self:flex-start;font-size:10px;font-weight:700;color:#1f7a3a;background:#e6f5ec;border:1px solid #bfe6cd;border-radius:999px;padding:2px 9px}
+    .seller-chip{flex:0 0 auto;font-size:10px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:999px;background:var(--chip-bg);border:1px solid var(--card-line);white-space:nowrap}
+    .seller-badge{align-self:flex-start;font-size:10px;font-weight:700;color:var(--green);background:color-mix(in srgb,var(--green) 14%,transparent);border:1px solid color-mix(in srgb,var(--green) 32%,transparent);border-radius:999px;padding:2px 9px}
     .seller-note{color:var(--gray);font-size:12px;line-height:1.5}
     .seller-est{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
     .seller-est small{display:block;margin-top:3px;color:var(--gray);font-size:11px;font-weight:400}
@@ -164,14 +254,15 @@
     .seller-link:hover{text-decoration:underline}
     .seller-link svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-    details{margin-top:18px;border-top:1px solid rgba(0,0,0,0.06);padding-top:4px}
+    details{margin-top:18px;border-top:1px solid var(--card-line);padding-top:4px}
     summary{min-height:48px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:600}
     summary::after{content:"+";color:var(--gray);font-size:20px;font-weight:400}
     details[open] summary::after{content:"−"}
     .method-copy{max-width:760px;padding:0 0 12px;color:var(--gray);font-size:13px;line-height:1.7}
     .method-copy a{color:var(--blue)}
-    .share-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.06)}
+    .share-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--card-line);flex-wrap:wrap}
     .share-row p{color:var(--gray);font-size:13px}
+    .share-actions{display:flex;gap:10px;flex-wrap:wrap}
 
     footer{padding:28px 22px 40px;text-align:center}
     .footer-inner{max-width:var(--max);margin:0 auto;color:var(--gray);font-size:12px;line-height:1.6}
@@ -180,14 +271,17 @@
     @media(max-width:768px){
       .nav-links{display:none}.menu-toggle{display:block}
       .hero-coin{width:96px;height:96px}
-      .toolbar{align-items:stretch}.toolbar-actions{width:100%}.field,.field select,.refresh-button{width:100%}
-      .price-grid,.context-grid,.factor-list,.explain-grid,.ratio-row,.section-heading,.seller-grid{grid-template-columns:1fr}
+      .toolbar{align-items:stretch;top:52px}.toolbar-actions{width:100%}.field,.field select,.toolbar .btn{width:100%}
+      .price-grid,.context-grid,.factor-list,.explain-grid,.ratio-row,.section-heading,.seller-grid,.calc-grid,.alert-grid,.region-panel,.holdings-summary{grid-template-columns:1fr}
       .coin-thumb{width:60px;height:60px}
+      .holding-form{grid-template-columns:1fr 1fr}
+      .calc-fields{grid-template-columns:1fr}
     }
     @media(max-width:480px){
       .main-wrap{padding:0 16px}.page-header{padding:96px 16px 64px}
       .local-grid{gap:12px}.metal{padding:18px}.section{padding:20px}
       .share-row{flex-direction:column;align-items:flex-start}
+      .holding-form{grid-template-columns:1fr}
     }
     @media(prefers-reduced-motion:reduce){
       html{scroll-behavior:auto}
@@ -201,16 +295,22 @@
   <nav aria-label="Portfolio navigation">
     <div class="nav-c">
       <a href="index.html" class="nav-logo">Sumanth Bolle</a>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="servicenow.html">ServiceNow</a></li>
-        <li><a href="blog.html">Blog</a></li>
-        <li><a href="summaverick.html">Summaverick</a></li>
-        <li><a href="flights.html">SkyFare</a></li>
-        <li><a href="metals.html" class="active" aria-current="page">Metals</a></li>
-        <li><a href="index.html#contact">Contact</a></li>
-      </ul>
-      <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="servicenow.html">ServiceNow</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="summaverick.html">Summaverick</a></li>
+          <li><a href="flights.html">SkyFare</a></li>
+          <li><a href="metals.html" class="active" aria-current="page">Metals</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+          <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+          <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+        <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+      </div>
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <a href="index.html">Home</a>
@@ -226,10 +326,10 @@
   <header class="page-header">
     <span class="eyebrow">Precious metals market report</span>
     <h1>Gold and silver, clearly.</h1>
-    <p>Live gold and silver prices, clearly explained in your currency. Check current spot prices, compare recent movement, and understand the market factors worth watching—without unnecessary financial jargon.</p>
+    <p>Live gold and silver prices, clearly explained in your currency — with tola, sovereign and baht converters, calculators, a holdings tracker, and history you can actually read.</p>
     <div class="hero-visuals" aria-hidden="true">
-      <img class="hero-coin gold" src="assets/images/gold-coin-3d.webp" alt="" width="132" height="132">
-      <img class="hero-coin silver" src="assets/images/silver-coin-3d.webp" alt="" width="132" height="132">
+      <img class="hero-coin gold" src="assets/images/gold-coin-3d.webp" alt="" width="148" height="148">
+      <img class="hero-coin silver" src="assets/images/silver-coin-3d.webp" alt="" width="148" height="148">
     </div>
   </header>
 
@@ -241,7 +341,8 @@
           <label for="currency">Display currency</label>
           <select id="currency" aria-describedby="currencyNote"></select>
         </div>
-        <button class="refresh-button" id="refreshButton" type="button">Refresh</button>
+        <button class="btn" id="refreshButton" type="button">Refresh</button>
+        <button class="btn" id="shareButton" type="button">Share snapshot</button>
       </div>
       <p class="control-note" id="currencyNote">Your selection is remembered on this device.</p>
     </div>
@@ -266,11 +367,13 @@
           </div>
         </div>
         <div class="local-grid">
-          <div><span class="data-label">Selected currency / oz</span><strong class="data-value placeholder" data-field="localOz">—</strong></div>
-          <div><span class="data-label">Selected currency / gram</span><strong class="data-value placeholder" data-field="localGram">—</strong></div>
-          <div><span class="data-label">24K reference / gram</span><strong class="data-value placeholder" data-field="pureGram">—</strong></div>
-          <div><span class="data-label">Estimated 22K metal value / gram</span><strong class="data-value placeholder" data-field="karat22">—</strong></div>
-          <div data-region-field="gold10g"><span class="data-label">24K reference / 10 grams</span><strong class="data-value placeholder" data-field="tenGram">—</strong></div>
+          <div><span class="data-label">Per troy ounce</span><strong class="data-value placeholder" data-field="localOz">—</strong></div>
+          <div><span class="data-label">Per gram (24K)</span><strong class="data-value placeholder" data-field="localGram">—</strong></div>
+          <div><span class="data-label">Per 10 g (24K)</span><strong class="data-value placeholder" data-field="tenGram">—</strong></div>
+          <div><span class="data-label">Per gram (22K)</span><strong class="data-value placeholder" data-field="gram22">—</strong></div>
+          <div data-region-field="tola"><span class="data-label">Per tola (24K)</span><strong class="data-value placeholder" data-field="tola">—</strong></div>
+          <div data-region-field="sovereign"><span class="data-label">Per sovereign · 8 g (22K)</span><strong class="data-value placeholder" data-field="sovereign">—</strong></div>
+          <div data-region-field="baht"><span class="data-label">Per baht (96.5%)</span><strong class="data-value placeholder" data-field="baht">—</strong></div>
         </div>
         <p class="update-meta" data-field="updated">Exact update time will appear here.</p>
       </article>
@@ -293,20 +396,110 @@
           </div>
         </div>
         <div class="local-grid">
-          <div><span class="data-label">Selected currency / oz</span><strong class="data-value placeholder" data-field="localOz">—</strong></div>
-          <div><span class="data-label">Selected currency / gram</span><strong class="data-value placeholder" data-field="localGram">—</strong></div>
-          <div data-region-field="silverKg"><span class="data-label">Selected currency / kilogram</span><strong class="data-value placeholder" data-field="kilogram">—</strong></div>
+          <div><span class="data-label">Per troy ounce</span><strong class="data-value placeholder" data-field="localOz">—</strong></div>
+          <div><span class="data-label">Per gram</span><strong class="data-value placeholder" data-field="localGram">—</strong></div>
+          <div><span class="data-label">Per 100 g</span><strong class="data-value placeholder" data-field="hundredGram">—</strong></div>
+          <div><span class="data-label">Per kilogram</span><strong class="data-value placeholder" data-field="kilogram">—</strong></div>
         </div>
         <p class="update-meta" data-field="updated">Exact update time will appear here.</p>
       </article>
     </section>
 
-    <section class="section" aria-labelledby="changedTitle">
+    <section class="section highlight" aria-labelledby="changedTitle">
       <div class="section-heading">
-        <div><p class="section-label">Since the previous reading</p><h2 id="changedTitle">What changed since the last update</h2></div>
-        <p class="section-intro" id="changeIntro">Once prices arrive, this section compares them with your previous successful visit or the latest daily reference.</p>
+        <div><p class="section-label">Since your last visit</p><h2 id="changedTitle">What changed since the last update</h2></div>
+        <p class="section-intro" id="changeIntro">Once prices arrive, this section compares them with your previous visit or the latest daily reference.</p>
       </div>
       <div class="change-summary" id="changeSummary">Fetching the latest market price.</div>
+    </section>
+
+    <section class="section" aria-labelledby="calcTitle">
+      <div class="section-heading">
+        <div><p class="section-label">Unit converter &amp; calculators</p><h2 id="calcTitle">Work out the real numbers</h2></div>
+        <p class="section-intro">Grams, 10 grams, tola, sovereign, baht and troy ounce — with purity. These are the figures you need when standing at a jeweller or bank counter.</p>
+      </div>
+      <div class="calc-grid">
+        <div class="calc-card">
+          <h3>Value &amp; melt calculator</h3>
+          <p class="hint">Enter a weight and purity to see today’s pure-metal (melt) value at spot.</p>
+          <div class="calc-fields">
+            <div><label for="vcMetal">Metal</label><select id="vcMetal"><option value="gold">Gold</option><option value="silver">Silver</option></select></div>
+            <div><label for="vcWeight">Weight</label><input id="vcWeight" type="number" min="0" step="any" value="10"></div>
+            <div><label for="vcUnit">Unit</label><select id="vcUnit"></select></div>
+            <div><label for="vcPurity">Purity</label><select id="vcPurity"></select></div>
+          </div>
+          <div class="calc-out"><div class="big" id="vcValue">—</div><div class="sub" id="vcSub">Pure metal content will appear here.</div></div>
+        </div>
+        <div class="calc-card">
+          <h3>Premium checker</h3>
+          <p class="hint">Enter what a shop quotes for an item to see the premium over spot metal value.</p>
+          <div class="calc-fields">
+            <div><label for="pcMetal">Metal</label><select id="pcMetal"><option value="gold">Gold</option><option value="silver">Silver</option></select></div>
+            <div><label for="pcWeight">Weight</label><input id="pcWeight" type="number" min="0" step="any" value="10"></div>
+            <div><label for="pcUnit">Unit</label><select id="pcUnit"></select></div>
+            <div><label for="pcPurity">Purity</label><select id="pcPurity"></select></div>
+            <div class="full"><label for="pcQuote">Price you were quoted (total, in selected currency)</label><input id="pcQuote" type="number" min="0" step="any" placeholder="e.g. 85000"></div>
+          </div>
+          <div class="calc-out"><div class="big" id="pcResult">—</div><div class="sub" id="pcSub">Enter a quote to compare with spot metal value.</div></div>
+        </div>
+      </div>
+      <p class="disclaimer">Melt value is the spot value of the pure metal only. Real shop prices add making charges, taxes, duties and dealer margins, so a positive premium is normal — especially for jewellery.</p>
+    </section>
+
+    <section class="section" aria-labelledby="holdingsTitle">
+      <div class="section-heading">
+        <div><p class="section-label">Your holdings</p><h2 id="holdingsTitle">Track what you own</h2></div>
+        <p class="section-intro">Save a few items once — they stay in this browser only, with no account and no server. Come back any time to see today’s value and how it has moved.</p>
+      </div>
+      <div class="holdings-summary">
+        <div class="hs-card"><div class="lbl">Total value today</div><div class="val" id="holdTotal">—</div></div>
+        <div class="hs-card"><div class="lbl">Since your last visit</div><div class="val small" id="holdVisit">—</div></div>
+        <div class="hs-card"><div class="lbl">Vs 30 days ago</div><div class="val small" id="holdMonth">—</div></div>
+      </div>
+      <form class="holding-form" id="holdingForm">
+        <div><label for="hMetal">Metal</label><select id="hMetal"><option value="gold">Gold</option><option value="silver">Silver</option></select></div>
+        <div><label for="hWeight">Weight</label><input id="hWeight" type="number" min="0" step="any" placeholder="50" required></div>
+        <div><label for="hUnit">Unit</label><select id="hUnit"></select></div>
+        <div><label for="hPurity">Purity</label><select id="hPurity"></select></div>
+        <div><button class="btn btn-primary" type="submit" style="width:100%">Add item</button></div>
+      </form>
+      <input id="hLabelInput" type="text" placeholder="Optional label (e.g. Mum's chain)" style="width:100%;margin-bottom:14px">
+      <ul class="holdings-list" id="holdingsList"></ul>
+      <p class="empty-note" id="holdingsEmpty">No items yet. Add your first piece above to start tracking.</p>
+    </section>
+
+    <section class="section" aria-labelledby="historyTitle">
+      <div class="section-heading">
+        <div><p class="section-label">Price history</p><h2 id="historyTitle">How it has moved over time</h2></div>
+        <p class="section-intro">Switch timeframes and metals, hover to read any day, and use the buy simulator to see how an amount bought on a past date would look today.</p>
+      </div>
+      <div class="tf-row">
+        <div class="tf-group" id="tfGroup" role="group" aria-label="Timeframe">
+          <button class="tf-btn active" data-tf="1M" type="button">1M</button>
+          <button class="tf-btn" data-tf="3M" type="button">3M</button>
+          <button class="tf-btn" data-tf="1Y" type="button">1Y</button>
+          <button class="tf-btn" data-tf="5Y" type="button">5Y</button>
+          <button class="tf-btn" data-tf="Max" type="button">Max</button>
+        </div>
+        <div class="metal-toggle" id="histMetalToggle" role="group" aria-label="Metal">
+          <button class="active" data-hm="gold" type="button">Gold</button>
+          <button data-hm="silver" type="button">Silver</button>
+        </div>
+      </div>
+      <div class="history-chart" data-chart="history">
+        <svg viewBox="0 0 960 280" preserveAspectRatio="none" role="img" aria-label="Price history chart"></svg>
+        <div class="chart-tooltip" data-tooltip aria-hidden="true"></div>
+      </div>
+      <p class="control-note" id="histCaption" style="margin-top:10px">—</p>
+      <div class="buy-sim">
+        <div class="bs-controls">
+          <div><label for="bsAmount">Amount</label><input id="bsAmount" type="number" min="0" step="any" value="10" style="width:110px"></div>
+          <div><label for="bsUnit">Unit</label><select id="bsUnit"></select></div>
+          <div style="flex:1;min-width:200px"><label for="bsDate" id="bsDateLabel">Purchase date</label><input id="bsDate" type="range" min="0" max="0" value="0"></div>
+        </div>
+        <p class="bs-out" id="bsOut">Pick a timeframe and slide to a past date to simulate a purchase.</p>
+      </div>
+      <p class="disclaimer">History uses daily USD closes (weekly or monthly for long ranges) from Frankfurter, converted with the latest FX rate. Event markers are approximate context, not precise timestamps.</p>
     </section>
 
     <section class="section" aria-labelledby="compareTitle">
@@ -345,6 +538,51 @@
       <p class="disclaimer">This information is provided for education and general market context. It is not financial advice or a recommendation to trade or purchase precious metals.</p>
     </section>
 
+    <section class="section" aria-labelledby="alertsTitle">
+      <div class="section-heading">
+        <div><p class="section-label">Price alerts</p><h2 id="alertsTitle">Get pinged at the right moment</h2></div>
+        <p class="section-intro">Set a level, a gold/silver ratio band, or a big-move threshold. Alerts run in this browser while the page is open and can show a desktop notification.</p>
+      </div>
+      <div class="alert-grid">
+        <div class="alert-card">
+          <h3>Price level</h3>
+          <div class="alert-fields">
+            <div><label for="alMetal">Metal</label><select id="alMetal"><option value="gold">Gold</option><option value="silver">Silver</option></select></div>
+            <div><label for="alDir">Trigger</label><select id="alDir"><option value="above">Rises above</option><option value="below">Falls below</option></select></div>
+            <div><label for="alLevel">Level (per oz, selected currency)</label><input id="alLevel" type="number" min="0" step="any" style="width:150px"></div>
+            <div><button class="btn" id="alSave" type="button">Save alert</button></div>
+          </div>
+          <p class="alert-status" id="alStatus">No price alert set.</p>
+        </div>
+        <div class="alert-card">
+          <h3>Ratio &amp; big moves</h3>
+          <div class="alert-fields">
+            <div><label for="alRatioLow">Ratio below</label><input id="alRatioLow" type="number" min="0" step="any" style="width:110px" placeholder="70"></div>
+            <div><label for="alRatioHigh">Ratio above</label><input id="alRatioHigh" type="number" min="0" step="any" style="width:110px" placeholder="95"></div>
+            <div><label for="alMove">Daily move ≥ (%)</label><input id="alMove" type="number" min="0" step="any" style="width:110px" placeholder="2"></div>
+            <div><button class="btn" id="alSave2" type="button">Save</button></div>
+          </div>
+          <p class="alert-status" id="alStatus2">No ratio or move alert set.</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button class="btn btn-sm" id="alEnable" type="button">Enable browser notifications</button>
+        <button class="btn btn-sm" id="alClear" type="button">Clear all alerts</button>
+      </div>
+      <div class="alert-log" id="alertLog" aria-live="polite"></div>
+      <p class="disclaimer">Alerts are best-effort and run only while this page is open in your browser — they are not a substitute for a brokerage or exchange alert service.</p>
+    </section>
+
+    <section class="section" aria-labelledby="sellersTitle">
+      <div class="section-heading">
+        <div><p class="section-label">Where to buy</p><h2 id="sellersTitle">Local market &amp; popular sellers</h2></div>
+        <p class="section-intro" id="sellerIntro">Well-known sellers for your region, plus the local pricing realities — taxes, duties and the forms people actually buy.</p>
+      </div>
+      <div class="region-panel" id="regionPanel"></div>
+      <div class="seller-grid" id="sellerGrid"></div>
+      <p class="disclaimer">These sellers are listed for general reference only — not endorsements, and not live quotes. Estimated bands apply a typical premium to the current spot price and will differ from each seller’s actual price, which reflects live premiums, availability, taxes, import duties and (for jewellery) making charges. Always confirm the current price on the seller’s own website.</p>
+    </section>
+
     <section class="section" aria-labelledby="factorsTitle">
       <div class="section-heading">
         <div><p class="section-label">General market context</p><h2 id="factorsTitle">Market factors worth watching</h2></div>
@@ -360,7 +598,8 @@
         <li><strong>Industrial demand for silver</strong><span>Solar, electronics, and manufacturing demand give silver an industrial dimension.</span></li>
         <li><strong>Mining supply and costs</strong><span>Production, energy, labour, and refining costs influence longer-run supply conditions.</span></li>
       </ul>
-      <p class="context-note">These factors are educational context, not a claim about the cause of today’s movement. No live causal analysis is being presented.</p>
+      <p class="context-note">These factors are educational context, not a claim about the cause of today’s movement.</p>
+      <a class="ask" id="askFactors" href="summaverick.html" target="_blank" rel="noopener">Ask Summaverick to explain today’s drivers<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </section>
 
     <section class="section" aria-labelledby="understandTitle">
@@ -369,20 +608,12 @@
         <p class="section-intro">A spot quote is a market reference. The amount paid at a jeweller or bullion dealer will usually differ.</p>
       </div>
       <div class="explain-grid">
-        <div><h3>What is a troy ounce?</h3><p>Precious metals are quoted in troy ounces. One troy ounce is 31.1035 grams, slightly heavier than the everyday ounce used for food and household goods.</p></div>
-        <div><h3>24K and 22K gold</h3><p>24K is the near-pure gold reference. A 22K metal-value estimate uses 22/24 of the 24K price. It does not include making charges, tax, or a dealer margin.</p></div>
-        <div><h3>Spot price and retail price</h3><p>Spot is the wholesale market reference for immediate settlement. Coins, bars, and jewellery may trade above it because they are finished retail products.</p></div>
+        <div><h3>Troy ounce, gram, tola, baht</h3><p>Metals trade in troy ounces (31.1035 g). A tola is 11.6638 g, a sovereign/pavan is taken as 8 g, and a Thai baht of gold is 15.244 g at 96.5% purity.</p></div>
+        <div><h3>24K and 22K gold</h3><p>24K is near-pure. 22K (916) is about 91.7% gold; the metal value scales with purity, before making charges, tax or dealer margin.</p></div>
+        <div><h3>Spot price and retail price</h3><p>Spot is the wholesale market reference. Coins, bars and jewellery trade above it because they are finished retail products.</p></div>
       </div>
       <p class="disclaimer">These are spot-market reference prices. Retail jewellery and bullion prices may include taxes, dealer premiums, fabrication costs, making charges and local market spreads.</p>
-    </section>
-
-    <section class="section" aria-labelledby="sellersTitle">
-      <div class="section-heading">
-        <div><p class="section-label">Where to buy</p><h2 id="sellersTitle">Popular sellers and typical pricing</h2></div>
-        <p class="section-intro" id="sellerIntro">Well-known and popular sellers for your region, with a rough estimated price band and a link to each seller’s live price. Government mints and bullion dealers usually carry lower premiums than jewellery, which adds making charges.</p>
-      </div>
-      <div class="seller-grid" id="sellerGrid"></div>
-      <p class="disclaimer">These sellers are listed for general reference only — not endorsements, and not live quotes. Estimated bands apply a typical premium to the current spot price and will differ from each seller’s actual price, which reflects live premiums, availability, taxes, import duties and (for jewellery) making charges. Always confirm the current price on the seller’s own website before buying.</p>
+      <a class="ask" id="askUnderstand" href="summaverick.html" target="_blank" rel="noopener">Ask Summaverick about gold purity &amp; buying tips<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </section>
 
     <section class="section" aria-labelledby="methodTitle">
@@ -393,12 +624,15 @@
       <details>
         <summary>How prices and comparisons are calculated</summary>
         <div class="method-copy">
-          Current USD spot references come from <a href="https://gold-api.com/" target="_blank" rel="noopener noreferrer">Gold API</a>. Currency conversion and daily historical references come from <a href="https://frankfurter.dev/" target="_blank" rel="noopener noreferrer">Frankfurter</a>. Local prices multiply the USD quote by the latest available FX rate. Grams use 31.1034768 grams per troy ounce; 22K uses 22/24 of the 24K metal value. Charts use daily USD closes for the past ~30 days with a soft range band, smooth curve, and interactive scrubbing. “Strengthening” means the seven-day change is above 0.5%; “Weakening” means below −0.5%; values between those thresholds are “Stable.” Seller estimates in “Where to buy” apply a typical premium band to the current spot price for a benchmark product; they are rough, region-based approximations and are never fetched from each seller — always confirm the live price on the seller’s own website.
+          Current USD spot references come from <a href="https://gold-api.com/" target="_blank" rel="noopener noreferrer">Gold API</a>. Currency conversion and daily historical references come from <a href="https://frankfurter.dev/" target="_blank" rel="noopener noreferrer">Frankfurter</a>. Local prices multiply the USD quote by the latest available FX rate. Grams use 31.1034768 g per troy ounce; tola = 11.6638 g; sovereign = 8 g; baht = 15.244 g; 22K uses 22/24 of the metal value. History uses daily closes (weekly/monthly for long ranges). Calculator, holdings and alert data stay in your browser’s local storage and are never sent to a server. Seller estimates apply a typical premium band to spot and are never fetched per seller — confirm live prices on each seller’s site.
         </div>
       </details>
       <div class="share-row">
-        <p>Copy a clean text summary without promotional language.</p>
-        <button class="share-button" id="shareButton" type="button">Copy current rates</button>
+        <p>Share or copy a clean summary without promotional language.</p>
+        <div class="share-actions">
+          <button class="btn btn-sm" id="shareButton2" type="button">Share snapshot</button>
+          <button class="btn btn-sm" id="copyButton" type="button">Copy current rates</button>
+        </div>
       </div>
     </section>
   </main>
@@ -410,6 +644,8 @@
     </div>
   </footer>
 
+  <canvas id="shareCanvas" width="1080" height="1080" style="display:none"></canvas>
+
   <script src="assets/js/shared/nav-theme.js"></script>
   <script>
   (function(){
@@ -419,18 +655,60 @@
     var OUNCE_GRAMS=31.1034768;
     var CACHE_KEY='metals_last_success_v1';
     var PREF_KEY='metals_currency_v1';
+    var HOLD_KEY='metals_holdings_v1';
+    var HOLD_SNAP_KEY='metals_holdings_snap_v1';
+    var ALERT_KEY='metals_alerts_v1';
+
+    var UNIT_GRAMS={gram:1,tengram:10,tola:11.6638038,sovereign:8,baht:15.244,ounce:OUNCE_GRAMS,kilogram:1000};
+    var UNIT_LABELS={gram:'Gram',tengram:'10 grams',tola:'Tola (11.66 g)',sovereign:'Sovereign (8 g)',baht:'Baht (15.24 g)',ounce:'Troy ounce',kilogram:'Kilogram'};
+    var PURITY=[{v:'0.999',k:'24K (999)'},{v:'0.9167',k:'22K (916)'},{v:'0.875',k:'21K (875)'},{v:'0.75',k:'18K (750)'},{v:'0.585',k:'14K (585)'},{v:'0.965',k:'22K Thai (965)'}];
+
     var currencies=['USD','EUR','GBP','INR','AED','AUD','CAD','CHF','CNY','HKD','JPY','KRW','SGD','ZAR','BRL','MXN','NZD','SEK','NOK','DKK','PLN','TRY','THB','MYR','IDR','PHP','ILS','CZK','HUF','RON','ISK'];
     var currencyNames={USD:'US dollar',EUR:'Euro',GBP:'British pound',INR:'Indian rupee',AED:'UAE dirham',AUD:'Australian dollar',CAD:'Canadian dollar',CHF:'Swiss franc',CNY:'Chinese yuan',HKD:'Hong Kong dollar',JPY:'Japanese yen',KRW:'South Korean won',SGD:'Singapore dollar',ZAR:'South African rand',BRL:'Brazilian real',MXN:'Mexican peso',NZD:'New Zealand dollar',SEK:'Swedish krona',NOK:'Norwegian krone',DKK:'Danish krone',PLN:'Polish złoty',TRY:'Turkish lira',THB:'Thai baht',MYR:'Malaysian ringgit',IDR:'Indonesian rupiah',PHP:'Philippine peso',ILS:'Israeli new shekel',CZK:'Czech koruna',HUF:'Hungarian forint',RON:'Romanian leu',ISK:'Icelandic króna'};
     var regionCurrency={IN:'INR',GB:'GBP',AE:'AED',AU:'AUD',CA:'CAD',CH:'CHF',CN:'CNY',HK:'HKD',JP:'JPY',KR:'KRW',SG:'SGD',ZA:'ZAR',BR:'BRL',MX:'MXN',NZ:'NZD',SE:'SEK',NO:'NOK',DK:'DKK',PL:'PLN',TR:'TRY',TH:'THB',MY:'MYR',ID:'IDR',PH:'PHP',IL:'ILS',CZ:'CZK',HU:'HUF',RO:'RON',IS:'ISK',DE:'EUR',FR:'EUR',IT:'EUR',ES:'EUR',NL:'EUR',IE:'EUR',AT:'EUR',BE:'EUR',PT:'EUR',FI:'EUR',GR:'EUR'};
-    var currentData=null;
-    var previousData=readJson(CACHE_KEY);
-    var previousRendered=null;
-    var requestVersion=0;
-    var chartState={};
 
-    /* Region-aware seller directory. Prices are never fetched per seller — each
-     * card shows a rough spot-derived estimate (typical premium band) and links
-     * to the seller's own live pricing. Bands are approximate and educational. */
+    var EVENTS=[
+      {date:'2020-03-16',label:'COVID crash'},
+      {date:'2020-08-06',label:'2020 record'},
+      {date:'2022-03-16',label:'Fed hikes begin'},
+      {date:'2023-10-09',label:'Mideast tensions'},
+      {date:'2024-03-01',label:'New highs'},
+      {date:'2025-04-07',label:'Tariff volatility'}
+    ];
+
+    var MARKET_NOTES={
+      INR:[
+        {lbl:'Taxes & duty',text:'Retail gold typically carries ~6% import duty plus 3% GST on value, before making charges — so shop prices sit meaningfully above spot.'},
+        {lbl:'Popular forms',text:'22K jewellery, MMTC-PAMP 24K coins/bars, bank coins, and digital gold (SafeGold/Augmont) for small amounts.'},
+        {lbl:'Watch for',text:'Making charges (8–25%) and hallmarking. BIS-hallmarked 916 is standard for 22K jewellery.'}
+      ],
+      SGD:[
+        {lbl:'Taxes',text:'Investment-grade gold and silver (99.5%+/99.9%+) are GST-exempt in Singapore; jewellery is not.'},
+        {lbl:'Popular forms',text:'LBMA bars/coins from BullionStar & Silver Bullion, bank bars (UOB), and 916 jewellery in Little India.'},
+        {lbl:'Watch for',text:'Making charges on jewellery vs near-spot investment bars; compare per-gram before buying.'}
+      ],
+      AED:[
+        {lbl:'Taxes',text:'Investment gold (99%+) is generally VAT-exempt in the UAE; jewellery making charges may attract 5% VAT.'},
+        {lbl:'Popular forms',text:'24K bars (Emirates Gold), and 22K/21K jewellery across the Dubai Gold Souk and major chains.'},
+        {lbl:'Watch for',text:'Making charges are often negotiable in the souk; confirm the daily rate board first.'}
+      ],
+      GBP:[
+        {lbl:'Taxes',text:'Investment gold is VAT-exempt in the UK; silver carries 20% VAT. UK gold coins (Britannia/Sovereign) are CGT-free for residents.'},
+        {lbl:'Popular forms',text:'Royal Mint coins and bars, and low-premium coins from established dealers.'},
+        {lbl:'Watch for',text:'Choose CGT-free coins if capital gains matter; compare premiums per coin.'}
+      ],
+      USD:[
+        {lbl:'Taxes',text:'Sales tax on bullion varies by state; many states exempt investment-grade metal above a threshold.'},
+        {lbl:'Popular forms',text:'1 oz Eagles/Maples, 1 oz bars, and fractional coins; occasional low-premium bars at warehouse clubs.'},
+        {lbl:'Watch for',text:'Premiums over spot differ widely by product and dealer — compare before buying.'}
+      ],
+      EUR:[
+        {lbl:'Taxes',text:'Investment gold is VAT-exempt across the EU; silver generally carries VAT.'},
+        {lbl:'Popular forms',text:'Low-premium coins and bars from established EU dealers; storage options common.'},
+        {lbl:'Watch for',text:'Compare per-gram premiums and shipping; silver VAT makes coins pricier than gold per value.'}
+      ]
+    };
+
     var SELLERS={
       USD:{region:'the United States',list:[
         {name:'SD Bullion',type:'Bullion dealer',note:'Known for consistently low premiums on coins and bars.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://sdbullion.com/gold'},
@@ -494,7 +772,22 @@
       ]}
     };
 
-    if(window.SBShared) window.SBShared.initNavMenu();
+    var currentData=null;
+    var previousData=readJson(CACHE_KEY);
+    var previousRendered=null;
+    var requestVersion=0;
+    var chartState={};
+    var historyCache={};
+    var histTf='1M';
+    var histMetal='gold';
+    var alertPrev=null;
+
+    /* ---- theme + nav ---- */
+    if(window.SBShared){window.SBShared.initNavMenu();window.SBShared.initThemeToggle({toggleSelector:'#themeToggle'});}
+    (function(){
+      var t=document.getElementById('themeToggle');
+      if(t) t.addEventListener('click',function(){document.querySelector('meta[name=theme-color]').setAttribute('content',document.documentElement.getAttribute('data-theme')==='dark'?'#0d0d10':'#f5f5f7');});
+    })();
     var toggle=document.querySelector('.menu-toggle');
     if(toggle){
       toggle.addEventListener('click',function(){
@@ -506,34 +799,55 @@
         if(event.key==='Escape'&&toggle.classList.contains('active')){
           toggle.classList.remove('active');
           document.getElementById('mobileMenu').classList.remove('active');
-          toggle.setAttribute('aria-expanded','false');
-          toggle.setAttribute('aria-label','Open navigation');
-          toggle.focus();
+          toggle.setAttribute('aria-expanded','false');toggle.focus();
         }
       });
     }
 
+    /* ---- currency + unit + purity selects ---- */
     var currencySelect=document.getElementById('currency');
     currencies.forEach(function(code){
-      var option=document.createElement('option');
-      option.value=code;
-      option.textContent=code+' — '+(currencyNames[code]||code);
-      currencySelect.appendChild(option);
+      var o=document.createElement('option');o.value=code;o.textContent=code+' — '+(currencyNames[code]||code);currencySelect.appendChild(o);
     });
     currencySelect.value=getInitialCurrency();
     currencySelect.addEventListener('change',function(){
       localStorage.setItem(PREF_KEY,currencySelect.value);
       loadPrices(false);
     });
-    document.getElementById('refreshButton').addEventListener('click',function(){loadPrices(false)});
-    document.getElementById('shareButton').addEventListener('click',copyRates);
+    fillUnitSelect(document.getElementById('vcUnit'),'gram');
+    fillUnitSelect(document.getElementById('pcUnit'),'gram');
+    fillUnitSelect(document.getElementById('hUnit'),'gram');
+    fillUnitSelect(document.getElementById('bsUnit'),'gram');
+    fillPuritySelect(document.getElementById('vcPurity'),'0.9167');
+    fillPuritySelect(document.getElementById('pcPurity'),'0.9167');
+    fillPuritySelect(document.getElementById('hPurity'),'0.9167');
 
+    document.getElementById('refreshButton').addEventListener('click',function(){loadPrices(false)});
+    document.getElementById('shareButton').addEventListener('click',shareSnapshot);
+    document.getElementById('shareButton2').addEventListener('click',shareSnapshot);
+    document.getElementById('copyButton').addEventListener('click',copyRates);
+    ['vcMetal','vcWeight','vcUnit','vcPurity'].forEach(function(id){document.getElementById(id).addEventListener('input',calcValue)});
+    ['pcMetal','pcWeight','pcUnit','pcPurity','pcQuote'].forEach(function(id){document.getElementById(id).addEventListener('input',calcPremium)});
+
+    document.getElementById('holdingForm').addEventListener('submit',function(e){e.preventDefault();addHolding()});
+    ['bsAmount','bsUnit','bsDate'].forEach(function(id){document.getElementById(id).addEventListener('input',renderBuySim)});
+    document.querySelectorAll('#tfGroup .tf-btn').forEach(function(b){b.addEventListener('click',function(){setTimeframe(b.getAttribute('data-tf'))})});
+    document.querySelectorAll('#histMetalToggle button').forEach(function(b){b.addEventListener('click',function(){setHistMetal(b.getAttribute('data-hm'))})});
+    document.getElementById('alSave').addEventListener('click',saveAlert);
+    document.getElementById('alSave2').addEventListener('click',saveAlert);
+    document.getElementById('alEnable').addEventListener('click',enableNotifications);
+    document.getElementById('alClear').addEventListener('click',clearAlerts);
+
+    loadAlertUI();
+    renderHoldings();
     if(isValidPayload(previousData)&&previousData.currency===currencySelect.value){
       try{render(previousData,{cached:true})}catch(e){previousData=null}
     }
     loadPrices(true);
     window.setInterval(function(){loadPrices(false)},120000);
+    window.addEventListener('beforeunload',saveHoldingSnapshot);
 
+    /* ================= data ================= */
     function getInitialCurrency(){
       var saved=localStorage.getItem(PREF_KEY);
       if(currencies.indexOf(saved)!==-1) return saved;
@@ -541,477 +855,476 @@
       var region=(locale.match(/[-_]([A-Z]{2})\b/i)||[])[1];
       return regionCurrency[String(region||'').toUpperCase()]||'USD';
     }
-
-    function readJson(key){
-      try{return JSON.parse(localStorage.getItem(key)||'null')}catch(e){return null}
-    }
-
-    function isValidPayload(data){
-      return !!(data&&data.metals&&data.metals.gold&&data.metals.silver
-        &&Number.isFinite(Number(data.metals.gold.usdPerOunce))&&Number(data.metals.gold.usdPerOunce)>0
-        &&Number.isFinite(Number(data.metals.silver.usdPerOunce))&&Number(data.metals.silver.usdPerOunce)>0
-        &&typeof data.currency==='string');
-    }
-
-    function setStatus(kind,text){
-      var dot=document.getElementById('statusDot');
-      dot.className='status-dot '+(kind||'');
-      document.getElementById('statusText').textContent=text;
-    }
-
-    function setNotice(message,isError){
-      var notice=document.getElementById('notice');
-      notice.textContent=message||'';
-      notice.className='notice'+(message?' visible':'')+(isError?' error':'');
-    }
+    function readJson(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch(e){return null}}
+    function isValidPayload(d){return !!(d&&d.metals&&d.metals.gold&&d.metals.silver&&Number.isFinite(Number(d.metals.gold.usdPerOunce))&&Number(d.metals.gold.usdPerOunce)>0&&Number.isFinite(Number(d.metals.silver.usdPerOunce))&&Number(d.metals.silver.usdPerOunce)>0&&typeof d.currency==='string')}
+    function setStatus(kind,text){var dot=document.getElementById('statusDot');dot.className='status-dot '+(kind||'');document.getElementById('statusText').textContent=text}
+    function setNotice(msg,err){var n=document.getElementById('notice');n.textContent=msg||'';n.className='notice'+(msg?' visible':'')+(err?' error':'')}
 
     async function loadPrices(initial){
       var requestId=++requestVersion;
       var requestedCurrency=currencySelect.value;
       var button=document.getElementById('refreshButton');
       var report=document.getElementById('marketReport');
-      button.disabled=true;
-      button.textContent='Refreshing…';
-      report.setAttribute('aria-busy','true');
-      setStatus('','Fetching the latest market price');
-      setNotice('',false);
+      button.disabled=true;button.textContent='Refreshing…';report.setAttribute('aria-busy','true');
+      setStatus('','Fetching the latest market price');setNotice('',false);
       try{
         var data=await fetchWorker(requestedCurrency);
         if(requestId!==requestVersion)return;
-        previousRendered=currentData;
-        currentData=data;
-        render(data,{initial:initial});
-        localStorage.setItem(CACHE_KEY,JSON.stringify(data));
-        previousData=data;
+        previousRendered=currentData;currentData=data;render(data,{initial:initial});
+        localStorage.setItem(CACHE_KEY,JSON.stringify(data));previousData=data;
       }catch(error){
         var fallback=await fetchDirect(requestedCurrency).catch(function(){return null});
         if(requestId!==requestVersion)return;
-        if(fallback){
-          previousRendered=currentData;
-          currentData=fallback;
-          render(fallback,{direct:true,initial:initial});
-          localStorage.setItem(CACHE_KEY,JSON.stringify(fallback));
-          previousData=fallback;
-        }else{
-          var cached=readJson(CACHE_KEY);
-          if(isValidPayload(cached)&&cached.currency===requestedCurrency){
-            currentData=cached;
-            render(cached,{cached:true,error:true});
-          }else{
-            setStatus('','Market data unavailable');
-            setNotice('Live data is temporarily unavailable, and there is no previous successful update stored for this currency.',true);
-          }
-        }
-      }finally{
-        if(requestId===requestVersion){
-          button.disabled=false;
-          button.textContent='Refresh';
-          report.setAttribute('aria-busy','false');
-        }
-      }
+        if(fallback){previousRendered=currentData;currentData=fallback;render(fallback,{direct:true,initial:initial});localStorage.setItem(CACHE_KEY,JSON.stringify(fallback));previousData=fallback;}
+        else{var cached=readJson(CACHE_KEY);if(isValidPayload(cached)&&cached.currency===requestedCurrency){currentData=cached;render(cached,{cached:true,error:true});}else{setStatus('','Market data unavailable');setNotice('Live data is temporarily unavailable, and there is no previous successful update stored for this currency.',true);}}
+      }finally{if(requestId===requestVersion){button.disabled=false;button.textContent='Refresh';report.setAttribute('aria-busy','false');}}
     }
-
     async function fetchWithTimeout(url,timeout){
-      var controller=new AbortController();
-      var timer=setTimeout(function(){controller.abort()},timeout||9000);
-      try{
-        var response=await fetch(url,{signal:controller.signal,headers:{Accept:'application/json'}});
-        if(!response.ok) throw new Error('Request failed');
-        return await response.json();
-      }finally{clearTimeout(timer)}
+      var controller=new AbortController();var timer=setTimeout(function(){controller.abort()},timeout||9000);
+      try{var r=await fetch(url,{signal:controller.signal,headers:{Accept:'application/json'}});if(!r.ok)throw new Error('Request failed');return await r.json();}finally{clearTimeout(timer)}
     }
-
-    async function fetchWorker(currency){
-      var data=await fetchWithTimeout(ENDPOINT+'?currency='+encodeURIComponent(currency));
-      if(!data||!data.success) throw new Error(data&&data.error||'Market data unavailable');
-      return data;
-    }
-
+    async function fetchWorker(currency){var d=await fetchWithTimeout(ENDPOINT+'?currency='+encodeURIComponent(currency));if(!d||!d.success)throw new Error(d&&d.error||'Market data unavailable');return d}
     async function fetchDirect(currency){
-      var now=new Date();
-      var start=new Date(now.getTime()-35*86400000).toISOString().slice(0,10);
-      var end=now.toISOString().slice(0,10);
-      var query='from='+start+'&to='+end+'&quotes=USD';
-      var requests=[
-        fetchWithTimeout('https://api.gold-api.com/price/XAU'),
-        fetchWithTimeout('https://api.gold-api.com/price/XAG'),
-        fetchWithTimeout('https://api.frankfurter.dev/v2/rates?base=XAU&'+query),
-        fetchWithTimeout('https://api.frankfurter.dev/v2/rates?base=XAG&'+query)
-      ];
-      if(currency!=='USD') requests.push(fetchWithTimeout('https://api.frankfurter.dev/v2/rate/USD/'+currency));
-      var results=await Promise.allSettled(requests);
-      var gold=fulfilled(results[0]),silver=fulfilled(results[1]);
-      if(!gold||!silver||!Number.isFinite(Number(gold.price))||Number(gold.price)<=0
-        ||!Number.isFinite(Number(silver.price))||Number(silver.price)<=0) throw new Error('Live prices unavailable');
-      var fxPayload=currency==='USD'?null:fulfilled(results[4]);
-      var fx=currency==='USD'?1:Number(fxPayload&&fxPayload.rate);
-      var times=[gold.updatedAt,silver.updatedAt].map(function(value){return new Date(value).getTime()}).filter(Number.isFinite);
-      var sourceTime=times.length?new Date(Math.min.apply(null,times)).toISOString():null;
-      var hasQuoteTimestamps=times.length===2;
-      return {
-        success:true,currency:currency,fxRate:Number.isFinite(fx)&&fx>0?fx:null,conversionAvailable:Number.isFinite(fx)&&fx>0,
-        fxDate:currency==='USD'?end:String(fxPayload&&fxPayload.date||'').slice(0,10)||null,
-        generatedAt:new Date().toISOString(),sourceUpdatedAt:sourceTime,quoteTimestampAvailable:hasQuoteTimestamps,
-        freshness:hasQuoteTimestamps&&(Date.now()-new Date(sourceTime).getTime())<300000?'live':'delayed',
-        metals:{
-          gold:{symbol:'XAU',usdPerOunce:Number(gold.price),history:normalizeHistory(fulfilled(results[2]))},
-          silver:{symbol:'XAG',usdPerOunce:Number(silver.price),history:normalizeHistory(fulfilled(results[3]))}
-        },
-        sources:{live:{name:'Gold API',url:'https://gold-api.com/'},historyAndFx:{name:'Frankfurter',url:'https://frankfurter.dev/'}}
-      };
+      var now=new Date();var start=new Date(now.getTime()-35*86400000).toISOString().slice(0,10);var end=now.toISOString().slice(0,10);var query='from='+start+'&to='+end+'&quotes=USD';
+      var requests=[fetchWithTimeout('https://api.gold-api.com/price/XAU'),fetchWithTimeout('https://api.gold-api.com/price/XAG'),fetchWithTimeout('https://api.frankfurter.dev/v2/rates?base=XAU&'+query),fetchWithTimeout('https://api.frankfurter.dev/v2/rates?base=XAG&'+query)];
+      if(currency!=='USD')requests.push(fetchWithTimeout('https://api.frankfurter.dev/v2/rate/USD/'+currency));
+      var results=await Promise.allSettled(requests);var gold=fulfilled(results[0]),silver=fulfilled(results[1]);
+      if(!gold||!silver||!Number.isFinite(Number(gold.price))||Number(gold.price)<=0||!Number.isFinite(Number(silver.price))||Number(silver.price)<=0)throw new Error('Live prices unavailable');
+      var fxPayload=currency==='USD'?null:fulfilled(results[4]);var fx=currency==='USD'?1:Number(fxPayload&&fxPayload.rate);
+      var times=[gold.updatedAt,silver.updatedAt].map(function(v){return new Date(v).getTime()}).filter(Number.isFinite);
+      var sourceTime=times.length?new Date(Math.min.apply(null,times)).toISOString():null;var hasTs=times.length===2;
+      return {success:true,currency:currency,fxRate:Number.isFinite(fx)&&fx>0?fx:null,conversionAvailable:Number.isFinite(fx)&&fx>0,fxDate:currency==='USD'?end:String(fxPayload&&fxPayload.date||'').slice(0,10)||null,generatedAt:new Date().toISOString(),sourceUpdatedAt:sourceTime,quoteTimestampAvailable:hasTs,freshness:hasTs&&(Date.now()-new Date(sourceTime).getTime())<300000?'live':'delayed',metals:{gold:{symbol:'XAU',usdPerOunce:Number(gold.price),history:normalizeHistory(fulfilled(results[2]))},silver:{symbol:'XAG',usdPerOunce:Number(silver.price),history:normalizeHistory(fulfilled(results[3]))}}};
     }
+    function fulfilled(r){return r&&r.status==='fulfilled'?r.value:null}
+    function normalizeHistory(rows){return Array.isArray(rows)?rows.map(function(r){return{date:String(r.date||'').slice(0,10),usdPerOunce:Number(r.rate)}}).filter(function(r){return r.date&&Number.isFinite(r.usdPerOunce)}):[]}
 
-    function fulfilled(result){return result&&result.status==='fulfilled'?result.value:null}
-    function normalizeHistory(rows){
-      return Array.isArray(rows)?rows.map(function(row){return{date:String(row.date||'').slice(0,10),usdPerOunce:Number(row.rate)}}).filter(function(row){return row.date&&Number.isFinite(row.usdPerOunce)}):[];
-    }
+    /* ================= render ================= */
+    function fxOf(d){return d.conversionAvailable&&Number.isFinite(d.fxRate)?d.fxRate:1}
+    function ccyOf(d){return d.conversionAvailable&&Number.isFinite(d.fxRate)?d.currency:'USD'}
+    function spotGramUSD(d,metal){return d.metals[metal].usdPerOunce/OUNCE_GRAMS}
 
     function render(data,options){
       options=options||{};
       var exact=data.sourceUpdatedAt?new Date(data.sourceUpdatedAt):new Date(data.generatedAt);
-      if(!Number.isFinite(exact.getTime())) exact=new Date();
+      if(!Number.isFinite(exact.getTime()))exact=new Date();
       var age=relativeTime(exact);
       var status=options.cached?'cached':(data.freshness||'delayed');
       var statusLabel=status==='live'?'Live market reference':status==='cached'?'Using the last available price':'Delayed market reference';
       setStatus(status,statusLabel+' · '+(data.sourceUpdatedAt?'Updated '+age:'Source time unavailable'));
-      if(options.error){
-        setNotice('Live data is temporarily unavailable. Showing the last successful update from '+formatDateTime(exact)+'.',true);
-      }else if(!data.conversionAvailable){
-        setNotice('The USD spot price is available, but local currency conversion could not be refreshed.',true);
-      }
+      if(options.error)setNotice('Live data is temporarily unavailable. Showing the last successful update from '+formatDateTime(exact)+'.',true);
+      else if(!data.conversionAvailable)setNotice('The USD spot price is available, but local currency conversion could not be refreshed.',true);
 
-      renderMetal('gold',data.metals.gold,data,exact,status);
-      renderMetal('silver',data.metals.silver,data,exact,status);
+      renderMetal('gold',data,exact,status);
+      renderMetal('silver',data,exact,status);
       renderChanges(data);
       renderContext('gold',data.metals.gold,data.sourceUpdatedAt);
       renderContext('silver',data.metals.silver,data.sourceUpdatedAt);
       renderRatio(data);
       renderSellers(data);
+      calcValue();calcPremium();
+      renderHoldings();
+      historyCache['1M']={gold:seriesFromHistory(data.metals.gold),silver:seriesFromHistory(data.metals.silver)};
+      if(!historyCache[histTf]||histTf==='1M')renderHistory();
+      else renderHistory();
+      updateAskLinks(data);
+      evaluateAlerts(data);
     }
 
-    function productDetails(product,data){
-      var g=data.metals.gold.usdPerOunce,s=data.metals.silver.usdPerOunce;
-      var gram=g/OUNCE_GRAMS,sgram=s/OUNCE_GRAMS;
-      switch(product){
-        case 'goldBar1oz':return{usd:g,label:'1 oz gold bar',digits:0};
-        case 'gold10g24k':return{usd:gram*10,label:'10 g · 24K gold',digits:0};
-        case 'gold10g22k':return{usd:gram*10*(22/24),label:'10 g · 22K gold',digits:0};
-        case 'gold1g24k':return{usd:gram,label:'1 g · 24K gold',digits:2};
-        case 'silver1oz':return{usd:s,label:'1 oz silver',digits:2};
-        case 'silver1kg':return{usd:sgram*1000,label:'1 kg silver',digits:0};
-        default:return{usd:g,label:'1 oz gold coin',digits:0};
-      }
-    }
-
-    function renderSellers(data){
-      var grid=document.getElementById('sellerGrid');
-      if(!grid)return;
-      var config=SELLERS[data.currency]||SELLERS.DEFAULT;
-      var intro=document.getElementById('sellerIntro');
-      if(intro){
-        intro.textContent='Well-known and popular sellers for '+config.region+', with a rough estimated price band and a link to each seller’s live price. Government mints and bullion dealers usually carry lower premiums than jewellery, which adds making charges.';
-      }
-      var fx=data.fxRate;
-      var estCurrency=Number.isFinite(fx)?data.currency:'USD';
-      var estFx=Number.isFinite(fx)?fx:1;
-      var minAvg=config.list.reduce(function(min,seller){
-        var avg=(seller.premium[0]+seller.premium[1])/2;
-        return avg<min?avg:min;
-      },Infinity);
-      grid.innerHTML=config.list.slice().sort(function(a,b){
-        return (a.premium[0]+a.premium[1])-(b.premium[0]+b.premium[1]);
-      }).map(function(seller){
-        var product=productDetails(seller.product,data);
-        var low=product.usd*(1+seller.premium[0])*estFx;
-        var high=product.usd*(1+seller.premium[1])*estFx;
-        var estimate=formatMoney(low,estCurrency,product.digits)+' – '+formatMoney(high,estCurrency,product.digits);
-        var premiumPct=Math.round(seller.premium[0]*100)+'–'+Math.round(seller.premium[1]*100)+'%';
-        var isBest=(seller.premium[0]+seller.premium[1])/2<=minAvg+0.0001;
-        return '<div class="seller-card">'
-          +'<div class="seller-top"><span class="seller-name">'+escapeHtml(seller.name)+'</span>'
-          +'<span class="seller-chip">'+escapeHtml(seller.type)+'</span></div>'
-          +(isBest?'<span class="seller-badge">Often lowest premium</span>':'')
-          +'<p class="seller-note">'+escapeHtml(seller.note)+'</p>'
-          +'<p class="seller-est">'+escapeHtml(estimate)
-          +'<small>Est. '+escapeHtml(product.label)+' · typical premium '+premiumPct+' over spot</small></p>'
-          +'<a class="seller-link" href="'+escapeHtml(seller.url)+'" target="_blank" rel="noopener noreferrer">Check live price'
-          +'<svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></a>'
-          +'</div>';
-      }).join('');
-    }
-
-    function renderMetal(key,metal,data,exact,effectiveFreshness){
+    function renderMetal(key,data,exact,fresh){
       var root=document.querySelector('[data-metal="'+key+'"]');
-      var fx=data.fxRate;
-      var local=Number.isFinite(fx)?metal.usdPerOunce*fx:null;
-      var gram=local/OUNCE_GRAMS;
-      var prior=pointNear(metal.history,1,data.sourceUpdatedAt);
-      var change=prior?metal.usdPerOunce-prior.usdPerOunce:0;
-      var pct=prior?change/prior.usdPerOunce*100:0;
+      var metal=data.metals[key];var fx=data.fxRate;var local=Number.isFinite(fx)?metal.usdPerOunce*fx:null;var gram=local/OUNCE_GRAMS;
+      var prior=pointNear(metal.history,1,data.sourceUpdatedAt);var change=prior?metal.usdPerOunce-prior.usdPerOunce:0;var pct=prior?change/prior.usdPerOunce*100:0;
       setHtml(root,'usd',escapeHtml(formatMoney(metal.usdPerOunce,'USD',2))+'<span class="per-unit">/ oz</span>');
-      setText(root,'localOz',local===null?'Unavailable':formatMoney(local,data.currency,key==='silver'?2:2));
+      setText(root,'localOz',local===null?'Unavailable':formatMoney(local,data.currency,2));
       setText(root,'localGram',local===null?'Unavailable':formatMoney(gram,data.currency,key==='silver'?3:2));
       if(key==='gold'){
-        setText(root,'pureGram',local===null?'Unavailable':formatMoney(gram,data.currency,2));
-        setText(root,'karat22',local===null?'Unavailable':formatMoney(gram*(22/24),data.currency,2));
         setText(root,'tenGram',local===null?'Unavailable':formatMoney(gram*10,data.currency,0));
+        setText(root,'gram22',local===null?'Unavailable':formatMoney(gram*0.9167,data.currency,2));
+        setText(root,'tola',local===null?'Unavailable':formatMoney(gram*UNIT_GRAMS.tola,data.currency,0));
+        setText(root,'sovereign',local===null?'Unavailable':formatMoney(gram*8*0.9167,data.currency,0));
+        setText(root,'baht',local===null?'Unavailable':formatMoney(gram*UNIT_GRAMS.baht*0.965,data.currency,0));
+        setRegionField(root,'tola',['INR','AED','NPR','LKR','PKR'].indexOf(data.currency)!==-1);
+        setRegionField(root,'sovereign',['INR','AED','LKR'].indexOf(data.currency)!==-1);
+        setRegionField(root,'baht',['THB'].indexOf(data.currency)!==-1);
       }else{
+        setText(root,'hundredGram',local===null?'Unavailable':formatMoney(gram*100,data.currency,0));
         setText(root,'kilogram',local===null?'Unavailable':formatMoney(gram*1000,data.currency,0));
       }
       var move=root.querySelector('[data-field="move"]');
-      if(prior){
-        move.textContent=(change>0?'Up ':change<0?'Down ':'Unchanged ')+formatSignedMoney(Math.abs(change),'USD')+' ('+formatPct(pct)+') since the previous daily reference';
-        move.className='move '+directionClass(change);
-      }else{
-        move.textContent='Daily comparison is temporarily unavailable';
-        move.className='move neutral';
-      }
-      var updateText=data.sourceUpdatedAt
-        ?'Spot updated '+formatDateTime(exact)+' · '+relativeTime(exact)
-        :'Spot update time unavailable';
-      if(data.fxDate&&data.currency!=='USD') updateText+=' · FX reference '+data.fxDate;
-      setText(root,'updated',updateText+' · '+freshnessCopy(effectiveFreshness));
-      var gold10g=root.querySelector('[data-region-field="gold10g"]');
-      if(gold10g) gold10g.hidden=data.currency!=='INR';
+      if(prior){move.textContent=(change>0?'Up ':change<0?'Down ':'Unchanged ')+formatSignedMoney(Math.abs(change),'USD')+' ('+formatPct(pct)+') since the previous daily reference';move.className='move '+directionClass(change);}
+      else{move.textContent='Daily comparison is temporarily unavailable';move.className='move neutral';}
+      var updateText=data.sourceUpdatedAt?'Spot updated '+formatDateTime(exact)+' · '+relativeTime(exact):'Spot update time unavailable';
+      if(data.fxDate&&data.currency!=='USD')updateText+=' · FX reference '+data.fxDate;
+      setText(root,'updated',updateText+' · '+freshnessCopy(fresh));
       root.querySelectorAll('.placeholder').forEach(function(el){el.classList.remove('placeholder')});
-      var old=previousRendered&&previousRendered.metals&&previousRendered.metals[key];
-      var spot=root.querySelector('[data-field="usd"]');
+      var old=previousRendered&&previousRendered.metals&&previousRendered.metals[key];var spot=root.querySelector('[data-field="usd"]');
       spot.classList.remove('flash-up','flash-down');
-      if(old&&old.usdPerOunce!==metal.usdPerOunce){
-        void spot.offsetWidth;
-        spot.classList.add(metal.usdPerOunce>old.usdPerOunce?'flash-up':'flash-down');
-      }
-      renderChart(key,metal);
+      if(old&&old.usdPerOunce!==metal.usdPerOunce){void spot.offsetWidth;spot.classList.add(metal.usdPerOunce>old.usdPerOunce?'flash-up':'flash-down');}
+      drawMiniChart(key,metal);
+    }
+    function setRegionField(root,name,show){var el=root.querySelector('[data-region-field="'+name+'"]');if(el)el.hidden=!show}
+
+    function seriesFromHistory(metal){var arr=metal.history.slice(-31).map(function(p){return{date:p.date,value:p.usdPerOunce}});var today=new Date().toISOString().slice(0,10);if(arr.length&&arr[arr.length-1].date===today)arr[arr.length-1].value=metal.usdPerOunce;else arr.push({date:today,value:metal.usdPerOunce});return arr}
+
+    function drawMiniChart(key,metal){
+      var wrap=document.querySelector('[data-chart="'+key+'"]');if(!wrap)return;
+      var root=document.querySelector('[data-metal="'+key+'"]');
+      var series=seriesFromHistory(metal);
+      if(series.length<2){wrap.querySelector('svg').innerHTML='';setText(root,'chartCaption','Chart unavailable');return;}
+      var pct=(series[series.length-1].value-series[0].value)/series[0].value*100;
+      setText(root,'chartCaption',formatPct(pct)+' over window');
+      drawChart(wrap,series,{stroke:key==='gold'?'#b0892d':'#8e97a4',width:640,height:168,digits:key==='silver'?2:0,markers:[]});
     }
 
-    function renderChart(key,metal){
-      var wrap=document.querySelector('[data-chart="'+key+'"]');
-      if(!wrap) return;
-      var svg=wrap.querySelector('svg');
-      var tooltip=wrap.querySelector('[data-tooltip]');
-      var root=document.querySelector('[data-metal="'+key+'"]');
-      var series=metal.history.slice(-31).map(function(point){return{date:point.date,value:point.usdPerOunce}});
-      if(!series.length||!series.some(function(p){return p.date===new Date().toISOString().slice(0,10)})){
-        series=series.concat([{date:(new Date()).toISOString().slice(0,10),value:metal.usdPerOunce}]);
-      }else{
-        series[series.length-1].value=metal.usdPerOunce;
-      }
-      if(series.length<2){
-        svg.innerHTML='';
-        setText(root,'chartCaption','Chart unavailable');
-        return;
-      }
-
-      var width=640,height=168,padX=18,padY=18;
-      var values=series.map(function(p){return p.value});
-      var min=Math.min.apply(null,values),max=Math.max.apply(null,values);
-      if(max===min){max+=1;min-=1}
-      var span=max-min;
-      var points=series.map(function(point,index){
-        var x=padX+(index/(series.length-1))*(width-padX*2);
-        var y=height-padY-((point.value-min)/span)*(height-padY*2);
-        return{x:x,y:y,date:point.date,value:point.value};
-      });
+    /* generic chart with hover, guides, area, endpoint, optional event markers */
+    function drawChart(wrap,series,opts){
+      var svg=wrap.querySelector('svg');var tooltip=wrap.querySelector('[data-tooltip]');
+      var width=opts.width,height=opts.height,padX=22,padY=20;
+      var values=series.map(function(p){return p.value});var min=Math.min.apply(null,values),max=Math.max.apply(null,values);
+      if(max===min){max+=1;min-=1}var span=max-min;
+      function xAt(i){return padX+(i/(series.length-1))*(width-padX*2)}
+      function yAt(v){return height-padY-((v-min)/span)*(height-padY*2)}
+      var points=series.map(function(p,i){return{x:xAt(i),y:yAt(p.value),date:p.date,value:p.value}});
       var line=smoothPath(points);
       var area=line+' L '+points[points.length-1].x+' '+(height-padY)+' L '+points[0].x+' '+(height-padY)+' Z';
-      var stroke=key==='gold'?'#b0892d':'#7f8a98';
-      var fillId=key+'-fill';
-      var first=points[0].value,last=points[points.length-1].value;
-      var changePct=(last-first)/first*100;
-      setText(root,'chartCaption',formatPct(changePct)+' over window');
-
-      var mid=min+span/2;
-      function yFor(value){return height-padY-((value-min)/span)*(height-padY*2)}
-      var guides=[max,mid,min].map(function(value){
-        var y=yFor(value);
-        return '<line x1="'+padX+'" y1="'+y+'" x2="'+(width-padX)+'" y2="'+y+'" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>'+
-          '<text x="'+(width-padX)+'" y="'+(y-4)+'" text-anchor="end" fill="#86868b" font-size="10" font-family="-apple-system,BlinkMacSystemFont,sans-serif">'+escapeHtml(formatMoney(value,'USD',key==='silver'?2:0))+'</text>';
-      }).join('');
-      svg.innerHTML=[
-        '<defs><linearGradient id="'+fillId+'" x1="0" y1="0" x2="0" y2="1">',
-        '<stop offset="0%" stop-color="'+stroke+'" stop-opacity="0.34"/>',
-        '<stop offset="100%" stop-color="'+stroke+'" stop-opacity="0.02"/>',
-        '</linearGradient></defs>',
-        guides,
-        '<rect x="'+padX+'" y="'+yFor(max)+'" width="'+(width-padX*2)+'" height="'+(yFor(min)-yFor(max))+'" fill="'+stroke+'" opacity="0.04" rx="8"/>',
-        '<path d="'+area+'" fill="url(#'+fillId+')"/>',
-        '<path d="'+line+'" fill="none" stroke="'+stroke+'" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>',
-        '<circle cx="'+points[points.length-1].x+'" cy="'+points[points.length-1].y+'" r="5" fill="#fff" stroke="'+stroke+'" stroke-width="2.5"/>',
-        '<text x="'+padX+'" y="'+(height-4)+'" fill="#86868b" font-size="10" font-family="-apple-system,BlinkMacSystemFont,sans-serif">'+escapeHtml(points[0].date.slice(5))+'</text>',
-        '<text x="'+(width-padX)+'" y="'+(height-4)+'" text-anchor="end" fill="#86868b" font-size="10" font-family="-apple-system,BlinkMacSystemFont,sans-serif">'+escapeHtml(points[points.length-1].date.slice(5))+'</text>',
-        '<line class="scrub" x1="0" y1="'+padY+'" x2="0" y2="'+(height-padY)+'" stroke="rgba(29,29,31,0.25)" stroke-width="1" stroke-dasharray="3 4" opacity="0"/>',
-        '<circle class="hover-dot" cx="0" cy="0" r="4.5" fill="'+stroke+'" opacity="0"/>'
-      ].join('');
-
-      chartState[key]={points:points,tooltip:tooltip,wrap:wrap,svg:svg};
-      if(!wrap._chartBound){
-        wrap._chartBound=true;
-        wrap.addEventListener('pointermove',function(event){onChartMove(key,event)});
-        wrap.addEventListener('pointerleave',function(){onChartLeave(key)});
+      var stroke=opts.stroke;var fillId='f'+Math.random().toString(36).slice(2,8);
+      var guides=[max,min+span/2,min].map(function(v){var y=yAt(v);return '<line x1="'+padX+'" y1="'+y+'" x2="'+(width-padX)+'" y2="'+y+'" stroke="rgba(128,128,128,0.18)" stroke-width="1"/><text x="'+(width-padX)+'" y="'+(y-4)+'" text-anchor="end" fill="currentColor" opacity="0.5" font-size="10">'+escapeHtml(formatMoney(v,'USD',opts.digits))+'</text>'}).join('');
+      var markers='';
+      if(opts.markers&&opts.markers.length){
+        var first=series[0].date,last=series[series.length-1].date;
+        opts.markers.forEach(function(ev){
+          if(ev.date>=first&&ev.date<=last){
+            var idx=nearestIndex(series,ev.date);var x=xAt(idx);
+            markers+='<line x1="'+x+'" y1="'+padY+'" x2="'+x+'" y2="'+(height-padY)+'" stroke="rgba(128,128,128,0.5)" stroke-width="1" stroke-dasharray="2 4"/><text x="'+x+'" y="'+(padY-6)+'" text-anchor="middle" fill="currentColor" opacity="0.6" font-size="9">'+escapeHtml(ev.label)+'</text>';
+          }
+        });
       }
+      svg.innerHTML='<defs><linearGradient id="'+fillId+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+stroke+'" stop-opacity="0.32"/><stop offset="100%" stop-color="'+stroke+'" stop-opacity="0.02"/></linearGradient></defs>'
+        +guides+markers
+        +'<path d="'+area+'" fill="url(#'+fillId+')"/>'
+        +'<path d="'+line+'" fill="none" stroke="'+stroke+'" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>'
+        +'<circle cx="'+points[points.length-1].x+'" cy="'+points[points.length-1].y+'" r="5" fill="var(--white)" stroke="'+stroke+'" stroke-width="2.5"/>'
+        +'<text x="'+padX+'" y="'+(height-4)+'" fill="currentColor" opacity="0.5" font-size="10">'+escapeHtml(series[0].date)+'</text>'
+        +'<text x="'+(width-padX)+'" y="'+(height-4)+'" text-anchor="end" fill="currentColor" opacity="0.5" font-size="10">'+escapeHtml(series[series.length-1].date)+'</text>'
+        +'<line class="scrub" x1="0" y1="'+padY+'" x2="0" y2="'+(height-padY)+'" stroke="rgba(128,128,128,0.6)" stroke-width="1" stroke-dasharray="3 4" opacity="0"/>'
+        +'<circle class="hover-dot" cx="0" cy="0" r="4.5" fill="'+stroke+'" opacity="0"/>';
+      var st={points:points,tooltip:tooltip,wrap:wrap,svg:svg,digits:opts.digits};
+      wrap._state=st;
+      if(!wrap._bound){wrap._bound=true;wrap.addEventListener('pointermove',function(e){onMove(wrap,e)});wrap.addEventListener('pointerleave',function(){onLeave(wrap)});}
     }
+    function onMove(wrap,e){
+      var st=wrap._state;if(!st)return;var rect=wrap.getBoundingClientRect();var ratio=(e.clientX-rect.left)/rect.width;
+      var i=Math.max(0,Math.min(st.points.length-1,Math.round(ratio*(st.points.length-1))));var p=st.points[i];
+      var scrub=st.svg.querySelector('.scrub'),dot=st.svg.querySelector('.hover-dot');
+      scrub.setAttribute('x1',p.x);scrub.setAttribute('x2',p.x);scrub.setAttribute('opacity','1');dot.setAttribute('cx',p.x);dot.setAttribute('cy',p.y);dot.setAttribute('opacity','1');
+      st.tooltip.innerHTML='<span>'+escapeHtml(p.date)+'</span><strong>'+escapeHtml(formatMoney(p.value,'USD',st.digits))+'/oz</strong>';
+      st.tooltip.classList.add('visible');var leftPct=(p.x/(wrap.querySelector('svg').viewBox.baseVal.width))*100;st.tooltip.style.left=Math.min(74,Math.max(2,leftPct-10))+'%';
+    }
+    function onLeave(wrap){var st=wrap._state;if(!st)return;var s=st.svg.querySelector('.scrub'),d=st.svg.querySelector('.hover-dot');if(s)s.setAttribute('opacity','0');if(d)d.setAttribute('opacity','0');st.tooltip.classList.remove('visible')}
+    function smoothPath(points){if(points.length<2)return '';var d='M '+points[0].x+' '+points[0].y;for(var i=0;i<points.length-1;i++){var p0=points[i===0?0:i-1],p1=points[i],p2=points[i+1],p3=points[i+2]||p2;var c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6,c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;d+=' C '+c1x+' '+c1y+', '+c2x+' '+c2y+', '+p2.x+' '+p2.y}return d}
+    function nearestIndex(series,date){var t=new Date(date+'T12:00:00Z').getTime();var best=0,bd=Infinity;for(var i=0;i<series.length;i++){var d=Math.abs(new Date(series[i].date+'T12:00:00Z').getTime()-t);if(d<bd){bd=d;best=i}}return best}
 
-    function smoothPath(points){
-      if(points.length<2) return '';
-      var d='M '+points[0].x+' '+points[0].y;
-      for(var i=0;i<points.length-1;i++){
-        var p0=points[i===0?0:i-1];
-        var p1=points[i];
-        var p2=points[i+1];
-        var p3=points[i+2]||p2;
-        var cp1x=p1.x+(p2.x-p0.x)/6;
-        var cp1y=p1.y+(p2.y-p0.y)/6;
-        var cp2x=p2.x-(p3.x-p1.x)/6;
-        var cp2y=p2.y-(p3.y-p1.y)/6;
-        d+=' C '+cp1x+' '+cp1y+', '+cp2x+' '+cp2y+', '+p2.x+' '+p2.y;
+    /* ================= history section ================= */
+    function setTimeframe(tf){histTf=tf;document.querySelectorAll('#tfGroup .tf-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tf')===tf)});renderHistory()}
+    function setHistMetal(m){histMetal=m;document.querySelectorAll('#histMetalToggle button').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-hm')===m)});renderHistory()}
+    async function renderHistory(){
+      if(!currentData)return;
+      var cap=document.getElementById('histCaption');
+      if(!historyCache[histTf]){
+        cap.textContent='Loading '+histTf+' history…';
+        try{historyCache[histTf]=await fetchHistory(histTf);}catch(e){cap.textContent='History for '+histTf+' is temporarily unavailable.';return;}
       }
-      return d;
+      var cache=historyCache[histTf];var series=(cache&&cache[histMetal])||[];
+      if(series.length<2){cap.textContent='Not enough history to chart '+histTf+'.';return;}
+      var last=series[series.length-1].value;var first=series[0].value;var pct=(last-first)/first*100;
+      var fx=fxOf(currentData);var ccy=ccyOf(currentData);
+      cap.textContent=histMetal.charAt(0).toUpperCase()+histMetal.slice(1)+' · '+histTf+' · '+formatPct(pct)+' (USD). Prices shown in USD/oz; convert via calculators for '+ccy+'.';
+      var wrap=document.querySelector('[data-chart="history"]');
+      drawChart(wrap,series,{stroke:histMetal==='gold'?'#b0892d':'#8e97a4',width:960,height:280,digits:histMetal==='silver'?2:0,markers:EVENTS});
+      setupBuySim(series);
+    }
+    function fetchHistory(tf){
+      var end=new Date().toISOString().slice(0,10);var from,group='';
+      var now=new Date();
+      if(tf==='3M')from=new Date(now.getTime()-95*86400000).toISOString().slice(0,10);
+      else if(tf==='1Y')from=new Date(now.getTime()-370*86400000).toISOString().slice(0,10);
+      else if(tf==='5Y'){from=new Date(now.getTime()-1830*86400000).toISOString().slice(0,10);group='&group=week';}
+      else if(tf==='Max'){from='2015-01-01';group='&group=month';}
+      else from=new Date(now.getTime()-32*86400000).toISOString().slice(0,10);
+      var g='from='+from+'&to='+end+'&quotes=USD'+group;
+      return Promise.all([
+        fetchWithTimeout('https://api.frankfurter.dev/v2/rates?base=XAU&'+g,15000),
+        fetchWithTimeout('https://api.frankfurter.dev/v2/rates?base=XAG&'+g,15000)
+      ]).then(function(res){
+        function conv(rows,metal){var arr=Array.isArray(rows)?rows.map(function(r){return{date:String(r.date).slice(0,10),value:Number(r.rate)}}).filter(function(r){return r.date&&Number.isFinite(r.value)}):[];var today=end;if(currentData&&currentData.metals[metal]){if(arr.length&&arr[arr.length-1].date!==today)arr.push({date:today,value:currentData.metals[metal].usdPerOunce});}return arr}
+        return {gold:conv(res[0],'gold'),silver:conv(res[1],'silver')};
+      });
+    }
+    function setupBuySim(series){
+      var slider=document.getElementById('bsDate');slider.max=String(series.length-1);
+      if(Number(slider.value)>series.length-1)slider.value='0';
+      slider._series=series;renderBuySim();
+    }
+    function renderBuySim(){
+      var slider=document.getElementById('bsDate');var series=slider._series;var out=document.getElementById('bsOut');
+      if(!series||!currentData){out.textContent='Pick a timeframe and slide to a past date to simulate a purchase.';return;}
+      var i=Math.max(0,Math.min(series.length-1,Number(slider.value)||0));var buy=series[i];var nowV=series[series.length-1].value;
+      document.getElementById('bsDateLabel').textContent='Purchase date: '+buy.date;
+      var amount=parseFloat(document.getElementById('bsAmount').value)||0;var unit=document.getElementById('bsUnit').value;var grams=amount*(UNIT_GRAMS[unit]||1);
+      var fx=fxOf(currentData);var ccy=ccyOf(currentData);
+      var costUSD=grams/OUNCE_GRAMS*buy.value;var nowUSD=grams/OUNCE_GRAMS*nowV;
+      var pct=(nowV-buy.value)/buy.value*100;
+      out.innerHTML='If you bought <strong>'+escapeHtml(formatQty(amount)+' '+unitShort(unit))+'</strong> of '+histMetal+' on <strong>'+escapeHtml(buy.date)+'</strong> at '+escapeHtml(formatMoney(buy.value,'USD',2))+'/oz, it cost about <strong>'+escapeHtml(formatMoney(costUSD*fx,ccy,0))+'</strong> and is worth <strong>'+escapeHtml(formatMoney(nowUSD*fx,ccy,0))+'</strong> today — <span class="'+directionClass(pct)+'">'+escapeHtml(formatPct(pct))+'</span> in metal value (excludes premiums, taxes and making charges).';
     }
 
-    function onChartMove(key,event){
-      var state=chartState[key];
-      if(!state) return;
-      var rect=state.wrap.getBoundingClientRect();
-      var ratio=(event.clientX-rect.left)/rect.width;
-      var index=Math.round(ratio*(state.points.length-1));
-      index=Math.max(0,Math.min(state.points.length-1,index));
-      var point=state.points[index];
-      var scrub=state.svg.querySelector('.scrub');
-      var dot=state.svg.querySelector('.hover-dot');
-      scrub.setAttribute('x1',point.x);scrub.setAttribute('x2',point.x);scrub.setAttribute('opacity','1');
-      dot.setAttribute('cx',point.x);dot.setAttribute('cy',point.y);dot.setAttribute('opacity','1');
-      state.tooltip.innerHTML='<span>'+escapeHtml(point.date)+'</span><strong>'+escapeHtml(formatMoney(point.value,'USD',2))+'/oz</strong>';
-      state.tooltip.classList.add('visible');
-      var leftPct=(point.x/640)*100;
-      state.tooltip.style.left=Math.min(72,Math.max(2,leftPct-12))+'%';
+    /* ================= calculators ================= */
+    function fillUnitSelect(sel,def){Object.keys(UNIT_GRAMS).forEach(function(u){var o=document.createElement('option');o.value=u;o.textContent=UNIT_LABELS[u];sel.appendChild(o)});sel.value=def}
+    function fillPuritySelect(sel,def){PURITY.forEach(function(p){var o=document.createElement('option');o.value=p.v;o.textContent=p.k;sel.appendChild(o)});sel.value=def}
+    function unitShort(u){return {gram:'g',tengram:'×10g',tola:'tola',sovereign:'sov',baht:'baht',ounce:'oz',kilogram:'kg'}[u]||u}
+    function formatQty(n){return new Intl.NumberFormat(undefined,{maximumFractionDigits:3}).format(n)}
+    function calcValue(){
+      var out=document.getElementById('vcValue');var sub=document.getElementById('vcSub');
+      if(!currentData){out.textContent='—';sub.textContent='Waiting for live prices.';return;}
+      var metal=document.getElementById('vcMetal').value;var w=parseFloat(document.getElementById('vcWeight').value)||0;var unit=document.getElementById('vcUnit').value;var purity=parseFloat(document.getElementById('vcPurity').value)||0;
+      var grams=w*(UNIT_GRAMS[unit]||1);var pure=grams*purity;var fx=fxOf(currentData);var ccy=ccyOf(currentData);
+      var val=pure*spotGramUSD(currentData,metal)*fx;
+      out.textContent=formatMoney(val,ccy,2);
+      sub.textContent=formatQty(grams)+' g total · '+formatQty(pure)+' g pure '+metal+' · melt value at spot'+(ccy!==currentData.currency?' (USD; local FX unavailable)':'');
+    }
+    function calcPremium(){
+      var res=document.getElementById('pcResult');var sub=document.getElementById('pcSub');
+      if(!currentData){res.textContent='—';sub.textContent='Waiting for live prices.';return;}
+      var metal=document.getElementById('pcMetal').value;var w=parseFloat(document.getElementById('pcWeight').value)||0;var unit=document.getElementById('pcUnit').value;var purity=parseFloat(document.getElementById('pcPurity').value)||0;var quote=parseFloat(document.getElementById('pcQuote').value);
+      var grams=w*(UNIT_GRAMS[unit]||1);var pure=grams*purity;var fx=fxOf(currentData);var ccy=ccyOf(currentData);
+      var melt=pure*spotGramUSD(currentData,metal)*fx;
+      if(!Number.isFinite(quote)||quote<=0){res.textContent='—';sub.textContent='Spot metal value: '+formatMoney(melt,ccy,2)+'. Enter a quote to compare.';return;}
+      var prem=quote-melt;var pct=melt>0?prem/melt*100:0;
+      res.innerHTML='<span class="'+(prem>=0?'neutral':'positive')+'">'+escapeHtml(formatMoney(prem,ccy,0))+'</span> premium ('+escapeHtml(formatPct(pct))+')';
+      sub.textContent='Spot metal value ≈ '+formatMoney(melt,ccy,0)+'. Premium covers making charges, taxes and margin.';
     }
 
-    function onChartLeave(key){
-      var state=chartState[key];
-      if(!state) return;
-      var scrub=state.svg.querySelector('.scrub');
-      var dot=state.svg.querySelector('.hover-dot');
-      if(scrub) scrub.setAttribute('opacity','0');
-      if(dot) dot.setAttribute('opacity','0');
-      state.tooltip.classList.remove('visible');
+    /* ================= holdings ================= */
+    function getHoldings(){var a=readJson(HOLD_KEY);return Array.isArray(a)?a:[]}
+    function setHoldings(a){localStorage.setItem(HOLD_KEY,JSON.stringify(a))}
+    function addHolding(){
+      var w=parseFloat(document.getElementById('hWeight').value);if(!Number.isFinite(w)||w<=0)return;
+      var item={id:Date.now()+''+Math.floor(Math.random()*1000),metal:document.getElementById('hMetal').value,weight:w,unit:document.getElementById('hUnit').value,purity:parseFloat(document.getElementById('hPurity').value)||0.9167,label:document.getElementById('hLabelInput').value.trim()};
+      var a=getHoldings();a.push(item);setHoldings(a);
+      document.getElementById('hWeight').value='';document.getElementById('hLabelInput').value='';
+      renderHoldings();
     }
+    function deleteHolding(id){setHoldings(getHoldings().filter(function(it){return it.id!==id}));renderHoldings()}
+    function holdingValueUSDgram(item){return item.weight*(UNIT_GRAMS[item.unit]||1)*item.purity}
+    function renderHoldings(){
+      var list=document.getElementById('holdingsList');var empty=document.getElementById('holdingsEmpty');var items=getHoldings();
+      list.innerHTML='';
+      if(!items.length){empty.style.display='block';}else{empty.style.display='none';}
+      var fx=currentData?fxOf(currentData):1;var ccy=currentData?ccyOf(currentData):'USD';
+      var total=0,total30=0;
+      items.forEach(function(item){
+        var pure=holdingValueUSDgram(item);var perGramUSD=currentData?spotGramUSD(currentData,item.metal):0;
+        var valUSD=pure*perGramUSD;var val=valUSD*fx;total+=val;
+        if(currentData){var p30=pointNear(currentData.metals[item.metal].history,30,currentData.sourceUpdatedAt);if(p30){total30+=pure*(p30.usdPerOunce/OUNCE_GRAMS)*fx;}else{total30+=val;}}
+        var li=document.createElement('li');li.className='holding-item';
+        var karat=purityLabel(item.purity);
+        li.innerHTML='<div><div class="hi-main">'+escapeHtml((item.label?item.label+' — ':'')+formatQty(item.weight)+' '+unitShort(item.unit)+' '+item.metal)+'</div><div class="hi-sub">'+escapeHtml(karat)+' · '+formatQty(pure)+' g pure</div></div>'
+          +'<div style="display:flex;align-items:center;gap:12px"><span class="hi-val">'+escapeHtml(currentData?formatMoney(val,ccy,0):'—')+'</span><button class="hi-del" type="button" aria-label="Remove item" data-id="'+item.id+'">×</button></div>';
+        list.appendChild(li);
+      });
+      list.querySelectorAll('.hi-del').forEach(function(b){b.addEventListener('click',function(){deleteHolding(b.getAttribute('data-id'))})});
+      document.getElementById('holdTotal').textContent=items.length&&currentData?formatMoney(total,ccy,0):'—';
+      var snap=readJson(HOLD_SNAP_KEY);var visitEl=document.getElementById('holdVisit');
+      if(items.length&&currentData&&snap&&snap.currency===ccy&&Number.isFinite(snap.total)){
+        var dv=total-snap.total;visitEl.innerHTML='<span class="'+directionClass(dv)+'">'+escapeHtml((dv>=0?'+':'')+formatMoney(dv,ccy,0))+'</span>';visitEl.title='Since '+(snap.date||'last visit');
+      }else visitEl.textContent=items.length?'First visit':'—';
+      var monthEl=document.getElementById('holdMonth');
+      if(items.length&&currentData&&total30>0){var dm=total-total30;monthEl.innerHTML='<span class="'+directionClass(dm)+'">'+escapeHtml((dm>=0?'+':'')+formatMoney(dm,ccy,0))+'</span>';}
+      else monthEl.textContent='—';
+      window._holdTotalNow=items.length&&currentData?{total:total,currency:ccy}:null;
+    }
+    function saveHoldingSnapshot(){if(window._holdTotalNow){localStorage.setItem(HOLD_SNAP_KEY,JSON.stringify({total:window._holdTotalNow.total,currency:window._holdTotalNow.currency,date:new Date().toISOString().slice(0,10)}))}}
+    function purityLabel(v){var f=PURITY.filter(function(p){return Math.abs(parseFloat(p.v)-v)<0.001})[0];return f?f.k:(Math.round(v*1000)+' fine')}
 
+    /* ================= comparisons ================= */
     function renderChanges(data){
       var stored=previousData&&previousData.currency===data.currency&&previousData.metals?previousData:null;
-      var intro=document.getElementById('changeIntro');
-      var summary=document.getElementById('changeSummary');
+      var intro=document.getElementById('changeIntro');var summary=document.getElementById('changeSummary');
       if(stored){
         intro.textContent='Compared with the last successful prices stored on this device from '+formatDateTime(new Date(stored.sourceUpdatedAt||stored.generatedAt))+'.';
-        var goldDiff=data.metals.gold.usdPerOunce-stored.metals.gold.usdPerOunce;
-        var silverDiff=data.metals.silver.usdPerOunce-stored.metals.silver.usdPerOunce;
-        if(Math.abs(goldDiff)<.0001&&Math.abs(silverDiff)<.0001){
-          summary.textContent='Prices have not changed since the previous refresh.';
-        }else{
-          summary.innerHTML='Gold is <span class="'+directionClass(goldDiff)+'">'+wordDirection(goldDiff)+' '+escapeHtml(formatSignedMoney(Math.abs(goldDiff),'USD'))+'</span> per ounce; silver is <span class="'+directionClass(silverDiff)+'">'+wordDirection(silverDiff)+' '+escapeHtml(formatSignedMoney(Math.abs(silverDiff),'USD'))+'</span>.';
-        }
+        var gd=data.metals.gold.usdPerOunce-stored.metals.gold.usdPerOunce;var sd=data.metals.silver.usdPerOunce-stored.metals.silver.usdPerOunce;
+        if(Math.abs(gd)<.0001&&Math.abs(sd)<.0001)summary.textContent='Prices have not changed since the previous refresh.';
+        else summary.innerHTML='Gold is <span class="'+directionClass(gd)+'">'+wordDirection(gd)+' '+escapeHtml(formatSignedMoney(Math.abs(gd),'USD'))+'</span> per ounce; silver is <span class="'+directionClass(sd)+'">'+wordDirection(sd)+' '+escapeHtml(formatSignedMoney(Math.abs(sd),'USD'))+'</span>.';
       }else{
-        var goldPoint=pointNear(data.metals.gold.history,1,data.sourceUpdatedAt);
-        var silverPoint=pointNear(data.metals.silver.history,1,data.sourceUpdatedAt);
+        var gp=pointNear(data.metals.gold.history,1,data.sourceUpdatedAt);var sp=pointNear(data.metals.silver.history,1,data.sourceUpdatedAt);
         intro.textContent='No earlier visit is stored for comparison, so this uses the previous available daily reference.';
-        if(goldPoint&&silverPoint){
-          var gd=data.metals.gold.usdPerOunce-goldPoint.usdPerOunce;
-          var sd=data.metals.silver.usdPerOunce-silverPoint.usdPerOunce;
-          summary.innerHTML='Gold is <span class="'+directionClass(gd)+'">'+wordDirection(gd)+' '+escapeHtml(formatSignedMoney(Math.abs(gd),'USD'))+'</span> per ounce; silver is <span class="'+directionClass(sd)+'">'+wordDirection(sd)+' '+escapeHtml(formatSignedMoney(Math.abs(sd),'USD'))+'</span>.';
-        }else summary.textContent='Recent comparison data is temporarily unavailable.';
+        if(gp&&sp){var g=data.metals.gold.usdPerOunce-gp.usdPerOunce;var s=data.metals.silver.usdPerOunce-sp.usdPerOunce;summary.innerHTML='Gold is <span class="'+directionClass(g)+'">'+wordDirection(g)+' '+escapeHtml(formatSignedMoney(Math.abs(g),'USD'))+'</span> per ounce; silver is <span class="'+directionClass(s)+'">'+wordDirection(s)+' '+escapeHtml(formatSignedMoney(Math.abs(s),'USD'))+'</span>.';}else summary.textContent='Recent comparison data is temporarily unavailable.';
       }
     }
-
-    function renderContext(key,metal,anchorTime){
-      var root=document.querySelector('[data-context="'+key+'"]');
-      var values=metal.history.slice(-31).map(function(point){return point.usdPerOunce}).concat([metal.usdPerOunce]);
-      if(values.length<2) return;
-      var low=Math.min.apply(null,values),high=Math.max.apply(null,values);
-      var position=high===low?50:(metal.usdPerOunce-low)/(high-low)*100;
-      position=Math.max(0,Math.min(100,position));
-      root.querySelector('.range-marker').style.left=position+'%';
-      setText(root,'rangePosition',position>72?'Upper range':position<28?'Lower range':'Middle range');
-      setText(root,'rangeLow',formatMoney(low,'USD',key==='silver'?2:0)+' low');
-      setText(root,'rangeHigh',formatMoney(high,'USD',key==='silver'?2:0)+' high');
-      [1,7,30].forEach(function(days){
-        var point=pointNear(metal.history,days,anchorTime);
-        var pct=point?(metal.usdPerOunce-point.usdPerOunce)/point.usdPerOunce*100:null;
-        var field=root.querySelector('[data-field="day'+days+'"]');
-        field.textContent=pct===null?'—':formatPct(pct);
-        field.className=pct===null?'neutral':directionClass(pct);
-      });
-      var week=pointNear(metal.history,7,anchorTime);
-      var weekPct=week?(metal.usdPerOunce-week.usdPerOunce)/week.usdPerOunce*100:0;
-      var label=weekPct>.5?'Strengthening':weekPct<-.5?'Weakening':'Stable';
-      setText(root,'momentum','Short-term directional momentum: '+label);
+    function renderContext(key,metal,anchor){
+      var root=document.querySelector('[data-context="'+key+'"]');var values=metal.history.slice(-31).map(function(p){return p.usdPerOunce}).concat([metal.usdPerOunce]);if(values.length<2)return;
+      var low=Math.min.apply(null,values),high=Math.max.apply(null,values);var pos=high===low?50:(metal.usdPerOunce-low)/(high-low)*100;pos=Math.max(0,Math.min(100,pos));
+      root.querySelector('.range-marker').style.left=pos+'%';
+      setText(root,'rangePosition',pos>72?'Upper range':pos<28?'Lower range':'Middle range');
+      setText(root,'rangeLow',formatMoney(low,'USD',key==='silver'?2:0)+' low');setText(root,'rangeHigh',formatMoney(high,'USD',key==='silver'?2:0)+' high');
+      [1,7,30].forEach(function(days){var p=pointNear(metal.history,days,anchor);var pct=p?(metal.usdPerOunce-p.usdPerOunce)/p.usdPerOunce*100:null;var f=root.querySelector('[data-field="day'+days+'"]');f.textContent=pct===null?'—':formatPct(pct);f.className=pct===null?'neutral':directionClass(pct)});
+      var wk=pointNear(metal.history,7,anchor);var wkPct=wk?(metal.usdPerOunce-wk.usdPerOunce)/wk.usdPerOunce*100:0;
+      setText(root,'momentum','Short-term directional momentum: '+(wkPct>.5?'Strengthening':wkPct<-.5?'Weakening':'Stable'));
     }
-
     function renderRatio(data){
-      var ratio=data.metals.gold.usdPerOunce/data.metals.silver.usdPerOunce;
-      document.getElementById('ratioValue').textContent=formatNumber(ratio,1);
-      var gold30=pointNear(data.metals.gold.history,30,data.sourceUpdatedAt);
-      var silver30=gold30&&data.metals.silver.history.find(function(point){return point.date===gold30.date});
-      document.getElementById('ratioReference').textContent=gold30&&silver30?formatNumber(gold30.usdPerOunce/silver30.usdPerOunce,1):'Unavailable';
+      var ratio=data.metals.gold.usdPerOunce/data.metals.silver.usdPerOunce;document.getElementById('ratioValue').textContent=formatNumber(ratio,1);
+      var g30=pointNear(data.metals.gold.history,30,data.sourceUpdatedAt);var s30=g30&&data.metals.silver.history.find(function(p){return p.date===g30.date});
+      document.getElementById('ratioReference').textContent=g30&&s30?formatNumber(g30.usdPerOunce/s30.usdPerOunce,1):'Unavailable';
       document.getElementById('ratioCopy').textContent='One ounce of gold currently equals about '+formatNumber(ratio,1)+' ounces of silver by spot value.';
     }
-
     function pointNear(history,days,anchorTime){
-      if(!Array.isArray(history)||!history.length) return null;
-      var anchor=anchorTime?new Date(anchorTime).getTime():Date.now();
-      if(!Number.isFinite(anchor))anchor=Date.now();
-      var target=anchor-days*86400000;
-      var best=history.reduce(function(best,point){
-        var distance=Math.abs(new Date(point.date+'T12:00:00Z').getTime()-target);
-        return !best||distance<best.distance?{distance:distance,point:point}:best;
-      },null);
-      var tolerance=(days<=7?3:6)*86400000;
-      return best&&best.distance<=tolerance?best.point:null;
+      if(!Array.isArray(history)||!history.length)return null;var anchor=anchorTime?new Date(anchorTime).getTime():Date.now();if(!Number.isFinite(anchor))anchor=Date.now();var target=anchor-days*86400000;
+      var best=history.reduce(function(b,p){var dist=Math.abs(new Date(p.date+'T12:00:00Z').getTime()-target);return !b||dist<b.distance?{distance:dist,point:p}:b},null);
+      var tol=(days<=7?3:6)*86400000;return best&&best.distance<=tol?best.point:null;
     }
 
-    function setText(root,field,value){var el=root.querySelector('[data-field="'+field+'"]');if(el)el.textContent=value}
-    function setHtml(root,field,value){var el=root.querySelector('[data-field="'+field+'"]');if(el)el.innerHTML=value}
-    function directionClass(value){return value>0?'positive':value<0?'negative':'neutral'}
-    function wordDirection(value){return value>0?'up':value<0?'down':'unchanged by'}
-    function freshnessCopy(value){return value==='live'?'live source':value==='cached'?'cached source':'delayed source'}
-    function formatPct(value){return (value>0?'+':'')+formatNumber(value,2)+'%'}
-    function formatNumber(value,digits){return new Intl.NumberFormat(undefined,{minimumFractionDigits:digits,maximumFractionDigits:digits}).format(value)}
-    function formatMoney(value,currency,digits){
-      try{return new Intl.NumberFormat(undefined,{style:'currency',currency:currency,minimumFractionDigits:digits,maximumFractionDigits:digits}).format(value)}
-      catch(e){return currency+' '+formatNumber(value,digits)}
+    /* ================= sellers + region ================= */
+    function productDetails(product,data){
+      var g=data.metals.gold.usdPerOunce,s=data.metals.silver.usdPerOunce,gram=g/OUNCE_GRAMS,sgram=s/OUNCE_GRAMS;
+      switch(product){case 'goldBar1oz':return{usd:g,label:'1 oz gold bar',digits:0};case 'gold10g24k':return{usd:gram*10,label:'10 g · 24K gold',digits:0};case 'gold10g22k':return{usd:gram*10*0.9167,label:'10 g · 22K gold',digits:0};case 'gold1g24k':return{usd:gram,label:'1 g · 24K gold',digits:2};case 'silver1oz':return{usd:s,label:'1 oz silver',digits:2};case 'silver1kg':return{usd:sgram*1000,label:'1 kg silver',digits:0};default:return{usd:g,label:'1 oz gold coin',digits:0}}
     }
-    function formatSignedMoney(value,currency){return formatMoney(value,currency,currency==='JPY'?0:2)}
-    function formatDateTime(date){return new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'medium'}).format(date)}
-    function relativeTime(date){
-      var seconds=Math.max(0,Math.round((Date.now()-date.getTime())/1000));
-      if(seconds<10)return'a few seconds ago';
-      if(seconds<60)return seconds+' seconds ago';
-      var minutes=Math.round(seconds/60);
-      if(minutes<60)return minutes+' minute'+(minutes===1?'':'s')+' ago';
-      var hours=Math.round(minutes/60);
-      return hours+' hour'+(hours===1?'':'s')+' ago';
+    function renderSellers(data){
+      var grid=document.getElementById('sellerGrid');if(!grid)return;var config=SELLERS[data.currency]||SELLERS.DEFAULT;
+      var intro=document.getElementById('sellerIntro');if(intro)intro.textContent='Well-known sellers for '+config.region+', plus the local pricing realities — taxes, duties and the forms people actually buy.';
+      renderRegion(data);
+      var fx=fxOf(data);var ccy=ccyOf(data);
+      var minAvg=config.list.reduce(function(m,s){var a=(s.premium[0]+s.premium[1])/2;return a<m?a:m},Infinity);
+      grid.innerHTML=config.list.slice().sort(function(a,b){return (a.premium[0]+a.premium[1])-(b.premium[0]+b.premium[1])}).map(function(s){
+        var pd=productDetails(s.product,data);var low=pd.usd*(1+s.premium[0])*fx;var high=pd.usd*(1+s.premium[1])*fx;
+        var est=formatMoney(low,ccy,pd.digits)+' – '+formatMoney(high,ccy,pd.digits);var pp=Math.round(s.premium[0]*100)+'–'+Math.round(s.premium[1]*100)+'%';
+        var best=(s.premium[0]+s.premium[1])/2<=minAvg+0.0001;
+        return '<div class="seller-card"><div class="seller-top"><span class="seller-name">'+escapeHtml(s.name)+'</span><span class="seller-chip">'+escapeHtml(s.type)+'</span></div>'+(best?'<span class="seller-badge">Often lowest premium</span>':'')+'<p class="seller-note">'+escapeHtml(s.note)+'</p><p class="seller-est">'+escapeHtml(est)+'<small>Est. '+escapeHtml(pd.label)+' · typical premium '+pp+' over spot</small></p><a class="seller-link" href="'+escapeHtml(s.url)+'" target="_blank" rel="noopener noreferrer">Check live price<svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></a></div>';
+      }).join('');
     }
-    function escapeHtml(value){
-      return String(value).replace(/[&<>"']/g,function(char){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]});
+    function renderRegion(data){
+      var panel=document.getElementById('regionPanel');var notes=MARKET_NOTES[data.currency];
+      if(!notes){panel.innerHTML='';panel.style.display='none';return;}
+      panel.style.display='';
+      panel.innerHTML=notes.map(function(n){return '<div class="region-card"><div class="lbl">'+escapeHtml(n.lbl)+'</div><p>'+escapeHtml(n.text)+'</p></div>'}).join('');
     }
 
-    async function copyRates(){
-      if(!currentData)return;
-      var gold=currentData.metals.gold,silver=currentData.metals.silver,fx=currentData.fxRate;
-      var goldLocal=Number.isFinite(fx)?' · '+formatMoney(gold.usdPerOunce*fx/OUNCE_GRAMS,currentData.currency,2)+'/g':'';
-      var silverLocal=Number.isFinite(fx)?' · '+formatMoney(silver.usdPerOunce*fx/OUNCE_GRAMS,currentData.currency,3)+'/g':'';
-      var updated=currentData.sourceUpdatedAt?formatDateTime(new Date(currentData.sourceUpdatedAt)):'time unavailable';
-      var fxNote=currentData.currency!=='USD'&&currentData.fxDate?' · FX reference '+currentData.fxDate:'';
-      var text='Gold: '+formatMoney(gold.usdPerOunce,'USD',2)+'/oz'+goldLocal+'\n'
-        +'Silver: '+formatMoney(silver.usdPerOunce,'USD',2)+'/oz'+silverLocal+'\n'
-        +'Updated '+updated+fxNote+' · Rates are spot-market references.';
-      var button=document.getElementById('shareButton');
-      try{
-        await navigator.clipboard.writeText(text);
-        button.textContent='Copied';
-      }catch(e){
-        window.prompt('Copy current rates',text);
+    /* ================= alerts ================= */
+    function getAlerts(){var a=readJson(ALERT_KEY);return a&&typeof a==='object'?a:{}}
+    function setAlerts(a){localStorage.setItem(ALERT_KEY,JSON.stringify(a))}
+    function loadAlertUI(){
+      var a=getAlerts();
+      if(a.price){document.getElementById('alMetal').value=a.price.metal;document.getElementById('alDir').value=a.price.dir;document.getElementById('alLevel').value=a.price.level;}
+      if(a.ratioLow!=null)document.getElementById('alRatioLow').value=a.ratioLow;
+      if(a.ratioHigh!=null)document.getElementById('alRatioHigh').value=a.ratioHigh;
+      if(a.move!=null)document.getElementById('alMove').value=a.move;
+      refreshAlertStatus();
+    }
+    function saveAlert(){
+      var a=getAlerts();
+      var lvl=parseFloat(document.getElementById('alLevel').value);
+      if(Number.isFinite(lvl)&&lvl>0)a.price={metal:document.getElementById('alMetal').value,dir:document.getElementById('alDir').value,level:lvl,currency:currencySelect.value};
+      var rl=parseFloat(document.getElementById('alRatioLow').value);var rh=parseFloat(document.getElementById('alRatioHigh').value);var mv=parseFloat(document.getElementById('alMove').value);
+      a.ratioLow=Number.isFinite(rl)?rl:null;a.ratioHigh=Number.isFinite(rh)?rh:null;a.move=Number.isFinite(mv)?mv:null;
+      setAlerts(a);refreshAlertStatus();logAlert('Alert saved.');
+    }
+    function clearAlerts(){localStorage.removeItem(ALERT_KEY);document.getElementById('alLevel').value='';document.getElementById('alRatioLow').value='';document.getElementById('alRatioHigh').value='';document.getElementById('alMove').value='';refreshAlertStatus();document.getElementById('alertLog').innerHTML=''}
+    function refreshAlertStatus(){
+      var a=getAlerts();
+      document.getElementById('alStatus').textContent=a.price?('Alert: '+a.price.metal+' '+(a.price.dir==='above'?'rises above':'falls below')+' '+formatMoney(a.price.level,a.price.currency,0)+' /oz.'):'No price alert set.';
+      var parts=[];if(a.ratioLow!=null)parts.push('ratio < '+a.ratioLow);if(a.ratioHigh!=null)parts.push('ratio > '+a.ratioHigh);if(a.move!=null)parts.push('daily move ≥ '+a.move+'%');
+      document.getElementById('alStatus2').textContent=parts.length?('Alert: '+parts.join(', ')+'.'):'No ratio or move alert set.';
+    }
+    function enableNotifications(){
+      if(!('Notification' in window)){logAlert('This browser does not support notifications.');return;}
+      Notification.requestPermission().then(function(p){logAlert(p==='granted'?'Browser notifications enabled.':'Notifications not enabled ('+p+').')});
+    }
+    function fireAlert(title,body){
+      logAlert(body);
+      try{if('Notification' in window&&Notification.permission==='granted')new Notification(title,{body:body});}catch(e){}
+    }
+    function logAlert(text){
+      var log=document.getElementById('alertLog');var d=document.createElement('div');d.className='alert-item';d.textContent=new Date().toLocaleTimeString()+' · '+text;log.insertBefore(d,log.firstChild);
+      while(log.children.length>6)log.removeChild(log.lastChild);
+    }
+    function evaluateAlerts(data){
+      var a=getAlerts();var fx=fxOf(data);
+      var gold=data.metals.gold.usdPerOunce,silver=data.metals.silver.usdPerOunce,ratio=gold/silver;
+      var prev=alertPrev;
+      if(a.price&&prev){
+        var cur=(a.price.metal==='gold'?gold:silver);var prevP=(a.price.metal==='gold'?prev.gold:prev.silver);
+        var levelUSD=a.price.currency&&data.currency===a.price.currency&&fx?a.price.level/fx:a.price.level; // approx compare in USD
+        if(a.price.dir==='above'&&prevP<levelUSD&&cur>=levelUSD)fireAlert('Metals alert',a.price.metal+' rose above '+formatMoney(a.price.level,a.price.currency,0)+'/oz.');
+        if(a.price.dir==='below'&&prevP>levelUSD&&cur<=levelUSD)fireAlert('Metals alert',a.price.metal+' fell below '+formatMoney(a.price.level,a.price.currency,0)+'/oz.');
       }
+      if(prev){
+        if(a.ratioLow!=null&&prev.ratio>=a.ratioLow&&ratio<a.ratioLow)fireAlert('Ratio alert','Gold/silver ratio dropped below '+a.ratioLow+' (now '+formatNumber(ratio,1)+').');
+        if(a.ratioHigh!=null&&prev.ratio<=a.ratioHigh&&ratio>a.ratioHigh)fireAlert('Ratio alert','Gold/silver ratio rose above '+a.ratioHigh+' (now '+formatNumber(ratio,1)+').');
+      }
+      if(a.move!=null){
+        ['gold','silver'].forEach(function(m){var p=pointNear(data.metals[m].history,1,data.sourceUpdatedAt);if(p){var mv=Math.abs((data.metals[m].usdPerOunce-p.usdPerOunce)/p.usdPerOunce*100);if(mv>=a.move&&(!prev||!prev._movedFired||!prev._movedFired[m])){fireAlert('Big move',m+' moved '+formatNumber(mv,1)+'% vs the previous daily reference.');}}});
+      }
+      alertPrev={gold:gold,silver:silver,ratio:ratio};
+    }
+
+    /* ================= share ================= */
+    function shareSnapshot(){
+      if(!currentData){return;}
+      var c=document.getElementById('shareCanvas');var ctx=c.getContext('2d');var W=c.width,H=c.height;
+      var dark=document.documentElement.getAttribute('data-theme')==='dark';
+      var grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#141414');grad.addColorStop(1,'#000');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='rgba(176,137,45,0.14)';ctx.beginPath();ctx.arc(W*0.5,H*0.16,W*0.42,0,Math.PI*2);ctx.fill();
+      var fx=fxOf(currentData),ccy=ccyOf(currentData);var gold=currentData.metals.gold,silver=currentData.metals.silver;
+      var g30=pointNear(gold.history,30,currentData.sourceUpdatedAt);var s30=pointNear(silver.history,30,currentData.sourceUpdatedAt);
+      var gPct=g30?(gold.usdPerOunce-g30.usdPerOunce)/g30.usdPerOunce*100:0;var sPct=s30?(silver.usdPerOunce-s30.usdPerOunce)/s30.usdPerOunce*100:0;
+      ctx.textAlign='left';ctx.fillStyle='#c5a35b';ctx.font='600 34px -apple-system,Segoe UI,Roboto,sans-serif';ctx.fillText('GOLD & SILVER — SPOT REFERENCE',80,120);
+      ctx.fillStyle='#fff';ctx.font='700 96px -apple-system,Segoe UI,Roboto,sans-serif';
+      ctx.fillText('Gold',80,300);ctx.fillText(formatMoney(gold.usdPerOunce*fx,ccy,0),80,410);
+      ctx.font='500 40px -apple-system,Segoe UI,Roboto,sans-serif';ctx.fillStyle=gPct>=0?'#78d089':'#ff8a80';ctx.fillText((gPct>=0?'▲ ':'▼ ')+formatPct(gPct)+' · 30d',80,470);
+      ctx.fillStyle='#fff';ctx.font='700 96px -apple-system,Segoe UI,Roboto,sans-serif';
+      ctx.fillText('Silver',80,640);ctx.fillText(formatMoney(silver.usdPerOunce*fx,ccy,0),80,750);
+      ctx.font='500 40px -apple-system,Segoe UI,Roboto,sans-serif';ctx.fillStyle=sPct>=0?'#78d089':'#ff8a80';ctx.fillText((sPct>=0?'▲ ':'▼ ')+formatPct(sPct)+' · 30d',80,810);
+      ctx.fillStyle='#c7c7cc';ctx.font='400 34px -apple-system,Segoe UI,Roboto,sans-serif';
+      ctx.fillText('Gold/silver ratio: '+formatNumber(gold.usdPerOunce/silver.usdPerOunce,1),80,910);
+      ctx.fillText('Per oz in '+ccy+' · '+new Date(currentData.sourceUpdatedAt||Date.now()).toLocaleDateString(),80,960);
+      ctx.fillStyle='#8a8a8f';ctx.font='400 30px -apple-system,Segoe UI,Roboto,sans-serif';ctx.fillText('Spot-market reference · sumanthbolle.com/metals',80,1030);
+      c.toBlob(function(blob){
+        if(!blob){return;}
+        var file=new File([blob],'gold-silver-snapshot.png',{type:'image/png'});
+        if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Gold & Silver spot',text:shareText()}).catch(function(){})}
+        else{var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='gold-silver-snapshot.png';a.click();setTimeout(function(){URL.revokeObjectURL(url)},1000);}
+      },'image/png');
+    }
+    function shareText(){
+      if(!currentData)return '';var fx=fxOf(currentData),ccy=ccyOf(currentData);var g=currentData.metals.gold,s=currentData.metals.silver;
+      return 'Gold: '+formatMoney(g.usdPerOunce,'USD',2)+'/oz · '+formatMoney(g.usdPerOunce*fx/OUNCE_GRAMS,ccy,2)+'/g\nSilver: '+formatMoney(s.usdPerOunce,'USD',2)+'/oz · '+formatMoney(s.usdPerOunce*fx/OUNCE_GRAMS,ccy,3)+'/g\nUpdated '+(currentData.sourceUpdatedAt?formatDateTime(new Date(currentData.sourceUpdatedAt)):'')+' · Rates are spot-market references.';
+    }
+    async function copyRates(){
+      if(!currentData)return;var button=document.getElementById('copyButton');
+      try{await navigator.clipboard.writeText(shareText());button.textContent='Copied';}catch(e){window.prompt('Copy current rates',shareText());}
       setTimeout(function(){button.textContent='Copy current rates'},1800);
     }
+
+    /* ================= ask summaverick ================= */
+    function updateAskLinks(data){
+      var g=data.metals.gold.usdPerOunce,s=data.metals.silver.usdPerOunce,ratio=(g/s).toFixed(1);
+      var q1='Gold spot is about $'+g.toFixed(0)+'/oz and silver about $'+s.toFixed(0)+'/oz today. In plain English, what factors are commonly cited for recent precious-metal moves? Keep it educational, not financial advice.';
+      var q2='Explain gold purity (24K vs 22K), what a tola/sovereign/baht means, and practical tips for comparing jeweller prices vs spot. The gold/silver ratio is about '+ratio+'.';
+      document.getElementById('askFactors').href='summaverick.html?q='+encodeURIComponent(q1);
+      document.getElementById('askUnderstand').href='summaverick.html?q='+encodeURIComponent(q2);
+    }
+
+    /* ================= helpers ================= */
+    function setText(root,f,v){var el=root.querySelector('[data-field="'+f+'"]');if(el)el.textContent=v}
+    function setHtml(root,f,v){var el=root.querySelector('[data-field="'+f+'"]');if(el)el.innerHTML=v}
+    function directionClass(v){return v>0?'positive':v<0?'negative':'neutral'}
+    function wordDirection(v){return v>0?'up':v<0?'down':'unchanged by'}
+    function freshnessCopy(v){return v==='live'?'live source':v==='cached'?'cached source':'delayed source'}
+    function formatPct(v){return (v>0?'+':'')+formatNumber(v,2)+'%'}
+    function formatNumber(v,d){return new Intl.NumberFormat(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}).format(v)}
+    function formatMoney(v,ccy,d){try{return new Intl.NumberFormat(undefined,{style:'currency',currency:ccy,minimumFractionDigits:d,maximumFractionDigits:d}).format(v)}catch(e){return ccy+' '+formatNumber(v,d)}}
+    function formatSignedMoney(v,ccy){return formatMoney(v,ccy,ccy==='JPY'?0:2)}
+    function formatDateTime(dt){return new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'medium'}).format(dt)}
+    function relativeTime(dt){var s=Math.max(0,Math.round((Date.now()-dt.getTime())/1000));if(s<10)return'a few seconds ago';if(s<60)return s+' seconds ago';var m=Math.round(s/60);if(m<60)return m+' minute'+(m===1?'':'s')+' ago';var h=Math.round(m/60);return h+' hour'+(h===1?'':'s')+' ago'}
+    function escapeHtml(v){return String(v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   })();
   </script>
 </body>
