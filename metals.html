@@ -151,6 +151,19 @@
     .explain-grid h3{margin-bottom:8px;font-size:14px}
     .explain-grid p{color:var(--gray);font-size:13px;line-height:1.6}
 
+    .seller-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+    .seller-card{display:flex;flex-direction:column;gap:9px;padding:16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid rgba(0,0,0,0.04)}
+    .seller-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .seller-name{font-size:15px;font-weight:600;line-height:1.25}
+    .seller-chip{flex:0 0 auto;font-size:10px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:999px;background:var(--white);border:1px solid rgba(0,0,0,0.06);white-space:nowrap}
+    .seller-badge{align-self:flex-start;font-size:10px;font-weight:700;color:#1f7a3a;background:#e6f5ec;border:1px solid #bfe6cd;border-radius:999px;padding:2px 9px}
+    .seller-note{color:var(--gray);font-size:12px;line-height:1.5}
+    .seller-est{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+    .seller-est small{display:block;margin-top:3px;color:var(--gray);font-size:11px;font-weight:400}
+    .seller-link{margin-top:auto;font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+    .seller-link:hover{text-decoration:underline}
+    .seller-link svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
     details{margin-top:18px;border-top:1px solid rgba(0,0,0,0.06);padding-top:4px}
     summary{min-height:48px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:600}
     summary::after{content:"+";color:var(--gray);font-size:20px;font-weight:400}
@@ -168,7 +181,7 @@
       .nav-links{display:none}.menu-toggle{display:block}
       .hero-coin{width:96px;height:96px}
       .toolbar{align-items:stretch}.toolbar-actions{width:100%}.field,.field select,.refresh-button{width:100%}
-      .price-grid,.context-grid,.factor-list,.explain-grid,.ratio-row,.section-heading{grid-template-columns:1fr}
+      .price-grid,.context-grid,.factor-list,.explain-grid,.ratio-row,.section-heading,.seller-grid{grid-template-columns:1fr}
       .coin-thumb{width:60px;height:60px}
     }
     @media(max-width:480px){
@@ -363,6 +376,15 @@
       <p class="disclaimer">These are spot-market reference prices. Retail jewellery and bullion prices may include taxes, dealer premiums, fabrication costs, making charges and local market spreads.</p>
     </section>
 
+    <section class="section" aria-labelledby="sellersTitle">
+      <div class="section-heading">
+        <div><p class="section-label">Where to buy</p><h2 id="sellersTitle">Popular sellers and typical pricing</h2></div>
+        <p class="section-intro" id="sellerIntro">Well-known and popular sellers for your region, with a rough estimated price band and a link to each seller’s live price. Government mints and bullion dealers usually carry lower premiums than jewellery, which adds making charges.</p>
+      </div>
+      <div class="seller-grid" id="sellerGrid"></div>
+      <p class="disclaimer">These sellers are listed for general reference only — not endorsements, and not live quotes. Estimated bands apply a typical premium to the current spot price and will differ from each seller’s actual price, which reflects live premiums, availability, taxes, import duties and (for jewellery) making charges. Always confirm the current price on the seller’s own website before buying.</p>
+    </section>
+
     <section class="section" aria-labelledby="methodTitle">
       <div class="section-heading">
         <div><p class="section-label">Transparency</p><h2 id="methodTitle">Methodology and data sources</h2></div>
@@ -371,7 +393,7 @@
       <details>
         <summary>How prices and comparisons are calculated</summary>
         <div class="method-copy">
-          Current USD spot references come from <a href="https://gold-api.com/" target="_blank" rel="noopener noreferrer">Gold API</a>. Currency conversion and daily historical references come from <a href="https://frankfurter.dev/" target="_blank" rel="noopener noreferrer">Frankfurter</a>. Local prices multiply the USD quote by the latest available FX rate. Grams use 31.1034768 grams per troy ounce; 22K uses 22/24 of the 24K metal value. Charts use daily USD closes for the past ~30 days with a soft range band, smooth curve, and interactive scrubbing. “Strengthening” means the seven-day change is above 0.5%; “Weakening” means below −0.5%; values between those thresholds are “Stable.”
+          Current USD spot references come from <a href="https://gold-api.com/" target="_blank" rel="noopener noreferrer">Gold API</a>. Currency conversion and daily historical references come from <a href="https://frankfurter.dev/" target="_blank" rel="noopener noreferrer">Frankfurter</a>. Local prices multiply the USD quote by the latest available FX rate. Grams use 31.1034768 grams per troy ounce; 22K uses 22/24 of the 24K metal value. Charts use daily USD closes for the past ~30 days with a soft range band, smooth curve, and interactive scrubbing. “Strengthening” means the seven-day change is above 0.5%; “Weakening” means below −0.5%; values between those thresholds are “Stable.” Seller estimates in “Where to buy” apply a typical premium band to the current spot price for a benchmark product; they are rough, region-based approximations and are never fetched from each seller — always confirm the live price on the seller’s own website.
         </div>
       </details>
       <div class="share-row">
@@ -405,6 +427,67 @@
     var previousRendered=null;
     var requestVersion=0;
     var chartState={};
+
+    /* Region-aware seller directory. Prices are never fetched per seller — each
+     * card shows a rough spot-derived estimate (typical premium band) and links
+     * to the seller's own live pricing. Bands are approximate and educational. */
+    var SELLERS={
+      USD:{region:'the United States',list:[
+        {name:'SD Bullion',type:'Bullion dealer',note:'Known for consistently low premiums on coins and bars.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://sdbullion.com/gold'},
+        {name:'JM Bullion',type:'Bullion dealer',note:'Large US dealer with frequent low-premium coin deals.',premium:[0.03,0.07],product:'goldCoin1oz',url:'https://www.jmbullion.com/gold/'},
+        {name:'APMEX',type:'Bullion dealer',note:'Very wide product range with live per-product pricing.',premium:[0.04,0.08],product:'goldCoin1oz',url:'https://www.apmex.com/category/10000/gold'},
+        {name:'Costco',type:'Warehouse retailer',note:'Occasional low-premium 1 oz bars for members.',premium:[0.02,0.05],product:'goldBar1oz',url:'https://www.costco.com/gold-bars-coins.html'},
+        {name:'Kitco',type:'Dealer & refiner',note:'Live charts alongside dealer buy/sell pricing.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://online.kitco.com/'},
+        {name:'Money Metals Exchange',type:'Bullion dealer',note:'Popular US dealer with storage options.',premium:[0.04,0.08],product:'goldCoin1oz',url:'https://www.moneymetals.com/buy/gold'}
+      ]},
+      GBP:{region:'the United Kingdom',list:[
+        {name:'The Royal Mint',type:'Government mint',note:'Official UK bullion; CGT-free Britannia coins.',premium:[0.04,0.08],product:'goldCoin1oz',url:'https://www.royalmint.com/invest/'},
+        {name:'BullionByPost',type:'Bullion dealer',note:'Large UK dealer with live pricing and fast delivery.',premium:[0.03,0.07],product:'goldCoin1oz',url:'https://www.bullionbypost.co.uk/gold-coins/'},
+        {name:'Atkinsons Bullion',type:'Bullion dealer',note:'Competitive low-premium coins and bars.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://www.atkinsonsbullion.com/gold'},
+        {name:'Chards',type:'Bullion dealer',note:'Long-established dealer with detailed listings.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://www.chards.co.uk/gold-coins'}
+      ]},
+      EUR:{region:'the Eurozone',list:[
+        {name:'GoldSilver.be',type:'Bullion dealer',note:'Belgian dealer known for tight premiums.',premium:[0.03,0.05],product:'goldCoin1oz',url:'https://www.goldsilver.be/en/'},
+        {name:'pro aurum',type:'Bullion dealer',note:'Large European dealer with branch network.',premium:[0.04,0.07],product:'goldCoin1oz',url:'https://www.proaurum.de/en/'},
+        {name:'Degussa',type:'Bullion dealer',note:'Premium brand for bars, coins and storage.',premium:[0.04,0.08],product:'goldCoin1oz',url:'https://www.degussa-goldhandel.de/en/'},
+        {name:'The European Mint',type:'Bullion dealer',note:'Low-premium coins shipped across the EU.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://www.europeanmint.com/gold-coins'}
+      ]},
+      INR:{region:'India',list:[
+        {name:'MMTC-PAMP',type:'Refiner & bullion',note:'LBMA-accredited 24K coins and bars; lower premiums than jewellery.',premium:[0.09,0.15],product:'gold10g24k',url:'https://www.mmtcpamp.com/buy-gold'},
+        {name:'SafeGold',type:'Digital gold',note:'Buy fractional 24K digital gold close to spot.',premium:[0.06,0.10],product:'gold1g24k',url:'https://www.safegold.com/'},
+        {name:'Tanishq',type:'Jeweller',note:'Trusted national brand; transparent daily gold rate.',premium:[0.13,0.25],product:'gold10g22k',url:'https://www.tanishq.co.in/gold-rate.html'},
+        {name:'Malabar Gold & Diamonds',type:'Jeweller',note:'Wide network with a published daily gold rate.',premium:[0.12,0.24],product:'gold10g22k',url:'https://www.malabargoldanddiamonds.com/gold-rate'},
+        {name:'Kalyan Jewellers',type:'Jeweller',note:'BIS-hallmarked jewellery; daily rate board.',premium:[0.12,0.24],product:'gold10g22k',url:'https://www.kalyanjewellers.net/gold-rate-today.php'},
+        {name:'Joyalukkas',type:'Jeweller',note:'Large chain with daily published rates.',premium:[0.12,0.24],product:'gold10g22k',url:'https://www.joyalukkas.in/gold-rate-today'}
+      ]},
+      AED:{region:'the United Arab Emirates',list:[
+        {name:'Emirates Gold',type:'Refiner & bullion',note:'Locally refined 24K bars with lower premiums.',premium:[0.03,0.08],product:'gold10g24k',url:'https://www.emiratesgold.ae/'},
+        {name:'Dubai Gold Souk',type:'Jewellery market',note:'Deira souk; making charges are often negotiable.',premium:[0.05,0.20],product:'gold10g22k',url:'https://www.dubaigoldsouk.com/'},
+        {name:'Malabar Gold & Diamonds',type:'Jeweller',note:'Regional network with daily UAE gold rates.',premium:[0.06,0.18],product:'gold10g22k',url:'https://www.malabargoldanddiamonds.com/ae'},
+        {name:'Damas Jewellery',type:'Jeweller',note:'Established UAE brand for jewellery and coins.',premium:[0.06,0.18],product:'gold10g22k',url:'https://www.damasjewellery.com/'}
+      ]},
+      SGD:{region:'Singapore',list:[
+        {name:'BullionStar',type:'Bullion dealer',note:'Live per-product pricing with on-site vaulting.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://www.bullionstar.com/buy/category/gold'},
+        {name:'Silver Bullion',type:'Bullion dealer',note:'Secured storage and transparent spreads.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://www.silverbullion.com.sg/'},
+        {name:'UOB',type:'Bank',note:'Physical gold bars and gold savings accounts.',premium:[0.04,0.08],product:'goldCoin1oz',url:'https://www.uob.com.sg/personal/save/gold-silver/gold-silver.page'}
+      ]},
+      AUD:{region:'Australia',list:[
+        {name:'ABC Bullion',type:'Bullion dealer',note:'Major dealer with competitive premiums.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://www.abcbullion.com.au/store/gold'},
+        {name:'The Perth Mint',type:'Government mint',note:'Government-owned mint; coins, bars and depository.',premium:[0.04,0.08],product:'goldCoin1oz',url:'https://www.perthmint.com/'},
+        {name:'Ainslie Bullion',type:'Bullion dealer',note:'Established dealer with live pricing.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://www.ainsliebullion.com.au/'}
+      ]},
+      CAD:{region:'Canada',list:[
+        {name:'Silver Gold Bull',type:'Bullion dealer',note:'Popular Canadian dealer with low premiums.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://silvergoldbull.ca/categories/gold'},
+        {name:'Royal Canadian Mint',type:'Government mint',note:'Official mint; Maple Leaf coins and bars.',premium:[0.04,0.08],product:'goldCoin1oz',url:'https://www.mint.ca/en/shop/bullion'},
+        {name:'TD Precious Metals',type:'Bank',note:'Bank-sold bars and coins for account holders.',premium:[0.04,0.09],product:'goldCoin1oz',url:'https://www.td.com/ca/en/investing/direct-investing/products/precious-metals'}
+      ]},
+      DEFAULT:{region:'global dealers',list:[
+        {name:'APMEX',type:'Bullion dealer',note:'Very wide range with worldwide shipping options.',premium:[0.04,0.08],product:'goldCoin1oz',url:'https://www.apmex.com/category/10000/gold'},
+        {name:'BullionVault',type:'Online marketplace',note:'Buy and store allocated gold near spot in pro vaults.',premium:[0.02,0.05],product:'goldCoin1oz',url:'https://www.bullionvault.com/'},
+        {name:'The Royal Mint',type:'Government mint',note:'Official UK bullion with international delivery.',premium:[0.04,0.08],product:'goldCoin1oz',url:'https://www.royalmint.com/invest/'},
+        {name:'Kitco',type:'Dealer & refiner',note:'Live charts alongside dealer pricing.',premium:[0.03,0.06],product:'goldCoin1oz',url:'https://online.kitco.com/'}
+      ]}
+    };
 
     if(window.SBShared) window.SBShared.initNavMenu();
     var toggle=document.querySelector('.menu-toggle');
@@ -598,6 +681,58 @@
       renderContext('gold',data.metals.gold,data.sourceUpdatedAt);
       renderContext('silver',data.metals.silver,data.sourceUpdatedAt);
       renderRatio(data);
+      renderSellers(data);
+    }
+
+    function productDetails(product,data){
+      var g=data.metals.gold.usdPerOunce,s=data.metals.silver.usdPerOunce;
+      var gram=g/OUNCE_GRAMS,sgram=s/OUNCE_GRAMS;
+      switch(product){
+        case 'goldBar1oz':return{usd:g,label:'1 oz gold bar',digits:0};
+        case 'gold10g24k':return{usd:gram*10,label:'10 g · 24K gold',digits:0};
+        case 'gold10g22k':return{usd:gram*10*(22/24),label:'10 g · 22K gold',digits:0};
+        case 'gold1g24k':return{usd:gram,label:'1 g · 24K gold',digits:2};
+        case 'silver1oz':return{usd:s,label:'1 oz silver',digits:2};
+        case 'silver1kg':return{usd:sgram*1000,label:'1 kg silver',digits:0};
+        default:return{usd:g,label:'1 oz gold coin',digits:0};
+      }
+    }
+
+    function renderSellers(data){
+      var grid=document.getElementById('sellerGrid');
+      if(!grid)return;
+      var config=SELLERS[data.currency]||SELLERS.DEFAULT;
+      var intro=document.getElementById('sellerIntro');
+      if(intro){
+        intro.textContent='Well-known and popular sellers for '+config.region+', with a rough estimated price band and a link to each seller’s live price. Government mints and bullion dealers usually carry lower premiums than jewellery, which adds making charges.';
+      }
+      var fx=data.fxRate;
+      var estCurrency=Number.isFinite(fx)?data.currency:'USD';
+      var estFx=Number.isFinite(fx)?fx:1;
+      var minAvg=config.list.reduce(function(min,seller){
+        var avg=(seller.premium[0]+seller.premium[1])/2;
+        return avg<min?avg:min;
+      },Infinity);
+      grid.innerHTML=config.list.slice().sort(function(a,b){
+        return (a.premium[0]+a.premium[1])-(b.premium[0]+b.premium[1]);
+      }).map(function(seller){
+        var product=productDetails(seller.product,data);
+        var low=product.usd*(1+seller.premium[0])*estFx;
+        var high=product.usd*(1+seller.premium[1])*estFx;
+        var estimate=formatMoney(low,estCurrency,product.digits)+' – '+formatMoney(high,estCurrency,product.digits);
+        var premiumPct=Math.round(seller.premium[0]*100)+'–'+Math.round(seller.premium[1]*100)+'%';
+        var isBest=(seller.premium[0]+seller.premium[1])/2<=minAvg+0.0001;
+        return '<div class="seller-card">'
+          +'<div class="seller-top"><span class="seller-name">'+escapeHtml(seller.name)+'</span>'
+          +'<span class="seller-chip">'+escapeHtml(seller.type)+'</span></div>'
+          +(isBest?'<span class="seller-badge">Often lowest premium</span>':'')
+          +'<p class="seller-note">'+escapeHtml(seller.note)+'</p>'
+          +'<p class="seller-est">'+escapeHtml(estimate)
+          +'<small>Est. '+escapeHtml(product.label)+' · typical premium '+premiumPct+' over spot</small></p>'
+          +'<a class="seller-link" href="'+escapeHtml(seller.url)+'" target="_blank" rel="noopener noreferrer">Check live price'
+          +'<svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></a>'
+          +'</div>';
+      }).join('');
     }
 
     function renderMetal(key,metal,data,exact,effectiveFreshness){
