@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkyFare — Search Flights, Compare Fares &amp; Book | Sumanth Bolle</title>
-  <meta name="description" content="SkyFare: search live flights, compare by price and speed, then book directly on Google Flights, Kayak, Skyscanner, or the airline — one click from every result.">
-  <meta name="keywords" content="SkyFare, flight search, book flights, cheap flights, Google Flights, Kayak, flight comparison, airline booking">
+  <title>SkyFare — Smart Flight Search &amp; Value Score Ranking | Sumanth Bolle</title>
+  <meta name="description" content="SkyFare: intelligent flight search powered by Summaverick. Ranked by Value Score — price, duration, stops, and timing — then book on Google Flights, Kayak, Skyscanner, or the airline.">
+  <meta name="keywords" content="SkyFare, flight search, Value Score, Summaverick, smart flight recommendations, Google Flights, Kayak, flight comparison">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://sumanthbolle.com/flights">
-  <meta property="og:title" content="SkyFare — Search Flights. Compare. Book.">
-  <meta property="og:description" content="Find live fares and book in one click on Google Flights, Kayak, Skyscanner, or the airline.">
+  <meta property="og:title" content="SkyFare — Smart flight search, clearer decisions">
+  <meta property="og:description" content="AI destination ideas and Value Score ranking — then book in one click on Google Flights, Kayak, Skyscanner, or the airline.">
   <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
   <meta property="og:url" content="https://sumanthbolle.com/flights">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SkyFare — Search Flights. Compare. Book.">
-  <meta name="twitter:description" content="Live flight search with direct book redirects to Google Flights, Kayak, and airlines.">
+  <meta name="twitter:title" content="SkyFare — Smart flight search, clearer decisions">
+  <meta name="twitter:description" content="Value Score ranking and Summaverick destination ideas — then book on Google Flights, Kayak, or the airline.">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -28,7 +28,7 @@
     "url": "https://sumanthbolle.com/flights",
     "applicationCategory": "TravelApplication",
     "operatingSystem": "Web",
-    "description": "Search live flights, compare fares by price and speed, and book directly on Google Flights, Kayak, Skyscanner, or the airline.",
+    "description": "Intelligent flight search with Value Score ranking and Summaverick destination suggestions. Book on Google Flights, Kayak, Skyscanner, or the airline.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
   }
@@ -166,12 +166,12 @@
     .filter-select{padding:5px 10px;border:none;border-radius:6px;background:var(--bg);font-size:12px;font-weight:500;color:var(--text);font-family:inherit;cursor:pointer}
 
     /* ─── Flight card ─── */
-    .flight-card{background:var(--white);border-radius:var(--radius);padding:20px 24px 20px 62px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:10px;transition:all .2s;position:relative}
+    .flight-card{background:var(--white);border-radius:var(--radius);padding:20px 88px 20px 62px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:10px;transition:all .2s;position:relative}
     .flight-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);border-color:rgba(0,0,0,0.08)}
     .flight-card.highlighted{border-color:rgba(0,102,204,0.2);box-shadow:0 2px 12px rgba(0,102,204,0.06)}
     .fc-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
     .badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.2px}
-    .badge-cheapest{background:#dcfce7;color:#166534}.badge-fastest{background:#f3e8ff;color:#6b21a8}.badge-bestvalue{background:#dbeafe;color:#1e40af}.badge-underbudget{background:#d1fae5;color:#065f46}.badge-nonstop{background:#fef3c7;color:#92400e}.badge-lowco2{background:#d1fae5;color:#047857}.badge-greatdeal{background:#dcfce7;color:#15803d}
+    .badge-cheapest{background:#dcfce7;color:#166534}.badge-fastest{background:#e0f2fe;color:#075985}.badge-bestvalue,.badge-bestoverall{background:#dbeafe;color:#1e40af}.badge-besttiming{background:#fef3c7;color:#92400e}.badge-underbudget{background:#d1fae5;color:#065f46}.badge-nonstop{background:#f1f5f9;color:#334155}.badge-lowco2{background:#d1fae5;color:#047857}.badge-greatdeal{background:#dcfce7;color:#15803d}
     .badge-unverified{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
     .fc-body{display:flex;align-items:center;gap:16px}
     .fc-airline{flex:0 0 auto;display:flex;align-items:center;gap:10px;min-width:140px}
@@ -222,7 +222,6 @@
     .fc-layovers{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
     .fc-layover{font-size:11px;color:var(--gray);background:var(--bg);padding:2px 8px;border-radius:4px}
     .fc-notes{font-size:12px;color:var(--gray);font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.04)}
-    .fc-score{position:absolute;top:18px;left:16px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid;background:var(--white)}
 
     /* ─── Day planner strip (find the cheapest day to fly) ─── */
     .day-strip{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:16px}
@@ -248,14 +247,57 @@
     .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
     .nl-planner{background:var(--white);border-radius:var(--radius);padding:20px 22px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:24px}
     .nl-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px}
-    .nl-title svg{width:16px;height:16px;stroke:var(--purple);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .nl-title svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .nl-row{display:flex;gap:10px}
     .nl-row input{flex:1;padding:11px 14px;border:1px solid rgba(0,0,0,0.1);border-radius:var(--radius-xs);font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
     .nl-row input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,0.12)}
-    .nl-row button{padding:11px 20px;background:var(--purple);color:#fff;border:none;border-radius:var(--radius-xs);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .2s}
-    .nl-row button:hover{background:#4a48c4}
+    .nl-row button{padding:11px 20px;background:var(--blue);color:#fff;border:none;border-radius:var(--radius-xs);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .2s}
+    .nl-row button:hover{background:#0055aa}
+    .nl-row button:disabled{opacity:.55;cursor:not-allowed}
     .nl-hint{font-size:12px;color:var(--gray);margin-top:9px}
+    .nl-examples{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .nl-ex{padding:5px 10px;border:1px solid rgba(0,0,0,0.08);border-radius:8px;background:var(--bg);font-size:11px;color:var(--text);cursor:pointer;font-family:inherit;transition:border-color .15s}
+    .nl-ex:hover{border-color:var(--blue);color:var(--blue)}
+    .nl-status{font-size:13px;color:var(--gray);margin-top:12px;display:flex;align-items:center;gap:8px}
+    .nl-error{font-size:13px;color:#b91c1c;margin-top:12px}
+    .inspire-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+    .inspire-card{border:1px solid rgba(0,0,0,0.08);border-radius:var(--radius-sm);padding:14px;background:var(--bg);text-align:left;display:flex;flex-direction:column;gap:8px}
+    .inspire-card .ic-dest{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+    .inspire-card .ic-why{font-size:13px;color:var(--gray);line-height:1.45;flex:1}
+    .inspire-card .ic-meta{font-size:12px;color:var(--text);display:flex;flex-direction:column;gap:3px}
+    .inspire-card .ic-meta strong{font-weight:600}
+    .inspire-card .ic-search{margin-top:4px;padding:9px 12px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;width:100%}
+    .inspire-card .ic-search:hover{background:#0055aa}
     @media(max-width:600px){.nl-row{flex-direction:column}}
+    @media(max-width:800px){.inspire-grid{grid-template-columns:1fr}}
+    .fc-score-wrap{position:absolute;top:14px;left:14px;display:flex;flex-direction:column;align-items:center;gap:2px;z-index:1}
+    .fc-score{position:static;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid;background:var(--white)}
+    .fc-score-label{font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gray)}
+    .fc-compare{position:absolute;top:14px;right:14px;z-index:2}
+    .fc-compare label{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--gray);cursor:pointer;background:rgba(255,255,255,.92);padding:4px 8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
+    .fc-compare input{margin:0}
+    .compare-bar{position:fixed;left:0;right:0;bottom:0;z-index:9000;background:rgba(17,17,17,.96);color:#fff;padding:12px 18px;display:none;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;box-shadow:0 -8px 24px rgba(0,0,0,.18)}
+    .compare-bar.show{display:flex}
+    .compare-bar .cb-text{font-size:13px;opacity:.9}
+    .compare-bar button{padding:9px 16px;border-radius:8px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+    .compare-bar .cb-go{background:var(--blue);color:#fff}
+    .compare-bar .cb-clear{background:rgba(255,255,255,.12);color:#fff}
+    .compare-panel{position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;padding:16px}
+    .compare-panel.show{display:flex}
+    .compare-sheet{background:var(--white);border-radius:16px 16px 8px 8px;width:min(980px,100%);max-height:88vh;overflow:auto;padding:18px 18px 24px}
+    .compare-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .compare-head h3{font-size:17px;font-weight:700;letter-spacing:-.01em}
+    .compare-head button{border:none;background:var(--bg);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1}
+    .compare-grid{display:grid;gap:12px}
+    .compare-grid.cols-2{grid-template-columns:1fr 1fr}
+    .compare-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+    .compare-col{border:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:14px;background:var(--bg)}
+    .compare-col .cc-airline{font-size:15px;font-weight:700;margin-bottom:4px}
+    .compare-col .cc-price{font-size:22px;font-weight:700;margin:8px 0}
+    .compare-col .cc-row{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:6px 0;border-top:1px solid rgba(0,0,0,0.06)}
+    .compare-col .cc-row span:first-child{color:var(--gray)}
+    .compare-col .cc-book{display:inline-flex;margin-top:10px;padding:9px 12px;background:var(--blue);color:#fff;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600}
+    @media(max-width:700px){.compare-grid.cols-2,.compare-grid.cols-3{grid-template-columns:1fr}}
     .field-clear{position:absolute;right:8px;top:31px;width:22px;height:22px;border:none;border-radius:50%;background:rgba(0,0,0,0.06);color:var(--gray);font-size:14px;line-height:1;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0}
     .field-clear:hover{background:rgba(0,0,0,0.12);color:var(--text)}
     .field.has-value .field-clear{display:flex}
@@ -481,9 +523,10 @@
       .fc-airline{min-width:0}
       .fc-right{text-align:left;align-items:stretch;flex-direction:column;flex-wrap:nowrap;gap:8px;width:100%;min-width:0}
       .fc-actions{max-width:280px}
-      .flight-card{padding-left:24px}
-      .fc-score{display:none}
-      .fc-score{top:12px;right:12px;width:32px;height:32px;font-size:10px}
+      .flight-card{padding:48px 16px 16px}
+      .fc-score-wrap{top:10px;left:12px}
+      .fc-score{width:30px;height:30px;font-size:10px}
+      .fc-compare{top:10px;right:10px}
       .search-card{padding:20px}
       .more-filters.show{grid-template-columns:1fr}
     }
@@ -524,14 +567,14 @@
 <header class="page-header">
   <span class="eyebrow">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3.64 14.26l2.86.95 4.02-4.02-8-4.59 1.16-1.16 9.37 2.51 3.18-3.18c.58-.58 1.53-.58 2.12 0 .58.59.58 1.53 0 2.12l-3.18 3.18 2.51 9.37-1.16 1.16-4.59-8-4.02 4.02.95 2.86-1.07 1.07-2.53-3.9-3.9-2.53 1.07-1.07z"/></svg>
-    Flight search with direct book links
+    Intelligent flight search · powered by Summaverick
   </span>
   <div class="hero-brand">SkyFare</div>
-  <h1>Search flights. Compare. Book.</h1>
-  <p>Find live fares ranked by price, speed, and value — then book in one click on Google Flights, Kayak, Skyscanner, or the airline.</p>
+  <h1>Smarter recommendations. Clearer decisions.</h1>
+  <p>We don’t try to list every flight — we help you pick the right one. Ranked by Value Score, then book on Google Flights, Kayak, Skyscanner, or the airline.</p>
   <div class="hero-promise" aria-label="How SkyFare works">
-    <span class="hero-pill"><strong>1.</strong> Search</span>
-    <span class="hero-pill"><strong>2.</strong> Compare</span>
+    <span class="hero-pill"><strong>1.</strong> Ask or search</span>
+    <span class="hero-pill"><strong>2.</strong> Rank by Value Score</span>
     <span class="hero-pill"><strong>3.</strong> Book on partner sites</span>
   </div>
 </header>
@@ -606,6 +649,22 @@
   <div class="sr-only" aria-live="polite" id="srAnnounce"></div>
   <div class="results-area" id="resultsArea"></div>
 
+</div>
+
+<!-- Compare tray -->
+<div class="compare-bar" id="compareBar" role="region" aria-label="Compare selected flights">
+  <span class="cb-text" id="compareBarText">Select 2–3 flights to compare</span>
+  <button type="button" class="cb-go" id="compareGo">Compare</button>
+  <button type="button" class="cb-clear" id="compareClear">Clear</button>
+</div>
+<div class="compare-panel" id="comparePanel" role="dialog" aria-modal="true" aria-labelledby="compareTitle">
+  <div class="compare-sheet">
+    <div class="compare-head">
+      <h3 id="compareTitle">Compare flights</h3>
+      <button type="button" id="compareClose" aria-label="Close compare">&times;</button>
+    </div>
+    <div class="compare-grid" id="compareGrid"></div>
+  </div>
 </div>
 
 <!-- Flight details fly-out -->
@@ -937,6 +996,7 @@
 
 
     const API_URL = 'https://wandering-haze-b394.sumanthbolle312.workers.dev/flights';
+    const INSPIRE_URL = 'https://wandering-haze-b394.sumanthbolle312.workers.dev/flights/inspire';
 
   /* ─── Analytics (privacy-safe, no external scripts / no PII) ───
      Pushes structured events to window.dataLayer (GA4/GTM-ready) and fires a
@@ -964,6 +1024,8 @@
   let priceMode = 'person';   // 'person' | 'total'
   let lastPriceDelta = null;  // change vs the previous check of the same date
   let searchCompletedAt = null;
+  let compareSelected = [];   // up to 3 flight ids for side-by-side compare
+  let lastInspireSuggestions = null;
 
   /* Remembered preferences (currency, cabin, passengers, trip type) */
   const PREFS_KEY = 'skyfare_prefs';
@@ -1452,35 +1514,177 @@
     bindNlPlanner();
   }
 
-  /* ─── Describe-your-trip planner: hands a natural-language request to
-     Summaverick (the site's research assistant) for destination + timing
-     ideas, which the traveller then prices here. ─── */
-  function nlPlannerHtml() {
-    return '<div class="nl-planner">'
-      + '<div class="nl-title"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>Not sure where or when to go?</div>'
+  /* ─── Describe-your-trip planner: Summaverick returns destinations + weeks
+     + rough fares in-page, with one-click prefilled SkyFare search. ─── */
+  function nlPlannerHtml(suggestions, statusHtml) {
+    const examples = [
+      'Warm places under $700 in March from Singapore',
+      'Best long weekend getaways from Delhi in August',
+      'Where can I go for under $500 return in September?'
+    ];
+    let h = '<div class="nl-planner" id="nlPlanner">'
+      + '<div class="nl-title"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>Ask Summaverick where to go</div>'
       + '<div class="nl-row">'
-      + '<input type="text" id="nlTrip" placeholder="Describe your trip — e.g. cheap beach week from Singapore in September" aria-label="Describe your trip">'
-      + '<button type="button" id="nlGo">Plan with AI</button>'
+      + '<input type="text" id="nlTrip" placeholder="e.g. warm places under $700 in March from Singapore" aria-label="Describe your trip">'
+      + '<button type="button" id="nlGo">Suggest destinations</button>'
       + '</div>'
-      + '<div class="nl-hint">Summaverick suggests destinations, the best weeks to fly and rough fares — then price the exact dates here.</div>'
-      + '</div>';
+      + '<div class="nl-hint">Get destinations, best weeks, and rough fares — then search exact dates on SkyFare in one click.</div>'
+      + '<div class="nl-examples">' + examples.map(function(ex) {
+        return '<button type="button" class="nl-ex" data-ex="' + escHtml(ex) + '">' + escHtml(ex) + '</button>';
+      }).join('') + '</div>';
+    if (statusHtml) h += statusHtml;
+    if (suggestions && suggestions.length) {
+      h += '<div class="inspire-grid" id="inspireGrid">';
+      suggestions.forEach(function(s, idx) {
+        const priceBits = [];
+        if (s.price_range && (s.price_range.min || s.price_range.max)) {
+          const cur = s.price_range.currency || 'USD';
+          if (s.price_range.min && s.price_range.max) priceBits.push(fmtMoney(s.price_range.min, cur) + ' – ' + fmtMoney(s.price_range.max, cur));
+          else if (s.price_range.min) priceBits.push('from ' + fmtMoney(s.price_range.min, cur));
+          else priceBits.push('up to ' + fmtMoney(s.price_range.max, cur));
+        }
+        h += '<div class="inspire-card">'
+          + '<div class="ic-dest">' + escHtml(s.destination || s.destination_city || 'Destination') + '</div>'
+          + (s.why ? '<div class="ic-why">' + escHtml(s.why) + '</div>' : '')
+          + '<div class="ic-meta">'
+          + (s.origin ? '<span><strong>From</strong> ' + escHtml(s.origin) + '</span>' : '')
+          + (s.best_weeks && s.best_weeks.length ? '<span><strong>Best weeks</strong> ' + escHtml(s.best_weeks.join(' · ')) + '</span>' : '')
+          + (priceBits.length ? '<span><strong>Rough fare</strong> ' + escHtml(priceBits.join('')) + '</span>' : '')
+          + (s.suggested_departure ? '<span><strong>Try</strong> ' + escHtml(s.suggested_departure) + (s.suggested_return ? ' → ' + escHtml(s.suggested_return) : '') + '</span>' : '')
+          + '</div>'
+          + '<button type="button" class="ic-search" data-inspire-idx="' + idx + '">Search this trip</button>'
+          + '</div>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+    return h;
   }
+
+  function applyInspireSuggestion(s) {
+    if (!s) return;
+    if (s.origin) {
+      $('#origin').value = s.origin;
+      $('#origin').dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (s.destination) {
+      $('#destination').value = s.destination;
+      $('#destination').dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    const trip = s.trip_type === 'one-way' ? 'one-way' : 'round-trip';
+    document.querySelectorAll('.trip-btn').forEach(function(b) {
+      const on = b.dataset.trip === trip;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    tripType = trip;
+    $('#returnField').style.display = trip === 'one-way' ? 'none' : '';
+    if (s.suggested_departure) {
+      $('#departureDate').value = s.suggested_departure;
+      $('#returnDate').min = s.suggested_departure;
+    }
+    if (s.suggested_return && trip === 'round-trip') $('#returnDate').value = s.suggested_return;
+    if (s.price_range && s.price_range.max) {
+      $('#maxBudget').value = s.price_range.max;
+      const adv = $('#advFields');
+      if (adv && !adv.classList.contains('show')) {
+        $('#advToggle').click();
+      }
+    }
+    if (s.price_range && s.price_range.currency) {
+      const cur = $('#currency');
+      if (cur && [...cur.options].some(function(o) { return o.value === s.price_range.currency; })) {
+        cur.value = s.price_range.currency;
+      }
+    }
+    trackFlightEvent('flight_inspire_search', {
+      destination: s.destination_airport || s.destination,
+      origin: s.origin_airport || s.origin
+    });
+    $('#searchCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Auto-run when we have enough to search.
+    if ($('#origin').value && $('#destination').value && $('#departureDate').value) {
+      $('#searchForm').requestSubmit();
+    }
+  }
+
   function bindNlPlanner() {
     const go = $('#nlGo'), input = $('#nlTrip');
     if (!go || !input) return;
-    const submit = () => {
+    document.querySelectorAll('.nl-ex').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        input.value = btn.getAttribute('data-ex') || '';
+        input.focus();
+      });
+    });
+    document.querySelectorAll('.ic-search').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const idx = parseInt(btn.getAttribute('data-inspire-idx'), 10);
+        if (lastInspireSuggestions && lastInspireSuggestions[idx]) {
+          applyInspireSuggestion(lastInspireSuggestions[idx]);
+        }
+      });
+    });
+
+    const submit = async function() {
       const desc = input.value.trim();
       if (desc.length < 5) { input.focus(); return; }
-      const prompt = 'I want to plan this trip: "' + desc + '". Suggest 3 destinations that fit, the cheapest weeks to fly there, typical round-trip fares, and anything I should know (weather, visas, crowds). Keep it practical.';
-      window.open('summaverick.html?q=' + encodeURIComponent(prompt), '_blank', 'noopener');
+      go.disabled = true;
+      const originHint = ($('#origin') && $('#origin').value) || '';
+      const currency = ($('#currency') && $('#currency').value) || 'USD';
+      const loadingHtml = '<div class="nl-status"><span class="spin" style="width:14px;height:14px;border:2px solid rgba(0,0,0,0.15);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;display:inline-block"></span> Summaverick is finding destinations…</div>';
+      resultsArea.innerHTML = '<div class="fade-in">' + nlPlannerHtml(null, loadingHtml) + routeChipsHtml() + '</div>';
+      bindRouteChips();
+      // Re-bind after re-render; preserve typed query.
+      const input2 = $('#nlTrip');
+      if (input2) input2.value = desc;
+      bindNlPlanner();
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(function() { controller.abort(); }, 40000);
+        const res = await fetch(INSPIRE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: desc, origin: originHint, currency: currency }),
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        const json = await res.json();
+        if (!json.success || !json.data || !json.data.suggestions || !json.data.suggestions.length) {
+          throw new Error((json && json.error) || 'No suggestions returned.');
+        }
+        lastInspireSuggestions = json.data.suggestions;
+        trackFlightEvent('flight_inspire_results', { count: lastInspireSuggestions.length });
+        resultsArea.innerHTML = '<div class="fade-in">' + nlPlannerHtml(lastInspireSuggestions) + routeChipsHtml() + '</div>';
+        bindRouteChips();
+        const keep = $('#nlTrip');
+        if (keep) keep.value = desc;
+        bindNlPlanner();
+      } catch (err) {
+        trackFlightEvent('flight_inspire_error', { message: String(err && err.message || err).slice(0, 120) });
+        const fallbackPrompt = 'I want to plan this trip: "' + desc + '". Suggest 3 destinations that fit, the cheapest weeks to fly there, typical round-trip fares, and anything I should know (weather, visas, crowds). Keep it practical.';
+        const errHtml = '<div class="nl-error">Couldn’t load suggestions here'
+          + (err && err.message ? ' — ' + escHtml(err.message) : '')
+          + '. <a href="summaverick.html?q=' + encodeURIComponent(fallbackPrompt) + '" target="_blank" rel="noopener">Open in Summaverick</a> instead.</div>';
+        resultsArea.innerHTML = '<div class="fade-in">' + nlPlannerHtml(null, errHtml) + routeChipsHtml() + '</div>';
+        bindRouteChips();
+        const keep = $('#nlTrip');
+        if (keep) keep.value = desc;
+        bindNlPlanner();
+      } finally {
+        const go2 = $('#nlGo');
+        if (go2) go2.disabled = false;
+      }
     };
     go.addEventListener('click', submit);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+    input.addEventListener('keydown', function(e) { if (e.key === 'Enter') submit(); });
   }
 
   async function search(params) {
     isLoading = true;
     resultData = null;
+    compareSelected = [];
+    updateCompareBar();
     updateSearchBtn(true);
     renderLoading();
 
@@ -1663,7 +1867,8 @@
         confidence: 'low',
         notes: 'Illustrative demo fare — not a live price.',
         score: 82 - i * 9,
-        badges: i === 1 ? ['Cheapest'] : (i === 0 ? ['Fastest'] : []),
+        badges: i === 0 ? ['Best Overall', 'Fastest'] : (i === 1 ? ['Cheapest'] : ['Best Timing']),
+        timing_score: i === 2 ? 92 : (80 - i * 10),
         booking_url: '',
         source_url: ''
       };
@@ -1683,7 +1888,8 @@
       },
       recommendation: {
         best_overall_flight_id: 'demo_1', cheapest_flight_id: 'demo_2',
-        fastest_flight_id: 'demo_1', best_under_budget_flight_id: 'demo_2',
+        fastest_flight_id: 'demo_1', best_timing_flight_id: 'demo_3',
+        best_under_budget_flight_id: 'demo_2',
         explanation: 'Demo ranking shown because the live search service was unavailable.'
       },
       flights: flights,
@@ -1762,14 +1968,16 @@
       { label: 'Best Overall', dot: 'blue', flight: find(rec.best_overall_flight_id) },
       { label: 'Cheapest', dot: 'green', flight: find(rec.cheapest_flight_id) },
       { label: 'Fastest', dot: 'purple', flight: find(rec.fastest_flight_id) },
-      { label: 'Best Under Budget', dot: 'orange', flight: find(rec.best_under_budget_flight_id) },
+      { label: 'Best Timing', dot: 'orange', flight: find(rec.best_timing_flight_id) || d.flights.reduce(function(a, b) {
+        return (a.timing_score || 0) >= (b.timing_score || 0) ? a : b;
+      }, d.flights[0]) },
     ];
     html += '<div class="summary-grid">';
     cards.forEach(c => {
       if (!c.flight) { html += '<div class="summary-card"><div class="sc-label"><span class="sc-dot ' + c.dot + '"></span>' + c.label + '</div><div class="sc-meta">N/A</div></div>'; return; }
       const f = c.flight;
       const stops = f.stops === 0 ? 'Nonstop' : f.stops + ' stop' + (f.stops > 1 ? 's' : '');
-      html += '<div class="summary-card"><div class="sc-label"><span class="sc-dot ' + c.dot + '"></span>' + c.label + '</div><div class="sc-airline">' + escHtml(f.airline) + '</div><div class="sc-meta">' + stops + ' · ' + fmtDur(f.total_duration_minutes) + '</div><div class="sc-price">' + fmtMoney(f.price, f.currency || gotCur) + '</div></div>';
+      html += '<div class="summary-card"><div class="sc-label"><span class="sc-dot ' + c.dot + '"></span>' + c.label + '</div><div class="sc-airline">' + escHtml(f.airline) + '</div><div class="sc-meta">' + stops + ' · ' + fmtDur(f.total_duration_minutes) + (typeof f.score === 'number' ? ' · Score ' + f.score : '') + '</div><div class="sc-price">' + fmtMoney(f.price, f.currency || gotCur) + '</div></div>';
     });
     html += '</div>';
 
@@ -1852,7 +2060,7 @@
     html += '<p>Prices are estimates and can change until you complete checkout on the booking site. SkyFare redirects you to book — always confirm the final fare and baggage rules before paying.</p>';
     html += '<details class="how-it-works"><summary><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.7-2.5 2.2-2.5 3.7M12 17h.01"/></svg>How SkyFare search &amp; book works</summary>'
       + '<div class="hiw-body"><p><strong>Search:</strong> your route, dates and preferences are researched live across airline and travel sites — that can take up to a minute.</p>'
-      + '<p><strong>Compare:</strong> each flight is scored on price, duration, stops and fit for your priority. "Best overall" is the highest score, not a paid placement.</p>'
+      + '<p><strong>Value Score:</strong> each flight is scored 0–100 on price (40%), duration (25%), stops &amp; layovers (15%), departure/arrival timing (10%), and airline quality (10%). Labels like Best Overall, Cheapest, Fastest, and Best Timing are computed — never paid placements.</p>'
       + '<p><strong>Book:</strong> every card has a Book button that opens Google Flights, Kayak, Skyscanner, or the original provider so you can buy the ticket there. SkyFare does not process payments.</p>'
       + '<p><strong>Privacy:</strong> only the search itself (route, dates, preferences) is sent to the service. No account; recent routes stay in this browser only.</p></div></details>';
     html += '</div>';
@@ -1941,6 +2149,27 @@
       const f = d.flights.find(x => String(x.id) === btn.dataset.fid);
       if (f) openFlyout(f);
     }));
+
+    /* Compare checkboxes */
+    $$('.cmp-check').forEach(function(box) {
+      box.addEventListener('change', function() {
+        const id = String(box.dataset.fid || '');
+        if (!id) return;
+        if (box.checked) {
+          if (compareSelected.length >= 3) {
+            box.checked = false;
+            const sr = $('#srAnnounce');
+            if (sr) sr.textContent = 'You can compare up to 3 flights.';
+            return;
+          }
+          if (compareSelected.indexOf(id) < 0) compareSelected.push(id);
+        } else {
+          compareSelected = compareSelected.filter(function(x) { return x !== id; });
+        }
+        updateCompareBar();
+      });
+    });
+    updateCompareBar();
 
     /* Demo-mode: retry the live search */
     const demoRetry = $('#demoRetry');
@@ -2212,7 +2441,27 @@
   }
   flyoutClose.addEventListener('click', closeFlyout);
   flyScrim.addEventListener('click', closeFlyout);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && flightFlyout.classList.contains('open')) closeFlyout(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if ($('#comparePanel') && $('#comparePanel').classList.contains('show')) closeComparePanel();
+      else if (flightFlyout.classList.contains('open')) closeFlyout();
+    }
+  });
+
+  const compareGo = $('#compareGo');
+  const compareClear = $('#compareClear');
+  const compareClose = $('#compareClose');
+  const comparePanel = $('#comparePanel');
+  if (compareGo) compareGo.addEventListener('click', openComparePanel);
+  if (compareClear) compareClear.addEventListener('click', function() {
+    compareSelected = [];
+    updateCompareBar();
+    if (resultData) renderResults();
+  });
+  if (compareClose) compareClose.addEventListener('click', closeComparePanel);
+  if (comparePanel) comparePanel.addEventListener('click', function(e) {
+    if (e.target === comparePanel) closeComparePanel();
+  });
 
   /* Clear buttons on the route fields */
   $$('.field-clear').forEach(btn => {
@@ -2390,10 +2639,74 @@
     return h;
   }
 
+  /* ─── Side-by-side compare (2–3 flights) ─── */
+  function updateCompareBar() {
+    const bar = $('#compareBar');
+    const text = $('#compareBarText');
+    const go = $('#compareGo');
+    if (!bar) return;
+    const n = compareSelected.length;
+    if (n === 0 || !resultData) {
+      bar.classList.remove('show');
+      return;
+    }
+    bar.classList.add('show');
+    if (text) text.textContent = n + ' flight' + (n === 1 ? '' : 's') + ' selected · pick 2–3 to compare';
+    if (go) go.disabled = n < 2;
+  }
+
+  function openComparePanel() {
+    if (!resultData || compareSelected.length < 2) return;
+    const flights = compareSelected
+      .map(function(id) { return resultData.flights.find(function(f) { return String(f.id) === id; }); })
+      .filter(Boolean)
+      .slice(0, 3);
+    const grid = $('#compareGrid');
+    const panel = $('#comparePanel');
+    if (!grid || !panel) return;
+    grid.className = 'compare-grid cols-' + flights.length;
+    grid.innerHTML = flights.map(function(f) {
+      const book = primaryBookHref(f, lastParams);
+      const stops = f.stops === 0 ? 'Nonstop' : f.stops + ' stop' + (f.stops > 1 ? 's' : '');
+      const isBasic = f.fare_brand && /basic|light|saver|economy basic/i.test(f.fare_brand);
+      return '<div class="compare-col">'
+        + '<div class="cc-airline">' + escHtml(f.airline || 'Flight') + '</div>'
+        + '<div style="font-size:12px;color:var(--gray)">' + escHtml((f.flight_numbers || []).join(' · ') || '') + '</div>'
+        + '<div class="cc-price">' + fmtMoney(f.price, f.currency || displayCurrency()) + '</div>'
+        + '<div class="cc-row"><span>Value Score</span><strong>' + (f.score || '—') + '</strong></div>'
+        + '<div class="cc-row"><span>Duration</span><strong>' + fmtDur(f.total_duration_minutes) + '</strong></div>'
+        + '<div class="cc-row"><span>Stops</span><strong>' + stops + '</strong></div>'
+        + '<div class="cc-row"><span>Departs</span><strong>' + escHtml(fmtTime(f.departure_time)) + '</strong></div>'
+        + '<div class="cc-row"><span>Arrives</span><strong>' + escHtml(fmtTime(f.arrival_time)) + ((f.day_offset || 0) > 0 ? ' (+' + f.day_offset + 'd)' : '') + '</strong></div>'
+        + '<div class="cc-row"><span>Fare</span><strong>' + escHtml(f.fare_brand || '—') + (isBasic ? ' ⚠' : '') + '</strong></div>'
+        + '<div class="cc-row"><span>Bags</span><strong>' + (f.carry_on_included === true ? 'Carry-on' : f.carry_on_included === false ? 'No carry-on' : '—') + '</strong></div>'
+        + (f.badges && f.badges.length ? '<div class="cc-row"><span>Labels</span><strong>' + escHtml(f.badges.join(', ')) + '</strong></div>' : '')
+        + (book ? '<a class="cc-book" href="' + escHtml(book) + '" target="_blank" rel="noopener noreferrer">Book</a>' : '')
+        + '</div>';
+    }).join('');
+    panel.classList.add('show');
+    trackFlightEvent('flight_compare_open', { count: flights.length });
+  }
+
+  function closeComparePanel() {
+    const panel = $('#comparePanel');
+    if (panel) panel.classList.remove('show');
+  }
+
   /* ─── Flight card HTML ─── */
   function flightCardHtml(f, highlighted, passengers, priceInsights) {
-    const badgeMap = { 'Cheapest': 'cheapest', 'Fastest': 'fastest', 'Best Value': 'bestvalue', 'Under Budget': 'underbudget', 'Nonstop': 'nonstop', 'Low CO2': 'lowco2', 'Great Deal': 'greatdeal' };
-    let h = '<div class="flight-card' + (highlighted ? ' highlighted' : '') + '">';
+    const badgeMap = {
+      'Cheapest': 'cheapest',
+      'Fastest': 'fastest',
+      'Best Value': 'bestvalue',
+      'Best Overall': 'bestoverall',
+      'Best Timing': 'besttiming',
+      'Under Budget': 'underbudget',
+      'Nonstop': 'nonstop',
+      'Low CO2': 'lowco2',
+      'Great Deal': 'greatdeal'
+    };
+    let h = '<div class="flight-card' + (highlighted ? ' highlighted' : '') + '" data-flight-id="' + escHtml(String(f.id)) + '">';
 
     /* Badges */
     if ((f.badges && f.badges.length) || f._unverified) {
@@ -2403,10 +2716,14 @@
       h += '</div>';
     }
 
-    /* Score ring */
+    /* Value Score ring */
     const sc = f.score || 0;
-    const scolor = sc >= 80 ? 'var(--green)' : sc >= 60 ? 'var(--orange)' : 'var(--red)';
-    h += '<div class="fc-score" style="border-color:' + scolor + ';color:' + scolor + '">' + sc + '</div>';
+    const scolor = sc >= 80 ? 'var(--green)' : sc >= 60 ? 'var(--blue)' : sc >= 40 ? 'var(--orange)' : 'var(--red)';
+    h += '<div class="fc-score-wrap" title="Value Score: price 40%, duration 25%, stops 15%, timing 10%, airline 10%">'
+      + '<div class="fc-score" style="border-color:' + scolor + ';color:' + scolor + '">' + sc + '</div>'
+      + '<span class="fc-score-label">Value</span></div>';
+    const compared = compareSelected.indexOf(String(f.id)) >= 0;
+    h += '<div class="fc-compare"><label><input type="checkbox" class="cmp-check" data-fid="' + escHtml(String(f.id)) + '"' + (compared ? ' checked' : '') + '> Compare</label></div>';
 
     h += '<div class="fc-body">';
 

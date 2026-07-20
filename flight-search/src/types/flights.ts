@@ -140,6 +140,7 @@ export interface Recommendation {
   best_overall_flight_id: string;
   cheapest_flight_id: string;
   fastest_flight_id: string;
+  best_timing_flight_id?: string;
   best_under_budget_flight_id: string;
   explanation: string;
 }

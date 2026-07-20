@@ -186,19 +186,17 @@ SkyFare brings the signature tools of the best 2026 flight-search sites into one
 
 ## Scoring Logic
 
-Each flight is scored 0–100 based on weighted factors. When comparable emissions data is
-available across results, emissions participate in the score and the other weights adjust:
+Each flight gets a **Value Score** 0–100 (SkyFare handover formula):
 
-| Factor     | Weight (with emissions) | Weight (no emissions) |
-| ---------- | ----------------------- | --------------------- |
-| Price      | 34%                     | 45%                   |
-| Duration   | 22%                     | 25%                   |
-| Stops      | 13%                     | 13%                   |
-| Emissions  | 15%                     | —                     |
-| Budget fit | 8%                      | 9%                    |
-| Confidence | 8%                      | 8%                    |
+| Factor              | Weight |
+| ------------------- | ------ |
+| Price               | 40%    |
+| Duration            | 25%    |
+| Stops + layovers    | 15%    |
+| Departure/arrival timing | 10% |
+| Airline quality     | 10%    |
 
-Results are sorted by the selected priority mode: **Best Balance** (by score), **Cheapest** (by price), **Fastest** (by duration), or **Best Under Budget** (budget-first, then score). The results list can additionally be re-sorted and filtered client-side (including by emissions).
+Results are labelled **Best Overall**, **Cheapest**, **Fastest**, and **Best Timing**. Priority modes: **Best Balance** (by score), **Cheapest**, **Fastest**, or **Best Under Budget**. Client-side filters can re-sort further.
 
 ## Security
 
