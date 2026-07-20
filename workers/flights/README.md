@@ -8,8 +8,10 @@ Worker deployed at `https://wandering-haze-b394.sumanthbolle312.workers.dev`.
 
 ## Routes
 - `POST /flights` — SkyFare flight search + book-redirect enrichment.
+- `POST /flights/inspire` — Summaverick destination suggestions (JSON) for one-click SkyFare search.
 - `POST /` — Summaverick chat.
 - `GET /trending`, `GET /servicenow` — landing/hub widgets.
+- `GET /metals` — precious-metals spot references (when deployed from `api/worker.js`).
 
 ## `/flights` source priority
 

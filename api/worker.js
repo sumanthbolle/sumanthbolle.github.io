@@ -6,6 +6,8 @@
  *   POST /              — chat completion (existing); body: { query, context }
  *   POST /flights       — SkyFare flight discovery + "best time to book" advisory;
  *                         body: { origin, destination, departureDate, ... }
+ *   POST /flights/inspire — Summaverick destination ideas for SkyFare;
+ *                         body: { query, origin?, currency? }
  *   GET  /trending      — landing-page widgets (news / market / tech),
  *                         country-aware via cf.country (or ?country=XX override),
  *                         cached per country in Cloudflare Cache API
@@ -107,6 +109,10 @@ export default {
 
     if (url.pathname === '/flights') {
       return handleFlightSearch(request, env, origin);
+    }
+
+    if (url.pathname === '/flights/inspire') {
+      return handleFlightInspire(request, env, origin);
     }
 
     return handleChat(request, env, origin);
@@ -757,7 +763,7 @@ async function handleMetals(request, ctx, origin) {
 
 /* ───────────── Flight Search ───────────── */
 
-const FLIGHT_SYSTEM_PROMPT = 'You are a real-time flight search and travel pricing assistant. Your task is to find current publicly available flight options for the provided route, dates, passenger count, cabin class, budget, and preferences.\n\nYou must:\n- Search current web results for flight prices.\n- Prefer airline official websites and reputable travel providers (Google Flights, Kayak, Skyscanner, Expedia, etc.).\n- Return only structured JSON. No markdown, no code fences, no explanation text outside JSON.\n- Do not invent flights, prices, booking links, or airlines.\n- If exact prices are not available, mark the confidence as "low" and explain why in the notes field.\n- Include source URLs wherever possible.\n- Include a freshness note indicating when the data was retrieved.\n- Compare flights based on price, duration, stops, layovers, budget fit, baggage, and carbon emissions.\n- Do not claim that a booking is confirmed.\n- Every flight MUST include a usable booking_url that opens a real search or book page (Google Flights, Kayak, Skyscanner, Expedia, or the airline). Prefer deep links prefilled with the route and dates. If only a source article is available, put it in source_url and still provide a Google Flights or Kayak search URL in booking_url. SkyFare redirects users to complete booking on those sites.\n- Each flight must have a unique "id" field (e.g., "flight_1", "flight_2").\n- The "badges" array can include values like "Cheapest", "Fastest", "Best Value", "Under Budget", "Nonstop", "Low CO2", "Great Deal".\n- The "score" field should be your best estimate from 0-100 based on overall value.\n\nFor every flight also estimate, where known:\n- "co2_kg": estimated carbon emissions per passenger for the whole itinerary, in kilograms (number). Use typical aircraft/route emissions if a precise figure is unavailable; otherwise omit.\n- "fare_brand": the fare family / branded fare (e.g. "Basic Economy", "Main Cabin", "Economy Flex", "Business Saver").\n- "carry_on_included": true/false — whether a full-size cabin bag is included.\n- "checked_bags_included": number of checked bags included in the quoted fare (0 if none).\n- "refundable": true/false if known.\n- "self_transfer": true if the itinerary mixes separate tickets / virtual-interline / non-protected connections (Kiwi-style self-transfer) where the traveller must re-check bags and missed connections are not protected.\nBe honest: prefer omitting a field over guessing a specific figure. Basic Economy / "light" fares usually do not include a carry-on or checked bag — reflect that.';
+const FLIGHT_SYSTEM_PROMPT = 'You are a real-time flight search and travel pricing assistant. Your task is to find current publicly available flight options for the provided route, dates, passenger count, cabin class, budget, and preferences.\n\nYou must:\n- Search current web results for flight prices.\n- Prefer airline official websites and reputable travel providers (Google Flights, Kayak, Skyscanner, Expedia, etc.).\n- Return only structured JSON. No markdown, no code fences, no explanation text outside JSON.\n- Do not invent flights, prices, booking links, or airlines.\n- If exact prices are not available, mark the confidence as "low" and explain why in the notes field.\n- Include source URLs wherever possible.\n- Include a freshness note indicating when the data was retrieved.\n- Compare flights based on price, duration, stops, layovers, budget fit, baggage, and carbon emissions.\n- Do not claim that a booking is confirmed.\n- Every flight MUST include a usable booking_url that opens a real search or book page (Google Flights, Kayak, Skyscanner, Expedia, or the airline). Prefer deep links prefilled with the route and dates. If only a source article is available, put it in source_url and still provide a Google Flights or Kayak search URL in booking_url. SkyFare redirects users to complete booking on those sites.\n- Each flight must have a unique "id" field (e.g., "flight_1", "flight_2").\n- The "badges" array can include values like "Cheapest", "Fastest", "Best Overall", "Best Timing", "Under Budget", "Nonstop", "Low CO2", "Great Deal".\n- The "score" field should be your best estimate from 0-100 based on overall value (price, duration, stops, timing, airline quality).\n\nFor every flight also estimate, where known:\n- "co2_kg": estimated carbon emissions per passenger for the whole itinerary, in kilograms (number). Use typical aircraft/route emissions if a precise figure is unavailable; otherwise omit.\n- "fare_brand": the fare family / branded fare (e.g. "Basic Economy", "Main Cabin", "Economy Flex", "Business Saver").\n- "carry_on_included": true/false — whether a full-size cabin bag is included.\n- "checked_bags_included": number of checked bags included in the quoted fare (0 if none).\n- "refundable": true/false if known.\n- "self_transfer": true if the itinerary mixes separate tickets / virtual-interline / non-protected connections (Kiwi-style self-transfer) where the traveller must re-check bags and missed connections are not protected.\nBe honest: prefer omitting a field over guessing a specific figure. Basic Economy / "light" fares usually do not include a carry-on or checked bag — reflect that.';
 
 const FLIGHT_TIMEOUT_MS = 55000;
 
@@ -1214,6 +1220,65 @@ function flightDayShape(f) {
   return { day_offset: offset, overnight: overnight };
 }
 
+/* SkyFare Value Score (Phase 1 handover): Price 40%, Duration 25%,
+ * Stops/layovers 15%, Departure/arrival timing 10%, Airline quality 10%.
+ * Emissions remain informational badges, not part of the core score. */
+function flightTimingScore(f) {
+  var dep = flightTimeToMinutes(f.departure_time);
+  var arr = flightTimeToMinutes(f.arrival_time);
+  var score = 70;
+  if (dep !== null) {
+    // Prefer mid-morning / afternoon departures; penalise red-eyes and very late.
+    if (dep >= 8 * 60 && dep < 11 * 60) score = 100;
+    else if (dep >= 11 * 60 && dep < 18 * 60) score = 90;
+    else if (dep >= 6 * 60 && dep < 8 * 60) score = 75;
+    else if (dep >= 18 * 60 && dep < 21 * 60) score = 65;
+    else if (dep >= 21 * 60 || dep < 5 * 60) score = 30;
+    else score = 50;
+  }
+  if (arr !== null) {
+    if (arr >= 22 * 60 || arr < 6 * 60) score = Math.min(score, 45);
+    else if (arr >= 20 * 60) score = Math.min(score, 65);
+  }
+  if (f.overnight) score = Math.min(score, 35);
+  if ((f.day_offset || 0) >= 2) score = Math.min(score, 40);
+  return score;
+}
+
+function flightLayoverQuality(f) {
+  var score = 100;
+  if (!f.stops) return score;
+  score -= Math.min(60, f.stops * 25);
+  var layovers = Array.isArray(f.layovers) ? f.layovers : [];
+  layovers.forEach(function(l) {
+    var mins = typeof l.duration_minutes === 'number' ? l.duration_minutes : 0;
+    if (mins > 0 && mins < 50) score -= 25;      // tight connection risk
+    else if (mins >= 240) score -= 20;           // long layover fatigue
+    else if (mins >= 180) score -= 10;
+  });
+  if (f.self_transfer) score -= 30;
+  return Math.max(0, Math.min(100, score));
+}
+
+function flightAirlineQuality(f) {
+  var name = String(f.airline || '').toLowerCase();
+  var brand = String(f.fare_brand || '').toLowerCase();
+  // Heuristic tiers until we have a real reliability feed (Phase 3).
+  var premium = /singapore|qatar|emirates|ana |all nippon|japan airlines|cathay|swiss|lufthansa|british airways|qantas|air new zealand|delta|united|american|air france|klm|finnair|turkish|eva air|korean air|virgin/;
+  var solid = /indigo|vistara|air india|scoot|jetstar|peach|airasia|vietjet|thai airways|malaysia airlines|garuda|philippine|etihad|oman air|saudia|iberia|tap |alitalia|ita airways|aeromexico|copa|latam|avianca|alaska|westjet|porter|ryanair|easyjet|wizz/;
+  var ulcc = /spirit|frontier|allegiant|cape air|nok air|lion air|cebu pacific|spicejet|go first|zipair/;
+  var score = 55;
+  if (premium.test(name)) score = 88;
+  else if (solid.test(name)) score = 72;
+  else if (ulcc.test(name)) score = 42;
+  if (/basic|light|saver|blue basic|basic economy/.test(brand)) score = Math.max(25, score - 18);
+  if (f.refundable === true) score = Math.min(100, score + 5);
+  if (f.carry_on_included === false) score = Math.max(20, score - 8);
+  if (f.confidence === 'high') score = Math.min(100, score + 4);
+  else if (f.confidence === 'low') score = Math.max(20, score - 8);
+  return score;
+}
+
 function scoreFlights(response, priorityMode, maxBudget) {
   var flights = response.flights;
   if (flights.length === 0) return response;
@@ -1231,25 +1296,33 @@ function scoreFlights(response, priorityMode, maxBudget) {
   var medP = flightMedian(prices);
   var medC = flightMedian(co2s);
   var hasEmissions = co2s.length >= 2 && maxC > minC;
-  var confMap = { high: 100, medium: 60, low: 25 };
 
-  // Weighted factors. Emissions only participate when we have comparable
-  // data for several flights; otherwise their weight folds back into price.
-  var W = hasEmissions
-    ? { price: 0.34, dur: 0.22, stops: 0.13, budget: 0.08, conf: 0.08, co2: 0.15 }
-    : { price: 0.45, dur: 0.25, stops: 0.13, budget: 0.09, conf: 0.08, co2: 0 };
+  // Handover Value Score weights (tunable).
+  var W = { price: 0.40, dur: 0.25, stops: 0.15, timing: 0.10, airline: 0.10 };
 
   flights.forEach(function(f) {
+    var shape = flightDayShape(f);
+    f.day_offset = shape.day_offset;
+    f.overnight = shape.overnight;
+
     var ps = f.price > 0 ? flightNorm100(f.price, minP, maxP) : 50;
     var ds = f.total_duration_minutes > 0 ? flightNorm100(f.total_duration_minutes, minD, maxD) : 50;
-    var ss = flightNorm100(f.stops, minS, maxS);
-    var es = (hasEmissions && typeof f.co2_kg === 'number' && f.co2_kg > 0) ? flightNorm100(f.co2_kg, minC, maxC) : 50;
-    var bs = 50;
-    if (maxBudget && maxBudget > 0) {
-      bs = f.price <= maxBudget ? 100 : Math.max(0, 100 - ((f.price - maxBudget) / maxBudget) * 200);
+    // Blend stop count with layover quality (handover: "stops + layover quality").
+    var stopCountScore = flightNorm100(f.stops, minS, maxS);
+    var layoverScore = flightLayoverQuality(f);
+    var ss = Math.round(stopCountScore * 0.55 + layoverScore * 0.45);
+    var ts = flightTimingScore(f);
+    var as = flightAirlineQuality(f);
+
+    // Soft budget nudge: keep under-budget options visible without rewriting the formula.
+    if (maxBudget && maxBudget > 0 && f.price > 0) {
+      if (f.price > maxBudget) ps = Math.max(0, ps - 15);
+      else ps = Math.min(100, ps + 5);
     }
-    var cs = confMap[f.confidence] || 10;
-    f.score = Math.round(ps * W.price + ds * W.dur + ss * W.stops + bs * W.budget + cs * W.conf + es * W.co2);
+
+    f.score = Math.round(ps * W.price + ds * W.dur + ss * W.stops + ts * W.timing + as * W.airline);
+    f.timing_score = ts;
+    f.value_breakdown = { price: ps, duration: ds, stops: ss, timing: ts, airline: as };
     f.is_under_budget = maxBudget ? f.price <= maxBudget : true;
 
     // Emissions level relative to the result set's median.
@@ -1268,9 +1341,6 @@ function scoreFlights(response, priorityMode, maxBudget) {
       f.deal_quality = 'unknown';
     }
 
-    var shape = flightDayShape(f);
-    f.day_offset = shape.day_offset;
-    f.overnight = shape.overnight;
     f.badges = [];
   });
   // Only consider flights with a usable value; the previous reduce could
@@ -1280,6 +1350,9 @@ function scoreFlights(response, priorityMode, maxBudget) {
   var cheapest = (pricedFlights.length ? pricedFlights : flights).reduce(function(a, b) { return a.price <= b.price ? a : b; });
   var fastest = (timedFlights.length ? timedFlights : flights).reduce(function(a, b) { return a.total_duration_minutes <= b.total_duration_minutes ? a : b; });
   var best = flights.reduce(function(a, b) { return a.score >= b.score ? a : b; });
+  var bestTiming = flights.reduce(function(a, b) {
+    return (a.timing_score || 0) >= (b.timing_score || 0) ? a : b;
+  });
   var greenest = co2s.length ? flights.reduce(function(a, b) {
     var av = typeof a.co2_kg === 'number' && a.co2_kg > 0 ? a.co2_kg : Infinity;
     var bv = typeof b.co2_kg === 'number' && b.co2_kg > 0 ? b.co2_kg : Infinity;
@@ -1293,7 +1366,8 @@ function scoreFlights(response, priorityMode, maxBudget) {
   }
   addFlightBadge(cheapest.id, 'Cheapest');
   addFlightBadge(fastest.id, 'Fastest');
-  addFlightBadge(best.id, 'Best Value');
+  addFlightBadge(best.id, 'Best Overall');
+  addFlightBadge(bestTiming.id, 'Best Timing');
   if (bestUB) addFlightBadge(bestUB.id, 'Under Budget');
   flights.filter(function(f) { return f.stops === 0; }).forEach(function(f) { addFlightBadge(f.id, 'Nonstop'); });
   // "Great Deal" for fares meaningfully below the median (only meaningful with a few quotes).
@@ -1327,11 +1401,13 @@ function scoreFlights(response, priorityMode, maxBudget) {
   rec.cheapest_flight_id = cheapest.id;
   rec.fastest_flight_id = fastest.id;
   rec.best_overall_flight_id = best.id;
+  rec.best_timing_flight_id = bestTiming.id;
   rec.best_under_budget_flight_id = bestUB ? bestUB.id : '';
   if (!rec.explanation) {
-    var parts = [best.airline + ' at ' + best.currency + ' ' + best.price + ' offers the best overall value.'];
+    var parts = [best.airline + ' at ' + best.currency + ' ' + best.price + ' ranks Best Overall (Value Score ' + best.score + ').'];
     if (cheapest.id !== best.id) parts.push(cheapest.airline + ' is cheapest at ' + cheapest.currency + ' ' + cheapest.price + '.');
     if (fastest.id !== best.id) parts.push(fastest.airline + ' is fastest at ' + fastest.total_duration_minutes + ' min.');
+    if (bestTiming.id !== best.id) parts.push(bestTiming.airline + ' has the best departure/arrival timing.');
     rec.explanation = parts.join(' ');
   }
   response.flights = sorted;
@@ -1509,6 +1585,132 @@ async function searchAmadeus(env, p, depIata, arrIata) {
   }
   var json = await res.json();
   return amadeusOffersToRaw(json, p, depIata, arrIata);
+}
+
+const INSPIRE_SYSTEM_PROMPT = 'You are Summaverick planning flights for SkyFare. Given a natural-language trip request, suggest 3 concrete destinations the traveller can search right away. Return ONLY JSON — no markdown, no code fences, no prose outside JSON. Prefer real IATA codes. Suggest realistic departure/return ISO dates (YYYY-MM-DD) within the stated month/season or the next 90 days if unspecified. Rough fares should be typical economy round-trip totals including taxes when possible. Never invent fake airport codes.';
+
+const INSPIRE_TIMEOUT_MS = 35000;
+
+function extractInspireJson(text) {
+  if (!text || typeof text !== 'string') return null;
+  var cleaned = text.trim();
+  var fence = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) cleaned = fence[1].trim();
+  var start = cleaned.indexOf('{');
+  var end = cleaned.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
+  try { return JSON.parse(cleaned.slice(start, end + 1)); } catch (e) { return null; }
+}
+
+function normalizeInspireSuggestion(raw, fallbackCurrency) {
+  if (!raw || typeof raw !== 'object') return null;
+  var destCity = sanitize(String(raw.destination || raw.city || '')).slice(0, 80);
+  var destCode = sanitize(String(raw.destination_airport || raw.iata || raw.airport || '')).toUpperCase().slice(0, 3);
+  if (!destCity && !destCode) return null;
+  if (destCode && !/^[A-Z]{3}$/.test(destCode)) destCode = '';
+  var originCity = sanitize(String(raw.origin || raw.origin_hint || '')).slice(0, 80);
+  var originCode = sanitize(String(raw.origin_airport || '')).toUpperCase().slice(0, 3);
+  if (originCode && !/^[A-Z]{3}$/.test(originCode)) originCode = '';
+  var weeks = Array.isArray(raw.best_weeks) ? raw.best_weeks : [];
+  weeks = weeks.map(function(w) { return sanitize(String(w)).slice(0, 40); }).filter(Boolean).slice(0, 4);
+  var price = raw.price_range && typeof raw.price_range === 'object' ? raw.price_range : {};
+  var min = parseInt(price.min, 10);
+  var max = parseInt(price.max, 10);
+  var cur = sanitize(String(price.currency || fallbackCurrency || 'USD')).toUpperCase().slice(0, 3) || 'USD';
+  var dep = sanitize(String(raw.suggested_departure || raw.departure_date || '')).slice(0, 10);
+  var ret = sanitize(String(raw.suggested_return || raw.return_date || '')).slice(0, 10);
+  if (dep && !/^\d{4}-\d{2}-\d{2}$/.test(dep)) dep = '';
+  if (ret && !/^\d{4}-\d{2}-\d{2}$/.test(ret)) ret = '';
+  var destLabel = destCity
+    ? (destCode ? destCity + ' (' + destCode + ')' : destCity)
+    : destCode;
+  var originLabel = originCity
+    ? (originCode ? originCity + ' (' + originCode + ')' : originCity)
+    : (originCode || '');
+  return {
+    destination: destLabel,
+    destination_city: destCity || destCode,
+    destination_airport: destCode,
+    origin: originLabel,
+    origin_city: originCity,
+    origin_airport: originCode,
+    best_weeks: weeks,
+    price_range: {
+      min: Number.isFinite(min) ? min : null,
+      max: Number.isFinite(max) ? max : null,
+      currency: cur,
+    },
+    why: sanitize(String(raw.why || raw.reason || raw.notes || '')).slice(0, 220),
+    trip_type: /one.?way/i.test(String(raw.trip_type || '')) ? 'one-way' : 'round-trip',
+    suggested_departure: dep,
+    suggested_return: ret,
+  };
+}
+
+async function handleFlightInspire(request, env, origin) {
+  try {
+    var body;
+    try { body = await request.json(); } catch (e) {
+      return jsonResponse({ success: false, error: 'Invalid request body.' }, origin);
+    }
+    var query = sanitize(String(body.query || '')).slice(0, 400);
+    var originHint = sanitize(String(body.origin || '')).slice(0, 80);
+    var currency = sanitize(String(body.currency || 'USD')).toUpperCase().slice(0, 3) || 'USD';
+    if (!query || query.length < 5) {
+      return jsonResponse({ success: false, error: 'Describe your trip in a short sentence.' }, origin);
+    }
+
+    var apiKey = env.PERPLEXITY_API_KEY;
+    if (!apiKey) {
+      return jsonResponse({ success: false, error: 'Inspiration service is not configured.' }, origin);
+    }
+
+    var userPrompt = 'Trip request: "' + query + '"\n'
+      + (originHint ? 'Preferred origin (if not in the request): ' + originHint + '\n' : '')
+      + 'Currency for rough fares: ' + currency + '\n'
+      + 'Return JSON with this exact shape:\n'
+      + '{"suggestions":[{"destination":"Bali","destination_airport":"DPS","origin":"Singapore","origin_airport":"SIN","best_weeks":["mid September","late September"],"price_range":{"min":280,"max":450,"currency":"' + currency + '"},"why":"Warm beaches in shoulder season","trip_type":"round-trip","suggested_departure":"2026-09-12","suggested_return":"2026-09-19"}]}\n'
+      + 'Rules: exactly 3 suggestions; use real IATA codes; dates must be YYYY-MM-DD; keep "why" under 180 characters; if origin is unknown leave origin fields empty.';
+
+    var payload = {
+      model: 'sonar',
+      messages: [
+        { role: 'system', content: INSPIRE_SYSTEM_PROMPT },
+        { role: 'user', content: userPrompt },
+      ],
+      temperature: 0.2,
+      max_tokens: 1600,
+      web_search_options: { search_context_size: 'medium' },
+    };
+
+    var data = await callSonarWithTimeout(apiKey, payload, INSPIRE_TIMEOUT_MS);
+    var content = data && data.choices && data.choices[0] && data.choices[0].message
+      ? data.choices[0].message.content
+      : null;
+    var parsed = extractInspireJson(content);
+    if (!parsed || !Array.isArray(parsed.suggestions)) {
+      throw new Error('Could not parse destination suggestions.');
+    }
+    var suggestions = parsed.suggestions
+      .map(function(s) { return normalizeInspireSuggestion(s, currency); })
+      .filter(Boolean)
+      .slice(0, 3);
+    if (!suggestions.length) throw new Error('No usable destination suggestions returned.');
+
+    return jsonResponse({
+      success: true,
+      data: {
+        query: query,
+        suggestions: suggestions,
+        source: 'summaverick',
+      },
+    }, origin);
+  } catch (e) {
+    return jsonResponse({
+      success: false,
+      error: e.message || 'Could not suggest destinations. Try a clearer trip description.',
+    }, origin);
+  }
 }
 
 async function handleFlightSearch(request, env, origin) {

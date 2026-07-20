@@ -16,3 +16,7 @@ When designing or reviewing UI for this site, use these skills:
 ## Current enhancement brief
 
 See [`docs/website-enhancement-review.md`](docs/website-enhancement-review.md) for the full site review, IA priorities, AI-slop findings, and recommended roadmap.
+
+## Product sources of truth
+
+- **SkyFare** — [`docs/skyfare-product-handover.md`](docs/skyfare-product-handover.md) (vision, Value Score, Summaverick integration, Phase 1–3 roadmap).

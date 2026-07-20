@@ -9,19 +9,6 @@ function normalizeTo100(value: number, min: number, max: number): number {
   return Math.round(((max - value) / (max - min)) * 100);
 }
 
-function confidenceScore(confidence: string): number {
-  switch (confidence) {
-    case "high":
-      return 100;
-    case "medium":
-      return 60;
-    case "low":
-      return 25;
-    default:
-      return 10;
-  }
-}
-
 function median(arr: number[]): number {
   if (!arr.length) return 0;
   const s = [...arr].sort((a, b) => a - b);
@@ -54,6 +41,68 @@ function dayShape(f: Flight): { day_offset: number; overnight: boolean } {
   return { day_offset: offset, overnight };
 }
 
+/** SkyFare Value Score timing component (handover §5.1). */
+function timingScore(f: Flight & { overnight?: boolean; day_offset?: number }): number {
+  const dep = timeToMinutes(f.departure_time);
+  const arr = timeToMinutes(f.arrival_time);
+  let score = 70;
+  if (dep !== null) {
+    if (dep >= 8 * 60 && dep < 11 * 60) score = 100;
+    else if (dep >= 11 * 60 && dep < 18 * 60) score = 90;
+    else if (dep >= 6 * 60 && dep < 8 * 60) score = 75;
+    else if (dep >= 18 * 60 && dep < 21 * 60) score = 65;
+    else if (dep >= 21 * 60 || dep < 5 * 60) score = 30;
+    else score = 50;
+  }
+  if (arr !== null) {
+    if (arr >= 22 * 60 || arr < 6 * 60) score = Math.min(score, 45);
+    else if (arr >= 20 * 60) score = Math.min(score, 65);
+  }
+  if (f.overnight) score = Math.min(score, 35);
+  if ((f.day_offset || 0) >= 2) score = Math.min(score, 40);
+  return score;
+}
+
+function layoverQuality(f: Flight): number {
+  let score = 100;
+  if (!f.stops) return score;
+  score -= Math.min(60, f.stops * 25);
+  (f.layovers || []).forEach((l) => {
+    const mins = typeof l.duration_minutes === "number" ? l.duration_minutes : 0;
+    if (mins > 0 && mins < 50) score -= 25;
+    else if (mins >= 240) score -= 20;
+    else if (mins >= 180) score -= 10;
+  });
+  if (f.self_transfer) score -= 30;
+  return Math.max(0, Math.min(100, score));
+}
+
+function airlineQuality(f: Flight): number {
+  const name = String(f.airline || "").toLowerCase();
+  const brand = String(f.fare_brand || "").toLowerCase();
+  const premium =
+    /singapore|qatar|emirates|ana |all nippon|japan airlines|cathay|swiss|lufthansa|british airways|qantas|air new zealand|delta|united|american|air france|klm|finnair|turkish|eva air|korean air|virgin/;
+  const solid =
+    /indigo|vistara|air india|scoot|jetstar|peach|airasia|vietjet|thai airways|malaysia airlines|garuda|philippine|etihad|oman air|saudia|iberia|tap |alitalia|ita airways|aeromexico|copa|latam|avianca|alaska|westjet|porter|ryanair|easyjet|wizz/;
+  const ulcc =
+    /spirit|frontier|allegiant|cape air|nok air|lion air|cebu pacific|spicejet|go first|zipair/;
+  let score = 55;
+  if (premium.test(name)) score = 88;
+  else if (solid.test(name)) score = 72;
+  else if (ulcc.test(name)) score = 42;
+  if (/basic|light|saver|blue basic|basic economy/.test(brand))
+    score = Math.max(25, score - 18);
+  if (f.refundable === true) score = Math.min(100, score + 5);
+  if (f.carry_on_included === false) score = Math.max(20, score - 8);
+  if (f.confidence === "high") score = Math.min(100, score + 4);
+  else if (f.confidence === "low") score = Math.max(20, score - 8);
+  return score;
+}
+
+/**
+ * Value Score (0–100) per SkyFare handover:
+ * Price 40% · Duration 25% · Stops/layovers 15% · Timing 10% · Airline 10%
+ */
 export function scoreAndRankFlights(
   response: FlightSearchResponse,
   priorityMode: PriorityMode,
@@ -71,7 +120,6 @@ export function scoreAndRankFlights(
     .map((f) => f.co2_kg)
     .filter((c): c is number => typeof c === "number" && c > 0);
 
-  // Guard empty arrays: Math.min/max of [] give ±Infinity → NaN scores.
   const minPrice = prices.length ? Math.min(...prices) : 0;
   const maxPrice = prices.length ? Math.max(...prices) : 0;
   const minDuration = durations.length ? Math.min(...durations) : 0;
@@ -84,16 +132,14 @@ export function scoreAndRankFlights(
   const medCo2 = median(co2s);
   const hasEmissions = co2s.length >= 2 && maxCo2 > minCo2;
 
-  // Emissions only participate in scoring when comparable data exists;
-  // otherwise that weight folds back into price.
-  const W = hasEmissions
-    ? { price: 0.34, duration: 0.22, stops: 0.13, budget: 0.08, confidence: 0.08, co2: 0.15 }
-    : { price: 0.45, duration: 0.25, stops: 0.13, budget: 0.09, confidence: 0.08, co2: 0 };
+  const W = { price: 0.4, duration: 0.25, stops: 0.15, timing: 0.1, airline: 0.1 };
 
   const scored = flights.map((flight) => {
-    const priceScore =
-      flight.price > 0 ? normalizeTo100(flight.price, minPrice, maxPrice) : 50;
+    const shape = dayShape(flight);
+    const withShape = { ...flight, ...shape };
 
+    let priceScore =
+      flight.price > 0 ? normalizeTo100(flight.price, minPrice, maxPrice) : 50;
     const durationScore =
       flight.total_duration_minutes > 0
         ? normalizeTo100(
@@ -102,33 +148,23 @@ export function scoreAndRankFlights(
             maxDuration
           )
         : 50;
+    const stopCountScore = normalizeTo100(flight.stops, minStops, maxStops);
+    const layoverScore = layoverQuality(flight);
+    const stopsScore = Math.round(stopCountScore * 0.55 + layoverScore * 0.45);
+    const tScore = timingScore(withShape);
+    const aScore = airlineQuality(flight);
 
-    const stopsScore = normalizeTo100(flight.stops, minStops, maxStops);
-
-    const emissionsScore =
-      hasEmissions && typeof flight.co2_kg === "number" && flight.co2_kg > 0
-        ? normalizeTo100(flight.co2_kg, minCo2, maxCo2)
-        : 50;
-
-    let budgetScore = 50;
-    if (maxBudget && maxBudget > 0) {
-      if (flight.price <= maxBudget) {
-        budgetScore = 100;
-      } else {
-        const overBy = ((flight.price - maxBudget) / maxBudget) * 100;
-        budgetScore = Math.max(0, 100 - overBy * 2);
-      }
+    if (maxBudget && maxBudget > 0 && flight.price > 0) {
+      if (flight.price > maxBudget) priceScore = Math.max(0, priceScore - 15);
+      else priceScore = Math.min(100, priceScore + 5);
     }
-
-    const confScore = confidenceScore(flight.confidence);
 
     const totalScore = Math.round(
       priceScore * W.price +
         durationScore * W.duration +
         stopsScore * W.stops +
-        budgetScore * W.budget +
-        confScore * W.confidence +
-        emissionsScore * W.co2
+        tScore * W.timing +
+        aScore * W.airline
     );
 
     let emissions_level: Flight["emissions_level"] = "unknown";
@@ -153,8 +189,6 @@ export function scoreAndRankFlights(
               : "high";
     }
 
-    const shape = dayShape(flight);
-
     const updatedFlight: Flight = {
       ...flight,
       score: totalScore,
@@ -165,6 +199,7 @@ export function scoreAndRankFlights(
       overnight: shape.overnight,
       badges: [],
     };
+    (updatedFlight as Flight & { timing_score?: number }).timing_score = tScore;
 
     return updatedFlight;
   });
@@ -178,6 +213,11 @@ export function scoreAndRankFlights(
     a.total_duration_minutes <= b.total_duration_minutes ? a : b
   );
   const bestScore = scored.reduce((a, b) => (a.score >= b.score ? a : b));
+  const bestTiming = scored.reduce((a, b) => {
+    const at = (a as Flight & { timing_score?: number }).timing_score || 0;
+    const bt = (b as Flight & { timing_score?: number }).timing_score || 0;
+    return at >= bt ? a : b;
+  });
   const greenest = co2s.length
     ? scored.reduce((a, b) => {
         const av =
@@ -200,7 +240,8 @@ export function scoreAndRankFlights(
 
   addBadge(cheapest.id, "Cheapest");
   addBadge(fastest.id, "Fastest");
-  addBadge(bestScore.id, "Best Value");
+  addBadge(bestScore.id, "Best Overall");
+  addBadge(bestTiming.id, "Best Timing");
   if (bestUnderBudget) addBadge(bestUnderBudget.id, "Under Budget");
   scored.filter((f) => f.stops === 0).forEach((f) => addBadge(f.id, "Nonstop"));
   if (scored.length >= 3) {
@@ -239,13 +280,14 @@ export function scoreAndRankFlights(
     cheapest_flight_id: cheapest.id,
     fastest_flight_id: fastest.id,
     best_overall_flight_id: bestScore.id,
+    best_timing_flight_id: bestTiming.id,
     best_under_budget_flight_id: bestUnderBudget?.id || "",
   };
 
   if (!updatedRecommendation.explanation) {
     const parts: string[] = [];
     parts.push(
-      `${bestScore.airline} at ${bestScore.currency} ${bestScore.price} offers the best overall value.`
+      `${bestScore.airline} at ${bestScore.currency} ${bestScore.price} ranks Best Overall (Value Score ${bestScore.score}).`
     );
     if (cheapest.id !== bestScore.id) {
       parts.push(
@@ -255,6 +297,11 @@ export function scoreAndRankFlights(
     if (fastest.id !== bestScore.id) {
       parts.push(
         `${fastest.airline} is the fastest at ${fastest.total_duration_minutes} minutes.`
+      );
+    }
+    if (bestTiming.id !== bestScore.id) {
+      parts.push(
+        `${bestTiming.airline} has the best departure/arrival timing.`
       );
     }
     updatedRecommendation.explanation = parts.join(" ");
