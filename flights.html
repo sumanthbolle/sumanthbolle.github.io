@@ -245,9 +245,41 @@
 
     .loading-elapsed{margin-left:8px;font-size:11px;color:var(--gray)}
     .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+    /* ─── Secondary CTA + landing sections ─── */
+    .hero-secondary-cta{text-align:center;margin:16px 0 4px;font-size:14px;color:var(--gray)}
+    .hero-secondary-cta button{background:none;border:none;color:var(--blue);font-weight:600;font-size:14px;cursor:pointer;font-family:inherit;padding:0}
+    .hero-secondary-cta button:hover{text-decoration:underline}
+    #landing{margin-top:8px}
+    .section{margin:40px 0}
+    .section-title{font-size:20px;font-weight:700;letter-spacing:-0.02em;color:var(--text);margin-bottom:16px}
+    .hiw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .hiw-card{background:var(--white);border-radius:var(--radius);padding:20px;border:1px solid rgba(0,0,0,0.05);box-shadow:0 1px 6px rgba(0,0,0,0.04)}
+    .hiw-card h3{font-size:15px;font-weight:600;color:var(--text);margin:12px 0 6px}
+    .hiw-card p{font-size:13px;color:var(--gray);line-height:1.6}
+    .hiw-ic{width:40px;height:40px;border-radius:11px;background:rgba(0,102,204,0.08);display:flex;align-items:center;justify-content:center}
+    .hiw-ic svg{width:20px;height:20px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .route-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .route-tile{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 12px;background:var(--white);border:1px solid rgba(0,0,0,0.07);border-radius:var(--radius-sm);font-size:13px;font-weight:600;color:var(--text);cursor:pointer;font-family:inherit;transition:all .18s;text-align:center}
+    .route-tile:hover{border-color:var(--blue);color:var(--blue);box-shadow:0 2px 10px rgba(0,102,204,0.08)}
+    .route-tile svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.6}
+    .why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .why-card{background:var(--white);border-radius:var(--radius);padding:20px;border:1px solid rgba(0,0,0,0.05);box-shadow:0 1px 6px rgba(0,0,0,0.04);display:flex;gap:14px;align-items:flex-start}
+    .why-ic{width:38px;height:38px;border-radius:11px;background:rgba(0,102,204,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .why-ic svg{width:19px;height:19px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .why-card h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px}
+    .why-card p{font-size:13px;color:var(--gray);line-height:1.6}
+    .site-foot{border-top:1px solid rgba(0,0,0,0.07);background:var(--white);margin-top:40px}
+    .foot-c{max-width:1080px;margin:0 auto;padding:22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--gray)}
+    .foot-brand{font-weight:700;color:var(--text)}
+    .foot-by a{color:var(--blue);text-decoration:none}
+    .foot-by a:hover{text-decoration:underline}
+    .foot-copy{margin-left:auto}
+    @media(max-width:800px){.hiw-grid{grid-template-columns:1fr}.route-grid{grid-template-columns:1fr 1fr}.why-grid{grid-template-columns:1fr}.foot-copy{margin-left:0;flex-basis:100%}}
+    @media(max-width:480px){.route-grid{grid-template-columns:1fr}}
+    .nl-lede{font-size:13px;color:var(--gray);line-height:1.6;margin-bottom:14px;max-width:640px}
     .nl-planner{background:var(--white);border-radius:var(--radius);padding:20px 22px;box-shadow:0 1px 6px rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.04);margin-bottom:24px}
-    .nl-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px}
-    .nl-title svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .nl-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px}
+    .nl-title svg{width:18px;height:18px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .nl-row{display:flex;gap:10px}
     .nl-row input{flex:1;padding:11px 14px;border:1px solid rgba(0,0,0,0.1);border-radius:var(--radius-xs);font-size:14px;font-family:inherit;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
     .nl-row input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,0.12)}
@@ -570,10 +602,10 @@
     Intelligent flight search · powered by Summaverick
   </span>
   <div class="hero-brand">SkyFare</div>
-  <h1>Smarter recommendations. Clearer decisions.</h1>
-  <p>We don’t try to list every flight — we help you pick the right one. Ranked by Value Score, then book on Google Flights, Kayak, Skyscanner, or the airline.</p>
+  <h1>Search flights. Compare smarter. Book with confidence.</h1>
+  <p>Live fares ranked by real value — price, speed, and quality — then book directly on Google Flights, Kayak, Skyscanner, or the airline.</p>
   <div class="hero-promise" aria-label="How SkyFare works">
-    <span class="hero-pill"><strong>1.</strong> Ask or search</span>
+    <span class="hero-pill"><strong>1.</strong> Search or ask AI</span>
     <span class="hero-pill"><strong>2.</strong> Rank by Value Score</span>
     <span class="hero-pill"><strong>3.</strong> Book on partner sites</span>
   </div>
@@ -645,11 +677,103 @@
     </form>
   </div>
 
+  <!-- Secondary CTA -->
+  <p class="hero-secondary-cta">Not sure where to go? <button type="button" id="planWithAiLink">Plan with AI</button></p>
+
   <!-- Results area -->
   <div class="sr-only" aria-live="polite" id="srAnnounce"></div>
   <div class="results-area" id="resultsArea"></div>
 
+  <!-- Landing sections (hidden once a search runs) -->
+  <div id="landing">
+
+    <!-- 3. AI Planner -->
+    <section class="section" id="aiPlanner">
+      <div class="nl-planner">
+        <div class="nl-title"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>Not sure where or when to go?</div>
+        <p class="nl-lede">Tell Summaverick what you want. It suggests destinations, the best weeks to fly, and rough prices — then drops you straight into a real search.</p>
+        <div class="nl-row">
+          <input type="text" id="nlTrip" placeholder="e.g. Warm places under $700 from Singapore in March" aria-label="Describe your trip">
+          <button type="button" id="nlGo">Get AI suggestions</button>
+        </div>
+        <div class="nl-examples" id="nlExamples">
+          <button type="button" class="nl-ex" data-ex="Beach destinations under $600 return">Beach under $600</button>
+          <button type="button" class="nl-ex" data-ex="Europe in shoulder season without the crowds">Europe in shoulder season</button>
+          <button type="button" class="nl-ex" data-ex="Best long weekend getaway from Singapore">Long weekend from Singapore</button>
+          <button type="button" class="nl-ex" data-ex="Business class deals for a long-haul trip">Business class deals</button>
+        </div>
+        <div id="inspireResults"></div>
+      </div>
+    </section>
+
+    <!-- 4. How SkyFare works -->
+    <section class="section" id="howItWorks">
+      <h2 class="section-title">How SkyFare works</h2>
+      <div class="hiw-grid">
+        <div class="hiw-card">
+          <div class="hiw-ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+          <h3>Search</h3>
+          <p>Enter your route or let Summaverick suggest destinations that fit your budget and dates.</p>
+        </div>
+        <div class="hiw-card">
+          <div class="hiw-ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div>
+          <h3>Compare by value</h3>
+          <p>We rank flights by a Value Score — price, total time, stops, timing and airline — not just the cheapest ticket.</p>
+        </div>
+        <div class="hiw-card">
+          <div class="hiw-ic"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg></div>
+          <h3>Book anywhere</h3>
+          <p>One click takes you to Google Flights, Kayak, Skyscanner, or the airline. No middleman markup.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Popular routes -->
+    <section class="section" id="popularSection">
+      <div id="recentRoutes"></div>
+      <h2 class="section-title">Popular routes right now</h2>
+      <div class="route-grid" id="popularRoutesGrid"></div>
+    </section>
+
+    <!-- 6. Why SkyFare -->
+    <section class="section" id="whySkyfare">
+      <h2 class="section-title">Why people prefer SkyFare</h2>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div>
+          <h3>Ranked by real value</h3>
+          <p>A transparent Value Score, not just the lowest price. See Best Overall, Cheapest, Fastest and Best Timing at a glance.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-ic"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg></div>
+          <h3>AI that actually helps</h3>
+          <p>Summaverick suggests destinations, the best weeks to fly and rough fares — then hands you a ready-to-run search.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-ic"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg></div>
+          <h3>No shady redirects</h3>
+          <p>A clean handoff to trusted booking sites. SkyFare never processes payment or adds a markup.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-ic"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
+          <h3>Built for clarity</h3>
+          <p>Fast, minimal and honest. Total prices, Basic Economy warnings, and no clutter getting in your way.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
 </div>
+
+<!-- 7. Footer -->
+<footer class="site-foot">
+  <div class="foot-c">
+    <span class="foot-brand">SkyFare</span>
+    <span class="foot-by">by <a href="index.html">Sumanth Bolle</a></span>
+    <span class="foot-copy">© <span id="footYear"></span> · Fares are estimates — confirm on the booking site.</span>
+  </div>
+</footer>
 
 <!-- Compare tray -->
 <div class="compare-bar" id="compareBar" role="region" aria-label="Compare selected flights">
@@ -997,6 +1121,7 @@
 
     const API_URL = 'https://wandering-haze-b394.sumanthbolle312.workers.dev/flights';
     const INSPIRE_URL = 'https://wandering-haze-b394.sumanthbolle312.workers.dev/flights/inspire';
+    const CHAT_URL = 'https://wandering-haze-b394.sumanthbolle312.workers.dev/';
 
   /* ─── Analytics (privacy-safe, no external scripts / no PII) ───
      Pushes structured events to window.dataLayer (GA4/GTM-ready) and fires a
@@ -1246,14 +1371,14 @@
 
   /* Popular routes for the empty-state inspiration grid (Skyscanner-style). */
   const POPULAR_ROUTES = [
+    { from: 'Singapore (SIN)', to: 'Tokyo (HND)' },
+    { from: 'Singapore (SIN)', to: 'Bangkok (BKK)' },
+    { from: 'Singapore (SIN)', to: 'Dubai (DXB)' },
+    { from: 'New Delhi (DEL)', to: 'Dubai (DXB)' },
     { from: 'New York (JFK)', to: 'London (LHR)' },
     { from: 'Los Angeles (LAX)', to: 'Tokyo (HND)' },
-    { from: 'Singapore (SIN)', to: 'Bangkok (BKK)' },
-    { from: 'Dubai (DXB)', to: 'London (LHR)' },
-    { from: 'San Francisco (SFO)', to: 'New York (JFK)' },
     { from: 'Sydney (SYD)', to: 'Singapore (SIN)' },
     { from: 'Paris (CDG)', to: 'New York (JFK)' },
-    { from: 'New Delhi (DEL)', to: 'Dubai (DXB)' },
   ];
 
   const RECENT_KEY = 'skyfare_recent_routes';
@@ -1441,28 +1566,6 @@
     else $('#searchForm').dispatchEvent(new Event('submit', { cancelable: true }));
   }
 
-  function routeChipsHtml() {
-    var recent = loadRecentRoutes();
-    var h = '';
-    if (recent.length) {
-      h += '<div class="route-chips-wrap"><div class="route-chips-label">'
-        + '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Recent searches</div><div class="route-chips">';
-      recent.forEach(function(r) {
-        h += '<button type="button" class="route-chip" data-from="' + escHtml(r.from) + '" data-to="' + escHtml(r.to) + '">'
-          + escHtml(shortPlace(r.from)) + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg> ' + escHtml(shortPlace(r.to)) + '</button>';
-      });
-      h += '</div></div>';
-    }
-    h += '<div class="route-chips-wrap"><div class="route-chips-label">'
-      + '<svg viewBox="0 0 24 24"><path d="M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 0 0 0 18M12.5 3a17 17 0 0 1 0 18"/><circle cx="12" cy="12" r="9"/></svg>Popular routes</div><div class="route-chips">';
-    POPULAR_ROUTES.forEach(function(r) {
-      h += '<button type="button" class="route-chip" data-from="' + escHtml(r.from) + '" data-to="' + escHtml(r.to) + '">'
-        + escHtml(shortPlace(r.from)) + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg> ' + escHtml(shortPlace(r.to)) + '</button>';
-    });
-    h += '</div></div>';
-    return h;
-  }
-
   function shortPlace(s) {
     if (!s) return '';
     var m = String(s).match(/\(([A-Za-z]{3})\)/);
@@ -1471,7 +1574,7 @@
   }
 
   function bindRouteChips() {
-    $$('.route-chip').forEach(function(btn) {
+    $$('.route-chip, .route-tile').forEach(function(btn) {
       btn.addEventListener('click', function() { applyRoute(btn.dataset.from, btn.dataset.to); });
     });
   }
@@ -1508,57 +1611,184 @@
     return true;
   }
 
+  function hideLanding() { const l = $('#landing'); if (l) l.style.display = 'none'; }
+  function showLanding() { const l = $('#landing'); if (l) l.style.display = ''; }
+
   function renderInitial() {
-    resultsArea.innerHTML = '<div class="fade-in">' + nlPlannerHtml() + routeChipsHtml() + '</div>';
+    resultsArea.innerHTML = '';
+    showLanding();
+    renderRouteChips();
+    renderInspire(lastInspireSuggestions);
+  }
+
+  /* ─── Popular + recent routes (persistent landing section) ─── */
+  function renderRouteChips() {
+    const grid = $('#popularRoutesGrid');
+    if (grid) {
+      grid.innerHTML = POPULAR_ROUTES.map(function(r) {
+        return '<button type="button" class="route-tile" data-from="' + escHtml(r.from) + '" data-to="' + escHtml(r.to) + '">'
+          + escHtml(shortPlace(r.from)) + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg> ' + escHtml(shortPlace(r.to)) + '</button>';
+      }).join('');
+    }
+    const recentWrap = $('#recentRoutes');
+    if (recentWrap) {
+      const recent = loadRecentRoutes();
+      if (recent.length) {
+        recentWrap.innerHTML = '<h2 class="section-title">Your recent searches</h2><div class="route-grid">'
+          + recent.map(function(r) {
+            return '<button type="button" class="route-tile" data-from="' + escHtml(r.from) + '" data-to="' + escHtml(r.to) + '">'
+              + escHtml(shortPlace(r.from)) + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg> ' + escHtml(shortPlace(r.to)) + '</button>';
+          }).join('')
+          + '</div>';
+      } else {
+        recentWrap.innerHTML = '';
+      }
+    }
     bindRouteChips();
-    bindNlPlanner();
   }
 
   /* ─── Describe-your-trip planner: Summaverick returns destinations + weeks
-     + rough fares in-page, with one-click prefilled SkyFare search. ─── */
-  function nlPlannerHtml(suggestions, statusHtml) {
-    const examples = [
-      'Warm places under $700 in March from Singapore',
-      'Best long weekend getaways from Delhi in August',
-      'Where can I go for under $500 return in September?'
-    ];
-    let h = '<div class="nl-planner" id="nlPlanner">'
-      + '<div class="nl-title"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>Ask Summaverick where to go</div>'
-      + '<div class="nl-row">'
-      + '<input type="text" id="nlTrip" placeholder="e.g. warm places under $700 in March from Singapore" aria-label="Describe your trip">'
-      + '<button type="button" id="nlGo">Suggest destinations</button>'
-      + '</div>'
-      + '<div class="nl-hint">Get destinations, best weeks, and rough fares — then search exact dates on SkyFare in one click.</div>'
-      + '<div class="nl-examples">' + examples.map(function(ex) {
-        return '<button type="button" class="nl-ex" data-ex="' + escHtml(ex) + '">' + escHtml(ex) + '</button>';
-      }).join('') + '</div>';
-    if (statusHtml) h += statusHtml;
-    if (suggestions && suggestions.length) {
-      h += '<div class="inspire-grid" id="inspireGrid">';
-      suggestions.forEach(function(s, idx) {
-        const priceBits = [];
-        if (s.price_range && (s.price_range.min || s.price_range.max)) {
-          const cur = s.price_range.currency || 'USD';
-          if (s.price_range.min && s.price_range.max) priceBits.push(fmtMoney(s.price_range.min, cur) + ' – ' + fmtMoney(s.price_range.max, cur));
-          else if (s.price_range.min) priceBits.push('from ' + fmtMoney(s.price_range.min, cur));
-          else priceBits.push('up to ' + fmtMoney(s.price_range.max, cur));
-        }
-        h += '<div class="inspire-card">'
-          + '<div class="ic-dest">' + escHtml(s.destination || s.destination_city || 'Destination') + '</div>'
-          + (s.why ? '<div class="ic-why">' + escHtml(s.why) + '</div>' : '')
-          + '<div class="ic-meta">'
-          + (s.origin ? '<span><strong>From</strong> ' + escHtml(s.origin) + '</span>' : '')
-          + (s.best_weeks && s.best_weeks.length ? '<span><strong>Best weeks</strong> ' + escHtml(s.best_weeks.join(' · ')) + '</span>' : '')
-          + (priceBits.length ? '<span><strong>Rough fare</strong> ' + escHtml(priceBits.join('')) + '</span>' : '')
-          + (s.suggested_departure ? '<span><strong>Try</strong> ' + escHtml(s.suggested_departure) + (s.suggested_return ? ' → ' + escHtml(s.suggested_return) : '') + '</span>' : '')
-          + '</div>'
-          + '<button type="button" class="ic-search" data-inspire-idx="' + idx + '">Search this trip</button>'
-          + '</div>';
-      });
-      h += '</div>';
-    }
+     + rough fares in the persistent AI Planner section, with one-click
+     prefilled SkyFare search. ─── */
+  function inspireCardsHtml(suggestions) {
+    let h = '<div class="inspire-grid" id="inspireGrid">';
+    suggestions.forEach(function(s, idx) {
+      const priceBits = [];
+      if (s.price_range && (s.price_range.min || s.price_range.max)) {
+        const cur = s.price_range.currency || 'USD';
+        if (s.price_range.min && s.price_range.max) priceBits.push(fmtMoney(s.price_range.min, cur) + ' – ' + fmtMoney(s.price_range.max, cur));
+        else if (s.price_range.min) priceBits.push('from ' + fmtMoney(s.price_range.min, cur));
+        else priceBits.push('up to ' + fmtMoney(s.price_range.max, cur));
+      }
+      h += '<div class="inspire-card">'
+        + '<div class="ic-dest">' + escHtml(s.destination || s.destination_city || 'Destination') + '</div>'
+        + (s.why ? '<div class="ic-why">' + escHtml(s.why) + '</div>' : '')
+        + '<div class="ic-meta">'
+        + (s.origin ? '<span><strong>From</strong> ' + escHtml(s.origin) + '</span>' : '')
+        + (s.best_weeks && s.best_weeks.length ? '<span><strong>Best weeks</strong> ' + escHtml(s.best_weeks.join(' · ')) + '</span>' : '')
+        + (priceBits.length ? '<span><strong>Rough fare</strong> ' + escHtml(priceBits.join('')) + '</span>' : '')
+        + (s.suggested_departure ? '<span><strong>Try</strong> ' + escHtml(s.suggested_departure) + (s.suggested_return ? ' → ' + escHtml(s.suggested_return) : '') + '</span>' : '')
+        + '</div>'
+        + '<button type="button" class="ic-search" data-inspire-idx="' + idx + '">Search this trip</button>'
+        + '</div>';
+    });
     h += '</div>';
     return h;
+  }
+
+  function renderInspire(suggestions, statusHtml) {
+    const slot = $('#inspireResults');
+    if (!slot) return;
+    let h = '';
+    if (statusHtml) h += statusHtml;
+    if (suggestions && suggestions.length) h += inspireCardsHtml(suggestions);
+    slot.innerHTML = h;
+    if (suggestions && suggestions.length) {
+      slot.querySelectorAll('.ic-search').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          const idx = parseInt(btn.getAttribute('data-inspire-idx'), 10);
+          if (lastInspireSuggestions && lastInspireSuggestions[idx]) {
+            applyInspireSuggestion(lastInspireSuggestions[idx]);
+          }
+        });
+      });
+    }
+  }
+
+  /* Parse a Summaverick chat answer into inspire suggestions (fallback path
+     used when the dedicated /flights/inspire endpoint isn't available). */
+  function parseInspireFromText(text, currency) {
+    if (!text || typeof text !== 'string') return null;
+    let cleaned = text.trim();
+    const fence = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fence) cleaned = fence[1].trim();
+    const start = cleaned.indexOf('{');
+    const end = cleaned.lastIndexOf('}');
+    if (start < 0 || end <= start) return null;
+    let parsed;
+    try { parsed = JSON.parse(cleaned.slice(start, end + 1)); } catch (e) { return null; }
+    const arr = Array.isArray(parsed.suggestions) ? parsed.suggestions : (Array.isArray(parsed) ? parsed : null);
+    if (!arr) return null;
+    return arr.map(function(raw) {
+      if (!raw || typeof raw !== 'object') return null;
+      const destCity = String(raw.destination || raw.city || '').slice(0, 80);
+      let destCode = String(raw.destination_airport || raw.iata || raw.airport || '').toUpperCase().slice(0, 3);
+      if (destCode && !/^[A-Z]{3}$/.test(destCode)) destCode = '';
+      if (!destCity && !destCode) return null;
+      let originCode = String(raw.origin_airport || '').toUpperCase().slice(0, 3);
+      if (originCode && !/^[A-Z]{3}$/.test(originCode)) originCode = '';
+      const originCity = String(raw.origin || raw.origin_hint || '').slice(0, 80);
+      const price = (raw.price_range && typeof raw.price_range === 'object') ? raw.price_range : {};
+      const min = parseInt(price.min, 10);
+      const max = parseInt(price.max, 10);
+      const cur = String(price.currency || currency || 'USD').toUpperCase().slice(0, 3) || 'USD';
+      let dep = String(raw.suggested_departure || raw.departure_date || '').slice(0, 10);
+      let ret = String(raw.suggested_return || raw.return_date || '').slice(0, 10);
+      if (dep && !/^\d{4}-\d{2}-\d{2}$/.test(dep)) dep = '';
+      if (ret && !/^\d{4}-\d{2}-\d{2}$/.test(ret)) ret = '';
+      let weeks = Array.isArray(raw.best_weeks) ? raw.best_weeks.map(function(w) { return String(w).slice(0, 40); }).filter(Boolean).slice(0, 4) : [];
+      const destLabel = destCity ? (destCode ? destCity + ' (' + destCode + ')' : destCity) : destCode;
+      const originLabel = originCity ? (originCode ? originCity + ' (' + originCode + ')' : originCity) : (originCode || '');
+      return {
+        destination: destLabel, destination_city: destCity || destCode, destination_airport: destCode,
+        origin: originLabel, origin_city: originCity, origin_airport: originCode,
+        best_weeks: weeks,
+        price_range: { min: isFinite(min) ? min : null, max: isFinite(max) ? max : null, currency: cur },
+        why: String(raw.why || raw.reason || raw.notes || '').slice(0, 220),
+        trip_type: /one.?way/i.test(String(raw.trip_type || '')) ? 'one-way' : 'round-trip',
+        suggested_departure: dep, suggested_return: ret
+      };
+    }).filter(Boolean).slice(0, 3);
+  }
+
+  /* Fetch suggestions: prefer the dedicated /flights/inspire endpoint; if the
+     worker hasn't been deployed with it yet (returns the chat shape or errors),
+     fall back to the deployed Summaverick chat endpoint asking for JSON. */
+  async function fetchInspireSuggestions(desc, originHint, currency) {
+    // 1) Dedicated endpoint.
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(function() { ctrl.abort(); }, 40000);
+      const res = await fetch(INSPIRE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: desc, origin: originHint, currency: currency }),
+        signal: ctrl.signal
+      });
+      clearTimeout(t);
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.success && json.data && Array.isArray(json.data.suggestions) && json.data.suggestions.length) {
+          return json.data.suggestions;
+        }
+        // Old worker: chat shape came back on this path — parse its answer.
+        if (json && json.result && json.result.answer) {
+          const parsed = parseInspireFromText(json.result.answer, currency);
+          if (parsed && parsed.length) return parsed;
+        }
+      }
+    } catch (e) { /* fall through to chat */ }
+
+    // 2) Chat endpoint fallback (already deployed).
+    const prompt = 'You are planning flights. For this request: "' + desc + '"'
+      + (originHint ? ' (preferred origin: ' + originHint + ')' : '')
+      + ', reply with ONLY JSON — no prose, no markdown fences. Shape: '
+      + '{"suggestions":[{"destination":"Bali","destination_airport":"DPS","origin":"Singapore","origin_airport":"SIN","best_weeks":["mid September"],"price_range":{"min":280,"max":450,"currency":"' + currency + '"},"why":"Warm beaches in shoulder season","trip_type":"round-trip","suggested_departure":"2026-09-12","suggested_return":"2026-09-19"}]}'
+      + ' Give exactly 3 suggestions, real IATA codes, ISO dates (YYYY-MM-DD), "why" under 180 chars, fares in ' + currency + '.';
+    const ctrl2 = new AbortController();
+    const t2 = setTimeout(function() { ctrl2.abort(); }, 40000);
+    const res2 = await fetch(CHAT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: prompt }),
+      signal: ctrl2.signal
+    });
+    clearTimeout(t2);
+    const json2 = await res2.json();
+    const answer = json2 && (json2.result && json2.result.answer);
+    const parsed2 = parseInspireFromText(answer, currency);
+    if (parsed2 && parsed2.length) return parsed2;
+    throw new Error((json2 && json2.error) || 'No suggestions returned.');
   }
 
   function applyInspireSuggestion(s) {
@@ -1610,19 +1840,12 @@
 
   function bindNlPlanner() {
     const go = $('#nlGo'), input = $('#nlTrip');
-    if (!go || !input) return;
+    if (!go || !input || go.dataset.bound) return;
+    go.dataset.bound = '1';
     document.querySelectorAll('.nl-ex').forEach(function(btn) {
       btn.addEventListener('click', function() {
         input.value = btn.getAttribute('data-ex') || '';
         input.focus();
-      });
-    });
-    document.querySelectorAll('.ic-search').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        const idx = parseInt(btn.getAttribute('data-inspire-idx'), 10);
-        if (lastInspireSuggestions && lastInspireSuggestions[idx]) {
-          applyInspireSuggestion(lastInspireSuggestions[idx]);
-        }
       });
     });
 
@@ -1632,48 +1855,21 @@
       go.disabled = true;
       const originHint = ($('#origin') && $('#origin').value) || '';
       const currency = ($('#currency') && $('#currency').value) || 'USD';
-      const loadingHtml = '<div class="nl-status"><span class="spin" style="width:14px;height:14px;border:2px solid rgba(0,0,0,0.15);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;display:inline-block"></span> Summaverick is finding destinations…</div>';
-      resultsArea.innerHTML = '<div class="fade-in">' + nlPlannerHtml(null, loadingHtml) + routeChipsHtml() + '</div>';
-      bindRouteChips();
-      // Re-bind after re-render; preserve typed query.
-      const input2 = $('#nlTrip');
-      if (input2) input2.value = desc;
-      bindNlPlanner();
+      renderInspire(null, '<div class="nl-status"><span class="spin" style="width:14px;height:14px;border:2px solid rgba(0,0,0,0.15);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;display:inline-block"></span> Summaverick is finding destinations…</div>');
+      trackFlightEvent('flight_inspire_submit', { length: desc.length });
       try {
-        const controller = new AbortController();
-        const timeout = setTimeout(function() { controller.abort(); }, 40000);
-        const res = await fetch(INSPIRE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: desc, origin: originHint, currency: currency }),
-          signal: controller.signal
-        });
-        clearTimeout(timeout);
-        const json = await res.json();
-        if (!json.success || !json.data || !json.data.suggestions || !json.data.suggestions.length) {
-          throw new Error((json && json.error) || 'No suggestions returned.');
-        }
-        lastInspireSuggestions = json.data.suggestions;
-        trackFlightEvent('flight_inspire_results', { count: lastInspireSuggestions.length });
-        resultsArea.innerHTML = '<div class="fade-in">' + nlPlannerHtml(lastInspireSuggestions) + routeChipsHtml() + '</div>';
-        bindRouteChips();
-        const keep = $('#nlTrip');
-        if (keep) keep.value = desc;
-        bindNlPlanner();
+        const suggestions = await fetchInspireSuggestions(desc, originHint, currency);
+        lastInspireSuggestions = suggestions;
+        trackFlightEvent('flight_inspire_results', { count: suggestions.length });
+        renderInspire(suggestions);
       } catch (err) {
         trackFlightEvent('flight_inspire_error', { message: String(err && err.message || err).slice(0, 120) });
         const fallbackPrompt = 'I want to plan this trip: "' + desc + '". Suggest 3 destinations that fit, the cheapest weeks to fly there, typical round-trip fares, and anything I should know (weather, visas, crowds). Keep it practical.';
-        const errHtml = '<div class="nl-error">Couldn’t load suggestions here'
+        renderInspire(null, '<div class="nl-error">Couldn’t load suggestions right now'
           + (err && err.message ? ' — ' + escHtml(err.message) : '')
-          + '. <a href="summaverick.html?q=' + encodeURIComponent(fallbackPrompt) + '" target="_blank" rel="noopener">Open in Summaverick</a> instead.</div>';
-        resultsArea.innerHTML = '<div class="fade-in">' + nlPlannerHtml(null, errHtml) + routeChipsHtml() + '</div>';
-        bindRouteChips();
-        const keep = $('#nlTrip');
-        if (keep) keep.value = desc;
-        bindNlPlanner();
+          + '. <a href="summaverick.html?q=' + encodeURIComponent(fallbackPrompt) + '" target="_blank" rel="noopener">Open in Summaverick</a> instead.</div>');
       } finally {
-        const go2 = $('#nlGo');
-        if (go2) go2.disabled = false;
+        go.disabled = false;
       }
     };
     go.addEventListener('click', submit);
@@ -1685,6 +1881,7 @@
     resultData = null;
     compareSelected = [];
     updateCompareBar();
+    hideLanding();
     updateSearchBtn(true);
     renderLoading();
 
@@ -2471,6 +2668,21 @@
     btn.addEventListener('click', () => { input.value = ''; sync(); input.focus(); });
     sync();
   });
+
+  /* Secondary CTA: jump to the AI planner */
+  const planLink = $('#planWithAiLink');
+  if (planLink) planLink.addEventListener('click', function() {
+    const target = $('#aiPlanner');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const input = $('#nlTrip');
+    if (input) setTimeout(function() { input.focus(); }, 400);
+  });
+
+  const footYear = $('#footYear');
+  if (footYear) footYear.textContent = new Date().getFullYear();
+
+  /* The AI planner lives in the persistent landing section — bind it once. */
+  bindNlPlanner();
 
   /* Boot: restore remembered preferences, then a shared link re-runs its
      search (overriding prefs); otherwise show route inspiration. */
