@@ -254,7 +254,8 @@
     .nl-row button{padding:11px 20px;background:var(--blue);color:#fff;border:none;border-radius:var(--radius-xs);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .2s}
     .nl-row button:hover{background:#0055aa}
     .nl-row button:disabled{opacity:.55;cursor:not-allowed}
-    .nl-hint{font-size:12px;color:var(--gray);margin-top:9px}
+    .nl-hint{font-size:12px;color:var(--gray);margin-top:9px;margin-bottom:9px}
+    .nl-title + .nl-hint{margin-top:-4px}
     .nl-examples{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
     .nl-ex{padding:5px 10px;border:1px solid rgba(0,0,0,0.08);border-radius:8px;background:var(--bg);font-size:11px;color:var(--text);cursor:pointer;font-family:inherit;transition:border-color .15s}
     .nl-ex:hover{border-color:var(--blue);color:var(--blue)}
@@ -570,12 +571,12 @@
     Intelligent flight search · powered by Summaverick
   </span>
   <div class="hero-brand">SkyFare</div>
-  <h1>Smarter recommendations. Clearer decisions.</h1>
-  <p>We don’t try to list every flight — we help you pick the right one. Ranked by Value Score, then book on Google Flights, Kayak, Skyscanner, or the airline.</p>
+  <h1>Find better flights. Not just cheaper ones.</h1>
+  <p>Most sites just dump every possible flight on you. SkyFare ranks them by actual value — price, total time, and how painful the journey is — then sends you to book on Google Flights, Kayak, Skyscanner, or the airline.</p>
   <div class="hero-promise" aria-label="How SkyFare works">
-    <span class="hero-pill"><strong>1.</strong> Ask or search</span>
-    <span class="hero-pill"><strong>2.</strong> Rank by Value Score</span>
-    <span class="hero-pill"><strong>3.</strong> Book on partner sites</span>
+    <span class="hero-pill"><strong>1.</strong> Search or ask</span>
+    <span class="hero-pill"><strong>2.</strong> See the best options ranked</span>
+    <span class="hero-pill"><strong>3.</strong> Book on a site you already trust</span>
   </div>
 </header>
 
@@ -1518,17 +1519,17 @@
      + rough fares in-page, with one-click prefilled SkyFare search. ─── */
   function nlPlannerHtml(suggestions, statusHtml) {
     const examples = [
-      'Warm places under $700 in March from Singapore',
-      'Best long weekend getaways from Delhi in August',
-      'Where can I go for under $500 return in September?'
+      'Somewhere warm under $700 from Singapore in March',
+      'Long weekend from Delhi, not too expensive',
+      'Europe in September, under $900 return'
     ];
     let h = '<div class="nl-planner" id="nlPlanner">'
-      + '<div class="nl-title"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>Ask Summaverick where to go</div>'
+      + '<div class="nl-title"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/></svg>Not sure where to go?</div>'
+      + '<div class="nl-hint">Just tell Summaverick what you\'re looking for in plain English. It\'ll suggest places, good weeks to fly, and rough prices — then open a proper search for you.</div>'
       + '<div class="nl-row">'
-      + '<input type="text" id="nlTrip" placeholder="e.g. warm places under $700 in March from Singapore" aria-label="Describe your trip">'
-      + '<button type="button" id="nlGo">Suggest destinations</button>'
+      + '<input type="text" id="nlTrip" placeholder="' + escHtml(examples[0]) + '" aria-label="Describe your trip">'
+      + '<button type="button" id="nlGo">Suggest places</button>'
       + '</div>'
-      + '<div class="nl-hint">Get destinations, best weeks, and rough fares — then search exact dates on SkyFare in one click.</div>'
       + '<div class="nl-examples">' + examples.map(function(ex) {
         return '<button type="button" class="nl-ex" data-ex="' + escHtml(ex) + '">' + escHtml(ex) + '</button>';
       }).join('') + '</div>';
@@ -2057,12 +2058,12 @@
     /* Disclaimer + how-it-works + privacy */
     html += '<div class="disclaimer">';
     if (d.search_summary.freshness_note) html += '<p>' + escHtml(d.search_summary.freshness_note) + '</p>';
-    html += '<p>Prices are estimates and can change until you complete checkout on the booking site. SkyFare redirects you to book — always confirm the final fare and baggage rules before paying.</p>';
-    html += '<details class="how-it-works"><summary><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.7-2.5 2.2-2.5 3.7M12 17h.01"/></svg>How SkyFare search &amp; book works</summary>'
-      + '<div class="hiw-body"><p><strong>Search:</strong> your route, dates and preferences are researched live across airline and travel sites — that can take up to a minute.</p>'
-      + '<p><strong>Value Score:</strong> each flight is scored 0–100 on price (40%), duration (25%), stops &amp; layovers (15%), departure/arrival timing (10%), and airline quality (10%). Labels like Best Overall, Cheapest, Fastest, and Best Timing are computed — never paid placements.</p>'
-      + '<p><strong>Book:</strong> every card has a Book button that opens Google Flights, Kayak, Skyscanner, or the original provider so you can buy the ticket there. SkyFare does not process payments.</p>'
-      + '<p><strong>Privacy:</strong> only the search itself (route, dates, preferences) is sent to the service. No account; recent routes stay in this browser only.</p></div></details>';
+    html += '<p>Prices are estimates and can change until you check out on the booking site. Always confirm the final fare and baggage rules before you pay.</p>';
+    html += '<details class="how-it-works"><summary><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.7-2.5 2.2-2.5 3.7M12 17h.01"/></svg>How it works</summary>'
+      + '<div class="hiw-body"><p><strong>Search or ask:</strong> you search once and we research your route live across airline and travel sites — that can take up to a minute.</p>'
+      + '<p><strong>We rank by Value Score:</strong> not just the cheapest ticket. We score every flight on price, total travel time, stops, timing, and airline quality, then flag the standouts like Best Overall, Cheapest, and Fastest. Nothing here is a paid placement.</p>'
+      + '<p><strong>Book wherever you want:</strong> every card has a Book button that sends you to Google Flights, Kayak, Skyscanner, or the airline to buy the ticket. We don\'t mark anything up, and we don\'t process payments ourselves.</p>'
+      + '<p><strong>Privacy:</strong> we only send your search — route, dates, preferences — to make this work. No account needed, and your recent routes stay in this browser.</p></div></details>';
     html += '</div>';
 
     html += '</div>';
