@@ -1058,6 +1058,17 @@
     }
   }
 
+  /* Human-readable "Sep 12" label for a YYYY-MM-DD string — avoids echoing
+     raw ISO dates that some users misread as day-first. */
+  function fmtIsoHuman(iso) {
+    const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return escHtml(iso || '');
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const mi = parseInt(m[2], 10) - 1;
+    if (mi < 0 || mi > 11) return escHtml(iso);
+    return monthNames[mi] + ' ' + parseInt(m[3], 10);
+  }
+
   /* ─── Book redirects: every result must open a real search/book page ─── */
   function extractIata(str) {
     const s = String(str || '').trim();
@@ -1551,7 +1562,7 @@
           + (s.origin ? '<span><strong>From</strong> ' + escHtml(s.origin) + '</span>' : '')
           + (s.best_weeks && s.best_weeks.length ? '<span><strong>Best weeks</strong> ' + escHtml(s.best_weeks.join(' · ')) + '</span>' : '')
           + (priceBits.length ? '<span><strong>Rough fare</strong> ' + escHtml(priceBits.join('')) + '</span>' : '')
-          + (s.suggested_departure ? '<span><strong>Try</strong> ' + escHtml(s.suggested_departure) + (s.suggested_return ? ' → ' + escHtml(s.suggested_return) : '') + '</span>' : '')
+          + (s.suggested_departure ? '<span><strong>Try</strong> ' + fmtIsoHuman(s.suggested_departure) + (s.suggested_return ? ' → ' + fmtIsoHuman(s.suggested_return) : '') + '</span>' : '')
           + '</div>'
           + '<button type="button" class="ic-search" data-inspire-idx="' + idx + '">Search this trip</button>'
           + '</div>';
