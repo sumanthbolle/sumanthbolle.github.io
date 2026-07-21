@@ -2908,5 +2908,23 @@
   }
 })();
 </script>
+<script src="assets/js/shared/help-panel.js"></script>
+<script>
+SBHelpGuide.init({
+  page: 'skyfare',
+  tabLabel: 'Guide',
+  title: 'How to use SkyFare',
+  intro: 'Smart flight search ranked by Value Score, not just the lowest fare.',
+  steps: [
+    { title: 'Search a route', desc: 'Enter an origin and destination — city or airport code both work, and autocomplete suggests matches as you type.' },
+    { title: 'Fine-tune the results', desc: 'Set a max budget, and add preferred airlines or ones to avoid, so the ranking reflects what actually matters to you.' },
+    { title: 'Trust the Value Score', desc: 'Every result is ranked by Value Score — price, duration, stops, and timing combined — not just the cheapest option. Open a card to see the score breakdown.' },
+    { title: 'Open the details fly-out', desc: 'Click a result to open its full itinerary in a fly-out panel before you commit.' },
+    { title: 'Compare up to 3 flights', desc: 'Check the compare box on 2–3 cards; a compare bar appears at the bottom of the screen — tap Compare for a side-by-side view.' },
+    { title: 'Check Best Time to Book', desc: 'Use the Best Time to Book panel for timing guidance before you search further.' },
+    { title: 'Book on the airline or an OTA', desc: 'Every result links out to Google Flights, Kayak, Skyscanner, or the airline directly — SkyFare doesn\'t sell tickets itself.' }
+  ]
+});
+</script>
 </body>
 </html>

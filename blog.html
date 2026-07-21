@@ -399,6 +399,25 @@
 
 <script src="assets/js/shared/nav-theme.js"></script>
 <script src="assets/js/shared/subscribe.js"></script>
+<script src="assets/js/shared/help-panel.js"></script>
+<script>
+SBHelpGuide.init({
+  page: 'blog',
+  tabLabel: 'Guide',
+  title: 'How to explore the Blog',
+  intro: 'A quick tour of the article hub and the certification roadmap it sits alongside.',
+  steps: [
+    { title: 'Switch Blog Posts vs. Tutorials', desc: 'The tabs just under the header switch between long-form articles and the step-by-step tutorials hub.' },
+    { title: 'Filter by topic', desc: 'Use the pill filters above the grid (AI & GenAI, Career, Architecture, ServiceNow) to narrow the article list to what you care about.' },
+    { title: 'Follow a certification path', desc: 'Open CSA Certification or All Certifications from the tab bar, then work through the left-hand topic sidebar module by module (tap "Topics" on mobile).' },
+    { title: 'Read distraction-free', desc: 'Every article shows a reading-progress bar at the top and a floating "On this page" outline for longer posts — click a heading to jump straight to it.' },
+    { title: 'Copy code in one click', desc: 'Tutorial code blocks each have a Copy button in the top-right corner.' },
+    { title: 'Search across everything', desc: 'Use the search icon in the nav bar to jump to any article, tutorial, or quiz topic by keyword.' }
+  ],
+  footerNote: 'Prepping for the exam?',
+  footerLink: { label: 'Try the CSA quiz →', href: 'quiz.html' }
+});
+</script>
 <script>
 let BLOG_POSTS=[],currentArticleId=null,currentTopicId=null,completedTopics=JSON.parse(localStorage.getItem('csa_completed')||'[]'),pendingArticleId=null;
 

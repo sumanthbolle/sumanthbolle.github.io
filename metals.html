@@ -665,6 +665,25 @@
   <canvas id="shareCanvas" width="1080" height="1080" style="display:none"></canvas>
 
   <script src="assets/js/shared/nav-theme.js"></script>
+  <script src="assets/js/shared/help-panel.js"></script>
+  <script>
+  SBHelpGuide.init({
+    page: 'metals',
+    tabLabel: 'Guide',
+    title: 'How to use the Metals tracker',
+    intro: 'Live gold and silver prices with the context and tools to act on them.',
+    steps: [
+      { title: 'Read the live prices', desc: 'Gold and silver spot prices update at the top of the page in your selected currency.' },
+      { title: 'Switch units & currency', desc: 'Use the converter to view prices per gram, tola, sovereign, or baht, in the currency you actually shop in.' },
+      { title: 'Run the calculators', desc: 'Enter a quantity and purity in the calculator section to price your own holdings or a potential purchase.' },
+      { title: 'Track your holdings', desc: 'Add items to the holdings tracker to see your total value and gain/loss update live.' },
+      { title: 'Study the trend', desc: 'Hover the history chart for day-by-day context, and switch ranges to compare short- vs. long-term moves.' },
+      { title: 'Check regional context', desc: 'Scroll to the region panel for local premium and market notes (India, US, Middle East, and more).' },
+      { title: 'Set a price alert', desc: 'Use the Alerts section to log a target price you want to watch.' },
+      { title: 'Toggle dark mode', desc: 'Use the moon/sun icon in the nav — this guide switches with it automatically.' }
+    ]
+  });
+  </script>
   <script>
   (function(){
     'use strict';
