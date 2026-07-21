@@ -1602,7 +1602,44 @@ function extractInspireJson(text) {
   try { return JSON.parse(cleaned.slice(start, end + 1)); } catch (e) { return null; }
 }
 
-function normalizeInspireSuggestion(raw, fallbackCurrency) {
+var INSPIRE_MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+
+/* The model is told to use YYYY-MM-DD, but sonar occasionally still writes
+   day-first (e.g. treats "12 Sep" as month=12 day=09). Both orderings can be
+   syntactically valid dates (when day <= 12), so a shape-only regex isn't
+   enough — cross-check against any month mentioned in the suggestion text
+   and reorder if that resolves the ambiguity. */
+function inspireMonthHint(text) {
+  if (!text) return 0;
+  var t = String(text).toLowerCase();
+  for (var i = 0; i < INSPIRE_MONTH_NAMES.length; i++) {
+    if (t.indexOf(INSPIRE_MONTH_NAMES[i]) !== -1) return i + 1;
+  }
+  return 0;
+}
+function inspirePad2(n) { return (n < 10 ? '0' : '') + n; }
+function inspireIsValidYmd(y, m, d) {
+  if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+  var dt = new Date(Date.UTC(y, m - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
+}
+function inspireFixDateOrder(iso, monthHint) {
+  var m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return '';
+  var y = parseInt(m[1], 10), a = parseInt(m[2], 10), b = parseInt(m[3], 10);
+  var asIs = inspireIsValidYmd(y, a, b);
+  var swapped = a !== b && inspireIsValidYmd(y, b, a);
+  if (asIs && swapped) {
+    // Ambiguous (both day <= 12): trust the month the suggestion text agrees with.
+    if (monthHint && b === monthHint && a !== monthHint) return y + '-' + inspirePad2(b) + '-' + inspirePad2(a);
+    return iso;
+  }
+  if (asIs) return iso;
+  if (swapped) return y + '-' + inspirePad2(b) + '-' + inspirePad2(a);
+  return '';
+}
+
+function normalizeInspireSuggestion(raw, fallbackCurrency, queryHint) {
   if (!raw || typeof raw !== 'object') return null;
   var destCity = sanitize(String(raw.destination || raw.city || '')).slice(0, 80);
   var destCode = sanitize(String(raw.destination_airport || raw.iata || raw.airport || '')).toUpperCase().slice(0, 3);
@@ -1621,6 +1658,15 @@ function normalizeInspireSuggestion(raw, fallbackCurrency) {
   var ret = sanitize(String(raw.suggested_return || raw.return_date || '')).slice(0, 10);
   if (dep && !/^\d{4}-\d{2}-\d{2}$/.test(dep)) dep = '';
   if (ret && !/^\d{4}-\d{2}-\d{2}$/.test(ret)) ret = '';
+  var monthHint = inspireMonthHint(weeks.join(' ') + ' ' + (raw.why || '') + ' ' + (queryHint || ''));
+  if (dep) dep = inspireFixDateOrder(dep, monthHint);
+  if (ret) ret = inspireFixDateOrder(ret, monthHint);
+  if (dep && ret && ret < dep) {
+    // Return landed before departure — most likely dep/ret still disagree on
+    // day/month order between themselves. Try re-deriving ret from dep's month.
+    var reordered = inspireFixDateOrder(ret, parseInt(dep.slice(5, 7), 10));
+    ret = (reordered && reordered >= dep) ? reordered : '';
+  }
   var destLabel = destCity
     ? (destCode ? destCity + ' (' + destCode + ')' : destCity)
     : destCode;
@@ -1692,7 +1738,7 @@ async function handleFlightInspire(request, env, origin) {
       throw new Error('Could not parse destination suggestions.');
     }
     var suggestions = parsed.suggestions
-      .map(function(s) { return normalizeInspireSuggestion(s, currency); })
+      .map(function(s) { return normalizeInspireSuggestion(s, currency, query); })
       .filter(Boolean)
       .slice(0, 3);
     if (!suggestions.length) throw new Error('No usable destination suggestions returned.');
