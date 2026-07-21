@@ -1074,8 +1074,22 @@
   </script>
   <script src="assets/js/shared/nav-theme.js"></script>
   <script src="assets/js/shared/subscribe.js"></script>
+  <script src="assets/js/shared/help-panel.js"></script>
   <script>
     window.SBShared && window.SBShared.initNavMenu();
+    SBHelpGuide.init({
+      page: 'interviews',
+      tabLabel: 'Guide',
+      title: 'How to explore Interview Prep',
+      intro: 'Real ServiceNow interview questions, organized so you can drill exactly what you need.',
+      steps: [
+        { title: 'Filter by category', desc: 'Use the left sidebar (or the "Filter by Category" button on mobile) to narrow questions to a topic like Business Rules, ACLs, or Performance.' },
+        { title: 'Add a difficulty filter', desc: 'Combine a category with Foundation, Intermediate, or Expert to match questions to your interview stage.' },
+        { title: 'Bookmark a filtered view', desc: 'Category and difficulty filters are reflected in the URL, so you can share or bookmark a direct link to a specific set of questions.' },
+        { title: 'Search by keyword', desc: 'Use the search bar to find a specific concept (e.g. "GlideAggregate") across every question instantly.' },
+        { title: 'Share a question', desc: 'Use the share action on any question card to copy a ready-to-send summary.' }
+      ]
+    });
   </script>
 </body>
 </html>

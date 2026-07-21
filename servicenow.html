@@ -660,6 +660,23 @@
   <footer><p class="footer-text">© 2026 Sumanth Bolle. ServiceNow Central — built for the community.</p></footer>
 
   <script src="assets/js/shared/nav-theme.js"></script>
+  <script src="assets/js/shared/help-panel.js"></script>
+  <script>
+  SBHelpGuide.init({
+    page: 'servicenow',
+    tabLabel: 'Guide',
+    title: 'How to explore ServiceNow Central',
+    intro: 'This hub ties together tutorials, quiz, interviews, and live AI coverage — here is how to move through it fast.',
+    steps: [
+      { title: 'Search or jump instantly', desc: 'Open the hero search bar to find any tutorial, quiz topic, interview question, or learning path by keyword.' },
+      { title: 'Pick a learning path', desc: 'Under "Start here", choose Beginner, CSA, Scripting, Interview, or AI — each links you through the right sequence of content in order.' },
+      { title: 'Explore the platform diagram', desc: 'Click a term like CMDB in the architecture section to expand an inline definition without leaving the page.' },
+      { title: 'Jump from the stats strip', desc: 'The dark counts row (Articles / Tutorials / Interview Qs / Quiz questions) links straight into each hub — click a number to go there.' },
+      { title: 'Follow live AI coverage', desc: 'The AI Agents section links to continuously updated news and deep dives on the Now Platform.' },
+      { title: 'Get quick answers', desc: 'Scroll to the FAQ near the bottom for sourced answers to common ServiceNow platform questions.' }
+    ]
+  });
+  </script>
   <script>
   (function () {
     'use strict';

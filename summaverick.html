@@ -3103,5 +3103,22 @@
       init();
     })();
   </script>
+  <script src="assets/js/shared/help-panel.js"></script>
+  <script>
+    SBHelpGuide.init({
+      page: 'summaverick',
+      tabLabel: 'Guide',
+      title: 'How to use Summaverick',
+      intro: 'An AI research assistant built for fast, sourced answers.',
+      steps: [
+        { title: 'Start with a task', desc: 'Tap one of the starter cards under "What do you want to do?" for a ready-made prompt, or just type your own question in the composer.' },
+        { title: 'Pick a depth', desc: 'Choose Quick, Deeper, or Full picture above the composer to control how much context and research goes into the answer.' },
+        { title: 'Keep the thread going', desc: 'Follow-up questions stay in the same conversation — Summaverick remembers the context, so you don\'t have to repeat yourself.' },
+        { title: 'Browse chat history', desc: 'Open the history icon in the top bar to revisit, rename, or delete past conversations.' },
+        { title: 'Start fresh', desc: 'Use "New conversation" to clear context and begin a new topic from scratch.' },
+        { title: 'Switch themes', desc: 'Toggle Light/Dark from the top bar — this guide matches whichever theme you pick.' }
+      ]
+    });
+  </script>
 </body>
 </html>
