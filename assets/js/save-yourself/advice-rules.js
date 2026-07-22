@@ -1,6 +1,7 @@
 /**
  * Deterministic advice engine for Save Yourself.
- * Rule-based; returns transparent triggeredRules + actionable steps.
+ * Rule-based; returns transparent triggeredRules + prioritized actions.
+ * Tone is non-judgmental: it never implies the borrower failed by needing money.
  */
 (function (global) {
   'use strict';
@@ -27,6 +28,16 @@
     { id: 'other', label: 'Other' }
   ];
 
+  // Reason-specific reflective question. Never uses "can you live with that",
+  // which is inappropriate for medical or emergency borrowing.
+  var HONEST_QUESTION = {
+    emergency: 'What is the smallest amount that covers the essential need right now, and which non-loan bridge can cover the rest?',
+    invest: 'Will this reliably earn or save more than its total cost within about 12–18 months?',
+    debt: 'Does this new loan actually lower my total cost and close the old debts for good?',
+    lifestyle: 'If I wait 90 days and it still matters, can I fund it without borrowing?',
+    mixed: 'Is a loan the clearest way to solve this, and is the amount as small as it can be?'
+  };
+
   function reasonById(id) {
     for (var i = 0; i < REASONS.length; i++) {
       if (REASONS[i].id === id) return REASONS[i];
@@ -39,65 +50,67 @@
    * @param {string} ctx.reasonId
    * @param {string} [ctx.problemSentence]
    * @param {string} [ctx.lenderId]
-   * @param {number} [ctx.existingEmis] — count or approximate monthly debt
    * @param {'yes'|'no'|'partial'|'unknown'} [ctx.emergencyFund]
-   * @param {'yes'|'no'|'unsure'} [ctx.debtRatioHigh]
    * @param {'one_time'|'recurring'|'unknown'} [ctx.shortfallType]
-   * @param {object} [ctx.loan] — result from SYLoanMath.calculate
+   * @param {object} [ctx.loan] — result from SYLoanMath.calculate (may include .dti)
    */
   function buildAdvice(ctx) {
     var reason = reasonById(ctx.reasonId) || reasonById('other');
-    var triggered = [];
-    var headline = '';
-    var steps = [];
-    var severity = 'moderate'; // low | moderate | high | critical
-    var honestQuestion =
-      'If I never took this loan, what is the worst that would realistically happen in the next 6–12 months — and can I live with that?';
+    var loan = ctx.loan && ctx.loan.ok ? ctx.loan : null;
+    var dti = loan && loan.dti ? loan.dti : null;
 
-    // --- Burden rules ---
-    if (ctx.debtRatioHigh === 'yes') {
-      triggered.push({
-        id: 'high_debt_ratio',
-        label: 'Debt payments may exceed 40% of income'
-      });
-      severity = 'critical';
-      steps.push({
-        title: 'Pause and map every payment',
-        detail: 'List all EMIs and minimums. If this loan would push total debt payments above ~40–50% of income, taking more debt usually deepens the hole.'
-      });
-      steps.push({
-        title: 'Prioritize cost of money, not EMI size',
-        detail: 'Attack the highest interest balance first (often credit cards or payday). Avoid stacking a new EMI on top unless it truly replaces a more expensive one.'
-      });
+    var triggered = [];
+    var priorityActions = []; // burden-driven, most urgent
+    var reasonActions = [];   // reason-specific
+    var severity = 'moderate';
+
+    // --- Debt-to-income (computed, not self-reported) ---
+    if (dti) {
+      if (dti.band === 'high') {
+        triggered.push({ id: 'dti_high', label: 'Debt payments ≈ ' + Math.round(dti.percent) + '% of income (high)' });
+        severity = 'critical';
+        priorityActions.push({
+          title: 'Check affordability before signing',
+          detail: 'With this EMI, your monthly debt payments reach about ' + Math.round(dti.percent)
+            + '% of gross income. Comfort thresholds vary by lender, product, and country — many flag anything above roughly a third — so treat this as a signal to reduce the amount or extend nothing further without a plan.'
+        });
+      } else if (dti.band === 'elevated') {
+        triggered.push({ id: 'dti_elevated', label: 'Debt payments ≈ ' + Math.round(dti.percent) + '% of income' });
+        if (severity === 'moderate') severity = 'high';
+        priorityActions.push({
+          title: 'Keep an eye on total commitments',
+          detail: 'Debt payments would sit near ' + Math.round(dti.percent)
+            + '% of gross income. Some products and jurisdictions allow more (for example, housing limits can be higher), but a smaller amount or shorter tenure leaves more breathing room.'
+        });
+      }
     }
 
     if (ctx.emergencyFund === 'no') {
       triggered.push({ id: 'no_emergency_fund', label: 'No 3+ month emergency fund' });
       if (severity === 'moderate') severity = 'high';
-      steps.push({
-        title: 'Start a “never again” fund immediately',
-        detail: 'Even a small automatic transfer (any affordable amount) after essentials builds the habit that reduces the next emergency loan.'
+      priorityActions.push({
+        title: 'Start a small buffer alongside repayment',
+        detail: 'Even a modest automatic transfer after essentials builds the cushion that reduces the need for the next loan.'
       });
     } else if (ctx.emergencyFund === 'partial') {
       triggered.push({ id: 'partial_emergency_fund', label: 'Partial emergency fund' });
     }
 
     if (ctx.shortfallType === 'recurring') {
-      triggered.push({ id: 'recurring_shortfall', label: 'Recurring income shortfall' });
+      triggered.push({ id: 'recurring_shortfall', label: 'Recurring monthly shortfall' });
       severity = severity === 'critical' ? 'critical' : 'high';
-      steps.push({
-        title: 'Fix the leak before adding a loan',
-        detail: 'A loan does not solve a monthly gap — it adds a new fixed payment. Cut low-value spend and/or raise income until the month balances without borrowing.'
+      priorityActions.push({
+        title: 'Address the monthly gap first',
+        detail: 'A loan adds a fixed payment rather than closing a recurring gap. Raising income or trimming lower-value spend fixes the root cause; a loan alone usually does not.'
       });
     }
 
-    var loan = ctx.loan && ctx.loan.ok ? ctx.loan : null;
-    if (loan && loan.annualRatePercent >= 36) {
-      triggered.push({ id: 'predatory_rate', label: 'Rate ≥ 36% p.a.' });
+    if (loan && loan.aprPercent != null && loan.aprPercent >= 36) {
+      triggered.push({ id: 'predatory_rate', label: 'Effective rate ≥ 36% p.a.' });
       severity = 'critical';
     } else if (loan && loan.annualRatePercent >= 24) {
       triggered.push({ id: 'high_rate', label: 'Rate ≥ 24% p.a.' });
-      if (severity === 'low' || severity === 'moderate') severity = 'high';
+      if (severity === 'moderate') severity = 'high';
     }
 
     if (ctx.lenderId === 'payday' || ctx.lenderId === 'credit_card') {
@@ -106,193 +119,185 @@
         label: ctx.lenderId === 'payday' ? 'Payday lender' : 'Credit card borrowing'
       });
       if (severity !== 'critical') severity = 'high';
-      steps.push({
-        title: 'Treat this as expensive money',
-        detail: 'Payday and revolving credit card debt usually have the worst lifetime cost. Borrow the smallest critical amount and repay as soon as income arrives.'
+      priorityActions.push({
+        title: 'This is usually the most expensive money',
+        detail: 'Payday and revolving credit-card balances tend to carry the highest lifetime cost. Borrow only the critical amount and clear it as soon as income allows.'
       });
     }
 
     if (ctx.lenderId === 'friend' || ctx.lenderId === 'family') {
       triggered.push({ id: 'informal_lender', label: 'Friend or family lender' });
-      steps.push({
-        title: 'Write a clear repayment plan',
-        detail: 'Agree amount, rate (even 0%), dates, and what happens if a payment is missed. Share a written schedule — it protects the relationship.'
+      reasonActions.push({
+        title: 'Put the terms in writing',
+        detail: 'Agree amount, rate (even 0%), dates, and what happens if a payment slips. A short written schedule protects the relationship.'
       });
     }
 
-    // --- Reason buckets ---
-    triggered.push({
-      id: 'reason_' + reason.id,
-      label: 'Reason: ' + reason.label
-    });
+    triggered.push({ id: 'reason_' + reason.id, label: 'Reason: ' + reason.label });
 
+    var headline = '';
     if (reason.bucket === 'lifestyle') {
-      headline = 'This looks non-essential — delay and fund it yourself if you still want it.';
+      headline = 'This looks flexible in timing — delaying or partly self-funding could remove the loan entirely.';
       if (severity === 'moderate') severity = 'high';
-      steps = steps.concat([
+      reasonActions = reasonActions.concat([
         {
           title: 'Delay 90 days',
-          detail: 'Put the purchase on a 90-day list. Most lifestyle desires fade; if it remains, you decide with a cooler head.'
+          detail: 'Put the purchase on a 90-day list. If it still matters afterward, you decide with a clearer head.'
         },
         {
           title: 'Price it in hours of your life',
-          detail: loan
-            ? 'At your planned EMI, this loan costs roughly ' + formatHoursHint(loan) + ' of work-equivalent burden each month — is the item worth that?'
-            : 'Divide the total interest by your hourly take-home. That is the pure loss in hours of your life.'
+          detail: 'Divide the total cost of borrowing by your hourly take-home pay. That number is how many extra work-hours the financing adds.'
         },
         {
-          title: 'Cheaper or second-hand first',
-          detail: 'Find a lower-cost version, wait for a sale, or buy used before financing new.'
-        },
-        {
-          title: '30–60 day side-income sprint',
-          detail: 'Fund it with a focused income push instead of locking in months of repayments.'
+          title: 'Cheaper, used, or a short income sprint',
+          detail: 'A lower-cost version, a sale, or a focused 30–60 day earning push can fund it without months of repayments.'
         }
       ]);
     } else if (reason.bucket === 'emergency') {
-      headline = 'Emergency borrowing: minimize the amount, bridge temporarily, then rebuild.';
-      steps = steps.concat([
+      headline = 'Emergencies are valid reasons to borrow — the goal is the smallest amount and the cheapest bridge.';
+      reasonActions = reasonActions.concat([
         {
-          title: 'Borrow only what is critical',
-          detail: 'Separate must-pay medical/survival costs from nice-to-have add-ons. Smaller principal = less pure interest loss.'
+          title: 'Borrow only what is critical now',
+          detail: 'Separate must-pay costs from anything that can wait. A smaller principal means less cost of borrowing.'
         },
         {
-          title: 'Check bridges before a loan',
+          title: 'Check lower-cost bridges first',
           detail: 'Hospital payment plans, employer advances, government schemes, community funds, or family at 0% often beat commercial rates.'
         },
         {
-          title: 'Repay high-interest the moment income returns',
-          detail: 'When cash flow recovers, prioritize clearing this balance before new spending habits return.'
-        },
-        {
-          title: 'Set a rebuild target',
-          detail: 'After survival mode, automate even a small emergency-fund transfer so the next shock does not require a lender.'
+          title: 'Rebuild gently once stable',
+          detail: 'When income recovers, clear the highest-cost balance first, then automate a small buffer for next time.'
         }
       ]);
     } else if (reason.bucket === 'invest') {
-      headline = 'Only borrow if the return clearly beats the loan cost within 12–18 months.';
-      steps = steps.concat([
+      headline = 'Borrowing to invest in yourself can pay off — if the return clearly beats the total cost.';
+      reasonActions = reasonActions.concat([
         {
-          title: 'Validate ROI before you sign',
-          detail: 'Will this education or business create more income than the total interest within 12–18 months? If not, shrink the plan or wait.'
+          title: 'Write a one-page return check',
+          detail: 'Estimate the income or savings this creates within 12–18 months and compare it to the cost of borrowing. If it is close, shrink the plan.'
         },
         {
           title: 'Hunt cheaper capital',
-          detail: 'Grants, scholarships, employer sponsorship, revenue-based financing, or a smaller pilot often beat a full personal loan.'
+          detail: 'Grants, scholarships, employer sponsorship, revenue-based financing, or a smaller pilot often cost less than a personal loan.'
         },
         {
           title: 'Keep money streams separate',
-          detail: 'Do not mix household cash with business risk. A written budget for loan proceeds prevents lifestyle bleed.'
+          detail: 'A dedicated budget for the loan proceeds prevents everyday spending from eating into the plan.'
         }
       ]);
     } else if (reason.bucket === 'debt') {
-      headline = 'Consolidation only helps if the new loan is cheaper and closes the old ones.';
-      steps = steps.concat([
+      headline = 'Consolidation helps only when the new loan is genuinely cheaper and closes the old balances.';
+      reasonActions = reasonActions.concat([
         {
-          title: 'Compare total interest, not just EMI',
-          detail: 'A longer tenure can lower EMI while increasing lifetime cost. Run the numbers both ways before consolidating.'
+          title: 'Compare total cost, not just EMI',
+          detail: 'A longer tenure can lower the monthly payment while raising lifetime cost. Check both before consolidating.'
         },
         {
-          title: 'Close the old accounts',
-          detail: 'If you consolidate and keep revolving credit open, balances often creep back. Cut up or freeze cards you cannot manage.'
+          title: 'Close what you consolidate',
+          detail: 'If old revolving credit stays open, balances often rebuild. Freeze or close accounts you cannot manage.'
         },
         {
-          title: 'Hard rule after payoff',
-          detail: 'Once clear, commit to no new consumer debt for 12–24 months while you rebuild cash buffers.'
+          title: 'Set a payoff-forward rule',
+          detail: 'Once clear, give yourself a defined window with no new consumer debt while buffers rebuild.'
         }
       ]);
     } else {
-      headline = 'Treat this as optional until the numbers and alternatives are clear.';
-      steps = steps.concat([
+      headline = 'Worth a careful look — clarify the numbers and alternatives before committing.';
+      reasonActions = reasonActions.concat([
         {
           title: 'Name the real problem',
           detail: ctx.problemSentence
-            ? 'You wrote: “' + truncate(ctx.problemSentence, 160) + '”. Ask whether a loan is the only tool that solves that problem.'
-            : 'In one sentence, what problem does this money solve? If the sentence is vague, pause.'
+            ? 'You wrote: “' + truncate(ctx.problemSentence, 160) + '”. Check whether a loan is the clearest tool for that.'
+            : 'In one sentence, what does this money solve? If the sentence is vague, it is worth pausing.'
         },
         {
-          title: 'Size the downside of waiting',
-          detail: 'Write the realistic worst case of not borrowing for 6–12 months. If you can live with it, you may not need the loan.'
+          title: 'Size the alternatives',
+          detail: 'List two or three ways to solve this with less borrowing, then compare them to the cost shown.'
         }
       ]);
     }
 
-    // Universal moves (always appended, de-duplicated by title)
+    // Universal moves — kept short and only added if room remains.
     var universal = [
       {
-        title: 'Refinance or negotiate the rate',
-        detail: 'Banks, NBFCs, and especially friends/family often accept a clearer plan at a lower rate. Ask — silence is expensive.'
+        title: 'Negotiate the rate or fees',
+        detail: 'Lenders, and especially friends or family, often accept a clearer plan at a lower rate. Fees are frequently negotiable too.'
       },
       {
-        title: 'Raise income temporarily instead of debt',
-        detail: 'A short sprint of overtime, freelancing, or selling unused items can shrink or eliminate the principal.'
-      },
-      {
-        title: 'Cut the lowest-value 10–15% of expenses',
-        detail: 'For the duration of the loan, trim subscriptions and discretionary spend that you would not defend out loud.'
+        title: 'Reduce the principal a little',
+        detail: 'Even funding 10–20% yourself measurably cuts the cost of borrowing shown above.'
       },
       {
         title: 'Share a written repayment plan',
-        detail: 'Accountability to one trusted person dramatically improves follow-through.'
+        detail: 'Telling one trusted person your payoff date meaningfully improves follow-through.'
       }
     ];
 
-    universal.forEach(function (u) {
-      if (!steps.some(function (s) { return s.title === u.title; })) steps.push(u);
-    });
+    // Prioritized, de-duplicated action list. Burden actions first, then reason, then universal.
+    var ordered = dedupeByTitle(priorityActions.concat(reasonActions).concat(universal));
+    var topActions = ordered.slice(0, 3);
+    var moreActions = ordered.slice(3);
 
-    // Next actions timeline
-    var plan30 = buildTimeline(reason, ctx, loan);
+    var plan = buildTimeline(reason, ctx, loan, dti);
 
     return {
       reason: reason,
       severity: severity,
       headline: headline,
-      honestQuestion: honestQuestion,
+      honestQuestion: HONEST_QUESTION[reason.bucket] || HONEST_QUESTION.mixed,
       triggeredRules: triggered,
-      steps: steps,
-      plan: plan30,
+      topActions: topActions,
+      moreActions: moreActions,
+      steps: ordered,
+      plan: plan,
       alternatives: buildAlternatives(reason, ctx)
     };
   }
 
-  function buildTimeline(reason, ctx, loan) {
+  function dedupeByTitle(list) {
+    var seen = Object.create(null);
+    var out = [];
+    list.forEach(function (item) {
+      if (seen[item.title]) return;
+      seen[item.title] = true;
+      out.push(item);
+    });
+    return out;
+  }
+
+  function buildTimeline(reason, ctx, loan, dti) {
     var day30 = [];
     var day60 = [];
     var day90 = [];
 
     if (reason.bucket === 'lifestyle') {
-      day30.push('Add the purchase to a 90-day waitlist; delete saved carts and stop browsing it daily.');
-      day30.push('Calculate total interest as “hours of work” and write it on a sticky note.');
-      day60.push('Run a side-income sprint equal to at least 25–50% of the principal.');
-      day60.push('Price second-hand / cheaper alternatives and keep screenshots.');
-      day90.push('Re-decide with the full cost summary in front of you. Default answer: do not borrow.');
+      day30.push('Add the purchase to a 90-day waitlist and stop browsing it daily.');
+      day60.push('Run a short income sprint or find a cheaper/used option.');
+      day90.push('Re-decide with the full cost summary in front of you.');
     } else if (reason.bucket === 'emergency') {
-      day30.push('Confirm the minimum critical amount; decline non-essential add-ons.');
-      day30.push('Ask hospital/employer/community for payment plans before signing a high-rate loan.');
-      day60.push('As income returns, route surplus to the highest-rate balance first.');
-      day90.push('Automate an emergency-fund transfer; set a 3-month expense target.');
+      day30.push('Confirm the minimum critical amount; ask providers/employer for payment plans.');
+      day60.push('As income returns, route surplus to the highest-cost balance first.');
+      day90.push('Automate a small buffer toward a 3-month expense target.');
     } else if (reason.bucket === 'invest') {
-      day30.push('Write a one-page ROI: expected income uplift vs total loan interest.');
-      day30.push('Apply to at least two cheaper capital sources (grant, scholarship, sponsor).');
-      day60.push('Pilot a smaller version of the plan that needs less principal.');
-      day90.push('Proceed only if projected return still beats loan cost with a margin of safety.');
+      day30.push('Write the return check and apply to one or two cheaper capital sources.');
+      day60.push('Pilot a smaller version that needs less principal.');
+      day90.push('Proceed only if the projected return still beats the cost with margin.');
+    } else if (reason.bucket === 'debt') {
+      day30.push('List every balance with its rate; compare consolidation total cost both ways.');
+      day60.push('If consolidating, close or freeze the old revolving credit.');
+      day90.push('Lock a payoff date and a no-new-debt window afterward.');
     } else {
-      day30.push('Fill the cost summary and say the honest question out loud.');
-      day30.push('List three alternatives that do not require this loan.');
-      day60.push('Negotiate rate/tenure or reduce principal by funding part yourself.');
-      day90.push('If you still borrow, lock a repayment date and a no-new-debt rule afterward.');
+      day30.push('Fill the cost summary and list three lower-borrowing alternatives.');
+      day60.push('Negotiate rate/tenure or fund part of it yourself.');
+      day90.push('If you still borrow, lock a repayment date.');
     }
 
-    if (ctx.debtRatioHigh === 'yes') {
-      day30.unshift('Do not sign until you can show total debt payments stay under ~40% of income — or have a written exception plan.');
+    if (dti && dti.band === 'high') {
+      day30.unshift('Reduce the amount until monthly debt payments are comfortable for your income.');
     }
     if (loan && loan.withExtra && loan.withExtra.monthsSaved > 0) {
-      day60.push(
-        'If you must borrow, try the extra-payment plan: it can finish ~'
-        + loan.withExtra.monthsSaved
-        + ' month(s) sooner and save interest.'
-      );
+      day60.push('If you borrow, the extra-payment plan finishes about '
+        + loan.withExtra.monthsSaved + ' month(s) sooner.');
     }
 
     return { days30: day30, days60: day60, days90: day90 };
@@ -301,36 +306,20 @@
   function buildAlternatives(reason, ctx) {
     var list = [];
     if (reason.bucket === 'lifestyle') {
-      list.push('Wait 90 days and reassess');
-      list.push('Buy used / lower tier');
-      list.push('Fund with a short income sprint');
+      list = ['Wait 90 days and reassess', 'Buy used or a lower tier', 'Fund with a short income sprint'];
     } else if (reason.bucket === 'emergency') {
-      list.push('Payment plan with provider');
-      list.push('Employer advance or leave encashment');
-      list.push('Community / government assistance');
-      list.push('0% family bridge with written terms');
+      list = ['Payment plan with the provider', 'Employer advance', 'Community / government assistance', '0% family bridge with written terms'];
     } else if (reason.bucket === 'invest') {
-      list.push('Scholarship, grant, or employer sponsorship');
-      list.push('Smaller pilot before full capital');
-      list.push('Revenue-based or milestone funding');
+      list = ['Scholarship, grant, or sponsorship', 'Smaller pilot first', 'Revenue-based or milestone funding'];
     } else if (reason.bucket === 'debt') {
-      list.push('Direct negotiation with current lenders');
-      list.push('Balance transfer with a real payoff date');
-      list.push('Credit counseling (fee-only)');
+      list = ['Negotiate directly with current lenders', 'Balance transfer with a real payoff date', 'Fee-only credit counseling'];
     } else {
-      list.push('Delay and reduce the amount');
-      list.push('Partial self-funding');
-      list.push('Negotiate a lower rate with a clear plan');
+      list = ['Delay and reduce the amount', 'Partial self-funding', 'Negotiate a lower rate'];
     }
     if (ctx.lenderId === 'payday') {
-      list.unshift('Any non-payday bridge — payday is usually the worst lifetime cost');
+      list.unshift('Almost any non-payday bridge');
     }
     return list;
-  }
-
-  function formatHoursHint(loan) {
-    // Soft hint without assuming wage — speak in EMI terms
-    return 'one full EMI of work-value';
   }
 
   function truncate(s, n) {
