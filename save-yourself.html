@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save Yourself — See the Real Cost of Borrowing | Sumanth Bolle</title>
+  <meta name="description" content="Before you borrow, see the exact lifetime cost, understand your burden, and get clear alternatives. Fully private — calculations run in your browser.">
+  <meta name="author" content="Sumanth Bolle">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#f5f5f7">
+  <link rel="canonical" href="https://sumanthbolle.com/save-yourself">
+  <meta property="og:title" content="Save Yourself — See the Real Cost of Borrowing">
+  <meta property="og:description" content="Exact EMI math, opportunity cost, and personalized paths to avoid unnecessary debt. Nothing leaves your device.">
+  <meta property="og:url" content="https://sumanthbolle.com/save-yourself">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Save Yourself",
+    "url": "https://sumanthbolle.com/save-yourself",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "description": "Educational loan cost calculator with reducing-balance EMI math, opportunity cost, and rule-based guidance. Runs entirely in the browser.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
+  }
+  </script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000;
+      --green:#1f7a3a;--red:#c32b23;--amber:#9a6b12;
+      --card-line:rgba(0,0,0,0.06);--card-shadow:0 1px 8px rgba(0,0,0,0.04);
+      --input-bg:#fff;--input-line:rgba(0,0,0,0.12);--chip-bg:#fff;
+      --loss-bg:#fff2f1;--loss-line:#ffd0cc;--loss-text:#b42318;
+      --ok-bg:#eef8f0;--ok-line:#c6e6cc;
+      --radius:16px;--radius-sm:12px;--radius-xs:8px;--max:1080px;
+    }
+    :root[data-theme="dark"]{
+      --blue:#4c9cff;--text:#f2f2f7;--gray:#9a9aa2;--bg:#0d0d10;--white:#17171b;--black:#fff;
+      --green:#4cc26a;--red:#ff6b60;--amber:#e8c877;
+      --card-line:rgba(255,255,255,0.08);--card-shadow:0 1px 10px rgba(0,0,0,0.5);
+      --input-bg:#1f1f24;--input-line:rgba(255,255,255,0.16);--chip-bg:#22222a;
+      --loss-bg:#2c1512;--loss-line:#6a2b25;--loss-text:#ff9a90;
+      --ok-bg:#14241a;--ok-line:#2a5a38;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:background .3s,color .3s}
+    button,select,input,textarea{font:inherit;color:inherit}
+    a{color:inherit}
+    .skip-link{position:absolute;left:16px;top:-80px;z-index:10000;background:var(--text);color:var(--bg);padding:10px 14px;border-radius:8px;text-decoration:none}
+    .skip-link:focus{top:12px}
+    :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+    nav{position:fixed;top:0;width:100%;height:48px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid var(--card-line)}
+    .nav-c{max-width:var(--max);margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+    .nav-logo{font-size:20px;font-weight:600;color:var(--text);text-decoration:none}
+    .nav-right{display:flex;align-items:center;gap:18px}
+    .nav-links{display:flex;gap:22px;list-style:none}
+    .nav-links a{color:var(--text);text-decoration:none;font-size:13px;opacity:.8;transition:opacity .3s,color .3s}
+    .nav-links a:hover,.nav-links a.active{opacity:1;color:var(--blue)}
+    .theme-toggle{background:none;border:0;cursor:pointer;padding:8px;min-width:40px;min-height:40px;color:var(--text);display:flex;align-items:center;justify-content:center;border-radius:8px}
+    .theme-toggle:hover{background:var(--card-line)}
+    .theme-toggle svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    :root:not([data-theme="dark"]) .theme-toggle .moon{display:none}
+    :root[data-theme="dark"] .theme-toggle .sun{display:none}
+    .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;min-width:44px;min-height:44px}
+    .menu-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:.3s}
+    .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+    .menu-toggle.active span:nth-child(2){opacity:0}
+    .menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+    .mobile-menu{display:none;position:fixed;top:48px;left:0;width:100%;background:var(--white);backdrop-filter:blur(20px);padding:20px;border-bottom:1px solid var(--card-line);z-index:9998;max-height:calc(100vh - 48px);overflow:auto}
+    .mobile-menu.active{display:block}
+    .mobile-menu a{display:block;padding:12px 0;color:var(--text);text-decoration:none;font-size:16px;border-bottom:1px solid var(--card-line)}
+    .mobile-menu a.active{color:var(--blue)}
+
+    .page-header{padding:108px 22px 72px;text-align:center;background:
+      radial-gradient(ellipse 70% 55% at 50% 0%,rgba(0,102,204,0.22) 0%,transparent 55%),
+      linear-gradient(180deg,#12141a 0%,#0a0a0c 100%);
+      color:#fff;position:relative;overflow:hidden}
+    .page-header::after{content:'';position:absolute;inset:auto 0 0 0;height:120px;background:linear-gradient(180deg,transparent,var(--bg));pointer-events:none}
+    .page-header .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.78);font-size:12px;font-weight:600;letter-spacing:.4px;margin-bottom:16px;position:relative;animation:fadeUp .7s ease both}
+    .privacy-dot{width:7px;height:7px;border-radius:50%;background:#34c759;box-shadow:0 0 0 0 rgba(52,211,153,.45);animation:pulseDot 2.4s ease infinite}
+    .page-header h1{font-size:clamp(36px,7vw,58px);font-weight:600;letter-spacing:-.03em;margin-bottom:12px;position:relative;animation:fadeUp .7s ease .08s both}
+    .page-header .lede{font-size:18px;color:#c7c7cc;max-width:560px;margin:0 auto;line-height:1.55;position:relative;animation:fadeUp .7s ease .16s both}
+    .page-header .sub-note{margin-top:18px;font-size:13px;color:rgba(255,255,255,0.55);position:relative;animation:fadeUp .7s ease .24s both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(52,211,153,.5)}70%{box-shadow:0 0 0 10px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+
+    .main-wrap{max-width:var(--max);margin:0 auto;padding:0 22px 40px;position:relative;z-index:1}
+    .privacy-bar{background:var(--white);border-radius:22px;padding:14px 18px;box-shadow:0 4px 24px rgba(0,0,0,0.08);margin-top:-36px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border:1px solid var(--card-line);animation:fadeUp .6s ease .2s both}
+    .privacy-bar p{font-size:13px;color:var(--gray);line-height:1.45}
+    .privacy-bar strong{color:var(--text);font-weight:600}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:var(--ok-bg);border:1px solid var(--ok-line);color:var(--green);font-size:12px;font-weight:600;white-space:nowrap}
+
+    .layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:16px;margin-top:18px;align-items:start}
+    .stack{display:flex;flex-direction:column;gap:16px}
+    .section{background:var(--white);border-radius:22px;padding:28px;box-shadow:var(--card-shadow);border:1px solid var(--card-line)}
+    .section.highlight{border-color:rgba(0,102,204,0.28);box-shadow:0 2px 16px rgba(0,102,204,0.08)}
+    .section-label{margin:0 0 8px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    .section h2{font-size:clamp(22px,3vw,28px);font-weight:600;letter-spacing:-.02em;margin-bottom:8px}
+    .section-intro{color:var(--gray);font-size:15px;line-height:1.6;max-width:640px;margin-bottom:20px}
+
+    .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .field{display:flex;flex-direction:column;gap:5px}
+    .field.full{grid-column:1/-1}
+    .field label,.field .lbl{display:block;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.7px}
+    .field .hint{font-size:12px;color:var(--gray);line-height:1.4;text-transform:none;letter-spacing:0;font-weight:400}
+    .input-wrap{display:flex;align-items:stretch;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--input-bg);overflow:hidden}
+    .input-wrap:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,0.14)}
+    .input-prefix{display:flex;align-items:center;padding:0 12px;background:var(--bg);color:var(--gray);font-size:13px;font-weight:600;border-right:1px solid var(--input-line);white-space:nowrap}
+    .input-wrap input,.input-wrap select{border:0;background:transparent;min-height:42px;padding:0 12px;width:100%;min-width:0}
+    .input-wrap input:focus,.input-wrap select:focus{outline:none;box-shadow:none}
+    select,input[type=number],input[type=text],textarea{min-height:42px;padding:0 12px;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--input-bg);color:var(--text);width:100%}
+    textarea{min-height:88px;padding:12px;resize:vertical;line-height:1.45}
+    select{padding-right:34px;cursor:pointer}
+    select:focus,input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,0.14);outline:none}
+    .field-error{font-size:12px;color:var(--red);line-height:1.4}
+    .field-error[hidden]{display:none!important}
+
+    .segmented{display:inline-flex;gap:2px;padding:3px;background:var(--bg);border-radius:10px;border:1px solid var(--card-line);flex-wrap:wrap}
+    .segmented label{position:relative}
+    .segmented input{position:absolute;opacity:0;pointer-events:none}
+    .segmented span{display:inline-flex;align-items:center;min-height:34px;padding:0 12px;border-radius:8px;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer}
+    .segmented input:checked+span{background:var(--white);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+    .segmented input:focus-visible+span{outline:2px solid var(--blue);outline-offset:2px}
+
+    .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .choice{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line);cursor:pointer;transition:border-color .2s,background .2s}
+    .choice:hover{border-color:rgba(0,102,204,0.35)}
+    .choice:has(input:checked){border-color:var(--blue);background:color-mix(in srgb,var(--blue) 8%,var(--bg))}
+    .choice input{margin-top:3px;accent-color:var(--blue);width:16px;height:16px;flex:0 0 auto}
+    .choice span{font-size:14px;line-height:1.35}
+
+    .btn{min-height:42px;padding:0 16px;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--bg);color:var(--text);cursor:pointer;transition:background .2s,border-color .2s;font-weight:500}
+    .btn:hover{border-color:var(--blue);color:var(--blue)}
+    .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .btn-primary:hover{background:#0055aa;color:#fff}
+    .btn-primary:disabled,.btn:disabled{opacity:.45;cursor:not-allowed}
+    .btn-sm{min-height:36px;padding:0 12px;font-size:13px}
+    .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+    .results{position:sticky;top:64px}
+    .results[data-state="empty"] .metric-value{color:#c7c7cc}
+    .results-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+    .live-pill{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent);padding:5px 9px;border-radius:999px}
+    .metrics{display:grid;gap:12px}
+    .metric{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
+    .metric.loss{background:var(--loss-bg);border-color:var(--loss-line)}
+    .metric.loss .metric-value{color:var(--loss-text)}
+    .metric-label{display:block;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.55px;margin-bottom:6px}
+    .metric-value{font-size:clamp(22px,3vw,28px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;line-height:1.15}
+    .metric-sub{margin-top:6px;font-size:12px;color:var(--gray);line-height:1.45}
+    .formula-note{margin-top:14px;font-size:12px;color:var(--gray);line-height:1.55}
+    .notice{display:none;margin:12px 0 0;padding:12px 14px;border-radius:var(--radius-sm);background:#fff8e8;border:1px solid #f2dfb0;color:#8a6a1f;font-size:13px;line-height:1.5}
+    :root[data-theme="dark"] .notice{background:#2a2410;border-color:#5a4a1e;color:#e8c877}
+    .notice.visible,.notice.warn{display:block}
+    .extra-box{margin-top:14px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--ok-bg);border:1px solid var(--ok-line)}
+    .extra-box h3{font-size:14px;margin-bottom:8px}
+    .extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .extra-grid span{display:block;font-size:11px;color:var(--gray)}
+    .extra-grid strong{display:block;margin-top:3px;font-size:15px;font-variant-numeric:tabular-nums}
+
+    details.amort{margin-top:14px;border-top:1px solid var(--card-line);padding-top:4px}
+    details.amort summary{min-height:48px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:14px;font-weight:600;list-style:none}
+    details.amort summary::-webkit-details-marker{display:none}
+    details.amort summary::after{content:"+";color:var(--gray);font-size:20px;font-weight:400}
+    details.amort[open] summary::after{content:"−"}
+    .table-scroll{overflow:auto;max-height:320px;border:1px solid var(--card-line);border-radius:var(--radius-sm)}
+    table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+    th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--card-line);white-space:nowrap}
+    th:first-child,td:first-child{text-align:left}
+    th{position:sticky;top:0;background:var(--bg);font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em}
+
+    .severity{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;background:var(--bg);border:1px solid var(--card-line);color:var(--gray)}
+    .severity[data-level="high"]{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 35%,transparent);background:color-mix(in srgb,var(--amber) 12%,transparent)}
+    .severity[data-level="critical"]{color:var(--loss-text);border-color:var(--loss-line);background:var(--loss-bg)}
+    .rule-list,.step-list,.plan-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:12px}
+    .rule-list li{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;background:var(--bg);border:1px solid var(--card-line);font-size:12px;font-weight:600;width:fit-content}
+    .rule-list li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--blue)}
+    .step-list li{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
+    .step-list strong{display:block;font-size:14px;margin-bottom:4px}
+    .step-list span{display:block;font-size:13px;color:var(--gray);line-height:1.55}
+    .honest{margin-top:18px;padding:18px 20px;border-radius:var(--radius);background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 8%,var(--bg)),var(--bg));border:1px solid color-mix(in srgb,var(--blue) 22%,var(--card-line))}
+    .honest p{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+    .honest blockquote{font-size:17px;line-height:1.45;font-weight:500;letter-spacing:-.015em}
+    .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+    .plan-card{padding:14px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
+    .plan-card h3{font-size:13px;margin-bottom:8px;color:var(--blue)}
+    .plan-list li{font-size:13px;color:var(--gray);line-height:1.5;padding-left:12px;position:relative}
+    .plan-list li::before{content:"·";position:absolute;left:0;color:var(--blue);font-weight:700}
+    .alt-list{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .alt-list li{padding:7px 12px;border-radius:999px;background:var(--chip-bg);border:1px solid var(--card-line);font-size:13px}
+
+    .quote-band{margin:8px 0 0;padding:22px 24px;border-radius:22px;background:var(--white);border:1px solid var(--card-line);box-shadow:var(--card-shadow);text-align:center}
+    .quote-band p{font-size:16px;line-height:1.55;color:var(--text);max-width:640px;margin:0 auto}
+    .quote-band .attr{margin-top:10px;font-size:12px;color:var(--gray)}
+
+    .disclaimer{margin-top:8px;color:var(--gray);font-size:13px;line-height:1.6}
+    .disclaimer a{color:var(--blue)}
+
+    .sticky-results{display:none;position:fixed;left:0;right:0;bottom:0;z-index:9000;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--white) 92%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--card-line);box-shadow:0 -8px 24px rgba(0,0,0,.08)}
+    .sticky-results.show{display:block}
+    .sticky-inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .sticky-inner strong{font-variant-numeric:tabular-nums}
+    .sticky-meta{font-size:12px;color:var(--gray)}
+    .action-status{font-size:12px;color:var(--green);margin-top:8px}
+    .action-status[hidden]{display:none!important}
+
+    footer{padding:28px 22px 40px;text-align:center}
+    .footer-inner{max-width:var(--max);margin:0 auto;color:var(--gray);font-size:12px;line-height:1.6}
+    .attribution{margin-top:8px}
+
+    @media(max-width:900px){
+      .layout{grid-template-columns:1fr}
+      .results{position:static}
+      .plan-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:768px){
+      .nav-links{display:none}.menu-toggle{display:block}
+      .field-grid,.choice-grid,.extra-grid{grid-template-columns:1fr}
+      select,input[type=number],input[type=text],textarea,.input-wrap input{min-height:48px;font-size:16px}
+      .btn{min-height:48px}
+      .main-wrap{padding:0 16px 48px}
+      .page-header{padding:96px 16px 64px}
+      .section{padding:20px}
+      .sticky-results.show{display:block}
+    }
+    @media(min-width:769px){
+      .sticky-results{display:none!important}
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      .privacy-dot,.page-header .eyebrow,.page-header h1,.page-header .lede,.page-header .sub-note,.privacy-bar{animation:none}
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to calculator</a>
+  <nav aria-label="Portfolio navigation">
+    <div class="nav-c">
+      <a href="index.html" class="nav-logo">Sumanth Bolle</a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="servicenow.html">ServiceNow</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="summaverick.html">Summaverick</a></li>
+          <li><a href="flights.html">SkyFare</a></li>
+          <li><a href="metals.html">Metals</a></li>
+          <li><a href="save-yourself.html" class="active" aria-current="page">Save Yourself</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+          <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+          <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+        <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html">Home</a>
+      <a href="servicenow.html">ServiceNow</a>
+      <a href="blog.html">Blog</a>
+      <a href="summaverick.html">Summaverick</a>
+      <a href="flights.html">SkyFare</a>
+      <a href="metals.html">Metals</a>
+      <a href="save-yourself.html" class="active" aria-current="page">Save Yourself</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <span class="eyebrow"><span class="privacy-dot" aria-hidden="true"></span> No data leaves your device</span>
+    <h1>Save Yourself</h1>
+    <p class="lede">See the real cost of borrowing before you take the money.</p>
+    <p class="sub-note">Exact reducing-balance math · every ISO currency · guidance you can act on</p>
+  </header>
+
+  <main id="main" class="main-wrap">
+    <div class="privacy-bar">
+      <p><strong>Everything runs locally in your browser.</strong> Nothing is stored on a server or sent anywhere. Optional preferences stay on this device only.</p>
+      <span class="badge" title="Client-side only">Private by design</span>
+    </div>
+
+    <div class="layout">
+      <div class="stack">
+        <section class="section highlight" aria-labelledby="loanTitle">
+          <p class="section-label">1 · Loan details</p>
+          <h2 id="loanTitle">Tell us the basic numbers</h2>
+          <p class="section-intro">We’ll show exactly how much this costs — EMI, total repayable, pure interest loss, and a simple opportunity-cost illustration.</p>
+
+          <div class="field-grid">
+            <div class="field full">
+              <label for="currencySearch">Currency</label>
+              <input type="text" id="currencySearch" placeholder="Search ISO code or name (INR, USD, Euro…)" autocomplete="off" aria-controls="currency">
+              <div class="hint" style="margin-top:6px">All ISO 4217 currencies via your browser’s Intl data. Symbol and decimals are locale-correct.</div>
+            </div>
+            <div class="field full">
+              <label for="currency">Selected currency</label>
+              <select id="currency"></select>
+            </div>
+
+            <div class="field full">
+              <label for="amount">How much do you want to borrow?</label>
+              <div class="input-wrap">
+                <span class="input-prefix" data-currency-prefix>INR ₹</span>
+                <input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 100000" aria-describedby="err-amount">
+              </div>
+              <p class="field-error" id="err-amount" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="rate">Interest rate (per year)</label>
+              <div class="input-wrap">
+                <input id="rate" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 18" aria-describedby="err-rate">
+                <span class="input-prefix">%</span>
+              </div>
+              <p class="field-error" id="err-rate" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="tenure">Tenure</label>
+              <div class="input-wrap">
+                <input id="tenure" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 24" aria-describedby="err-tenure">
+                <select id="tenureUnit" aria-label="Tenure unit" style="max-width:110px;border-left:1px solid var(--input-line);border-radius:0">
+                  <option value="months">months</option>
+                  <option value="years">years</option>
+                </select>
+              </div>
+              <p class="field-error" id="err-tenure" hidden></p>
+            </div>
+
+            <div class="field full">
+              <span class="lbl">Interest type</span>
+              <div class="segmented" role="radiogroup" aria-label="Interest type">
+                <label><input type="radio" name="interestType" value="reducing" checked><span>Reducing balance (recommended)</span></label>
+                <label><input type="radio" name="interestType" value="flat"><span>Flat rate</span></label>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="lender">Who are you borrowing from?</label>
+              <select id="lender"></select>
+            </div>
+
+            <div class="field">
+              <label for="oppRate">Opportunity rate (illustration)</label>
+              <div class="input-wrap">
+                <input id="oppRate" type="text" inputmode="decimal" value="10" autocomplete="off">
+                <span class="input-prefix">%</span>
+              </div>
+              <div class="hint">Conservative long-run return assumption for the “what if invested” figure.</div>
+            </div>
+
+            <div class="field full">
+              <label for="extraPayment">Simulate extra payment each month (optional)</label>
+              <div class="input-wrap">
+                <span class="input-prefix" data-currency-prefix>INR ₹</span>
+                <input id="extraPayment" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="err-extra">
+              </div>
+              <p class="field-error" id="err-extra" hidden></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="whyTitle">
+          <p class="section-label">2 · Why are you borrowing?</p>
+          <h2 id="whyTitle">Be honest with yourself</h2>
+          <p class="section-intro">This is the most important part. Guidance changes based on your reason.</p>
+          <div class="choice-grid" id="reasonList" role="radiogroup" aria-label="Borrowing reason"></div>
+          <div class="field full" style="margin-top:14px">
+            <label for="problemSentence">Optional — what problem are you really trying to solve?</label>
+            <textarea id="problemSentence" maxlength="280" placeholder="One sentence. Example: Cover hospital bills until insurance reimburses."></textarea>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="burdenTitle">
+          <p class="section-label">3 · Current burden</p>
+          <h2 id="burdenTitle">What is already on your plate?</h2>
+          <p class="section-intro">Approximate answers are enough. They improve the advice quality.</p>
+          <div class="field-grid">
+            <div class="field full">
+              <label for="existingDebt">Existing monthly debt payments (approximate)</label>
+              <input id="existingDebt" type="text" inputmode="decimal" placeholder="Optional — amount or count of EMIs">
+            </div>
+            <div class="field">
+              <label for="emergencyFund">3+ months emergency fund?</label>
+              <select id="emergencyFund">
+                <option value="unknown">Not sure</option>
+                <option value="yes">Yes</option>
+                <option value="partial">Partial</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="debtRatio">Will this push debt payments &gt; 40% of income?</label>
+              <select id="debtRatio">
+                <option value="unsure">Not sure</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="shortfallType">One-time event or recurring shortfall?</label>
+              <select id="shortfallType">
+                <option value="unknown">Not sure</option>
+                <option value="one_time">One-time event</option>
+                <option value="recurring">Recurring shortfall</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="advicePanel" aria-labelledby="adviceTitle" hidden>
+          <div class="results-head">
+            <div>
+              <p class="section-label">4 · How to save yourself</p>
+              <h2 id="adviceTitle">Personalized guidance</h2>
+            </div>
+            <span class="severity" id="adviceSeverity">Worth a careful look</span>
+          </div>
+          <p class="section-intro" id="adviceHeadline"></p>
+          <p class="section-label" style="margin-top:4px">Rules that triggered</p>
+          <ul class="rule-list" id="triggeredRules"></ul>
+          <ol class="step-list" id="adviceSteps"></ol>
+
+          <div class="honest">
+            <p>The honest question</p>
+            <blockquote id="honestQuote"></blockquote>
+          </div>
+
+          <div class="plan-grid" aria-label="30 60 90 day plan">
+            <div class="plan-card">
+              <h3>Next 30 days</h3>
+              <ul class="plan-list" id="plan30"></ul>
+            </div>
+            <div class="plan-card">
+              <h3>Next 60 days</h3>
+              <ul class="plan-list" id="plan60"></ul>
+            </div>
+            <div class="plan-card">
+              <h3>Next 90 days</h3>
+              <ul class="plan-list" id="plan90"></ul>
+            </div>
+          </div>
+
+          <p class="section-label" style="margin-top:18px">Alternative paths</p>
+          <ul class="alt-list" id="alternatives"></ul>
+        </section>
+      </div>
+
+      <aside class="stack">
+        <section class="section results" id="resultsPanel" data-state="empty" aria-live="polite" aria-atomic="true" aria-labelledby="resultsTitle">
+          <div class="results-head">
+            <div>
+              <p class="section-label">Live results</p>
+              <h2 id="resultsTitle">What you will actually pay</h2>
+            </div>
+            <span class="live-pill">Updates instantly</span>
+          </div>
+          <div class="metrics">
+            <div class="metric">
+              <span class="metric-label">Monthly payment (EMI)</span>
+              <div class="metric-value" id="resEmi">—</div>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Total you will repay</span>
+              <div class="metric-value" id="resTotal">—</div>
+            </div>
+            <div class="metric loss">
+              <span class="metric-label">Interest cost (pure loss)</span>
+              <div class="metric-value" id="resInterest">—</div>
+              <p class="metric-sub">Money that could have gone to an emergency fund, investing, or staying in your pocket.</p>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Effective cost per day</span>
+              <div class="metric-value" id="resDaily">—</div>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Opportunity illustration</span>
+              <div class="metric-value" id="resOpp">—</div>
+              <p class="metric-sub" id="resOppNote">If interest were invested monthly instead.</p>
+            </div>
+          </div>
+          <div id="warnings"></div>
+          <div class="extra-box" id="extraResults" hidden>
+            <h3>With extra monthly payments</h3>
+            <div class="extra-grid">
+              <div><span>New payment</span><strong id="extraEmi">—</strong></div>
+              <div><span>Months to clear</span><strong id="extraMonths">—</strong></div>
+              <div><span>Interest saved</span><strong id="extraSaved">—</strong></div>
+              <div><span>Total saved</span><strong id="extraTotalSaved">—</strong></div>
+            </div>
+          </div>
+          <p class="formula-note" id="resFormula"></p>
+          <details class="amort" id="amortWrap" hidden>
+            <summary>Amortization schedule</summary>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>
+                </thead>
+                <tbody id="amortBody"></tbody>
+              </table>
+            </div>
+          </details>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="copySummary" type="button" disabled>Copy summary</button>
+            <button class="btn" id="downloadSummary" type="button">Download summary</button>
+            <button class="btn btn-sm" id="clearData" type="button">Clear local data</button>
+          </div>
+          <p class="action-status" id="actionStatus" hidden></p>
+        </section>
+
+        <section class="section">
+          <p class="section-label">Next steps</p>
+          <h2>After you see the numbers</h2>
+          <ol class="step-list">
+            <li><strong>Save your cost summary</strong><span>Copy or download it — useful when comparing lenders or talking to family.</span></li>
+            <li><strong>Check the alternatives list</strong><span>Generated from your reason and burden answers above.</span></li>
+            <li><strong>Follow the 30-day avoid plan</strong><span>If you can live without the loan, you just saved the interest as pure gain.</span></li>
+            <li><strong>Optional: fee-only counselor</strong><span>For complex debt, prefer advice that is not paid by selling you a loan.</span></li>
+          </ol>
+          <p class="disclaimer" style="margin-top:16px">
+            This is an educational tool, not financial advice. Interest calculations follow standard formulas and are illustrative of contractual math — always verify exact terms, fees, and APR with the lender. Your situation is unique.
+          </p>
+        </section>
+      </aside>
+    </div>
+
+    <div class="quote-band">
+      <p>Built with the belief that the best loan is the one you never needed.</p>
+      <div class="attr">Built for clarity, not judgment · © 2026 Sumanth Bolle</div>
+    </div>
+  </main>
+
+  <div class="sticky-results" id="stickyResults" aria-hidden="true">
+    <div class="sticky-inner">
+      <div>
+        <div class="sticky-meta">EMI</div>
+        <strong id="stickyEmi">—</strong>
+      </div>
+      <div style="text-align:right">
+        <div class="sticky-meta">Interest (pure loss)</div>
+        <strong id="stickyInterest">—</strong>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div>© 2026 Sumanth Bolle.</div>
+      <div class="attribution">Save Yourself runs entirely on your device.<br>No account. No backend for calculations. No judgment.</div>
+    </div>
+  </footer>
+
+  <script src="assets/js/shared/nav-theme.js"></script>
+  <script src="assets/js/shared/help-panel.js"></script>
+  <script src="assets/js/save-yourself/currency.js"></script>
+  <script src="assets/js/save-yourself/loan-math.js"></script>
+  <script src="assets/js/save-yourself/advice-rules.js"></script>
+  <script src="assets/js/save-yourself/app.js"></script>
+  <script>
+    SBHelpGuide.init({
+      page: 'save-yourself',
+      tabLabel: 'Guide',
+      title: 'How to use Save Yourself',
+      intro: 'See the real lifetime cost of a loan before you sign — privately, in your browser.',
+      steps: [
+        { title: 'Enter loan details', desc: 'Amount, annual rate, tenure, and whether interest is reducing-balance or flat. Results update live.' },
+        { title: 'Pick your currency', desc: 'Search any ISO 4217 currency. Formatting and decimal places come from your browser’s Intl APIs.' },
+        { title: 'Say why you are borrowing', desc: 'Honest reason selection unlocks tailored, rule-based guidance — not generic quotes.' },
+        { title: 'Add burden context', desc: 'Emergency fund and debt-ratio answers change the severity and next actions.' },
+        { title: 'Simulate extra payments', desc: 'See how many months and how much interest you save by paying a bit more each month.' },
+        { title: 'Copy or download a summary', desc: 'Everything stays on your device. Clear local data anytime.' }
+      ]
+    });
+  </script>
+</body>
+</html>
