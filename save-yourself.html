@@ -103,6 +103,16 @@
     .privacy-bar strong{color:var(--text);font-weight:600}
     .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:var(--ok-bg);border:1px solid var(--ok-line);color:var(--green);font-size:12px;font-weight:600;white-space:nowrap}
 
+    /* Ask Summaverick callout */
+    .agent-callout{display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:20px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line);flex-wrap:wrap}
+    .agent-callout-icon{flex:0 0 auto;width:38px;height:38px;border-radius:11px;background:color-mix(in srgb,var(--blue) 14%,transparent);color:var(--blue);display:flex;align-items:center;justify-content:center}
+    .agent-callout-icon svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .agent-callout-text{flex:1;min-width:200px;font-size:13px;line-height:1.5;color:var(--gray)}
+    .agent-callout-text strong{display:block;color:var(--text);font-size:14px;margin-bottom:2px}
+    .agent-callout-cta{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none}
+    .agent-callout-cta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    @media(max-width:480px){.agent-callout{flex-direction:column;align-items:flex-start}.agent-callout-cta{width:100%;justify-content:center}}
+
     .layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:16px;margin-top:18px;align-items:start}
     .stack{display:flex;flex-direction:column;gap:16px}
     .section{background:var(--white);border-radius:22px;padding:28px;box-shadow:var(--card-shadow);border:1px solid var(--card-line)}
@@ -381,17 +391,31 @@
           <h2 id="loanTitle">Start with the basics</h2>
           <p class="section-intro">Amount, rate, tenure, interest type, and any fees. Results update as you type — no button needed.</p>
 
+          <div class="agent-callout">
+            <div class="agent-callout-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M4.5 12H7.5M16.5 12h3M6.3 6.3l2 2M15.7 15.7l2 2M6.3 17.7l2-2M15.7 8.3l2-2"/><circle cx="12" cy="12" r="3.4"/></svg>
+            </div>
+            <div class="agent-callout-text">
+              <strong>Have the paperwork instead of the numbers?</strong>
+              <span>Paste a loan agreement, term sheet, SMS, or email to Summaverick — it will read the raw text and hand back a clear summary you can use to fill in the fields below.</span>
+            </div>
+            <a class="btn btn-sm agent-callout-cta" href="summaverick.html?q=I%20have%20raw%20information%20about%20a%20loan%20or%20credit%20offer%20(a%20pasted%20agreement%2C%20term%20sheet%2C%20SMS%2C%20or%20email)%20that%20I%20will%20paste%20next.%20When%20I%20paste%20it%2C%20read%20it%20carefully%20and%20give%20me%20a%20clear%2C%20plain-English%20summary%20covering%3A%20principal%20amount%2C%20interest%20rate%20and%20type%20(flat%20or%20reducing)%2C%20tenure%2C%20EMI%20or%20monthly%20payment%20if%20stated%2C%20all%20fees%20and%20charges%2C%20prepayment%20or%20foreclosure%20terms%2C%20and%20any%20red%20flags%20or%20unusual%20clauses.%20Keep%20it%20educational%2C%20not%20financial%20advice.%20I%20will%20paste%20the%20raw%20text%20now." target="_blank" rel="noopener">
+              Ask Summaverick
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+
           <div class="field-grid">
             <div class="field full">
               <label id="currencyLabel" for="currencyInput">Currency</label>
               <div class="combo" data-combo>
-                <input type="text" id="currencyInput" role="combobox" aria-expanded="false" aria-controls="currencyListbox" aria-autocomplete="list" aria-labelledby="currencyLabel" autocomplete="off" placeholder="Search ISO code or name (INR, US dollar…)">
+                <input type="text" id="currencyInput" role="combobox" aria-expanded="false" aria-controls="currencyListbox" aria-autocomplete="list" aria-labelledby="currencyLabel" aria-describedby="currencyHint" autocomplete="off" placeholder="Search ISO code or name (INR, US dollar…)">
                 <button type="button" class="combo-toggle" id="currencyToggle" aria-label="Show currency list" tabindex="-1">
                   <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
                 <ul id="currencyListbox" role="listbox" aria-labelledby="currencyLabel" class="combo-list" hidden></ul>
               </div>
-              <div class="hint">All ISO 4217 currencies via your browser’s Intl data. Symbol and decimal places are locale-correct.</div>
+              <div class="hint sr-only" id="currencyHint">All ISO 4217 currencies via your browser’s Intl data. Symbol and decimal places are locale-correct. Full details are in the page Guide.</div>
             </div>
 
             <div class="field full">
@@ -441,16 +465,16 @@
                   <option value="percent">%</option>
                 </select>
               </div>
-              <div class="hint" id="processingHint">One-time fee charged upfront.</div>
+              <div class="hint sr-only" id="processingHint">One-time fee charged upfront. Included in the effective rate shown in the results.</div>
             </div>
 
             <div class="field">
               <label for="otherFees">Insurance / legal / other one-time charges</label>
               <div class="input-wrap">
                 <span class="input-prefix" data-currency-prefix>INR ₹</span>
-                <input id="otherFees" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
+                <input id="otherFees" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="otherFeesHint">
               </div>
-              <div class="hint">Deducted upfront; included in the effective rate.</div>
+              <div class="hint sr-only" id="otherFeesHint">Deducted upfront; included in the effective rate.</div>
             </div>
           </div>
         </section>
@@ -472,10 +496,10 @@
                 <div class="field">
                   <label for="oppRate">Opportunity rate (illustration)</label>
                   <div class="input-wrap">
-                    <input id="oppRate" type="text" inputmode="decimal" value="10" autocomplete="off">
+                    <input id="oppRate" type="text" inputmode="decimal" value="10" autocomplete="off" aria-describedby="oppRateHint">
                     <span class="input-suffix">% p.a.</span>
                   </div>
-                  <div class="hint">Conservative long-run return for the “what if invested” figure.</div>
+                  <div class="hint sr-only" id="oppRateHint">Conservative long-run return for the “what if invested” figure.</div>
                 </div>
                 <div class="field">
                   <label for="extraPayment">Extra payment each month</label>
@@ -488,10 +512,10 @@
                 <div class="field">
                   <label for="prepayPenalty">Prepayment penalty</label>
                   <div class="input-wrap">
-                    <input id="prepayPenalty" type="text" inputmode="decimal" value="0" autocomplete="off">
+                    <input id="prepayPenalty" type="text" inputmode="decimal" value="0" autocomplete="off" aria-describedby="prepayHint">
                     <span class="input-suffix">% of prepaid</span>
                   </div>
-                  <div class="hint">Applied to principal repaid ahead of schedule.</div>
+                  <div class="hint sr-only" id="prepayHint">Applied to principal repaid ahead of schedule.</div>
                 </div>
               </div>
             </div>
@@ -503,14 +527,14 @@
                   <label for="income">Gross monthly income</label>
                   <div class="input-wrap">
                     <span class="input-prefix" data-currency-prefix>INR ₹</span>
-                    <input id="income" type="text" inputmode="decimal" autocomplete="off" placeholder="Optional">
+                    <input id="income" type="text" inputmode="decimal" autocomplete="off" placeholder="Optional" aria-describedby="dtiHint">
                   </div>
                 </div>
                 <div class="field">
                   <label for="existingDebt">Existing monthly loan repayments</label>
                   <div class="input-wrap">
                     <span class="input-prefix" data-currency-prefix>INR ₹</span>
-                    <input id="existingDebt" type="text" inputmode="decimal" autocomplete="off" placeholder="Optional">
+                    <input id="existingDebt" type="text" inputmode="decimal" autocomplete="off" placeholder="Optional" aria-describedby="dtiHint">
                   </div>
                 </div>
                 <div class="field">
@@ -531,13 +555,13 @@
                   </select>
                 </div>
               </div>
-              <p class="hint" style="margin-top:8px">We calculate your debt-to-income ratio from these — you don’t need to judge any threshold yourself. Comfort levels vary by lender, product, and country.</p>
+              <p class="hint sr-only" id="dtiHint">We calculate your debt-to-income ratio from these — you don’t need to judge any threshold yourself. Comfort levels vary by lender, product, and country.</p>
             </div>
 
             <div class="refine-block">
               <h3>Why are you borrowing?</h3>
-              <p class="hint" style="margin-bottom:10px">Selecting a reason unlocks tailored, rule-based guidance below the results.</p>
-              <div class="choice-grid" id="reasonList" role="radiogroup" aria-label="Borrowing reason"></div>
+              <p class="hint sr-only" id="reasonHint">Selecting a reason unlocks tailored, rule-based guidance below the results.</p>
+              <div class="choice-grid" id="reasonList" role="radiogroup" aria-label="Borrowing reason" aria-describedby="reasonHint"></div>
               <div class="field full" style="margin-top:14px">
                 <label for="lender">Who are you borrowing from?</label>
                 <select id="lender"></select>
@@ -620,7 +644,7 @@
             <div class="metric cost">
               <span class="metric-label">Cost of borrowing</span>
               <div class="metric-value" id="resInterest">—</div>
-              <p class="metric-sub">Interest plus one-time fees over the life of the loan.</p>
+              <p class="metric-sub sr-only">Interest plus one-time fees over the life of the loan.</p>
             </div>
             <div class="metric">
               <span class="metric-label">Effective rate (EIR/APR)</span>
@@ -765,14 +789,16 @@
       page: 'save-yourself',
       tabLabel: 'Guide',
       title: 'How to use Save Yourself',
-      intro: 'Estimate the real lifetime cost of a loan before you sign — privately, in your browser.',
+      intro: 'Estimate the real lifetime cost of a loan before you sign — privately, in your browser. This guide holds the details so the form itself can stay clean.',
       steps: [
-        { title: 'Enter loan details', desc: 'Amount, annual rate, tenure, interest type, and any fees. Results update live as you type.' },
-        { title: 'Pick your currency', desc: 'Type to search any ISO 4217 currency in the combobox. Formatting comes from your browser’s Intl APIs.' },
-        { title: 'Read the effective rate', desc: 'EIR/APR includes fees and reveals the true cost — especially for flat-rate loans.' },
-        { title: 'Refine your assessment', desc: 'Expand the section to add income, extra payments, and your reason for tailored guidance.' },
-        { title: 'Compare a better deal', desc: 'See what a lower rate or shorter tenure would save side by side.' },
-        { title: 'Copy or download a summary', desc: 'Everything stays on your device. Clear local data anytime.' }
+        { title: 'Enter loan details', desc: 'Amount, annual rate, tenure, interest type, and any processing or other one-time fees. Every ISO 4217 currency is supported via your browser’s Intl data — results update live as you type.' },
+        { title: 'Have paperwork instead of numbers?', desc: 'Use the “Ask Summaverick” card in Step 1 to paste a loan agreement, term sheet, SMS, or email. Summaverick reads it and hands back a clear, plain-English summary you can use to fill in the fields.' },
+        { title: 'Read the effective rate (EIR/APR)', desc: 'This includes fees and shows the true annual cost — especially useful for flat-rate loans, where the effective rate is often noticeably higher than the quoted rate.' },
+        { title: 'See the opportunity cost & extra payments', desc: 'Open “Refine my assessment” for a conservative “what if invested instead” illustration, plus how much an extra monthly payment (and any prepayment penalty) would save.' },
+        { title: 'Check affordability', desc: 'Add gross monthly income and existing repayments to see a computed debt-to-income percentage — you don’t need to judge a threshold yourself, since limits vary by lender, product, and country.' },
+        { title: 'Get guidance for your reason', desc: 'Selecting why you’re borrowing unlocks tailored, rule-based next actions, a reflective question suited to that reason, and a 30/60/90-day plan.' },
+        { title: 'Compare a better deal', desc: 'The results panel shows what a lower rate or a shorter tenure would save, side by side with your current inputs.' },
+        { title: 'Copy or download a summary', desc: 'Everything stays on your device. Clear local data anytime with the button below the results.' }
       ]
     });
   </script>
