@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Save Yourself — See the Real Cost of Borrowing | Sumanth Bolle</title>
-  <meta name="description" content="Before you borrow, see the exact lifetime cost, understand your burden, and get clear alternatives. Fully private — calculations run in your browser.">
+  <title>Save Yourself — Estimate the Real Cost of Borrowing | Sumanth Bolle</title>
+  <meta name="description" content="Before you borrow, estimate the full cost of a loan — EMI, fees, and effective rate (EIR/APR) — understand your burden, and see clearer alternatives. Everything runs privately in your browser.">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#f5f5f7">
   <link rel="canonical" href="https://sumanthbolle.com/save-yourself">
-  <meta property="og:title" content="Save Yourself — See the Real Cost of Borrowing">
-  <meta property="og:description" content="Exact EMI math, opportunity cost, and personalized paths to avoid unnecessary debt. Nothing leaves your device.">
+  <meta property="og:title" content="Save Yourself — Estimate the Real Cost of Borrowing">
+  <meta property="og:description" content="EMI, fees, and effective rate (EIR/APR), opportunity cost, and clear alternatives before you take a loan. Nothing leaves your device.">
   <meta property="og:url" content="https://sumanthbolle.com/save-yourself">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
+  <meta property="og:image" content="https://sumanthbolle.com/assets/images/save-yourself-og.png">
+  <meta property="og:image:alt" content="Save Yourself — private loan cost calculator">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://sumanthbolle.com/assets/images/save-yourself-og.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <script type="application/ld+json">
@@ -25,7 +27,7 @@
     "url": "https://sumanthbolle.com/save-yourself",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web",
-    "description": "Educational loan cost calculator with reducing-balance EMI math, opportunity cost, and rule-based guidance. Runs entirely in the browser.",
+    "description": "Educational loan cost estimator with reducing-balance and flat-rate EMI math, fees, effective interest rate (EIR/APR), and rule-based guidance. Runs entirely in the browser.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
   }
@@ -34,25 +36,28 @@
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
       --blue:#0066CC;--text:#1d1d1f;--gray:#86868b;--bg:#f5f5f7;--white:#fff;--black:#000;
-      --green:#1f7a3a;--red:#c32b23;--amber:#9a6b12;
+      --green:#1f7a3a;--red:#c32b23;--amber:#9a6b12;--flame:#e2571e;
       --card-line:rgba(0,0,0,0.06);--card-shadow:0 1px 8px rgba(0,0,0,0.04);
       --input-bg:#fff;--input-line:rgba(0,0,0,0.12);--chip-bg:#fff;
-      --loss-bg:#fff2f1;--loss-line:#ffd0cc;--loss-text:#b42318;
+      --cost-bg:#fff4ef;--cost-line:#f6d4c4;--cost-text:#b4460f;
       --ok-bg:#eef8f0;--ok-line:#c6e6cc;
+      --principal:#2b6fd6;--interest:#e2571e;
       --radius:16px;--radius-sm:12px;--radius-xs:8px;--max:1080px;
     }
     :root[data-theme="dark"]{
       --blue:#4c9cff;--text:#f2f2f7;--gray:#9a9aa2;--bg:#0d0d10;--white:#17171b;--black:#fff;
-      --green:#4cc26a;--red:#ff6b60;--amber:#e8c877;
+      --green:#4cc26a;--red:#ff6b60;--amber:#e8c877;--flame:#ff7a45;
       --card-line:rgba(255,255,255,0.08);--card-shadow:0 1px 10px rgba(0,0,0,0.5);
       --input-bg:#1f1f24;--input-line:rgba(255,255,255,0.16);--chip-bg:#22222a;
-      --loss-bg:#2c1512;--loss-line:#6a2b25;--loss-text:#ff9a90;
+      --cost-bg:#2a1710;--cost-line:#5e3320;--cost-text:#ff9f78;
       --ok-bg:#14241a;--ok-line:#2a5a38;
+      --principal:#5aa0ff;--interest:#ff7a45;
     }
     html{scroll-behavior:smooth}
     body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:background .3s,color .3s}
     button,select,input,textarea{font:inherit;color:inherit}
     a{color:inherit}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     .skip-link{position:absolute;left:16px;top:-80px;z-index:10000;background:var(--text);color:var(--bg);padding:10px 14px;border-radius:8px;text-decoration:none}
     .skip-link:focus{top:12px}
     :focus-visible{outline:2px solid var(--blue);outline-offset:3px}
@@ -98,7 +103,7 @@
     .privacy-bar strong{color:var(--text);font-weight:600}
     .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:var(--ok-bg);border:1px solid var(--ok-line);color:var(--green);font-size:12px;font-weight:600;white-space:nowrap}
 
-    .layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:16px;margin-top:18px;align-items:start}
+    .layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:16px;margin-top:18px;align-items:start}
     .stack{display:flex;flex-direction:column;gap:16px}
     .section{background:var(--white);border-radius:22px;padding:28px;box-shadow:var(--card-shadow);border:1px solid var(--card-line)}
     .section.highlight{border-color:rgba(0,102,204,0.28);box-shadow:0 2px 16px rgba(0,102,204,0.08)}
@@ -107,21 +112,38 @@
     .section-intro{color:var(--gray);font-size:15px;line-height:1.6;max-width:640px;margin-bottom:20px}
 
     .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .field{display:flex;flex-direction:column;gap:5px}
+    .field{display:flex;flex-direction:column;gap:5px;min-width:0}
     .field.full{grid-column:1/-1}
     .field label,.field .lbl{display:block;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.7px}
     .field .hint{font-size:12px;color:var(--gray);line-height:1.4;text-transform:none;letter-spacing:0;font-weight:400}
     .input-wrap{display:flex;align-items:stretch;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--input-bg);overflow:hidden}
     .input-wrap:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,0.14)}
     .input-prefix{display:flex;align-items:center;padding:0 12px;background:var(--bg);color:var(--gray);font-size:13px;font-weight:600;border-right:1px solid var(--input-line);white-space:nowrap}
+    .input-suffix{display:flex;align-items:center;padding:0 12px;background:var(--bg);color:var(--gray);font-size:13px;font-weight:600;border-left:1px solid var(--input-line);white-space:nowrap}
     .input-wrap input,.input-wrap select{border:0;background:transparent;min-height:42px;padding:0 12px;width:100%;min-width:0}
     .input-wrap input:focus,.input-wrap select:focus{outline:none;box-shadow:none}
     select,input[type=number],input[type=text],textarea{min-height:42px;padding:0 12px;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--input-bg);color:var(--text);width:100%}
-    textarea{min-height:88px;padding:12px;resize:vertical;line-height:1.45}
+    textarea{min-height:80px;padding:12px;resize:vertical;line-height:1.45}
     select{padding-right:34px;cursor:pointer}
     select:focus,input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,0.14);outline:none}
+    input[aria-invalid="true"],.input-wrap:has(input[aria-invalid="true"]){border-color:var(--red)}
     .field-error{font-size:12px;color:var(--red);line-height:1.4}
     .field-error[hidden]{display:none!important}
+
+    /* Currency combobox */
+    .combo{position:relative}
+    .combo input{padding-right:40px}
+    .combo-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;background:none;color:var(--gray);cursor:pointer;border-radius:6px;display:flex;align-items:center;justify-content:center}
+    .combo-toggle:hover{background:var(--card-line);color:var(--text)}
+    .combo-toggle svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .combo-list{position:absolute;z-index:60;top:calc(100% + 6px);left:0;right:0;max-height:280px;overflow:auto;background:var(--white);border:1px solid var(--input-line);border-radius:var(--radius-sm);box-shadow:0 12px 40px rgba(0,0,0,.16);list-style:none;padding:6px}
+    .combo-list[hidden]{display:none}
+    .combo-opt{padding:10px 12px;border-radius:8px;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;gap:12px}
+    .combo-opt small{color:var(--gray)}
+    .combo-opt[aria-selected="true"]{background:color-mix(in srgb,var(--blue) 12%,var(--white))}
+    .combo-opt.active{background:color-mix(in srgb,var(--blue) 16%,var(--white))}
+    .combo-group{padding:8px 12px 4px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray)}
+    .combo-empty{padding:12px;color:var(--gray);font-size:13px}
 
     .segmented{display:inline-flex;gap:2px;padding:3px;background:var(--bg);border-radius:10px;border:1px solid var(--card-line);flex-wrap:wrap}
     .segmented label{position:relative}
@@ -142,25 +164,79 @@
     .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
     .btn-primary:hover{background:#0055aa;color:#fff}
     .btn-primary:disabled,.btn:disabled{opacity:.45;cursor:not-allowed}
+    .btn-primary:disabled:hover,.btn:disabled:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .btn:disabled:hover{background:var(--bg);color:var(--text);border-color:var(--input-line)}
     .btn-sm{min-height:36px;padding:0 12px;font-size:13px}
     .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
 
+    /* Refine (progressive disclosure) */
+    details.refine{background:var(--white);border-radius:22px;border:1px solid var(--card-line);box-shadow:var(--card-shadow);overflow:hidden}
+    details.refine>summary{list-style:none;cursor:pointer;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    details.refine>summary::-webkit-details-marker{display:none}
+    details.refine>summary h2{font-size:clamp(18px,2.4vw,22px);font-weight:600;letter-spacing:-.02em;margin:0}
+    details.refine>summary .sum-sub{display:block;margin-top:4px;font-size:13px;color:var(--gray);font-weight:400}
+    details.refine>summary .chev{color:var(--gray);font-size:22px;line-height:1;transition:transform .2s}
+    details.refine[open]>summary .chev{transform:rotate(45deg)}
+    .refine-body{padding:0 28px 28px}
+    .refine-sub{margin:0 0 18px;color:var(--gray);font-size:14px;line-height:1.55}
+    .refine-block{padding-top:20px;margin-top:8px;border-top:1px solid var(--card-line)}
+    .refine-block:first-of-type{border-top:0;padding-top:0}
+    .refine-block h3{font-size:14px;font-weight:600;margin-bottom:12px}
+
+    /* Results */
     .results{position:sticky;top:64px}
-    .results[data-state="empty"] .metric-value{color:#c7c7cc}
+    .results[data-state="empty"] .metric-value,.results[data-state="empty"] .headline-value{color:#c7c7cc}
     .results-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
-    .live-pill{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent);padding:5px 9px;border-radius:999px}
-    .metrics{display:grid;gap:12px}
+    .live-pill{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent);padding:5px 9px;border-radius:999px;white-space:nowrap}
+    .headline-metric{padding:16px 18px;border-radius:var(--radius-sm);background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 8%,var(--bg)),var(--bg));border:1px solid color-mix(in srgb,var(--blue) 18%,var(--card-line));margin-bottom:12px}
+    .headline-metric .metric-label{color:var(--blue)}
+    .headline-value{font-size:clamp(28px,4.5vw,38px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;line-height:1.1}
+    .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .metric{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
-    .metric.loss{background:var(--loss-bg);border-color:var(--loss-line)}
-    .metric.loss .metric-value{color:var(--loss-text)}
+    .metric.wide{grid-column:1/-1}
+    .metric.cost{background:var(--cost-bg);border-color:var(--cost-line)}
+    .metric.cost .metric-value{color:var(--cost-text)}
     .metric-label{display:block;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.55px;margin-bottom:6px}
-    .metric-value{font-size:clamp(22px,3vw,28px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;line-height:1.15}
+    .metric-value{font-size:clamp(19px,2.6vw,24px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;line-height:1.15}
     .metric-sub{margin-top:6px;font-size:12px;color:var(--gray);line-height:1.45}
-    .formula-note{margin-top:14px;font-size:12px;color:var(--gray);line-height:1.55}
+
+    /* Split bar: principal vs cost of borrowing */
+    .viz{margin-top:16px}
+    .viz h3{font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.55px;margin-bottom:10px}
+    .split-bar{display:flex;height:22px;border-radius:999px;overflow:hidden;background:var(--bg);border:1px solid var(--card-line)}
+    .split-bar span{display:block;height:100%;transition:width .35s ease}
+    .split-principal{background:var(--principal)}
+    .split-cost{background:var(--interest)}
+    .split-legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:12px;color:var(--gray)}
+    .split-legend .key{display:inline-flex;align-items:center;gap:6px}
+    .split-legend .dot{width:10px;height:10px;border-radius:3px}
+    .split-legend .dot.p{background:var(--principal)}
+    .split-legend .dot.c{background:var(--interest)}
+    .split-legend strong{color:var(--text);font-variant-numeric:tabular-nums}
+
+    /* Interest burn timeline */
+    .burn{margin-top:18px}
+    .burn-wrap{position:relative;height:180px;border:1px solid var(--card-line);border-radius:var(--radius-sm);background:var(--bg);padding:10px}
+    .burn-wrap svg{width:100%;height:100%;display:block;overflow:visible}
+    .burn-cap{margin-top:8px;font-size:12px;color:var(--gray);line-height:1.5}
+    .burn-legend{display:flex;gap:14px;margin-top:6px;font-size:12px;color:var(--gray)}
+    .burn-legend .key{display:inline-flex;align-items:center;gap:6px}
+    .burn-legend .swatch{width:14px;height:3px;border-radius:2px;display:inline-block}
+
+    /* Comparison */
+    .compare{margin-top:18px}
+    .compare table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+    .compare th,.compare td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--card-line);white-space:nowrap}
+    .compare th:first-child,.compare td:first-child{text-align:left;white-space:normal}
+    .compare thead th{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+    .compare tr.current td{font-weight:600}
+    .compare .save{color:var(--green);font-weight:600}
+    .compare .up{color:var(--cost-text)}
+
     .notice{display:none;margin:12px 0 0;padding:12px 14px;border-radius:var(--radius-sm);background:#fff8e8;border:1px solid #f2dfb0;color:#8a6a1f;font-size:13px;line-height:1.5}
     :root[data-theme="dark"] .notice{background:#2a2410;border-color:#5a4a1e;color:#e8c877}
     .notice.visible,.notice.warn{display:block}
-    .extra-box{margin-top:14px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--ok-bg);border:1px solid var(--ok-line)}
+    .extra-box{margin-top:16px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--ok-bg);border:1px solid var(--ok-line)}
     .extra-box h3{font-size:14px;margin-bottom:8px}
     .extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .extra-grid span{display:block;font-size:11px;color:var(--gray)}
@@ -172,27 +248,35 @@
     details.amort summary::after{content:"+";color:var(--gray);font-size:20px;font-weight:400}
     details.amort[open] summary::after{content:"−"}
     .table-scroll{overflow:auto;max-height:320px;border:1px solid var(--card-line);border-radius:var(--radius-sm)}
-    table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
-    th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--card-line);white-space:nowrap}
-    th:first-child,td:first-child{text-align:left}
-    th{position:sticky;top:0;background:var(--bg);font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em}
+    table.amort-table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+    table.amort-table th,table.amort-table td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--card-line);white-space:nowrap}
+    table.amort-table th:first-child,table.amort-table td:first-child{text-align:left}
+    table.amort-table th{position:sticky;top:0;background:var(--bg);font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em}
 
+    /* Advice */
     .severity{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;background:var(--bg);border:1px solid var(--card-line);color:var(--gray)}
     .severity[data-level="high"]{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 35%,transparent);background:color-mix(in srgb,var(--amber) 12%,transparent)}
-    .severity[data-level="critical"]{color:var(--loss-text);border-color:var(--loss-line);background:var(--loss-bg)}
-    .rule-list,.step-list,.plan-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:12px}
-    .rule-list li{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;background:var(--bg);border:1px solid var(--card-line);font-size:12px;font-weight:600;width:fit-content}
+    .severity[data-level="critical"]{color:var(--cost-text);border-color:var(--cost-line);background:var(--cost-bg)}
+    .rule-list{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .rule-list li{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:var(--bg);border:1px solid var(--card-line);font-size:12px;font-weight:600}
     .rule-list li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--blue)}
+    .step-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:14px;counter-reset:sy-step}
+    .step-list.top li{counter-increment:sy-step;padding-left:44px;position:relative}
+    .step-list.top li::before{content:counter(sy-step);position:absolute;left:14px;top:14px;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
     .step-list li{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
     .step-list strong{display:block;font-size:14px;margin-bottom:4px}
     .step-list span{display:block;font-size:13px;color:var(--gray);line-height:1.55}
+    details.more-actions{margin-top:12px}
+    details.more-actions summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--blue);min-height:40px;display:flex;align-items:center}
     .honest{margin-top:18px;padding:18px 20px;border-radius:var(--radius);background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 8%,var(--bg)),var(--bg));border:1px solid color-mix(in srgb,var(--blue) 22%,var(--card-line))}
     .honest p{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
     .honest blockquote{font-size:17px;line-height:1.45;font-weight:500;letter-spacing:-.015em}
     .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
     .plan-card{padding:14px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
     .plan-card h3{font-size:13px;margin-bottom:8px;color:var(--blue)}
-    .plan-list li{font-size:13px;color:var(--gray);line-height:1.5;padding-left:12px;position:relative}
+    .plan-list{list-style:none}
+    .plan-list li{font-size:13px;color:var(--gray);line-height:1.5;padding-left:12px;position:relative;margin-top:6px}
+    .plan-list li:first-child{margin-top:0}
     .plan-list li::before{content:"·";position:absolute;left:0;color:var(--blue);font-weight:700}
     .alt-list{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
     .alt-list li{padding:7px 12px;border-radius:999px;background:var(--chip-bg);border:1px solid var(--card-line);font-size:13px}
@@ -223,12 +307,13 @@
     }
     @media(max-width:768px){
       .nav-links{display:none}.menu-toggle{display:block}
-      .field-grid,.choice-grid,.extra-grid{grid-template-columns:1fr}
+      .field-grid,.choice-grid,.extra-grid,.metrics{grid-template-columns:1fr}
       select,input[type=number],input[type=text],textarea,.input-wrap input{min-height:48px;font-size:16px}
       .btn{min-height:48px}
       .main-wrap{padding:0 16px 48px}
       .page-header{padding:96px 16px 64px}
-      .section{padding:20px}
+      .section,.refine-body,details.refine>summary{padding-left:20px;padding-right:20px}
+      .section{padding-top:20px;padding-bottom:20px}
       .sticky-results.show{display:block}
     }
     @media(min-width:769px){
@@ -257,7 +342,7 @@
           <li><a href="save-yourself.html" class="active" aria-current="page">Save Yourself</a></li>
           <li><a href="index.html#contact">Contact</a></li>
         </ul>
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
           <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
           <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
         </button>
@@ -279,8 +364,8 @@
   <header class="page-header">
     <span class="eyebrow"><span class="privacy-dot" aria-hidden="true"></span> No data leaves your device</span>
     <h1>Save Yourself</h1>
-    <p class="lede">See the real cost of borrowing before you take the money.</p>
-    <p class="sub-note">Exact reducing-balance math · every ISO currency · guidance you can act on</p>
+    <p class="lede">Estimate the real cost of borrowing before you take the money.</p>
+    <p class="sub-note">EMI · fees · effective rate (EIR/APR) · every ISO currency · guidance you can act on</p>
   </header>
 
   <main id="main" class="main-wrap">
@@ -292,19 +377,21 @@
     <div class="layout">
       <div class="stack">
         <section class="section highlight" aria-labelledby="loanTitle">
-          <p class="section-label">1 · Loan details</p>
-          <h2 id="loanTitle">Tell us the basic numbers</h2>
-          <p class="section-intro">We’ll show exactly how much this costs — EMI, total repayable, pure interest loss, and a simple opportunity-cost illustration.</p>
+          <p class="section-label">Step 1 · Loan details</p>
+          <h2 id="loanTitle">Start with the basics</h2>
+          <p class="section-intro">Amount, rate, tenure, interest type, and any fees. Results update as you type — no button needed.</p>
 
           <div class="field-grid">
             <div class="field full">
-              <label for="currencySearch">Currency</label>
-              <input type="text" id="currencySearch" placeholder="Search ISO code or name (INR, USD, Euro…)" autocomplete="off" aria-controls="currency">
-              <div class="hint" style="margin-top:6px">All ISO 4217 currencies via your browser’s Intl data. Symbol and decimals are locale-correct.</div>
-            </div>
-            <div class="field full">
-              <label for="currency">Selected currency</label>
-              <select id="currency"></select>
+              <label id="currencyLabel" for="currencyInput">Currency</label>
+              <div class="combo" data-combo>
+                <input type="text" id="currencyInput" role="combobox" aria-expanded="false" aria-controls="currencyListbox" aria-autocomplete="list" aria-labelledby="currencyLabel" autocomplete="off" placeholder="Search ISO code or name (INR, US dollar…)">
+                <button type="button" class="combo-toggle" id="currencyToggle" aria-label="Show currency list" tabindex="-1">
+                  <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <ul id="currencyListbox" role="listbox" aria-labelledby="currencyLabel" class="combo-list" hidden></ul>
+              </div>
+              <div class="hint">All ISO 4217 currencies via your browser’s Intl data. Symbol and decimal places are locale-correct.</div>
             </div>
 
             <div class="field full">
@@ -320,7 +407,7 @@
               <label for="rate">Interest rate (per year)</label>
               <div class="input-wrap">
                 <input id="rate" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 18" aria-describedby="err-rate">
-                <span class="input-prefix">%</span>
+                <span class="input-suffix">% p.a.</span>
               </div>
               <p class="field-error" id="err-rate" hidden></p>
             </div>
@@ -346,93 +433,143 @@
             </div>
 
             <div class="field">
-              <label for="lender">Who are you borrowing from?</label>
-              <select id="lender"></select>
+              <label for="processingFee">Processing fee</label>
+              <div class="input-wrap">
+                <input id="processingFee" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="processingHint">
+                <select id="processingUnit" aria-label="Processing fee unit" style="max-width:96px;border-left:1px solid var(--input-line);border-radius:0">
+                  <option value="amount">amount</option>
+                  <option value="percent">%</option>
+                </select>
+              </div>
+              <div class="hint" id="processingHint">One-time fee charged upfront.</div>
             </div>
 
             <div class="field">
-              <label for="oppRate">Opportunity rate (illustration)</label>
-              <div class="input-wrap">
-                <input id="oppRate" type="text" inputmode="decimal" value="10" autocomplete="off">
-                <span class="input-prefix">%</span>
-              </div>
-              <div class="hint">Conservative long-run return assumption for the “what if invested” figure.</div>
-            </div>
-
-            <div class="field full">
-              <label for="extraPayment">Simulate extra payment each month (optional)</label>
+              <label for="otherFees">Insurance / legal / other one-time charges</label>
               <div class="input-wrap">
                 <span class="input-prefix" data-currency-prefix>INR ₹</span>
-                <input id="extraPayment" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="err-extra">
+                <input id="otherFees" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
               </div>
-              <p class="field-error" id="err-extra" hidden></p>
+              <div class="hint">Deducted upfront; included in the effective rate.</div>
             </div>
           </div>
         </section>
 
-        <section class="section" aria-labelledby="whyTitle">
-          <p class="section-label">2 · Why are you borrowing?</p>
-          <h2 id="whyTitle">Be honest with yourself</h2>
-          <p class="section-intro">This is the most important part. Guidance changes based on your reason.</p>
-          <div class="choice-grid" id="reasonList" role="radiogroup" aria-label="Borrowing reason"></div>
-          <div class="field full" style="margin-top:14px">
-            <label for="problemSentence">Optional — what problem are you really trying to solve?</label>
-            <textarea id="problemSentence" maxlength="280" placeholder="One sentence. Example: Cover hospital bills until insurance reimburses."></textarea>
-          </div>
-        </section>
+        <details class="refine" id="refine">
+          <summary>
+            <span>
+              <h2>Refine my assessment</h2>
+              <span class="sum-sub">Optional — opportunity cost, extra payments, income &amp; personalized guidance</span>
+            </span>
+            <span class="chev" aria-hidden="true">+</span>
+          </summary>
+          <div class="refine-body">
+            <p class="refine-sub">These inputs stay on your device and unlock the opportunity-cost illustration, the extra-payment simulation, an income-based affordability check, and reason-specific guidance.</p>
 
-        <section class="section" aria-labelledby="burdenTitle">
-          <p class="section-label">3 · Current burden</p>
-          <h2 id="burdenTitle">What is already on your plate?</h2>
-          <p class="section-intro">Approximate answers are enough. They improve the advice quality.</p>
-          <div class="field-grid">
-            <div class="field full">
-              <label for="existingDebt">Existing monthly debt payments (approximate)</label>
-              <input id="existingDebt" type="text" inputmode="decimal" placeholder="Optional — amount or count of EMIs">
+            <div class="refine-block">
+              <h3>Payoff &amp; opportunity</h3>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="oppRate">Opportunity rate (illustration)</label>
+                  <div class="input-wrap">
+                    <input id="oppRate" type="text" inputmode="decimal" value="10" autocomplete="off">
+                    <span class="input-suffix">% p.a.</span>
+                  </div>
+                  <div class="hint">Conservative long-run return for the “what if invested” figure.</div>
+                </div>
+                <div class="field">
+                  <label for="extraPayment">Extra payment each month</label>
+                  <div class="input-wrap">
+                    <span class="input-prefix" data-currency-prefix>INR ₹</span>
+                    <input id="extraPayment" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="err-extra">
+                  </div>
+                  <p class="field-error" id="err-extra" hidden></p>
+                </div>
+                <div class="field">
+                  <label for="prepayPenalty">Prepayment penalty</label>
+                  <div class="input-wrap">
+                    <input id="prepayPenalty" type="text" inputmode="decimal" value="0" autocomplete="off">
+                    <span class="input-suffix">% of prepaid</span>
+                  </div>
+                  <div class="hint">Applied to principal repaid ahead of schedule.</div>
+                </div>
+              </div>
             </div>
-            <div class="field">
-              <label for="emergencyFund">3+ months emergency fund?</label>
-              <select id="emergencyFund">
-                <option value="unknown">Not sure</option>
-                <option value="yes">Yes</option>
-                <option value="partial">Partial</option>
-                <option value="no">No</option>
-              </select>
+
+            <div class="refine-block">
+              <h3>Affordability</h3>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="income">Gross monthly income</label>
+                  <div class="input-wrap">
+                    <span class="input-prefix" data-currency-prefix>INR ₹</span>
+                    <input id="income" type="text" inputmode="decimal" autocomplete="off" placeholder="Optional">
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="existingDebt">Existing monthly loan repayments</label>
+                  <div class="input-wrap">
+                    <span class="input-prefix" data-currency-prefix>INR ₹</span>
+                    <input id="existingDebt" type="text" inputmode="decimal" autocomplete="off" placeholder="Optional">
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="emergencyFund">3+ months emergency fund?</label>
+                  <select id="emergencyFund">
+                    <option value="unknown">Not sure</option>
+                    <option value="yes">Yes</option>
+                    <option value="partial">Partial</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="shortfallType">One-time event or recurring shortfall?</label>
+                  <select id="shortfallType">
+                    <option value="unknown">Not sure</option>
+                    <option value="one_time">One-time event</option>
+                    <option value="recurring">Recurring shortfall</option>
+                  </select>
+                </div>
+              </div>
+              <p class="hint" style="margin-top:8px">We calculate your debt-to-income ratio from these — you don’t need to judge any threshold yourself. Comfort levels vary by lender, product, and country.</p>
             </div>
-            <div class="field">
-              <label for="debtRatio">Will this push debt payments &gt; 40% of income?</label>
-              <select id="debtRatio">
-                <option value="unsure">Not sure</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-            </div>
-            <div class="field full">
-              <label for="shortfallType">One-time event or recurring shortfall?</label>
-              <select id="shortfallType">
-                <option value="unknown">Not sure</option>
-                <option value="one_time">One-time event</option>
-                <option value="recurring">Recurring shortfall</option>
-              </select>
+
+            <div class="refine-block">
+              <h3>Why are you borrowing?</h3>
+              <p class="hint" style="margin-bottom:10px">Selecting a reason unlocks tailored, rule-based guidance below the results.</p>
+              <div class="choice-grid" id="reasonList" role="radiogroup" aria-label="Borrowing reason"></div>
+              <div class="field full" style="margin-top:14px">
+                <label for="lender">Who are you borrowing from?</label>
+                <select id="lender"></select>
+              </div>
+              <div class="field full" style="margin-top:14px">
+                <label for="problemSentence">Optional — what problem are you really trying to solve?</label>
+                <textarea id="problemSentence" maxlength="280" placeholder="One sentence. Example: Cover hospital bills until insurance reimburses."></textarea>
+              </div>
             </div>
           </div>
-        </section>
+        </details>
 
         <section class="section" id="advicePanel" aria-labelledby="adviceTitle" hidden>
           <div class="results-head">
             <div>
-              <p class="section-label">4 · How to save yourself</p>
+              <p class="section-label">Step 3 · How to save yourself</p>
               <h2 id="adviceTitle">Personalized guidance</h2>
             </div>
             <span class="severity" id="adviceSeverity">Worth a careful look</span>
           </div>
           <p class="section-intro" id="adviceHeadline"></p>
-          <p class="section-label" style="margin-top:4px">Rules that triggered</p>
-          <ul class="rule-list" id="triggeredRules"></ul>
-          <ol class="step-list" id="adviceSteps"></ol>
+
+          <p class="section-label" style="margin-top:4px">Start with these three</p>
+          <ol class="step-list top" id="topActions"></ol>
+
+          <details class="more-actions" id="moreActionsWrap" hidden>
+            <summary>More ways to reduce the cost</summary>
+            <ul class="step-list" id="moreActions"></ul>
+          </details>
 
           <div class="honest">
-            <p>The honest question</p>
+            <p>A question worth answering</p>
             <blockquote id="honestQuote"></blockquote>
           </div>
 
@@ -453,43 +590,95 @@
 
           <p class="section-label" style="margin-top:18px">Alternative paths</p>
           <ul class="alt-list" id="alternatives"></ul>
+
+          <p class="section-label" style="margin-top:18px">Why you’re seeing this</p>
+          <ul class="rule-list" id="triggeredRules"></ul>
         </section>
       </div>
 
       <aside class="stack">
-        <section class="section results" id="resultsPanel" data-state="empty" aria-live="polite" aria-atomic="true" aria-labelledby="resultsTitle">
+        <section class="section results" id="resultsPanel" data-state="empty" aria-labelledby="resultsTitle">
           <div class="results-head">
             <div>
-              <p class="section-label">Live results</p>
-              <h2 id="resultsTitle">What you will actually pay</h2>
+              <p class="section-label">Step 2 · Live results</p>
+              <h2 id="resultsTitle">What this will cost</h2>
             </div>
-            <span class="live-pill">Updates instantly</span>
+            <span class="live-pill">Updates as you type</span>
           </div>
+          <p class="sr-only" id="liveSummary" role="status" aria-live="polite"></p>
+
+          <div class="headline-metric">
+            <span class="metric-label">Monthly payment (EMI)</span>
+            <div class="headline-value" id="resEmi">—</div>
+          </div>
+
           <div class="metrics">
-            <div class="metric">
-              <span class="metric-label">Monthly payment (EMI)</span>
-              <div class="metric-value" id="resEmi">—</div>
-            </div>
             <div class="metric">
               <span class="metric-label">Total you will repay</span>
               <div class="metric-value" id="resTotal">—</div>
             </div>
-            <div class="metric loss">
-              <span class="metric-label">Interest cost (pure loss)</span>
+            <div class="metric cost">
+              <span class="metric-label">Cost of borrowing</span>
               <div class="metric-value" id="resInterest">—</div>
-              <p class="metric-sub">Money that could have gone to an emergency fund, investing, or staying in your pocket.</p>
+              <p class="metric-sub">Interest plus one-time fees over the life of the loan.</p>
             </div>
             <div class="metric">
-              <span class="metric-label">Effective cost per day</span>
+              <span class="metric-label">Effective rate (EIR/APR)</span>
+              <div class="metric-value" id="resApr">—</div>
+              <p class="metric-sub" id="resAprNote">Includes fees; the true annual cost.</p>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Cost per day</span>
               <div class="metric-value" id="resDaily">—</div>
             </div>
-            <div class="metric">
+            <div class="metric wide" id="dtiMetric" hidden>
+              <span class="metric-label">Debt-to-income (with this EMI)</span>
+              <div class="metric-value" id="resDti">—</div>
+              <p class="metric-sub" id="resDtiNote"></p>
+            </div>
+            <div class="metric wide" id="oppMetric" hidden>
               <span class="metric-label">Opportunity illustration</span>
               <div class="metric-value" id="resOpp">—</div>
-              <p class="metric-sub" id="resOppNote">If interest were invested monthly instead.</p>
+              <p class="metric-sub" id="resOppNote"></p>
             </div>
           </div>
+
+          <div class="viz" id="splitViz" hidden>
+            <h3>Where your money goes</h3>
+            <div class="split-bar" aria-hidden="true">
+              <span class="split-principal" id="splitP" style="width:60%"></span>
+              <span class="split-cost" id="splitC" style="width:40%"></span>
+            </div>
+            <div class="split-legend">
+              <span class="key"><span class="dot p"></span>Principal <strong id="legendP">—</strong></span>
+              <span class="key"><span class="dot c"></span>Cost of borrowing <strong id="legendC">—</strong></span>
+            </div>
+          </div>
+
+          <figure class="burn" id="burnViz" hidden>
+            <h3 style="font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.55px;margin-bottom:10px">Interest burn over time</h3>
+            <div class="burn-wrap">
+              <svg id="burnChart" viewBox="0 0 640 200" preserveAspectRatio="none" role="img" aria-label="Chart of interest and principal in each payment across the loan term"></svg>
+            </div>
+            <div class="burn-legend" aria-hidden="true">
+              <span class="key"><span class="swatch" style="background:var(--interest)"></span>Interest per payment</span>
+              <span class="key"><span class="swatch" style="background:var(--principal)"></span>Principal per payment</span>
+            </div>
+            <figcaption class="burn-cap" id="burnCap"></figcaption>
+          </figure>
+
+          <div class="compare" id="compareViz" hidden>
+            <h3 style="font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.55px;margin-bottom:10px">If you got a better deal</h3>
+            <table>
+              <thead>
+                <tr><th>Scenario</th><th>EMI</th><th>Interest cost</th><th>You’d save</th></tr>
+              </thead>
+              <tbody id="compareBody"></tbody>
+            </table>
+          </div>
+
           <div id="warnings"></div>
+
           <div class="extra-box" id="extraResults" hidden>
             <h3>With extra monthly payments</h3>
             <div class="extra-grid">
@@ -498,12 +687,15 @@
               <div><span>Interest saved</span><strong id="extraSaved">—</strong></div>
               <div><span>Total saved</span><strong id="extraTotalSaved">—</strong></div>
             </div>
+            <p class="metric-sub" id="extraPenaltyNote" hidden></p>
           </div>
-          <p class="formula-note" id="resFormula"></p>
+
+          <p class="metric-sub" id="resFormula" style="margin-top:14px">Enter loan details to see estimated reducing-balance or flat-rate results.</p>
+
           <details class="amort" id="amortWrap" hidden>
             <summary>Amortization schedule</summary>
             <div class="table-scroll">
-              <table>
+              <table class="amort-table">
                 <thead>
                   <tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>
                 </thead>
@@ -511,9 +703,10 @@
               </table>
             </div>
           </details>
+
           <div class="btn-row">
             <button class="btn btn-primary" id="copySummary" type="button" disabled>Copy summary</button>
-            <button class="btn" id="downloadSummary" type="button">Download summary</button>
+            <button class="btn" id="downloadSummary" type="button" disabled>Download summary</button>
             <button class="btn btn-sm" id="clearData" type="button">Clear local data</button>
           </div>
           <p class="action-status" id="actionStatus" hidden></p>
@@ -523,21 +716,21 @@
           <p class="section-label">Next steps</p>
           <h2>After you see the numbers</h2>
           <ol class="step-list">
-            <li><strong>Save your cost summary</strong><span>Copy or download it — useful when comparing lenders or talking to family.</span></li>
-            <li><strong>Check the alternatives list</strong><span>Generated from your reason and burden answers above.</span></li>
-            <li><strong>Follow the 30-day avoid plan</strong><span>If you can live without the loan, you just saved the interest as pure gain.</span></li>
-            <li><strong>Optional: fee-only counselor</strong><span>For complex debt, prefer advice that is not paid by selling you a loan.</span></li>
+            <li><strong>Save your cost summary</strong><span>Copy or download it — useful when comparing lenders or talking things over with family.</span></li>
+            <li><strong>Compare a better deal</strong><span>The scenarios above show what a lower rate or shorter tenure would save.</span></li>
+            <li><strong>Follow the 30-day plan</strong><span>Small, concrete moves that reduce or remove the borrowing cost.</span></li>
+            <li><strong>Optional: a fee-only counselor</strong><span>For complex debt, prefer advice that isn’t paid by selling you a loan.</span></li>
           </ol>
           <p class="disclaimer" style="margin-top:16px">
-            This is an educational tool, not financial advice. Interest calculations follow standard formulas and are illustrative of contractual math — always verify exact terms, fees, and APR with the lender. Your situation is unique.
+            This is an educational tool, not financial advice. Figures are <strong>estimates</strong>: EMI and EIR/APR follow standard formulas from the inputs you provide and cannot capture every fee, tax, variable-rate change, or lender rounding. Always confirm exact terms, fees, and the APR with the lender. Your situation is unique.
           </p>
         </section>
       </aside>
     </div>
 
     <div class="quote-band">
-      <p>Built with the belief that the best loan is the one you never needed.</p>
-      <div class="attr">Built for clarity, not judgment · © 2026 Sumanth Bolle</div>
+      <p>Built for clarity, not pressure — so the choice is fully yours.</p>
+      <div class="attr">No account · no backend for calculations · © 2026 Sumanth Bolle</div>
     </div>
   </main>
 
@@ -548,7 +741,7 @@
         <strong id="stickyEmi">—</strong>
       </div>
       <div style="text-align:right">
-        <div class="sticky-meta">Interest (pure loss)</div>
+        <div class="sticky-meta">Cost of borrowing</div>
         <strong id="stickyInterest">—</strong>
       </div>
     </div>
@@ -572,13 +765,13 @@
       page: 'save-yourself',
       tabLabel: 'Guide',
       title: 'How to use Save Yourself',
-      intro: 'See the real lifetime cost of a loan before you sign — privately, in your browser.',
+      intro: 'Estimate the real lifetime cost of a loan before you sign — privately, in your browser.',
       steps: [
-        { title: 'Enter loan details', desc: 'Amount, annual rate, tenure, and whether interest is reducing-balance or flat. Results update live.' },
-        { title: 'Pick your currency', desc: 'Search any ISO 4217 currency. Formatting and decimal places come from your browser’s Intl APIs.' },
-        { title: 'Say why you are borrowing', desc: 'Honest reason selection unlocks tailored, rule-based guidance — not generic quotes.' },
-        { title: 'Add burden context', desc: 'Emergency fund and debt-ratio answers change the severity and next actions.' },
-        { title: 'Simulate extra payments', desc: 'See how many months and how much interest you save by paying a bit more each month.' },
+        { title: 'Enter loan details', desc: 'Amount, annual rate, tenure, interest type, and any fees. Results update live as you type.' },
+        { title: 'Pick your currency', desc: 'Type to search any ISO 4217 currency in the combobox. Formatting comes from your browser’s Intl APIs.' },
+        { title: 'Read the effective rate', desc: 'EIR/APR includes fees and reveals the true cost — especially for flat-rate loans.' },
+        { title: 'Refine your assessment', desc: 'Expand the section to add income, extra payments, and your reason for tailored guidance.' },
+        { title: 'Compare a better deal', desc: 'See what a lower rate or shorter tenure would save side by side.' },
         { title: 'Copy or download a summary', desc: 'Everything stays on your device. Clear local data anytime.' }
       ]
     });

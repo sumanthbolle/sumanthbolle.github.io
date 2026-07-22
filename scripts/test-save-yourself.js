@@ -141,20 +141,69 @@ assert(C.fractionDigits('JPY') === 0, 'JPY 0 decimals');
 assert(C.fractionDigits('KWD') === 3, 'KWD 3 decimals');
 assert(C.fractionDigits('INR') === 2, 'INR 2 decimals');
 
-// Advice engine deterministic
+// --- Fees, EIR/APR ---
+var withFees = L.calculate({
+  principal: 100000,
+  annualRatePercent: 12,
+  months: 24,
+  interestType: 'reducing',
+  currency: 'INR',
+  fees: { processing: 2, processingIsPercent: true, other: 500 }
+});
+assert(withFees.ok, 'fees calc ok');
+approx(withFees.fees.total, 2500, 0.5, 'processing 2% + 500 = 2500 fees');
+approx(withFees.costOfBorrowing, withFees.totalInterest + 2500, 0.5, 'cost of borrowing = interest + fees');
+assert(withFees.aprPercent > 12, 'APR with fees exceeds nominal 12%');
+
+// APR without fees ≈ nominal for reducing balance
+var noFee = L.calculate({ principal: 100000, annualRatePercent: 12, months: 24, interestType: 'reducing', currency: 'INR' });
+approx(noFee.aprPercent, 12, 0.1, 'APR ≈ nominal when no fees (reducing)');
+
+// Flat-rate EIR is materially higher than the flat nominal
+var flatEir = L.calculate({ principal: 100000, annualRatePercent: 10, months: 12, interestType: 'flat', currency: 'INR' });
+assert(flatEir.aprPercent > 16, 'flat 10% has much higher EIR (~18%)');
+
+// --- Debt-to-income ---
+var dti = L.calculate({
+  principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
+  grossMonthlyIncome: 20000, existingMonthlyRepayments: 6000
+});
+assert(dti.dti && dti.dti.percent > 50, 'DTI computed and high');
+assert(dti.dti.band === 'high', 'DTI band high');
+var dtiOk = L.calculate({
+  principal: 100000, annualRatePercent: 18, months: 60, interestType: 'reducing', currency: 'INR',
+  grossMonthlyIncome: 100000, existingMonthlyRepayments: 0
+});
+assert(dtiOk.dti.band === 'moderate', 'low DTI band moderate');
+
+// --- Comparisons ---
+var comp = L.calculate({
+  principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
+  withComparisons: true
+});
+assert(comp.comparisons && comp.comparisons.length >= 1, 'comparisons present');
+assert(comp.comparisons.some(function (c) { return c.id === 'better_rate' && c.interestSaved > 0; }), 'better rate saves interest');
+assert(comp.comparisons.some(function (c) { return c.id === 'shorter_tenure' && c.interestSaved > 0; }), 'shorter tenure saves interest');
+
+// --- Advice engine (new shape) ---
 var advice = A.buildAdvice({
   reasonId: 'lifestyle',
-  debtRatioHigh: 'yes',
   emergencyFund: 'no',
   lenderId: 'payday',
-  loan: r
+  loan: dti // high DTI loan
 });
-assert(advice.severity === 'critical', 'lifestyle + high burden → critical');
-assert(advice.triggeredRules.some(function (x) { return x.id === 'high_debt_ratio'; }), 'debt ratio rule');
-assert(advice.steps.length >= 4, 'actionable steps present');
+assert(advice.severity === 'critical', 'lifestyle + high DTI + payday → critical');
+assert(advice.triggeredRules.some(function (x) { return x.id === 'dti_high'; }), 'dti_high rule fires from computed ratio');
+assert(advice.topActions.length === 3, 'exactly three top actions');
+assert(advice.steps.length >= 3, 'full action list present');
+// No broken copy fragments
+var joined = advice.steps.map(function (s) { return s.title + ' ' + s.detail; }).join(' ');
+assert(joined.indexOf('of work-value of work-equivalent') === -1, 'no broken hours copy');
 
 var emergency = A.buildAdvice({ reasonId: 'medical', loan: r });
-assert(/Emergency/i.test(emergency.headline), 'medical → emergency headline');
+assert(/Emergenc/i.test(emergency.headline), 'medical → emergency headline');
+assert(emergency.honestQuestion.indexOf('live with that') === -1, 'medical question is not "can I live with that"');
+assert(/smallest amount/i.test(emergency.honestQuestion), 'medical question is reason-specific');
 
 if (failed) {
   console.error('\n' + failed + ' failure(s)');
