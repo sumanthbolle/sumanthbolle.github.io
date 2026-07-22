@@ -15,6 +15,7 @@ const STATIC_PAGES = [
   { url: '/servicenow', priority: '1.0', changefreq: 'hourly' },
   { url: '/flights', priority: '1.0', changefreq: 'daily' },
   { url: '/metals', priority: '0.9', changefreq: 'hourly' },
+  { url: '/save-yourself', priority: '0.9', changefreq: 'weekly' },
   { url: '/blog', priority: '0.9', changefreq: 'daily' },
   { url: '/interviews', priority: '0.9', changefreq: 'daily' },
   { url: '/tutorials.html', priority: '0.9', changefreq: 'weekly' },
