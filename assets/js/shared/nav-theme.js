@@ -24,6 +24,45 @@
     });
   }
 
+  function initNavDropdowns(options) {
+    var settings = options || {};
+    var dropdownSelector = settings.dropdownSelector || '.nav-drop';
+    var buttonSelector = settings.buttonSelector || '.nav-drop-btn';
+    var openClass = settings.openClass || 'open';
+
+    var dropdowns = Array.prototype.slice.call(document.querySelectorAll(dropdownSelector));
+    if (!dropdowns.length) return;
+
+    function closeAll(except) {
+      dropdowns.forEach(function (drop) {
+        if (drop === except) return;
+        drop.classList.remove(openClass);
+        var btn = drop.querySelector(buttonSelector);
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    dropdowns.forEach(function (drop) {
+      var btn = drop.querySelector(buttonSelector);
+      if (!btn) return;
+      btn.addEventListener('click', function (event) {
+        event.stopPropagation();
+        var willOpen = !drop.classList.contains(openClass);
+        closeAll(drop);
+        drop.classList.toggle(openClass, willOpen);
+        btn.setAttribute('aria-expanded', String(willOpen));
+      });
+      drop.querySelectorAll(buttonSelector + ' ~ * a').forEach(function (link) {
+        link.addEventListener('click', function () { closeAll(null); });
+      });
+    });
+
+    document.addEventListener('click', function () { closeAll(null); });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeAll(null);
+    });
+  }
+
   function initThemeToggle(options) {
     var settings = options || {};
     var toggleSelector = settings.toggleSelector || '#themeToggle';
@@ -49,6 +88,7 @@
 
   window.SBShared = {
     initNavMenu: initNavMenu,
+    initNavDropdowns: initNavDropdowns,
     initThemeToggle: initThemeToggle,
   };
 })();
