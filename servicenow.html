@@ -142,9 +142,19 @@
     nav{position:fixed;top:0;width:100%;height:48px;background:rgba(251,251,253,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid rgba(0,0,0,0.1)}
     .nav-c{max-width:1080px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
     .nav-logo{font-size:20px;font-weight:600;color:var(--text)}
-    .nav-links{display:flex;gap:28px;list-style:none}
+    .nav-links{display:flex;align-items:center;gap:28px;list-style:none}
     .nav-links a{color:var(--text);font-size:13px;opacity:.8;transition:opacity .3s,color .3s}
     .nav-links a:hover,.nav-links a.active{opacity:1;color:var(--blue)}
+    .nav-drop{position:relative}
+    .nav-drop-btn{display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font:inherit;font-size:13px;color:var(--text);opacity:.8;cursor:pointer;transition:opacity .3s,color .3s}
+    .nav-drop-btn:hover,.nav-drop.open .nav-drop-btn,.nav-drop-btn.active{opacity:1;color:var(--blue)}
+    .nav-caret{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+    .nav-drop.open .nav-caret{transform:rotate(180deg)}
+    .nav-drop-menu{position:absolute;top:26px;left:50%;transform:translateX(-50%) translateY(4px);min-width:180px;margin:0;padding:8px;list-style:none;background:var(--white);border:1px solid rgba(0,0,0,.08);border-radius:12px;box-shadow:0 14px 32px rgba(0,0,0,.14);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:10000}
+    .nav-drop.open .nav-drop-menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+    @media(hover:hover){.nav-drop:hover .nav-drop-menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}}
+    .nav-drop-menu a{display:block;padding:8px 12px;border-radius:8px;font-size:13px;color:var(--text);opacity:.85;text-decoration:none;white-space:nowrap}
+    .nav-drop-menu a:hover,.nav-drop-menu a.active{opacity:1;background:rgba(0,102,204,.08);color:var(--blue)}
     .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
     .menu-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:.3s}
     .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
@@ -153,6 +163,12 @@
     .mobile-menu{display:none;position:fixed;top:48px;left:0;width:100%;background:rgba(251,251,253,0.98);backdrop-filter:blur(20px);padding:20px;border-bottom:1px solid rgba(0,0,0,0.1);z-index:9998}
     .mobile-menu.active{display:block}
     .mobile-menu a{display:block;padding:12px 0;color:var(--text);font-size:16px;border-bottom:1px solid rgba(0,0,0,0.05)}
+    .mobile-menu a.sub{padding-left:14px;font-size:15px;opacity:.85}
+    .mobile-menu-label{display:block;padding:14px 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray)}
+    .sub-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;padding:8px 22px;background:var(--white);border-bottom:1px solid rgba(0,0,0,0.08);position:fixed;top:48px;width:100%;z-index:9998}
+    .sub-tab{padding:6px 20px;border:none;border-radius:20px;background:transparent;color:var(--gray);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.25s;text-decoration:none;font-family:inherit}
+    .sub-tab:hover{background:rgba(0,0,0,0.04);color:var(--text)}
+    .sub-tab.active{background:var(--blue);color:var(--white)}
 
     /* ── SECTION SYSTEM (shared component) ── */
     .section{padding:100px 0;background:var(--white)}
@@ -398,7 +414,9 @@
       .nav-links{display:none}
       .menu-toggle{display:block}
       .section{padding:72px 0}
-      .hero{min-height:78vh;padding:110px 20px 70px}
+      .hero{min-height:78vh;padding:132px 20px 70px}
+      .sub-tabs{padding:8px 14px}
+      .sub-tab{padding:6px 12px;font-size:12px}
       .pillar-grid{grid-template-columns:1fr}
       .paths-grid{grid-template-columns:1fr}
       .authority-row{grid-template-columns:repeat(2,1fr);gap:8px}
@@ -424,33 +442,51 @@
       <a href="index.html" class="nav-logo">Sumanth Bolle</a>
       <ul class="nav-links">
         <li><a href="index.html#about">About</a></li>
-        <li><a href="servicenow.html" class="active" aria-current="page">ServiceNow</a></li>
-        <li><a href="blog.html">Blog</a></li>
-        <li><a href="tutorials.html">Tutorials</a></li>
+        <li class="nav-drop">
+          <button class="nav-drop-btn active" type="button" aria-haspopup="true" aria-expanded="false">Learn<svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <ul class="nav-drop-menu">
+            <li><a href="servicenow.html" class="active" aria-current="page">ServiceNow</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="tutorials.html">Tutorials</a></li>
+            <li><a href="quiz.html">Quiz</a></li>
+          </ul>
+        </li>
         <li><a href="interviews.html">Interviews</a></li>
-        <li><a href="quiz.html">Quiz</a></li>
         <li><a href="summaverick.html">Summaverick</a></li>
         <li><a href="flights.html">SkyFare</a></li>
-        <li><a href="metals.html">Metals</a></li>
-          <li><a href="save-yourself.html">Save Yourself</a></li>
+        <li class="nav-drop">
+          <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">Tools<svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <ul class="nav-drop-menu">
+            <li><a href="metals.html">Metals</a></li>
+            <li><a href="save-yourself.html">Save Yourself</a></li>
+          </ul>
+        </li>
         <li><a href="index.html#contact">Contact</a></li>
       </ul>
       <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
-      <a href="index.html">Home</a>
-      <a href="servicenow.html" class="active">ServiceNow</a>
-      <a href="blog.html">Blog</a>
-      <a href="tutorials.html">Tutorials</a>
+      <a href="index.html#about">About</a>
+      <span class="mobile-menu-label">Learn</span>
+      <a href="servicenow.html" class="active sub">ServiceNow</a>
+      <a href="blog.html" class="sub">Blog</a>
+      <a href="tutorials.html" class="sub">Tutorials</a>
+      <a href="quiz.html" class="sub">Quiz</a>
       <a href="interviews.html">Interviews</a>
-      <a href="quiz.html">Quiz</a>
       <a href="summaverick.html">Summaverick</a>
       <a href="flights.html">SkyFare</a>
-      <a href="metals.html">Metals</a>
-      <a href="save-yourself.html">Save Yourself</a>
+      <span class="mobile-menu-label">Tools</span>
+      <a href="metals.html" class="sub">Metals</a>
+      <a href="save-yourself.html" class="sub">Save Yourself</a>
       <a href="index.html#contact">Contact</a>
     </div>
   </nav>
+  <div class="sub-tabs">
+    <a href="servicenow.html" class="sub-tab active">ServiceNow Hub</a>
+    <a href="blog.html" class="sub-tab">Blog</a>
+    <a href="tutorials.html" class="sub-tab">Tutorials</a>
+    <a href="quiz.html" class="sub-tab">Quiz</a>
+  </div>
 
   <header class="hero">
     <div class="hero-eye"><span class="dot" aria-hidden="true"></span> The single source of truth for ServiceNow</div>
@@ -1320,6 +1356,7 @@
     window.SBShared && window.SBShared.initNavMenu({
       toggleSelector: '#menuToggle', menuSelector: '#mobileMenu'
     });
+    window.SBShared && window.SBShared.initNavDropdowns();
     var mt = document.getElementById('menuToggle');
     if (mt) mt.addEventListener('click', function () {
       mt.setAttribute('aria-expanded', mt.classList.contains('active') ? 'true' : 'false');

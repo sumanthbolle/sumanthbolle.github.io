@@ -361,6 +361,30 @@
 
     .topnav a:hover { color: var(--text); }
 
+    .nav-drop { position: relative; }
+    .nav-drop-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; padding: 0; font: inherit;
+      font-size: 13px; color: var(--text-muted); cursor: pointer;
+      transition: color 180ms ease;
+    }
+    .nav-drop-btn:hover, .nav-drop.open .nav-drop-btn, .nav-drop-btn.active { color: var(--text); }
+    .nav-caret { width: 9px; height: 9px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform 180ms ease; }
+    .nav-drop.open .nav-caret { transform: rotate(180deg); }
+    .nav-drop-menu {
+      position: absolute; top: 26px; left: 50%; transform: translateX(-50%) translateY(4px);
+      min-width: 170px; margin: 0; padding: 8px; list-style: none;
+      background: var(--surface-3); border: 1px solid var(--border-strong); border-radius: 12px;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 14px 32px rgba(0,0,0,.35);
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease; z-index: 10000;
+    }
+    .nav-drop.open .nav-drop-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+    @media (hover:hover) { .nav-drop:hover .nav-drop-menu { opacity: 1; visibility: visible; pointer-events: auto; transform: translateX(-50%) translateY(0); } }
+    .nav-drop-menu a { display: block; padding: 8px 12px; border-radius: 8px; font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+    .nav-drop-menu a:hover, .nav-drop-menu a.active { color: var(--text); background: var(--surface-2); }
+
     .theme-toggle {
       display: inline-flex;
       align-items: center;
@@ -1642,7 +1666,7 @@
         padding-right: 18px;
       }
 
-      .topnav > a { display: none; }
+      .topnav > a, .topnav > .nav-drop { display: none; }
 
       .hero { padding-top: 34px; }
 
@@ -1706,12 +1730,24 @@
 
         <nav class="topnav" aria-label="Primary">
           <a href="index.html">Portfolio</a>
-          <a href="servicenow.html">ServiceNow</a>
-          <a href="blog.html">Blog</a>
+          <div class="nav-drop">
+            <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">Learn<svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <ul class="nav-drop-menu">
+              <li><a href="servicenow.html">ServiceNow</a></li>
+              <li><a href="blog.html">Blog</a></li>
+              <li><a href="tutorials.html">Tutorials</a></li>
+              <li><a href="quiz.html">Quiz</a></li>
+            </ul>
+          </div>
           <a href="interviews.html">Interviews</a>
           <a href="flights.html">SkyFare</a>
-          <a href="metals.html">Metals</a>
-          <a href="save-yourself.html">Save Yourself</a>
+          <div class="nav-drop">
+            <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">Tools<svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+            <ul class="nav-drop-menu">
+              <li><a href="metals.html">Metals</a></li>
+              <li><a href="save-yourself.html">Save Yourself</a></li>
+            </ul>
+          </div>
 
           <div class="theme-toggle" aria-label="Theme">
             <button class="theme-btn" type="button" data-theme="light">Light</button>
@@ -3104,6 +3140,8 @@
       init();
     })();
   </script>
+  <script src="assets/js/shared/nav-theme.js"></script>
+  <script>window.SBShared && window.SBShared.initNavDropdowns();</script>
   <script src="assets/js/shared/help-panel.js"></script>
   <script>
     SBHelpGuide.init({
