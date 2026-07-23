@@ -51,23 +51,11 @@
     .nav-links{display:flex;list-style:none;gap:24px;align-items:center}
     .nav-links a{color:var(--text2);font-size:14px;text-decoration:none}
     .nav-links a.active,.nav-links a:hover{color:var(--text)}
-    .nav-drop{position:relative}
-    .nav-drop-btn{display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font:inherit;font-size:14px;color:var(--text2);cursor:pointer}
-    .nav-drop-btn:hover,.nav-drop.open .nav-drop-btn,.nav-drop-btn.active{color:var(--text)}
-    .nav-caret{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
-    .nav-drop.open .nav-caret{transform:rotate(180deg)}
-    .nav-drop-menu{position:absolute;top:28px;left:50%;transform:translateX(-50%) translateY(4px);min-width:170px;margin:0;padding:8px;list-style:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 14px 32px rgba(0,0,0,.4);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:10000}
-    .nav-drop.open .nav-drop-menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
-    @media(hover:hover){.nav-drop:hover .nav-drop-menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}}
-    .nav-drop-menu a{display:block;padding:8px 12px;border-radius:8px;font-size:14px;color:var(--text2);white-space:nowrap}
-    .nav-drop-menu a:hover,.nav-drop-menu a.active{color:var(--text);background:var(--surface2)}
     .menu-toggle{display:none;background:none;border:none;cursor:pointer}
     .menu-toggle span{display:block;width:20px;height:2px;background:var(--text);margin:4px 0}
     .mobile-menu{display:none;position:absolute;top:56px;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px}
     .mobile-menu.open{display:flex;flex-direction:column;gap:10px}
     .mobile-menu a{color:var(--text2);text-decoration:none;padding:6px 0}
-    .mobile-menu a.sub{padding-left:14px;font-size:13px;color:var(--text3)}
-    .mobile-menu-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)}
     .sub-tabs{display:flex;justify-content:center;gap:4px;padding:8px 20px;background:var(--bg);border-bottom:1px solid var(--border);position:fixed;top:56px;width:100%;z-index:199}
     .sub-tab{padding:6px 20px;border:none;border-radius:20px;background:transparent;color:var(--text3);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.25s;text-decoration:none;font-family:var(--font)}
     .sub-tab:hover{background:var(--surface2);color:var(--text)}
@@ -173,43 +161,26 @@
       <a href="index.html" class="nav-logo">Sumanth Bolle</a>
       <ul class="nav-links">
         <li><a href="index.html#about">About</a></li>
-        <li class="nav-drop">
-          <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">Learn<svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
-          <ul class="nav-drop-menu">
-            <li><a href="servicenow.html">ServiceNow</a></li>
-            <li><a href="blog.html">Blog</a></li>
-            <li><a href="tutorials.html">Tutorials</a></li>
-            <li><a href="quiz.html">Quiz</a></li>
-          </ul>
-        </li>
-        <li><a href="interviews.html">Interviews</a></li>
+        <li><a href="servicenow.html">ServiceNow</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="interviews.html" class="active">Interviews</a></li>
         <li><a href="summaverick.html">Summaverick</a></li>
         <li><a href="flights.html">SkyFare</a></li>
-        <li class="nav-drop">
-          <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">Tools<svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
-          <ul class="nav-drop-menu">
-            <li><a href="metals.html">Metals</a></li>
-            <li><a href="save-yourself.html">Save Yourself</a></li>
-          </ul>
-        </li>
+        <li><a href="metals.html">Metals</a></li>
+          <li><a href="save-yourself.html">Save Yourself</a></li>
         <li><a href="index.html#contact">Contact</a></li>
       </ul>
       <button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu" id="mobileMenu">
-      <a href="index.html#about">About</a>
-      <span class="mobile-menu-label">Learn</span>
-      <a href="servicenow.html" class="sub">ServiceNow</a>
-      <a href="blog.html" class="sub">Blog</a>
-      <a href="tutorials.html" class="sub">Tutorials</a>
-      <a href="quiz.html" class="sub">Quiz</a>
-      <a href="interviews.html">Interviews</a>
+      <a href="index.html">Home</a>
+      <a href="servicenow.html">ServiceNow</a>
+      <a href="blog.html">Blog</a>
+      <a href="interviews.html" style="color:var(--text)">Interviews</a>
       <a href="summaverick.html">Summaverick</a>
       <a href="flights.html">SkyFare</a>
-      <span class="mobile-menu-label">Tools</span>
-      <a href="metals.html" class="sub">Metals</a>
-      <a href="save-yourself.html" class="sub">Save Yourself</a>
-      <a href="index.html#contact">Contact</a>
+      <a href="metals.html">Metals</a>
+      <a href="save-yourself.html">Save Yourself</a>
     </div>
   </nav>
   <div class="sub-tabs">
@@ -995,25 +966,7 @@
     if(window.SBShared&&window.SBShared.initNavMenu){
       window.SBShared.initNavMenu({toggleSelector:'#menuToggle',menuSelector:'#mobileMenu',menuOpenClass:'open',toggleActiveClass:''});
     }
-    if(window.SBShared&&window.SBShared.initNavDropdowns)window.SBShared.initNavDropdowns();
     renderModes();
-  </script>
-  <script src="assets/js/shared/help-panel.js"></script>
-  <script>
-    SBHelpGuide.init({
-      page: 'technical-terms-quiz',
-      tabLabel: 'Guide',
-      title: 'How to use the Tech Terms Quiz',
-      intro: 'A focused, standalone drill for the technical vocabulary that comes up most in ServiceNow interviews.',
-      steps: [
-        { title: 'Filter by level', desc: 'Use the chips above the terms to narrow the list to a difficulty level, or keep "All" for the full set.' },
-        { title: 'Pick a study mode', desc: 'Switch between flashcard review and quiz modes depending on whether you want to learn terms or test yourself.' },
-        { title: 'Check your stats', desc: 'The stat pills at the top track how many terms you have seen and how many you have mastered so far.' },
-        { title: 'Move to full prep', desc: 'Use the Interviews / Quiz / Tech Terms Quiz tabs under the nav to jump into broader interview or quiz practice.' }
-      ],
-      footerNote: 'Want more depth?',
-      footerLink: { label: 'Open the full Quiz hub →', href: 'quiz.html' }
-    });
   </script>
 </body>
 </html>

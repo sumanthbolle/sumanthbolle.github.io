@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -77,27 +77,15 @@
     .nav-c{max-width:1200px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
     .nav-logo{font-size:18px;font-weight:700;color:var(--text);text-decoration:none;letter-spacing:-0.5px}
     .nav-logo span{color:var(--text3)}
-    .nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+    .nav-links{display:flex;gap:28px;list-style:none}
     .nav-links a{color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s;letter-spacing:0.3px}
     .nav-links a:hover,.nav-links a.active{color:var(--text)}
-    .nav-drop{position:relative}
-    .nav-drop-btn{display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font:inherit;font-size:13px;font-weight:500;letter-spacing:0.3px;color:var(--text2);cursor:pointer;transition:color .2s}
-    .nav-drop-btn:hover,.nav-drop.open .nav-drop-btn,.nav-drop-btn.active{color:var(--text)}
-    .nav-caret{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
-    .nav-drop.open .nav-caret{transform:rotate(180deg)}
-    .nav-drop-menu{position:absolute;top:26px;left:50%;transform:translateX(-50%) translateY(4px);min-width:170px;margin:0;padding:8px;list-style:none;background:var(--card);border:1px solid var(--border2);border-radius:12px;box-shadow:0 14px 32px rgba(0,0,0,.5);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:10000}
-    .nav-drop.open .nav-drop-menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
-    @media(hover:hover){.nav-drop:hover .nav-drop-menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}}
-    .nav-drop-menu a{display:block;padding:8px 12px;border-radius:8px;font-size:13px;color:var(--text2);text-decoration:none;white-space:nowrap}
-    .nav-drop-menu a:hover,.nav-drop-menu a.active{color:var(--text);background:var(--card2)}
     .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
     .menu-toggle span{display:block;width:20px;height:1.5px;background:var(--text);margin:5px 0;transition:0.3s}
     .mobile-menu{display:none;position:fixed;top:52px;left:0;width:100%;background:rgba(0,0,0,0.95);backdrop-filter:blur(20px);padding:16px 24px;border-bottom:1px solid var(--border)}
     .mobile-menu.active{display:block}
     .mobile-menu a{display:block;padding:12px 0;color:var(--text2);text-decoration:none;font-size:15px;border-bottom:1px solid var(--border)}
     .mobile-menu a:last-child{border:none}
-    .mobile-menu a.sub{padding-left:14px;font-size:14px;color:var(--text3)}
-    .mobile-menu-label{display:block;padding:14px 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)}
     .sub-tabs{display:flex;justify-content:center;gap:4px;padding:8px 24px;background:rgba(0,0,0,0.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:fixed;top:52px;width:100%;z-index:9998}
     .sub-tab{padding:6px 20px;border:none;border-radius:20px;background:transparent;color:var(--text3);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.25s;text-decoration:none;font-family:inherit}
     .sub-tab:hover{background:rgba(255,255,255,0.06);color:var(--text)}
@@ -331,26 +319,13 @@
     <a href="index.html" class="nav-logo">Sumanth <span>Bolle</span></a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
-      <li class="nav-drop">
-        <button class="nav-drop-btn active" type="button" aria-haspopup="true" aria-expanded="false">Learn<svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
-        <ul class="nav-drop-menu">
-          <li><a href="servicenow.html">ServiceNow</a></li>
-          <li><a href="blog.html">Blog</a></li>
-          <li><a href="tutorials.html" class="active" aria-current="page">Tutorials</a></li>
-          <li><a href="quiz.html">Quiz</a></li>
-        </ul>
-      </li>
+      <li><a href="servicenow.html">ServiceNow</a></li>
+      <li><a href="blog.html" class="active">Blog</a></li>
       <li><a href="interviews.html">Interviews</a></li>
       <li><a href="summaverick.html">Summaverick</a></li>
       <li><a href="flights.html">SkyFare</a></li>
-      <li class="nav-drop">
-        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">Tools<svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
-        <ul class="nav-drop-menu">
-          <li><a href="metals.html">Metals</a></li>
+      <li><a href="metals.html">Metals</a></li>
           <li><a href="save-yourself.html">Save Yourself</a></li>
-        </ul>
-      </li>
-      <li><a href="index.html#contact">Contact</a></li>
     </ul>
     <button class="menu-toggle" id="menuToggle" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -359,18 +334,13 @@
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html">Home</a>
-  <span class="mobile-menu-label">Learn</span>
-  <a href="servicenow.html" class="sub">ServiceNow</a>
-  <a href="blog.html" class="sub">Blog</a>
-  <a href="tutorials.html" class="active sub" style="color:var(--text)">Tutorials</a>
-  <a href="quiz.html" class="sub">Quiz</a>
+  <a href="servicenow.html">ServiceNow</a>
+  <a href="blog.html" style="color:var(--text)">Blog</a>
   <a href="interviews.html">Interviews</a>
   <a href="summaverick.html">Summaverick</a>
   <a href="flights.html">SkyFare</a>
-  <span class="mobile-menu-label">Tools</span>
-  <a href="metals.html" class="sub">Metals</a>
-  <a href="save-yourself.html" class="sub">Save Yourself</a>
-  <a href="index.html#contact">Contact</a>
+  <a href="metals.html">Metals</a>
+  <a href="save-yourself.html">Save Yourself</a>
 </div>
 <div class="sub-tabs">
   <a href="blog.html" class="sub-tab">Blog Posts</a>
@@ -1773,26 +1743,5 @@ document.getElementById('backTop').addEventListener('click', function() { window
 render();
 </script>
 <script src="assets/js/shared/subscribe.js"></script>
-<script src="assets/js/shared/nav-theme.js"></script>
-<script src="assets/js/shared/help-panel.js"></script>
-<script>
-window.SBShared && window.SBShared.initNavDropdowns();
-SBHelpGuide.init({
-  page: 'tutorials',
-  tabLabel: 'Guide',
-  title: 'How to explore Tutorials',
-  intro: 'Step-by-step ServiceNow tutorials with runnable code, organized into a learning path from beginner to production-ready.',
-  steps: [
-    { title: 'Pick a track', desc: 'Browse categories in the left sidebar — Beginner Basics, Scripting, Flow Designer, Integrations, and more — or use "Topics" on mobile.' },
-    { title: 'Follow the order', desc: 'Tutorials within a track are sequenced; work through them top to bottom for the smoothest path from fundamentals to advanced patterns.' },
-    { title: 'Copy runnable code', desc: 'Every code block has a one-click Copy button in its top-right corner — paste straight into Scripts Background or Studio.' },
-    { title: 'Jump back to Blog', desc: 'Use the Blog Posts / Tutorials tabs under the nav to switch between long-form articles and hands-on tutorials.' },
-    { title: 'Test what you learned', desc: 'Head to the Quiz hub (in the Learn menu) to check your understanding of the concepts covered here.' },
-    { title: 'Search fast', desc: 'Press Ctrl/Cmd+K anywhere on this page to jump straight to a tutorial by keyword.' }
-  ],
-  footerNote: 'Prefer reading first?',
-  footerLink: { label: 'Browse the Blog →', href: 'blog.html' }
-});
-</script>
 </body>
 </html>

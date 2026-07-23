@@ -71,19 +71,9 @@
     nav{position:fixed;top:0;width:100%;height:48px;background:rgba(251,251,253,0.8);backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid rgba(0,0,0,0.1)}
     .nav-c{max-width:1080px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
     .nav-logo{font-size:20px;font-weight:600;color:var(--text);text-decoration:none}
-    .nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+    .nav-links{display:flex;gap:28px;list-style:none}
     .nav-links a{color:var(--text);text-decoration:none;font-size:13px;opacity:.8;transition:opacity .3s}
     .nav-links a:hover{opacity:1;color:var(--blue)}
-    .nav-drop{position:relative}
-    .nav-drop-btn{display:flex;align-items:center;gap:4px;background:none;border:none;padding:0;font:inherit;font-size:13px;color:var(--text);opacity:.8;cursor:pointer;transition:opacity .3s,color .3s}
-    .nav-drop-btn:hover,.nav-drop.open .nav-drop-btn{opacity:1;color:var(--blue)}
-    .nav-caret{width:9px;height:9px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
-    .nav-drop.open .nav-caret{transform:rotate(180deg)}
-    .nav-drop-menu{position:absolute;top:26px;left:50%;transform:translateX(-50%) translateY(4px);min-width:180px;margin:0;padding:8px;list-style:none;background:var(--white);border:1px solid rgba(0,0,0,.08);border-radius:12px;box-shadow:0 14px 32px rgba(0,0,0,.14);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:10000}
-    .nav-drop.open .nav-drop-menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
-    @media(hover:hover){.nav-drop:hover .nav-drop-menu{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}}
-    .nav-drop-menu a{display:block;padding:8px 12px;border-radius:8px;font-size:13px;color:var(--text);opacity:.85;text-decoration:none;white-space:nowrap}
-    .nav-drop-menu a:hover{opacity:1;background:rgba(0,102,204,.08);color:var(--blue)}
     .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
     .menu-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:0.3s}
     .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
@@ -92,8 +82,6 @@
     .mobile-menu{display:none;position:fixed;top:48px;left:0;width:100%;background:rgba(251,251,253,0.98);backdrop-filter:blur(20px);padding:20px;border-bottom:1px solid rgba(0,0,0,0.1)}
     .mobile-menu.active{display:block}
     .mobile-menu a{display:block;padding:12px 0;color:var(--text);text-decoration:none;font-size:16px;border-bottom:1px solid rgba(0,0,0,0.05)}
-    .mobile-menu a.sub{padding-left:14px;font-size:15px;opacity:.85}
-    .mobile-menu-label{display:block;padding:14px 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray)}
     
     .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 80px;background:var(--black);position:relative;overflow:hidden}
     .hero::before{content:'';position:absolute;width:100%;height:100%;background:radial-gradient(ellipse 80% 50% at 50% 50%,rgba(29,78,216,0.15) 0%,transparent 70%)}
@@ -499,43 +487,23 @@
       <a href="#" class="nav-logo">Sumanth Bolle</a>
       <ul class="nav-links">
         <li><a href="#about">About</a></li>
-        <li class="nav-drop">
-          <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">Learn<svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
-          <ul class="nav-drop-menu">
-            <li><a href="servicenow.html">ServiceNow</a></li>
-            <li><a href="blog.html">Blog</a></li>
-            <li><a href="tutorials.html">Tutorials</a></li>
-            <li><a href="quiz.html">Quiz</a></li>
-          </ul>
-        </li>
+        <!--<li><a href="#expertise">Expertise</a></li>-->
+        <!--<li><a href="#projects">Projects</a></li>-->
+        <!--<li><a href="#skills">Skills</a></li>-->
+        <li><a href="servicenow.html">ServiceNow</a></li>
+        <li><a href="blog.html">Blog</a></li>
         <li><a href="interviews.html">Interviews</a></li>
+        <!--<li><a href="#integrations">Integrations</a></li>-->
         <li><a href="summaverick.html">Summaverick</a></li>
         <li><a href="flights.html">SkyFare</a></li>
-        <li class="nav-drop">
-          <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">Tools<svg class="nav-caret" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
-          <ul class="nav-drop-menu">
-            <li><a href="metals.html">Metals</a></li>
-            <li><a href="save-yourself.html">Save Yourself</a></li>
-          </ul>
-        </li>
+        <li><a href="metals.html">Metals</a></li>
+          <li><a href="save-yourself.html">Save Yourself</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
       <button class="menu-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu">
-      <a href="#about">About</a>
-      <span class="mobile-menu-label">Learn</span>
-      <a href="servicenow.html" class="sub">ServiceNow</a>
-      <a href="blog.html" class="sub">Blog</a>
-      <a href="tutorials.html" class="sub">Tutorials</a>
-      <a href="quiz.html" class="sub">Quiz</a>
-      <a href="interviews.html">Interviews</a>
-      <a href="summaverick.html">Summaverick</a>
-      <a href="flights.html">SkyFare</a>
-      <span class="mobile-menu-label">Tools</span>
-      <a href="metals.html" class="sub">Metals</a>
-      <a href="save-yourself.html" class="sub">Save Yourself</a>
-      <a href="#contact">Contact</a>
+      <a href="#about">About</a><!--<a href="#expertise">Expertise</a>--><!--<a href="#projects">Projects</a>--><!--<a href="#skills">Skills</a>--><a href="servicenow.html">ServiceNow</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><!--<a href="#integrations">Integrations</a>--><a href="summaverick.html">Summaverick</a><a href="flights.html">SkyFare</a><a href="metals.html">Metals</a><a href="save-yourself.html">Save Yourself</a><a href="#contact">Contact</a>
     </div>
   </nav>
 
@@ -858,7 +826,7 @@
   <button class="back-to-top"><svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg></button>
   <footer><p class="footer-text">© <script>document.write(new Date().getFullYear())</script> Sumanth Bolle. Designed with precision.</p></footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="assets/js/shared/subscribe.js"></script><script src="assets/js/shared/nav-theme.js"></script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="assets/js/shared/subscribe.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script>
@@ -904,7 +872,6 @@
     var menuToggle=document.querySelector('.menu-toggle'),mobileMenu=document.querySelector('.mobile-menu');
     menuToggle.addEventListener('click',function(){this.classList.toggle('active');mobileMenu.classList.toggle('active');this.setAttribute('aria-expanded',mobileMenu.classList.contains('active'));});
     document.querySelectorAll('.mobile-menu a').forEach(function(a){a.addEventListener('click',function(){menuToggle.classList.remove('active');mobileMenu.classList.remove('active');});});
-    window.SBShared&&window.SBShared.initNavDropdowns();
 
     // Back to top
     var backToTop=document.querySelector('.back-to-top');
