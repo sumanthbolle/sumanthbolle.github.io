@@ -842,6 +842,7 @@
 
     if (window.SBShared) {
       window.SBShared.initNavMenu();
+      window.SBShared.initNavDropdowns();
       window.SBShared.initThemeToggle({ storageKey: 'theme' });
     }
     syncThemePressed();
