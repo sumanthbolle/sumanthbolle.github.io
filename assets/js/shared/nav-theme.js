@@ -36,9 +36,19 @@
     function closeAll(except) {
       dropdowns.forEach(function (drop) {
         if (drop === except) return;
+        if (!drop.classList.contains(openClass) && !drop.matches(':focus-within')) return;
         drop.classList.remove(openClass);
         var btn = drop.querySelector(buttonSelector);
-        if (btn) btn.setAttribute('aria-expanded', 'false');
+        if (btn) {
+          btn.setAttribute('aria-expanded', 'false');
+          // Drop the CSS-only :focus-within fallback too, so a JS-driven
+          // close (outside click / Escape / picking a link) actually hides
+          // the menu instead of leaving it open because the button/link
+          // inside it still has focus.
+          if (document.activeElement && drop.contains(document.activeElement)) {
+            document.activeElement.blur();
+          }
+        }
       });
     }
 
@@ -51,6 +61,7 @@
         closeAll(drop);
         drop.classList.toggle(openClass, willOpen);
         btn.setAttribute('aria-expanded', String(willOpen));
+        if (!willOpen) btn.blur();
       });
       drop.querySelectorAll(buttonSelector + ' ~ * a').forEach(function (link) {
         link.addEventListener('click', function () { closeAll(null); });
