@@ -26,6 +26,7 @@
    * @param {number} [input.fees.prepaymentPenaltyPercent] — % on principal prepaid early
    * @param {number} [input.grossMonthlyIncome] — for debt-to-income
    * @param {number} [input.existingMonthlyRepayments] — for debt-to-income
+   * @param {'yes'|'partial'|'no'|'unknown'} [input.emergencyFund] — for the affordability verdict
    * @param {boolean} [input.withComparisons] — build better-rate / shorter-tenure scenarios
    */
   function calculateLoan(input) {
@@ -120,6 +121,15 @@
       : null;
 
     var dti = debtRatio(input.grossMonthlyIncome, input.existingMonthlyRepayments, base.emi, currency);
+    var totalPayableWithFees = C.roundMoney(base.totalPayable + upfrontFees, currency);
+    var lifeCostFigures = lifeCost(totalPayableWithFees, costOfBorrowing, input.grossMonthlyIncome);
+    var affordabilityVerdict = affordability({
+      dti: dti,
+      emergencyFund: input.emergencyFund,
+      aprPercent: apr,
+      annualRatePercent: annualRate,
+      currency: currency
+    });
 
     return {
       ok: true,
@@ -143,6 +153,9 @@
       effectiveMonthly: base.emi,
       costPerDay: C.roundMoney((base.totalPayable + upfrontFees) / (months * 30.4375), currency),
       opportunity: opportunity,
+      opportunityTimeline: opportunityTimeline(base.emi, oppRate, currency),
+      lifeCost: lifeCostFigures,
+      affordability: affordabilityVerdict,
       schedule: base.schedule || null,
       amortization: base.schedule || null,
       withExtra: withExtra,
@@ -346,6 +359,144 @@
     };
   }
 
+  /**
+   * Translate money into working time. Uses a 40-hour week (173.33 hours/month),
+   * which is the conventional full-time month used for hourly conversions.
+   */
+  var HOURS_PER_MONTH = 40 * 52 / 12;
+
+  function lifeCost(totalPayable, costOfBorrowing, grossMonthlyIncome) {
+    var income = Number(grossMonthlyIncome);
+    if (!Number.isFinite(income) || income <= 0) return null;
+    var hourly = income / HOURS_PER_MONTH;
+    if (!(hourly > 0)) return null;
+    var hoursTotal = totalPayable / hourly;
+    var hoursCost = costOfBorrowing / hourly;
+    return {
+      hourlyIncome: hourly,
+      hoursPerWeek: 40,
+      hoursTotal: hoursTotal,
+      hoursCost: hoursCost,
+      weeksTotal: hoursTotal / 40,
+      weeksCost: hoursCost / 40,
+      monthsOfIncome: totalPayable / income
+    };
+  }
+
+  /** "If you saved the EMI instead" — 1 / 3 / 5 year horizons, cash vs invested. */
+  function opportunityTimeline(monthlyAmount, opportunityRatePercent, currency) {
+    var pmt = Number(monthlyAmount);
+    if (!Number.isFinite(pmt) || pmt <= 0) return null;
+    var rate = Number(opportunityRatePercent);
+    if (!Number.isFinite(rate) || rate < 0) rate = 0;
+    var r = rate / 12 / 100;
+    return [12, 36, 60].map(function (n) {
+      var saved = pmt * n;
+      var invested = Math.abs(r) < 1e-15 ? saved : pmt * (Math.pow(1 + r, n) - 1) / r;
+      return {
+        months: n,
+        years: n / 12,
+        label: (n / 12) + (n === 12 ? ' year' : ' years'),
+        saved: C.roundMoney(saved, currency),
+        invested: C.roundMoney(invested, currency),
+        gain: C.roundMoney(invested - saved, currency)
+      };
+    });
+  }
+
+  /**
+   * Affordability verdict from computed signals only — never from a self-rating.
+   * Returns green / amber / red plus the reasons behind it, so the call is auditable.
+   */
+  function affordability(input) {
+    var dti = input.dti;
+    var currency = input.currency;
+    var fund = input.emergencyFund || 'unknown';
+    var apr = Number.isFinite(Number(input.aprPercent)) ? Number(input.aprPercent) : null;
+    var nominal = Number(input.annualRatePercent);
+    var effective = apr != null ? apr : nominal;
+
+    var margin = dti ? C.roundMoney(dti.income - dti.totalPayments, currency) : null;
+    var marginRatio = dti && dti.income > 0 ? (dti.income - dti.totalPayments) / dti.income : null;
+
+    // Stress test: could the payments still be met on 20% less income?
+    var stressed = dti && dti.income > 0 ? dti.totalPayments / (dti.income * 0.8) : null;
+
+    var bufferStatus = fund === 'yes' ? 'pass'
+      : fund === 'partial' ? 'partial'
+        : fund === 'no' ? 'fail' : 'unknown';
+
+    var reasons = [];
+    var level = 'safe';
+    function escalate(next) {
+      var order = { safe: 0, caution: 1, danger: 2 };
+      if (order[next] > order[level]) level = next;
+    }
+
+    if (dti) {
+      if (dti.band === 'high') {
+        escalate('danger');
+        reasons.push('Debt payments reach about ' + Math.round(dti.percent) + '% of gross income.');
+      } else if (dti.band === 'elevated') {
+        escalate('caution');
+        reasons.push('Debt payments sit near ' + Math.round(dti.percent) + '% of gross income.');
+      }
+      if (margin != null && margin <= 0) {
+        escalate('danger');
+        reasons.push('Nothing is left each month after income minus all loan payments.');
+      } else if (marginRatio != null && marginRatio < 0.25) {
+        escalate('caution');
+        reasons.push('Less than a quarter of income remains after all loan payments.');
+      }
+      if (stressed != null && stressed > 1) {
+        escalate('danger');
+        reasons.push('A 20% drop in income would leave the payments unaffordable.');
+      } else if (stressed != null && stressed > 0.5) {
+        escalate('caution');
+        reasons.push('A 20% drop in income would push payments past half of what you earn.');
+      }
+    }
+
+    if (bufferStatus === 'fail') {
+      escalate('caution');
+      reasons.push('No three-month emergency fund, so a single surprise could break the schedule.');
+    } else if (bufferStatus === 'partial') {
+      reasons.push('The emergency fund is partial — a short setback is covered, a long one is not.');
+    }
+
+    if (effective != null && effective >= 36) {
+      escalate('danger');
+      reasons.push('An effective rate at or above 36% p.a. is treated as high-cost credit almost everywhere.');
+    } else if (effective != null && effective >= 24) {
+      escalate('caution');
+      reasons.push('An effective rate above 24% p.a. is expensive money worth shopping around.');
+    }
+
+    if (!dti && bufferStatus === 'unknown' && !reasons.length) {
+      return {
+        level: 'unknown',
+        label: 'Add income to see a verdict',
+        margin: null,
+        marginRatio: null,
+        stressRatio: null,
+        emergencyBuffer: bufferStatus,
+        reasons: ['Add gross monthly income under “Refine my assessment” for an affordability verdict.']
+      };
+    }
+
+    if (!reasons.length) reasons.push('Payments, buffer, and rate all land inside commonly comfortable ranges.');
+
+    return {
+      level: level,
+      label: level === 'danger' ? 'Danger' : level === 'caution' ? 'Caution' : 'Safe',
+      margin: margin,
+      marginRatio: marginRatio,
+      stressRatio: stressed,
+      emergencyBuffer: bufferStatus,
+      reasons: reasons
+    };
+  }
+
   function buildComparisons(principal, annualRate, months, type, currency, base) {
     var out = [];
     var calc = type === 'flat' ? calcFlat : calcReducing;
@@ -530,6 +681,9 @@
     _calcFlat: calcFlat,
     _computeAPR: computeAPR,
     _debtRatio: debtRatio,
-    _opportunityCost: opportunityCost
+    _opportunityCost: opportunityCost,
+    _lifeCost: lifeCost,
+    _opportunityTimeline: opportunityTimeline,
+    _affordability: affordability
   };
 })(typeof window !== 'undefined' ? window : globalThis);

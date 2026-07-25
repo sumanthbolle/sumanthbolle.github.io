@@ -29,10 +29,12 @@ sandbox.SYCurrency = cur.SYCurrency;
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'assets/js/save-yourself/currency.js'), 'utf8'), sandbox);
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'assets/js/save-yourself/loan-math.js'), 'utf8'), sandbox);
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'assets/js/save-yourself/advice-rules.js'), 'utf8'), sandbox);
+vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'assets/js/save-yourself/decision.js'), 'utf8'), sandbox);
 
 var C = sandbox.SYCurrency;
 var L = sandbox.SYLoanMath;
 var A = sandbox.SYAdvice;
+var D = sandbox.SYDecision;
 
 var failed = 0;
 function assert(cond, msg) {
@@ -204,6 +206,103 @@ var emergency = A.buildAdvice({ reasonId: 'medical', loan: r });
 assert(/Emergenc/i.test(emergency.headline), 'medical → emergency headline');
 assert(emergency.honestQuestion.indexOf('live with that') === -1, 'medical question is not "can I live with that"');
 assert(/smallest amount/i.test(emergency.honestQuestion), 'medical question is reason-specific');
+
+// --- Life cost: money expressed as working time ---
+var life = L.calculate({
+  principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
+  grossMonthlyIncome: 50000
+});
+assert(life.lifeCost, 'life cost computed when income is known');
+// 50000/month ÷ 173.33 hours ≈ 288.46/hour; total payable ≈ 119817.83
+approx(life.lifeCost.hourlyIncome, 288.46, 0.5, 'hourly income from a 40-hour week');
+approx(life.lifeCost.hoursTotal, 415.4, 1.0, 'hours of work to repay the whole loan');
+approx(life.lifeCost.weeksTotal, 10.4, 0.1, 'weeks of full-time work');
+assert(life.lifeCost.hoursCost < life.lifeCost.hoursTotal, 'borrowing cost is a subset of total hours');
+var noIncome = L.calculate({ principal: 1000, annualRatePercent: 10, months: 12, interestType: 'reducing', currency: 'USD' });
+assert(noIncome.lifeCost === null, 'no life cost without income');
+
+// --- Opportunity timeline ---
+var timeline = L.calculate({
+  principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
+  opportunityRatePercent: 12
+});
+assert(timeline.opportunityTimeline.length === 3, 'timeline covers 1, 3, and 5 years');
+approx(timeline.opportunityTimeline[0].saved, timeline.emi * 12, 0.5, '1-year set-aside = 12 payments');
+assert(timeline.opportunityTimeline[0].invested > timeline.opportunityTimeline[0].saved, 'investing beats cash at 12%');
+assert(timeline.opportunityTimeline[2].gain > timeline.opportunityTimeline[0].gain, 'compounding grows with time');
+var zeroOpp = L.calculate({
+  principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
+  opportunityRatePercent: 0
+});
+approx(zeroOpp.opportunityTimeline[1].invested, zeroOpp.opportunityTimeline[1].saved, 0.5, '0% return matches cash');
+
+// --- Affordability verdict ---
+var danger = L.calculate({
+  principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
+  grossMonthlyIncome: 20000, existingMonthlyRepayments: 6000, emergencyFund: 'no'
+});
+assert(danger.affordability.level === 'danger', 'high DTI → danger verdict');
+assert(danger.affordability.emergencyBuffer === 'fail', 'missing emergency fund fails the buffer check');
+assert(danger.affordability.reasons.length > 1, 'verdict explains itself');
+
+var safe = L.calculate({
+  principal: 100000, annualRatePercent: 9, months: 24, interestType: 'reducing', currency: 'INR',
+  grossMonthlyIncome: 200000, existingMonthlyRepayments: 0, emergencyFund: 'yes'
+});
+assert(safe.affordability.level === 'safe', 'comfortable numbers → safe verdict');
+approx(safe.affordability.margin, 200000 - safe.emi, 1.0, 'margin = income − all loan payments');
+
+var caution = L.calculate({
+  principal: 100000, annualRatePercent: 28, months: 24, interestType: 'reducing', currency: 'INR',
+  grossMonthlyIncome: 200000, emergencyFund: 'yes'
+});
+assert(caution.affordability.level === 'caution', 'expensive rate alone → caution');
+
+var unknown = L.calculate({ principal: 100000, annualRatePercent: 9, months: 24, interestType: 'reducing', currency: 'INR' });
+assert(unknown.affordability.level === 'unknown', 'no income and no fund answer → no verdict');
+
+// --- Reason risk metadata ---
+assert(A.REASONS.every(function (x) { return x.risk && x.guidance; }), 'every reason has a risk level and guidance');
+var lifestyleAdvice = A.buildAdvice({ reasonId: 'lifestyle', loan: safe });
+assert(lifestyleAdvice.severity === 'critical', 'extreme-risk reason forces highest caution');
+assert(/RISK/i.test(lifestyleAdvice.riskLabel), 'risk label exposed to the UI');
+var educationAdvice = A.buildAdvice({ reasonId: 'education', loan: safe });
+assert(educationAdvice.severity === 'moderate', 'low-risk reason with clean numbers stays moderate');
+assert(A.LENDERS.some(function (l) { return l.id === 'credit_union'; }), 'credit union is an option');
+assert(A.LENDERS.some(function (l) { return l.id === 'employer'; }), 'employer lending is an option');
+var employerAdvice = A.buildAdvice({ reasonId: 'medical', lenderId: 'employer', loan: safe });
+assert(employerAdvice.steps.some(function (s) { return /if you leave/i.test(s.title); }), 'employer loan warns about leaving the job');
+
+// --- Final filter ---
+var allNo = D.evaluateFilter({
+  tier1Total: 6, tier1Checked: 1, reasonBucket: 'lifestyle',
+  stressRatio: 0.9, aprPercent: 40, payoffMonths: 36, hasResult: true, feesEntered: true
+}, {});
+assert(allNo.no >= 3, 'a bad loan trips at least three no answers');
+assert(allNo.level === 'danger', '3+ no answers → danger');
+assert(/sleep on it/i.test(allNo.verdict), 'danger verdict tells the borrower to wait');
+
+var allYes = D.evaluateFilter({
+  tier1Total: 6, tier1Checked: 5, reasonBucket: 'emergency',
+  stressRatio: 0.2, aprPercent: 11, payoffMonths: 12, commitmentSigned: true,
+  hasResult: true, feesEntered: true
+}, { strategy: 'yes' });
+assert(allYes.no === 0 && allYes.unanswered === 0, 'a clean loan answers every question yes');
+assert(allYes.level === 'safe', 'clean loan → safe');
+
+var overridden = D.evaluateFilter({
+  tier1Total: 6, tier1Checked: 5, reasonBucket: 'emergency',
+  stressRatio: 0.2, aprPercent: 11, payoffMonths: 12, commitmentSigned: true,
+  hasResult: true, feesEntered: true
+}, { rate: 'no' });
+assert(overridden.rows.filter(function (r) { return r.id === 'rate'; })[0].source === 'manual',
+  'a manual answer overrides the derived one');
+assert(overridden.no === 1, 'override is counted');
+
+var empty = D.evaluateFilter({}, {});
+assert(empty.unanswered === D.FILTER_QUESTIONS.length, 'nothing is assumed without inputs');
+assert(empty.level === 'unknown', 'no inputs → no verdict');
+assert(D.ESCAPE_TIERS[0].items.length >= 5 && D.RED_FLAGS.length >= 5, 'escape routes and red flags present');
 
 if (failed) {
   console.error('\n' + failed + ' failure(s)');

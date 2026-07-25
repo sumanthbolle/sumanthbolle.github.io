@@ -7,16 +7,21 @@
   var C = window.SYCurrency;
   var MathLib = window.SYLoanMath;
   var Advice = window.SYAdvice;
+  var Decision = window.SYDecision;
 
   var PREF_KEY = 'sy_prefs_v1';
+  var PLAN_KEY = 'sy_plan_v1';
   var locale = C.detectLocale();
   var state = {
     currency: C.detectDefaultCurrency(locale),
     currencyOptions: [],
     lastResult: null,
     lastAdvice: null,
+    lastFilter: null,
     touched: Object.create(null),
-    interacted: false
+    interacted: false,
+    escape: Object.create(null),
+    filterAnswers: Object.create(null)
   };
 
   function $(id) { return document.getElementById(id); }
@@ -46,6 +51,40 @@
   }
   function clearPrefs() {
     try { localStorage.removeItem(PREF_KEY); } catch (e) { /* ignore */ }
+  }
+
+  /* ---------- Plan: checklist, filter answers, commitment ---------- */
+  var COMMIT_FIELDS = ['commitDate', 'commitExtra', 'commitBuffer', 'commitPerson'];
+
+  function loadPlan() {
+    try {
+      var raw = localStorage.getItem(PLAN_KEY);
+      if (!raw) return;
+      var p = JSON.parse(raw);
+      if (!p || typeof p !== 'object') return;
+      if (p.escape && typeof p.escape === 'object') state.escape = p.escape;
+      if (p.filter && typeof p.filter === 'object') state.filterAnswers = p.filter;
+      if (p.commit && typeof p.commit === 'object') {
+        COMMIT_FIELDS.forEach(function (id) {
+          if (typeof p.commit[id] === 'string' && $(id)) $(id).value = p.commit[id];
+        });
+      }
+    } catch (e) { /* ignore */ }
+  }
+  function savePlan() {
+    try {
+      var commit = {};
+      COMMIT_FIELDS.forEach(function (id) { commit[id] = $(id) ? $(id).value : ''; });
+      localStorage.setItem(PLAN_KEY, JSON.stringify({
+        escape: state.escape, filter: state.filterAnswers, commit: commit
+      }));
+    } catch (e) { /* ignore */ }
+  }
+  function clearPlan() {
+    try { localStorage.removeItem(PLAN_KEY); } catch (e) { /* ignore */ }
+    state.escape = Object.create(null);
+    state.filterAnswers = Object.create(null);
+    COMMIT_FIELDS.forEach(function (id) { if ($(id)) $(id).value = ''; });
   }
 
   /* ---------- Currency combobox ---------- */
@@ -215,8 +254,11 @@
       var label = document.createElement('label');
       label.className = 'choice';
       label.setAttribute('for', id);
+      var risk = Advice.RISK_LABEL[r.risk] || '';
       label.innerHTML = '<input type="radio" name="reason" id="' + id + '" value="' + r.id + '">'
-        + '<span>' + escapeHtml(r.label) + '</span>';
+        + '<span class="choice-body"><span>' + escapeHtml(r.label) + '</span>'
+        + (risk ? '<span class="risk-chip" data-risk="' + escapeHtml(r.risk) + '">' + escapeHtml(risk) + '</span>' : '')
+        + '</span>';
       wrap.appendChild(label);
     });
   }
@@ -315,7 +357,7 @@
   /* ---------- Rendering: results ---------- */
   function setResultsPlaceholder() {
     $('resultsPanel').setAttribute('data-state', 'empty');
-    ['resEmi', 'resTotal', 'resInterest', 'resApr', 'resDaily', 'resOpp', 'resDti'].forEach(function (id) {
+    ['resEmi', 'resTotal', 'resInterest', 'resApr', 'resDaily', 'resOpp', 'resDti', 'resHours'].forEach(function (id) {
       $(id).textContent = '—';
     });
     $('resFormula').textContent = 'Enter loan details to see estimated reducing-balance or flat-rate results.';
@@ -327,6 +369,9 @@
     $('compareViz').hidden = true;
     $('dtiMetric').hidden = true;
     $('oppMetric').hidden = true;
+    $('lifeMetric').hidden = true;
+    $('affordBox').hidden = true;
+    $('oppTimeline').hidden = true;
     $('liveSummary').textContent = '';
     setButtons(false);
   }
@@ -388,9 +433,12 @@
       $('oppMetric').hidden = true;
     }
 
+    renderLifeCost(result);
+    renderAffordability(result);
     renderSplit(result);
     renderBurn(result);
     renderComparisons(result);
+    renderOpportunityTimeline(result);
 
     var warn = $('warnings');
     warn.innerHTML = '';
@@ -427,6 +475,60 @@
 
     state.lastResult = result;
     setButtons(true);
+  }
+
+  function renderLifeCost(result) {
+    var life = result.lifeCost;
+    if (!life) { $('lifeMetric').hidden = true; return; }
+    $('lifeMetric').hidden = false;
+    $('resHours').textContent = C.formatNumber(life.hoursTotal, 0, locale) + ' hrs';
+    $('resHoursNote').textContent = 'About ' + C.formatNumber(life.weeksTotal, 1, locale)
+      + ' weeks of full-time work at your income — of which '
+      + C.formatNumber(life.hoursCost, 0, locale) + ' hrs pay for the borrowing itself.';
+  }
+
+  function renderAffordability(result) {
+    var a = result.affordability;
+    var box = $('affordBox');
+    if (!a || a.level === 'unknown') { box.hidden = true; return; }
+    box.hidden = false;
+    var ccy = result.currency;
+    var badge = $('affordVerdict');
+    badge.setAttribute('data-level', a.level);
+    badge.textContent = a.label;
+    $('affordDti').textContent = result.dti ? C.formatNumber(result.dti.percent, 0, locale) + '%' : '—';
+    $('affordMargin').textContent = a.margin == null
+      ? '—'
+      : C.formatMoney(a.margin, ccy, locale) + ' / month';
+    $('affordBuffer').textContent = a.emergencyBuffer === 'pass' ? 'Pass'
+      : a.emergencyBuffer === 'partial' ? 'Partial'
+        : a.emergencyBuffer === 'fail' ? 'Fail' : 'Not answered';
+    var list = $('affordReasons');
+    list.innerHTML = '';
+    a.reasons.forEach(function (text) {
+      var li = document.createElement('li');
+      li.textContent = text;
+      list.appendChild(li);
+    });
+  }
+
+  function renderOpportunityTimeline(result) {
+    var wrap = $('oppTimeline');
+    var rows = result.opportunityTimeline;
+    if (!$('refine').open || !rows || !rows.length) { wrap.hidden = true; return; }
+    wrap.hidden = false;
+    var ccy = result.currency;
+    var rate = result.opportunity ? result.opportunity.ratePercent : 0;
+    $('oppInvestedHead').textContent = 'Invested @ ' + C.formatNumber(rate, 0, locale) + '%';
+    var html = '';
+    rows.forEach(function (row) {
+      html += '<tr><td>' + escapeHtml(row.label) + '</td><td>'
+        + escapeHtml(C.formatMoney(row.saved, ccy, locale)) + '</td><td class="save">'
+        + escapeHtml(C.formatMoney(row.invested, ccy, locale)) + '</td></tr>';
+    });
+    $('oppTimelineBody').innerHTML = html;
+    $('oppTimelineNote').textContent = 'If you set aside the ' + C.formatMoney(result.emi, ccy, locale)
+      + ' monthly payment instead of committing it to this loan. Investment returns are never guaranteed.';
   }
 
   function renderSplit(result) {
@@ -553,6 +655,14 @@
     state.lastAdvice = advice;
     $('advicePanel').hidden = false;
     $('adviceHeadline').textContent = advice.headline;
+    var guidance = $('reasonGuidance');
+    if (advice.reasonGuidance) {
+      guidance.hidden = false;
+      guidance.textContent = advice.reason.label + ' · ' + advice.riskLabel + ' — ' + advice.reasonGuidance;
+    } else {
+      guidance.hidden = true;
+      guidance.textContent = '';
+    }
     $('adviceSeverity').textContent = severityLabel(advice.severity);
     $('adviceSeverity').setAttribute('data-level', advice.severity);
 
@@ -598,6 +708,202 @@
     });
   }
 
+  /* ---------- Rendering: before you sign ---------- */
+  function renderEscapeTiers() {
+    var wrap = $('escapeTiers');
+    wrap.innerHTML = '';
+    Decision.ESCAPE_TIERS.forEach(function (tier) {
+      var section = document.createElement('div');
+      section.className = 'tier';
+      section.setAttribute('data-tier', tier.id);
+      var items = tier.items.map(function (item) {
+        var key = tier.id + '.' + item.id;
+        return '<li><label><input type="checkbox" data-escape="' + escapeHtml(key) + '"'
+          + (state.escape[key] ? ' checked' : '') + '><span>' + escapeHtml(item.label) + '</span></label></li>';
+      }).join('');
+      section.innerHTML = '<h3>' + escapeHtml(tier.title) + '</h3>'
+        + '<p>' + escapeHtml(tier.note) + '</p>'
+        + '<ul class="check-list">' + items + '</ul>'
+        + '<p class="tier-progress" data-progress="' + escapeHtml(tier.id) + '"></p>';
+      wrap.appendChild(section);
+    });
+    wrap.addEventListener('change', function (e) {
+      var box = e.target.closest('input[data-escape]');
+      if (!box) return;
+      var key = box.getAttribute('data-escape');
+      if (box.checked) state.escape[key] = true;
+      else delete state.escape[key];
+      savePlan();
+      updateTierProgress();
+      renderFilter();
+    });
+    updateTierProgress();
+  }
+
+  function tierCount(tier) {
+    var checked = 0;
+    tier.items.forEach(function (item) {
+      if (state.escape[tier.id + '.' + item.id]) checked += 1;
+    });
+    return checked;
+  }
+
+  function updateTierProgress() {
+    Decision.ESCAPE_TIERS.forEach(function (tier) {
+      var el = document.querySelector('[data-progress="' + tier.id + '"]');
+      if (!el) return;
+      var checked = tierCount(tier);
+      el.textContent = checked + ' of ' + tier.items.length + ' tried'
+        + (tier.id === 'tier1' && checked < 3 ? ' — the final filter looks for at least three.' : '');
+    });
+  }
+
+  function renderLadder() {
+    var body = $('ladderBody');
+    body.innerHTML = Decision.LENDER_LADDER.map(function (row) {
+      return '<tr data-tone="' + escapeHtml(row.tone) + '"><td>' + escapeHtml(row.label)
+        + '</td><td>' + escapeHtml(row.apr) + '</td><td>' + escapeHtml(row.use) + '</td></tr>';
+    }).join('');
+  }
+
+  function renderRedFlags() {
+    var list = $('redFlagList');
+    list.innerHTML = '';
+    Decision.RED_FLAGS.forEach(function (text) {
+      var li = document.createElement('li');
+      li.textContent = text;
+      list.appendChild(li);
+    });
+  }
+
+  /* ---------- Rendering: final filter ---------- */
+  function buildFilterContext() {
+    var r = state.lastResult && state.lastResult.ok ? state.lastResult : null;
+    var tier1 = Decision.ESCAPE_TIERS[0];
+    var reason = document.querySelector('input[name="reason"]:checked');
+    var reasonMeta = reason ? Advice.reasonById(reason.value) : null;
+    var payoffMonths = null;
+    if (r) payoffMonths = r.withExtra && r.withExtra.months > 0 ? r.withExtra.months : r.months;
+    return {
+      tier1Total: tier1.items.length,
+      tier1Checked: tierCount(tier1),
+      reasonBucket: reasonMeta ? reasonMeta.bucket : null,
+      reasonLabel: reasonMeta ? reasonMeta.label : null,
+      stressRatio: r && r.affordability ? r.affordability.stressRatio : null,
+      aprPercent: r ? r.aprPercent : null,
+      payoffMonths: payoffMonths,
+      commitmentSigned: !!($('commitDate').value && $('commitPerson').value.trim()),
+      hasResult: !!r,
+      feesEntered: !!(r && r.fees && r.fees.total > 0)
+    };
+  }
+
+  function renderFilter() {
+    var evaluation = Decision.evaluateFilter(buildFilterContext(), state.filterAnswers);
+    state.lastFilter = evaluation;
+    var list = $('filterList');
+    // The list is rebuilt on every keystroke, so remember which button had focus.
+    var active = document.activeElement;
+    var focused = active && active.matches && active.matches('#filterList button[data-filter]')
+      ? '[data-filter="' + active.getAttribute('data-filter') + '"][data-val="' + active.getAttribute('data-val') + '"]'
+      : null;
+    list.innerHTML = evaluation.rows.map(function (row) {
+      var meta;
+      if (row.answer && row.source === 'derived') {
+        meta = (row.answer === 'yes' ? row.yes : row.no) + ' · From your numbers'
+          + (row.note ? ': ' + row.note : '');
+      } else if (row.answer) {
+        meta = row.answer === 'yes' ? row.yes : row.no;
+      } else {
+        meta = 'Yes → ' + row.yes + ' · No → ' + row.no + (row.note ? ' · ' + row.note : '');
+      }
+      return '<li class="filter-row" data-answer="' + (row.answer || '') + '">'
+        + '<span class="filter-q"><span class="q">' + escapeHtml(row.question) + '</span>'
+        + '<span class="meta">' + escapeHtml(meta) + '</span></span>'
+        + '<span class="segmented" role="group" aria-label="' + escapeHtml(row.question) + '">'
+        + segButton(row, 'yes') + segButton(row, 'no')
+        + '</span></li>';
+    }).join('');
+
+    if (focused) {
+      var restore = list.querySelector('button' + focused);
+      if (restore) restore.focus();
+    }
+
+    var badge = $('filterBadge');
+    badge.setAttribute('data-level', evaluation.level);
+    badge.textContent = evaluation.no > 0
+      ? evaluation.no + ' × no'
+      : evaluation.unanswered ? evaluation.unanswered + ' unanswered' : 'All clear';
+    var verdict = $('filterVerdict');
+    verdict.setAttribute('data-level', evaluation.level);
+    // Assigning identical text can re-announce in some screen readers.
+    if (verdict.textContent !== evaluation.verdict) verdict.textContent = evaluation.verdict;
+  }
+
+  function segButton(row, value) {
+    var pressed = row.answer === value;
+    var manual = pressed && row.source === 'manual';
+    return '<button type="button" class="seg-btn" data-filter="' + escapeHtml(row.id)
+      + '" data-val="' + value + '" aria-pressed="' + (pressed ? 'true' : 'false') + '"'
+      + (manual ? ' title="Click again to go back to the calculated answer"' : '')
+      + '>' + (value === 'yes' ? 'Yes' : 'No') + '</button>';
+  }
+
+  function bindFilter() {
+    $('filterList').addEventListener('click', function (e) {
+      var btn = e.target.closest('button[data-filter]');
+      if (!btn) return;
+      var id = btn.getAttribute('data-filter');
+      var val = btn.getAttribute('data-val');
+      if (state.filterAnswers[id] === val) delete state.filterAnswers[id];
+      else state.filterAnswers[id] = val;
+      savePlan();
+      renderFilter();
+    });
+  }
+
+  /* ---------- Rendering: commitment ---------- */
+  function commitValues() {
+    var extra = C.parseAmount($('commitExtra').value || '');
+    var buffer = C.parseAmount($('commitBuffer').value || '');
+    return {
+      date: $('commitDate').value || '',
+      extra: extra.ok && extra.value > 0 ? extra.value : null,
+      buffer: buffer.ok && buffer.value > 0 ? buffer.value : null,
+      person: ($('commitPerson').value || '').trim()
+    };
+  }
+
+  function formatCommitDate(value) {
+    if (!value) return null;
+    var parts = value.split('-');
+    var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    if (isNaN(d.getTime())) return null;
+    try {
+      return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+    } catch (e) {
+      return value;
+    }
+  }
+
+  function commitLines() {
+    var v = commitValues();
+    var ccy = state.currency;
+    return [
+      'I will clear this loan by ' + (formatCommitDate(v.date) || '________'),
+      'I will earn or free up an extra ' + (v.extra ? C.formatMoney(v.extra, ccy, locale) : '________') + ' each month until it is gone',
+      'I will not borrow again until I have ' + (v.buffer ? C.formatMoney(v.buffer, ccy, locale) : '________') + ' saved',
+      'I will check in with ' + (v.person || '________')
+    ];
+  }
+
+  function renderCommit() {
+    $('commitPreview').textContent = commitLines().map(function (line, i) {
+      return (i + 1) + '. ' + line + '.';
+    }).join('\n');
+  }
+
   function severityLabel(level) {
     if (level === 'critical') return 'Highest caution';
     if (level === 'high') return 'Extra caution';
@@ -615,6 +921,7 @@
       $('advicePanel').hidden = true;
       state.lastResult = null;
       updateSticky();
+      renderFilter();
       return;
     }
 
@@ -629,6 +936,7 @@
       fees: form.fees,
       grossMonthlyIncome: form.grossMonthlyIncome,
       existingMonthlyRepayments: form.existingMonthlyRepayments,
+      emergencyFund: form.emergencyFund,
       withComparisons: true
     });
 
@@ -649,6 +957,7 @@
     }
 
     updateSticky();
+    renderFilter();
   }
 
   function updateSticky() {
@@ -683,6 +992,17 @@
     if (r.dti) {
       lines.push('Debt-to-income with this EMI: ' + C.formatNumber(r.dti.percent, 0, locale) + '%');
     }
+    if (r.lifeCost) {
+      lines.push('Work to repay: ' + C.formatNumber(r.lifeCost.hoursTotal, 0, locale) + ' hours ('
+        + C.formatNumber(r.lifeCost.weeksTotal, 1, locale) + ' full-time weeks)');
+    }
+    if (r.affordability && r.affordability.level !== 'unknown') {
+      lines.push('Affordability verdict: ' + r.affordability.label
+        + (r.affordability.margin != null
+          ? ' · margin after all loan payments ' + C.formatMoney(r.affordability.margin, r.currency, locale) + '/month'
+          : ''));
+      r.affordability.reasons.forEach(function (reason) { lines.push('  · ' + reason); });
+    }
     if (r.opportunity && r.opportunity.futureValue > 0) {
       lines.push('Opportunity illustration (' + r.opportunity.ratePercent + '%): '
         + C.formatMoney(r.opportunity.futureValue, r.currency, locale));
@@ -699,14 +1019,52 @@
           + ', save ' + C.formatMoney(c.interestSaved, r.currency, locale) + ' interest');
       });
     }
+    if (r.opportunityTimeline) {
+      lines.push('', 'If the payment were set aside instead:');
+      r.opportunityTimeline.forEach(function (row) {
+        lines.push('  · ' + row.label + ': ' + C.formatMoney(row.saved, r.currency, locale)
+          + ' set aside, ' + C.formatMoney(row.invested, r.currency, locale) + ' invested');
+      });
+    }
     if (state.lastAdvice) {
       lines.push('', 'Guidance: ' + state.lastAdvice.headline);
+      lines.push('Reason: ' + state.lastAdvice.reason.label + ' (' + state.lastAdvice.riskLabel + ')');
       lines.push('Top actions:');
       state.lastAdvice.topActions.forEach(function (a) { lines.push('  · ' + a.title); });
     }
+
+    var tried = escapeRoutesTried();
+    if (tried.length) {
+      lines.push('', 'Cheaper options already tried:');
+      tried.forEach(function (label) { lines.push('  · ' + label); });
+    }
+
+    if (state.lastFilter) {
+      lines.push('', 'Final filter — ' + state.lastFilter.verdict);
+      state.lastFilter.rows.forEach(function (row) {
+        lines.push('  [' + (row.answer ? row.answer.toUpperCase() : ' ? ') + '] ' + row.question);
+      });
+    }
+
+    var commit = commitValues();
+    if (commit.date || commit.extra || commit.buffer || commit.person) {
+      lines.push('', 'My commitment:');
+      commitLines().forEach(function (line, i) { lines.push('  ' + (i + 1) + '. ' + line + '.'); });
+    }
+
     lines.push('', 'Educational estimate only — not financial advice. Verify exact terms with the lender.',
       'https://sumanthbolle.com/save-yourself');
     return lines.join('\n');
+  }
+
+  function escapeRoutesTried() {
+    var out = [];
+    Decision.ESCAPE_TIERS.forEach(function (tier) {
+      tier.items.forEach(function (item) {
+        if (state.escape[tier.id + '.' + item.id]) out.push(item.label);
+      });
+    });
+    return out;
   }
 
   async function copySummary() {
@@ -788,10 +1146,23 @@
 
     $('refine').addEventListener('toggle', function () { recalculate(); });
 
+    COMMIT_FIELDS.forEach(function (id) {
+      var el = $(id);
+      if (!el) return;
+      el.addEventListener('input', function () {
+        markInteracted();
+        savePlan();
+        renderCommit();
+        renderFilter();
+      });
+      el.addEventListener('change', function () { savePlan(); renderCommit(); renderFilter(); });
+    });
+
     $('copySummary').addEventListener('click', copySummary);
     $('downloadSummary').addEventListener('click', downloadSummary);
     $('clearData').addEventListener('click', function () {
       clearPrefs();
+      clearPlan();
       ['amount', 'rate', 'tenure', 'extraPayment', 'processingFee', 'otherFees', 'income',
         'existingDebt', 'problemSentence'].forEach(function (id) { $(id).value = ''; });
       $('prepayPenalty').value = '0';
@@ -800,6 +1171,9 @@
       state.submitAttempted = false;
       var checkedReason = document.querySelector('input[name="reason"]:checked');
       if (checkedReason) checkedReason.checked = false;
+      document.querySelectorAll('input[data-escape]').forEach(function (box) { box.checked = false; });
+      updateTierProgress();
+      renderCommit();
       setResultsPlaceholder();
       $('advicePanel').hidden = true;
       flashStatus('Local data cleared.');
@@ -831,14 +1205,20 @@
 
   function init() {
     loadPrefs();
+    loadPlan();
     buildCurrencyOptions();
     $('currencyInput').value = currentCurrencyLabel();
     populateLenders();
     populateReasons();
+    renderEscapeTiers();
+    renderLadder();
+    renderRedFlags();
+    renderCommit();
     updateCurrencyChrome();
     setResultsPlaceholder();
     bindCombo();
     bindLive();
+    bindFilter();
 
     if (window.SBShared) {
       window.SBShared.initNavMenu();
