@@ -7,24 +7,62 @@
   'use strict';
 
   var REASONS = [
-    { id: 'medical', label: 'Medical / Family emergency', bucket: 'emergency' },
-    { id: 'job_gap', label: 'Job loss or income gap', bucket: 'emergency' },
-    { id: 'education', label: 'Education / Skill upgrade', bucket: 'invest' },
-    { id: 'business', label: 'Business or side hustle', bucket: 'invest' },
-    { id: 'consolidation', label: 'Debt consolidation', bucket: 'debt' },
-    { id: 'wedding', label: 'Wedding / Family function', bucket: 'lifestyle' },
-    { id: 'lifestyle', label: 'Lifestyle / Gadget / Travel', bucket: 'lifestyle' },
-    { id: 'home', label: 'Home / Rent related', bucket: 'mixed' },
-    { id: 'other', label: 'Other', bucket: 'mixed' }
+    {
+      id: 'medical', label: 'Medical / Family emergency', bucket: 'emergency', risk: 'medium',
+      guidance: 'Ask about hospital financial assistance, itemised bill review, and interest-free payment plans before borrowing commercially.'
+    },
+    {
+      id: 'job_gap', label: 'Job loss or income gap', bucket: 'emergency', risk: 'high',
+      guidance: 'Claim any unemployment or hardship support, add short-term income, and consider selling idle assets before adding a fixed monthly payment.'
+    },
+    {
+      id: 'education', label: 'Education / Skill upgrade', bucket: 'invest', risk: 'low',
+      guidance: 'Verify the return first. Scholarships, employer sponsorship, and income-share options usually beat a personal loan.'
+    },
+    {
+      id: 'business', label: 'Business or side hustle', bucket: 'invest', risk: 'high',
+      guidance: 'Validate demand at near-zero cost first. Start smaller than planned and let early profit fund the next step.'
+    },
+    {
+      id: 'consolidation', label: 'Debt consolidation', bucket: 'debt', risk: 'medium',
+      guidance: 'Only worth it when the new effective rate beats the weighted average of what you already owe — and the old accounts actually close.'
+    },
+    {
+      id: 'wedding', label: 'Wedding / Family function', bucket: 'lifestyle', risk: 'high',
+      guidance: 'Scale the event to what you can cash-flow. Borrowed celebrations are repaid long after the day is over.'
+    },
+    {
+      id: 'lifestyle', label: 'Lifestyle / Gadget / Travel', bucket: 'lifestyle', risk: 'extreme',
+      guidance: 'This is the one case where the answer is usually simply no. If it cannot be paid in cash, it is not yet affordable.'
+    },
+    {
+      id: 'home', label: 'Home / Rent related', bucket: 'mixed', risk: 'medium',
+      guidance: 'Talk to the landlord about a payment plan, look at sharing costs, and check local housing assistance before signing.'
+    },
+    {
+      id: 'other', label: 'Other', bucket: 'mixed', risk: 'unknown',
+      guidance: 'Describe the situation in one sentence below — the guidance sharpens once the real problem is named.'
+    }
   ];
+
+  var RISK_LABEL = {
+    low: 'Low risk',
+    medium: 'Medium risk',
+    high: 'High risk',
+    extreme: 'Extreme risk',
+    unknown: 'Risk depends on details'
+  };
 
   var LENDERS = [
     { id: 'bank', label: 'Bank' },
-    { id: 'nbfc', label: 'NBFC' },
-    { id: 'credit_card', label: 'Credit Card' },
-    { id: 'friend', label: 'Friend' },
+    { id: 'credit_union', label: 'Credit union' },
+    { id: 'nbfc', label: 'NBFC / finance company' },
+    { id: 'credit_card', label: 'Credit card' },
+    { id: 'p2p', label: 'P2P lending platform' },
+    { id: 'employer', label: 'Employer / salary advance' },
     { id: 'family', label: 'Family' },
-    { id: 'payday', label: 'Payday' },
+    { id: 'friend', label: 'Friend' },
+    { id: 'payday', label: 'Payday / title lender' },
     { id: 'other', label: 'Other' }
   ];
 
@@ -133,7 +171,33 @@
       });
     }
 
-    triggered.push({ id: 'reason_' + reason.id, label: 'Reason: ' + reason.label });
+    if (ctx.lenderId === 'employer') {
+      triggered.push({ id: 'employer_lender', label: 'Employer / salary advance' });
+      reasonActions.push({
+        title: 'Check what happens if you leave',
+        detail: 'Employer advances and workplace loans usually fall due in full when the job ends. Confirm that clause before you accept one.'
+      });
+    }
+
+    if (ctx.lenderId === 'p2p') {
+      triggered.push({ id: 'p2p_lender', label: 'P2P lending platform' });
+      reasonActions.push({
+        title: 'Read the platform fees, not just the rate',
+        detail: 'P2P origination and servicing fees are charged separately from interest. Put them in the fee fields above so the effective rate tells the truth.'
+      });
+    }
+
+    if (reason.risk === 'extreme') {
+      triggered.push({ id: 'extreme_reason_risk', label: 'Reason carries extreme risk' });
+      severity = 'critical';
+    } else if (reason.risk === 'high' && severity === 'moderate') {
+      severity = 'high';
+    }
+
+    triggered.push({
+      id: 'reason_' + reason.id,
+      label: 'Reason: ' + reason.label + (RISK_LABEL[reason.risk] ? ' (' + RISK_LABEL[reason.risk].toLowerCase() + ')' : '')
+    });
 
     var headline = '';
     if (reason.bucket === 'lifestyle') {
@@ -243,6 +307,8 @@
     return {
       reason: reason,
       severity: severity,
+      riskLabel: RISK_LABEL[reason.risk] || RISK_LABEL.unknown,
+      reasonGuidance: reason.guidance,
       headline: headline,
       honestQuestion: HONEST_QUESTION[reason.bucket] || HONEST_QUESTION.mixed,
       triggeredRules: triggered,
@@ -331,6 +397,7 @@
   global.SYAdvice = {
     REASONS: REASONS,
     LENDERS: LENDERS,
+    RISK_LABEL: RISK_LABEL,
     reasonById: reasonById,
     buildAdvice: buildAdvice
   };

@@ -114,7 +114,7 @@
     @media(max-width:480px){.agent-callout{flex-direction:column;align-items:flex-start}.agent-callout-cta{width:100%;justify-content:center}}
 
     .layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:16px;margin-top:18px;align-items:start}
-    .stack{display:flex;flex-direction:column;gap:16px}
+    .stack{display:flex;flex-direction:column;gap:16px;min-width:0}
     .section{background:var(--white);border-radius:22px;padding:28px;box-shadow:var(--card-shadow);border:1px solid var(--card-line)}
     .section.highlight{border-color:rgba(0,102,204,0.28);box-shadow:0 2px 16px rgba(0,102,204,0.08)}
     .section-label{margin:0 0 8px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
@@ -125,6 +125,7 @@
     .field{display:flex;flex-direction:column;gap:5px;min-width:0}
     .field.full{grid-column:1/-1}
     .field label,.field .lbl{display:block;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.7px}
+    .hint{font-size:12px;color:var(--gray);line-height:1.45}
     .field .hint{font-size:12px;color:var(--gray);line-height:1.4;text-transform:none;letter-spacing:0;font-weight:400}
     .input-wrap{display:flex;align-items:stretch;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--input-bg);overflow:hidden}
     .input-wrap:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,0.14)}
@@ -132,7 +133,7 @@
     .input-suffix{display:flex;align-items:center;padding:0 12px;background:var(--bg);color:var(--gray);font-size:13px;font-weight:600;border-left:1px solid var(--input-line);white-space:nowrap}
     .input-wrap input,.input-wrap select{border:0;background:transparent;min-height:42px;padding:0 12px;width:100%;min-width:0}
     .input-wrap input:focus,.input-wrap select:focus{outline:none;box-shadow:none}
-    select,input[type=number],input[type=text],textarea{min-height:42px;padding:0 12px;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--input-bg);color:var(--text);width:100%}
+    select,input[type=number],input[type=text],input[type=date],textarea{min-height:42px;padding:0 12px;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--input-bg);color:var(--text);width:100%}
     textarea{min-height:80px;padding:12px;resize:vertical;line-height:1.45}
     select{padding-right:34px;cursor:pointer}
     select:focus,input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,204,0.14);outline:none}
@@ -161,6 +162,10 @@
     .segmented span{display:inline-flex;align-items:center;min-height:34px;padding:0 12px;border-radius:8px;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer}
     .segmented input:checked+span{background:var(--white);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
     .segmented input:focus-visible+span{outline:2px solid var(--blue);outline-offset:2px}
+    .segmented .seg-btn{border:0;background:none;min-height:34px;padding:0 16px;border-radius:8px;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer}
+    .segmented .seg-btn[aria-pressed="true"]{background:var(--white);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+    .segmented .seg-btn[data-val="yes"][aria-pressed="true"]{color:var(--green)}
+    .segmented .seg-btn[data-val="no"][aria-pressed="true"]{color:var(--cost-text)}
 
     .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .choice{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line);cursor:pointer;transition:border-color .2s,background .2s}
@@ -168,6 +173,11 @@
     .choice:has(input:checked){border-color:var(--blue);background:color-mix(in srgb,var(--blue) 8%,var(--bg))}
     .choice input{margin-top:3px;accent-color:var(--blue);width:16px;height:16px;flex:0 0 auto}
     .choice span{font-size:14px;line-height:1.35}
+    .choice-body{display:flex;flex-direction:column;gap:3px;min-width:0}
+    .risk-chip{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gray)}
+    .risk-chip[data-risk="low"]{color:var(--green)}
+    .risk-chip[data-risk="high"]{color:var(--amber)}
+    .risk-chip[data-risk="extreme"]{color:var(--cost-text)}
 
     .btn{min-height:42px;padding:0 16px;border:1px solid var(--input-line);border-radius:var(--radius-xs);background:var(--bg);color:var(--text);cursor:pointer;transition:background .2s,border-color .2s;font-weight:500}
     .btn:hover{border-color:var(--blue);color:var(--blue)}
@@ -200,14 +210,14 @@
     .live-pill{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent);padding:5px 9px;border-radius:999px;white-space:nowrap}
     .headline-metric{padding:16px 18px;border-radius:var(--radius-sm);background:linear-gradient(180deg,color-mix(in srgb,var(--blue) 8%,var(--bg)),var(--bg));border:1px solid color-mix(in srgb,var(--blue) 18%,var(--card-line));margin-bottom:12px}
     .headline-metric .metric-label{color:var(--blue)}
-    .headline-value{font-size:clamp(28px,4.5vw,38px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;line-height:1.1}
+    .headline-value{font-size:clamp(28px,4.5vw,38px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;line-height:1.1;overflow-wrap:anywhere}
     .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .metric{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
     .metric.wide{grid-column:1/-1}
     .metric.cost{background:var(--cost-bg);border-color:var(--cost-line)}
     .metric.cost .metric-value{color:var(--cost-text)}
     .metric-label{display:block;font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.55px;margin-bottom:6px}
-    .metric-value{font-size:clamp(19px,2.6vw,24px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;line-height:1.15}
+    .metric-value{font-size:clamp(19px,2.6vw,24px);font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums lining-nums;line-height:1.15;overflow-wrap:anywhere}
     .metric-sub{margin-top:6px;font-size:12px;color:var(--gray);line-height:1.45}
 
     /* Split bar: principal vs cost of borrowing */
@@ -233,10 +243,31 @@
     .burn-legend .key{display:inline-flex;align-items:center;gap:6px}
     .burn-legend .swatch{width:14px;height:3px;border-radius:2px;display:inline-block}
 
+    .viz-title{font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.55px;margin-bottom:10px}
+
+    /* Affordability verdict */
+    .verdict{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;background:var(--bg);border:1px solid var(--card-line);color:var(--gray);white-space:nowrap}
+    .verdict::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+    .verdict[data-level="safe"]{color:var(--green);background:var(--ok-bg);border-color:var(--ok-line)}
+    .verdict[data-level="caution"]{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent);border-color:color-mix(in srgb,var(--amber) 35%,transparent)}
+    .verdict[data-level="danger"]{color:var(--cost-text);background:var(--cost-bg);border-color:var(--cost-line)}
+    .afford{margin-top:16px;padding:16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
+    .afford-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+    .afford-head h3{font-size:13px;font-weight:600}
+    .afford-rows{display:flex;flex-direction:column;gap:8px}
+    .afford-rows>div{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:13px}
+    .afford-rows dt{color:var(--gray)}
+    .afford-rows dd{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+    .afford-reasons{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:6px}
+    .afford-reasons li{font-size:12px;color:var(--gray);line-height:1.5;padding-left:14px;position:relative}
+    .afford-reasons li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:var(--card-line)}
+
     /* Comparison */
-    .compare{margin-top:18px}
+    .compare{margin-top:18px;overflow-x:auto}
     .compare table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
-    .compare th,.compare td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--card-line);white-space:nowrap}
+    .compare th,.compare td{padding:9px 6px;text-align:right;border-bottom:1px solid var(--card-line);white-space:nowrap}
+    .compare td:first-child,.compare th:first-child{padding-left:0}
+    .compare td:last-child,.compare th:last-child{padding-right:0}
     .compare th:first-child,.compare td:first-child{text-align:left;white-space:normal}
     .compare thead th{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
     .compare tr.current td{font-weight:600}
@@ -267,6 +298,8 @@
     .severity{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;background:var(--bg);border:1px solid var(--card-line);color:var(--gray)}
     .severity[data-level="high"]{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 35%,transparent);background:color-mix(in srgb,var(--amber) 12%,transparent)}
     .severity[data-level="critical"]{color:var(--cost-text);border-color:var(--cost-line);background:var(--cost-bg)}
+    .reason-guidance{margin:-8px 0 4px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line);border-left:3px solid var(--blue);font-size:14px;line-height:1.55}
+    .reason-guidance[hidden]{display:none!important}
     .rule-list{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
     .rule-list li{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:var(--bg);border:1px solid var(--card-line);font-size:12px;font-weight:600}
     .rule-list li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--blue)}
@@ -290,6 +323,40 @@
     .plan-list li::before{content:"·";position:absolute;left:0;color:var(--blue);font-weight:700}
     .alt-list{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
     .alt-list li{padding:7px 12px;border-radius:999px;background:var(--chip-bg);border:1px solid var(--card-line);font-size:13px}
+
+    /* Escape routes, ladder, red flags, final filter, commitment */
+    .block-title{font-size:14px;font-weight:600;margin:22px 0 6px}
+    .tier{margin-top:16px;padding:16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
+    .tier h3{font-size:13px;font-weight:600;margin-bottom:4px}
+    .tier p{font-size:12px;color:var(--gray);line-height:1.5;margin-bottom:12px}
+    .check-list{list-style:none;display:flex;flex-direction:column;gap:2px}
+    .check-list label{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:var(--radius-xs);cursor:pointer;font-size:14px;line-height:1.45;min-height:44px}
+    .check-list label:hover{background:var(--card-line)}
+    .check-list input{margin-top:2px;width:17px;height:17px;flex:0 0 auto;accent-color:var(--blue)}
+    .check-list input:checked+span{color:var(--gray);text-decoration:line-through;text-decoration-color:var(--card-line)}
+    .tier-progress{margin-top:10px;font-size:12px;color:var(--gray)}
+    .ladder-wrap{margin-top:10px;overflow-x:auto;border:1px solid var(--card-line);border-radius:var(--radius-sm)}
+    table.ladder-table{width:100%;min-width:420px;border-collapse:collapse;font-size:13px}
+    table.ladder-table th,table.ladder-table td{padding:10px;text-align:left;border-bottom:1px solid var(--card-line);vertical-align:top}
+    table.ladder-table thead th{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em;font-weight:600;position:sticky;top:0;background:var(--bg)}
+    table.ladder-table td:nth-child(2){font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+    table.ladder-table tr[data-tone="avoid"] td{color:var(--cost-text)}
+    table.ladder-table tr[data-tone="avoid"] td:first-child{font-weight:600}
+    .flag-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .flag-list li{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--cost-bg);border:1px solid var(--cost-line);font-size:14px;line-height:1.45}
+    .flag-list li::before{content:"";flex:0 0 auto;width:8px;height:8px;margin-top:7px;border-radius:2px;background:var(--interest)}
+    .filter-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .filter-row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line)}
+    .filter-row[data-answer="no"]{background:var(--cost-bg);border-color:var(--cost-line)}
+    .filter-row[data-answer="yes"]{background:var(--ok-bg);border-color:var(--ok-line)}
+    .filter-q{flex:1 1 260px;min-width:0}
+    .filter-q .q{display:block;font-size:14px;line-height:1.45;font-weight:500}
+    .filter-q .meta{display:block;margin-top:4px;font-size:12px;color:var(--gray);line-height:1.45}
+    .filter-verdict{margin-top:16px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line);font-size:14px;line-height:1.5}
+    .filter-verdict[data-level="danger"]{background:var(--cost-bg);border-color:var(--cost-line);color:var(--cost-text);font-weight:600}
+    .filter-verdict[data-level="safe"]{background:var(--ok-bg);border-color:var(--ok-line)}
+    .commit-preview{margin-top:16px;padding:16px 18px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--card-line);font-size:14px;line-height:1.65;white-space:pre-line}
+    .commit-preview em{color:var(--gray);font-style:normal}
 
     .quote-band{margin:8px 0 0;padding:22px 24px;border-radius:22px;background:var(--white);border:1px solid var(--card-line);box-shadow:var(--card-shadow);text-align:center}
     .quote-band p{font-size:16px;line-height:1.55;color:var(--text);max-width:640px;margin:0 auto}
@@ -375,12 +442,12 @@
     <span class="eyebrow"><span class="privacy-dot" aria-hidden="true"></span> No data leaves your device</span>
     <h1>Save Yourself</h1>
     <p class="lede">Estimate the real cost of borrowing before you take the money.</p>
-    <p class="sub-note">EMI · fees · effective rate (EIR/APR) · every ISO currency · guidance you can act on</p>
+    <p class="sub-note">EMI · fees · effective rate (EIR/APR) · affordability verdict · escape routes · a final go/no-go filter</p>
   </header>
 
   <main id="main" class="main-wrap">
     <div class="privacy-bar">
-      <p><strong>Everything runs locally in your browser.</strong> Nothing is stored on a server or sent anywhere. Optional preferences stay on this device only.</p>
+      <p><strong>Everything runs locally in your browser.</strong> Nothing is stored on a server or sent anywhere. Your currency, checklist ticks, and written commitment are kept on this device so you can come back to them — clear them anytime with the button under the results.</p>
       <span class="badge" title="Client-side only">Private by design</span>
     </div>
 
@@ -482,6 +549,7 @@
         <details class="refine" id="refine">
           <summary>
             <span>
+              <p class="section-label">Step 2 · Refine</p>
               <h2>Refine my assessment</h2>
               <span class="sum-sub">Optional — opportunity cost, extra payments, income &amp; personalized guidance</span>
             </span>
@@ -583,6 +651,7 @@
             <span class="severity" id="adviceSeverity">Worth a careful look</span>
           </div>
           <p class="section-intro" id="adviceHeadline"></p>
+          <p class="reason-guidance" id="reasonGuidance"></p>
 
           <p class="section-label" style="margin-top:4px">Start with these three</p>
           <ol class="step-list top" id="topActions"></ol>
@@ -618,13 +687,82 @@
           <p class="section-label" style="margin-top:18px">Why you’re seeing this</p>
           <ul class="rule-list" id="triggeredRules"></ul>
         </section>
+
+        <section class="section" aria-labelledby="escapeTitle">
+          <p class="section-label">Step 4 · Before you sign</p>
+          <h2 id="escapeTitle">Escape routes — try these first</h2>
+          <p class="section-intro">Everything here is cheaper than the loan above. Tick what you have already tried; the final filter further down reads your Tier 1 answers.</p>
+          <div id="escapeTiers"></div>
+
+          <h3 class="block-title">Tier 3 · If you must borrow</h3>
+          <p class="hint">Indicative annual cost by lender type. Ranges shift a lot by country, product, and credit history — the calculator above is the source of truth for any real offer.</p>
+          <div class="ladder-wrap">
+            <table class="ladder-table">
+              <thead>
+                <tr><th scope="col">Lender</th><th scope="col">Typical APR</th><th scope="col">Use only if</th></tr>
+              </thead>
+              <tbody id="ladderBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="redFlagTitle">
+          <p class="section-label">Red flags</p>
+          <h2 id="redFlagTitle">Walk away if the lender…</h2>
+          <p class="section-intro">Any single one of these is reason enough to stop. Legitimate lenders put terms in writing and let you take your time.</p>
+          <ul class="flag-list" id="redFlagList"></ul>
+        </section>
+
+        <section class="section" id="decisionPanel" aria-labelledby="decisionTitle">
+          <div class="results-head">
+            <div>
+              <p class="section-label">The decision</p>
+              <h2 id="decisionTitle">Final filter</h2>
+            </div>
+            <span class="verdict" id="filterBadge" data-level="unknown">Unanswered</span>
+          </div>
+          <p class="section-intro">Seven questions. The ones marked “from your numbers” are answered by the calculator — you can override any of them. Three or more “no” answers means today is not the day.</p>
+          <ul class="filter-list" id="filterList"></ul>
+          <p class="filter-verdict" id="filterVerdict" role="status" aria-live="polite" data-level="unknown"></p>
+        </section>
+
+        <section class="section" aria-labelledby="commitTitle">
+          <p class="section-label">Commit</p>
+          <h2 id="commitTitle">If you do borrow, write it down</h2>
+          <p class="section-intro">A payoff plan you can point at beats one you intend. This stays on your device and travels with the copied or downloaded summary.</p>
+          <div class="field-grid">
+            <div class="field">
+              <label for="commitDate">I will pay this off by</label>
+              <input id="commitDate" type="date">
+            </div>
+            <div class="field">
+              <label for="commitExtra">Extra I will earn or free up each month</label>
+              <div class="input-wrap">
+                <span class="input-prefix" data-currency-prefix>INR ₹</span>
+                <input id="commitExtra" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
+              </div>
+            </div>
+            <div class="field">
+              <label for="commitBuffer">I will not borrow again until I have saved</label>
+              <div class="input-wrap">
+                <span class="input-prefix" data-currency-prefix>INR ₹</span>
+                <input id="commitBuffer" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
+              </div>
+            </div>
+            <div class="field">
+              <label for="commitPerson">I will check in with</label>
+              <input id="commitPerson" type="text" maxlength="80" autocomplete="off" placeholder="A person who will actually ask">
+            </div>
+          </div>
+          <p class="commit-preview" id="commitPreview"></p>
+        </section>
       </div>
 
       <aside class="stack">
         <section class="section results" id="resultsPanel" data-state="empty" aria-labelledby="resultsTitle">
           <div class="results-head">
             <div>
-              <p class="section-label">Step 2 · Live results</p>
+              <p class="section-label">Live results</p>
               <h2 id="resultsTitle">What this will cost</h2>
             </div>
             <span class="live-pill">Updates as you type</span>
@@ -665,6 +803,24 @@
               <div class="metric-value" id="resOpp">—</div>
               <p class="metric-sub" id="resOppNote"></p>
             </div>
+            <div class="metric wide" id="lifeMetric" hidden>
+              <span class="metric-label">Hours of work to repay</span>
+              <div class="metric-value" id="resHours">—</div>
+              <p class="metric-sub" id="resHoursNote"></p>
+            </div>
+          </div>
+
+          <div class="afford" id="affordBox" hidden>
+            <div class="afford-head">
+              <h3>Affordability check</h3>
+              <span class="verdict" id="affordVerdict" data-level="unknown">—</span>
+            </div>
+            <dl class="afford-rows">
+              <div><dt>Debt-to-income</dt><dd id="affordDti">—</dd></div>
+              <div><dt>Margin after all loan payments</dt><dd id="affordMargin">—</dd></div>
+              <div><dt>Emergency fund buffer</dt><dd id="affordBuffer">—</dd></div>
+            </dl>
+            <ul class="afford-reasons" id="affordReasons"></ul>
           </div>
 
           <div class="viz" id="splitViz" hidden>
@@ -680,7 +836,7 @@
           </div>
 
           <figure class="burn" id="burnViz" hidden>
-            <h3 style="font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.55px;margin-bottom:10px">Interest burn over time</h3>
+            <h3 class="viz-title">Interest burn over time</h3>
             <div class="burn-wrap">
               <svg id="burnChart" viewBox="0 0 640 200" preserveAspectRatio="none" role="img" aria-label="Chart of interest and principal in each payment across the loan term"></svg>
             </div>
@@ -692,13 +848,24 @@
           </figure>
 
           <div class="compare" id="compareViz" hidden>
-            <h3 style="font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.55px;margin-bottom:10px">If you got a better deal</h3>
+            <h3 class="viz-title">If you got a better deal</h3>
             <table>
               <thead>
                 <tr><th>Scenario</th><th>EMI</th><th>Interest cost</th><th>You’d save</th></tr>
               </thead>
               <tbody id="compareBody"></tbody>
             </table>
+          </div>
+
+          <div class="compare" id="oppTimeline" hidden>
+            <h3 class="viz-title">If you saved the payment instead</h3>
+            <table>
+              <thead>
+                <tr><th>Timeline</th><th>Set aside</th><th id="oppInvestedHead">Invested</th></tr>
+              </thead>
+              <tbody id="oppTimelineBody"></tbody>
+            </table>
+            <p class="metric-sub" id="oppTimelineNote"></p>
           </div>
 
           <div id="warnings"></div>
@@ -783,6 +950,7 @@
   <script src="assets/js/save-yourself/currency.js"></script>
   <script src="assets/js/save-yourself/loan-math.js"></script>
   <script src="assets/js/save-yourself/advice-rules.js"></script>
+  <script src="assets/js/save-yourself/decision.js"></script>
   <script src="assets/js/save-yourself/app.js"></script>
   <script>
     SBHelpGuide.init({
@@ -796,8 +964,11 @@
         { title: 'Read the effective rate (EIR/APR)', desc: 'This includes fees and shows the true annual cost — especially useful for flat-rate loans, where the effective rate is often noticeably higher than the quoted rate.' },
         { title: 'See the opportunity cost & extra payments', desc: 'Open “Refine my assessment” for a conservative “what if invested instead” illustration, plus how much an extra monthly payment (and any prepayment penalty) would save.' },
         { title: 'Check affordability', desc: 'Add gross monthly income and existing repayments to see a computed debt-to-income percentage — you don’t need to judge a threshold yourself, since limits vary by lender, product, and country.' },
-        { title: 'Get guidance for your reason', desc: 'Selecting why you’re borrowing unlocks tailored, rule-based next actions, a reflective question suited to that reason, and a 30/60/90-day plan.' },
+        { title: 'Get guidance for your reason', desc: 'Selecting why you’re borrowing shows the risk level for that reason, tailored rule-based next actions, a reflective question, and a 30/60/90-day plan.' },
         { title: 'Compare a better deal', desc: 'The results panel shows what a lower rate or a shorter tenure would save, side by side with your current inputs.' },
+        { title: 'Work the escape routes', desc: '“Before you sign” lists cheaper options tier by tier, plus indicative rates for each lender type. Ticking what you have already tried feeds the final filter.' },
+        { title: 'Run the final filter', desc: 'Seven yes/no checks decide whether today is the day. Four of them answer themselves from your numbers; you can override any answer. Three or more “no” answers means wait.' },
+        { title: 'Write the commitment', desc: 'A payoff date, an extra monthly amount, a savings target, and one person who will ask. It is saved on your device and included in the exported summary.' },
         { title: 'Copy or download a summary', desc: 'Everything stays on your device. Clear local data anytime with the button below the results.' }
       ]
     });
