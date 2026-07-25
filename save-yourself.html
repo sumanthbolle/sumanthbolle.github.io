@@ -117,7 +117,7 @@
     .stack{display:flex;flex-direction:column;gap:16px;min-width:0}
     .section{background:var(--white);border-radius:22px;padding:28px;box-shadow:var(--card-shadow);border:1px solid var(--card-line)}
     .section.highlight{border-color:rgba(0,102,204,0.28);box-shadow:0 2px 16px rgba(0,102,204,0.08)}
-    .section-label{margin:0 0 8px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    .section-label{display:block;margin:0 0 8px;color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
     .section h2{font-size:clamp(22px,3vw,28px);font-weight:600;letter-spacing:-.02em;margin-bottom:8px}
     .section-intro{color:var(--gray);font-size:15px;line-height:1.6;max-width:640px;margin-bottom:20px}
 
@@ -191,11 +191,12 @@
 
     /* Refine (progressive disclosure) */
     details.refine{background:var(--white);border-radius:22px;border:1px solid var(--card-line);box-shadow:var(--card-shadow);overflow:hidden}
-    details.refine>summary{list-style:none;cursor:pointer;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    details.refine>summary{list-style:none;cursor:pointer;padding:20px 28px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto;column-gap:12px}
     details.refine>summary::-webkit-details-marker{display:none}
+    details.refine>summary .section-label{margin-bottom:6px}
     details.refine>summary h2{font-size:clamp(18px,2.4vw,22px);font-weight:600;letter-spacing:-.02em;margin:0}
     details.refine>summary .sum-sub{display:block;margin-top:4px;font-size:13px;color:var(--gray);font-weight:400}
-    details.refine>summary .chev{color:var(--gray);font-size:22px;line-height:1;transition:transform .2s}
+    details.refine>summary .chev{grid-column:2;grid-row:1/4;align-self:center;justify-self:end;color:var(--gray);font-size:22px;line-height:1;transition:transform .2s}
     details.refine[open]>summary .chev{transform:rotate(45deg)}
     .refine-body{padding:0 28px 28px}
     .refine-sub{margin:0 0 18px;color:var(--gray);font-size:14px;line-height:1.55}
@@ -271,7 +272,8 @@
     .compare th:first-child,.compare td:first-child{text-align:left;white-space:normal}
     .compare thead th{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
     .compare tr.current td{font-weight:600}
-    .compare .save{color:var(--green);font-weight:600}
+    .compare .save{display:block;color:var(--green);font-weight:600;font-size:12px}
+    .compare .pos{color:var(--green);font-weight:600}
     .compare .up{color:var(--cost-text)}
 
     .notice{display:none;margin:12px 0 0;padding:12px 14px;border-radius:var(--radius-sm);background:#fff8e8;border:1px solid #f2dfb0;color:#8a6a1f;font-size:13px;line-height:1.5}
@@ -548,11 +550,9 @@
 
         <details class="refine" id="refine">
           <summary>
-            <span>
-              <p class="section-label">Step 2 · Refine</p>
-              <h2>Refine my assessment</h2>
-              <span class="sum-sub">Optional — opportunity cost, extra payments, income &amp; personalized guidance</span>
-            </span>
+            <span class="section-label">Step 2 · Refine</span>
+            <h2>Refine my assessment</h2>
+            <span class="sum-sub">Optional — opportunity cost, extra payments, income &amp; personalized guidance</span>
             <span class="chev" aria-hidden="true">+</span>
           </summary>
           <div class="refine-body">
@@ -666,7 +666,7 @@
             <blockquote id="honestQuote"></blockquote>
           </div>
 
-          <div class="plan-grid" aria-label="30 60 90 day plan">
+          <div class="plan-grid" role="group" aria-label="30 60 90 day plan">
             <div class="plan-card">
               <h3>Next 30 days</h3>
               <ul class="plan-list" id="plan30"></ul>
@@ -851,7 +851,7 @@
             <h3 class="viz-title">If you got a better deal</h3>
             <table>
               <thead>
-                <tr><th>Scenario</th><th>EMI</th><th>Interest cost</th><th>You’d save</th></tr>
+                <tr><th>Scenario</th><th>EMI</th><th>Interest cost</th></tr>
               </thead>
               <tbody id="compareBody"></tbody>
             </table>

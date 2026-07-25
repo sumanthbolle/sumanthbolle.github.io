@@ -523,7 +523,7 @@
     var html = '';
     rows.forEach(function (row) {
       html += '<tr><td>' + escapeHtml(row.label) + '</td><td>'
-        + escapeHtml(C.formatMoney(row.saved, ccy, locale)) + '</td><td class="save">'
+        + escapeHtml(C.formatMoney(row.saved, ccy, locale)) + '</td><td class="pos">'
         + escapeHtml(C.formatMoney(row.invested, ccy, locale)) + '</td></tr>';
     });
     $('oppTimelineBody').innerHTML = html;
@@ -620,15 +620,18 @@
     var ccy = result.currency;
     var html = '<tr class="current"><td>Your current inputs</td><td>'
       + escapeHtml(C.formatMoney(result.emi, ccy, locale)) + '</td><td>'
-      + escapeHtml(C.formatMoney(result.totalInterest, ccy, locale)) + '</td><td>—</td></tr>';
+      + escapeHtml(C.formatMoney(result.totalInterest, ccy, locale)) + '</td></tr>';
     result.comparisons.forEach(function (c) {
       var emiCell = escapeHtml(C.formatMoney(c.emi, ccy, locale));
       if (c.id === 'shorter_tenure' && typeof c.emiDelta === 'number' && c.emiDelta > 0) {
         emiCell += ' <span class="up">(+' + escapeHtml(C.formatMoney(c.emiDelta, ccy, locale)) + ')</span>';
       }
       html += '<tr><td>' + escapeHtml(c.label) + '</td><td>' + emiCell + '</td><td>'
-        + escapeHtml(C.formatMoney(c.totalInterest, ccy, locale)) + '</td><td class="save">'
-        + (c.interestSaved > 0 ? escapeHtml(C.formatMoney(c.interestSaved, ccy, locale)) : '—') + '</td></tr>';
+        + escapeHtml(C.formatMoney(c.totalInterest, ccy, locale))
+        + (c.interestSaved > 0
+          ? '<span class="save">saves ' + escapeHtml(C.formatMoney(c.interestSaved, ccy, locale)) + '</span>'
+          : '')
+        + '</td></tr>';
     });
     body.innerHTML = html;
   }
