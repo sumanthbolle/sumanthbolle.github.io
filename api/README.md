@@ -93,8 +93,20 @@ Set these as **secrets** in the Cloudflare Workers dashboard (Settings → Varia
 | `AMADEUS_CLIENT_ID`  | no       | Amadeus Self-Service key. When set (with the secret), `/flights` uses real Amadeus inventory as the primary source. Free test quota available. |
 | `AMADEUS_CLIENT_SECRET` | no    | Amadeus Self-Service secret. Required alongside `AMADEUS_CLIENT_ID`.                                                                            |
 | `AMADEUS_ENV`        | no       | `test` (default, free quota) or `production`. Optionally override the host entirely with `AMADEUS_BASE_URL`.                                    |
+| `SERVICENOW_DOMAIN_ENABLED` | no | Default `true`. When enabled, ServiceNow questions get the domain-intelligence system addon (see `research-agent/`). |
+| `SERVICENOW_RELEASE_FAMILY` | no | Default `australia`. Release family used for ServiceNowDocs guidance. |
 
 No other keys are required. The tech widget uses the public Hacker News API (no auth).
+
+## ServiceNow domain pack
+
+ServiceNow research questions are detected in `handleChat` and augmented with
+domain prompts from `api/servicenow-domain.js`. The full Node domain pack
+(SDK `explain` / `query`, ServiceNowDocs retrieval, evidence verification,
+evals) lives under [`research-agent/`](../research-agent/README.md).
+
+Live instance queries remain **disabled** by default. Non-ServiceNow chat
+behaviour is unchanged.
 
 ## Country detection
 

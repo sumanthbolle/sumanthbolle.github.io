@@ -21,6 +21,13 @@ Feel free to explore, learn, or fork for your own site!
 
 Open `servicenow.html` for the canonical ServiceNow entry point: search the library (⌘K), pick a learning path, follow live sourced AI news, then drill into tutorials, interviews, and quizzes.
 
+## Summaverick ServiceNow domain pack
+
+The Summaverick research agent includes a modular ServiceNow domain intelligence layer:
+
+- Node pack: [`research-agent/`](research-agent/README.md) (SDK explain/query, ServiceNowDocs, evidence, evals)
+- Worker routing: `api/servicenow-domain.js` + `api/worker.js` (domain detection for chat)
+
 ##  Getting Started
 
 1. Fork or clone this repo:

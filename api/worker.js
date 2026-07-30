@@ -22,11 +22,22 @@
  *   AMADEUS_CLIENT_SECRET— Amadeus Self-Service secret
  *   AMADEUS_ENV          — 'test' (default) or 'production'
  *   AMADEUS_BASE_URL     — optional override of the Amadeus host
+ *   SERVICENOW_DOMAIN_ENABLED — optional; default true. When true, ServiceNow
+ *                         questions get domain-pack system guidance (see
+ *                         research-agent/ for the full Node domain pack).
+ *   SERVICENOW_RELEASE_FAMILY — optional; default australia
  *
  * /flights source priority: Amadeus real inventory (when keys set & IATA codes
  * resolvable) → Perplexity Sonar fallback. Each response includes data.source
  * ('amadeus' | 'ai') so the UI can label fare provenance.
  */
+
+import {
+  SERVICENOW_DOMAIN_SYSTEM_ADDON,
+  isServiceNowDomainQuery,
+  classifyServiceNowIntent,
+  serviceNowSearchHint,
+} from './servicenow-domain.js';
 
 const SYSTEM_PROMPT = `You are Summaverick, a general-purpose AI research assistant. You answer questions on any topic — world news, science, technology, business, culture, code, careers, personal decisions, and everyday curiosity — by synthesizing real sources into clear, grounded answers.
 
@@ -140,7 +151,27 @@ async function handleChat(request, env, origin) {
       return jsonResponse({ success: false, error: 'API key not configured' }, origin);
     }
 
-    const messages = [{ role: 'system', content: SYSTEM_PROMPT }];
+    const domainEnabled = env.SERVICENOW_DOMAIN_ENABLED !== 'false';
+    const snDomain = domainEnabled && isServiceNowDomainQuery(query);
+    const snIntent = snDomain ? classifyServiceNowIntent(query) : null;
+    const releaseFamily =
+      (env.SERVICENOW_RELEASE_FAMILY || snIntent?.releaseFamily || 'australia').toLowerCase();
+
+    let systemContent = SYSTEM_PROMPT;
+    if (snDomain) {
+      systemContent =
+        SYSTEM_PROMPT +
+        '\n\n' +
+        SERVICENOW_DOMAIN_SYSTEM_ADDON +
+        '\n\n' +
+        serviceNowSearchHint(releaseFamily) +
+        `\nClassified ServiceNow intent: ${snIntent.intent}; modules: ${snIntent.modules.join(', ')}.` +
+        (snIntent.requiresLiveInstance
+          ? '\nLive instance metadata queries are disabled by default in this Worker; do not invent instance-specific fields.'
+          : '');
+    }
+
+    const messages = [{ role: 'system', content: systemContent }];
 
     if (Array.isArray(context) && context.length > 0) {
       for (const msg of context.slice(-10)) {
@@ -158,14 +189,23 @@ async function handleChat(request, env, origin) {
     const sonarPayload = {
       model: 'sonar',
       messages,
-      temperature: 0.2,
-      max_tokens: 1024,
+      temperature: snDomain ? 0.1 : 0.2,
+      max_tokens: snDomain ? 1600 : 1024,
       web_search_options: { search_context_size: 'high' },
       return_related_questions: true
     };
 
     const data = await callSonar(apiKey, sonarPayload);
     const result = buildResult(data);
+    if (result && snDomain) {
+      result.domain = 'servicenow';
+      result.servicenow = {
+        intent: snIntent.intent,
+        modules: snIntent.modules,
+        releaseFamily,
+        liveInstanceEnabled: false,
+      };
+    }
     return jsonResponse({ success: true, result }, origin);
 
   } catch (e) {
