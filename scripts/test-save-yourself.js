@@ -226,7 +226,10 @@ var timeline = L.calculate({
   principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
   opportunityRatePercent: 12
 });
-assert(timeline.opportunityTimeline.length === 3, 'timeline covers 1, 3, and 5 years');
+assert(timeline.opportunityTimeline.length === 3, 'timeline covers 12, 24, and 36 months');
+assert(timeline.opportunityTimeline[0].months === 12
+  && timeline.opportunityTimeline[1].months === 24
+  && timeline.opportunityTimeline[2].months === 36, 'timeline horizons are 12/24/36');
 approx(timeline.opportunityTimeline[0].saved, timeline.emi * 12, 0.5, '1-year set-aside = 12 payments');
 assert(timeline.opportunityTimeline[0].invested > timeline.opportunityTimeline[0].saved, 'investing beats cash at 12%');
 assert(timeline.opportunityTimeline[2].gain > timeline.opportunityTimeline[0].gain, 'compounding grows with time');
@@ -303,6 +306,183 @@ var empty = D.evaluateFilter({}, {});
 assert(empty.unanswered === D.FILTER_QUESTIONS.length, 'nothing is assumed without inputs');
 assert(empty.level === 'unknown', 'no inputs → no verdict');
 assert(D.ESCAPE_TIERS[0].items.length >= 5 && D.RED_FLAGS.length >= 5, 'escape routes and red flags present');
+
+// ============================================================================
+// Financial X-Ray redesign cases
+// ============================================================================
+
+// 1. Zero-rate reducing
+var xrZero = L.calculate({
+  principal: 24000, annualRatePercent: 0, months: 24, interestType: 'reducing', currency: 'USD'
+});
+assert(xrZero.ok && xrZero.totalInterestPaid === 0, 'X-Ray: zero-rate reducing');
+approx(xrZero.scheduledPayment, 1000, 0.01, 'X-Ray: zero-rate EMI = P/n');
+assert(xrZero.estimatedNominalAnnualCost === 0, 'X-Ray: zero-rate nominal annual cost is 0');
+
+// 2. Standard reducing (covered above) — alias fields
+assert(r.grossPrincipal === r.principal && r.financedPrincipal === r.principal, 'X-Ray: gross/financed = principal when no fees');
+assert(r.scheduledPayment === r.emi && r.totalPaid === r.totalPayable, 'X-Ray: scheduledPayment/totalPaid aliases');
+assert(r.borrowingCost === r.costOfBorrowing && r.totalInterestPaid === r.totalInterest, 'X-Ray: borrowingCost/interest aliases');
+
+// 3. Flat-rate (covered above)
+assert(f.interestType === 'flat', 'X-Ray: flat-rate path');
+
+// 4. Fixed upfront fee deducted
+var fixedFee = L.calculate({
+  principal: 100000, annualRatePercent: 12, months: 24, interestType: 'reducing', currency: 'INR',
+  fees: { processing: 1500, treatment: 'deducted' }
+});
+assert(fixedFee.ok, 'X-Ray: fixed fee deducted ok');
+approx(fixedFee.upfrontFees, 1500, 0.01, 'X-Ray: fixed upfront fee');
+approx(fixedFee.netProceeds, 98500, 0.01, 'X-Ray: deducted net = principal − fees');
+assert(fixedFee.financedPrincipal === 100000, 'X-Ray: deducted financed = principal');
+assert(fixedFee.fees.treatment === 'deducted', 'X-Ray: treatment deducted');
+
+// 5. Percentage fee
+var pctFee = L.calculate({
+  principal: 100000, annualRatePercent: 12, months: 24, interestType: 'reducing', currency: 'INR',
+  fees: { processing: 2, processingIsPercent: true }
+});
+approx(pctFee.fees.processing, 2000, 0.01, 'X-Ray: percentage fee = 2% of principal');
+approx(pctFee.upfrontFees, 2000, 0.01, 'X-Ray: percentage fee total');
+
+// 6. Fee deducted from payout
+assert(fixedFee.netDisbursed === fixedFee.netProceeds, 'X-Ray: netDisbursed aliases netProceeds');
+assert(fixedFee.aprPercent > 12, 'X-Ray: deducted fees raise APR above nominal');
+
+// 7. Fee added to loan
+var addedFee = L.calculate({
+  principal: 100000, annualRatePercent: 12, months: 24, interestType: 'reducing', currency: 'INR',
+  fees: { processing: 1500, treatment: 'added' }
+});
+assert(addedFee.financedPrincipal > addedFee.principal, 'X-Ray: added financedPrincipal > principal');
+approx(addedFee.financedPrincipal, 101500, 0.01, 'X-Ray: financed = principal + fees');
+approx(addedFee.netProceeds, 100000, 0.01, 'X-Ray: added netProceeds = principal');
+assert(addedFee.emi > fixedFee.emi, 'X-Ray: added treatment raises EMI vs deducted');
+
+// 8. Zero-interest with fees
+var zeroFees = L.calculate({
+  principal: 10000, annualRatePercent: 0, months: 10, interestType: 'reducing', currency: 'USD',
+  fees: { processing: 200, treatment: 'deducted' }
+});
+assert(zeroFees.ok && zeroFees.totalInterest === 0, 'X-Ray: zero-interest with fees');
+approx(zeroFees.netProceeds, 9800, 0.01, 'X-Ray: zero-interest net after fees');
+assert(zeroFees.estimatedNominalAnnualCost > 0, 'X-Ray: zero coupon still has positive cash-flow cost from fees');
+assert(zeroFees.borrowingCost === 200, 'X-Ray: borrowing cost = fees only when rate is 0');
+
+// 9. One-month loan (covered) — aliases present
+assert(one.months === 1 && one.schedule.length === 1, 'X-Ray: one-month schedule');
+
+// 10. Final payment rounding
+var roundLoan = L.calculate({
+  principal: 10000, annualRatePercent: 11.5, months: 17, interestType: 'reducing', currency: 'USD'
+});
+assert(roundLoan.ok && roundLoan.schedule.length >= 1, 'X-Ray: rounding schedule ok');
+var last = roundLoan.schedule[roundLoan.schedule.length - 1];
+approx(last.balance, 0, 0.01, 'X-Ray: final balance cleared');
+var schedPrincipal = roundLoan.schedule.reduce(function (s, row) { return s + row.principal; }, 0);
+approx(schedPrincipal, roundLoan.financedPrincipal, 0.05, 'X-Ray: schedule principal sums to financed');
+
+// 11. IRR annual cost + effective annual > nominal when fees present
+assert(fixedFee.monthlyCashFlowRate != null, 'X-Ray: monthly cash-flow rate present');
+approx(fixedFee.estimatedNominalAnnualCost, fixedFee.aprPercent, 1e-9, 'X-Ray: aprPercent = nominal annual cost');
+assert(fixedFee.estimatedEffectiveAnnualCost > fixedFee.estimatedNominalAnnualCost,
+  'X-Ray: effective annual > nominal when fees present');
+assert(fixedFee.estimatedNominalAnnualCost > 12, 'X-Ray: nominal annual cost exceeds coupon when fees present');
+
+// 12. Extra-payment payoff
+assert(extra.withExtra.monthsSaved > 0, 'X-Ray: extra payment monthsSaved');
+assert(extra.withExtra.netSaving === extra.withExtra.totalSaved, 'X-Ray: netSaving aliases totalSaved');
+assert(extra.withExtra.netSaving > 0, 'X-Ray: extra payment netSaving');
+
+// 13. Prepayment penalty path
+var withPenalty = L.calculate({
+  principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
+  extraMonthly: 3000,
+  fees: { prepaymentPenaltyPercent: 2 }
+});
+assert(withPenalty.withExtra && withPenalty.withExtra.prepaymentPenalty > 0, 'X-Ray: prepayment penalty applied');
+assert(withPenalty.withExtra.totalPayable >= withPenalty.withExtra.totalInterest, 'X-Ray: penalty included in totalPayable');
+
+// 14. Opportunity at zero return (covered above)
+approx(zeroOpp.opportunityTimeline[0].invested, zeroOpp.opportunityTimeline[0].saved, 0.5, 'X-Ray: zero-return horizon 12 matches cash');
+approx(zeroOpp.opportunityTimeline[2].invested, zeroOpp.opportunityTimeline[2].saved, 0.5, 'X-Ray: zero-return horizon 36 matches cash');
+
+// 15. Malformed input
+var badRate = L.calculate({ principal: 1000, annualRatePercent: -1, months: 12, interestType: 'reducing', currency: 'USD' });
+assert(!badRate.ok && badRate.error === 'rate', 'X-Ray: negative rate blocked');
+var badTenure = L.calculate({ principal: 1000, annualRatePercent: 10, months: 0, interestType: 'reducing', currency: 'USD' });
+assert(!badTenure.ok && badTenure.error === 'tenure', 'X-Ray: zero tenure blocked');
+var badExtra = L.calculate({ principal: 1000, annualRatePercent: 10, months: 12, interestType: 'reducing', currency: 'USD', extraMonthly: -5 });
+assert(!badExtra.ok && badExtra.error === 'extra', 'X-Ray: negative extra blocked');
+
+// 16. Fee treatment separate reduces net for APR
+var separateFee = L.calculate({
+  principal: 100000, annualRatePercent: 12, months: 24, interestType: 'reducing', currency: 'INR',
+  fees: { processing: 1500, treatment: 'separate' }
+});
+approx(separateFee.netProceeds, 98500, 0.01, 'X-Ray: separate net for APR = principal − fees');
+assert(separateFee.financedPrincipal === 100000, 'X-Ray: separate financed = principal');
+approx(separateFee.aprPercent, fixedFee.aprPercent, 0.05, 'X-Ray: separate APR matches deducted for same fees');
+assert(separateFee.fees.treatment === 'separate', 'X-Ray: treatment separate');
+
+// Fees consume full payout — still ok with warning, null rates
+var eaten = L.calculate({
+  principal: 1000, annualRatePercent: 12, months: 12, interestType: 'reducing', currency: 'USD',
+  fees: { processing: 1000, treatment: 'deducted' }
+});
+assert(eaten.ok, 'X-Ray: fees-consume-payout still returns ok');
+assert(eaten.netProceeds <= 0, 'X-Ray: netProceeds <= 0 when fees eat payout');
+assert(eaten.aprPercent == null && eaten.estimatedNominalAnnualCost == null, 'X-Ray: rates null when no net proceeds');
+assert(eaten.warnings.some(function (w) { return w.code === 'fees_consume_payout'; }), 'X-Ray: fees_consume_payout warning');
+
+// 17. costPerHundred ≈ 121.57 for P=100000, 12%, 36 months, fees 1500
+var cph = L.calculate({
+  principal: 100000, annualRatePercent: 12, months: 36, interestType: 'reducing', currency: 'INR',
+  fees: { processing: 1500 }
+});
+approx(cph.costPerHundred, 121.57, 1.0, 'X-Ray: costPerHundred ≈ 121.57');
+assert(cph.costPerHundred > 100, 'X-Ray: costPerHundred above 100');
+
+// 18. costSignal bands
+assert(L._buildCostSignal(5).band === 'lower', 'X-Ray: costSignal lower (0–8)');
+assert(L._buildCostSignal(8).band === 'lower', 'X-Ray: costSignal lower at 8');
+assert(L._buildCostSignal(8.1).band === 'elevated', 'X-Ray: costSignal elevated (>8)');
+assert(L._buildCostSignal(15).band === 'elevated', 'X-Ray: costSignal elevated at 15');
+assert(L._buildCostSignal(15.1).band === 'expensive', 'X-Ray: costSignal expensive (>15)');
+assert(L._buildCostSignal(25).band === 'expensive', 'X-Ray: costSignal expensive at 25');
+assert(L._buildCostSignal(25.1).band === 'severe', 'X-Ray: costSignal severe (>25)');
+assert(cph.costSignal && cph.costSignal.band && cph.costSignal.label && cph.costSignal.guidance,
+  'X-Ray: costSignal object on result');
+assert(typeof cph.costSignal.guidance === 'string' && cph.costSignal.guidance.length > 0,
+  'X-Ray: costSignal guidance present');
+
+// Richer comparisons include rate −1 and fees removed
+var richComp = L.calculate({
+  principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
+  fees: { processing: 2000 },
+  withComparisons: true
+});
+assert(richComp.comparisons.some(function (c) { return c.id === 'rate_minus_1'; }), 'X-Ray: comparison rate −1 ppt');
+assert(richComp.comparisons.some(function (c) { return c.id === 'fees_removed' && c.totalSaved > 0; }),
+  'X-Ray: comparison fees removed');
+
+// Cash-flow pressure when income present
+assert(safe.cashFlowPressure && safe.cashFlowPressure.marginLabel === 'comfortable',
+  'X-Ray: cashFlowPressure comfortable');
+var tightPressure = L.calculate({
+  principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
+  grossMonthlyIncome: 10000, existingMonthlyRepayments: 6000, emergencyFund: 'no'
+});
+assert(tightPressure.cashFlowPressure && tightPressure.cashFlowPressure.marginLabel === 'negative',
+  'X-Ray: cashFlowPressure negative when overstretched');
+assert(noIncome.cashFlowPressure === null, 'X-Ray: no cashFlowPressure without income');
+
+// Exports
+assert(typeof L.calculate === 'function' && typeof L.monthsFromTenure === 'function', 'X-Ray: public exports');
+assert(typeof L._estimateMonthlyCashFlowRate === 'function' && typeof L._computeAPR === 'function',
+  'X-Ray: IRR helpers exported');
+assert(L.monthsFromTenure(2, 'years') === 24, 'X-Ray: monthsFromTenure years');
 
 if (failed) {
   console.error('\n' + failed + ' failure(s)');
