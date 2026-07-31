@@ -2,8 +2,8 @@
  * Pure loan math — reducing-balance EMI and flat-rate.
  * No external finance libraries. Integer minor-units where possible.
  *
- * Adds: one-time fees, effective interest rate (EIR/APR) via IRR,
- * debt-to-income helper, and comparison scenarios (better rate / shorter tenure).
+ * Adds: one-time fees (deducted / separate / added), cash-flow annual cost via IRR,
+ * debt-to-income helper, comparison scenarios, opportunity timeline, affordability.
  */
 (function (global) {
   'use strict';
@@ -24,6 +24,7 @@
    * @param {boolean} [input.fees.processingIsPercent] — treat processing as % of principal
    * @param {number} [input.fees.other] — insurance/legal/other one-time charges
    * @param {number} [input.fees.prepaymentPenaltyPercent] — % on principal prepaid early
+   * @param {'deducted'|'separate'|'added'} [input.fees.treatment] — default deducted
    * @param {number} [input.grossMonthlyIncome] — for debt-to-income
    * @param {number} [input.existingMonthlyRepayments] — for debt-to-income
    * @param {'yes'|'partial'|'no'|'unknown'} [input.emergencyFund] — for the affordability verdict
@@ -55,36 +56,73 @@
       return { ok: false, error: 'extra', message: 'Extra payment cannot be negative.' };
     }
 
+    var grossPrincipal = C.roundMoney(principal, currency);
+    var upfrontFees = fees.total;
+    var treatment = fees.treatment;
+    var financedPrincipal;
+    var netProceeds;
+
+    if (treatment === 'added') {
+      financedPrincipal = C.roundMoney(principal + upfrontFees, currency);
+      netProceeds = C.roundMoney(principal, currency);
+    } else {
+      // deducted | separate — repayments on principal; APR uses principal − fees
+      financedPrincipal = C.roundMoney(principal, currency);
+      netProceeds = C.roundMoney(principal - upfrontFees, currency);
+    }
+
     var base;
     try {
       if (type === 'flat') {
-        base = calcFlat(principal, annualRate, months, currency);
+        base = calcFlat(financedPrincipal, annualRate, months, currency);
       } else {
-        base = calcReducing(principal, annualRate, months, currency);
+        base = calcReducing(financedPrincipal, annualRate, months, currency);
       }
     } catch (e) {
       return { ok: false, error: 'calc', message: e.message || 'Could not calculate this loan.' };
     }
 
-    var upfrontFees = fees.total;
-    var costOfBorrowing = C.roundMoney(base.totalInterest + upfrontFees, currency);
-    var netDisbursed = C.roundMoney(principal - upfrontFees, currency);
+    var scheduleTotal = base.totalPayable;
+    var totalInterest = base.totalInterest;
+    // deducted/separate: fees are cash at t=0 (or reduced payout); added: fees sit inside EMIs
+    var totalPaid = treatment === 'added'
+      ? scheduleTotal
+      : C.roundMoney(scheduleTotal + upfrontFees, currency);
+    var costOfBorrowing = C.roundMoney(totalInterest + upfrontFees, currency);
+    var netDisbursed = netProceeds;
+    var totalPrincipalPaid = financedPrincipal;
 
-    // Effective interest rate (APR) via IRR on actual cashflows, net of upfront fees.
-    var apr = computeAPR(netDisbursed, base.schedule);
+    var monthlyCashFlowRate = null;
+    var estimatedNominalAnnualCost = null;
+    var estimatedEffectiveAnnualCost = null;
+    if (netProceeds > 0 && base.schedule && base.schedule.length) {
+      monthlyCashFlowRate = estimateMonthlyCashFlowRate(netProceeds, base.schedule);
+      if (monthlyCashFlowRate != null) {
+        estimatedNominalAnnualCost = monthlyCashFlowRate * 12 * 100;
+        estimatedEffectiveAnnualCost = (Math.pow(1 + monthlyCashFlowRate, 12) - 1) * 100;
+      }
+    }
+    // Backward-compatible APR field = nominal annualisation of monthly IRR
+    var apr = estimatedNominalAnnualCost;
 
     var withExtra = null;
     if (extra > 0 && type === 'reducing') {
       withExtra = simulateExtraPayments(
-        principal, annualRate, months, extra, currency, base.emi, base.schedule, fees.prepaymentPenaltyPercent
+        financedPrincipal, annualRate, months, extra, currency, base.emi, base.schedule, fees.prepaymentPenaltyPercent
       );
     } else if (extra > 0 && type === 'flat') {
       withExtra = simulateFlatExtra(base, extra, currency);
     }
 
-    var opportunity = opportunityCost(base.totalInterest + upfrontFees, months, oppRate, currency);
+    var opportunity = opportunityCost(costOfBorrowing, months, oppRate, currency);
 
     var warnings = [];
+    if (netProceeds <= 0 && upfrontFees > 0) {
+      warnings.push({
+        code: 'fees_consume_payout',
+        message: 'Upfront fees use up the full loan amount, so there is nothing left to disburse. Confirm the fee schedule before proceeding.'
+      });
+    }
     if (annualRate >= 36) {
       warnings.push({
         code: 'predatory_rate',
@@ -117,12 +155,15 @@
     }
 
     var comparisons = input.withComparisons
-      ? buildComparisons(principal, annualRate, months, type, currency, base)
+      ? buildComparisons(principal, annualRate, months, type, currency, {
+          emi: base.emi,
+          totalInterest: totalInterest,
+          totalPayable: totalPaid
+        }, upfrontFees, treatment)
       : null;
 
     var dti = debtRatio(input.grossMonthlyIncome, input.existingMonthlyRepayments, base.emi, currency);
-    var totalPayableWithFees = C.roundMoney(base.totalPayable + upfrontFees, currency);
-    var lifeCostFigures = lifeCost(totalPayableWithFees, costOfBorrowing, input.grossMonthlyIncome);
+    var lifeCostFigures = lifeCost(totalPaid, costOfBorrowing, input.grossMonthlyIncome);
     var affordabilityVerdict = affordability({
       dti: dti,
       emergencyFund: input.emergencyFund,
@@ -130,32 +171,61 @@
       annualRatePercent: annualRate,
       currency: currency
     });
+    var pressure = cashFlowPressure(
+      input.grossMonthlyIncome,
+      input.existingMonthlyRepayments,
+      base.emi,
+      currency,
+      input.emergencyFund
+    );
+    var costPerHundred = grossPrincipal > 0
+      ? (totalPaid / grossPrincipal) * 100
+      : null;
+    var signal = buildCostSignal(estimatedNominalAnnualCost);
 
     return {
       ok: true,
       interestType: type,
       currency: currency,
-      principal: C.roundMoney(principal, currency),
+      principal: grossPrincipal,
+      grossPrincipal: grossPrincipal,
+      financedPrincipal: financedPrincipal,
       annualRatePercent: annualRate,
       months: months,
       emi: base.emi,
-      totalPayable: C.roundMoney(base.totalPayable + upfrontFees, currency),
-      totalInterest: base.totalInterest,
+      scheduledPayment: base.emi,
+      totalPayable: totalPaid,
+      totalPaid: totalPaid,
+      totalInterest: totalInterest,
+      totalInterestPaid: totalInterest,
+      totalPrincipalPaid: totalPrincipalPaid,
+      totalFeesPaid: upfrontFees,
       fees: {
         processing: fees.processing,
         other: fees.other,
         total: upfrontFees,
+        treatment: treatment,
+        processingIsPercent: !!fees.processingIsPercent,
         prepaymentPenaltyPercent: fees.prepaymentPenaltyPercent
       },
+      upfrontFees: upfrontFees,
       costOfBorrowing: costOfBorrowing,
+      borrowingCost: costOfBorrowing,
       netDisbursed: netDisbursed,
+      netProceeds: netProceeds,
       aprPercent: apr,
+      monthlyCashFlowRate: monthlyCashFlowRate,
+      estimatedNominalAnnualCost: estimatedNominalAnnualCost,
+      estimatedEffectiveAnnualCost: estimatedEffectiveAnnualCost,
+      costPerHundred: costPerHundred,
+      costSignal: signal,
       effectiveMonthly: base.emi,
-      costPerDay: C.roundMoney((base.totalPayable + upfrontFees) / (months * 30.4375), currency),
+      costPerDay: C.roundMoney(totalPaid / (months * 30.4375), currency),
       opportunity: opportunity,
       opportunityTimeline: opportunityTimeline(base.emi, oppRate, currency),
       lifeCost: lifeCostFigures,
       affordability: affordabilityVerdict,
+      cashFlowPressure: pressure,
       schedule: base.schedule || null,
       amortization: base.schedule || null,
       withExtra: withExtra,
@@ -171,7 +241,8 @@
   function normalizeFees(fees, principal, currency) {
     fees = fees || {};
     var processingRaw = Number(fees.processing) || 0;
-    var processing = fees.processingIsPercent
+    var processingIsPercent = !!fees.processingIsPercent;
+    var processing = processingIsPercent
       ? C.roundMoney(principal * processingRaw / 100, currency)
       : C.roundMoney(processingRaw, currency);
     var other = C.roundMoney(Number(fees.other) || 0, currency);
@@ -179,11 +250,15 @@
     if (other < 0) other = 0;
     var penalty = Number(fees.prepaymentPenaltyPercent) || 0;
     if (penalty < 0) penalty = 0;
+    var treatment = fees.treatment;
+    if (treatment !== 'separate' && treatment !== 'added') treatment = 'deducted';
     return {
       processing: processing,
       other: other,
       total: C.roundMoney(processing + other, currency),
-      prepaymentPenaltyPercent: penalty
+      processingIsPercent: processingIsPercent,
+      prepaymentPenaltyPercent: penalty,
+      treatment: treatment
     };
   }
 
@@ -305,11 +380,10 @@
   }
 
   /**
-   * APR / EIR via IRR on the loan's actual monthly cashflows.
-   * At t=0 the borrower receives netAmount; each month they pay schedule[t].payment.
-   * Solve for monthly i where PV(payments) = netAmount, annualize (i × 12).
+   * Monthly IRR on loan cashflows: t=0 receive netAmount; each month pay schedule[t].payment.
+   * Returns monthly rate or null when undefined.
    */
-  function computeAPR(netAmount, schedule) {
+  function estimateMonthlyCashFlowRate(netAmount, schedule) {
     if (!(netAmount > 0) || !schedule || !schedule.length) return null;
     var pays = schedule.map(function (r) { return r.payment; });
 
@@ -321,10 +395,9 @@
       return s - netAmount;
     }
 
-    // npv is decreasing in i. npv(0) = sum(payments) - net >= 0 when there is any cost.
     if (npv(0) <= 1e-9) return 0;
     var lo = 0;
-    var hi = 1; // 100%/month upper seed
+    var hi = 1;
     var guard = 0;
     while (npv(hi) > 0 && hi < 1000 && guard < 80) { hi *= 2; guard++; }
     for (var k = 0; k < 200; k++) {
@@ -333,8 +406,41 @@
       if (Math.abs(v) < 1e-8) { lo = mid; hi = mid; break; }
       if (v > 0) lo = mid; else hi = mid;
     }
-    var monthly = (lo + hi) / 2;
+    return (lo + hi) / 2;
+  }
+
+  /**
+   * APR / EIR via IRR — annualise monthly rate as i × 12 × 100 (nominal).
+   */
+  function computeAPR(netAmount, schedule) {
+    var monthly = estimateMonthlyCashFlowRate(netAmount, schedule);
+    if (monthly == null) return null;
     return monthly * 12 * 100;
+  }
+
+  function buildCostSignal(nominalAnnual) {
+    if (nominalAnnual == null || !Number.isFinite(nominalAnnual)) return null;
+    var band;
+    var label;
+    var guidance;
+    if (nominalAnnual <= 8) {
+      band = 'lower';
+      label = 'Lower cost';
+      guidance = 'This sits in a lower-cost range for consumer credit. Still compare a couple of offers before you commit.';
+    } else if (nominalAnnual <= 15) {
+      band = 'elevated';
+      label = 'Elevated';
+      guidance = 'The annual cost is higher than many everyday personal loans. A lower rate or lighter fees can change the total.';
+    } else if (nominalAnnual <= 25) {
+      band = 'expensive';
+      label = 'Expensive';
+      guidance = 'This is expensive credit on an annual-cost basis. Check whether a smaller amount or another lender reduces the burden.';
+    } else {
+      band = 'severe';
+      label = 'Severe';
+      guidance = 'The annual cost is very high. Pause and compare alternatives, including not borrowing, before you sign.';
+    }
+    return { band: band, label: label, guidance: guidance };
   }
 
   function debtRatio(grossMonthlyIncome, existingMonthlyRepayments, emi, currency) {
@@ -356,6 +462,37 @@
       ratio: ratio,
       percent: ratio * 100,
       band: band
+    };
+  }
+
+  function cashFlowPressure(grossMonthlyIncome, existingMonthlyRepayments, emi, currency, emergencyFund) {
+    var income = Number(grossMonthlyIncome);
+    if (!Number.isFinite(income) || income <= 0) return null;
+    var existing = Number(existingMonthlyRepayments) || 0;
+    if (existing < 0) existing = 0;
+    emi = emi || 0;
+    var remaining = C.roundMoney(income - existing - emi, currency);
+    var marginRatio = remaining / income;
+    var marginLabel;
+    if (marginRatio >= 0.4) marginLabel = 'comfortable';
+    else if (marginRatio >= 0.25) marginLabel = 'watch';
+    else if (marginRatio > 0) marginLabel = 'tight';
+    else marginLabel = 'negative';
+
+    var fund = emergencyFund || 'unknown';
+    var emergencyBuffer = fund === 'yes' ? 'pass'
+      : fund === 'partial' ? 'partial'
+        : fund === 'no' ? 'fail' : 'unknown';
+
+    return {
+      income: C.roundMoney(income, currency),
+      existing: C.roundMoney(existing, currency),
+      emi: emi,
+      remaining: remaining,
+      newEmiShare: emi / income,
+      allLoansShare: (existing + emi) / income,
+      marginLabel: marginLabel,
+      emergencyBuffer: emergencyBuffer
     };
   }
 
@@ -383,14 +520,14 @@
     };
   }
 
-  /** "If you saved the EMI instead" — 1 / 3 / 5 year horizons, cash vs invested. */
+  /** "If you saved the EMI instead" — 12 / 24 / 36 month horizons, cash vs invested. */
   function opportunityTimeline(monthlyAmount, opportunityRatePercent, currency) {
     var pmt = Number(monthlyAmount);
     if (!Number.isFinite(pmt) || pmt <= 0) return null;
     var rate = Number(opportunityRatePercent);
     if (!Number.isFinite(rate) || rate < 0) rate = 0;
     var r = rate / 12 / 100;
-    return [12, 36, 60].map(function (n) {
+    return [12, 24, 36].map(function (n) {
       var saved = pmt * n;
       var invested = Math.abs(r) < 1e-15 ? saved : pmt * (Math.pow(1 + r, n) - 1) / r;
       return {
@@ -497,41 +634,82 @@
     };
   }
 
-  function buildComparisons(principal, annualRate, months, type, currency, base) {
-    var out = [];
+  function runScenario(principal, annualRate, months, type, currency, feeTotal, treatment) {
+    var financed = treatment === 'added'
+      ? C.roundMoney(principal + feeTotal, currency)
+      : principal;
     var calc = type === 'flat' ? calcFlat : calcReducing;
+    var br = calc(financed, annualRate, months, currency);
+    var totalPayable = treatment === 'added'
+      ? br.totalPayable
+      : C.roundMoney(br.totalPayable + feeTotal, currency);
+    return {
+      emi: br.emi,
+      totalInterest: br.totalInterest,
+      totalPayable: totalPayable,
+      months: months,
+      annualRatePercent: annualRate
+    };
+  }
 
-    // Better rate: 3 percentage points lower (floored at 0), only if it changes anything.
-    var betterRate = Math.max(0, annualRate - 3);
-    if (betterRate < annualRate) {
-      var br = calc(principal, betterRate, months, currency);
+  function buildComparisons(principal, annualRate, months, type, currency, base, feeTotal, treatment) {
+    var out = [];
+    feeTotal = feeTotal || 0;
+    treatment = treatment || 'deducted';
+
+    function pushScenario(id, label, alt) {
+      var interestSaved = C.roundMoney(base.totalInterest - alt.totalInterest, currency);
+      var totalSaved = C.roundMoney(base.totalPayable - alt.totalPayable, currency);
+      var emiDelta = C.roundMoney(alt.emi - base.emi, currency);
+      // Prefer scenarios with positive savings (interest or total cost).
+      if (!(interestSaved > 0 || totalSaved > 0)) return;
       out.push({
-        id: 'better_rate',
-        label: 'Rate ' + betterRate + '% (−3 pts)',
-        annualRatePercent: betterRate,
-        months: months,
-        emi: br.emi,
-        totalInterest: br.totalInterest,
-        totalPayable: br.totalPayable,
-        interestSaved: C.roundMoney(base.totalInterest - br.totalInterest, currency)
+        id: id,
+        label: label,
+        annualRatePercent: alt.annualRatePercent,
+        months: alt.months,
+        emi: alt.emi,
+        totalInterest: alt.totalInterest,
+        totalPayable: alt.totalPayable,
+        interestSaved: interestSaved,
+        totalSaved: totalSaved,
+        emiDelta: emiDelta
       });
     }
 
-    // Shorter tenure: ~75% of the current term (min 1, and strictly shorter).
+    var rateMinus1 = Math.max(0, annualRate - 1);
+    var rateMinus3 = Math.max(0, annualRate - 3);
+    // When −1 and −3 collapse to the same floor, keep only better_rate for backward compat.
+    if (rateMinus1 < annualRate && rateMinus1 !== rateMinus3) {
+      pushScenario(
+        'rate_minus_1',
+        'Rate ' + rateMinus1 + '% (−1 ppt)',
+        runScenario(principal, rateMinus1, months, type, currency, feeTotal, treatment)
+      );
+    }
+    if (rateMinus3 < annualRate) {
+      pushScenario(
+        'better_rate',
+        'Rate ' + rateMinus3 + '% (−3 pts)',
+        runScenario(principal, rateMinus3, months, type, currency, feeTotal, treatment)
+      );
+    }
+
+    if (feeTotal > 0) {
+      pushScenario(
+        'fees_removed',
+        'Fees removed',
+        runScenario(principal, annualRate, months, type, currency, 0, treatment)
+      );
+    }
+
     var shorter = Math.max(1, Math.round(months * 0.75));
     if (shorter < months) {
-      var st = calc(principal, annualRate, shorter, currency);
-      out.push({
-        id: 'shorter_tenure',
-        label: shorter + ' months (−' + (months - shorter) + ')',
-        annualRatePercent: annualRate,
-        months: shorter,
-        emi: st.emi,
-        totalInterest: st.totalInterest,
-        totalPayable: st.totalPayable,
-        interestSaved: C.roundMoney(base.totalInterest - st.totalInterest, currency),
-        emiDelta: C.roundMoney(st.emi - base.emi, currency)
-      });
+      pushScenario(
+        'shorter_tenure',
+        shorter + ' months (−' + (months - shorter) + ')',
+        runScenario(principal, annualRate, shorter, type, currency, feeTotal, treatment)
+      );
     }
 
     return out.length ? out : null;
@@ -589,6 +767,8 @@
       totalInterest: totalInterest,
       prepaymentPenalty: penalty,
       interestSaved: null,
+      netSaving: null,
+      totalSaved: null,
       schedule: schedule
     };
   }
@@ -618,6 +798,9 @@
       totalPayable: C.roundMoney(totalPaid, currency),
       totalInterest: C.roundMoney(Math.max(0, totalPaid - (base.totalPayable - base.totalInterest)), currency),
       prepaymentPenalty: 0,
+      interestSaved: null,
+      netSaving: null,
+      totalSaved: null,
       schedule: schedule
     };
   }
@@ -662,11 +845,19 @@
       Math.max(0, result.totalInterest - result.withExtra.totalInterest - (result.withExtra.prepaymentPenalty || 0)),
       result.currency
     );
-    result.withExtra.interestSaved = interestSaved;
-    result.withExtra.totalSaved = C.roundMoney(
-      Math.max(0, result.totalPayable - result.withExtra.totalPayable),
+    // Upfront fees (deducted/separate) are paid either way — exclude from early-payoff savings.
+    // Added fees sit inside financed principal and are already in both repayment totals.
+    var feeAdjust = 0;
+    if (result.fees && result.fees.treatment !== 'added') {
+      feeAdjust = result.upfrontFees || 0;
+    }
+    var totalSaved = C.roundMoney(
+      Math.max(0, result.totalPayable - feeAdjust - result.withExtra.totalPayable),
       result.currency
     );
+    result.withExtra.interestSaved = interestSaved;
+    result.withExtra.totalSaved = totalSaved;
+    result.withExtra.netSaving = totalSaved;
     return result;
   }
 
@@ -680,10 +871,13 @@
     _calcReducing: calcReducing,
     _calcFlat: calcFlat,
     _computeAPR: computeAPR,
+    _estimateMonthlyCashFlowRate: estimateMonthlyCashFlowRate,
     _debtRatio: debtRatio,
+    _cashFlowPressure: cashFlowPressure,
     _opportunityCost: opportunityCost,
     _lifeCost: lifeCost,
     _opportunityTimeline: opportunityTimeline,
-    _affordability: affordability
+    _affordability: affordability,
+    _buildCostSignal: buildCostSignal
   };
 })(typeof window !== 'undefined' ? window : globalThis);
