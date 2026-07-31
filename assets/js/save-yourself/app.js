@@ -1,5 +1,5 @@
 /**
- * Save Yourself — UI wiring (client-side only).
+ * Save Yourself — Financial X-Ray UI wiring (client-side only).
  */
 (function () {
   'use strict';
@@ -8,20 +8,32 @@
   var MathLib = window.SYLoanMath;
   var Advice = window.SYAdvice;
   var Decision = window.SYDecision;
+  var Storage = window.SYStorage;
+  var MoneyFlow = window.SYMoneyFlow;
+  var Timeline = window.SYRepaymentTimeline;
 
-  var PREF_KEY = 'sy_prefs_v1';
-  var PLAN_KEY = 'sy_plan_v1';
   var locale = C.detectLocale();
+  var COMMIT_FIELDS = ['commitDate', 'commitExtra', 'commitBuffer', 'commitPerson'];
+  var ERROR_FIELDS = { amount: 'amount', rate: 'rate', tenure: 'tenure', extra: 'extraPayment' };
+
   var state = {
-    currency: C.detectDefaultCurrency(locale),
-    currencyOptions: [],
-    lastResult: null,
+    input: null,
+    ui: {
+      advancedOpen: false,
+      selectedPayment: 0,
+      timelineGrouping: 'auto',
+      editedByUser: false
+    },
+    filterAnswers: Object.create(null),
+    redFlags: Object.create(null),
+    escape: Object.create(null),
+    lastValidResult: null,
     lastAdvice: null,
     lastFilter: null,
+    currencyOptions: [],
     touched: Object.create(null),
-    interacted: false,
-    escape: Object.create(null),
-    filterAnswers: Object.create(null)
+    commitment: {},
+    amortLoaded: false
   };
 
   function $(id) { return document.getElementById(id); }
@@ -32,59 +44,161 @@
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  /* ---------- Preferences ---------- */
-  function loadPrefs() {
-    try {
-      var raw = localStorage.getItem(PREF_KEY);
-      if (!raw) return;
-      var p = JSON.parse(raw);
-      if (p && typeof p.currency === 'string') state.currency = p.currency;
-      if (p && typeof p.locale === 'string') locale = p.locale;
-    } catch (e) { /* ignore */ }
-  }
-  function savePrefs() {
-    try {
-      localStorage.setItem(PREF_KEY, JSON.stringify({
-        currency: state.currency, locale: locale, savedAt: new Date().toISOString()
-      }));
-    } catch (e) { /* ignore */ }
-  }
-  function clearPrefs() {
-    try { localStorage.removeItem(PREF_KEY); } catch (e) { /* ignore */ }
+  function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
   }
 
-  /* ---------- Plan: checklist, filter answers, commitment ---------- */
-  var COMMIT_FIELDS = ['commitDate', 'commitExtra', 'commitBuffer', 'commitPerson'];
+  /* ---------- Persistence ---------- */
+  function persist() {
+    if (!state.ui.editedByUser) return;
+    var input = collectInputForStorage();
+    var commitment = {};
+    COMMIT_FIELDS.forEach(function (id) {
+      commitment[id] = $(id) ? $(id).value : '';
+    });
+    Storage.save({
+      input: input,
+      ui: {
+        advancedOpen: state.ui.advancedOpen,
+        selectedPayment: state.ui.selectedPayment,
+        timelineGrouping: state.ui.timelineGrouping,
+        editedByUser: true,
+        locale: locale
+      },
+      checklist: {
+        filter: state.filterAnswers,
+        escape: state.escape,
+        redFlags: state.redFlags
+      },
+      commitment: commitment
+    });
+  }
 
-  function loadPlan() {
-    try {
-      var raw = localStorage.getItem(PLAN_KEY);
-      if (!raw) return;
-      var p = JSON.parse(raw);
-      if (!p || typeof p !== 'object') return;
-      if (p.escape && typeof p.escape === 'object') state.escape = p.escape;
-      if (p.filter && typeof p.filter === 'object') state.filterAnswers = p.filter;
-      if (p.commit && typeof p.commit === 'object') {
+  function collectInputForStorage() {
+    var amountParse = C.parseAmount($('amount').value);
+    var rateParse = C.parseAmount($('rate').value);
+    var tenureParse = C.parseAmount($('tenure').value);
+    var procParse = C.parseAmount($('processingFee').value || '0');
+    var otherParse = C.parseAmount($('otherFees').value || '0');
+    var extraParse = C.parseAmount($('extraPayment').value || '0');
+    var penaltyParse = C.parseAmount($('prepayPenalty').value || '0');
+    var incomeParse = C.parseAmount($('income').value || '');
+    var existingParse = C.parseAmount($('existingDebt').value || '');
+    var oppParse = C.parseAmount($('oppRate').value || '8');
+    var interestType = document.querySelector('input[name="interestType"]:checked');
+    var feeTreatment = document.querySelector('input[name="feeTreatment"]:checked');
+    var reason = document.querySelector('input[name="reason"]:checked');
+
+    return {
+      currency: state.input.currency,
+      principal: amountParse.ok ? amountParse.value : null,
+      nominalAnnualRate: rateParse.ok ? rateParse.value : null,
+      tenureValue: tenureParse.ok ? tenureParse.value : null,
+      tenureUnit: $('tenureUnit').value === 'months' ? 'months' : 'years',
+      interestType: interestType ? interestType.value : 'reducing',
+      processingFee: {
+        mode: $('processingUnit').value === 'percent' ? 'percent' : 'fixed',
+        value: procParse.ok ? procParse.value : 0,
+        treatment: feeTreatment ? feeTreatment.value : 'deducted'
+      },
+      otherCharges: otherParse.ok ? otherParse.value : 0,
+      extraMonthlyPayment: extraParse.ok ? extraParse.value : 0,
+      prepaymentPenaltyRate: penaltyParse.ok ? penaltyParse.value : 0,
+      grossMonthlyIncome: incomeParse.ok ? incomeParse.value : null,
+      existingMonthlyDebt: existingParse.ok ? existingParse.value : null,
+      emergencyFundMonths: $('emergencyFund').value || 'unknown',
+      opportunityAnnualRate: oppParse.ok ? oppParse.value : 8,
+      borrowingReason: reason ? reason.value : null,
+      lenderType: $('lender').value || null
+    };
+  }
+
+  function applyInputToForm(input) {
+    input = input || Storage.DEFAULT_EXAMPLE;
+    state.input = Object.assign({}, Storage.DEFAULT_EXAMPLE, input);
+    var cur = state.input.currency || C.detectDefaultCurrency(locale);
+    state.input.currency = cur;
+
+    if (state.input.principal != null) $('amount').value = String(state.input.principal);
+    if (state.input.nominalAnnualRate != null) $('rate').value = String(state.input.nominalAnnualRate);
+    if (state.input.tenureValue != null) $('tenure').value = String(state.input.tenureValue);
+    $('tenureUnit').value = state.input.tenureUnit === 'months' ? 'months' : 'years';
+
+    var type = state.input.interestType === 'flat' ? 'flat' : 'reducing';
+    document.querySelectorAll('input[name="interestType"]').forEach(function (el) {
+      el.checked = el.value === type;
+    });
+    updateFlatNote();
+
+    var fee = state.input.processingFee || { mode: 'fixed', value: 0, treatment: 'deducted' };
+    $('processingFee').value = fee.value != null ? String(fee.value) : '0';
+    $('processingUnit').value = fee.mode === 'percent' ? 'percent' : 'amount';
+    var treatment = fee.treatment === 'added' || fee.treatment === 'separate' ? fee.treatment : 'deducted';
+    document.querySelectorAll('input[name="feeTreatment"]').forEach(function (el) {
+      el.checked = el.value === treatment;
+    });
+
+    $('otherFees').value = state.input.otherCharges != null ? String(state.input.otherCharges) : '0';
+    $('extraPayment').value = state.input.extraMonthlyPayment ? String(state.input.extraMonthlyPayment) : '';
+    $('prepayPenalty').value = state.input.prepaymentPenaltyRate != null
+      ? String(state.input.prepaymentPenaltyRate) : '0';
+    $('oppRate').value = state.input.opportunityAnnualRate != null
+      ? String(state.input.opportunityAnnualRate) : '8';
+    $('income').value = state.input.grossMonthlyIncome != null
+      ? String(state.input.grossMonthlyIncome) : '';
+    $('existingDebt').value = state.input.existingMonthlyDebt != null
+      ? String(state.input.existingMonthlyDebt) : '';
+    $('emergencyFund').value = state.input.emergencyFundMonths || 'unknown';
+
+    if (state.input.lenderType && $('lender')) $('lender').value = state.input.lenderType;
+    if (state.input.borrowingReason) {
+      var reasonEl = document.querySelector('input[name="reason"][value="' + state.input.borrowingReason + '"]');
+      if (reasonEl) reasonEl.checked = true;
+    }
+  }
+
+  function loadState() {
+    var saved = Storage.load();
+    if (saved && saved.input && Object.keys(saved.input).length) {
+      state.ui.editedByUser = !!(saved.ui && saved.ui.editedByUser);
+      if (saved.ui) {
+        state.ui.advancedOpen = !!saved.ui.advancedOpen;
+        state.ui.selectedPayment = Number(saved.ui.selectedPayment) || 0;
+        state.ui.timelineGrouping = saved.ui.timelineGrouping || 'auto';
+        if (typeof saved.ui.locale === 'string') locale = saved.ui.locale;
+      }
+      if (saved.checklist) {
+        if (saved.checklist.filter) state.filterAnswers = Object.assign(Object.create(null), saved.checklist.filter);
+        if (saved.checklist.escape) state.escape = Object.assign(Object.create(null), saved.checklist.escape);
+        if (saved.checklist.redFlags) state.redFlags = Object.assign(Object.create(null), saved.checklist.redFlags);
+      }
+      if (saved.commitment) {
+        state.commitment = saved.commitment;
         COMMIT_FIELDS.forEach(function (id) {
-          if (typeof p.commit[id] === 'string' && $(id)) $(id).value = p.commit[id];
+          if (typeof saved.commitment[id] === 'string' && $(id)) $(id).value = saved.commitment[id];
         });
       }
-    } catch (e) { /* ignore */ }
+      applyInputToForm(saved.input);
+    } else {
+      state.ui.editedByUser = false;
+      applyInputToForm(clone(Storage.DEFAULT_EXAMPLE));
+    }
+    syncExampleBadge();
+    if (state.ui.advancedOpen) $('advancedDrawer').open = true;
   }
-  function savePlan() {
-    try {
-      var commit = {};
-      COMMIT_FIELDS.forEach(function (id) { commit[id] = $(id) ? $(id).value : ''; });
-      localStorage.setItem(PLAN_KEY, JSON.stringify({
-        escape: state.escape, filter: state.filterAnswers, commit: commit
-      }));
-    } catch (e) { /* ignore */ }
+
+  function syncExampleBadge() {
+    var badge = $('exampleBadge');
+    if (!badge) return;
+    badge.hidden = !!state.ui.editedByUser;
   }
-  function clearPlan() {
-    try { localStorage.removeItem(PLAN_KEY); } catch (e) { /* ignore */ }
-    state.escape = Object.create(null);
-    state.filterAnswers = Object.create(null);
-    COMMIT_FIELDS.forEach(function (id) { if ($(id)) $(id).value = ''; });
+
+  function markEdited() {
+    if (!state.ui.editedByUser) {
+      state.ui.editedByUser = true;
+      syncExampleBadge();
+    }
+    persist();
   }
 
   /* ---------- Currency combobox ---------- */
@@ -106,21 +220,22 @@
       seen[code] = true;
       out.push({ code: code, name: C.currencyName(code, locale), symbol: C.currencySymbol(code, locale), popular: false });
     });
-    if (!seen[state.currency]) state.currency = 'USD';
+    if (!seen[state.input.currency]) state.input.currency = 'USD';
     state.currencyOptions = out;
   }
 
-  function currentCurrencyLabel() {
-    var o = findOption(state.currency);
-    if (!o) return state.currency;
-    var sym = o.symbol && o.symbol !== o.code ? ' ' + o.symbol : '';
-    return o.code + sym + ' — ' + o.name;
-  }
   function findOption(code) {
     for (var i = 0; i < state.currencyOptions.length; i++) {
       if (state.currencyOptions[i].code === code) return state.currencyOptions[i];
     }
     return null;
+  }
+
+  function currentCurrencyLabel() {
+    var o = findOption(state.input.currency);
+    if (!o) return state.input.currency;
+    var sym = o.symbol && o.symbol !== o.code ? ' ' + o.symbol : '';
+    return o.code + sym + ' — ' + o.name;
   }
 
   function filterOptions(query) {
@@ -154,7 +269,7 @@
       }
       var sym = o.symbol && o.symbol !== o.code ? o.symbol : '';
       html += '<li class="combo-opt" role="option" id="cur-opt-' + i + '" data-code="' + o.code + '"'
-        + (o.code === state.currency ? ' aria-selected="true"' : '')
+        + (o.code === state.input.currency ? ' aria-selected="true"' : '')
         + '><span>' + escapeHtml(o.code) + (sym ? ' ' + escapeHtml(sym) : '')
         + '</span><small>' + escapeHtml(o.name) + '</small></li>';
     });
@@ -168,6 +283,7 @@
     $('currencyInput').setAttribute('aria-expanded', 'true');
     renderCurrencyList($('currencyInput').value === currentCurrencyLabel() ? '' : $('currencyInput').value);
   }
+
   function closeCombo() {
     combo.open = false;
     $('currencyListbox').hidden = true;
@@ -175,6 +291,7 @@
     $('currencyInput').removeAttribute('aria-activedescendant');
     combo.active = -1;
   }
+
   function setActive(idx) {
     var list = $('currencyListbox');
     var items = list.querySelectorAll('.combo-opt');
@@ -189,14 +306,14 @@
       $('currencyInput').setAttribute('aria-activedescendant', el.id);
     }
   }
+
   function selectCurrency(code) {
     if (!findOption(code)) return;
-    state.currency = code;
+    state.input.currency = code;
     $('currencyInput').value = currentCurrencyLabel();
-    savePrefs();
     updateCurrencyChrome();
     closeCombo();
-    markInteracted();
+    markEdited();
     recalculate();
   }
 
@@ -234,7 +351,7 @@
       }, 120);
     });
     toggle.addEventListener('click', function () {
-      if (combo.open) { closeCombo(); }
+      if (combo.open) closeCombo();
       else { input.focus(); openCombo(); }
     });
     list.addEventListener('mousedown', function (e) {
@@ -245,7 +362,15 @@
     });
   }
 
-  /* ---------- Populate selects ---------- */
+  function updateCurrencyChrome() {
+    var sym = C.currencySymbol(state.input.currency, locale);
+    var code = state.input.currency;
+    document.querySelectorAll('[data-currency-prefix]').forEach(function (el) {
+      el.textContent = code + (sym && sym !== code ? ' ' + sym : '');
+    });
+  }
+
+  /* ---------- Populate reasons / lenders / decision chrome ---------- */
   function populateReasons() {
     var wrap = $('reasonList');
     wrap.innerHTML = '';
@@ -262,23 +387,99 @@
       wrap.appendChild(label);
     });
   }
+
   function populateLenders() {
     var sel = $('lender');
     sel.innerHTML = '';
     Advice.LENDERS.forEach(function (l) {
       var opt = document.createElement('option');
-      opt.value = l.id; opt.textContent = l.label;
+      opt.value = l.id;
+      opt.textContent = l.label;
       sel.appendChild(opt);
     });
   }
 
-  /* ---------- Form reading ---------- */
+  function renderEscapeTiers() {
+    var host = $('escapeTiers');
+    host.innerHTML = '';
+    Decision.ESCAPE_TIERS.forEach(function (tier) {
+      var block = document.createElement('div');
+      block.className = 'sy-escape-tier';
+      var h = document.createElement('h4');
+      h.textContent = tier.title;
+      block.appendChild(h);
+      if (tier.note) {
+        var note = document.createElement('p');
+        note.className = 'hint';
+        note.textContent = tier.note;
+        block.appendChild(note);
+      }
+      var ul = document.createElement('ul');
+      ul.className = 'sy-escape-list';
+      tier.items.forEach(function (item) {
+        var key = tier.id + '.' + item.id;
+        var id = 'escape_' + tier.id + '_' + item.id;
+        var li = document.createElement('li');
+        li.innerHTML = '<label for="' + id + '"><input type="checkbox" id="' + id + '" data-escape="' + escapeHtml(key) + '"'
+          + (state.escape[key] ? ' checked' : '') + '><span>' + escapeHtml(item.label) + '</span></label>';
+        ul.appendChild(li);
+      });
+      block.appendChild(ul);
+      host.appendChild(block);
+    });
+    host.querySelectorAll('input[data-escape]').forEach(function (box) {
+      box.addEventListener('change', function () {
+        var key = box.getAttribute('data-escape');
+        if (box.checked) state.escape[key] = true;
+        else delete state.escape[key];
+        markEdited();
+        renderFilter();
+      });
+    });
+  }
+
+  function renderLadder() {
+    var body = $('ladderBody');
+    body.innerHTML = '';
+    Decision.LENDER_LADDER.forEach(function (row) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td data-tone="' + escapeHtml(row.tone) + '">' + escapeHtml(row.label) + '</td>'
+        + '<td>' + escapeHtml(row.apr) + '</td>'
+        + '<td>' + escapeHtml(row.use) + '</td>';
+      body.appendChild(tr);
+    });
+  }
+
+  function renderRedFlags() {
+    var list = $('redFlagList');
+    list.innerHTML = '';
+    Decision.RED_FLAGS.forEach(function (flag) {
+      var id = 'flag_' + flag.id;
+      var li = document.createElement('li');
+      li.className = 'sy-flag';
+      li.innerHTML = '<input type="checkbox" id="' + id + '" data-flag="' + escapeHtml(flag.id) + '"'
+        + (state.redFlags[flag.id] ? ' checked' : '') + '>'
+        + '<label for="' + id + '">' + escapeHtml(flag.label) + '</label>';
+      list.appendChild(li);
+    });
+    list.querySelectorAll('input[data-flag]').forEach(function (box) {
+      box.addEventListener('change', function () {
+        var id = box.getAttribute('data-flag');
+        if (box.checked) state.redFlags[id] = true;
+        else delete state.redFlags[id];
+        markEdited();
+        renderFilter();
+      });
+    });
+  }
+
+  /* ---------- Form → math input ---------- */
   function readForm() {
     var amountParse = C.parseAmount($('amount').value);
     var rateParse = C.parseAmount($('rate').value);
     var tenureParse = C.parseAmount($('tenure').value);
     var extraParse = C.parseAmount($('extraPayment').value || '0');
-    var oppParse = C.parseAmount($('oppRate').value || '10');
+    var oppParse = C.parseAmount($('oppRate').value || '8');
     var procParse = C.parseAmount($('processingFee').value || '0');
     var otherParse = C.parseAmount($('otherFees').value || '0');
     var penaltyParse = C.parseAmount($('prepayPenalty').value || '0');
@@ -286,6 +487,7 @@
     var existingParse = C.parseAmount($('existingDebt').value || '');
     var unit = $('tenureUnit').value;
     var interestType = document.querySelector('input[name="interestType"]:checked');
+    var feeTreatment = document.querySelector('input[name="feeTreatment"]:checked');
     var reason = document.querySelector('input[name="reason"]:checked');
 
     var errors = {};
@@ -310,6 +512,9 @@
       errors.extra = 'Enter a valid amount, or leave blank.';
     }
 
+    var treatment = feeTreatment ? feeTreatment.value : 'deducted';
+    if (treatment !== 'separate' && treatment !== 'added') treatment = 'deducted';
+
     return {
       errors: errors,
       valid: Object.keys(errors).length === 0,
@@ -317,14 +522,15 @@
       annualRatePercent: rateParse.value,
       months: months,
       interestType: interestType ? interestType.value : 'reducing',
-      currency: state.currency,
+      currency: state.input.currency,
       extraMonthly: extraParse.ok ? Math.max(0, extraParse.value) : 0,
-      opportunityRatePercent: oppParse.ok ? oppParse.value : 10,
+      opportunityRatePercent: oppParse.ok ? oppParse.value : 8,
       fees: {
         processing: procParse.ok ? Math.max(0, procParse.value) : 0,
         processingIsPercent: $('processingUnit').value === 'percent',
         other: otherParse.ok ? Math.max(0, otherParse.value) : 0,
-        prepaymentPenaltyPercent: penaltyParse.ok ? Math.max(0, penaltyParse.value) : 0
+        prepaymentPenaltyPercent: penaltyParse.ok ? Math.max(0, penaltyParse.value) : 0,
+        treatment: treatment
       },
       grossMonthlyIncome: incomeParse.ok ? incomeParse.value : null,
       existingMonthlyRepayments: existingParse.ok ? existingParse.value : 0,
@@ -332,48 +538,441 @@
       reasonId: reason ? reason.value : null,
       problemSentence: ($('problemSentence').value || '').trim(),
       emergencyFund: $('emergencyFund').value,
-      shortfallType: $('shortfallType').value
+      shortfallType: $('shortfallType').value,
+      withComparisons: true
     };
   }
-
-  var ERROR_FIELDS = { amount: 'amount', rate: 'rate', tenure: 'tenure', extra: 'extraPayment' };
 
   function showFieldErrors(errors) {
     Object.keys(ERROR_FIELDS).forEach(function (key) {
       var el = $('err-' + key);
       var input = $(ERROR_FIELDS[key]);
-      var show = errors[key] && (state.touched[key] || state.submitAttempted);
+      var show = !!errors[key] && !!state.touched[key];
       if (el) {
         if (show) { el.textContent = errors[key]; el.hidden = false; }
         else { el.textContent = ''; el.hidden = true; }
       }
       if (input) {
-        if (show) input.setAttribute('aria-invalid', 'true');
-        else input.removeAttribute('aria-invalid');
+        if (show) {
+          input.setAttribute('aria-invalid', 'true');
+          var described = input.getAttribute('aria-describedby') || '';
+          if (described.indexOf('err-' + key) === -1) {
+            input.setAttribute('aria-describedby', (described + ' err-' + key).trim());
+          }
+        } else {
+          input.removeAttribute('aria-invalid');
+        }
       }
     });
   }
 
-  /* ---------- Rendering: results ---------- */
-  function setResultsPlaceholder() {
-    $('resultsPanel').setAttribute('data-state', 'empty');
-    ['resEmi', 'resTotal', 'resInterest', 'resApr', 'resDaily', 'resOpp', 'resDti', 'resHours'].forEach(function (id) {
-      $(id).textContent = '—';
+  function updateFlatNote() {
+    var flat = document.querySelector('input[name="interestType"]:checked');
+    $('flatNote').hidden = !(flat && flat.value === 'flat');
+  }
+
+  /* ---------- Rendering ---------- */
+  function money(n, ccy) {
+    return C.formatMoney(n, ccy, locale);
+  }
+
+  function renderReality(result) {
+    var ccy = result.currency;
+    $('realityBorrow').textContent = money(result.principal, ccy);
+    $('realityReturn').textContent = money(result.totalPaid, ccy);
+    $('realityRent').textContent = money(result.borrowingCost, ccy);
+
+    var principalShare = result.totalPrincipalPaid || result.principal;
+    var interestShare = result.totalInterestPaid || 0;
+    var feeShare = result.fees && result.fees.treatment !== 'added' ? (result.upfrontFees || 0) : 0;
+    // When fees are added, they are inside principal/interest already — omit fee segment.
+    if (result.fees && result.fees.treatment === 'added') feeShare = 0;
+    var total = principalShare + interestShare + feeShare;
+    if (!(total > 0)) total = 1;
+    $('barPrincipal').style.flex = String(principalShare / total);
+    $('barInterest').style.flex = String(interestShare / total);
+    $('barFees').style.flex = String(feeShare / total);
+    $('feesLegend').hidden = feeShare <= 0;
+
+    $('metricCashValue').textContent = money(result.netProceeds, ccy);
+    $('metricEmiValue').textContent = money(result.emi, ccy);
+
+    if (result.costPerHundred != null) {
+      $('metricPerHundred').hidden = false;
+      var per = result.costPerHundred;
+      var unit = 100;
+      var returned = Math.round(per * 10) / 10;
+      $('metricPerHundredValue').textContent = returned.toFixed(1);
+      var sym = C.currencySymbol(ccy, locale) || '';
+      $('metricPerHundredSub').textContent =
+        'For every ' + sym + unit + ' borrowed you return ' + sym + returned.toFixed(1);
+    } else {
+      $('metricPerHundred').hidden = true;
+    }
+
+    if (result.estimatedNominalAnnualCost != null) {
+      $('metricAnnual').hidden = false;
+      $('metricAnnualValue').textContent =
+        C.formatNumber(result.estimatedNominalAnnualCost, 1, locale) + '%';
+    } else {
+      $('metricAnnual').hidden = true;
+    }
+
+    renderReceipt(result);
+  }
+
+  function renderReceipt(result) {
+    var ccy = result.currency;
+    var rows = [
+      ['Loan amount', money(result.principal, ccy)],
+      ['Cash you receive', money(result.netProceeds, ccy)],
+      ['Upfront fees', money(result.upfrontFees || 0, ccy)],
+      ['Monthly payment', money(result.emi, ccy)],
+      ['Number of payments', String(result.months)],
+      ['Interest', money(result.totalInterestPaid, ccy)],
+      ['Total you return', money(result.totalPaid, ccy), 'total'],
+      ['Money rent (interest + fees)', money(result.borrowingCost, ccy), 'cost']
+    ];
+    if (result.estimatedNominalAnnualCost != null) {
+      rows.push(['Estimated annual cost', C.formatNumber(result.estimatedNominalAnnualCost, 2, locale) + '%']);
+    }
+    var html = '';
+    rows.forEach(function (r) {
+      var cls = 'sy-receipt__row';
+      if (r[2] === 'total') cls += ' sy-receipt__row--total';
+      if (r[2] === 'cost') cls += ' sy-receipt__row--cost';
+      html += '<div class="' + cls + '"><dt>' + escapeHtml(r[0]) + '</dt><dd>' + escapeHtml(r[1]) + '</dd></div>';
     });
-    $('resFormula').textContent = 'Enter loan details to see estimated reducing-balance or flat-rate results.';
-    $('warnings').innerHTML = '';
-    $('extraResults').hidden = true;
-    $('amortWrap').hidden = true;
-    $('splitViz').hidden = true;
-    $('burnViz').hidden = true;
-    $('compareViz').hidden = true;
-    $('dtiMetric').hidden = true;
-    $('oppMetric').hidden = true;
-    $('lifeMetric').hidden = true;
-    $('affordBox').hidden = true;
-    $('oppTimeline').hidden = true;
-    $('liveSummary').textContent = '';
-    setButtons(false);
+    $('receiptBody').innerHTML = html;
+  }
+
+  function renderMoneyFlow(result) {
+    if (!MoneyFlow || !$('moneyFlowMount')) return;
+    MoneyFlow.render($('moneyFlowMount'), {
+      principal: result.principal,
+      netProceeds: result.netProceeds,
+      upfrontFees: result.upfrontFees || 0,
+      totalPaid: result.totalPaid,
+      borrowingCost: result.borrowingCost,
+      currency: result.currency,
+      formatMoney: function (n, ccy) { return money(n, ccy); }
+    });
+  }
+
+  function renderTimeline(result) {
+    if (!Timeline || !$('timelineMount') || !result.schedule) return;
+    Timeline.render($('timelineMount'), result.schedule, {
+      currency: result.currency,
+      formatMoney: function (n, ccy) { return money(n, ccy); },
+      interestType: result.interestType,
+      selectedMonth: state.ui.selectedPayment || 0,
+      grouping: state.ui.timelineGrouping || 'auto',
+      onSelect: function (info) {
+        state.ui.selectedPayment = info.index || 0;
+        if (state.ui.editedByUser) persist();
+      }
+    });
+  }
+
+  function costSignalPosition(nominal) {
+    if (nominal == null || !Number.isFinite(nominal)) return 0;
+    var capped = Math.max(0, Math.min(nominal, 40));
+    return (capped / 40) * 100;
+  }
+
+  function renderCostSignal(result) {
+    var signal = result.costSignal;
+    var marker = $('costSignalMarker');
+    var label = $('costSignalLabel');
+    var guidance = $('costSignalGuidance');
+    var value = $('costSignalValue');
+    if (!signal) {
+      label.textContent = '—';
+      label.setAttribute('data-band', '');
+      guidance.textContent = 'Enter a valid loan to see the cost signal.';
+      value.textContent = '';
+      marker.style.left = '0%';
+      return;
+    }
+    marker.style.left = costSignalPosition(result.estimatedNominalAnnualCost) + '%';
+    label.textContent = signal.label;
+    label.setAttribute('data-band', signal.band || '');
+    guidance.textContent = signal.guidance || '';
+    value.textContent = result.estimatedNominalAnnualCost != null
+      ? 'Estimated nominal annual cost: ' + C.formatNumber(result.estimatedNominalAnnualCost, 2, locale) + '%'
+      : '';
+  }
+
+  function renderCashFlow(result) {
+    var pressure = result.cashFlowPressure;
+    var panel = $('cashFlowPressure');
+    var invite = $('cashFlowInvite');
+    if (!pressure) {
+      panel.hidden = true;
+      invite.hidden = false;
+      return;
+    }
+    panel.hidden = false;
+    invite.hidden = true;
+    var ccy = result.currency;
+    var rows = [
+      ['Gross monthly income', money(pressure.income, ccy)],
+      ['Existing repayments', money(pressure.existing, ccy)],
+      ['This loan EMI', money(pressure.emi, ccy)],
+      ['Remaining after payments', money(pressure.remaining, ccy)]
+    ];
+    var html = '';
+    rows.forEach(function (r) {
+      html += '<div class="sy-pressure__row"><dt>' + escapeHtml(r[0]) + '</dt><dd>' + escapeHtml(r[1]) + '</dd></div>';
+    });
+    $('cashFlowBody').innerHTML = html;
+    var margin = $('cashFlowMargin');
+    var labels = {
+      comfortable: 'Comfortable margin after obligations',
+      watch: 'Watch — margin is thinning',
+      tight: 'Tight — little left after payments',
+      negative: 'Negative — payments exceed remaining income'
+    };
+    margin.textContent = labels[pressure.marginLabel] || pressure.marginLabel;
+    margin.setAttribute('data-label', pressure.marginLabel || '');
+  }
+
+  function renderScenarios(result) {
+    var ccy = result.currency;
+    var comps = result.comparisons || [];
+    var betterList = $('scenarioBetterList');
+    betterList.innerHTML = '';
+    if (comps.length) {
+      var best = comps.slice().sort(function (a, b) {
+        return (b.totalSaved || 0) - (a.totalSaved || 0);
+      })[0];
+      $('scenarioBetterOutcome').textContent = 'Save ' + money(best.totalSaved, ccy);
+      $('scenarioBetterOutcome').classList.add('sy-scenario__outcome--save');
+      $('scenarioBetterDetail').textContent = best.label + ' · EMI ' + money(best.emi, ccy);
+      comps.forEach(function (c) {
+        var li = document.createElement('li');
+        li.textContent = c.label + ' → save ' + money(c.totalSaved, ccy)
+          + ' (EMI ' + money(c.emi, ccy) + ')';
+        betterList.appendChild(li);
+      });
+    } else {
+      $('scenarioBetterOutcome').textContent = 'No cheaper scenario from these inputs';
+      $('scenarioBetterOutcome').classList.remove('sy-scenario__outcome--save');
+      $('scenarioBetterDetail').textContent = 'A lower rate, shorter tenure, or fewer fees would appear here when they reduce total cost.';
+    }
+
+    var timeline = result.opportunityTimeline;
+    var saveList = $('scenarioSaveList');
+    saveList.innerHTML = '';
+    if (timeline && timeline.length) {
+      var last = timeline[timeline.length - 1];
+      $('scenarioSaveOutcome').textContent = money(last.invested, ccy);
+      $('scenarioSaveDetail').textContent =
+        'If you set aside the EMI for ' + last.label + ' at '
+        + C.formatNumber(result.opportunity.ratePercent, 1, locale) + '% instead of borrowing.';
+      timeline.forEach(function (row) {
+        var li = document.createElement('li');
+        li.textContent = row.label + ': ' + money(row.saved, ccy) + ' set aside → '
+          + money(row.invested, ccy) + ' invested';
+        saveList.appendChild(li);
+      });
+    } else {
+      $('scenarioSaveOutcome').textContent = '—';
+      $('scenarioSaveDetail').textContent = 'Set an opportunity rate in advanced inputs.';
+    }
+
+    var extra = result.withExtra;
+    var extraBox = $('scenarioExtra');
+    if (extra) {
+      extraBox.hidden = false;
+      $('scenarioExtraOutcome').textContent = 'Save ' + money(extra.netSaving || extra.totalSaved || 0, ccy);
+      $('scenarioExtraDetail').textContent =
+        'Finish in ' + extra.months + ' months (vs ' + result.months + ')'
+        + (extra.prepaymentPenalty ? ' · penalty ' + money(extra.prepaymentPenalty, ccy) : '');
+    } else {
+      extraBox.hidden = true;
+    }
+  }
+
+  function renderWarnings(result) {
+    var warn = $('warnings');
+    warn.innerHTML = '';
+    (result.warnings || []).forEach(function (w) {
+      var div = document.createElement('div');
+      div.className = 'notice warn';
+      div.textContent = w.message;
+      warn.appendChild(div);
+    });
+  }
+
+  function renderAdvice(form, result) {
+    var panel = $('advicePanel');
+    if (!form.reasonId) {
+      panel.hidden = true;
+      state.lastAdvice = null;
+      return;
+    }
+    var advice = Advice.buildAdvice({
+      reasonId: form.reasonId,
+      lenderId: form.lenderId,
+      problemSentence: form.problemSentence,
+      emergencyFund: form.emergencyFund,
+      shortfallType: form.shortfallType,
+      loan: result
+    });
+    state.lastAdvice = advice;
+    panel.hidden = false;
+    $('adviceHeadline').textContent = advice.headline || '';
+    var top = $('topActions');
+    top.innerHTML = '';
+    (advice.topActions || []).slice(0, 3).forEach(function (a) {
+      var li = document.createElement('li');
+      li.innerHTML = '<strong>' + escapeHtml(a.title) + '</strong>'
+        + (a.detail ? ' — ' + escapeHtml(a.detail) : '');
+      top.appendChild(li);
+    });
+    var more = advice.moreActions || (advice.steps || []).slice(3);
+    var moreWrap = $('moreActionsWrap');
+    var moreList = $('moreActions');
+    moreList.innerHTML = '';
+    if (more.length) {
+      moreWrap.hidden = false;
+      more.forEach(function (a) {
+        var li = document.createElement('li');
+        li.innerHTML = '<strong>' + escapeHtml(a.title) + '</strong>'
+          + (a.detail ? ' — ' + escapeHtml(a.detail) : '');
+        moreList.appendChild(li);
+      });
+    } else {
+      moreWrap.hidden = true;
+    }
+  }
+
+  function tier1Progress() {
+    var tier = Decision.ESCAPE_TIERS[0];
+    if (!tier) return { total: 0, checked: 0 };
+    var checked = 0;
+    tier.items.forEach(function (item) {
+      if (state.escape[tier.id + '.' + item.id]) checked += 1;
+    });
+    return { total: tier.items.length, checked: checked };
+  }
+
+  function reasonBucket(reasonId) {
+    if (!reasonId) return null;
+    var r = Advice.reasonById(reasonId);
+    if (!r) return null;
+    if (r.bucket === 'emergency' || r.bucket === 'invest' || r.bucket === 'lifestyle' || r.bucket === 'debt') {
+      return r.bucket === 'debt' ? 'emergency' : r.bucket;
+    }
+    if (r.risk === 'extreme') return 'lifestyle';
+    if (r.risk === 'low') return 'invest';
+    return null;
+  }
+
+  function buildFilterCtx(result, form) {
+    var t1 = tier1Progress();
+    var stressRatio = null;
+    if (result && result.dti && result.dti.income > 0) {
+      stressRatio = result.dti.totalPayments / (result.dti.income * 0.8);
+    }
+    var commitSigned = COMMIT_FIELDS.some(function (id) {
+      return $(id) && String($(id).value || '').trim() !== '';
+    });
+    return {
+      hasResult: !!(result && result.ok),
+      feesEntered: !!(result && result.upfrontFees > 0),
+      marginLabel: result && result.cashFlowPressure ? result.cashFlowPressure.marginLabel : null,
+      comparedAlternative: !!(result && result.comparisons && result.comparisons.length),
+      tier1Total: t1.total,
+      tier1Checked: t1.checked,
+      reasonBucket: reasonBucket(form && form.reasonId),
+      stressRatio: stressRatio,
+      aprPercent: result ? result.estimatedNominalAnnualCost : null,
+      payoffMonths: result ? result.months : null,
+      commitmentSigned: commitSigned
+    };
+  }
+
+  function renderCheckList(container, rows, answers) {
+    container.innerHTML = '';
+    rows.forEach(function (row) {
+      var li = document.createElement('li');
+      li.className = 'sy-check';
+      var source = row.source === 'derived' ? 'from your numbers' : (row.source === 'manual' ? 'your answer' : '');
+      li.innerHTML =
+        '<div class="sy-check__q">' + escapeHtml(row.label)
+        + (source ? '<span class="sy-check__source">' + escapeHtml(source) + '</span>' : '')
+        + '</div>'
+        + '<div class="segmented" role="group" aria-label="' + escapeHtml(row.label) + '">'
+        + '<button type="button" class="seg-btn" data-check="' + escapeHtml(row.id) + '" data-val="yes" aria-pressed="'
+        + (row.answer === 'yes' ? 'true' : 'false') + '">Yes</button>'
+        + '<button type="button" class="seg-btn" data-check="' + escapeHtml(row.id) + '" data-val="no" aria-pressed="'
+        + (row.answer === 'no' ? 'true' : 'false') + '">No</button>'
+        + '</div>';
+      container.appendChild(li);
+    });
+    container.querySelectorAll('.seg-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-check');
+        var val = btn.getAttribute('data-val');
+        var current = state.filterAnswers[id];
+        if (current === val) delete state.filterAnswers[id];
+        else state.filterAnswers[id] = val;
+        markEdited();
+        renderFilter();
+      });
+    });
+  }
+
+  function renderFilter() {
+    var result = state.lastValidResult;
+    var form = readForm();
+    var ctx = buildFilterCtx(result, form);
+    var evaluated = Decision.evaluateFilter(ctx, state.filterAnswers, state.redFlags);
+    state.lastFilter = evaluated;
+    renderCheckList($('primaryChecks'), evaluated.primary, state.filterAnswers);
+    renderCheckList($('optionalChecks'), evaluated.optional, state.filterAnswers);
+    var verdict = $('filterVerdict');
+    verdict.textContent = evaluated.verdict;
+    verdict.setAttribute('data-state', evaluated.state || 'pause');
+  }
+
+  function renderAmortization(result) {
+    if (!state.amortLoaded || !result || !result.schedule) return;
+    var body = $('amortBody');
+    body.innerHTML = '';
+    result.schedule.forEach(function (row) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + row.month + '</td>'
+        + '<td>' + money(row.payment, result.currency) + '</td>'
+        + '<td>' + money(row.principal, result.currency) + '</td>'
+        + '<td>' + money(row.interest, result.currency) + '</td>'
+        + '<td>' + money(row.balance, result.currency) + '</td>';
+      body.appendChild(tr);
+    });
+  }
+
+  function updateSticky(result) {
+    if (!result || !result.ok) return;
+    $('stickyEmi').textContent = money(result.emi, result.currency);
+    $('stickyInterest').textContent = money(result.borrowingCost, result.currency);
+  }
+
+  var liveTimer = null;
+  function scheduleLiveSummary(result) {
+    clearTimeout(liveTimer);
+    liveTimer = setTimeout(function () {
+      if (!result || !result.ok) {
+        $('liveSummary').textContent = '';
+        return;
+      }
+      $('liveSummary').textContent =
+        'You borrow ' + money(result.principal, result.currency)
+        + '. You return ' + money(result.totalPaid, result.currency)
+        + '. ' + money(result.borrowingCost, result.currency) + ' is the rent on the money.'
+        + ' Monthly payment ' + money(result.emi, result.currency) + '.';
+    }, 400);
   }
 
   function setButtons(enabled) {
@@ -381,690 +980,144 @@
     $('downloadSummary').disabled = !enabled;
   }
 
-  function renderResults(result) {
-    var panel = $('resultsPanel');
-    if (!result.ok) {
-      panel.setAttribute('data-state', 'error');
-      $('resFormula').textContent = result.message || 'Could not calculate.';
-      setButtons(false);
-      return;
-    }
-    panel.setAttribute('data-state', 'ready');
-    var ccy = result.currency;
-
-    $('resEmi').textContent = C.formatMoney(result.emi, ccy, locale);
-    $('resTotal').textContent = C.formatMoney(result.totalPayable, ccy, locale);
-    $('resInterest').textContent = C.formatMoney(result.costOfBorrowing, ccy, locale);
-    $('resApr').textContent = result.aprPercent == null
-      ? '—'
-      : C.formatNumber(result.aprPercent, 2, locale) + '%';
-    $('resAprNote').textContent = result.fees.total > 0
-      ? 'Includes ' + C.formatMoney(result.fees.total, ccy, locale) + ' in one-time fees; the true annual cost.'
-      : 'The true annual cost (no fees entered).';
-    $('resDaily').textContent = C.formatMoney(result.costPerDay, ccy, locale);
-
-    $('resFormula').textContent = result.formulaNote
-      + ' Principal ' + C.formatMoney(result.principal, ccy, locale)
-      + ' · ' + C.formatNumber(result.annualRatePercent, 2, locale) + '% p.a. · '
-      + result.months + ' months.';
-
-    // DTI
-    if (result.dti) {
-      $('dtiMetric').hidden = false;
-      $('resDti').textContent = C.formatNumber(result.dti.percent, 0, locale) + '%';
-      var bandNote = result.dti.band === 'high'
-        ? 'On the higher side. Thresholds vary by lender, product, and country — a smaller amount or shorter tenure eases this.'
-        : result.dti.band === 'elevated'
-          ? 'Somewhat elevated. Some products (e.g. housing) allow more; this is a signal, not a hard limit.'
-          : 'Within a commonly comfortable range, though limits vary by lender and country.';
-      $('resDtiNote').textContent = 'About ' + C.formatMoney(result.dti.totalPayments, ccy, locale)
-        + ' of debt payments on ' + C.formatMoney(result.dti.income, ccy, locale) + ' income. ' + bandNote;
-    } else {
-      $('dtiMetric').hidden = true;
-    }
-
-    // Opportunity — only when refine is open (per progressive-disclosure)
-    var refineOpen = $('refine').open;
-    if (refineOpen && result.opportunity && result.opportunity.futureValue > 0) {
-      $('oppMetric').hidden = false;
-      $('resOpp').textContent = C.formatMoney(result.opportunity.futureValue, ccy, locale);
-      $('resOppNote').textContent = result.opportunity.note;
-    } else {
-      $('oppMetric').hidden = true;
-    }
-
-    renderLifeCost(result);
-    renderAffordability(result);
-    renderSplit(result);
-    renderBurn(result);
-    renderComparisons(result);
-    renderOpportunityTimeline(result);
-
-    var warn = $('warnings');
-    warn.innerHTML = '';
-    (result.warnings || []).forEach(function (w) {
-      var div = document.createElement('div');
-      div.className = 'notice visible warn';
-      div.textContent = w.message;
-      warn.appendChild(div);
-    });
-
-    if (result.withExtra && result.withExtra.months > 0) {
-      $('extraResults').hidden = false;
-      $('extraEmi').textContent = C.formatMoney(result.withExtra.emi, ccy, locale);
-      $('extraMonths').textContent = String(result.withExtra.months);
-      $('extraSaved').textContent = C.formatMoney(result.withExtra.interestSaved || 0, ccy, locale);
-      $('extraTotalSaved').textContent = C.formatMoney(result.withExtra.totalSaved || 0, ccy, locale);
-      if (result.withExtra.prepaymentPenalty > 0) {
-        $('extraPenaltyNote').hidden = false;
-        $('extraPenaltyNote').textContent = 'After a prepayment penalty of '
-          + C.formatMoney(result.withExtra.prepaymentPenalty, ccy, locale) + '.';
-      } else {
-        $('extraPenaltyNote').hidden = true;
-      }
-    } else {
-      $('extraResults').hidden = true;
-    }
-
-    renderAmortization(result);
-
-    // Concise live-region summary (screen readers)
-    $('liveSummary').textContent = 'EMI ' + C.formatMoney(result.emi, ccy, locale)
-      + '. Cost of borrowing ' + C.formatMoney(result.costOfBorrowing, ccy, locale)
-      + (result.aprPercent != null ? '. Effective rate ' + C.formatNumber(result.aprPercent, 1, locale) + ' percent.' : '.');
-
-    state.lastResult = result;
+  function renderAll(result, form) {
+    state.lastValidResult = result;
+    renderReality(result);
+    renderMoneyFlow(result);
+    renderTimeline(result);
+    renderCostSignal(result);
+    renderCashFlow(result);
+    renderScenarios(result);
+    renderWarnings(result);
+    renderAdvice(form, result);
+    renderFilter();
+    updateSticky(result);
+    scheduleLiveSummary(result);
     setButtons(true);
+    $('resFormula').textContent = result.formulaNote
+      + ' Principal ' + money(result.principal, result.currency)
+      + ' · ' + C.formatNumber(result.annualRatePercent, 2, locale) + '% p.a. · '
+      + result.months + ' months'
+      + (result.fees && result.fees.treatment ? ' · fees ' + result.fees.treatment : '') + '.';
+    if (state.amortLoaded) renderAmortization(result);
   }
 
-  function renderLifeCost(result) {
-    var life = result.lifeCost;
-    if (!life) { $('lifeMetric').hidden = true; return; }
-    $('lifeMetric').hidden = false;
-    $('resHours').textContent = C.formatNumber(life.hoursTotal, 0, locale) + ' hrs';
-    $('resHoursNote').textContent = 'About ' + C.formatNumber(life.weeksTotal, 1, locale)
-      + ' weeks of full-time work at your income — of which '
-      + C.formatNumber(life.hoursCost, 0, locale) + ' hrs pay for the borrowing itself.';
-  }
-
-  function renderAffordability(result) {
-    var a = result.affordability;
-    var box = $('affordBox');
-    if (!a || a.level === 'unknown') { box.hidden = true; return; }
-    box.hidden = false;
-    var ccy = result.currency;
-    var badge = $('affordVerdict');
-    badge.setAttribute('data-level', a.level);
-    badge.textContent = a.label;
-    $('affordDti').textContent = result.dti ? C.formatNumber(result.dti.percent, 0, locale) + '%' : '—';
-    $('affordMargin').textContent = a.margin == null
-      ? '—'
-      : C.formatMoney(a.margin, ccy, locale) + ' / month';
-    $('affordBuffer').textContent = a.emergencyBuffer === 'pass' ? 'Pass'
-      : a.emergencyBuffer === 'partial' ? 'Partial'
-        : a.emergencyBuffer === 'fail' ? 'Fail' : 'Not answered';
-    var list = $('affordReasons');
-    list.innerHTML = '';
-    a.reasons.forEach(function (text) {
-      var li = document.createElement('li');
-      li.textContent = text;
-      list.appendChild(li);
-    });
-  }
-
-  function renderOpportunityTimeline(result) {
-    var wrap = $('oppTimeline');
-    var rows = result.opportunityTimeline;
-    if (!$('refine').open || !rows || !rows.length) { wrap.hidden = true; return; }
-    wrap.hidden = false;
-    var ccy = result.currency;
-    var rate = result.opportunity ? result.opportunity.ratePercent : 0;
-    $('oppInvestedHead').textContent = 'Invested @ ' + C.formatNumber(rate, 0, locale) + '%';
-    var html = '';
-    rows.forEach(function (row) {
-      html += '<tr><td>' + escapeHtml(row.label) + '</td><td>'
-        + escapeHtml(C.formatMoney(row.saved, ccy, locale)) + '</td><td class="save">'
-        + escapeHtml(C.formatMoney(row.invested, ccy, locale)) + '</td></tr>';
-    });
-    $('oppTimelineBody').innerHTML = html;
-    $('oppTimelineNote').textContent = 'If you set aside the ' + C.formatMoney(result.emi, ccy, locale)
-      + ' monthly payment instead of committing it to this loan. Investment returns are never guaranteed.';
-  }
-
-  function renderSplit(result) {
-    var principal = result.principal;
-    var cost = result.costOfBorrowing;
-    var total = principal + cost;
-    if (total <= 0) { $('splitViz').hidden = true; return; }
-    $('splitViz').hidden = false;
-    var pPct = Math.max(2, Math.round(principal / total * 100));
-    var cPct = Math.max(0, 100 - pPct);
-    $('splitP').style.width = pPct + '%';
-    $('splitC').style.width = cPct + '%';
-    $('legendP').textContent = C.formatMoney(principal, result.currency, locale) + ' (' + pPct + '%)';
-    $('legendC').textContent = C.formatMoney(cost, result.currency, locale) + ' (' + cPct + '%)';
-  }
-
-  function renderBurn(result) {
-    var svg = $('burnChart');
-    var schedule = result.schedule;
-    if (!schedule || schedule.length < 2) { $('burnViz').hidden = true; return; }
-    $('burnViz').hidden = false;
-
-    var W = 640, H = 200, padL = 6, padR = 6, padT = 10, padB = 6;
-    var plotW = W - padL - padR, plotH = H - padT - padB;
-    var n = schedule.length;
-
-    // Sample to <= 160 points for performance on long tenures.
-    var step = Math.max(1, Math.ceil(n / 160));
-    var pts = [];
-    for (var i = 0; i < n; i += step) pts.push(schedule[i]);
-    if (pts[pts.length - 1] !== schedule[n - 1]) pts.push(schedule[n - 1]);
-
-    var maxPay = 0;
-    pts.forEach(function (r) { if (r.payment > maxPay) maxPay = r.payment; });
-    if (maxPay <= 0) { $('burnViz').hidden = true; return; }
-
-    var m = pts.length;
-    function xAt(i) { return padL + (m === 1 ? 0 : (i / (m - 1)) * plotW); }
-    var yBase = padT + plotH;
-    function hFor(v) { return (v / maxPay) * plotH; }
-
-    var interestTop = [];
-    var stackTop = [];
-    for (var k = 0; k < m; k++) {
-      var iH = hFor(pts[k].interest);
-      var pH = hFor(pts[k].principal);
-      interestTop.push([xAt(k), yBase - iH]);
-      stackTop.push([xAt(k), yBase - (iH + pH)]);
-    }
-
-    function poly(topArr, bottomArr) {
-      var d = 'M' + topArr.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' L');
-      for (var j = bottomArr.length - 1; j >= 0; j--) {
-        d += ' L' + bottomArr[j][0].toFixed(1) + ',' + bottomArr[j][1].toFixed(1);
-      }
-      return d + ' Z';
-    }
-    var baseline = [];
-    for (var b = 0; b < m; b++) baseline.push([xAt(b), yBase]);
-
-    var interestArea = poly(interestTop, baseline);
-    var principalArea = poly(stackTop, interestTop);
-
-    svg.innerHTML =
-      '<path d="' + principalArea + '" fill="var(--principal)" opacity="0.9"></path>'
-      + '<path d="' + interestArea + '" fill="var(--interest)" opacity="0.92"></path>';
-
-    // Crossover month: first month principal >= interest
-    var crossover = null;
-    for (var c = 0; c < schedule.length; c++) {
-      if (schedule[c].principal >= schedule[c].interest) { crossover = schedule[c].month; break; }
-    }
-    var cap;
-    if (result.interestType === 'flat') {
-      cap = 'Flat-rate loans split interest evenly across every payment, so the true cost stays high the whole term — see the EIR above.';
-    } else if (crossover && crossover > 1) {
-      cap = 'Early payments are mostly interest. You cross into paying more principal than interest around month ' + crossover + '.';
-    } else {
-      cap = 'Most of each payment goes to principal from the start — a sign of a low-cost loan.';
-    }
-    $('burnCap').textContent = cap;
-  }
-
-  function renderComparisons(result) {
-    var wrap = $('compareViz');
-    var body = $('compareBody');
-    if (!result.comparisons || !result.comparisons.length) { wrap.hidden = true; return; }
-    wrap.hidden = false;
-    var ccy = result.currency;
-    var html = '<tr class="current"><td>Your current inputs</td><td>'
-      + escapeHtml(C.formatMoney(result.emi, ccy, locale)) + '</td><td>'
-      + escapeHtml(C.formatMoney(result.totalInterest, ccy, locale)) + '</td><td>—</td></tr>';
-    result.comparisons.forEach(function (c) {
-      var emiCell = escapeHtml(C.formatMoney(c.emi, ccy, locale));
-      if (c.id === 'shorter_tenure' && typeof c.emiDelta === 'number' && c.emiDelta > 0) {
-        emiCell += ' <span class="up">(+' + escapeHtml(C.formatMoney(c.emiDelta, ccy, locale)) + ')</span>';
-      }
-      html += '<tr><td>' + escapeHtml(c.label) + '</td><td>' + emiCell + '</td><td>'
-        + escapeHtml(C.formatMoney(c.totalInterest, ccy, locale)) + '</td><td class="save">'
-        + (c.interestSaved > 0 ? escapeHtml(C.formatMoney(c.interestSaved, ccy, locale)) : '—') + '</td></tr>';
-    });
-    body.innerHTML = html;
-  }
-
-  function renderAmortization(result) {
-    var wrap = $('amortWrap');
-    var body = $('amortBody');
-    if (!result.schedule || !result.schedule.length) { wrap.hidden = true; body.innerHTML = ''; return; }
-    wrap.hidden = false;
-    var rows = result.schedule, html = '';
-    for (var i = 0; i < rows.length; i++) {
-      var row = rows[i];
-      html += '<tr><td>' + row.month + '</td><td>'
-        + escapeHtml(C.formatMoney(row.payment, result.currency, locale)) + '</td><td>'
-        + escapeHtml(C.formatMoney(row.principal, result.currency, locale)) + '</td><td>'
-        + escapeHtml(C.formatMoney(row.interest, result.currency, locale)) + '</td><td>'
-        + escapeHtml(C.formatMoney(row.balance, result.currency, locale)) + '</td></tr>';
-    }
-    body.innerHTML = html;
-  }
-
-  /* ---------- Rendering: advice ---------- */
-  function renderAdvice(advice) {
-    state.lastAdvice = advice;
-    $('advicePanel').hidden = false;
-    $('adviceHeadline').textContent = advice.headline;
-    var guidance = $('reasonGuidance');
-    if (advice.reasonGuidance) {
-      guidance.hidden = false;
-      guidance.textContent = advice.reason.label + ' · ' + advice.riskLabel + ' — ' + advice.reasonGuidance;
-    } else {
-      guidance.hidden = true;
-      guidance.textContent = '';
-    }
-    $('adviceSeverity').textContent = severityLabel(advice.severity);
-    $('adviceSeverity').setAttribute('data-level', advice.severity);
-
-    function fillSteps(id, arr) {
-      var el = $(id);
-      el.innerHTML = '';
-      arr.forEach(function (s) {
-        var li = document.createElement('li');
-        li.innerHTML = '<strong>' + escapeHtml(s.title) + '</strong><span>' + escapeHtml(s.detail) + '</span>';
-        el.appendChild(li);
-      });
-    }
-    fillSteps('topActions', advice.topActions);
-    if (advice.moreActions && advice.moreActions.length) {
-      $('moreActionsWrap').hidden = false;
-      fillSteps('moreActions', advice.moreActions);
-    } else {
-      $('moreActionsWrap').hidden = true;
-    }
-
-    $('honestQuote').textContent = '“' + advice.honestQuestion + '”';
-
-    function fillList(id, arr) {
-      var el = $(id);
-      el.innerHTML = '';
-      arr.forEach(function (t) {
-        var li = document.createElement('li');
-        li.textContent = t;
-        el.appendChild(li);
-      });
-    }
-    fillList('plan30', advice.plan.days30);
-    fillList('plan60', advice.plan.days60);
-    fillList('plan90', advice.plan.days90);
-    fillList('alternatives', advice.alternatives);
-
-    var rules = $('triggeredRules');
-    rules.innerHTML = '';
-    advice.triggeredRules.forEach(function (r) {
-      var li = document.createElement('li');
-      li.textContent = r.label;
-      rules.appendChild(li);
-    });
-  }
-
-  /* ---------- Rendering: before you sign ---------- */
-  function renderEscapeTiers() {
-    var wrap = $('escapeTiers');
-    wrap.innerHTML = '';
-    Decision.ESCAPE_TIERS.forEach(function (tier) {
-      var section = document.createElement('div');
-      section.className = 'tier';
-      section.setAttribute('data-tier', tier.id);
-      var items = tier.items.map(function (item) {
-        var key = tier.id + '.' + item.id;
-        return '<li><label><input type="checkbox" data-escape="' + escapeHtml(key) + '"'
-          + (state.escape[key] ? ' checked' : '') + '><span>' + escapeHtml(item.label) + '</span></label></li>';
-      }).join('');
-      section.innerHTML = '<h3>' + escapeHtml(tier.title) + '</h3>'
-        + '<p>' + escapeHtml(tier.note) + '</p>'
-        + '<ul class="check-list">' + items + '</ul>'
-        + '<p class="tier-progress" data-progress="' + escapeHtml(tier.id) + '"></p>';
-      wrap.appendChild(section);
-    });
-    wrap.addEventListener('change', function (e) {
-      var box = e.target.closest('input[data-escape]');
-      if (!box) return;
-      var key = box.getAttribute('data-escape');
-      if (box.checked) state.escape[key] = true;
-      else delete state.escape[key];
-      savePlan();
-      updateTierProgress();
-      renderFilter();
-    });
-    updateTierProgress();
-  }
-
-  function tierCount(tier) {
-    var checked = 0;
-    tier.items.forEach(function (item) {
-      if (state.escape[tier.id + '.' + item.id]) checked += 1;
-    });
-    return checked;
-  }
-
-  function updateTierProgress() {
-    Decision.ESCAPE_TIERS.forEach(function (tier) {
-      var el = document.querySelector('[data-progress="' + tier.id + '"]');
-      if (!el) return;
-      var checked = tierCount(tier);
-      el.textContent = checked + ' of ' + tier.items.length + ' tried'
-        + (tier.id === 'tier1' && checked < 3 ? ' — the final filter looks for at least three.' : '');
-    });
-  }
-
-  function renderLadder() {
-    var body = $('ladderBody');
-    body.innerHTML = Decision.LENDER_LADDER.map(function (row) {
-      return '<tr data-tone="' + escapeHtml(row.tone) + '"><td>' + escapeHtml(row.label)
-        + '</td><td>' + escapeHtml(row.apr) + '</td><td>' + escapeHtml(row.use) + '</td></tr>';
-    }).join('');
-  }
-
-  function renderRedFlags() {
-    var list = $('redFlagList');
-    list.innerHTML = '';
-    Decision.RED_FLAGS.forEach(function (text) {
-      var li = document.createElement('li');
-      li.textContent = text;
-      list.appendChild(li);
-    });
-  }
-
-  /* ---------- Rendering: final filter ---------- */
-  function buildFilterContext() {
-    var r = state.lastResult && state.lastResult.ok ? state.lastResult : null;
-    var tier1 = Decision.ESCAPE_TIERS[0];
-    var reason = document.querySelector('input[name="reason"]:checked');
-    var reasonMeta = reason ? Advice.reasonById(reason.value) : null;
-    var payoffMonths = null;
-    if (r) payoffMonths = r.withExtra && r.withExtra.months > 0 ? r.withExtra.months : r.months;
-    return {
-      tier1Total: tier1.items.length,
-      tier1Checked: tierCount(tier1),
-      reasonBucket: reasonMeta ? reasonMeta.bucket : null,
-      reasonLabel: reasonMeta ? reasonMeta.label : null,
-      stressRatio: r && r.affordability ? r.affordability.stressRatio : null,
-      aprPercent: r ? r.aprPercent : null,
-      payoffMonths: payoffMonths,
-      commitmentSigned: !!($('commitDate').value && $('commitPerson').value.trim()),
-      hasResult: !!r,
-      feesEntered: !!(r && r.fees && r.fees.total > 0)
-    };
-  }
-
-  function renderFilter() {
-    var evaluation = Decision.evaluateFilter(buildFilterContext(), state.filterAnswers);
-    state.lastFilter = evaluation;
-    var list = $('filterList');
-    // The list is rebuilt on every keystroke, so remember which button had focus.
-    var active = document.activeElement;
-    var focused = active && active.matches && active.matches('#filterList button[data-filter]')
-      ? '[data-filter="' + active.getAttribute('data-filter') + '"][data-val="' + active.getAttribute('data-val') + '"]'
-      : null;
-    list.innerHTML = evaluation.rows.map(function (row) {
-      var meta;
-      if (row.answer && row.source === 'derived') {
-        meta = (row.answer === 'yes' ? row.yes : row.no) + ' · From your numbers'
-          + (row.note ? ': ' + row.note : '');
-      } else if (row.answer) {
-        meta = row.answer === 'yes' ? row.yes : row.no;
-      } else {
-        meta = 'Yes → ' + row.yes + ' · No → ' + row.no + (row.note ? ' · ' + row.note : '');
-      }
-      return '<li class="filter-row" data-answer="' + (row.answer || '') + '">'
-        + '<span class="filter-q"><span class="q">' + escapeHtml(row.question) + '</span>'
-        + '<span class="meta">' + escapeHtml(meta) + '</span></span>'
-        + '<span class="segmented" role="group" aria-label="' + escapeHtml(row.question) + '">'
-        + segButton(row, 'yes') + segButton(row, 'no')
-        + '</span></li>';
-    }).join('');
-
-    if (focused) {
-      var restore = list.querySelector('button' + focused);
-      if (restore) restore.focus();
-    }
-
-    var badge = $('filterBadge');
-    badge.setAttribute('data-level', evaluation.level);
-    badge.textContent = evaluation.no > 0
-      ? evaluation.no + ' × no'
-      : evaluation.unanswered ? evaluation.unanswered + ' unanswered' : 'All clear';
-    var verdict = $('filterVerdict');
-    verdict.setAttribute('data-level', evaluation.level);
-    // Assigning identical text can re-announce in some screen readers.
-    if (verdict.textContent !== evaluation.verdict) verdict.textContent = evaluation.verdict;
-  }
-
-  function segButton(row, value) {
-    var pressed = row.answer === value;
-    var manual = pressed && row.source === 'manual';
-    return '<button type="button" class="seg-btn" data-filter="' + escapeHtml(row.id)
-      + '" data-val="' + value + '" aria-pressed="' + (pressed ? 'true' : 'false') + '"'
-      + (manual ? ' title="Click again to go back to the calculated answer"' : '')
-      + '>' + (value === 'yes' ? 'Yes' : 'No') + '</button>';
-  }
-
-  function bindFilter() {
-    $('filterList').addEventListener('click', function (e) {
-      var btn = e.target.closest('button[data-filter]');
-      if (!btn) return;
-      var id = btn.getAttribute('data-filter');
-      var val = btn.getAttribute('data-val');
-      if (state.filterAnswers[id] === val) delete state.filterAnswers[id];
-      else state.filterAnswers[id] = val;
-      savePlan();
-      renderFilter();
-    });
-  }
-
-  /* ---------- Rendering: commitment ---------- */
-  function commitValues() {
-    var extra = C.parseAmount($('commitExtra').value || '');
-    var buffer = C.parseAmount($('commitBuffer').value || '');
-    return {
-      date: $('commitDate').value || '',
-      extra: extra.ok && extra.value > 0 ? extra.value : null,
-      buffer: buffer.ok && buffer.value > 0 ? buffer.value : null,
-      person: ($('commitPerson').value || '').trim()
-    };
-  }
-
-  function formatCommitDate(value) {
-    if (!value) return null;
-    var parts = value.split('-');
-    var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-    if (isNaN(d.getTime())) return null;
-    try {
-      return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
-    } catch (e) {
-      return value;
-    }
-  }
-
-  function commitLines() {
-    var v = commitValues();
-    var ccy = state.currency;
-    return [
-      'I will clear this loan by ' + (formatCommitDate(v.date) || '________'),
-      'I will earn or free up an extra ' + (v.extra ? C.formatMoney(v.extra, ccy, locale) : '________') + ' each month until it is gone',
-      'I will not borrow again until I have ' + (v.buffer ? C.formatMoney(v.buffer, ccy, locale) : '________') + ' saved',
-      'I will check in with ' + (v.person || '________')
-    ];
-  }
-
-  function renderCommit() {
-    $('commitPreview').textContent = commitLines().map(function (line, i) {
-      return (i + 1) + '. ' + line + '.';
-    }).join('\n');
-  }
-
-  function severityLabel(level) {
-    if (level === 'critical') return 'Highest caution';
-    if (level === 'high') return 'Extra caution';
-    if (level === 'low') return 'Lower urgency';
-    return 'Worth a careful look';
-  }
-
-  /* ---------- Recalculate ---------- */
   function recalculate() {
     var form = readForm();
     showFieldErrors(form.errors);
-
     if (!form.valid) {
-      setResultsPlaceholder();
-      $('advicePanel').hidden = true;
-      state.lastResult = null;
-      updateSticky();
-      renderFilter();
+      // Keep last valid result visible; only gate buttons if we never had one.
+      if (!state.lastValidResult) setButtons(false);
       return;
     }
-
-    var result = MathLib.calculate({
-      principal: form.principal,
-      annualRatePercent: form.annualRatePercent,
-      months: form.months,
-      interestType: form.interestType,
-      currency: form.currency,
-      extraMonthly: form.extraMonthly,
-      opportunityRatePercent: form.opportunityRatePercent,
-      fees: form.fees,
-      grossMonthlyIncome: form.grossMonthlyIncome,
-      existingMonthlyRepayments: form.existingMonthlyRepayments,
-      emergencyFund: form.emergencyFund,
-      withComparisons: true
-    });
-
-    renderResults(result);
-
-    if (form.reasonId && result.ok) {
-      renderAdvice(Advice.buildAdvice({
-        reasonId: form.reasonId,
-        problemSentence: form.problemSentence,
-        lenderId: form.lenderId,
-        emergencyFund: form.emergencyFund,
-        shortfallType: form.shortfallType,
-        loan: result
-      }));
-    } else {
-      $('advicePanel').hidden = true;
-      state.lastAdvice = null;
-    }
-
-    updateSticky();
-    renderFilter();
-  }
-
-  function updateSticky() {
-    var sticky = $('stickyResults');
-    if (!sticky || !state.lastResult || !state.lastResult.ok) {
-      if (sticky) sticky.classList.remove('show');
+    var result = MathLib.calculate(form);
+    if (!result.ok) {
+      if (!state.lastValidResult) setButtons(false);
       return;
     }
-    var r = state.lastResult;
-    $('stickyEmi').textContent = C.formatMoney(r.emi, r.currency, locale);
-    $('stickyInterest').textContent = C.formatMoney(r.costOfBorrowing, r.currency, locale);
+    renderAll(result, form);
   }
 
-  /* ---------- Summary export ---------- */
+  /* ---------- Summary export (handover-style Financial X-Ray) ---------- */
   function buildSummaryText() {
-    var r = state.lastResult;
+    var r = state.lastValidResult;
     if (!r || !r.ok) return '';
+    var includeDecision = $('includeDecision') && $('includeDecision').checked;
+    var includeCommit = $('includeCommit') && $('includeCommit').checked;
+    var includeAmort = $('includeAmort') && $('includeAmort').checked;
+
     var lines = [
-      'Save Yourself — estimated loan cost summary',
+      'SAVE YOURSELF — FINANCIAL X-RAY',
       'Generated locally · nothing sent to a server',
       '',
-      'Principal: ' + C.formatMoney(r.principal, r.currency, locale),
+      'YOU BORROW:  ' + money(r.principal, r.currency),
+      'YOU RETURN:  ' + money(r.totalPaid, r.currency),
+      'MONEY RENT:  ' + money(r.borrowingCost, r.currency),
+      '',
+      'Cash received: ' + money(r.netProceeds, r.currency),
+      'Monthly payment: ' + money(r.emi, r.currency),
       'Rate: ' + C.formatNumber(r.annualRatePercent, 2, locale) + '% p.a. (' + r.interestType + ')',
       'Tenure: ' + r.months + ' months',
-      'One-time fees: ' + C.formatMoney(r.fees.total, r.currency, locale),
-      'EMI: ' + C.formatMoney(r.emi, r.currency, locale),
-      'Total repayable: ' + C.formatMoney(r.totalPayable, r.currency, locale),
-      'Cost of borrowing (interest + fees): ' + C.formatMoney(r.costOfBorrowing, r.currency, locale),
-      'Effective rate (EIR/APR): ' + (r.aprPercent == null ? 'n/a' : C.formatNumber(r.aprPercent, 2, locale) + '%'),
-      'Approx. cost / day: ' + C.formatMoney(r.costPerDay, r.currency, locale)
+      'One-time fees: ' + money(r.upfrontFees || 0, r.currency)
+        + (r.fees && r.fees.treatment ? ' (' + r.fees.treatment + ')' : '')
     ];
-    if (r.dti) {
-      lines.push('Debt-to-income with this EMI: ' + C.formatNumber(r.dti.percent, 0, locale) + '%');
+    if (r.costPerHundred != null) {
+      lines.push('For every 100 borrowed you return ' + C.formatNumber(r.costPerHundred, 1, locale));
     }
-    if (r.lifeCost) {
-      lines.push('Work to repay: ' + C.formatNumber(r.lifeCost.hoursTotal, 0, locale) + ' hours ('
-        + C.formatNumber(r.lifeCost.weeksTotal, 1, locale) + ' full-time weeks)');
+    if (r.estimatedNominalAnnualCost != null) {
+      lines.push('Estimated annual cost: ' + C.formatNumber(r.estimatedNominalAnnualCost, 2, locale) + '%');
     }
-    if (r.affordability && r.affordability.level !== 'unknown') {
-      lines.push('Affordability verdict: ' + r.affordability.label
-        + (r.affordability.margin != null
-          ? ' · margin after all loan payments ' + C.formatMoney(r.affordability.margin, r.currency, locale) + '/month'
-          : ''));
-      r.affordability.reasons.forEach(function (reason) { lines.push('  · ' + reason); });
+    if (r.costSignal) {
+      lines.push('Cost signal: ' + r.costSignal.label + ' — ' + r.costSignal.guidance);
     }
-    if (r.opportunity && r.opportunity.futureValue > 0) {
-      lines.push('Opportunity illustration (' + r.opportunity.ratePercent + '%): '
-        + C.formatMoney(r.opportunity.futureValue, r.currency, locale));
+    if (r.cashFlowPressure) {
+      lines.push('Cash-flow margin: ' + r.cashFlowPressure.marginLabel
+        + ' · remaining ' + money(r.cashFlowPressure.remaining, r.currency) + '/month');
     }
     if (r.withExtra) {
-      lines.push('With extra payment: EMI ' + C.formatMoney(r.withExtra.emi, r.currency, locale)
-        + ' · finishes in ' + r.withExtra.months + ' months · interest saved '
-        + C.formatMoney(r.withExtra.interestSaved || 0, r.currency, locale));
+      lines.push('With extra payment: finishes in ' + r.withExtra.months
+        + ' months · save ' + money(r.withExtra.netSaving || 0, r.currency));
     }
     if (r.comparisons && r.comparisons.length) {
-      lines.push('', 'Better-deal scenarios:');
+      lines.push('', 'Better-offer scenarios:');
       r.comparisons.forEach(function (c) {
-        lines.push('  · ' + c.label + ' → EMI ' + C.formatMoney(c.emi, r.currency, locale)
-          + ', save ' + C.formatMoney(c.interestSaved, r.currency, locale) + ' interest');
+        lines.push('  · ' + c.label + ' → save ' + money(c.totalSaved, r.currency));
       });
     }
     if (r.opportunityTimeline) {
-      lines.push('', 'If the payment were set aside instead:');
+      lines.push('', 'If you saved the payment instead:');
       r.opportunityTimeline.forEach(function (row) {
-        lines.push('  · ' + row.label + ': ' + C.formatMoney(row.saved, r.currency, locale)
-          + ' set aside, ' + C.formatMoney(row.invested, r.currency, locale) + ' invested');
-      });
-    }
-    if (state.lastAdvice) {
-      lines.push('', 'Guidance: ' + state.lastAdvice.headline);
-      lines.push('Reason: ' + state.lastAdvice.reason.label + ' (' + state.lastAdvice.riskLabel + ')');
-      lines.push('Top actions:');
-      state.lastAdvice.topActions.forEach(function (a) { lines.push('  · ' + a.title); });
-    }
-
-    var tried = escapeRoutesTried();
-    if (tried.length) {
-      lines.push('', 'Cheaper options already tried:');
-      tried.forEach(function (label) { lines.push('  · ' + label); });
-    }
-
-    if (state.lastFilter) {
-      lines.push('', 'Final filter — ' + state.lastFilter.verdict);
-      state.lastFilter.rows.forEach(function (row) {
-        lines.push('  [' + (row.answer ? row.answer.toUpperCase() : ' ? ') + '] ' + row.question);
+        lines.push('  · ' + row.label + ': ' + money(row.saved, r.currency)
+          + ' set aside → ' + money(row.invested, r.currency) + ' invested');
       });
     }
 
-    var commit = commitValues();
-    if (commit.date || commit.extra || commit.buffer || commit.person) {
-      lines.push('', 'My commitment:');
-      commitLines().forEach(function (line, i) { lines.push('  ' + (i + 1) + '. ' + line + '.'); });
+    if (includeDecision && state.lastFilter) {
+      lines.push('', 'Before you sign — ' + state.lastFilter.verdict
+        + ' [' + (state.lastFilter.state || '') + ']');
+      state.lastFilter.primary.forEach(function (row) {
+        lines.push('  [' + (row.answer ? row.answer.toUpperCase() : ' ? ') + '] ' + row.label);
+      });
+      state.lastFilter.optional.forEach(function (row) {
+        if (row.answer) lines.push('  [' + row.answer.toUpperCase() + '] ' + row.label);
+      });
+      if (state.lastFilter.redFlags && state.lastFilter.redFlags.length) {
+        lines.push('  Red flags:');
+        state.lastFilter.redFlags.forEach(function (f) {
+          lines.push('    ! ' + f.label);
+        });
+      }
     }
 
-    lines.push('', 'Educational estimate only — not financial advice. Verify exact terms with the lender.',
-      'https://sumanthbolle.com/save-yourself');
+    if (includeCommit) {
+      var commit = {};
+      COMMIT_FIELDS.forEach(function (id) { commit[id] = $(id) ? $(id).value : ''; });
+      if (commit.commitDate || commit.commitExtra || commit.commitBuffer || commit.commitPerson) {
+        lines.push('', 'Commitment:');
+        if (commit.commitDate) lines.push('  · Payoff by ' + commit.commitDate);
+        if (commit.commitExtra) lines.push('  · Extra monthly ' + commit.commitExtra);
+        if (commit.commitBuffer) lines.push('  · Buffer before borrowing again ' + commit.commitBuffer);
+        if (commit.commitPerson) lines.push('  · Accountability person: ' + commit.commitPerson);
+      }
+    }
+
+    if (includeAmort && r.schedule) {
+      lines.push('', 'Amortization (first 12 months):');
+      r.schedule.slice(0, 12).forEach(function (row) {
+        lines.push('  ' + row.month + '  pay ' + money(row.payment, r.currency)
+          + '  P ' + money(row.principal, r.currency)
+          + '  I ' + money(row.interest, r.currency)
+          + '  bal ' + money(row.balance, r.currency));
+      });
+    }
+
+    lines.push(
+      '',
+      'Educational estimate only — not financial advice. Verify exact terms with the lender.',
+      'Built for clarity, not pressure. The choice remains yours.',
+      'https://sumanthbolle.com/save-yourself'
+    );
     return lines.join('\n');
-  }
-
-  function escapeRoutesTried() {
-    var out = [];
-    Decision.ESCAPE_TIERS.forEach(function (tier) {
-      tier.items.forEach(function (item) {
-        if (state.escape[tier.id + '.' + item.id]) out.push(item.label);
-      });
-    });
-    return out;
   }
 
   async function copySummary() {
@@ -1075,126 +1128,214 @@
       flashStatus('Summary copied.');
     } catch (e) {
       var ta = document.createElement('textarea');
-      ta.value = text; document.body.appendChild(ta); ta.select();
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
       try { document.execCommand('copy'); flashStatus('Summary copied.'); }
       catch (err) { flashStatus('Could not copy — select and copy manually.'); }
       document.body.removeChild(ta);
     }
   }
+
   function downloadSummary() {
     var text = buildSummaryText();
     if (!text) return;
     var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url; a.download = 'save-yourself-summary.txt';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    a.href = url;
+    a.download = 'save-yourself-xray.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
     flashStatus('Summary downloaded.');
   }
+
   function flashStatus(msg) {
     var el = $('actionStatus');
-    el.textContent = msg; el.hidden = false;
+    el.textContent = msg;
+    el.hidden = false;
     clearTimeout(flashStatus._t);
     flashStatus._t = setTimeout(function () { el.hidden = true; }, 2500);
   }
 
-  /* ---------- Currency chrome ---------- */
-  function updateCurrencyChrome() {
-    var sym = C.currencySymbol(state.currency, locale);
-    var code = state.currency;
-    document.querySelectorAll('[data-currency-prefix]').forEach(function (el) {
-      el.textContent = code + (sym && sym !== code ? ' ' + sym : '');
-    });
+  function clearSavedData() {
+    var ok = window.confirm(
+      'Clear saved data on this device?\n\n'
+      + 'This removes your loan inputs, checklist answers, red flags, commitment notes, and preferences '
+      + 'stored under save-yourself:v2. Example numbers will load again. Nothing is sent to a server.'
+    );
+    if (!ok) return;
+    Storage.clear();
+    state.filterAnswers = Object.create(null);
+    state.redFlags = Object.create(null);
+    state.escape = Object.create(null);
+    state.lastValidResult = null;
+    state.lastAdvice = null;
+    state.lastFilter = null;
+    state.amortLoaded = false;
+    state.ui = {
+      advancedOpen: false,
+      selectedPayment: 0,
+      timelineGrouping: 'auto',
+      editedByUser: false
+    };
+    COMMIT_FIELDS.forEach(function (id) { if ($(id)) $(id).value = ''; });
+    $('problemSentence').value = '';
+    $('shortfallType').value = 'unknown';
+    $('advancedDrawer').open = false;
+    var checkedReason = document.querySelector('input[name="reason"]:checked');
+    if (checkedReason) checkedReason.checked = false;
+    applyInputToForm(clone(Storage.DEFAULT_EXAMPLE));
+    buildCurrencyOptions();
+    $('currencyInput').value = currentCurrencyLabel();
+    updateCurrencyChrome();
+    renderEscapeTiers();
+    renderRedFlags();
+    syncExampleBadge();
+    flashStatus('Saved data cleared. Example numbers restored.');
+    recalculate();
   }
 
-  /* ---------- Interaction / debounce ---------- */
+  /* ---------- Sticky strip ---------- */
+  function bindSticky() {
+    var sticky = $('stickyResults');
+    var reality = $('realityCanvas');
+    if (!sticky || !reality) return;
+
+    if ('IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!state.lastValidResult || !state.lastValidResult.ok) {
+            sticky.classList.remove('show');
+            sticky.setAttribute('aria-hidden', 'true');
+            return;
+          }
+          if (!entry.isIntersecting) {
+            sticky.classList.add('show');
+            sticky.setAttribute('aria-hidden', 'false');
+          } else {
+            sticky.classList.remove('show');
+            sticky.setAttribute('aria-hidden', 'true');
+          }
+        });
+      }, { rootMargin: '-48px 0px 0px 0px', threshold: 0 });
+      obs.observe(reality);
+    }
+
+    $('stickyView').addEventListener('click', function () {
+      reality.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    if (window.visualViewport) {
+      var onVV = function () {
+        var vv = window.visualViewport;
+        var keyboardOpen = vv.height < window.innerHeight * 0.75;
+        sticky.classList.toggle('sy-sticky--kb-hidden', keyboardOpen);
+      };
+      window.visualViewport.addEventListener('resize', onVV);
+      window.visualViewport.addEventListener('scroll', onVV);
+    }
+  }
+
+  /* ---------- Live bindings ---------- */
   var changeTimer = null;
   function onChange() {
     clearTimeout(changeTimer);
     changeTimer = setTimeout(recalculate, 60);
   }
-  function markInteracted() { state.interacted = true; }
 
   function bindLive() {
-    var textIds = ['amount', 'rate', 'tenure', 'extraPayment', 'oppRate', 'processingFee', 'otherFees',
-      'prepayPenalty', 'income', 'existingDebt', 'problemSentence'];
+    var textIds = [
+      'amount', 'rate', 'tenure', 'extraPayment', 'oppRate', 'processingFee', 'otherFees',
+      'prepayPenalty', 'income', 'existingDebt', 'problemSentence'
+    ];
     textIds.forEach(function (id) {
       var el = $(id);
       if (!el) return;
-      el.addEventListener('input', function () { markInteracted(); onChange(); });
+      el.addEventListener('input', function () {
+        markEdited();
+        onChange();
+      });
     });
+
     var selectIds = ['tenureUnit', 'processingUnit', 'lender', 'emergencyFund', 'shortfallType'];
     selectIds.forEach(function (id) {
       var el = $(id);
       if (!el) return;
-      el.addEventListener('change', function () { markInteracted(); onChange(); });
+      el.addEventListener('change', function () {
+        markEdited();
+        onChange();
+      });
     });
-    // Deferred validation: mark touched on blur.
+
     Object.keys(ERROR_FIELDS).forEach(function (key) {
       var input = $(ERROR_FIELDS[key]);
       if (!input) return;
-      input.addEventListener('blur', function () { state.touched[key] = true; showFieldErrors(readForm().errors); });
+      input.addEventListener('blur', function () {
+        state.touched[key] = true;
+        showFieldErrors(readForm().errors);
+      });
     });
 
     document.querySelectorAll('input[name="interestType"]').forEach(function (el) {
-      el.addEventListener('change', function () { markInteracted(); onChange(); });
+      el.addEventListener('change', function () {
+        updateFlatNote();
+        markEdited();
+        onChange();
+      });
+    });
+    document.querySelectorAll('input[name="feeTreatment"]').forEach(function (el) {
+      el.addEventListener('change', function () {
+        markEdited();
+        onChange();
+      });
     });
     document.querySelectorAll('input[name="reason"]').forEach(function (el) {
-      el.addEventListener('change', function () { markInteracted(); onChange(); });
+      el.addEventListener('change', function () {
+        markEdited();
+        onChange();
+      });
     });
 
-    $('refine').addEventListener('toggle', function () { recalculate(); });
+    $('advancedDrawer').addEventListener('toggle', function () {
+      state.ui.advancedOpen = $('advancedDrawer').open;
+      if (state.ui.editedByUser) persist();
+    });
+
+    $('openAdvancedLink').addEventListener('click', function (e) {
+      e.preventDefault();
+      $('advancedDrawer').open = true;
+      state.ui.advancedOpen = true;
+      $('income').focus();
+    });
+
+    $('amortWrap').addEventListener('toggle', function () {
+      if ($('amortWrap').open && !state.amortLoaded) {
+        state.amortLoaded = true;
+        if (state.lastValidResult) renderAmortization(state.lastValidResult);
+      }
+    });
 
     COMMIT_FIELDS.forEach(function (id) {
       var el = $(id);
       if (!el) return;
       el.addEventListener('input', function () {
-        markInteracted();
-        savePlan();
-        renderCommit();
+        markEdited();
         renderFilter();
       });
-      el.addEventListener('change', function () { savePlan(); renderCommit(); renderFilter(); });
+      el.addEventListener('change', function () {
+        markEdited();
+        renderFilter();
+      });
     });
 
     $('copySummary').addEventListener('click', copySummary);
     $('downloadSummary').addEventListener('click', downloadSummary);
-    $('clearData').addEventListener('click', function () {
-      clearPrefs();
-      clearPlan();
-      ['amount', 'rate', 'tenure', 'extraPayment', 'processingFee', 'otherFees', 'income',
-        'existingDebt', 'problemSentence'].forEach(function (id) { $(id).value = ''; });
-      $('prepayPenalty').value = '0';
-      $('oppRate').value = '10';
-      state.touched = Object.create(null);
-      state.submitAttempted = false;
-      var checkedReason = document.querySelector('input[name="reason"]:checked');
-      if (checkedReason) checkedReason.checked = false;
-      document.querySelectorAll('input[data-escape]').forEach(function (box) { box.checked = false; });
-      updateTierProgress();
-      renderCommit();
-      setResultsPlaceholder();
-      $('advicePanel').hidden = true;
-      flashStatus('Local data cleared.');
-      recalculate();
-    });
-
-    if ('IntersectionObserver' in window) {
-      var results = $('resultsPanel');
-      var sticky = $('stickyResults');
-      var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!state.lastResult || !state.lastResult.ok) { sticky.classList.remove('show'); return; }
-          if (!entry.isIntersecting) sticky.classList.add('show');
-          else sticky.classList.remove('show');
-        });
-      }, { rootMargin: '-48px 0px 0px 0px', threshold: 0 });
-      obs.observe(results);
-    }
+    $('clearData').addEventListener('click', clearSavedData);
   }
 
-  /* ---------- Theme toggle a11y ---------- */
   function syncThemePressed() {
     var btn = $('themeToggle');
     if (!btn) return;
@@ -1204,28 +1345,27 @@
   }
 
   function init() {
-    loadPrefs();
-    loadPlan();
-    buildCurrencyOptions();
-    $('currencyInput').value = currentCurrencyLabel();
     populateLenders();
     populateReasons();
+    loadState();
+    buildCurrencyOptions();
+    $('currencyInput').value = currentCurrencyLabel();
+    updateCurrencyChrome();
     renderEscapeTiers();
     renderLadder();
     renderRedFlags();
-    renderCommit();
-    updateCurrencyChrome();
-    setResultsPlaceholder();
     bindCombo();
     bindLive();
-    bindFilter();
+    bindSticky();
 
     if (window.SBShared) {
       window.SBShared.initNavMenu();
       window.SBShared.initThemeToggle({ storageKey: 'theme' });
     }
     syncThemePressed();
-    $('themeToggle').addEventListener('click', function () { setTimeout(syncThemePressed, 0); });
+    $('themeToggle').addEventListener('click', function () {
+      setTimeout(syncThemePressed, 0);
+    });
 
     recalculate();
   }

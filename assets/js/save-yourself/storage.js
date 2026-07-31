@@ -101,7 +101,11 @@
     var mode = fee.mode === 'percent' ? 'percent' : 'fixed';
     var value = pickNumber(fee.value, false);
     if (value === undefined) return undefined;
-    var treatment = fee.treatment === 'added' ? 'added' : 'deducted';
+    var treatment = fee.treatment === 'added'
+      ? 'added'
+      : fee.treatment === 'separate'
+        ? 'separate'
+        : 'deducted';
     return { mode: mode, value: value, treatment: treatment };
   }
 

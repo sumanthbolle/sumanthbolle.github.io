@@ -276,37 +276,56 @@ assert(A.LENDERS.some(function (l) { return l.id === 'employer'; }), 'employer l
 var employerAdvice = A.buildAdvice({ reasonId: 'medical', lenderId: 'employer', loan: safe });
 assert(employerAdvice.steps.some(function (s) { return /if you leave/i.test(s.title); }), 'employer loan warns about leaving the job');
 
-// --- Final filter ---
+// --- Final filter (primary + optional + red flags) ---
+assert(Array.isArray(D.PRIMARY_CHECKS) && D.PRIMARY_CHECKS.length === 4, 'four primary checks');
+assert(Array.isArray(D.OPTIONAL_CHECKS) && D.OPTIONAL_CHECKS.length >= 4, 'optional deeper checks present');
+assert(Array.isArray(D.FILTER_QUESTIONS) && D.FILTER_QUESTIONS.length === D.PRIMARY_CHECKS.length + D.OPTIONAL_CHECKS.length,
+  'FILTER_QUESTIONS alias covers primary + optional');
+assert(D.RED_FLAGS.every(function (f) { return f && typeof f.id === 'string' && typeof f.label === 'string'; }),
+  'RED_FLAGS are {id,label} objects');
+
 var allNo = D.evaluateFilter({
   tier1Total: 6, tier1Checked: 1, reasonBucket: 'lifestyle',
-  stressRatio: 0.9, aprPercent: 40, payoffMonths: 36, hasResult: true, feesEntered: true
+  stressRatio: 0.9, aprPercent: 40, payoffMonths: 36, hasResult: true, feesEntered: true,
+  marginLabel: 'negative'
 }, {});
 assert(allNo.no >= 3, 'a bad loan trips at least three no answers');
-assert(allNo.level === 'danger', '3+ no answers → danger');
-assert(/sleep on it/i.test(allNo.verdict), 'danger verdict tells the borrower to wait');
+assert(allNo.level === 'danger' && allNo.state === 'stop', 'failed checks → danger/stop');
+assert(/do not borrow|unresolved|pause before signing/i.test(allNo.verdict),
+  'stop verdict tells the borrower to wait');
 
 var allYes = D.evaluateFilter({
   tier1Total: 6, tier1Checked: 5, reasonBucket: 'emergency',
   stressRatio: 0.2, aprPercent: 11, payoffMonths: 12, commitmentSigned: true,
-  hasResult: true, feesEntered: true
+  hasResult: true, feesEntered: true, marginLabel: 'comfortable', comparedAlternative: true
 }, { strategy: 'yes' });
 assert(allYes.no === 0 && allYes.unanswered === 0, 'a clean loan answers every question yes');
-assert(allYes.level === 'safe', 'clean loan → safe');
+assert(allYes.level === 'safe' && allYes.state === 'ready', 'clean loan → ready');
+assert(/complete|compare|written disclosure/i.test(allYes.verdict), 'ready verdict points at written disclosure');
 
 var overridden = D.evaluateFilter({
   tier1Total: 6, tier1Checked: 5, reasonBucket: 'emergency',
   stressRatio: 0.2, aprPercent: 11, payoffMonths: 12, commitmentSigned: true,
-  hasResult: true, feesEntered: true
+  hasResult: true, feesEntered: true, marginLabel: 'comfortable', comparedAlternative: true
 }, { rate: 'no' });
 assert(overridden.rows.filter(function (r) { return r.id === 'rate'; })[0].source === 'manual',
   'a manual answer overrides the derived one');
 assert(overridden.no === 1, 'override is counted');
 
+var flagged = D.evaluateFilter(
+  { hasResult: true, feesEntered: true, marginLabel: 'comfortable', comparedAlternative: true },
+  {},
+  { pressure: true }
+);
+assert(flagged.state === 'stop' && flagged.level === 'danger', 'selected red flag → stop');
+assert(/red flag/i.test(flagged.verdict), 'stop verdict names red flags');
+assert(flagged.redFlags.length === 1 && flagged.redFlags[0].id === 'pressure', 'red flag objects returned');
+
 var empty = D.evaluateFilter({}, {});
 assert(empty.unanswered === D.FILTER_QUESTIONS.length, 'nothing is assumed without inputs');
-assert(empty.level === 'unknown', 'no inputs → no verdict');
+assert(empty.state === 'pause', 'no inputs → pause until primary checks resolve');
+assert(/unresolved|complete the checks/i.test(empty.verdict), 'pause verdict asks for unresolved checks');
 assert(D.ESCAPE_TIERS[0].items.length >= 5 && D.RED_FLAGS.length >= 5, 'escape routes and red flags present');
-
 // ============================================================================
 // Financial X-Ray redesign cases
 // ============================================================================
