@@ -102,7 +102,7 @@
           </div>
 
           <div class="field dominant">
-            <label for="amount">Amount</label>
+            <label for="amount">How much are you borrowing?</label>
             <div class="input-wrap">
               <span class="input-prefix" data-currency-prefix>INR ₹</span>
               <input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 100000" aria-describedby="err-amount">
@@ -275,21 +275,20 @@
 
       <div class="sy-reality" id="realityCanvas">
         <div class="sy-reality__headline">
-          <p class="sy-reality__line">You borrow <span class="sy-num" id="realityBorrow">—</span>.</p>
-          <p class="sy-reality__line">You return <span class="sy-num" id="realityReturn">—</span>.</p>
-          <p class="sy-reality__rent" id="realityRent">—</p>
-          <span class="sy-reality__rent-label">is the rent on the money</span>
+          <p class="sy-reality__line">You borrow <span class="sy-num reality-primary" id="realityBorrow">—</span>.</p>
+          <p class="sy-reality__line">You return <span class="sy-num reality-primary" id="realityReturn">—</span>.</p>
+          <p class="sy-reality__rent reality-cost"><span id="realityRent">—</span> is the rent on the money.</p>
         </div>
 
-        <div class="sy-reality-bar" id="realityBar" role="img" aria-label="Principal versus interest and fees">
+        <div class="sy-reality-bar" id="realityBar" role="img" aria-label="Principal versus money rent">
           <div class="sy-reality-bar__seg sy-reality-bar__seg--principal" id="barPrincipal" style="flex:1"></div>
           <div class="sy-reality-bar__seg sy-reality-bar__seg--interest" id="barInterest" style="flex:0"></div>
           <div class="sy-reality-bar__seg sy-reality-bar__seg--fees" id="barFees" style="flex:0"></div>
         </div>
         <div class="sy-reality-bar__legend">
-          <span data-key="principal">Principal</span>
-          <span data-key="interest">Interest</span>
-          <span data-key="fees" id="feesLegend">Fees</span>
+          <span data-key="principal">Principal returned <strong id="legendPrincipal">—</strong></span>
+          <span data-key="interest">Money rent <strong id="legendCost">—</strong></span>
+          <span data-key="fees" id="feesLegend" hidden>Fees <strong id="legendFees">—</strong></span>
         </div>
 
         <div class="sy-metrics">
@@ -345,6 +344,9 @@
           <h3>Cost signal</h3>
           <div class="sy-cost-scale" id="costSignalTrack" aria-hidden="true">
             <div class="sy-cost-scale__marker" id="costSignalMarker" style="left:0%"></div>
+          </div>
+          <div class="sy-cost-scale__bands" aria-hidden="true">
+            <span>Lower</span><span>Elevated</span><span>Expensive</span><span>Severe</span>
           </div>
           <div class="sy-cost-scale__ticks">
             <span>0%</span><span>8%</span><span>15%</span><span>25%</span><span>36%+</span>

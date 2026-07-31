@@ -589,10 +589,18 @@
     if (result.fees && result.fees.treatment === 'added') feeShare = 0;
     var total = principalShare + interestShare + feeShare;
     if (!(total > 0)) total = 1;
-    $('barPrincipal').style.flex = String(principalShare / total);
-    $('barInterest').style.flex = String(interestShare / total);
-    $('barFees').style.flex = String(feeShare / total);
+    var pFlex = Math.max(principalShare / total, 0);
+    var iFlex = Math.max(interestShare / total, 0);
+    var fFlex = Math.max(feeShare / total, 0);
+    // Keep tiny fee segments visible (≈2px at typical bar widths).
+    if (feeShare > 0 && fFlex < 0.02) fFlex = 0.02;
+    $('barPrincipal').style.flex = String(pFlex);
+    $('barInterest').style.flex = String(iFlex);
+    $('barFees').style.flex = String(fFlex);
     $('feesLegend').hidden = feeShare <= 0;
+    if ($('legendPrincipal')) $('legendPrincipal').textContent = money(principalShare, ccy);
+    if ($('legendCost')) $('legendCost').textContent = money(result.borrowingCost, ccy);
+    if ($('legendFees')) $('legendFees').textContent = money(feeShare, ccy);
 
     $('metricCashValue').textContent = money(result.netProceeds, ccy);
     $('metricEmiValue').textContent = money(result.emi, ccy);
@@ -623,19 +631,30 @@
 
   function renderReceipt(result) {
     var ccy = result.currency;
-    var rows = [
-      ['Loan amount', money(result.principal, ccy)],
-      ['Cash you receive', money(result.netProceeds, ccy)],
-      ['Upfront fees', money(result.upfrontFees || 0, ccy)],
-      ['Monthly payment', money(result.emi, ccy)],
-      ['Number of payments', String(result.months)],
-      ['Interest', money(result.totalInterestPaid, ccy)],
-      ['Total you return', money(result.totalPaid, ccy), 'total'],
-      ['Money rent (interest + fees)', money(result.borrowingCost, ccy), 'cost']
-    ];
-    if (result.estimatedNominalAnnualCost != null) {
-      rows.push(['Estimated annual cost', C.formatNumber(result.estimatedNominalAnnualCost, 2, locale) + '%']);
+    var fees = result.upfrontFees || 0;
+    var treatment = result.fees && result.fees.treatment;
+    var rows = [];
+
+    rows.push(['Advertised loan', money(result.principal, ccy)]);
+    if (treatment === 'added') {
+      rows.push(['Fees added to loan', money(fees, ccy)]);
+      rows.push(['Financed principal', money(result.financedPrincipal, ccy)]);
+      rows.push(['Cash reaching you', money(result.netProceeds, ccy)]);
+    } else if (treatment === 'separate') {
+      rows.push(['Fees paid separately', money(fees, ccy)]);
+      rows.push(['Cash reaching you', money(result.principal, ccy)]);
+      rows.push(['Net after fees (cash-flow)', money(result.netProceeds, ccy)]);
+    } else {
+      rows.push(['Less upfront charges', money(fees, ccy)]);
+      rows.push(['Cash reaching you', money(result.netProceeds, ccy)]);
     }
+
+    rows.push(['Principal returned', money(result.totalPrincipalPaid || result.financedPrincipal, ccy)]);
+    rows.push(['Interest paid', money(result.totalInterestPaid, ccy)]);
+    rows.push(['Fees paid', money(result.totalFeesPaid != null ? result.totalFeesPaid : fees, ccy)]);
+    rows.push(['Total leaving you', money(result.totalPaid, ccy), 'total']);
+    rows.push(['Money rent', money(result.borrowingCost, ccy), 'cost']);
+
     var html = '';
     rows.forEach(function (r) {
       var cls = 'sy-receipt__row';
@@ -1204,25 +1223,27 @@
     var reality = $('realityCanvas');
     if (!sticky || !reality) return;
 
-    if ('IntersectionObserver' in window) {
-      var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!state.lastValidResult || !state.lastValidResult.ok) {
-            sticky.classList.remove('show');
-            sticky.setAttribute('aria-hidden', 'true');
-            return;
-          }
-          if (!entry.isIntersecting) {
-            sticky.classList.add('show');
-            sticky.setAttribute('aria-hidden', 'false');
-          } else {
-            sticky.classList.remove('show');
-            sticky.setAttribute('aria-hidden', 'true');
-          }
-        });
-      }, { rootMargin: '-48px 0px 0px 0px', threshold: 0 });
-      obs.observe(reality);
+    function syncSticky() {
+      if (!state.lastValidResult || !state.lastValidResult.ok) {
+        sticky.classList.remove('show');
+        sticky.setAttribute('aria-hidden', 'true');
+        return;
+      }
+      // Only after the user has scrolled past the reality reveal (not while it is still below).
+      var rect = reality.getBoundingClientRect();
+      var scrolledPast = rect.bottom < 72;
+      if (scrolledPast) {
+        sticky.classList.add('show');
+        sticky.setAttribute('aria-hidden', 'false');
+      } else {
+        sticky.classList.remove('show');
+        sticky.setAttribute('aria-hidden', 'true');
+      }
     }
+
+    window.addEventListener('scroll', syncSticky, { passive: true });
+    window.addEventListener('resize', syncSticky);
+    syncSticky();
 
     $('stickyView').addEventListener('click', function () {
       reality.scrollIntoView({ behavior: 'smooth', block: 'start' });
