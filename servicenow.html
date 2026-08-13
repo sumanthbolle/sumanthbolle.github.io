@@ -416,6 +416,7 @@
       .section-eye,.section-title,.section-sub,.track,.lib-card,.pillar,.path-card{opacity:1;transform:none}
     }
   </style>
+  <link rel="stylesheet" href="assets/css/nav-utilities.css">
 </head>
 <body>
   <a href="#main" class="skip-nav">Skip to main content</a>
@@ -430,9 +431,14 @@
         <li><a href="interviews.html">Interviews</a></li>
         <li><a href="quiz.html">Quiz</a></li>
         <li><a href="summaverick.html">Summaverick</a></li>
-        <li><a href="flights.html">SkyFare</a></li>
-        <li><a href="metals.html">Metals</a></li>
-          <li><a href="save-yourself.html">Save Yourself</a></li>
+        <li class="nav-drop" data-nav-drop>
+          <button type="button" class="nav-drop__btn" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="nav-drop__menu" id="navUtilities" role="menu">
+            <a href="flights.html" role="menuitem"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+            <a href="metals.html" role="menuitem"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+            <a href="save-yourself.html" role="menuitem"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+          </div>
+        </li>
         <li><a href="index.html#contact">Contact</a></li>
       </ul>
       <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -445,9 +451,10 @@
       <a href="interviews.html">Interviews</a>
       <a href="quiz.html">Quiz</a>
       <a href="summaverick.html">Summaverick</a>
-      <a href="flights.html">SkyFare</a>
-      <a href="metals.html">Metals</a>
-      <a href="save-yourself.html">Save Yourself</a>
+      <span class="mobile-menu__label">Utilities</span>
+      <a class="mobile-menu__sub" href="flights.html">SkyFare</a>
+      <a class="mobile-menu__sub" href="metals.html">Metals</a>
+      <a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a>
       <a href="index.html#contact">Contact</a>
     </div>
   </nav>
@@ -1328,5 +1335,6 @@
     loadFeed(true);
   })();
   </script>
+  <script src="assets/js/shared/nav-utilities.js"></script>
 </body>
 </html>

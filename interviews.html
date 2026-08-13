@@ -257,6 +257,7 @@
   <script>window.SB_AI_SEARCH_ENDPOINT='https://wandering-haze-b394.sumanthbolle312.workers.dev'</script>
 <script defer src="assets/js/shared/search.js?v=4"></script>
 <script defer src="assets/js/shared/search-announcement.js?v=1"></script>
+<link rel="stylesheet" href="assets/css/nav-utilities.css">
 </head>
 <body>
   <nav>
@@ -271,15 +272,20 @@
         <li><a href="interviews.html" class="active">Interviews</a></li>
         <!--<li><a href="index.html#integrations">Integrations</a></li>-->
         <li><a href="summaverick.html">Summaverick</a></li>
-        <li><a href="flights.html">SkyFare</a></li>
-        <li><a href="metals.html">Metals</a></li>
-          <li><a href="save-yourself.html">Save Yourself</a></li>
+        <li class="nav-drop" data-nav-drop>
+          <button type="button" class="nav-drop__btn" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="nav-drop__menu" id="navUtilities" role="menu">
+            <a href="flights.html" role="menuitem"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+            <a href="metals.html" role="menuitem"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+            <a href="save-yourself.html" role="menuitem"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+          </div>
+        </li>
         <li><a href="index.html#contact">Contact</a></li>
       </ul>
       <button class="menu-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu">
-      <a href="index.html">Home</a><a href="index.html#about">About</a><a href="servicenow.html">ServiceNow</a><a href="blog.html">Blog</a><a href="interviews.html" class="active">Interviews</a><a href="summaverick.html">Summaverick</a><a href="flights.html">SkyFare</a><a href="metals.html">Metals</a><a href="save-yourself.html">Save Yourself</a><a href="index.html#contact">Contact</a>
+      <a href="index.html">Home</a><a href="index.html#about">About</a><a href="servicenow.html">ServiceNow</a><a href="blog.html">Blog</a><a href="interviews.html" class="active">Interviews</a><a href="summaverick.html">Summaverick</a><span class="mobile-menu__label">Utilities</span><a class="mobile-menu__sub" href="flights.html">SkyFare</a><a class="mobile-menu__sub" href="metals.html">Metals</a><a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a><a href="index.html#contact">Contact</a>
     </div>
   </nav>
   <div class="sub-tabs">
@@ -1092,5 +1098,6 @@
       ]
     });
   </script>
+<script src="assets/js/shared/nav-utilities.js"></script>
 </body>
 </html>

@@ -479,6 +479,7 @@
 
     /* old semantic scene CSS removed — replaced by canvas system */
   </style>
+  <link rel="stylesheet" href="assets/css/nav-utilities.css">
 </head>
 <body>
   <a href="#main" class="skip-nav">Skip to main content</a>
@@ -495,15 +496,20 @@
         <li><a href="interviews.html">Interviews</a></li>
         <!--<li><a href="#integrations">Integrations</a></li>-->
         <li><a href="summaverick.html">Summaverick</a></li>
-        <li><a href="flights.html">SkyFare</a></li>
-        <li><a href="metals.html">Metals</a></li>
-          <li><a href="save-yourself.html">Save Yourself</a></li>
+        <li class="nav-drop" data-nav-drop>
+          <button type="button" class="nav-drop__btn" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="nav-drop__menu" id="navUtilities" role="menu">
+            <a href="flights.html" role="menuitem"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+            <a href="metals.html" role="menuitem"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+            <a href="save-yourself.html" role="menuitem"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+          </div>
+        </li>
         <li><a href="#contact">Contact</a></li>
       </ul>
       <button class="menu-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
     <div class="mobile-menu">
-      <a href="#about">About</a><!--<a href="#expertise">Expertise</a>--><!--<a href="#projects">Projects</a>--><!--<a href="#skills">Skills</a>--><a href="servicenow.html">ServiceNow</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><!--<a href="#integrations">Integrations</a>--><a href="summaverick.html">Summaverick</a><a href="flights.html">SkyFare</a><a href="metals.html">Metals</a><a href="save-yourself.html">Save Yourself</a><a href="#contact">Contact</a>
+      <a href="#about">About</a><!--<a href="#expertise">Expertise</a>--><!--<a href="#projects">Projects</a>--><!--<a href="#skills">Skills</a>--><a href="servicenow.html">ServiceNow</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><!--<a href="#integrations">Integrations</a>--><a href="summaverick.html">Summaverick</a><span class="mobile-menu__label">Utilities</span><a class="mobile-menu__sub" href="flights.html">SkyFare</a><a class="mobile-menu__sub" href="metals.html">Metals</a><a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a><a href="#contact">Contact</a>
     </div>
   </nav>
 
@@ -946,5 +952,6 @@ PROJ_DATA.forEach(p=>{const section=document.getElementById('section-'+p.id),pin
 
 
   </script>
+  <script src="assets/js/shared/nav-utilities.js"></script>
 </body>
 </html>
