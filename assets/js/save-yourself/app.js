@@ -1047,7 +1047,7 @@
 
     var lines = [
       'SAVE YOURSELF — FINANCIAL X-RAY',
-      'Generated locally · nothing sent to a server',
+      'Generated in the browser',
       '',
       'YOU BORROW:  ' + money(r.principal, r.currency),
       'YOU RETURN:  ' + money(r.totalPaid, r.currency),
@@ -1133,7 +1133,6 @@
     lines.push(
       '',
       'Educational estimate only — not financial advice. Verify exact terms with the lender.',
-      'Built for clarity, not pressure. The choice remains yours.',
       'https://sumanthbolle.com/save-yourself'
     );
     return lines.join('\n');

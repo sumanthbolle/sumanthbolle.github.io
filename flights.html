@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkyFare — Smart Flight Search &amp; Value Score Ranking | Sumanth Bolle</title>
-  <meta name="description" content="SkyFare: intelligent flight search powered by Summaverick. Ranked by Value Score — price, duration, stops, and timing — then book on Google Flights, Kayak, Skyscanner, or the airline.">
-  <meta name="keywords" content="SkyFare, flight search, Value Score, Summaverick, smart flight recommendations, Google Flights, Kayak, flight comparison">
+  <title>SkyFare — Flight search with Value Score ranking | Sumanth Bolle</title>
+  <meta name="description" content="Search a route and compare flights on price, total travel time, stops and departure times. Book on Google Flights, Kayak, Skyscanner or the airline.">
+  <meta name="keywords" content="SkyFare, flight search, Value Score, flight comparison, Google Flights, Kayak, Skyscanner">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://sumanthbolle.com/flights">
-  <meta property="og:title" content="SkyFare — Smart flight search, clearer decisions">
-  <meta property="og:description" content="AI destination ideas and Value Score ranking — then book in one click on Google Flights, Kayak, Skyscanner, or the airline.">
+  <meta property="og:title" content="SkyFare — Flight search with Value Score ranking">
+  <meta property="og:description" content="Compare flights on price, travel time, stops and timing, then book on Google Flights, Kayak, Skyscanner or the airline.">
   <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
   <meta property="og:url" content="https://sumanthbolle.com/flights">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SkyFare — Smart flight search, clearer decisions">
-  <meta name="twitter:description" content="Value Score ranking and Summaverick destination ideas — then book on Google Flights, Kayak, or the airline.">
+  <meta name="twitter:title" content="SkyFare — Flight search with Value Score ranking">
+  <meta name="twitter:description" content="Compare flights on price, travel time, stops and timing, then book on Google Flights, Kayak or the airline.">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -28,7 +28,7 @@
     "url": "https://sumanthbolle.com/flights",
     "applicationCategory": "TravelApplication",
     "operatingSystem": "Web",
-    "description": "Intelligent flight search with Value Score ranking and Summaverick destination suggestions. Book on Google Flights, Kayak, Skyscanner, or the airline.",
+    "description": "Flight search with Value Score ranking across price, travel time, stops and timing. Book on Google Flights, Kayak, Skyscanner, or the airline.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
   }
@@ -57,18 +57,11 @@
     .mobile-menu a{display:block;padding:12px 0;color:var(--text);text-decoration:none;font-size:16px;border-bottom:1px solid rgba(0,0,0,0.05)}
     .mobile-menu a.active{color:var(--blue)}
 
-    /* ─── Hero ─── */
-    .page-header{padding:100px 22px 50px;text-align:center;background:linear-gradient(180deg,#111 0%,#000 100%);color:var(--white);position:relative;overflow:hidden}
-    .page-header::before{content:'';position:absolute;width:100%;height:100%;top:0;left:0;background:radial-gradient(ellipse 60% 50% at 50% 30%,rgba(59,130,246,0.12) 0%,transparent 70%)}
-    .page-header .eyebrow{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.2);color:#93c5fd;font-size:12px;font-weight:600;letter-spacing:0.5px;margin-bottom:16px}
-    .page-header h1{font-size:clamp(32px,7vw,52px);font-weight:600;margin-bottom:10px;letter-spacing:-0.02em;position:relative}
-    .page-header p{font-size:17px;color:var(--gray);max-width:520px;margin:0 auto;line-height:1.5;position:relative}
-
     /* ─── Main container ─── */
     .main-wrap{max-width:1080px;margin:0 auto;padding:0 22px}
 
     /* ─── Search Card ─── */
-    .search-card{background:var(--white);border-radius:22px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,0.06);margin-top:-40px;position:relative;z-index:10}
+    .search-card{background:var(--white);border:1px solid rgba(0,0,0,0.07);border-radius:22px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,0.05);position:relative;z-index:10}
 
     /* ─── Trip toggle ─── */
     .trip-toggle{display:inline-flex;gap:2px;padding:3px;background:var(--bg);border-radius:10px;margin-bottom:20px}
@@ -203,10 +196,6 @@
     .view-deal.secondary{background:transparent;color:var(--blue);border:1px solid rgba(0,102,204,0.25);box-shadow:none}
     .view-deal.secondary:hover{background:rgba(0,102,204,0.06);border-color:rgba(0,102,204,0.45)}
     .fc-actions{display:flex;flex-direction:column;align-items:stretch;gap:6px;width:100%;margin-top:4px}
-    .hero-brand{font-size:clamp(40px,8vw,64px);font-weight:700;letter-spacing:-.04em;margin-bottom:8px;position:relative}
-    .hero-promise{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px;position:relative}
-    .hero-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:980px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.75);font-size:12px;font-weight:500}
-    .hero-pill strong{color:#fff;font-weight:600}
     .book-trust{display:flex;align-items:flex-start;gap:10px;background:rgba(0,102,204,0.05);border:1px solid rgba(0,102,204,0.12);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;color:#1a56db;line-height:1.5}
     .book-trust svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .book-trust.live{background:rgba(52,199,89,0.07);border-color:rgba(52,199,89,0.25);color:#166534}
@@ -536,10 +525,11 @@
       .priority-row{grid-template-columns:1fr}
       .summary-grid,.skel-summary{grid-template-columns:1fr}
       .btb-stat{min-width:calc(50% - 5px)}
-      .page-header{padding:80px 16px 40px}
-      .search-card{margin-top:-30px;padding:16px}
+      .search-card{padding:16px}
     }
   </style>
+  <link rel="stylesheet" href="assets/css/nav-utilities.css">
+  <link rel="stylesheet" href="assets/css/utility-page.css">
 </head>
 <body>
 
@@ -553,32 +543,28 @@
       <li><a href="blog.html">Blog</a></li>
       <li><a href="interviews.html">Interviews</a></li>
       <li><a href="summaverick.html">Summaverick</a></li>
-      <li><a href="flights.html" class="active">SkyFare</a></li>
-      <li><a href="metals.html">Metals</a></li>
-          <li><a href="save-yourself.html">Save Yourself</a></li>
+      <li class="nav-drop" data-nav-drop>
+        <button type="button" class="nav-drop__btn active" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-drop__menu" id="navUtilities" role="menu">
+          <a href="flights.html" role="menuitem" aria-current="page"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+          <a href="metals.html" role="menuitem"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+          <a href="save-yourself.html" role="menuitem"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+        </div>
+      </li>
       <li><a href="index.html#contact">Contact</a></li>
     </ul>
     <button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html">Home</a><a href="index.html#about">About</a><a href="servicenow.html">ServiceNow</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><a href="summaverick.html">Summaverick</a><a href="flights.html" class="active">SkyFare</a><a href="metals.html">Metals</a><a href="save-yourself.html">Save Yourself</a><a href="index.html#contact">Contact</a>
+    <a href="index.html">Home</a><a href="index.html#about">About</a><a href="servicenow.html">ServiceNow</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><a href="summaverick.html">Summaverick</a><span class="mobile-menu__label">Utilities</span><a class="mobile-menu__sub active" href="flights.html" aria-current="page">SkyFare</a><a class="mobile-menu__sub" href="metals.html">Metals</a><a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a><a href="index.html#contact">Contact</a>
   </div>
 </nav>
 
-<!-- Hero -->
-<header class="page-header">
-  <span class="eyebrow">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3.64 14.26l2.86.95 4.02-4.02-8-4.59 1.16-1.16 9.37 2.51 3.18-3.18c.58-.58 1.53-.58 2.12 0 .58.59.58 1.53 0 2.12l-3.18 3.18 2.51 9.37-1.16 1.16-4.59-8-4.02 4.02.95 2.86-1.07 1.07-2.53-3.9-3.9-2.53 1.07-1.07z"/></svg>
-    Intelligent flight search · powered by Summaverick
-  </span>
-  <div class="hero-brand">SkyFare</div>
-  <h1>Find better flights. Not just cheaper ones.</h1>
-  <p>Most sites just dump every possible flight on you. SkyFare ranks them by actual value — price, total time, and how painful the journey is — then sends you to book on Google Flights, Kayak, Skyscanner, or the airline.</p>
-  <div class="hero-promise" aria-label="How SkyFare works">
-    <span class="hero-pill"><strong>1.</strong> Search or ask</span>
-    <span class="hero-pill"><strong>2.</strong> See the best options ranked</span>
-    <span class="hero-pill"><strong>3.</strong> Book on a site you already trust</span>
-  </div>
+<header class="util-head">
+  <p class="util-head__kicker">Utilities</p>
+  <h1>SkyFare</h1>
+  <p class="util-head__lede">Search a route once and compare the results on price, total travel time, stops and departure times. Booking happens on Google Flights, Kayak, Skyscanner or the airline.</p>
+  <p class="util-head__meta">Live fares come from Amadeus when the route is available there. Otherwise the results are researched by Summaverick and marked as leads to confirm before you pay.</p>
 </header>
 
 <div class="main-wrap">
@@ -652,6 +638,14 @@
   <div class="results-area" id="resultsArea"></div>
 
 </div>
+
+<section class="util-more" aria-label="Other utilities">
+  <p class="util-more__title">Other utilities</p>
+  <div class="util-more__grid">
+    <a class="util-more__card" href="metals.html"><strong>Metals</strong><span>Gold and silver spot prices in your currency, with converters and a holdings tracker.</span></a>
+    <a class="util-more__card" href="save-yourself.html"><strong>Save Yourself</strong><span>Work out the monthly payment, the total repaid and the fees on a loan before you sign.</span></a>
+  </div>
+</section>
 
 <!-- Compare tray -->
 <div class="compare-bar" id="compareBar" role="region" aria-label="Compare selected flights">
@@ -2073,7 +2067,7 @@
     html += '<p>Prices are estimates and can change until you check out on the booking site. Always confirm the final fare and baggage rules before you pay.</p>';
     html += '<details class="how-it-works"><summary><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .3c0 1.7-2.5 2.2-2.5 3.7M12 17h.01"/></svg>How it works</summary>'
       + '<div class="hiw-body"><p><strong>Search or ask:</strong> you search once and we research your route live across airline and travel sites — that can take up to a minute.</p>'
-      + '<p><strong>We rank by Value Score:</strong> not just the cheapest ticket. We score every flight on price, total travel time, stops, timing, and airline quality, then flag the standouts like Best Overall, Cheapest, and Fastest. Nothing here is a paid placement.</p>'
+      + '<p><strong>Value Score:</strong> every flight is scored on price, total travel time, stops, timing, and airline quality, and the strongest results are labelled Best Overall, Cheapest, and Fastest. No result is a paid placement.</p>'
       + '<p><strong>Book wherever you want:</strong> every card has a Book button that sends you to Google Flights, Kayak, Skyscanner, or the airline to buy the ticket. We don\'t mark anything up, and we don\'t process payments ourselves.</p>'
       + '<p><strong>Privacy:</strong> we only send your search — route, dates, preferences — to make this work. No account needed, and your recent routes stay in this browser.</p></div></details>';
     html += '</div>';
@@ -2927,11 +2921,11 @@ SBHelpGuide.init({
   page: 'skyfare',
   tabLabel: 'Guide',
   title: 'How to use SkyFare',
-  intro: 'Smart flight search ranked by Value Score, not just the lowest fare.',
+  intro: 'Flight search ranked by Value Score, which combines price, duration, stops and timing.',
   steps: [
     { title: 'Search a route', desc: 'Enter an origin and destination — city or airport code both work, and autocomplete suggests matches as you type.' },
-    { title: 'Fine-tune the results', desc: 'Set a max budget, and add preferred airlines or ones to avoid, so the ranking reflects what actually matters to you.' },
-    { title: 'Trust the Value Score', desc: 'Every result is ranked by Value Score — price, duration, stops, and timing combined — not just the cheapest option. Open a card to see the score breakdown.' },
+    { title: 'Fine-tune the results', desc: 'Set a max budget, and add preferred airlines or ones to avoid, so the ranking reflects what matters to you.' },
+    { title: 'Read the Value Score', desc: 'Every result is ranked on price, duration, stops and timing combined. Open a card to see the score breakdown.' },
     { title: 'Open the details fly-out', desc: 'Click a result to open its full itinerary in a fly-out panel before you commit.' },
     { title: 'Compare up to 3 flights', desc: 'Check the compare box on 2–3 cards; a compare bar appears at the bottom of the screen — tap Compare for a side-by-side view.' },
     { title: 'Check Best Time to Book', desc: 'Use the Best Time to Book panel for timing guidance before you search further.' },
@@ -2939,5 +2933,6 @@ SBHelpGuide.init({
   ]
 });
 </script>
+<script src="assets/js/shared/nav-utilities.js"></script>
 </body>
 </html>

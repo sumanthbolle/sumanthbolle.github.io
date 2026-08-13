@@ -80,6 +80,7 @@
     .nav-links{display:flex;gap:28px;list-style:none}
     .nav-links a{color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s;letter-spacing:0.3px}
     .nav-links a:hover,.nav-links a.active{color:var(--text)}
+    nav{--nav-drop-fg:var(--text2);--nav-drop-accent:var(--text);--nav-drop-bg:var(--card);--nav-drop-line:var(--border2);--nav-drop-hover:var(--card2)}
     .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
     .menu-toggle span{display:block;width:20px;height:1.5px;background:var(--text);margin:5px 0;transition:0.3s}
     .mobile-menu{display:none;position:fixed;top:52px;left:0;width:100%;background:rgba(0,0,0,0.95);backdrop-filter:blur(20px);padding:16px 24px;border-bottom:1px solid var(--border)}
@@ -310,6 +311,7 @@
       .menu-toggle{display:none}
     }
   </style>
+  <link rel="stylesheet" href="assets/css/nav-utilities.css">
 </head>
 <body>
 
@@ -323,9 +325,14 @@
       <li><a href="blog.html" class="active">Blog</a></li>
       <li><a href="interviews.html">Interviews</a></li>
       <li><a href="summaverick.html">Summaverick</a></li>
-      <li><a href="flights.html">SkyFare</a></li>
-      <li><a href="metals.html">Metals</a></li>
-          <li><a href="save-yourself.html">Save Yourself</a></li>
+      <li class="nav-drop" data-nav-drop>
+        <button type="button" class="nav-drop__btn" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-drop__menu" id="navUtilities" role="menu">
+          <a href="flights.html" role="menuitem"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+          <a href="metals.html" role="menuitem"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+          <a href="save-yourself.html" role="menuitem"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+        </div>
+      </li>
     </ul>
     <button class="menu-toggle" id="menuToggle" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -338,9 +345,10 @@
   <a href="blog.html" style="color:var(--text)">Blog</a>
   <a href="interviews.html">Interviews</a>
   <a href="summaverick.html">Summaverick</a>
-  <a href="flights.html">SkyFare</a>
-  <a href="metals.html">Metals</a>
-  <a href="save-yourself.html">Save Yourself</a>
+  <span class="mobile-menu__label">Utilities</span>
+  <a class="mobile-menu__sub" href="flights.html">SkyFare</a>
+  <a class="mobile-menu__sub" href="metals.html">Metals</a>
+  <a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a>
 </div>
 <div class="sub-tabs">
   <a href="blog.html" class="sub-tab">Blog Posts</a>
@@ -1743,5 +1751,6 @@ document.getElementById('backTop').addEventListener('click', function() { window
 render();
 </script>
 <script src="assets/js/shared/subscribe.js"></script>
+<script src="assets/js/shared/nav-utilities.js"></script>
 </body>
 </html>

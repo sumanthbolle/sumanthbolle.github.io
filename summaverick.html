@@ -361,6 +361,22 @@
 
     .topnav a:hover { color: var(--text); }
 
+    .topnav {
+      --nav-drop-fg: var(--text-muted);
+      --nav-drop-accent: var(--text);
+      --nav-drop-line: var(--border-strong);
+    }
+
+    html[data-theme="dark"] .topnav {
+      --nav-drop-bg: #0e1016;
+      --nav-drop-hover: rgba(255, 255, 255, 0.07);
+    }
+
+    html[data-theme="light"] .topnav {
+      --nav-drop-bg: #fff;
+      --nav-drop-hover: rgba(15, 23, 42, 0.06);
+    }
+
     .theme-toggle {
       display: inline-flex;
       align-items: center;
@@ -1642,7 +1658,8 @@
         padding-right: 18px;
       }
 
-      .topnav > a { display: none; }
+      .topnav > a,
+      .topnav > .nav-drop { display: none; }
 
       .hero { padding-top: 34px; }
 
@@ -1693,6 +1710,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="assets/css/nav-utilities.css">
 </head>
 <body>
   <div class="ambient"><div class="orb"></div></div>
@@ -1709,9 +1727,14 @@
           <a href="servicenow.html">ServiceNow</a>
           <a href="blog.html">Blog</a>
           <a href="interviews.html">Interviews</a>
-          <a href="flights.html">SkyFare</a>
-          <a href="metals.html">Metals</a>
-          <a href="save-yourself.html">Save Yourself</a>
+          <div class="nav-drop" data-nav-drop>
+            <button type="button" class="nav-drop__btn" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="nav-drop__menu" id="navUtilities" role="menu">
+              <a href="flights.html" role="menuitem"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+              <a href="metals.html" role="menuitem"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+              <a href="save-yourself.html" role="menuitem"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+            </div>
+          </div>
 
           <div class="theme-toggle" aria-label="Theme">
             <button class="theme-btn" type="button" data-theme="light">Light</button>
@@ -3121,5 +3144,6 @@
       ]
     });
   </script>
+<script src="assets/js/shared/nav-utilities.js"></script>
 </body>
 </html>
