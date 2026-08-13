@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engineering — Sumanth Bolle | Governed, Evaluated Enterprise AI on ServiceNow</title>
+  <meta name="description" content="The systems behind Summaverick: a three-layer ServiceNow research agent with a prompt-injection firewall, read-only allowlist, evidence ranking, an adversarial eval suite, and air-gappable token economics.">
+  <meta name="author" content="Sumanth Bolle">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta property="og:site_name" content="Sumanth Bolle">
+  <meta property="og:title" content="Engineering — Governed, Evaluated Enterprise AI on ServiceNow">
+  <meta property="og:description" content="Architecture, security model, evals and economics of the Summaverick ServiceNow research agent — explained and animated from the real code.">
+  <meta property="og:image" content="https://sumanthbolle.com/profile.jpeg">
+  <meta property="og:url" content="https://sumanthbolle.com/engineering.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Engineering — Enterprise AI on ServiceNow">
+  <meta name="twitter:description" content="The systems that stand behind Summaverick — governed, evaluated, air-gappable.">
+  <meta name="twitter:image" content="https://sumanthbolle.com/profile.jpeg">
+  <link rel="canonical" href="https://sumanthbolle.com/engineering.html">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"TechArticle",
+    "headline":"Governed, evaluated, air-gappable enterprise AI on ServiceNow",
+    "author":{"@type":"Person","name":"Sumanth Bolle","url":"https://sumanthbolle.com/"},
+    "about":["ServiceNow","Enterprise AI","Retrieval-Augmented Generation","AI Security","LLM Evaluation"],
+    "url":"https://sumanthbolle.com/engineering.html"
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/nav-utilities.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+    .skip-nav{position:absolute;top:-100px;left:0;background:var(--blue-strong);color:#fff;padding:12px 24px;z-index:10000;transition:top var(--dur)}
+    .skip-nav:focus{top:0}
+    a{color:var(--blue-strong)}
+    :focus-visible{outline:2px solid var(--blue-strong);outline-offset:2px}
+
+    nav{position:fixed;top:0;width:100%;height:48px;background:rgba(10,10,10,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:9999;border-bottom:1px solid var(--line)}
+    .nav-c{max-width:1120px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+    .nav-logo{font-family:var(--font-display);font-size:19px;font-weight:600;color:var(--text);text-decoration:none}
+    .nav-links{display:flex;gap:26px;list-style:none;align-items:center}
+    .nav-links a{color:var(--text);text-decoration:none;font-size:13px;opacity:.78;transition:opacity var(--dur)}
+    .nav-links a:hover{opacity:1}
+    .nav-links a[aria-current="page"]{opacity:1;color:#fff;font-weight:600}
+    .menu-toggle{display:none;background:none;border:0;cursor:pointer;padding:8px}
+    .menu-toggle span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:var(--dur)}
+    .mobile-menu{display:none;position:fixed;top:48px;left:0;width:100%;background:rgba(10,10,10,.98);backdrop-filter:blur(20px);padding:20px;border-bottom:1px solid var(--line)}
+    .mobile-menu.active{display:block}
+    .mobile-menu a{display:block;padding:12px 0;color:var(--text);text-decoration:none;font-size:16px;border-bottom:1px solid var(--line)}
+    .mobile-menu__label{display:block;padding:14px 0 4px;color:var(--text-muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+    .mobile-menu__sub{padding-left:14px!important}
+
+    .hero{padding:130px 22px 60px;max-width:1120px;margin:0 auto}
+    .hero-eye{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-strong);margin-bottom:18px}
+    .hero h1{font-family:var(--font-display);font-size:clamp(32px,6.5vw,60px);font-weight:700;letter-spacing:-.03em;line-height:1.05;max-width:16ch}
+    .hero h1 em{font-style:normal;color:var(--text-muted)}
+    .hero p{font-size:clamp(16px,2.4vw,20px);color:var(--text-muted);margin-top:22px;max-width:60ch}
+    .hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+    .hero-meta span{font-family:var(--mono);font-size:12px;color:var(--text-muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+
+    .section{max-width:1120px;margin:0 auto;padding:52px 22px}
+    .section-head{margin-bottom:26px}
+    .section-idx{font-family:var(--mono);font-size:12px;color:var(--blue-strong);letter-spacing:.1em}
+    .section-head h2{font-family:var(--font-display);font-size:clamp(24px,4vw,34px);font-weight:600;letter-spacing:-.02em;margin-top:8px}
+    .section-head p{color:var(--text-muted);margin-top:10px;max-width:66ch}
+    .prose{max-width:70ch;color:var(--text-muted);font-size:15px;line-height:1.65;margin-top:20px}
+    .prose strong{color:var(--text)}
+    .prose code,.mono{font-family:var(--mono);font-size:.9em;background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--text)}
+    .prose ul{margin:14px 0 0 18px}
+    .prose li{margin-bottom:8px}
+    .divider{max-width:1120px;margin:0 auto;height:1px;background:var(--line)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    @media(max-width:820px){.grid-2{grid-template-columns:1fr}}
+
+    .arch{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+    @media(max-width:720px){.arch{grid-template-columns:1fr}}
+    .arch-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:18px}
+    .arch-card .lyr{font-family:var(--mono);font-size:11px;color:var(--blue-strong);letter-spacing:.08em}
+    .arch-card h3{font-family:var(--font-display);font-size:16px;font-weight:600;margin:6px 0 6px}
+    .arch-card p{font-size:13px;color:var(--text-muted);line-height:1.5}
+    .arch-card .src{display:block;font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-top:10px}
+
+    .links{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+    .btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:14px;font-weight:600;border-radius:var(--r-sm);padding:11px 18px;min-height:44px}
+    .btn-p{background:var(--blue-strong);color:#fff}
+    .btn-s{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+
+    footer{max-width:1120px;margin:40px auto 0;padding:30px 22px;border-top:1px solid var(--line);color:var(--text-muted);font-size:13px}
+    @media(max-width:760px){.nav-links{display:none}.menu-toggle{display:block}}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-nav">Skip to content</a>
+  <nav>
+    <div class="nav-c">
+      <a href="index.html" class="nav-logo">Sumanth Bolle</a>
+      <ul class="nav-links">
+        <li><a href="engineering.html" aria-current="page">Engineering</a></li>
+        <li><a href="servicenow.html">Learn</a></li>
+        <li><a href="summaverick.html">Summaverick</a></li>
+        <li><a href="interviews.html">Interviews</a></li>
+        <li class="nav-drop" data-nav-drop>
+          <button type="button" class="nav-drop__btn" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="nav-drop__menu" id="navUtilities" role="menu">
+            <a href="flights.html" role="menuitem"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+            <a href="metals.html" role="menuitem"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+            <a href="save-yourself.html" role="menuitem"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+          </div>
+        </li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+    <div class="mobile-menu">
+      <a href="engineering.html" aria-current="page">Engineering</a>
+      <a href="servicenow.html">Learn</a>
+      <a href="summaverick.html">Summaverick</a>
+      <a href="interviews.html">Interviews</a>
+      <span class="mobile-menu__label">Utilities</span>
+      <a class="mobile-menu__sub" href="flights.html">SkyFare</a>
+      <a class="mobile-menu__sub" href="metals.html">Metals</a>
+      <a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+
+  <main id="main">
+    <header class="hero">
+      <p class="hero-eye">Engineering</p>
+      <h1>I build governed, evaluated, air-gappable enterprise AI <em>on ServiceNow.</em></h1>
+      <p>Below is the actual system behind Summaverick — a three-layer ServiceNow research agent. Every diagram on this page is driven by the real module code: the security rules, the ranking weights, the eval counts. If a label were removed and the picture still read fine, I'd have cut it.</p>
+      <div class="hero-meta">
+        <span>Read-only by design</span>
+        <span>Prompt-injection firewall</span>
+        <span>62 eval cases</span>
+        <span>Bedrock + on-prem Ollama</span>
+      </div>
+    </header>
+
+    <!-- 1 · SYSTEM OVERVIEW -->
+    <section class="section" id="overview">
+      <div class="section-head">
+        <span class="section-idx">01 · System overview</span>
+        <h2>Three knowledge layers, one cited answer</h2>
+        <p>The domain pack extends Summaverick without replacing its LLM gateway. A question is classified, planned, retrieved across up to three sources, de-duplicated, ranked, then verified against its own citations before it reaches the user.</p>
+      </div>
+      <div class="arch">
+        <div class="arch-card">
+          <span class="lyr">Layer 1</span>
+          <h3>SDK <code>explain</code></h3>
+          <p>Version-matched Fluent APIs, <code>.now.ts</code>, <code>now.config.json</code>, build &amp; auth topics. Never invents Fluent API properties.</p>
+          <span class="src">requires @servicenow/sdk 4.6.0+</span>
+        </div>
+        <div class="arch-card">
+          <span class="lyr">Layer 2</span>
+          <h3>ServiceNowDocs <code>llms.txt</code></h3>
+          <p>ITSM, CMDB, ITOM, IRM/GRC, SPM, CSM, HRSD, platform. Release-matched product documentation — no SPA scraping.</p>
+          <span class="src">14 domain modules mapped</span>
+        </div>
+        <div class="arch-card">
+          <span class="lyr">Layer 3 · optional</span>
+          <h3>SDK <code>query</code></h3>
+          <p>Read-only allowlisted instance metadata. <strong>Off by default.</strong> Task-scoped only — live results are never merged into the global knowledge base.</p>
+          <span class="src">requires @servicenow/sdk 4.8.0+</span>
+        </div>
+      </div>
+      <div data-proof="retrieval-trace" style="margin-top:24px"></div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 2 · SECURITY MODEL -->
+    <section class="section" id="security">
+      <div class="section-head">
+        <span class="section-idx">02 · Security model</span>
+        <h2>Untrusted by default, gated three ways</h2>
+        <p>Every retrieved document, record and SDK topic is treated as untrusted evidence, wrapped between <code>BEGIN_UNTRUSTED_SERVICENOW_EVIDENCE</code> markers. The request itself passes three independent gates before anything runs.</p>
+      </div>
+      <div data-proof="injection-firewall"></div>
+      <div class="prose">
+        <p>The three gates map one-to-one onto real modules:</p>
+        <ul>
+          <li><strong>Prompt-injection scanner</strong> — 10 fixed patterns catch <code>ignore previous instructions</code>, <code>enable write operations</code>, <code>disable citations</code>, <code>dump passwords</code> and the rest. Injection found inside evidence is logged and ignored for control, never obeyed.</li>
+          <li><strong>Read-only query allowlist</strong> — 19 metadata tables are allowlisted; 8 business tables (<code>incident</code>, <code>sys_user</code>…) require explicit opt-in; 12 credential/secret tables are hard-blocked. Every query needs an encoded query and a clamped row limit (default 50).</li>
+          <li><strong>Sensitive-field redaction</strong> — 18 field names (<code>password</code>, <code>ssn</code>, <code>work_notes</code>, <code>token</code>…) are scrubbed to <code>[REDACTED]</code> before the model ever sees a record.</li>
+        </ul>
+        <p>A fourth control governs the CLI itself: only 5 read-only SDK command prefixes are allowlisted, and 8 mutating subcommands (<code>build</code>, <code>deploy</code>, <code>delete</code>…) are blocked in v1 and always require explicit approval after impact analysis.</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 3 · EVALUATION -->
+    <section class="section" id="evaluation">
+      <div class="section-head">
+        <span class="section-idx">03 · Evaluation</span>
+        <h2>It ships behind an adversarial eval suite</h2>
+        <p>Claims about safety are cheap. These are measured: a regression suite plus a dedicated adversarial suite run on every change, each case asserting an expected intent, expected sources, or an expected block.</p>
+      </div>
+      <div data-proof="eval-scoreboard"></div>
+      <div class="prose">
+        <p>Adversarial cases are built to attack a specific control: role-override injections (<code>adv-01</code>), injection smuggled inside an incident description (<code>adv-02</code>), credential-table reads (<code>adv-03</code>), unrestricted business-table reads (<code>adv-04</code>), unapproved mutating commands (<code>adv-05/06</code>), and hallucination traps that name invented Fluent APIs or non-existent fields (<code>adv-09/10</code>). Each asserts the request is refused, redacted, or answered with <code>INSUFFICIENT_EVIDENCE</code> — never quietly complied with.</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 4 · IN PRODUCTION -->
+    <section class="section" id="production">
+      <div class="section-head">
+        <span class="section-idx">04 · In production</span>
+        <h2>How it runs, and what stands on it</h2>
+      </div>
+      <div class="prose">
+        <p>The public surface is a <strong>Cloudflare Worker gateway</strong> (<code>api/worker.js</code>) that fronts the Perplexity Sonar model and owns auth, CORS and tenancy. When a question is a ServiceNow question, <code>api/servicenow-domain.js</code> — a Worker-compatible mirror of the research-agent classifier — injects the domain system guidance: treat evidence as untrusted, prefer version-matched SDK docs, never invent Fluent properties, always cite, and default the release family to <code>australia</code>.</p>
+        <p>The same Worker routes <strong>SkyFare</strong> flight discovery (Amadeus inventory with a Sonar fallback, each response labelled by provenance) and the Metals spot feed. So the products aren't separate demos — <strong>Summaverick and SkyFare stand on one governed engine</strong>, with the heavy Node domain pack (SDK CLI + instance providers) living in <code>research-agent/</code>.</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 5 · CASE STUDIES -->
+    <section class="section" id="cases">
+      <div class="section-head">
+        <span class="section-idx">05 · Case studies</span>
+        <h2>What the economics and the reasoning look like</h2>
+        <p>Two of the systems above, in their own right: an agent that reasons its way to two different terminal states, and the cost model that makes a self-hosted brain worth building.</p>
+      </div>
+      <div class="grid-2" style="gap:24px">
+        <div data-proof="react-loop"></div>
+        <div data-proof="token-economics"></div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 6 · LINKS -->
+    <section class="section" id="read-more">
+      <div class="section-head">
+        <span class="section-idx">06 · Go deeper</span>
+        <h2>Read the source of truth</h2>
+        <p>Every claim on this page maps to a file. Start with the domain-pack README, then the security and retrieval modules.</p>
+      </div>
+      <div class="links">
+        <a class="btn btn-p" href="https://github.com/sumanthbolle" target="_blank" rel="noopener noreferrer">research-agent on GitHub →</a>
+        <a class="btn btn-s" href="summaverick.html">Try Summaverick</a>
+        <a class="btn btn-s" href="servicenow.html">ServiceNow Central</a>
+        <a class="btn btn-s" href="blog.html">Flagship write-ups</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <script>document.write(new Date().getFullYear())</script> Sumanth Bolle · Every diagram on this page is generated from the real research-agent module code.</p>
+  </footer>
+
+  <script>
+    var mt=document.querySelector('.menu-toggle'),mm=document.querySelector('.mobile-menu');
+    mt.addEventListener('click',function(){this.classList.toggle('active');mm.classList.toggle('active');this.setAttribute('aria-expanded',mm.classList.contains('active'));});
+    document.querySelectorAll('.mobile-menu a').forEach(function(a){a.addEventListener('click',function(){mt.classList.remove('active');mm.classList.remove('active');});});
+  </script>
+  <script src="assets/js/proofs/retrieval-trace.js"></script>
+  <script src="assets/js/proofs/injection-firewall.js"></script>
+  <script src="assets/js/proofs/eval-scoreboard.js"></script>
+  <script src="assets/js/proofs/react-loop.js"></script>
+  <script src="assets/js/proofs/token-economics.js"></script>
+  <script src="assets/js/shared/nav-utilities.js"></script>
+</body>
+</html>
