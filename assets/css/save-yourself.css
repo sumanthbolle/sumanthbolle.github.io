@@ -199,6 +199,13 @@ nav {
   -webkit-backdrop-filter: blur(20px);
   z-index: 9999;
   border-bottom: 1px solid var(--card-line);
+  --nav-drop-bg: var(--white);
+  --nav-drop-line: var(--card-line);
+  --nav-drop-hover: rgba(0, 0, 0, 0.05);
+}
+
+:root[data-theme="dark"] nav {
+  --nav-drop-hover: rgba(255, 255, 255, 0.07);
 }
 
 .nav-c {
