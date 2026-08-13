@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#f5f5f7">
   <link rel="canonical" href="https://sumanthbolle.com/metals">
   <meta property="og:title" content="Gold &amp; Silver Prices — Clear Market Context">
-  <meta property="og:description" content="Live gold and silver prices, clearly explained in your currency.">
+  <meta property="og:description" content="Live gold and silver spot prices in your currency, with unit converters, calculators and history.">
   <meta property="og:url" content="https://sumanthbolle.com/metals">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://sumanthbolle.com/assets/images/gold-coin-3d.webp">
@@ -60,6 +60,8 @@
     .nav-links{display:flex;gap:28px;list-style:none}
     .nav-links a{color:var(--text);text-decoration:none;font-size:13px;opacity:.8;transition:opacity .3s,color .3s}
     .nav-links a:hover,.nav-links a.active{opacity:1;color:var(--blue)}
+    nav{--nav-drop-bg:var(--white);--nav-drop-line:var(--card-line);--nav-drop-hover:rgba(0,0,0,0.05)}
+    :root[data-theme="dark"] nav{--nav-drop-hover:rgba(255,255,255,0.07)}
     .theme-toggle{background:none;border:0;cursor:pointer;padding:8px;min-width:40px;min-height:40px;color:var(--text);display:flex;align-items:center;justify-content:center;border-radius:8px}
     .theme-toggle:hover{background:var(--card-line)}
     .theme-toggle svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -75,18 +77,8 @@
     .mobile-menu a{display:block;padding:12px 0;color:var(--text);text-decoration:none;font-size:16px;border-bottom:1px solid var(--card-line)}
     .mobile-menu a.active{color:var(--blue)}
 
-    .page-header{padding:108px 22px 72px;text-align:center;background:linear-gradient(180deg,#111 0%,#000 100%);color:#fff;position:relative;overflow:hidden}
-    .page-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 45% at 50% 20%,rgba(176,137,45,0.16) 0%,transparent 70%)}
-    .page-header .eyebrow{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.78);font-size:12px;font-weight:600;letter-spacing:.4px;margin-bottom:16px;position:relative}
-    .page-header h1{font-size:clamp(34px,7vw,56px);font-weight:600;letter-spacing:-.03em;margin-bottom:12px;position:relative}
-    .page-header p{font-size:17px;color:#c7c7cc;max-width:560px;margin:0 auto;line-height:1.55;position:relative}
-    .hero-visuals{position:relative;display:flex;justify-content:center;gap:28px;margin-top:34px}
-    .hero-coin{width:148px;height:148px;object-fit:cover;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.12),rgba(255,255,255,0) 55%);box-shadow:0 18px 36px rgba(0,0,0,.45);animation:floatCoin 5.5s ease-in-out infinite}
-    .hero-coin.silver{animation-delay:1.1s}
-    @keyframes floatCoin{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-
     .main-wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
-    .toolbar{background:var(--white);border-radius:22px;padding:16px 20px;box-shadow:0 4px 24px rgba(0,0,0,0.08);margin-top:-36px;position:sticky;top:56px;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border:1px solid var(--card-line)}
+    .toolbar{background:var(--white);border-radius:22px;padding:16px 20px;box-shadow:0 2px 16px rgba(0,0,0,0.05);position:sticky;top:56px;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border:1px solid var(--card-line)}
     .status-copy{display:flex;align-items:center;gap:9px;color:var(--gray);font-size:13px;line-height:1.4}
     .status-dot{width:8px;height:8px;border-radius:50%;background:#c7c7cc;flex:0 0 auto}
     .status-dot.live{background:var(--green)}
@@ -273,7 +265,6 @@
 
     @media(max-width:768px){
       .nav-links{display:none}.menu-toggle{display:block}
-      .hero-coin{width:96px;height:96px}
       .toolbar{align-items:stretch;top:52px}.toolbar-actions{width:100%}.field,.field select,.toolbar .btn{width:100%}
       .price-grid,.context-grid,.factor-list,.explain-grid,.ratio-row,.section-heading,.seller-grid,.calc-grid,.alert-grid,.region-panel,.holdings-summary{grid-template-columns:1fr}
       .coin-thumb{width:60px;height:60px}
@@ -286,17 +277,18 @@
       .calc-fields label,.holding-form label{font-size:12px}
     }
     @media(max-width:480px){
-      .main-wrap{padding:0 16px}.page-header{padding:96px 16px 64px}
+      .main-wrap{padding:0 16px}
       .local-grid{gap:12px}.metal{padding:18px}.section{padding:20px}
       .share-row{flex-direction:column;align-items:flex-start}
       .holding-form{grid-template-columns:1fr}
     }
     @media(prefers-reduced-motion:reduce){
       html{scroll-behavior:auto}
-      .hero-coin{animation:none}
       *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
     }
   </style>
+  <link rel="stylesheet" href="assets/css/nav-utilities.css">
+  <link rel="stylesheet" href="assets/css/utility-page.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to prices</a>
@@ -309,9 +301,14 @@
           <li><a href="servicenow.html">ServiceNow</a></li>
           <li><a href="blog.html">Blog</a></li>
           <li><a href="summaverick.html">Summaverick</a></li>
-          <li><a href="flights.html">SkyFare</a></li>
-          <li><a href="metals.html" class="active" aria-current="page">Metals</a></li>
-          <li><a href="save-yourself.html">Save Yourself</a></li>
+          <li class="nav-drop" data-nav-drop>
+            <button type="button" class="nav-drop__btn active" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="nav-drop__menu" id="navUtilities" role="menu">
+              <a href="flights.html" role="menuitem"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+              <a href="metals.html" role="menuitem" aria-current="page"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+              <a href="save-yourself.html" role="menuitem"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+            </div>
+          </li>
           <li><a href="index.html#contact">Contact</a></li>
         </ul>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
@@ -326,21 +323,19 @@
       <a href="servicenow.html">ServiceNow</a>
       <a href="blog.html">Blog</a>
       <a href="summaverick.html">Summaverick</a>
-      <a href="flights.html">SkyFare</a>
-      <a href="metals.html" class="active" aria-current="page">Metals</a>
-      <a href="save-yourself.html">Save Yourself</a>
+      <span class="mobile-menu__label">Utilities</span>
+      <a class="mobile-menu__sub" href="flights.html">SkyFare</a>
+      <a class="mobile-menu__sub active" href="metals.html" aria-current="page">Metals</a>
+      <a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a>
       <a href="index.html#contact">Contact</a>
     </div>
   </nav>
 
-  <header class="page-header">
-    <span class="eyebrow">Precious metals market report</span>
-    <h1>Gold and silver, clearly.</h1>
-    <p>Live gold and silver prices, clearly explained in your currency — with tola, sovereign and baht converters, calculators, a holdings tracker, and history you can actually read.</p>
-    <div class="hero-visuals" aria-hidden="true">
-      <img class="hero-coin gold" src="assets/images/gold-coin-3d.webp" alt="" width="148" height="148">
-      <img class="hero-coin silver" src="assets/images/silver-coin-3d.webp" alt="" width="148" height="148">
-    </div>
+  <header class="util-head">
+    <p class="util-head__kicker">Utilities</p>
+    <h1>Gold &amp; silver prices</h1>
+    <p class="util-head__lede">Spot prices in the currency you shop in, converted to grams, tola, sovereign and baht, with calculators, a holdings tracker, alerts and price history.</p>
+    <p class="util-head__meta">Spot data from Gold API, currency and daily history from Frankfurter. Your currency, holdings and alerts are stored in this browser.</p>
   </header>
 
   <main id="main" class="main-wrap">
@@ -417,16 +412,16 @@
 
     <section class="section highlight" aria-labelledby="changedTitle">
       <div class="section-heading">
-        <div><p class="section-label">Since your last visit</p><h2 id="changedTitle">What changed since the last update</h2></div>
-        <p class="section-intro" id="changeIntro">Once prices arrive, this section compares them with your previous visit or the latest daily reference.</p>
+        <div><p class="section-label">Since your last visit</p><h2 id="changedTitle">What changed</h2></div>
+        <p class="section-intro" id="changeIntro">Once prices load, this compares them with your previous visit or the latest daily reference.</p>
       </div>
       <div class="change-summary" id="changeSummary">Fetching the latest market price.</div>
     </section>
 
     <section class="section" aria-labelledby="calcTitle">
       <div class="section-heading">
-        <div><p class="section-label">Unit converter &amp; calculators</p><h2 id="calcTitle">Work out the real numbers</h2></div>
-        <p class="section-intro">Grams, 10 grams, tola, sovereign, baht and troy ounce — with purity. These are the figures you need when standing at a jeweller or bank counter.</p>
+        <div><p class="section-label">Unit converter &amp; calculators</p><h2 id="calcTitle">Converters and calculators</h2></div>
+        <p class="section-intro">Price any weight in grams, 10 grams, tola, sovereign, baht or troy ounces, at the purity you are buying, and check a shop quote against it.</p>
       </div>
       <div class="calc-grid">
         <div class="calc-card">
@@ -458,8 +453,8 @@
 
     <section class="section" aria-labelledby="holdingsTitle">
       <div class="section-heading">
-        <div><p class="section-label">Your holdings</p><h2 id="holdingsTitle">Track what you own</h2></div>
-        <p class="section-intro">Save a few items once — they stay in this browser only, with no account and no server. Come back any time to see today’s value and how it has moved.</p>
+        <div><p class="section-label">Your holdings</p><h2 id="holdingsTitle">What you own</h2></div>
+        <p class="section-intro">Add your items once to see what they are worth at today’s price and how that has moved. The list is stored in this browser.</p>
       </div>
       <div class="holdings-summary">
         <div class="hs-card"><div class="lbl">Total value today</div><div class="val" id="holdTotal">—</div><div class="hs-breakdown" id="holdBreakdown"></div></div>
@@ -480,8 +475,8 @@
 
     <section class="section" aria-labelledby="historyTitle">
       <div class="section-heading">
-        <div><p class="section-label">Price history</p><h2 id="historyTitle">How it has moved over time</h2></div>
-        <p class="section-intro">Switch timeframes and metals, hover to read any day, and use the buy simulator to see how an amount bought on a past date would look today.</p>
+        <div><p class="section-label">Price history</p><h2 id="historyTitle">Price over time</h2></div>
+        <p class="section-intro">Switch timeframes and metals, hover to read any day, and use the simulator to see what an amount bought on a past date would be worth now.</p>
       </div>
       <div class="tf-row">
         <div class="tf-group" id="tfGroup" role="group" aria-label="Timeframe">
@@ -515,7 +510,7 @@
     <section class="section" aria-labelledby="compareTitle">
       <div class="section-heading">
         <div><p class="section-label">Price context</p><h2 id="compareTitle">How today compares</h2></div>
-        <p class="section-intro">Factual indicators place the current quote within its recent daily range. They describe direction—not whether anyone should buy or sell.</p>
+        <p class="section-intro">Where today’s quote sits inside its recent daily range, with 1, 7 and 30 day changes. These describe movement, not what anyone should do about it.</p>
       </div>
       <div class="context-grid">
         <div class="context-metal gold" data-context="gold">
@@ -550,7 +545,7 @@
 
     <section class="section" aria-labelledby="alertsTitle">
       <div class="section-heading">
-        <div><p class="section-label">Price alerts</p><h2 id="alertsTitle">Get pinged at the right moment</h2></div>
+        <div><p class="section-label">Price alerts</p><h2 id="alertsTitle">Price alerts</h2></div>
         <p class="section-intro">Set a level, a gold/silver ratio band, or a big-move threshold. Alerts run in this browser while the page is open and can show a desktop notification.</p>
       </div>
       <div class="alert-grid">
@@ -585,8 +580,8 @@
 
     <section class="section" aria-labelledby="sellersTitle">
       <div class="section-heading">
-        <div><p class="section-label">Where to buy</p><h2 id="sellersTitle">Local market &amp; popular sellers</h2></div>
-        <p class="section-intro" id="sellerIntro">Well-known sellers for your region, plus the local pricing realities — taxes, duties and the forms people actually buy.</p>
+        <div><p class="section-label">Where to buy</p><h2 id="sellersTitle">Local market &amp; sellers</h2></div>
+        <p class="section-intro" id="sellerIntro">Known sellers in your region, with the local pricing rules that apply: taxes, duties and the forms metal is usually sold in.</p>
       </div>
       <div class="tf-row">
         <div class="tf-group region-tabs" id="regionTabs" role="group" aria-label="Region">
@@ -605,8 +600,8 @@
 
     <section class="section" aria-labelledby="factorsTitle">
       <div class="section-heading">
-        <div><p class="section-label">General market context</p><h2 id="factorsTitle">Market factors worth watching</h2></div>
-        <p class="section-intro">Precious-metal prices are influenced by several connected markets. These are the factors investors commonly monitor when interpreting current movement.</p>
+        <div><p class="section-label">General market context</p><h2 id="factorsTitle">What moves these prices</h2></div>
+        <p class="section-intro">Precious-metal prices react to several connected markets. These are the factors people commonly watch when reading a move.</p>
       </div>
       <ul class="factor-list">
         <li><strong>US dollar direction</strong><span>A stronger dollar can make dollar-priced metals more expensive in other currencies.</span></li>
@@ -639,7 +634,7 @@
     <section class="section" aria-labelledby="methodTitle">
       <div class="section-heading">
         <div><p class="section-label">Transparency</p><h2 id="methodTitle">Methodology and data sources</h2></div>
-        <p class="section-intro">Live quotes and daily context are kept separate so the interface does not imply more certainty than the source data supports.</p>
+        <p class="section-intro">Live quotes and daily context come from different feeds and are kept separate, so nothing on the page looks more precise than the source data is.</p>
       </div>
       <details>
         <summary>How prices and comparisons are calculated</summary>
@@ -648,7 +643,7 @@
         </div>
       </details>
       <div class="share-row">
-        <p>Share or copy a clean summary without promotional language.</p>
+        <p>Copy the current rates as text, or save a snapshot image.</p>
         <div class="share-actions">
           <button class="btn btn-sm" id="shareButton2" type="button">Share snapshot</button>
           <button class="btn btn-sm" id="copyButton" type="button">Copy current rates</button>
@@ -657,23 +652,32 @@
     </section>
   </main>
 
+  <section class="util-more" aria-label="Other utilities">
+    <p class="util-more__title">Other utilities</p>
+    <div class="util-more__grid">
+      <a class="util-more__card" href="flights.html"><strong>SkyFare</strong><span>Compare flights on price, travel time, stops and departure times before you book.</span></a>
+      <a class="util-more__card" href="save-yourself.html"><strong>Save Yourself</strong><span>Work out the monthly payment, the total repaid and the fees on a loan before you sign.</span></a>
+    </div>
+  </section>
+
   <footer>
     <div class="footer-inner">
       <div>© 2026 Sumanth Bolle.</div>
-      <div class="attribution">Designed and built by Sumanth Bolle.<br>A focused experiment in making precious-metal market data easier to understand.</div>
+      <div class="attribution">Built by Sumanth Bolle. Spot prices are market references, not quotes from any dealer.</div>
     </div>
   </footer>
 
   <canvas id="shareCanvas" width="1080" height="1080" style="display:none"></canvas>
 
   <script src="assets/js/shared/nav-theme.js"></script>
+  <script src="assets/js/shared/nav-utilities.js"></script>
   <script src="assets/js/shared/help-panel.js"></script>
   <script>
   SBHelpGuide.init({
     page: 'metals',
     tabLabel: 'Guide',
     title: 'How to use the Metals tracker',
-    intro: 'Live gold and silver prices with the context and tools to act on them.',
+    intro: 'Live gold and silver prices, unit conversions, calculators and history.',
     steps: [
       { title: 'Read the live prices', desc: 'Gold and silver spot prices update at the top of the page in your selected currency.' },
       { title: 'Switch units & currency', desc: 'Use the converter to view prices per gram, tola, sovereign, or baht, in the currency you actually shop in.' },

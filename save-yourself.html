@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Save Yourself — Financial X-Ray for Loans | Sumanth Bolle</title>
-  <meta name="description" content="Financial X-Ray for borrowing: see what reaches you, what leaves you, and what the money costs — EMI, fees, money rent, and decision checks. Calculated privately on this device.">
+  <title>Save Yourself — Loan cost calculator | Sumanth Bolle</title>
+  <meta name="description" content="Work out what a loan costs before you sign: monthly payment, total repaid, fees, estimated annual cost, an amortization schedule and checks to run first.">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#f5f5f7">
   <link rel="canonical" href="https://sumanthbolle.com/save-yourself">
-  <meta property="og:title" content="Save Yourself — Financial X-Ray for Loans">
-  <meta property="og:description" content="See what reaches you, what leaves you, and what the money costs — before you sign. Nothing leaves your device.">
+  <meta property="og:title" content="Save Yourself — Loan cost calculator">
+  <meta property="og:description" content="Monthly payment, total repaid, fees and estimated annual cost for any loan, calculated in your browser.">
   <meta property="og:url" content="https://sumanthbolle.com/save-yourself">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://sumanthbolle.com/assets/images/save-yourself-og.png">
@@ -27,12 +27,14 @@
     "url": "https://sumanthbolle.com/save-yourself",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web",
-    "description": "Financial X-Ray for loans: see cash received, total returned, money rent, cost signal, and before-you-sign checks. Runs entirely in the browser.",
+    "description": "Loan calculator showing cash received, total repaid, money rent, estimated annual cost and checks to run before signing. Runs entirely in the browser.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
   }
   </script>
   <link rel="stylesheet" href="assets/css/save-yourself.css">
+  <link rel="stylesheet" href="assets/css/nav-utilities.css">
+  <link rel="stylesheet" href="assets/css/utility-page.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to calculator</a>
@@ -45,9 +47,14 @@
           <li><a href="servicenow.html">ServiceNow</a></li>
           <li><a href="blog.html">Blog</a></li>
           <li><a href="summaverick.html">Summaverick</a></li>
-          <li><a href="flights.html">SkyFare</a></li>
-          <li><a href="metals.html">Metals</a></li>
-          <li><a href="save-yourself.html" class="active" aria-current="page">Save Yourself</a></li>
+          <li class="nav-drop" data-nav-drop>
+            <button type="button" class="nav-drop__btn active" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="nav-drop__menu" id="navUtilities" role="menu">
+              <a href="flights.html" role="menuitem"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+              <a href="metals.html" role="menuitem"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+              <a href="save-yourself.html" role="menuitem" aria-current="page"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+            </div>
+          </li>
           <li><a href="index.html#contact">Contact</a></li>
         </ul>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
@@ -62,29 +69,26 @@
       <a href="servicenow.html">ServiceNow</a>
       <a href="blog.html">Blog</a>
       <a href="summaverick.html">Summaverick</a>
-      <a href="flights.html">SkyFare</a>
-      <a href="metals.html">Metals</a>
-      <a href="save-yourself.html" class="active" aria-current="page">Save Yourself</a>
+      <span class="mobile-menu__label">Utilities</span>
+      <a class="mobile-menu__sub" href="flights.html">SkyFare</a>
+      <a class="mobile-menu__sub" href="metals.html">Metals</a>
+      <a class="mobile-menu__sub active" href="save-yourself.html" aria-current="page">Save Yourself</a>
       <a href="index.html#contact">Contact</a>
     </div>
   </nav>
 
-  <main id="main" class="sy-main">
-    <div class="sy-trust" role="note">
-      <div class="sy-trust__marks">
-        <span>Private by design</span>
-        <span>Calculated on this device</span>
-        <span>No account</span>
-      </div>
-      <button type="button" class="sy-trust__clear" id="clearData">Clear saved data</button>
-    </div>
+  <header class="util-head">
+    <p class="util-head__kicker">Utilities</p>
+    <h1>Save Yourself</h1>
+    <p class="util-head__lede">Enter the loan you have been offered to see the monthly payment, the total you repay, what the fees add on top, and how that compares with saving up first.</p>
+    <p class="util-head__meta">
+      Calculations run in this browser and your inputs are saved on this device.
+      <button type="button" class="sy-clear" id="clearData">Clear saved data</button>
+    </p>
+    <span class="sy-example-badge" id="exampleBadge" hidden>Example numbers</span>
+  </header>
 
-    <header class="sy-title-block">
-      <p class="sy-eyebrow">Loan reality, before you sign</p>
-      <h1>Save Yourself</h1>
-      <p class="sy-lede">See what reaches you, what leaves you and what the money costs.</p>
-      <span class="sy-example-badge" id="exampleBadge" hidden>Example numbers</span>
-    </header>
+  <main id="main" class="sy-main">
 
     <div class="sy-workspace" id="workspace">
       <div class="sy-controls" id="loanControls">
@@ -324,7 +328,7 @@
     <section class="sy-section" id="moneyFlow" aria-labelledby="moneyFlowTitle">
       <p class="sy-section__eyebrow">Cash path</p>
       <h2 id="moneyFlowTitle">Where the money moves</h2>
-      <p class="sy-section__intro">Moment A is what reaches you. Moment B is what leaves you over the life of the loan.</p>
+      <p class="sy-section__intro">What lands in your account after fees, and what leaves it over the full term.</p>
       <div id="moneyFlowMount"></div>
     </section>
 
@@ -338,7 +342,7 @@
     <section class="sy-section" id="decisionSignals" aria-labelledby="signalsTitle">
       <p class="sy-section__eyebrow">Signals</p>
       <h2 id="signalsTitle">Cost and cash-flow pressure</h2>
-      <p class="sy-section__intro">A continuous reading of annual cost, plus how the payment sits against income when you share it.</p>
+      <p class="sy-section__intro">The estimated annual cost of this loan, and how the payment sits against your income once you enter it.</p>
       <div class="sy-signals">
         <div class="sy-signal" id="costSignal">
           <h3>Cost signal</h3>
@@ -371,7 +375,7 @@
     <section class="sy-section" id="scenarios" aria-labelledby="scenariosTitle">
       <p class="sy-section__eyebrow">Alternatives</p>
       <h2 id="scenariosTitle">What changes the total</h2>
-      <p class="sy-section__intro">Lead with outcomes — a better offer, saving first, or paying a little extra.</p>
+      <p class="sy-section__intro">Three comparisons: a better offer, saving up first, and paying extra each month.</p>
       <div class="sy-scenarios">
         <div class="sy-scenario" id="scenarioBetter">
           <h3>Better offer</h3>
@@ -396,7 +400,7 @@
     <section class="sy-section" id="beforeSign" aria-labelledby="beforeSignTitle">
       <p class="sy-section__eyebrow">Before you sign</p>
       <h2 id="beforeSignTitle">Decision board</h2>
-      <p class="sy-section__intro">Four checks first. Optional depth and red flags sit behind disclosure. The choice remains yours.</p>
+      <p class="sy-section__intro">Four checks to answer first. Deeper checks and red flags are in the sections below them.</p>
 
       <ul class="sy-checks" id="primaryChecks"></ul>
 
@@ -458,7 +462,7 @@
     <section class="sy-section" id="detailedResults" aria-labelledby="detailedTitle">
       <p class="sy-section__eyebrow">Detail</p>
       <h2 id="detailedTitle">Assumptions, schedule and export</h2>
-      <p class="sy-section__intro">Amortization loads when you open it. Methodology stays visible under disclosure.</p>
+      <p class="sy-section__intro">Open the schedule to see every month. The assumptions behind the figures are listed underneath.</p>
 
       <details class="sy-details" id="amortWrap">
         <summary>Amortization schedule</summary>
@@ -504,11 +508,15 @@
       </p>
     </section>
 
-    <div class="sy-privacy-foot">
-      <p>Built for clarity, not pressure. The choice remains yours.</p>
-      <p class="sy-privacy-marks">No account. No tracking. Calculated on this device.</p>
-    </div>
   </main>
+
+  <section class="util-more" aria-label="Other utilities">
+    <p class="util-more__title">Other utilities</p>
+    <div class="util-more__grid">
+      <a class="util-more__card" href="flights.html"><strong>SkyFare</strong><span>Compare flights on price, travel time, stops and departure times before you book.</span></a>
+      <a class="util-more__card" href="metals.html"><strong>Metals</strong><span>Gold and silver spot prices in your currency, with converters and a holdings tracker.</span></a>
+    </div>
+  </section>
 
   <div class="sy-sticky" id="stickyResults" aria-hidden="true">
     <div class="sy-sticky__inner">
@@ -529,11 +537,12 @@
   <footer>
     <div class="footer-inner">
       <div>© 2026 Sumanth Bolle.</div>
-      <div class="attribution">Save Yourself runs entirely on your device.<br>No account. No tracking. Calculated on this device.</div>
+      <div class="attribution">Built by Sumanth Bolle. Estimates only — confirm the exact terms with the lender.</div>
     </div>
   </footer>
 
   <script src="assets/js/shared/nav-theme.js"></script>
+  <script src="assets/js/shared/nav-utilities.js"></script>
   <script src="assets/js/shared/help-panel.js"></script>
   <script src="assets/js/save-yourself/currency.js"></script>
   <script src="assets/js/save-yourself/loan-math.js"></script>
@@ -548,7 +557,7 @@
       page: 'save-yourself',
       tabLabel: 'Guide',
       title: 'Financial X-Ray guide',
-      intro: 'A private loan reality check — numbers update as you type. Nothing leaves this device.',
+      intro: 'The numbers update as you type, and everything is calculated in your browser.',
       steps: [
         { title: 'Enter the loan', desc: 'Amount, rate, tenure, interest type, and fees. Fee treatment controls whether charges come from payout, sit separate, or join the principal.' },
         { title: 'Read the reality canvas', desc: 'Borrow → return → money rent. The receipt and four metrics spell out cash received, EMI, cost per 100, and estimated annual cost.' },
