@@ -174,7 +174,16 @@ Ordered for impact without boiling the ocean:
 7. **Products index** — Summaverick + SkyFare under one Lab/Products page; demote from top-level nav.
 8. **Live `/design-review` + `/qa`** (gstack) against production after each visual milestone.
 
-### Implemented in this pass (non-breaking)
+### Utilities grouping (later pass)
+
+Addresses Priority 1 (nav IA) and part of Priority 3/4 for the tool pages:
+
+- SkyFare, Metals and Save Yourself moved out of the top-level nav into a single **Utilities** dropdown, shared across every page (`assets/css/nav-utilities.css`, `assets/js/shared/nav-utilities.js`); mobile menus get a grouped `Utilities` section.
+- The three pages share one header pattern (`assets/css/utility-page.css`) and cross-link to each other at the foot of the page.
+- Dark gradient heroes, radial glow, `border-radius: 980px` pill rows and the floating coin animation removed from SkyFare and Metals.
+- Marketing copy on the three pages rewritten in plain language (removed “Built for clarity, not pressure”, “No account. No tracking. Calculated on this device.”, “Find better flights. Not just cheaper ones.”, “Gold and silver, clearly.”).
+
+### Implemented in an earlier pass (non-breaking)
 
 Shipped on ServiceNow Central without removing existing pages or products:
 
