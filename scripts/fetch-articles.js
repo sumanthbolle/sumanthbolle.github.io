@@ -982,11 +982,60 @@ async function callWithRetry(prompt, systemPrompt, maxRetries = 3, options = {})
 // MAIN
 // =============================================================================
 
+// -----------------------------------------------------------------------------
+// Manual-approval gate (see docs/website-enhancement-review.md, spec §7.1).
+// This generator no longer publishes unattended. A human must (1) explicitly
+// approve the run and (2) supply an authored brief grounded in real project
+// work, so output is episodic and verified rather than daily generic filler.
+//   CONTENT_APPROVE=1                              — required to run at all
+//   CONTENT_BRIEF="..."  |  --brief "..."          — authored steer (required)
+//   CONTENT_BRIEF_FILE=path | --brief-file path    — read the brief from a file
+//   CONTENT_CATEGORY=ai|career|architecture|...    — optional category hint
+// A scheduled/cron invocation with neither flag set exits 0 as a no-op.
+// -----------------------------------------------------------------------------
+function readBrief() {
+  const argv = process.argv.slice(2);
+  const argVal = (flag) => {
+    const i = argv.indexOf(flag);
+    return i > -1 ? argv[i + 1] : undefined;
+  };
+  let brief = process.env.CONTENT_BRIEF || argVal('--brief');
+  const file = process.env.CONTENT_BRIEF_FILE || argVal('--brief-file');
+  if (!brief && file && fs.existsSync(file)) brief = fs.readFileSync(file, 'utf8');
+  return (brief || '').trim();
+}
+
+function approvalGate() {
+  const approved = process.env.CONTENT_APPROVE === '1' || process.argv.includes('--approve');
+  if (!approved) {
+    console.log([
+      '⏸  Auto-publish is disabled. This generator runs only on explicit approval.',
+      '   To generate an episodic post, set CONTENT_APPROVE=1 and supply an authored brief:',
+      '     CONTENT_APPROVE=1 CONTENT_BRIEF="Post-mortem: Maverick token routing..." node scripts/fetch-articles.js',
+      '   Nothing was generated or written.'
+    ].join('\n'));
+    process.exit(0);
+  }
+  const brief = readBrief();
+  if (!brief) {
+    console.error([
+      '❌ Approved, but no authored brief provided.',
+      '   Supply CONTENT_BRIEF / --brief (or CONTENT_BRIEF_FILE / --brief-file).',
+      '   The brief must describe a real, verified topic (e.g. a Maverick / Medtric',
+      '   / air-gapped RAG post-mortem) — not a generic web topic.'
+    ].join('\n'));
+    process.exit(1);
+  }
+  return brief;
+}
+
 async function main() {
   if (!OPENAI_API_KEY) {
     console.error('❌ OPENAI_API_KEY not set');
     process.exit(1);
   }
+
+  const authoredBrief = approvalGate();
 
   const today = formatDate();
   const iso = nowISO();
@@ -1009,7 +1058,14 @@ async function main() {
   console.log(`📚 ARTICLE GENERATION`);
   console.log(`   Existing posts: ${posts.length}/${MAX_POSTS}`);
 
-  const topic = selectTopic(posts);
+  // Authored brief drives the topic — no random generic-template selection.
+  const topic = {
+    learningPath: 'authored',
+    category: process.env.CONTENT_CATEGORY || 'ai',
+    difficulty: 'Senior',
+    query: `Write from this authored brief, grounded in the author's real project work. `
+      + `Do not invent facts beyond the brief; keep claims verifiable.\n\nBRIEF:\n${authoredBrief}`
+  };
   console.log(`   Learning Path: ${topic.learningPath}`);
   console.log(`   Category: ${topic.category}`);
   console.log(`   Difficulty: ${topic.difficulty || 'N/A'}`);
