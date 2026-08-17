@@ -83,6 +83,11 @@
         '<div class="an-entry__actions">' +
           '<button type="button" class="btn btn-sm" data-act="save" data-id="' + attr(item.id) + '">Save to notes</button>' +
           sourceLink(item.sourceUrl, item.sourceName) +
+          /* When the anchor resolves to the standing compilation, offer the
+           * twenty-year pattern behind it — the static half of the question. */
+          (item.anchorId
+            ? '<a href="upsc-patterns.html?anchor=' + attr(item.anchorId) + '">20-year pattern</a>'
+            : '') +
         '</div>' +
       '</div>' +
     '</li>';

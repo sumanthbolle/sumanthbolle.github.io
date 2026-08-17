@@ -814,6 +814,14 @@
     renderCounts();
     renderRail();
     renderBrief();
+
+    /* ?topic= hands a concept over from the Pattern Atlas: the atlas holds the
+     * static anchor, this fetches the current trigger layer for it. */
+    var requested = new URLSearchParams(window.location.search).get('topic');
+    if (requested) {
+      search.value = requested.slice(0, 160);
+      doLookup();
+    }
   }
 
   if (document.readyState === 'loading') {
