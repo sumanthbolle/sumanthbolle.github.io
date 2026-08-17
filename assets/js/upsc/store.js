@@ -103,6 +103,17 @@
       };
     }
 
+    /* A date input will hand back a four-digit year the browser considers
+     * merely out of range, so reject anything too far out to plan from. */
+    if (days > 365 * 5) {
+      return {
+        mode: null,
+        days: days,
+        stage: stage,
+        note: 'That date is further out than any published calendar — check the year.',
+      };
+    }
+
     if (stage === 'interview') {
       return { mode: MODES.BOARD, days: days, stage: stage, note: '' };
     }

@@ -13,7 +13,9 @@
 :root {
   --blue: #0066cc;
   --text: #1d1d1f;
-  --gray: #86868b;
+  /* A step darker than the sitewide #86868b: this page leans on secondary text
+     for labels and guidance, and #86868b sits at 3.3:1 on the page surface. */
+  --gray: #6e6e73;
   --bg: #f5f5f7;
   --white: #fff;
   --green: #1f7a3a;
@@ -89,8 +91,7 @@ select,
 input,
 textarea,
 .nav-links,
-.nav-logo,
-.an-sans {
+.nav-logo {
   font-family: var(--sans);
 }
 
