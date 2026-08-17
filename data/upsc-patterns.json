@@ -1,0 +1,1996 @@
+{
+  "version": "1.0.0",
+  "compiled": "2026-08-17",
+  "provisional": true,
+  "anchorCount": 57,
+  "methodology": {
+    "whatThisIs": "A standing compilation of the static anchors UPSC has examined repeatedly over roughly twenty years, expressed as data so a tool can query it. An anchor is the syllabus concept that outlives the news event; a question is that anchor crossed with a current trigger and a directive verb.",
+    "frequencyEst": "frequency_est is an editorial weight from 0-100 derived from the recurring-theme compilation, NOT a count of questions from a tagged corpus. It ranks anchors against each other for revision priority. It is not evidence about any single year.",
+    "recencyGapEst": "recency_gap_est is an editorial 0-100 judgement of how overdue an anchor feels, where 100 means long absent and 0 means asked very recently. It is the weakest field here and the first that should be replaced with measured last-asked years.",
+    "stems": "question_stems are written in authentic UPSC phrasing for answer-writing practice. They are practice prioritisation, never prediction. Nobody can tell you what will be asked.",
+    "facts": "static_core names institutions, statutes and judgments only where the naming is settled. Every figure, percentage, ranking and award year is deliberately absent and pushed into the verify field instead, because a fluent wrong number written into a Mains answer costs marks silently.",
+    "howToMakeItReal": "Tag the official papers from upsc.gov.in into the schema in the skill's pyq-pattern-decoder (§7), replace frequency_est with real counts and recency_gap_est with the actual last-asked year, then drop the provisional flag. That is the highest-value work available on this dataset and everything downstream improves the moment it exists.",
+    "conflicts": "Where this file and the Union Public Service Commission disagree, the Commission is right."
+  },
+  "bands": {
+    "perennial": "Appears in most cycles in some form. Floor competence here is not optional.",
+    "high": "Appears frequently and across papers. Worth a written answer, not just a note.",
+    "medium": "Periodic. Revise it, but do not build a month around it.",
+    "emerging": "A newer theme UPSC is still developing. Low history, high forward weight — new anchors tend to be asked again soon."
+  },
+  "verbs": [
+    "discuss",
+    "examine",
+    "critically examine",
+    "analyse",
+    "critically analyse",
+    "evaluate",
+    "assess",
+    "comment",
+    "elucidate",
+    "explain",
+    "illustrate",
+    "substantiate",
+    "justify",
+    "enumerate",
+    "to what extent",
+    "do you agree"
+  ],
+  "triggerTypes": {
+    "EVENT": "A dated occurrence — a summit, a launch, a crisis, a policy announcement.",
+    "REPORT": "An official report, survey, index or committee recommendation.",
+    "JUDGMENT": "A court decision, usually the Supreme Court.",
+    "LEGISLATION": "A bill, act, amendment, rule or notification.",
+    "PERENNIAL": "No trigger needed; the anchor is asked on its own terms."
+  },
+  "papers": {
+    "GS1": "Heritage, history, society, geography",
+    "GS2": "Polity, governance, international relations",
+    "GS3": "Economy, environment, science and technology, security",
+    "GS4": "Ethics, integrity and aptitude",
+    "ESSAY": "Essay"
+  },
+  "anchors": [
+    {
+      "id": "women-and-society",
+      "anchor": "Women and social change",
+      "aliases": ["women's empowerment", "gender", "patriarchy", "female labour force participation", "women in politics"],
+      "papers": ["GS1", "GS2"],
+      "codes": ["GS1.5", "GS2.6"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 92,
+      "recency_gap_est": 15,
+      "verbs": ["discuss", "critically examine", "to what extent"],
+      "trigger_types": ["REPORT", "LEGISLATION", "JUDGMENT"],
+      "static_core": [
+        "Constitutional guarantees run from Articles 14-16 through Article 15(3) permitting protective provisions",
+        "Legal capacity has expanded faster than social sanction, which is why reform and outcome diverge",
+        "Participation is not the same measure as remunerative work, and answers that conflate them lose the argument"
+      ],
+      "prelims_angle": "Constitutional and statutory provisions, the reservation legislation for legislatures, and which survey measures which indicator",
+      "traps": [
+        "Writing only about the present when the marks sit in the movement from social reform to constitutional guarantee to contemporary gap",
+        "Treating women as a single category rather than one cut by caste, class and region"
+      ],
+      "skeleton": [
+        "Locate the phenomenon historically before describing it",
+        "Structural roots, present manifestation, regional variation, counter-current",
+        "Close on continuity and change, not on a call for awareness"
+      ],
+      "stems": [
+        { "stem": "Examine the extent to which legal reform has translated into substantive gender equality in India.", "verb": "examine", "paper": "GS1", "marks": 15 },
+        { "stem": "Discuss how the changing structure of employment has altered the position of women in Indian society.", "verb": "discuss", "paper": "GS1", "marks": 10 }
+      ],
+      "linked": ["inclusive-growth-and-employment", "welfare-schemes-and-vulnerable-sections", "caste-and-social-empowerment"],
+      "verify": ["Current female labour force participation figures with the survey and round attached", "The status and text of the legislature reservation legislation"]
+    },
+    {
+      "id": "urbanisation",
+      "anchor": "Urbanisation and urban governance",
+      "aliases": ["urban local bodies", "urban local government", "cities", "slums", "urban flooding", "smart cities", "municipal governance", "migration to cities"],
+      "papers": ["GS1", "GS2", "GS3"],
+      "codes": ["GS1.6", "GS2.2", "GS3.4"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 84,
+      "recency_gap_est": 20,
+      "verbs": ["discuss", "examine", "critically examine"],
+      "trigger_types": ["EVENT", "REPORT", "LEGISLATION"],
+      "static_core": [
+        "The 74th Amendment listed municipal functions in the Twelfth Schedule but left transfer to state discretion",
+        "Urban failure is a devolution failure: functions, funds and functionaries move separately and rarely together",
+        "Planning capacity, not money, is usually the binding constraint on Indian cities"
+      ],
+      "prelims_angle": "The 74th Amendment machinery, Twelfth Schedule subjects, and the design of the major urban missions",
+      "traps": [
+        "Listing problems of cities without naming who is constitutionally responsible for fixing them",
+        "Recommending a mission when the question asks about institutional capacity"
+      ],
+      "skeleton": [
+        "Quantify the shift, then name the governing institution",
+        "Design intent, actual functioning, the gap",
+        "Recommend an institutional change, not a scheme"
+      ],
+      "stems": [
+        { "stem": "Critically examine why the constitutional promise of the 74th Amendment has not produced empowered urban local bodies.", "verb": "critically examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Discuss the relationship between unplanned urban growth and the increasing incidence of urban flooding in India.", "verb": "discuss", "paper": "GS1", "marks": 10 }
+      ],
+      "linked": ["local-self-government", "disaster-management", "infrastructure-and-ppp"],
+      "verify": ["Current urban population share and its source", "Which urban missions are active in the current cycle"]
+    },
+    {
+      "id": "poverty-and-inequality",
+      "anchor": "Poverty and inequality",
+      "aliases": ["multidimensional poverty", "income inequality", "deprivation", "poverty line", "inclusive growth"],
+      "papers": ["GS1", "GS2", "GS3"],
+      "codes": ["GS1.6", "GS2.6", "GS3.1"],
+      "band": "perennial",
+      "recurrence": "frequent",
+      "frequency_est": 82,
+      "recency_gap_est": 30,
+      "verbs": ["discuss", "critically analyse", "to what extent"],
+      "trigger_types": ["REPORT", "PERENNIAL"],
+      "static_core": [
+        "Poverty measurement is contested by construction: a consumption line and a multidimensional index answer different questions",
+        "Growth reduces poverty through employment, and jobless growth breaks that link",
+        "Inequality of opportunity, not only of income, is what the Constitution's equality code addresses"
+      ],
+      "prelims_angle": "Which body publishes which measure, the dimensions of the multidimensional index, and the committee lineage of the poverty line",
+      "traps": [
+        "Quoting a poverty figure without the measure, the year and the agency",
+        "Treating poverty and inequality as the same problem with the same remedy"
+      ],
+      "skeleton": [
+        "State which measure the answer is using and why",
+        "Causes, current policy response, the measurable gap",
+        "Sequence the way forward rather than listing schemes"
+      ],
+      "stems": [
+        { "stem": "Critically analyse the claim that a decline in measured poverty is compatible with rising inequality in India.", "verb": "critically analyse", "paper": "GS3", "marks": 15 },
+        { "stem": "Discuss the limitations of consumption-based poverty measurement for policy design.", "verb": "discuss", "paper": "GS3", "marks": 10 }
+      ],
+      "linked": ["inclusive-growth-and-employment", "welfare-schemes-and-vulnerable-sections", "food-security-and-pds"],
+      "verify": ["The latest multidimensional poverty estimate with the publishing agency and year", "Which consumption survey is currently the reference"]
+    },
+    {
+      "id": "communalism-secularism-regionalism",
+      "anchor": "Communalism, secularism and regionalism",
+      "aliases": ["secularism", "communal", "regionalism", "sub-nationalism", "identity politics", "linguistic reorganisation"],
+      "papers": ["GS1", "GS2"],
+      "codes": ["GS1.6", "GS2.1"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 78,
+      "recency_gap_est": 35,
+      "verbs": ["discuss", "critically examine", "comment"],
+      "trigger_types": ["EVENT", "JUDGMENT", "PERENNIAL"],
+      "static_core": [
+        "Indian secularism is principled distance rather than strict separation, which is why the state legislates on religious practice",
+        "Articles 25-28 protect religious freedom subject to public order, morality and health",
+        "Regionalism is not automatically corrosive: it has produced both linguistic reorganisation and demands for separation"
+      ],
+      "prelims_angle": "The freedom of religion articles and their limits, the reorganisation timeline, and the constitutional provisions on minority institutions",
+      "traps": [
+        "Arguing from sentiment where the question asks for a constitutional reading",
+        "Presenting regionalism as uniformly negative when the Constitution accommodated it deliberately"
+      ],
+      "skeleton": [
+        "Define the Indian variant against the textbook one",
+        "Constitutional design, judicial interpretation, contemporary strain",
+        "Close on the accommodation the Constitution actually chose"
+      ],
+      "stems": [
+        { "stem": "Examine how the Indian conception of secularism differs from the strict separation model, with reference to constitutional practice.", "verb": "examine", "paper": "GS1", "marks": 15 },
+        { "stem": "Comment on the view that regionalism has strengthened rather than weakened Indian federalism.", "verb": "comment", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["judicial-review-and-activism", "india-neighbourhood", "post-independence-consolidation"],
+      "verify": ["Recent judgments on essential religious practices and their exact holdings"]
+    },
+    {
+      "id": "globalisation-and-indian-society",
+      "anchor": "Globalisation and Indian society",
+      "aliases": ["globalisation", "cultural change", "consumerism", "diaspora", "westernisation"],
+      "papers": ["GS1", "GS2"],
+      "codes": ["GS1.7", "GS2.10"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 72,
+      "recency_gap_est": 45,
+      "verbs": ["discuss", "critically examine", "to what extent"],
+      "trigger_types": ["EVENT", "PERENNIAL"],
+      "static_core": [
+        "Globalisation reaches Indian society through labour markets, media and migration rather than through trade policy alone",
+        "It has loosened ascriptive hierarchy in some domains while sharpening inequality in others",
+        "Cultural change under globalisation is hybridisation, not replacement"
+      ],
+      "prelims_angle": "Institutional architecture of trade and its Indian obligations; diaspora policy instruments",
+      "traps": [
+        "Writing an economics answer when the question is about society",
+        "Deciding globalisation is good or bad instead of showing what it changed and for whom"
+      ],
+      "skeleton": [
+        "Name the transmission channel before describing effects",
+        "One domain at a time: family, work, caste, gender, consumption",
+        "Close on hybridisation with a concrete example"
+      ],
+      "stems": [
+        { "stem": "Examine the effects of globalisation on the Indian family and on kinship obligations.", "verb": "examine", "paper": "GS1", "marks": 15 },
+        { "stem": "To what extent has globalisation weakened ascriptive hierarchies in Indian society?", "verb": "to what extent", "paper": "GS1", "marks": 10 }
+      ],
+      "linked": ["women-and-society", "inclusive-growth-and-employment", "diaspora-and-migration"],
+      "verify": ["Current remittance and diaspora figures with source and year"]
+    },
+    {
+      "id": "population-and-demography",
+      "anchor": "Population and demographic transition",
+      "aliases": ["demographic dividend", "ageing", "fertility", "population policy", "dependency ratio"],
+      "papers": ["GS1", "GS3"],
+      "codes": ["GS1.5", "GS3.1"],
+      "band": "high",
+      "recurrence": "periodic",
+      "frequency_est": 70,
+      "recency_gap_est": 55,
+      "verbs": ["discuss", "examine", "critically examine"],
+      "trigger_types": ["REPORT", "PERENNIAL"],
+      "static_core": [
+        "India is in different phases of transition simultaneously, which is why a single national policy misfits most states",
+        "A demographic dividend is a window, not an endowment: it pays only through employment and skills",
+        "Ageing arrives before universal social security is built, which is the structural risk"
+      ],
+      "prelims_angle": "Transition stages, which survey reports fertility and mortality indicators, and the census and civil registration architecture",
+      "traps": [
+        "Treating the dividend as automatic",
+        "Recommending population control where the data show fertility already at or below replacement"
+      ],
+      "skeleton": [
+        "Establish the regional divergence first",
+        "Window, conditions to convert it, consequences of missing it",
+        "Close on sequencing: skills and jobs before pensions"
+      ],
+      "stems": [
+        { "stem": "Examine the conditions under which India's demographic profile becomes a dividend rather than a burden.", "verb": "examine", "paper": "GS1", "marks": 15 },
+        { "stem": "Discuss the policy implications of the divergence in demographic transition across Indian states.", "verb": "discuss", "paper": "GS1", "marks": 10 }
+      ],
+      "linked": ["inclusive-growth-and-employment", "health-and-education-policy", "diaspora-and-migration"],
+      "verify": ["Current total fertility rate by state with the survey round", "Latest old-age dependency projection and its source"]
+    },
+    {
+      "id": "freedom-struggle-and-mass-movements",
+      "anchor": "Freedom struggle and mass movements",
+      "aliases": ["national movement", "Gandhi", "moderates extremists", "Quit India", "peasant and tribal revolts", "1857"],
+      "papers": ["GS1"],
+      "codes": ["GS1.2"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 80,
+      "recency_gap_est": 25,
+      "verbs": ["examine", "discuss", "critically examine", "evaluate"],
+      "trigger_types": ["PERENNIAL", "EVENT"],
+      "static_core": [
+        "The movement's method changed with its social base: constitutional agitation, then mass mobilisation, then negotiation",
+        "Gandhian technique made a middle-class campaign into a mass one by attaching local grievance to national demand",
+        "Peasant, tribal and worker movements ran alongside the Congress-led struggle and were not always subordinate to it"
+      ],
+      "prelims_angle": "Chronology, session-and-resolution detail, personalities attached to specific movements, and press and legislation milestones",
+      "traps": [
+        "Narrating events instead of assessing a claim about them",
+        "Reducing the struggle to a single leader or a single strand"
+      ],
+      "skeleton": [
+        "Take a position on the claim in the question in the first two lines",
+        "Phase by phase, with the social base of each",
+        "Include one non-Congress strand as counter-current"
+      ],
+      "stems": [
+        { "stem": "Evaluate the view that the Gandhian phase transformed the social base of the national movement rather than its aims.", "verb": "evaluate", "paper": "GS1", "marks": 15 },
+        { "stem": "Examine the role of tribal and peasant uprisings in shaping the anti-colonial struggle.", "verb": "examine", "paper": "GS1", "marks": 10 }
+      ],
+      "linked": ["post-independence-consolidation", "art-culture-and-heritage", "world-history-and-decolonisation"],
+      "verify": ["Exact dates and resolutions where a question turns on them"]
+    },
+    {
+      "id": "post-independence-consolidation",
+      "anchor": "Post-independence consolidation",
+      "aliases": ["integration of princely states", "linguistic reorganisation", "land reforms", "Green Revolution", "nation building"],
+      "papers": ["GS1"],
+      "codes": ["GS1.3"],
+      "band": "high",
+      "recurrence": "periodic",
+      "frequency_est": 68,
+      "recency_gap_est": 50,
+      "verbs": ["discuss", "examine", "evaluate"],
+      "trigger_types": ["PERENNIAL", "EVENT"],
+      "static_core": [
+        "Integration, reorganisation and land reform were one project: making a state capable of governing a diverse territory",
+        "Linguistic reorganisation accommodated identity rather than suppressing it, and that choice explains later stability",
+        "Land reform succeeded unevenly, and where it failed it shaped later agrarian politics"
+      ],
+      "prelims_angle": "Commission names and sequence, states created and when, and the components of land reform legislation",
+      "traps": [
+        "Listing events without the state-building argument that connects them",
+        "Claiming land reform failed uniformly across India"
+      ],
+      "skeleton": [
+        "Frame it as a state-capacity problem",
+        "Integration, reorganisation, agrarian structure",
+        "Close on which choices are still load-bearing today"
+      ],
+      "stems": [
+        { "stem": "Evaluate the contribution of linguistic reorganisation to the stability of the Indian union.", "verb": "evaluate", "paper": "GS1", "marks": 15 },
+        { "stem": "Discuss why land reforms produced very different outcomes across Indian states.", "verb": "discuss", "paper": "GS1", "marks": 10 }
+      ],
+      "linked": ["freedom-struggle-and-mass-movements", "fiscal-federalism", "agriculture-msp-and-marketing"],
+      "verify": ["Commission names and the year of each reorganisation being cited"]
+    },
+    {
+      "id": "art-culture-and-heritage",
+      "anchor": "Art, culture and heritage",
+      "aliases": ["temple architecture", "classical dance", "Bhakti Sufi", "UNESCO heritage", "Buddhist art", "folk traditions"],
+      "papers": ["GS1"],
+      "codes": ["GS1.1"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 62,
+      "recency_gap_est": 30,
+      "verbs": ["discuss", "elucidate", "illustrate", "examine"],
+      "trigger_types": ["EVENT", "PERENNIAL"],
+      "static_core": [
+        "Architectural schools are distinguished by structure and plan, not by decoration, and answers should name the feature",
+        "The Bhakti and Sufi movements are social history as much as religious history",
+        "Heritage questions reward specific examples over general appreciation"
+      ],
+      "prelims_angle": "School-to-feature-to-site mapping, dynastic attribution, and the classification of dance and music traditions",
+      "traps": [
+        "Praising instead of describing: an answer with no named feature or site scores as an appreciation",
+        "Missing the illustrate instruction, where examples are the body and not decoration"
+      ],
+      "skeleton": [
+        "One line locating the tradition in time and region",
+        "Feature, example, significance, repeated per point",
+        "A sketch where the question is architectural"
+      ],
+      "stems": [
+        { "stem": "Illustrate the distinguishing structural features of the major schools of Indian temple architecture.", "verb": "illustrate", "paper": "GS1", "marks": 15 },
+        { "stem": "Discuss the social significance of the Bhakti movement beyond its devotional content.", "verb": "discuss", "paper": "GS1", "marks": 10 }
+      ],
+      "linked": ["freedom-struggle-and-mass-movements", "communalism-secularism-regionalism"],
+      "verify": ["Site names, dynastic attributions and inscription years before asserting them"]
+    },
+    {
+      "id": "world-history-and-decolonisation",
+      "anchor": "World history and decolonisation",
+      "aliases": ["industrial revolution", "colonialism", "world wars", "cold war", "redrawal of boundaries"],
+      "papers": ["GS1"],
+      "codes": ["GS1.4"],
+      "band": "medium",
+      "recurrence": "periodic",
+      "frequency_est": 55,
+      "recency_gap_est": 60,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["PERENNIAL", "EVENT"],
+      "static_core": [
+        "The syllabus asks about processes and their consequences, not chronology for its own sake",
+        "Decolonisation left state boundaries that did not match nations, which is the origin of many current conflicts",
+        "Comparison across regions is what separates a strong answer from a summary"
+      ],
+      "prelims_angle": "Sequence of events, treaty names, and the institutional origins of the post-war order",
+      "traps": [
+        "Answering Europe when the question says the world",
+        "Narrating a war rather than assessing its effect on the international order"
+      ],
+      "skeleton": [
+        "Name the process and its mechanism",
+        "Two regions compared, not one described",
+        "Close on the consequence still visible today"
+      ],
+      "stems": [
+        { "stem": "Examine how the process of decolonisation shaped the political geography of West Asia and Africa.", "verb": "examine", "paper": "GS1", "marks": 15 },
+        { "stem": "Discuss the consequences of the Industrial Revolution for colonised economies.", "verb": "discuss", "paper": "GS1", "marks": 10 }
+      ],
+      "linked": ["multilateral-groupings-and-reform", "india-neighbourhood"],
+      "verify": ["Treaty names and dates where the answer turns on them"]
+    },
+    {
+      "id": "monsoon-and-climatology",
+      "anchor": "Monsoon and climatology",
+      "aliases": ["monsoon", "El Nino", "western disturbance", "jet stream", "cyclone formation", "rainfall variability"],
+      "papers": ["GS1", "GS3"],
+      "codes": ["GS1.8", "GS3.5"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 74,
+      "recency_gap_est": 25,
+      "verbs": ["explain", "discuss", "examine", "elucidate"],
+      "trigger_types": ["EVENT", "REPORT"],
+      "static_core": [
+        "The monsoon is a large-scale circulation response to differential heating, modulated by ocean-atmosphere oscillations",
+        "Variability, not the mean, is what damages Indian agriculture",
+        "A mechanism question wants the process chain, and a diagram earns marks a paragraph cannot"
+      ],
+      "prelims_angle": "Mechanism terminology, oscillation names and their phases, and the geography of rainfall distribution",
+      "traps": [
+        "Describing outcomes without the mechanism the verb asked for",
+        "Omitting the diagram in a physical geography answer"
+      ],
+      "skeleton": [
+        "State the mechanism in a chain of causes",
+        "Sketch it",
+        "Then the Indian consequence, quantified where sourced"
+      ],
+      "stems": [
+        { "stem": "Explain the mechanism of the Indian summer monsoon and the factors that modulate its interannual variability.", "verb": "explain", "paper": "GS1", "marks": 15 },
+        { "stem": "Discuss how increasing rainfall variability affects cropping decisions in India.", "verb": "discuss", "paper": "GS3", "marks": 10 }
+      ],
+      "linked": ["agriculture-msp-and-marketing", "disaster-management", "climate-negotiations"],
+      "verify": ["Current oscillation phase and forecast source before citing this season"]
+    },
+    {
+      "id": "geophysical-phenomena",
+      "anchor": "Geophysical phenomena and hazards",
+      "aliases": ["earthquake", "tsunami", "volcanism", "plate tectonics", "landslide", "cloudburst"],
+      "papers": ["GS1", "GS3"],
+      "codes": ["GS1.8", "GS3.7"],
+      "band": "medium",
+      "recurrence": "periodic",
+      "frequency_est": 58,
+      "recency_gap_est": 45,
+      "verbs": ["explain", "discuss", "examine"],
+      "trigger_types": ["EVENT", "PERENNIAL"],
+      "static_core": [
+        "Hazard is physical, disaster is social: the same event produces different losses depending on exposure and capacity",
+        "Plate boundary type predicts the hazard signature of a region",
+        "Himalayan hazard is compounded by slope construction and drainage disruption, not only by seismicity"
+      ],
+      "prelims_angle": "Seismic zonation, boundary types and their landforms, and monitoring institutions",
+      "traps": [
+        "Answering the event when the syllabus asks about the process or the response framework",
+        "Ignoring the human exposure half of the risk equation"
+      ],
+      "skeleton": [
+        "Process, then hazard signature, then exposure",
+        "One Indian region as the worked example",
+        "Close on mitigation that follows from the mechanism"
+      ],
+      "stems": [
+        { "stem": "Explain why the Himalayan region carries a compound hazard profile, and discuss the implications for construction norms.", "verb": "explain", "paper": "GS1", "marks": 15 },
+        { "stem": "Examine the relationship between plate boundary type and the hazards characteristic of a region.", "verb": "examine", "paper": "GS1", "marks": 10 }
+      ],
+      "linked": ["disaster-management", "monsoon-and-climatology", "infrastructure-and-ppp"],
+      "verify": ["Seismic zone classifications and the current zonation source"]
+    },
+    {
+      "id": "resource-distribution-and-industrial-location",
+      "anchor": "Resource distribution and industrial location",
+      "aliases": ["industrial location", "mineral belts", "critical minerals", "supply chain geography", "changes in geographical features"],
+      "papers": ["GS1", "GS3"],
+      "codes": ["GS1.9", "GS3.4"],
+      "band": "medium",
+      "recurrence": "periodic",
+      "frequency_est": 56,
+      "recency_gap_est": 50,
+      "verbs": ["discuss", "examine", "analyse"],
+      "trigger_types": ["EVENT", "REPORT"],
+      "static_core": [
+        "Location follows the changing weight of inputs: raw material, then power, then market, then labour and logistics",
+        "Resource endowment without processing capacity exports value rather than capturing it",
+        "Critical mineral dependence is now a strategic question, not only an industrial one"
+      ],
+      "prelims_angle": "Mineral belt geography, industrial region names, and the institutions governing mineral allocation",
+      "traps": [
+        "Listing locational factors without applying them to the industry in the question",
+        "Ignoring the strategic dimension when the trigger is a supply-chain event"
+      ],
+      "skeleton": [
+        "State which locational factor dominates for this industry and why",
+        "Then the Indian pattern, then the shift underway",
+        "Close on the policy lever that follows"
+      ],
+      "stems": [
+        { "stem": "Analyse how the determinants of industrial location have shifted in India over the past three decades.", "verb": "analyse", "paper": "GS1", "marks": 15 },
+        { "stem": "Discuss the strategic implications of India's dependence on imported critical minerals.", "verb": "discuss", "paper": "GS3", "marks": 10 }
+      ],
+      "linked": ["industrial-policy-and-manufacturing", "energy-transition", "science-tech-and-indigenisation"],
+      "verify": ["Import dependence figures for specific minerals with source and year"]
+    },
+    {
+      "id": "caste-and-social-empowerment",
+      "anchor": "Caste, tribe and social empowerment",
+      "aliases": ["scheduled castes", "scheduled tribes", "reservation", "adivasi", "social justice", "affirmative action"],
+      "papers": ["GS1", "GS2"],
+      "codes": ["GS1.5", "GS2.6"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 76,
+      "recency_gap_est": 25,
+      "verbs": ["discuss", "critically examine", "comment"],
+      "trigger_types": ["JUDGMENT", "LEGISLATION", "REPORT"],
+      "static_core": [
+        "The Constitution treats caste disadvantage as a ground for protective provision, not as a category to be denied",
+        "Reservation jurisprudence has turned repeatedly on efficiency, creamy layer and the extent of permissible classification",
+        "Tribal disadvantage is territorial as well as social, which is why Fifth and Sixth Schedule governance exists"
+      ],
+      "prelims_angle": "The Schedules and their governance machinery, statutory commissions, and the legislative basis of protective provisions",
+      "traps": [
+        "Debating reservation in the abstract when the question asks about a specific constitutional test",
+        "Collapsing tribal and caste disadvantage into one analysis"
+      ],
+      "skeleton": [
+        "Constitutional provision first, then the judicial test",
+        "Delivery record with a named institution",
+        "Close on the reform the jurisprudence points towards"
+      ],
+      "stems": [
+        { "stem": "Critically examine the constitutional tests that govern the extent of reservation in public employment.", "verb": "critically examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Discuss why territorial protections for tribal areas require a different governance design from other social protections.", "verb": "discuss", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["welfare-schemes-and-vulnerable-sections", "judicial-review-and-activism", "biodiversity-and-forest-rights"],
+      "verify": ["Recent judgments on reservation limits and their exact holdings"]
+    },
+    {
+      "id": "fiscal-federalism",
+      "anchor": "Fiscal federalism",
+      "aliases": ["finance commission", "tax devolution", "centre-state financial relations", "divisible pool", "cess and surcharge", "vertical devolution"],
+      "papers": ["GS2", "GS3"],
+      "codes": ["GS2.2", "GS3.2"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 90,
+      "recency_gap_est": 15,
+      "verbs": ["examine", "critically examine", "discuss"],
+      "trigger_types": ["REPORT", "LEGISLATION", "EVENT"],
+      "static_core": [
+        "Article 280 constitutes the Finance Commission, whose award sets both vertical and horizontal devolution",
+        "Cesses and surcharges sit outside the divisible pool, so the headline devolution share overstates what states receive untied",
+        "Article 279A's GST Council traded state rate autonomy for a common market, moving indirect taxation into a joint forum"
+      ],
+      "prelims_angle": "Finance Commission composition and mandate, what enters the divisible pool, GST Council design, and the difference between tied and untied transfers",
+      "traps": [
+        "Writing about GST rates when the question asks about the allocation of power",
+        "Asserting a devolution percentage without naming the Commission and the year"
+      ],
+      "skeleton": [
+        "Open on the constitutional allocation, not on a definition of federalism",
+        "Design intent, actual functioning, the gap: one block each",
+        "Close with an institutional recommendation, not a plea for cooperation"
+      ],
+      "stems": [
+        { "stem": "Examine the extent to which the growth of cesses and surcharges has altered the substance of tax devolution in India.", "verb": "examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Critically examine the claim that the GST Council represents cooperative federalism in practice.", "verb": "critically examine", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["taxation-and-gst", "government-budgeting-and-fiscal-policy", "local-self-government"],
+      "verify": ["The current Commission's vertical devolution recommendation and the years it covers", "GST Council voting weights and the majority required"]
+    },
+    {
+      "id": "judicial-review-and-activism",
+      "anchor": "Judicial review and judicial activism",
+      "aliases": ["judicial overreach", "PIL", "basic structure", "writ jurisdiction", "judicial independence", "constitutional morality"],
+      "papers": ["GS2"],
+      "codes": ["GS2.3", "GS2.1"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 88,
+      "recency_gap_est": 15,
+      "verbs": ["critically examine", "examine", "discuss", "comment"],
+      "trigger_types": ["JUDGMENT", "PERENNIAL"],
+      "static_core": [
+        "Judicial review flows from Articles 13, 32 and 226 and was placed beyond amendment by the basic structure doctrine in Kesavananda Bharati",
+        "Public interest litigation widened standing, which expanded access and simultaneously invited the overreach charge",
+        "Proportionality is now the working standard for testing state action against rights, following Puttaswamy"
+      ],
+      "prelims_angle": "Writs and their scope, the amendment and appointment case lineage, and tribunal jurisdiction",
+      "traps": [
+        "Omitting the verdict when the verb says critically examine",
+        "Treating activism and overreach as synonyms rather than as a question of institutional competence"
+      ],
+      "skeleton": [
+        "Constitutional source of the power in one line",
+        "Where review is legitimate, where it substitutes for the executive, and the test that distinguishes them",
+        "State a verdict with reasons"
+      ],
+      "stems": [
+        { "stem": "Critically examine the line between judicial review and judicial overreach in matters of policy.", "verb": "critically examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Discuss how the proportionality standard has changed the review of executive action affecting fundamental rights.", "verb": "discuss", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["separation-of-powers", "transparency-and-rti", "digital-public-infrastructure-and-ai"],
+      "verify": ["Case names and the exact proposition each judgment established before citing it"]
+    },
+    {
+      "id": "separation-of-powers",
+      "anchor": "Separation of powers and appointments",
+      "aliases": ["collegium", "judicial appointments", "checks and balances", "governor's role", "executive overreach"],
+      "papers": ["GS2"],
+      "codes": ["GS2.3", "GS2.4"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 80,
+      "recency_gap_est": 25,
+      "verbs": ["examine", "critically examine", "discuss"],
+      "trigger_types": ["JUDGMENT", "EVENT", "LEGISLATION"],
+      "static_core": [
+        "India adopts functional separation with deliberate overlap, so the test is encroachment on essential function rather than tidiness",
+        "The appointments question is about who guards independence, and every proposed alternative relocates rather than removes the problem",
+        "Discretionary offices, particularly the Governor's, are where the doctrine is tested most often in practice"
+      ],
+      "prelims_angle": "Appointment machinery for the higher judiciary, the Governor's discretionary powers, and the constitutional position of tribunals",
+      "traps": [
+        "Describing the doctrine abstractly without the Indian variant",
+        "Recommending a commission without addressing why the previous design was struck down"
+      ],
+      "skeleton": [
+        "State the Indian variant, not Montesquieu",
+        "Institution by institution: where the friction actually occurs",
+        "Close on a reform that preserves independence and adds accountability"
+      ],
+      "stems": [
+        { "stem": "Examine the constitutional issues raised by the present system of appointment to the higher judiciary.", "verb": "examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Critically examine the exercise of discretionary powers by Governors in the context of separation of powers.", "verb": "critically examine", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["judicial-review-and-activism", "parliamentary-functioning", "constitutional-and-statutory-bodies"],
+      "verify": ["The current appointments procedure and the judgments that established it"]
+    },
+    {
+      "id": "parliamentary-functioning",
+      "anchor": "Parliamentary functioning and accountability",
+      "aliases": ["parliament", "committees", "anti-defection", "ordinance", "money bill", "legislative scrutiny", "disruption"],
+      "papers": ["GS2"],
+      "codes": ["GS2.4"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 84,
+      "recency_gap_est": 20,
+      "verbs": ["discuss", "critically examine", "examine", "evaluate"],
+      "trigger_types": ["LEGISLATION", "EVENT", "REPORT"],
+      "static_core": [
+        "Parliament's core function is scrutiny of the executive, and sitting days plus committee referral are the operative measures of it",
+        "Committees do the deliberative work the floor no longer has time for, which is why referral practice matters more than debate length",
+        "The Tenth Schedule's anti-defection design strengthened party control at the cost of individual deliberation"
+      ],
+      "prelims_angle": "Committee types and composition, money bill definition under Article 110, ordinance conditions, and Speaker's powers under the Tenth Schedule",
+      "traps": [
+        "Lamenting disruption without measuring scrutiny",
+        "Citing sitting-day counts without a source and period"
+      ],
+      "skeleton": [
+        "Name the function being assessed before assessing it",
+        "Evidence of decline, institutional cause, the committee counterweight",
+        "Close on a procedural reform, not on an appeal to decorum"
+      ],
+      "stems": [
+        { "stem": "Critically examine the claim that the decline in legislative scrutiny is a procedural rather than a behavioural problem.", "verb": "critically examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Evaluate the contribution of parliamentary committees to executive accountability in India.", "verb": "evaluate", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["separation-of-powers", "transparency-and-rti", "government-budgeting-and-fiscal-policy"],
+      "verify": ["Sitting-day and bill-referral statistics with the source and the period they cover"]
+    },
+    {
+      "id": "local-self-government",
+      "anchor": "Local self-government and devolution",
+      "aliases": ["panchayati raj", "73rd amendment", "74th amendment", "PESA", "gram sabha", "municipal finance", "three Fs"],
+      "papers": ["GS2"],
+      "codes": ["GS2.2", "GS2.5"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 86,
+      "recency_gap_est": 20,
+      "verbs": ["critically examine", "discuss", "examine"],
+      "trigger_types": ["REPORT", "LEGISLATION", "PERENNIAL"],
+      "static_core": [
+        "The 73rd and 74th Amendments created the institutions and left the transfer of functions, funds and functionaries to state discretion",
+        "The Eleventh and Twelfth Schedules list subjects but do not compel devolution, which is the whole gap",
+        "State Finance Commissions are the constitutional mechanism for local resources and are the most ignored institution in the design"
+      ],
+      "prelims_angle": "Schedule contents, mandatory versus optional provisions, State Finance Commission mandate, and PESA's application to Fifth Schedule areas",
+      "traps": [
+        "Praising the amendments and then complaining about outcomes without naming the discretion that connects them",
+        "Forgetting the fiscal leg: elections happen, money does not follow"
+      ],
+      "skeleton": [
+        "Constitutional design in two lines",
+        "Functions, funds, functionaries: assess each separately",
+        "Close on the State Finance Commission or on a statutory devolution mandate"
+      ],
+      "stems": [
+        { "stem": "Critically examine why three decades of constitutional status have not produced fiscally capable local governments.", "verb": "critically examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Discuss the significance of PESA for tribal self-governance and the obstacles to its implementation.", "verb": "discuss", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["urbanisation", "fiscal-federalism", "welfare-schemes-and-vulnerable-sections"],
+      "verify": ["State Finance Commission constitution status across states", "Current share of own revenue in local body budgets with source"]
+    },
+    {
+      "id": "constitutional-and-statutory-bodies",
+      "anchor": "Constitutional and statutory bodies",
+      "aliases": ["CAG", "election commission", "UPSC", "NHRC", "CIC", "regulators", "quasi-judicial bodies", "tribunals"],
+      "papers": ["GS2"],
+      "codes": ["GS2.3", "GS2.7"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 82,
+      "recency_gap_est": 20,
+      "verbs": ["examine", "discuss", "critically examine", "evaluate"],
+      "trigger_types": ["EVENT", "JUDGMENT", "REPORT"],
+      "static_core": [
+        "Independence is engineered through appointment, tenure, removal and funding, and a body is only as independent as the weakest of the four",
+        "Constitutional status (the CAG under Article 148, the Election Commission under Article 324, the UPSC under Article 315) confers protection that statutory bodies lack",
+        "A recommendatory mandate without a compliance mechanism produces reports rather than outcomes"
+      ],
+      "prelims_angle": "Which body is constitutional, statutory or executive; appointment and removal procedure; and the reporting line for each",
+      "traps": [
+        "Confusing a statutory body with a constitutional one, which reverses the entire argument",
+        "Recommending more powers when the diagnosed problem is appointment or funding"
+      ],
+      "skeleton": [
+        "Mandate and constitutional or statutory basis",
+        "Independence tested on the four levers",
+        "Close on the specific lever that needs fixing"
+      ],
+      "stems": [
+        { "stem": "Examine the institutional safeguards that secure the independence of the Election Commission, and whether they remain adequate.", "verb": "examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Evaluate the effectiveness of human rights institutions in India given their recommendatory mandate.", "verb": "evaluate", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["electoral-reform", "transparency-and-rti", "probity-and-corruption"],
+      "verify": ["Current appointment procedures, especially where recently amended by statute"]
+    },
+    {
+      "id": "electoral-reform",
+      "anchor": "Elections and electoral reform",
+      "aliases": ["electoral reform", "political funding", "criminalisation of politics", "simultaneous elections", "delimitation", "model code"],
+      "papers": ["GS2"],
+      "codes": ["GS2.4", "GS2.7"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 78,
+      "recency_gap_est": 25,
+      "verbs": ["critically examine", "discuss", "examine"],
+      "trigger_types": ["JUDGMENT", "LEGISLATION", "EVENT"],
+      "static_core": [
+        "The recurring problems are money, criminality and information asymmetry, and each has a different institutional fix",
+        "Transparency in political funding is the reform on which the others depend, because opacity protects the rest",
+        "Delimitation is a federal question as much as an electoral one, since it redistributes representation between states"
+      ],
+      "prelims_angle": "Disqualification grounds, the funding instruments and their statutory basis, and the Election Commission's powers under the model code",
+      "traps": [
+        "Proposing state funding without engaging the enforcement problem it does not solve",
+        "Treating simultaneous elections as purely administrative when it has constitutional consequences"
+      ],
+      "skeleton": [
+        "Name the specific defect in the first line",
+        "One reform per paragraph, each with the institution that must act",
+        "Close on sequencing: transparency before restriction"
+      ],
+      "stems": [
+        { "stem": "Critically examine the reforms required to reduce the influence of undisclosed money in Indian elections.", "verb": "critically examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Discuss the federal implications of a delimitation exercise based on current population.", "verb": "discuss", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["constitutional-and-statutory-bodies", "parliamentary-functioning", "probity-and-corruption"],
+      "verify": ["The current legal position on political funding instruments after recent judgments"]
+    },
+    {
+      "id": "transparency-and-rti",
+      "anchor": "Transparency, RTI and accountability",
+      "aliases": ["right to information", "RTI", "accountability", "citizen charter", "social audit", "whistleblower protection"],
+      "papers": ["GS2", "GS4"],
+      "codes": ["GS2.5", "GS4.6"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 80,
+      "recency_gap_est": 25,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["LEGISLATION", "JUDGMENT", "REPORT"],
+      "static_core": [
+        "Transparency is instrumental: it exists to make accountability possible, and an answer should show the causal link rather than assert the value",
+        "The Right to Information Act 2005 works through designated officers, timelines and an appellate commission; weakening any of the three weakens the whole",
+        "Proactive disclosure is cheaper and more effective than answering requests one at a time"
+      ],
+      "prelims_angle": "RTI machinery and exemptions, appellate structure, and the statutory basis of whistleblower and grievance mechanisms",
+      "traps": [
+        "Arguing transparency as an end in itself",
+        "Ignoring the tension with privacy, which is where the marks are in a critically examine"
+      ],
+      "skeleton": [
+        "Link transparency to a named accountability outcome",
+        "Statutory machinery, then the failure point, then the counter-value",
+        "Close on proactive disclosure or on commission capacity"
+      ],
+      "stems": [
+        { "stem": "Examine how the right to information advances administrative accountability, and where it collides with the right to privacy.", "verb": "examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Discuss the conditions under which social audit becomes an effective accountability instrument.", "verb": "discuss", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["probity-and-corruption", "e-governance-and-service-delivery", "judicial-review-and-activism"],
+      "verify": ["Current pendency at information commissions with source", "Amendments to the RTI Act and their effect on tenure"]
+    },
+    {
+      "id": "e-governance-and-service-delivery",
+      "anchor": "E-governance and service delivery",
+      "aliases": ["e-governance", "digital governance", "last mile delivery", "grievance redressal", "direct benefit transfer", "exclusion error"],
+      "papers": ["GS2"],
+      "codes": ["GS2.5", "GS2.6"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 76,
+      "recency_gap_est": 25,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["EVENT", "REPORT", "LEGISLATION"],
+      "static_core": [
+        "Digitisation changes the location of discretion rather than removing it, so accountability must be redesigned alongside it",
+        "Exclusion error is the characteristic failure of targeted digital delivery, and it is invisible in efficiency statistics",
+        "Back-end process reform is what makes a front-end portal work; without it the portal digitises the delay"
+      ],
+      "prelims_angle": "Architecture of the identity and payment stack, mission names and mandates, and the statutory basis of service guarantees",
+      "traps": [
+        "Celebrating savings without addressing exclusion",
+        "Treating a portal as a reform when the process behind it is unchanged"
+      ],
+      "skeleton": [
+        "Name the service and the delivery failure being solved",
+        "What digitisation fixes, what it moves, what it breaks",
+        "Close on grievance redress and audit, not on more technology"
+      ],
+      "stems": [
+        { "stem": "Critically examine the claim that digital delivery has reduced discretion in Indian welfare administration.", "verb": "critically examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Discuss the design safeguards needed to prevent exclusion in targeted benefit transfer.", "verb": "discuss", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["digital-public-infrastructure-and-ai", "welfare-schemes-and-vulnerable-sections", "transparency-and-rti"],
+      "verify": ["Savings and exclusion estimates for benefit transfer with the study and year attached"]
+    },
+    {
+      "id": "welfare-schemes-and-vulnerable-sections",
+      "anchor": "Welfare schemes and vulnerable sections",
+      "aliases": ["welfare scheme", "social security", "vulnerable sections", "elderly", "persons with disabilities", "transgender", "children"],
+      "papers": ["GS2"],
+      "codes": ["GS2.6"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 82,
+      "recency_gap_est": 20,
+      "verbs": ["discuss", "examine", "critically examine", "evaluate"],
+      "trigger_types": ["LEGISLATION", "REPORT", "EVENT"],
+      "static_core": [
+        "Scheme design fails at four predictable points: identification, entitlement, delivery and grievance",
+        "Rights-based statutes shift the default from discretion to entitlement, which is why the legislative form matters",
+        "Convergence between schemes, not the number of schemes, determines what a household actually receives"
+      ],
+      "prelims_angle": "Statutory basis of major entitlements, target group definitions, and the institutional machinery for each vulnerable group",
+      "traps": [
+        "Listing schemes instead of evaluating a design feature",
+        "Writing about a group without the statute or commission that governs it"
+      ],
+      "skeleton": [
+        "State the entitlement and its legal basis",
+        "Test it at identification, delivery and grievance",
+        "Close on convergence or on a named institutional fix"
+      ],
+      "stems": [
+        { "stem": "Examine why rights-based welfare statutes have delivered better than scheme-based provision in some sectors and not in others.", "verb": "examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Evaluate the adequacy of India's social security architecture for informal workers.", "verb": "evaluate", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["food-security-and-pds", "poverty-and-inequality", "e-governance-and-service-delivery"],
+      "verify": ["Coverage and outlay figures for any scheme named, with the year and the ministry"]
+    },
+    {
+      "id": "health-and-education-policy",
+      "anchor": "Health and education policy",
+      "aliases": ["public health", "health financing", "education policy", "learning outcomes", "human capital", "out-of-pocket expenditure"],
+      "papers": ["GS2", "GS3"],
+      "codes": ["GS2.6", "GS3.1"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 78,
+      "recency_gap_est": 25,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["REPORT", "LEGISLATION", "EVENT"],
+      "static_core": [
+        "Both sectors are state subjects funded largely by the centre, which is why capacity varies more than policy does",
+        "Health spending is judged by out-of-pocket burden, not by insurance enrolment",
+        "In education the binding constraint has moved from access to learning outcome, and the policy instruments have not fully followed"
+      ],
+      "prelims_angle": "Constitutional placement, the statutory right to education, insurance and mission architecture, and which survey measures learning",
+      "traps": [
+        "Confusing insurance coverage with access to care",
+        "Recommending higher spending without naming what the money buys"
+      ],
+      "skeleton": [
+        "Quantify the outcome gap, then name who is constitutionally responsible",
+        "Financing, provision, regulation, workforce",
+        "Close on primary care or on teacher capacity, whichever the question invites"
+      ],
+      "stems": [
+        { "stem": "Critically examine why increased health insurance coverage has not reduced out-of-pocket expenditure proportionately in India.", "verb": "critically examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Examine the shift from access to learning outcomes in Indian school education and its policy implications.", "verb": "examine", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["population-and-demography", "inclusive-growth-and-employment", "welfare-schemes-and-vulnerable-sections"],
+      "verify": ["Health expenditure as a share of GDP and out-of-pocket share, with the account and year", "Latest learning-outcome survey findings"]
+    },
+    {
+      "id": "civil-services-reform",
+      "anchor": "Civil services and administrative reform",
+      "aliases": ["bureaucracy", "administrative reform", "lateral entry", "mission karmayogi", "generalist specialist", "political neutrality"],
+      "papers": ["GS2", "GS4"],
+      "codes": ["GS2.8", "GS4.5"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 76,
+      "recency_gap_est": 30,
+      "verbs": ["discuss", "critically examine", "examine"],
+      "trigger_types": ["REPORT", "EVENT", "PERENNIAL"],
+      "static_core": [
+        "The service was designed for order and now must deliver outcomes, and most reform debates are versions of that mismatch",
+        "Neutrality and responsiveness pull in opposite directions, and the officer's problem is the boundary between them",
+        "Domain expertise, performance appraisal and tenure security are three separate reforms often argued as one"
+      ],
+      "prelims_angle": "Constitutional protections for services, recruitment machinery, and the recommendations of the major administrative reform commissions",
+      "traps": [
+        "Blaming individuals where the incentive structure explains the behaviour",
+        "Arguing lateral entry as a general fix without naming the capability gap it addresses"
+      ],
+      "skeleton": [
+        "Name the function the service is being asked to perform",
+        "Structure, incentives, capability: one each",
+        "Close on a reform with a named institutional owner"
+      ],
+      "stems": [
+        { "stem": "Critically examine the tension between political neutrality and responsiveness in the Indian civil service.", "verb": "critically examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Discuss whether domain specialisation can be built within the existing structure of the civil services.", "verb": "discuss", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["probity-and-corruption", "foundational-values-and-emotional-intelligence", "transparency-and-rti"],
+      "verify": ["Reform commission recommendations quoted, with the commission and report number"]
+    },
+    {
+      "id": "india-neighbourhood",
+      "anchor": "India and its neighbourhood",
+      "aliases": ["India China", "India Pakistan", "Nepal", "Sri Lanka", "Bangladesh", "Myanmar", "neighbourhood first", "border dispute"],
+      "papers": ["GS2"],
+      "codes": ["GS2.9"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 86,
+      "recency_gap_est": 15,
+      "verbs": ["examine", "discuss", "critically examine", "analyse"],
+      "trigger_types": ["EVENT", "LEGISLATION", "REPORT"],
+      "static_core": [
+        "Neighbourhood policy is asymmetry management: India is larger than every neighbour, and that fact drives their hedging",
+        "The reliable analytical frame is political, economic, strategic, cultural and multilateral, then convergences and frictions",
+        "Connectivity and delivery record matter more than declaratory policy in this region"
+      ],
+      "prelims_angle": "Treaty and agreement names, connectivity project geography, and grouping membership",
+      "traps": [
+        "Writing sentiment instead of interest",
+        "Assessing a bilateral relationship without the third-party factor that actually shapes it"
+      ],
+      "skeleton": [
+        "State India's interest in one line, then the counterpart's",
+        "Political, economic, strategic, cultural: convergence and friction in each",
+        "Close on a deliverable, not on goodwill"
+      ],
+      "stems": [
+        { "stem": "Examine how asymmetry shapes India's relations with its smaller neighbours, and how policy has tried to offset it.", "verb": "examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Analyse the strategic implications of competitive connectivity projects in India's neighbourhood.", "verb": "analyse", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["indo-pacific-and-maritime-security", "multilateral-groupings-and-reform", "internal-security-and-extremism"],
+      "verify": ["Status of specific agreements and projects, which changes frequently"]
+    },
+    {
+      "id": "multilateral-groupings-and-reform",
+      "anchor": "Multilateral groupings and institutional reform",
+      "aliases": ["UNSC reform", "BRICS", "G20", "SCO", "WTO", "plurilateral", "global governance", "Global South"],
+      "papers": ["GS2"],
+      "codes": ["GS2.9", "GS2.10"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 74,
+      "recency_gap_est": 25,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["EVENT", "REPORT"],
+      "static_core": [
+        "Post-war institutions encode a distribution of power that no longer exists, which is the structural case for reform and the reason it stalls",
+        "India's approach is plurilateral hedging: several overlapping groupings rather than one alignment",
+        "Reform demands are credible only when paired with a willingness to accept obligations"
+      ],
+      "prelims_angle": "Membership and mandate of each grouping, decision rules, and the reform mechanisms in each charter",
+      "traps": [
+        "Listing groupings instead of analysing the strategy behind joining several",
+        "Demanding reform without addressing the amendment procedure that blocks it"
+      ],
+      "skeleton": [
+        "Name the governance failure the institution now produces",
+        "India's interest, the coalition available, the obstacle",
+        "Close on the realistic increment, not on the ideal design"
+      ],
+      "stems": [
+        { "stem": "Examine why reform of the United Nations Security Council has proved intractable, and assess India's approach to it.", "verb": "examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Discuss the logic of India's participation in multiple overlapping plurilateral groupings.", "verb": "discuss", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["india-neighbourhood", "climate-negotiations", "world-history-and-decolonisation"],
+      "verify": ["Current membership, chair and summit outcomes for any grouping named"]
+    },
+    {
+      "id": "indo-pacific-and-maritime-security",
+      "anchor": "Indo-Pacific and maritime security",
+      "aliases": ["Indo-Pacific", "Quad", "sea lanes", "blue economy", "IOR", "maritime domain awareness", "naval balance"],
+      "papers": ["GS2", "GS3"],
+      "codes": ["GS2.9", "GS3.8"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 74,
+      "recency_gap_est": 20,
+      "verbs": ["examine", "discuss", "analyse"],
+      "trigger_types": ["EVENT", "REPORT"],
+      "static_core": [
+        "The maritime domain matters because trade and energy move through it, so security and economics are the same question here",
+        "India's position is geographic before it is diplomatic: it sits astride the sea lanes it wants kept open",
+        "Capability, presence and partnership are three distinct instruments and answers should not merge them"
+      ],
+      "prelims_angle": "Chokepoint geography, the law of the sea framework, exercise and initiative names, and island territory administration",
+      "traps": [
+        "Treating the Indo-Pacific as a purely military theatre",
+        "Ignoring the legal framework when the trigger is a dispute over rights at sea"
+      ],
+      "skeleton": [
+        "Establish the material interest: trade, energy, fisheries",
+        "Capability, presence, partnership, law",
+        "Close on the instrument India actually controls"
+      ],
+      "stems": [
+        { "stem": "Examine India's maritime interests in the Indian Ocean Region and the instruments available to secure them.", "verb": "examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Analyse the significance of the law of the sea framework for resolving disputes in the Indo-Pacific.", "verb": "analyse", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["india-neighbourhood", "internal-security-and-extremism", "energy-transition"],
+      "verify": ["Trade volume through specific chokepoints, with source and year"]
+    },
+    {
+      "id": "diaspora-and-migration",
+      "anchor": "Diaspora and international migration",
+      "aliases": ["diaspora", "remittances", "labour migration", "brain drain", "emigration policy", "refugees"],
+      "papers": ["GS1", "GS2"],
+      "codes": ["GS2.10", "GS1.7"],
+      "band": "medium",
+      "recurrence": "periodic",
+      "frequency_est": 60,
+      "recency_gap_est": 50,
+      "verbs": ["discuss", "examine", "comment"],
+      "trigger_types": ["EVENT", "REPORT"],
+      "static_core": [
+        "The diaspora is an economic asset through remittances and a diplomatic asset through influence, and the two require different policy",
+        "Emigrant welfare, particularly for low-wage labour, is where policy is thinnest",
+        "India has no domestic refugee statute, which is the standing legal gap in migration questions"
+      ],
+      "prelims_angle": "Categories of overseas Indian status, welfare and emigration machinery, and India's position on international refugee instruments",
+      "traps": [
+        "Celebrating remittances without the vulnerability of the workers sending them",
+        "Confusing diaspora categories, which changes entitlement entirely"
+      ],
+      "skeleton": [
+        "Separate the economic from the diplomatic argument",
+        "Then the welfare gap, with the destination-country dimension",
+        "Close on a bilateral instrument or a statutory gap"
+      ],
+      "stems": [
+        { "stem": "Examine the extent to which India's diaspora policy addresses the vulnerability of low-wage emigrant workers.", "verb": "examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Comment on the implications of India's lack of a domestic refugee law.", "verb": "comment", "paper": "GS2", "marks": 10 }
+      ],
+      "linked": ["globalisation-and-indian-society", "population-and-demography", "india-neighbourhood"],
+      "verify": ["Remittance inflow figures with source and year", "Current status of emigration legislation"]
+    },
+    {
+      "id": "inclusive-growth-and-employment",
+      "anchor": "Inclusive growth and employment",
+      "aliases": ["jobless growth", "employment", "informal sector", "labour codes", "unemployment", "gig work", "skilling"],
+      "papers": ["GS3"],
+      "codes": ["GS3.1"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 86,
+      "recency_gap_est": 15,
+      "verbs": ["examine", "critically examine", "discuss"],
+      "trigger_types": ["REPORT", "LEGISLATION", "EVENT"],
+      "static_core": [
+        "Growth becomes inclusive through the employment channel, so the question is always what the growth is composed of",
+        "India's structural anomaly is a services-led growth path that did not absorb labour out of agriculture at scale",
+        "Informality is the central fact: without formalisation, social security and productivity gains both stall"
+      ],
+      "prelims_angle": "Which survey measures employment and how it defines the workforce, labour code consolidation, and skilling mission architecture",
+      "traps": [
+        "Quoting an unemployment rate without the survey, the definition and the period",
+        "Recommending skilling as a general answer to a demand-side problem"
+      ],
+      "skeleton": [
+        "Quantify the problem with the survey named",
+        "Structural cause, current policy response, measurable gap",
+        "Name the trade-off explicitly, then sequence the way forward"
+      ],
+      "stems": [
+        { "stem": "Critically examine why India's growth has not generated employment in proportion to its pace.", "verb": "critically examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Examine the implications of persistent informality for productivity and social security in India.", "verb": "examine", "paper": "GS3", "marks": 15 }
+      ],
+      "linked": ["industrial-policy-and-manufacturing", "poverty-and-inequality", "agriculture-msp-and-marketing"],
+      "verify": ["Current labour force participation and unemployment figures with the survey and round"]
+    },
+    {
+      "id": "government-budgeting-and-fiscal-policy",
+      "anchor": "Government budgeting and fiscal policy",
+      "aliases": ["fiscal deficit", "budget", "FRBM", "capital expenditure", "off-budget borrowing", "fiscal consolidation"],
+      "papers": ["GS3"],
+      "codes": ["GS3.2"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 84,
+      "recency_gap_est": 20,
+      "verbs": ["examine", "discuss", "critically examine", "evaluate"],
+      "trigger_types": ["EVENT", "REPORT", "LEGISLATION"],
+      "static_core": [
+        "The composition of expenditure matters more than its level: capital spending and revenue spending do different work",
+        "The FRBM framework sets the consolidation rule, and off-budget borrowing is how the rule gets softened without being broken",
+        "Fiscal space is created by revenue buoyancy and expenditure quality, not by deficit targets alone"
+      ],
+      "prelims_angle": "Deficit definitions and their relationships, budget documents and constitutional provisions, and the FRBM machinery",
+      "traps": [
+        "Confusing fiscal, revenue and primary deficit, which invalidates the argument",
+        "Debating the deficit number without the composition of spending behind it"
+      ],
+      "skeleton": [
+        "Define the deficit measure being discussed",
+        "Revenue side, expenditure composition, financing",
+        "Close on a sequenced consolidation path with a trade-off acknowledged"
+      ],
+      "stems": [
+        { "stem": "Examine why the quality of government expenditure matters more than the size of the fiscal deficit for growth.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Evaluate the effectiveness of India's fiscal rules in constraining the actual borrowing of the general government.", "verb": "evaluate", "paper": "GS3", "marks": 15 }
+      ],
+      "linked": ["taxation-and-gst", "fiscal-federalism", "monetary-policy-and-inflation"],
+      "verify": ["Current deficit figures and targets, with the budget year and document"]
+    },
+    {
+      "id": "taxation-and-gst",
+      "anchor": "Taxation and GST",
+      "aliases": ["GST", "goods and services tax", "direct tax", "tax buoyancy", "tax-to-GDP", "compliance", "customs tariff"],
+      "papers": ["GS3"],
+      "codes": ["GS3.2"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 78,
+      "recency_gap_est": 25,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["LEGISLATION", "REPORT", "EVENT"],
+      "static_core": [
+        "A good tax is judged on buoyancy, equity, compliance cost and neutrality, and reforms trade these against each other",
+        "GST unified the market and moved rate-setting into a joint forum, which is a federal change as much as a fiscal one",
+        "India's low tax-to-GDP ratio is a base and compliance problem before it is a rate problem"
+      ],
+      "prelims_angle": "GST structure and the Council's design, direct tax instruments, and which taxes fall outside the divisible pool",
+      "traps": [
+        "Arguing about rates when the question is about the tax base or the federal design",
+        "Ignoring compliance cost for small firms, where much of the marks sit"
+      ],
+      "skeleton": [
+        "Name the criterion the answer will judge the tax against",
+        "Design, incidence, compliance, federal effect",
+        "Close on base-widening or simplification with the trade-off stated"
+      ],
+      "stems": [
+        { "stem": "Examine the extent to which the goods and services tax has achieved the objectives set for it.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Discuss why India's tax-to-GDP ratio remains low and what would change it.", "verb": "discuss", "paper": "GS3", "marks": 10 }
+      ],
+      "linked": ["fiscal-federalism", "government-budgeting-and-fiscal-policy", "industrial-policy-and-manufacturing"],
+      "verify": ["Current tax-to-GDP ratio and GST collection figures with the year and source"]
+    },
+    {
+      "id": "banking-and-financial-stability",
+      "anchor": "Banking and financial stability",
+      "aliases": ["NPA", "bad loans", "insolvency", "IBC", "bank recapitalisation", "shadow banking", "financial inclusion", "banking sector"],
+      "papers": ["GS3"],
+      "codes": ["GS3.1"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 78,
+      "recency_gap_est": 25,
+      "verbs": ["examine", "critically examine", "discuss"],
+      "trigger_types": ["REPORT", "LEGISLATION", "EVENT"],
+      "static_core": [
+        "Asset quality problems originate in credit appraisal and in the business cycle, and resolution machinery only handles the consequence",
+        "The insolvency framework changed the incentive by shifting control away from the defaulting promoter",
+        "Financial inclusion is measured by usage, not by accounts opened"
+      ],
+      "prelims_angle": "Regulatory architecture and the resolution machinery, asset classification norms, and inclusion instruments",
+      "traps": [
+        "Treating recapitalisation as a solution to an appraisal problem",
+        "Citing an NPA ratio without the date and the category it refers to"
+      ],
+      "skeleton": [
+        "Separate origin, recognition and resolution",
+        "Institution responsible at each stage",
+        "Close on governance or appraisal, not on more capital"
+      ],
+      "stems": [
+        { "stem": "Critically examine whether the insolvency framework has addressed the underlying causes of stressed assets in Indian banking.", "verb": "critically examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Examine the difference between access to and usage of formal financial services in India.", "verb": "examine", "paper": "GS3", "marks": 10 }
+      ],
+      "linked": ["monetary-policy-and-inflation", "government-budgeting-and-fiscal-policy", "cyber-security-and-financial-crime"],
+      "verify": ["Current gross NPA ratio with the RBI publication and date", "Insolvency recovery rates with source"]
+    },
+    {
+      "id": "monetary-policy-and-inflation",
+      "anchor": "Monetary policy and inflation",
+      "aliases": ["inflation targeting", "MPC", "repo rate", "liquidity", "CPI", "external sector", "rupee"],
+      "papers": ["GS3"],
+      "codes": ["GS3.1"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 76,
+      "recency_gap_est": 30,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["EVENT", "REPORT"],
+      "static_core": [
+        "The framework is statutory: a committee, a target and an accountability requirement when the target is missed",
+        "Food and fuel shocks are supply-side, and monetary policy addresses them only through expectations",
+        "Policy operates under the open-economy constraint, so capital flows and the exchange rate limit the room available"
+      ],
+      "prelims_angle": "Monetary policy committee composition and mandate, instrument definitions, and which index the target uses",
+      "traps": [
+        "Prescribing rate action for a supply shock without saying why it would work",
+        "Ignoring the external constraint in an open-economy question"
+      ],
+      "skeleton": [
+        "State the framework and the target",
+        "Source of the current inflation, transmission channel, constraint",
+        "Close on the policy mix rather than on a single instrument"
+      ],
+      "stems": [
+        { "stem": "Examine the limits of inflation targeting when price pressure originates in food and energy supply.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Discuss how capital flows constrain the conduct of monetary policy in India.", "verb": "discuss", "paper": "GS3", "marks": 10 }
+      ],
+      "linked": ["banking-and-financial-stability", "government-budgeting-and-fiscal-policy", "energy-transition"],
+      "verify": ["Current inflation target band, its review date, and the latest print with the index"]
+    },
+    {
+      "id": "agriculture-msp-and-marketing",
+      "anchor": "Agriculture, MSP and marketing reform",
+      "aliases": ["MSP", "minimum support price", "price support", "agricultural marketing", "APMC", "farm laws", "irrigation", "cropping pattern", "farm credit", "FPO"],
+      "papers": ["GS3"],
+      "codes": ["GS3.3"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 86,
+      "recency_gap_est": 15,
+      "verbs": ["examine", "critically examine", "discuss", "evaluate"],
+      "trigger_types": ["LEGISLATION", "EVENT", "REPORT"],
+      "static_core": [
+        "Price support, procurement and marketing regulation are three separate instruments that answers routinely merge",
+        "Support concentrated in a few crops and regions distorts cropping patterns and groundwater use together",
+        "Agriculture is a state subject, which is why national marketing reform is constitutionally and politically hard"
+      ],
+      "prelims_angle": "How MSP is recommended and by which body, procurement machinery, and the statutory basis of market regulation",
+      "traps": [
+        "Discussing MSP as though it were universal in coverage",
+        "Ignoring the federal question in a marketing-reform answer"
+      ],
+      "skeleton": [
+        "Separate price, procurement and market access",
+        "Distortion created, who bears it, what the alternative instrument is",
+        "Close on sequencing with the state role named"
+      ],
+      "stems": [
+        { "stem": "Critically examine the effect of price support concentrated in a few crops on cropping patterns and resource use.", "verb": "critically examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Evaluate the constitutional and political obstacles to national agricultural marketing reform.", "verb": "evaluate", "paper": "GS3", "marks": 15 }
+      ],
+      "linked": ["food-security-and-pds", "water-resources-and-irrigation", "inclusive-growth-and-employment"],
+      "verify": ["Share of farmers selling at MSP, with the survey and year", "Current procurement volumes by crop"]
+    },
+    {
+      "id": "food-security-and-pds",
+      "anchor": "Food security and the PDS",
+      "aliases": ["PDS", "public distribution system", "food security act", "nutrition", "buffer stock", "malnutrition", "fortification", "hunger"],
+      "papers": ["GS2", "GS3"],
+      "codes": ["GS3.3", "GS2.6"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 76,
+      "recency_gap_est": 30,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["LEGISLATION", "REPORT", "EVENT"],
+      "static_core": [
+        "Food security has four dimensions: availability, access, utilisation and stability, and India's record differs across all four",
+        "Cereal availability has been solved far better than nutritional utilisation, which is why hunger indicators lag production",
+        "The statutory entitlement converted the PDS from a scheme to a right, changing what a court can enforce"
+      ],
+      "prelims_angle": "Statutory entitlement design, buffer norms and the agency holding them, and nutrition mission architecture",
+      "traps": [
+        "Answering availability when the question is about nutrition",
+        "Citing an international hunger ranking without engaging its methodology"
+      ],
+      "skeleton": [
+        "Name which dimension the question targets",
+        "Entitlement, delivery, outcome",
+        "Close on nutrition or on portability, with a named instrument"
+      ],
+      "stems": [
+        { "stem": "Examine why improvements in food availability have not translated into proportionate gains in nutritional outcomes in India.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Discuss the significance of portability of entitlements for migrant food security.", "verb": "discuss", "paper": "GS3", "marks": 10 }
+      ],
+      "linked": ["agriculture-msp-and-marketing", "welfare-schemes-and-vulnerable-sections", "poverty-and-inequality"],
+      "verify": ["Latest nutrition survey indicators with the round", "Current buffer stock norms and holdings"]
+    },
+    {
+      "id": "water-resources-and-irrigation",
+      "anchor": "Water resources and irrigation",
+      "aliases": ["groundwater", "irrigation", "river linking", "water pricing", "interstate water dispute", "watershed"],
+      "papers": ["GS1", "GS3"],
+      "codes": ["GS3.3", "GS1.9"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 72,
+      "recency_gap_est": 35,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["EVENT", "REPORT", "JUDGMENT"],
+      "static_core": [
+        "Groundwater is the main source of Indian irrigation and is governed as private property attached to land, which is the root of over-extraction",
+        "Water is a state subject with interstate rivers under a separate dispute mechanism, so the institutional map is fragmented",
+        "Pricing and cropping incentives drive use more than awareness campaigns do"
+      ],
+      "prelims_angle": "Constitutional placement and dispute machinery, basin geography, and the institutions measuring groundwater",
+      "traps": [
+        "Recommending efficiency technology without addressing the pricing incentive",
+        "Ignoring the federal dispute mechanism in an interstate question"
+      ],
+      "skeleton": [
+        "Quantify the extraction problem with a source",
+        "Property rights, pricing, cropping incentive, institution",
+        "Close on the incentive change, not on awareness"
+      ],
+      "stems": [
+        { "stem": "Critically examine why groundwater regulation in India has failed, and what would change extraction behaviour.", "verb": "critically examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Discuss the adequacy of India's institutional mechanism for resolving interstate river disputes.", "verb": "discuss", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["agriculture-msp-and-marketing", "environment-clearance-and-eia", "monsoon-and-climatology"],
+      "verify": ["Groundwater extraction stage figures with the assessment year and agency"]
+    },
+    {
+      "id": "infrastructure-and-ppp",
+      "anchor": "Infrastructure and PPP models",
+      "aliases": ["PPP", "public private partnership", "logistics", "ports", "railways", "highways", "asset monetisation", "land acquisition"],
+      "papers": ["GS3"],
+      "codes": ["GS3.4"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 72,
+      "recency_gap_est": 30,
+      "verbs": ["examine", "discuss", "critically examine", "evaluate"],
+      "trigger_types": ["EVENT", "REPORT", "LEGISLATION"],
+      "static_core": [
+        "A PPP allocates risk, and it fails when risk is assigned to the party least able to price it",
+        "Contract renegotiation frequency is the practical test of whether a model works",
+        "Logistics cost is a systems problem across modes, not a deficiency of any single mode"
+      ],
+      "prelims_angle": "PPP model types and their risk allocation, institutional machinery for appraisal, and monetisation instruments",
+      "traps": [
+        "Listing PPP models without the risk-allocation logic that distinguishes them",
+        "Treating land acquisition as an administrative delay rather than a rights question"
+      ],
+      "skeleton": [
+        "Name the risk being allocated",
+        "Model, incentive, failure mode, evidence",
+        "Close on contract design or on an appraisal institution"
+      ],
+      "stems": [
+        { "stem": "Examine why public-private partnerships in Indian infrastructure have frequently required renegotiation.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Evaluate asset monetisation as an instrument for financing infrastructure.", "verb": "evaluate", "paper": "GS3", "marks": 15 }
+      ],
+      "linked": ["industrial-policy-and-manufacturing", "urbanisation", "energy-transition"],
+      "verify": ["Logistics cost as a share of GDP, with the study and year, since this figure is widely misquoted"]
+    },
+    {
+      "id": "energy-transition",
+      "anchor": "Energy transition",
+      "aliases": ["renewable energy", "coal", "green hydrogen", "grid", "energy security", "storage", "net zero"],
+      "papers": ["GS3"],
+      "codes": ["GS3.4", "GS3.5"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 80,
+      "recency_gap_est": 20,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["EVENT", "REPORT", "LEGISLATION"],
+      "static_core": [
+        "The transition is a sequencing problem: generation capacity is the easy part, and storage, grid and distribution finance are the constraints",
+        "Distribution company finances determine whether renewable capacity is actually absorbed",
+        "Just transition is a labour and regional question in coal-dependent districts, not only an emissions question"
+      ],
+      "prelims_angle": "Capacity and target architecture, institutional roles in the power sector, and the instruments for storage and hydrogen",
+      "traps": [
+        "Reporting installed capacity as though it were generation",
+        "Omitting the distribution utility, where the transition actually stalls"
+      ],
+      "skeleton": [
+        "State the constraint, not the target",
+        "Generation, grid, storage, distribution finance, labour",
+        "Close on the sequencing with the trade-off acknowledged"
+      ],
+      "stems": [
+        { "stem": "Examine the constraints that determine how quickly India can absorb renewable generation capacity.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Discuss what a just transition would require in India's coal-dependent districts.", "verb": "discuss", "paper": "GS3", "marks": 15 }
+      ],
+      "linked": ["climate-negotiations", "infrastructure-and-ppp", "resource-distribution-and-industrial-location"],
+      "verify": ["Current installed capacity mix and generation share separately, with the year and source"]
+    },
+    {
+      "id": "industrial-policy-and-manufacturing",
+      "anchor": "Industrial policy and manufacturing",
+      "aliases": ["manufacturing", "MSME", "PLI", "industrial policy", "value chain", "ease of doing business", "import substitution"],
+      "papers": ["GS3"],
+      "codes": ["GS3.4", "GS3.1"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 74,
+      "recency_gap_est": 30,
+      "verbs": ["examine", "critically examine", "discuss"],
+      "trigger_types": ["EVENT", "REPORT", "LEGISLATION"],
+      "static_core": [
+        "Manufacturing's share of output and employment has not risen as the standard development path predicted, which is the puzzle to explain",
+        "Incentive-based industrial policy has to be judged on additionality: what would not have happened without it",
+        "Scale is blocked by regulation, credit and land, and MSMEs stay small partly by choice of remaining below thresholds"
+      ],
+      "prelims_angle": "Incentive scheme design and sectors covered, MSME classification, and the institutions administering industrial policy",
+      "traps": [
+        "Assessing an incentive scheme by amounts disbursed rather than by additional output or exports",
+        "Discussing manufacturing without the scale and factor-market constraints"
+      ],
+      "skeleton": [
+        "State the structural anomaly to be explained",
+        "Factor markets, scale, incentives, external demand",
+        "Close on the binding constraint with one comparative example"
+      ],
+      "stems": [
+        { "stem": "Critically examine incentive-based industrial policy in India against the test of additionality.", "verb": "critically examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Examine why Indian firms remain small, and what that means for manufacturing employment.", "verb": "examine", "paper": "GS3", "marks": 15 }
+      ],
+      "linked": ["inclusive-growth-and-employment", "taxation-and-gst", "science-tech-and-indigenisation"],
+      "verify": ["Manufacturing share of GVA and of employment, separately, with the year and source"]
+    },
+    {
+      "id": "science-tech-and-indigenisation",
+      "anchor": "Science, technology and indigenisation",
+      "aliases": ["space", "nuclear", "biotechnology", "semiconductor", "IPR", "defence indigenisation", "research funding"],
+      "papers": ["GS3"],
+      "codes": ["GS3.6"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 74,
+      "recency_gap_est": 25,
+      "verbs": ["discuss", "examine", "critically examine"],
+      "trigger_types": ["EVENT", "LEGISLATION", "REPORT"],
+      "static_core": [
+        "Capability, ecosystem and absorption are three different things, and indigenisation requires all three",
+        "Research intensity and the private share of research spending are the structural indicators, not mission announcements",
+        "Intellectual property policy trades incentive for access, and India's positions on that trade-off are long-standing"
+      ],
+      "prelims_angle": "Institutional map of scientific agencies, mission names and mandates, and the intellectual property framework",
+      "traps": [
+        "Listing achievements instead of assessing capability",
+        "Confusing assembly with indigenous manufacture in a self-reliance answer"
+      ],
+      "skeleton": [
+        "Distinguish capability from ecosystem in the opening",
+        "Research funding, talent, procurement, absorption",
+        "Close on the ecosystem instrument, not on a new mission"
+      ],
+      "stems": [
+        { "stem": "Examine the difference between technological capability and a technological ecosystem, with reference to India's indigenisation efforts.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Discuss the trade-offs in India's intellectual property policy between innovation incentive and access.", "verb": "discuss", "paper": "GS3", "marks": 10 }
+      ],
+      "linked": ["digital-public-infrastructure-and-ai", "industrial-policy-and-manufacturing", "resource-distribution-and-industrial-location"],
+      "verify": ["Gross expenditure on research as a share of GDP, with year and source"]
+    },
+    {
+      "id": "digital-public-infrastructure-and-ai",
+      "anchor": "Digital public infrastructure and AI governance",
+      "aliases": ["DPI", "artificial intelligence", "AI", "AI governance", "AI in public administration", "privacy", "due process", "data protection", "algorithmic accountability", "digital divide", "platform regulation", "deepfake"],
+      "papers": ["GS2", "GS3"],
+      "codes": ["GS3.6", "GS2.5"],
+      "band": "emerging",
+      "recurrence": "frequent",
+      "frequency_est": 72,
+      "recency_gap_est": 45,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["LEGISLATION", "EVENT", "JUDGMENT"],
+      "static_core": [
+        "Digital public infrastructure is a set of interoperable rails; the governance question is who sets the rules for them and who is accountable when they fail",
+        "Privacy is a fundamental right subject to a proportionality test, which is the standard any data regime must satisfy",
+        "Automated decisions in administration create an accountability gap, because a reasoned decision cannot be given for a model output"
+      ],
+      "prelims_angle": "Architecture of the identity, payment and data-sharing layers, the data protection framework, and the institutions regulating platforms",
+      "traps": [
+        "Writing about technology capability when the question asks about governance",
+        "Asserting a right to explanation that Indian law may not yet provide"
+      ],
+      "skeleton": [
+        "Name the harm and the decision-maker responsible for it",
+        "Rights, proportionality, institutional capacity, redress",
+        "Close on an accountability mechanism, not on innovation"
+      ],
+      "stems": [
+        { "stem": "Examine the accountability problems created by automated decision-making in public service delivery.", "verb": "examine", "paper": "GS2", "marks": 15 },
+        { "stem": "Critically examine whether India's data protection framework meets the proportionality standard set by the Supreme Court.", "verb": "critically examine", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["e-governance-and-service-delivery", "ethics-of-technology-in-administration", "cyber-security-and-financial-crime"],
+      "verify": ["Current status of data protection rules and the regulator's constitution"]
+    },
+    {
+      "id": "environment-clearance-and-eia",
+      "anchor": "Environmental clearance and EIA",
+      "aliases": ["EIA", "environmental impact assessment", "environmental clearance", "green tribunal", "NGT", "polluter pays", "precautionary principle", "pollution control"],
+      "papers": ["GS2", "GS3"],
+      "codes": ["GS3.5", "GS2.5"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 76,
+      "recency_gap_est": 25,
+      "verbs": ["critically examine", "examine", "discuss"],
+      "trigger_types": ["LEGISLATION", "JUDGMENT", "EVENT"],
+      "static_core": [
+        "The regime rests on the Environment (Protection) Act 1986 and rules notified under it, which is why changes arrive as notifications rather than as amendments",
+        "Indian courts have read the precautionary principle and polluter pays into environmental law as part of Article 21 jurisprudence",
+        "Appraisal quality, monitoring capacity and post-clearance compliance are three separate failures often argued as one"
+      ],
+      "prelims_angle": "Clearance categories and appraisal machinery, the tribunal's jurisdiction, and pollution control board structure",
+      "traps": [
+        "Framing this as environment against development instead of examining appraisal quality",
+        "Ignoring post-clearance monitoring, where the record is weakest"
+      ],
+      "skeleton": [
+        "State the statutory basis and who exercises discretion",
+        "Appraisal, public consultation, monitoring, enforcement",
+        "Close on capacity or on the judicial standard"
+      ],
+      "stems": [
+        { "stem": "Critically examine whether the environmental clearance process in India secures the objectives of the statute it flows from.", "verb": "critically examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Examine the role of the National Green Tribunal in shaping environmental compliance.", "verb": "examine", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["biodiversity-and-forest-rights", "climate-negotiations", "judicial-review-and-activism"],
+      "verify": ["The current clearance notification in force and what it changed", "Recent tribunal judgments and their exact holdings"]
+    },
+    {
+      "id": "climate-negotiations",
+      "anchor": "Climate change negotiations and commitments",
+      "aliases": ["COP", "NDC", "climate finance", "net zero", "loss and damage", "common but differentiated", "adaptation"],
+      "papers": ["GS2", "GS3"],
+      "codes": ["GS3.5", "GS2.9"],
+      "band": "high",
+      "recurrence": "near-annual",
+      "frequency_est": 84,
+      "recency_gap_est": 15,
+      "verbs": ["examine", "critically examine", "discuss"],
+      "trigger_types": ["EVENT", "REPORT"],
+      "static_core": [
+        "India's negotiating position rests on differentiated responsibility, per capita equity and the finance and technology conditionality",
+        "Adaptation is the domestic priority and mitigation is the international demand, and answers should not conflate the two",
+        "Commitments are made in national contributions and delivered through domestic sectoral policy, which is where the gap appears"
+      ],
+      "prelims_angle": "Convention and agreement architecture, contribution and review cycles, and the finance mechanisms and their institutions",
+      "traps": [
+        "Quoting a target without the base year and the metric, which changes its meaning entirely",
+        "Treating adaptation finance and mitigation finance as interchangeable"
+      ],
+      "skeleton": [
+        "State India's stated position and its basis",
+        "International demand, domestic constraint, finance gap",
+        "Close on adaptation capacity or on a sectoral delivery instrument"
+      ],
+      "stems": [
+        { "stem": "Examine the consistency between India's international climate commitments and its domestic sectoral policy.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Critically examine the adequacy of international climate finance for adaptation needs in developing countries.", "verb": "critically examine", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["energy-transition", "environment-clearance-and-eia", "multilateral-groupings-and-reform"],
+      "verify": ["India's current contribution targets with base years and metrics, from the official submission"]
+    },
+    {
+      "id": "biodiversity-and-forest-rights",
+      "anchor": "Biodiversity, forests and community rights",
+      "aliases": ["forest rights act", "biodiversity", "protected areas", "wildlife", "compensatory afforestation", "human wildlife conflict", "wetlands"],
+      "papers": ["GS3", "GS1"],
+      "codes": ["GS3.5", "GS1.5"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 72,
+      "recency_gap_est": 30,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["LEGISLATION", "JUDGMENT", "REPORT"],
+      "static_core": [
+        "Conservation and community rights are reconciled in law by recognising forest dwellers' rights alongside protection, and the friction is in implementation",
+        "Forest cover definitions include plantations, so cover statistics and ecosystem quality diverge",
+        "International biodiversity obligations run through access and benefit-sharing machinery at the local level"
+      ],
+      "prelims_angle": "Protected area categories, rights recognition machinery under the forest rights statute, and international biodiversity instruments",
+      "traps": [
+        "Treating forest cover as a proxy for ecological health",
+        "Framing forest dwellers as an obstacle to conservation rather than as rights holders"
+      ],
+      "skeleton": [
+        "State the statutory reconciliation, then where it breaks",
+        "Rights recognition, conservation objective, livelihood, enforcement",
+        "Close on the local institution the law already designates"
+      ],
+      "stems": [
+        { "stem": "Examine how Indian law reconciles forest conservation with the recognition of community rights, and where implementation falls short.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Discuss why forest cover statistics can rise while ecosystem quality declines.", "verb": "discuss", "paper": "GS3", "marks": 10 }
+      ],
+      "linked": ["caste-and-social-empowerment", "environment-clearance-and-eia", "water-resources-and-irrigation"],
+      "verify": ["Latest forest cover figures with the report and the definition used", "Rights recognition claim and title statistics"]
+    },
+    {
+      "id": "disaster-management",
+      "anchor": "Disaster management",
+      "aliases": ["disaster management", "NDMA", "urban flooding", "cyclone preparedness", "heat wave", "early warning", "resilience"],
+      "papers": ["GS3"],
+      "codes": ["GS3.7"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 76,
+      "recency_gap_est": 25,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["EVENT", "LEGISLATION", "REPORT"],
+      "static_core": [
+        "The statutory framework under the Disaster Management Act 2005 created a national, state and district structure with a mitigation mandate",
+        "The shift the syllabus tests is from relief and response to prevention and mitigation, which requires land use and building enforcement",
+        "Early warning saves lives; exposure reduction saves assets; India has done far better on the first"
+      ],
+      "prelims_angle": "Institutional structure and funds under the statute, hazard classification, and which agency issues which warning",
+      "traps": [
+        "Answering the specific event instead of the response framework",
+        "Recommending awareness where the failure is enforcement of building or zoning rules"
+      ],
+      "skeleton": [
+        "Separate hazard from vulnerability in the opening",
+        "Prevention, mitigation, preparedness, response, recovery",
+        "Close on the enforcement or financing instrument"
+      ],
+      "stems": [
+        { "stem": "Examine why India's disaster record has improved on mortality but not on economic loss.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Critically examine the shift from relief-centric to mitigation-centric disaster management in India.", "verb": "critically examine", "paper": "GS3", "marks": 15 }
+      ],
+      "linked": ["geophysical-phenomena", "urbanisation", "climate-negotiations"],
+      "verify": ["Disaster loss figures with the reporting agency and period"]
+    },
+    {
+      "id": "internal-security-and-extremism",
+      "anchor": "Internal security and extremism",
+      "aliases": ["left wing extremism", "insurgency", "border management", "terrorism", "police reform", "AFSPA", "radicalisation"],
+      "papers": ["GS3"],
+      "codes": ["GS3.8"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 78,
+      "recency_gap_est": 25,
+      "verbs": ["examine", "discuss", "critically examine", "analyse"],
+      "trigger_types": ["EVENT", "LEGISLATION", "JUDGMENT"],
+      "static_core": [
+        "Internal security failures are of three distinct kinds: capacity, coordination and legal framework, and treating them as one blur is the standard weak answer",
+        "Extremism has a development dimension and a security dimension, and the sequencing between them is the real policy question",
+        "Policing is a state subject, which is why central schemes cannot substitute for state police capacity"
+      ],
+      "prelims_angle": "Force structure and the agencies with jurisdiction, statutory framework for special powers, and border management responsibility",
+      "traps": [
+        "Recommending development as a general answer without the security sequencing",
+        "Ignoring the federal division that determines who can actually act"
+      ],
+      "skeleton": [
+        "Separate capacity, coordination and legal framework",
+        "Assess each with a named institution",
+        "Close on the sequencing between development and security"
+      ],
+      "stems": [
+        { "stem": "Analyse internal security challenges in India in terms of capacity, coordination and legal framework failures.", "verb": "analyse", "paper": "GS3", "marks": 15 },
+        { "stem": "Examine the sequencing between development interventions and security operations in areas affected by extremism.", "verb": "examine", "paper": "GS3", "marks": 15 }
+      ],
+      "linked": ["cyber-security-and-financial-crime", "india-neighbourhood", "caste-and-social-empowerment"],
+      "verify": ["Current status of affected districts and incident statistics with the ministry report and year"]
+    },
+    {
+      "id": "cyber-security-and-financial-crime",
+      "anchor": "Cyber security and financial crime",
+      "aliases": ["cyber security", "money laundering", "critical infrastructure", "PMLA", "terror financing", "data breach", "crypto"],
+      "papers": ["GS3"],
+      "codes": ["GS3.9"],
+      "band": "emerging",
+      "recurrence": "frequent",
+      "frequency_est": 70,
+      "recency_gap_est": 40,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["EVENT", "LEGISLATION", "JUDGMENT"],
+      "static_core": [
+        "Cyber security is an institutional problem before a technical one: attribution, response authority and reporting duties all need a legal home",
+        "Critical infrastructure protection requires mandatory incident reporting, which conflicts with reputational incentives to stay silent",
+        "Financial crime enforcement turns on the balance between investigative powers and procedural safeguards"
+      ],
+      "prelims_angle": "Nodal agencies and their mandates, statutory basis for interception and reporting, and the anti-money-laundering machinery",
+      "traps": [
+        "Describing attack types rather than governance failures",
+        "Ignoring the civil liberties side when the trigger is an enforcement power"
+      ],
+      "skeleton": [
+        "Name the asset and who is responsible for defending it",
+        "Legal framework, institutional capacity, reporting incentive, international cooperation",
+        "Close on the institutional gap with a safeguard attached"
+      ],
+      "stems": [
+        { "stem": "Examine the institutional gaps in India's protection of critical information infrastructure.", "verb": "examine", "paper": "GS3", "marks": 15 },
+        { "stem": "Critically examine the balance between investigative powers and procedural safeguards in India's anti-money-laundering regime.", "verb": "critically examine", "paper": "GS3", "marks": 15 }
+      ],
+      "linked": ["digital-public-infrastructure-and-ai", "internal-security-and-extremism", "banking-and-financial-stability"],
+      "verify": ["Reported incident volumes with the agency and year", "Current status of judgments on enforcement powers"]
+    },
+    {
+      "id": "ethics-and-human-interface",
+      "anchor": "Ethics and human interface",
+      "aliases": ["ethics", "morality", "consequences of ethics", "attitude", "values", "persuasion", "social influence"],
+      "papers": ["GS4"],
+      "codes": ["GS4.1", "GS4.2"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 84,
+      "recency_gap_est": 15,
+      "verbs": ["discuss", "examine", "elucidate", "illustrate"],
+      "trigger_types": ["PERENNIAL", "EVENT"],
+      "static_core": [
+        "The paper tests application, so every definition must be followed by an administrative illustration",
+        "Ethics, morality and law overlap but diverge, and naming where they diverge is what earns the marks",
+        "Attitude has cognitive, affective and behavioural components, and administrative interventions target different ones"
+      ],
+      "prelims_angle": "Not applicable; this anchor is examined only in the Mains ethics paper",
+      "traps": [
+        "A definition with no application to administration, which is half an answer",
+        "Decorative quotation that does no argumentative work"
+      ],
+      "skeleton": [
+        "Definition in one line, no throat-clearing",
+        "Dimensions, then a real or plausible administrative example",
+        "Close on the implication for an officer's conduct"
+      ],
+      "stems": [
+        { "stem": "Elucidate the distinction between ethics and law, and illustrate a situation where an administrator must choose between them.", "verb": "elucidate", "paper": "GS4", "marks": 10 },
+        { "stem": "Discuss how attitudes are formed and what that implies for changing public behaviour through administration.", "verb": "discuss", "paper": "GS4", "marks": 10 }
+      ],
+      "linked": ["foundational-values-and-emotional-intelligence", "probity-and-corruption", "case-study-method"],
+      "verify": ["Any quotation attributed to a thinker, before using it"]
+    },
+    {
+      "id": "foundational-values-and-emotional-intelligence",
+      "anchor": "Foundational values and emotional intelligence",
+      "aliases": ["integrity", "impartiality", "objectivity", "empathy", "emotional intelligence", "dedication to public service", "tolerance"],
+      "papers": ["GS4"],
+      "codes": ["GS4.3", "GS4.5"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 82,
+      "recency_gap_est": 15,
+      "verbs": ["discuss", "examine", "illustrate"],
+      "trigger_types": ["PERENNIAL"],
+      "static_core": [
+        "Each foundational value has a failure mode, and the strongest answers define the value by what its absence looks like in office",
+        "Emotional intelligence is a competence in perceiving and regulating emotion, not a synonym for kindness",
+        "Values conflict in practice: impartiality against compassion, and the officer's task is a graded response rather than a choice of camp"
+      ],
+      "prelims_angle": "Not applicable; examined in the Mains ethics paper",
+      "traps": [
+        "Listing values without a conflict, when the conflict is the question",
+        "Describing empathy as a feeling instead of as a decision-making input"
+      ],
+      "skeleton": [
+        "Name the value and its failure mode",
+        "One administrative situation where it is tested",
+        "Show the graded response, not the heroic one"
+      ],
+      "stems": [
+        { "stem": "Examine why emotional intelligence is considered a competence rather than a personality trait for civil servants.", "verb": "examine", "paper": "GS4", "marks": 10 },
+        { "stem": "Illustrate how the values of impartiality and compassion may conflict in field administration, and how you would resolve it.", "verb": "illustrate", "paper": "GS4", "marks": 15 }
+      ],
+      "linked": ["ethics-and-human-interface", "civil-services-reform", "case-study-method"],
+      "verify": ["Names of any code of conduct or rule cited"]
+    },
+    {
+      "id": "moral-thinkers-and-philosophers",
+      "anchor": "Moral thinkers and philosophers",
+      "aliases": ["moral thinkers", "philosophers", "Gandhi ethics", "Kant", "utilitarianism", "virtue ethics", "Ambedkar", "Kautilya"],
+      "papers": ["GS4"],
+      "codes": ["GS4.4"],
+      "band": "high",
+      "recurrence": "frequent",
+      "frequency_est": 68,
+      "recency_gap_est": 30,
+      "verbs": ["discuss", "examine", "comment", "illustrate"],
+      "trigger_types": ["PERENNIAL"],
+      "static_core": [
+        "A thinker is useful in this paper only through the administrative application of their core idea",
+        "The three standard frames are duty-based, consequence-based and character-based, and most dilemmas can be read through all three",
+        "Indian thinkers offer means-ends and social-justice arguments that map directly onto administrative practice"
+      ],
+      "prelims_angle": "Not applicable; examined in the Mains ethics paper",
+      "traps": [
+        "Attributing a quotation to the wrong thinker, which reads worse than not quoting at all",
+        "Explaining the philosophy without the administrative application"
+      ],
+      "skeleton": [
+        "Thinker, core idea in one line",
+        "The administrative application, concretely",
+        "Contrast with one other frame to show judgement"
+      ],
+      "stems": [
+        { "stem": "Discuss how a duty-based and a consequence-based reading would differ in evaluating an administrative decision taken under emergency.", "verb": "discuss", "paper": "GS4", "marks": 15 },
+        { "stem": "Comment on the administrative relevance of the insistence on purity of means in public life.", "verb": "comment", "paper": "GS4", "marks": 10 }
+      ],
+      "linked": ["ethics-and-human-interface", "case-study-method", "probity-and-corruption"],
+      "verify": ["Every quotation and its attribution, without exception"]
+    },
+    {
+      "id": "probity-and-corruption",
+      "anchor": "Probity in governance and corruption",
+      "aliases": ["probity", "corruption", "conflict of interest", "code of conduct", "code of ethics", "whistleblower", "citizen charter", "integrity"],
+      "papers": ["GS2", "GS4"],
+      "codes": ["GS4.6", "GS2.5"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 84,
+      "recency_gap_est": 15,
+      "verbs": ["examine", "discuss", "critically examine"],
+      "trigger_types": ["LEGISLATION", "REPORT", "EVENT"],
+      "static_core": [
+        "A code of ethics states values while a code of conduct states prohibited acts, and confusing the two is the most common error here",
+        "Corruption responds to opportunity, monopoly and discretion, so structural remedies beat exhortation",
+        "Probity institutions need protection for the person who reports, otherwise disclosure mechanisms stay unused"
+      ],
+      "prelims_angle": "Anti-corruption institutional machinery and statutory basis, whistleblower and grievance provisions, and citizen charter design",
+      "traps": [
+        "Moralising instead of naming the structural opportunity that produced the corruption",
+        "Recommending a new institution when the existing one lacks appointment or funding independence"
+      ],
+      "skeleton": [
+        "Define the specific integrity failure",
+        "Opportunity, discretion, detection, sanction",
+        "Close on a structural change with the institution named"
+      ],
+      "stems": [
+        { "stem": "Examine why codes of conduct alone have limited effect on corruption, and what structural measures complement them.", "verb": "examine", "paper": "GS4", "marks": 15 },
+        { "stem": "Critically examine the adequacy of protection available to those who report wrongdoing in public office.", "verb": "critically examine", "paper": "GS2", "marks": 15 }
+      ],
+      "linked": ["transparency-and-rti", "constitutional-and-statutory-bodies", "civil-services-reform"],
+      "verify": ["Statutory names and the current status of anti-corruption and disclosure legislation"]
+    },
+    {
+      "id": "case-study-method",
+      "anchor": "Ethics case-study method",
+      "aliases": ["case study", "dilemma", "stakeholders", "course of action", "rules versus compassion", "superior pressure", "whistleblowing dilemma"],
+      "papers": ["GS4"],
+      "codes": ["GS4.7"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 88,
+      "recency_gap_est": 10,
+      "verbs": ["discuss", "examine", "evaluate"],
+      "trigger_types": ["PERENNIAL", "EVENT"],
+      "static_core": [
+        "Recurring scenario families: rules against compassion, superior or political pressure, corruption in a colleague, scarce resources between legitimate claims, and technology dilemmas",
+        "Officers decide: an answer that refuses to choose scores poorly however sophisticated its analysis",
+        "Proportionality and feasibility separate a mature response from a heroic one that would end the officer's posting in a week"
+      ],
+      "prelims_angle": "Not applicable; this is the second section of the Mains ethics paper",
+      "traps": [
+        "Sermonising instead of acting: state the value and move to the decision",
+        "Choosing the tempting-but-wrong option without saying why the obvious route fails"
+      ],
+      "skeleton": [
+        "Facts and stakeholders with what each stands to gain or lose",
+        "Ethical issues named precisely, then options with merits, demerits and consequences",
+        "A decisive course of action justified against a value framework, with implementation",
+        "One systemic recommendation to prevent recurrence"
+      ],
+      "stems": [
+        { "stem": "You discover that a scheme benefit is being diverted with the knowledge of a senior colleague. Identify the ethical issues, the options available, and your course of action.", "verb": "discuss", "paper": "GS4", "marks": 20 },
+        { "stem": "A relief allocation must be made between two equally affected communities with insufficient supplies. Examine the ethical dimensions and state your decision.", "verb": "examine", "paper": "GS4", "marks": 20 }
+      ],
+      "linked": ["foundational-values-and-emotional-intelligence", "probity-and-corruption", "ethics-of-technology-in-administration"],
+      "verify": ["Any rule or provision you cite as the basis for the decision"]
+    },
+    {
+      "id": "ethics-of-technology-in-administration",
+      "anchor": "Ethics of technology in administration",
+      "aliases": ["AI ethics", "AI in administration", "surveillance", "privacy ethics", "algorithmic bias", "automated decision", "facial recognition"],
+      "papers": ["GS4"],
+      "codes": ["GS4.6", "GS4.1"],
+      "band": "emerging",
+      "recurrence": "periodic",
+      "frequency_est": 58,
+      "recency_gap_est": 65,
+      "verbs": ["discuss", "examine", "critically examine"],
+      "trigger_types": ["EVENT", "LEGISLATION", "JUDGMENT"],
+      "static_core": [
+        "The newest case-study family in this paper: surveillance, data use and automated decisions in administration",
+        "The ethical problem is accountability for a decision no official can fully explain, which is distinct from the technical problem of accuracy",
+        "Consent is weak where the state is the only provider, so proportionality and purpose limitation carry the ethical weight"
+      ],
+      "prelims_angle": "Not applicable directly; the governance framework is examined in GS2 and GS3",
+      "traps": [
+        "Arguing efficiency against privacy as a binary instead of applying proportionality",
+        "Assuming a technical fix resolves an accountability question"
+      ],
+      "skeleton": [
+        "Name the decision, the subject, and who answers for it",
+        "Proportionality, purpose limitation, redress, human review",
+        "Decide, with a safeguard attached to the decision"
+      ],
+      "stems": [
+        { "stem": "Examine the ethical issues in deploying automated eligibility decisions for welfare benefits.", "verb": "examine", "paper": "GS4", "marks": 15 },
+        { "stem": "Critically examine the use of surveillance technology for public order from the standpoint of administrative ethics.", "verb": "critically examine", "paper": "GS4", "marks": 15 }
+      ],
+      "linked": ["digital-public-infrastructure-and-ai", "case-study-method", "e-governance-and-service-delivery"],
+      "verify": ["The legal position on any specific technology deployment cited"]
+    },
+    {
+      "id": "essay-abstract-and-paradox",
+      "anchor": "Essay: abstract and philosophical",
+      "aliases": ["abstract essay", "paradox", "aphorism", "philosophical essay", "section A essay"],
+      "papers": ["ESSAY"],
+      "codes": ["ESSAY.A"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 80,
+      "recency_gap_est": 20,
+      "verbs": ["do you agree", "comment", "discuss"],
+      "trigger_types": ["PERENNIAL"],
+      "static_core": [
+        "The abstract section rewards conceptual range: history, science, literature and observation pulled into one argument",
+        "The essay is marked on coherence and range, not on information density, which is the most common misunderstanding",
+        "One sustained metaphor across the essay outperforms ten scattered quotations"
+      ],
+      "prelims_angle": "Not applicable; this is the Essay paper",
+      "traps": [
+        "Opening with since time immemorial, which sets the band before the argument starts",
+        "Writing a GS answer at essay length: knowledge without argument scores in the middle"
+      ],
+      "skeleton": [
+        "Open with an anecdote, vignette or paradox that carries the thesis implicitly",
+        "State the thesis explicitly in one sentence",
+        "Four to six movements, each changing the lens: historical, social, economic, ethical, technological",
+        "Steelman the opposing view, answer it, then return to the opening image"
+      ],
+      "stems": [
+        { "stem": "The best decisions are made when certainty is least available. Do you agree?", "verb": "do you agree", "paper": "ESSAY", "marks": 125 },
+        { "stem": "What we choose to measure shapes what we come to value.", "verb": "comment", "paper": "ESSAY", "marks": 125 }
+      ],
+      "linked": ["essay-development-and-society", "moral-thinkers-and-philosophers"],
+      "verify": ["Any statistic used in an essay; a wrong number here is worse than no number"]
+    },
+    {
+      "id": "essay-development-and-society",
+      "anchor": "Essay: socio-economic and policy",
+      "aliases": ["development versus environment", "policy essay", "section B essay", "technology and society", "education essay"],
+      "papers": ["ESSAY"],
+      "codes": ["ESSAY.B"],
+      "band": "perennial",
+      "recurrence": "near-annual",
+      "frequency_est": 80,
+      "recency_gap_est": 20,
+      "verbs": ["discuss", "do you agree", "comment"],
+      "trigger_types": ["PERENNIAL", "REPORT"],
+      "static_core": [
+        "The concrete section rewards policy literacy: data, schemes, trade-offs and a defensible position",
+        "Recurring families are technology and society, women and social change, education, democracy and its discontents, and development against environment",
+        "A position must be taken; a balanced-sounding essay with no thesis lands in the middle band"
+      ],
+      "prelims_angle": "Not applicable; this is the Essay paper",
+      "traps": [
+        "Turning it into a GS3 answer with sub-headings and no argument",
+        "Manufacturing statistics to sound authoritative"
+      ],
+      "skeleton": [
+        "Open on a concrete situation, not on a definition",
+        "State the trade-off the essay will resolve",
+        "Movements across sectors, with one comparative example",
+        "Counterpoint honestly, then close forward-looking without preaching"
+      ],
+      "stems": [
+        { "stem": "Growth that cannot be shared is not development.", "verb": "comment", "paper": "ESSAY", "marks": 125 },
+        { "stem": "Technology changes what is possible; institutions decide who benefits.", "verb": "discuss", "paper": "ESSAY", "marks": 125 }
+      ],
+      "linked": ["essay-abstract-and-paradox", "inclusive-growth-and-employment", "digital-public-infrastructure-and-ai"],
+      "verify": ["Every figure used, against a primary source, before the exam hall"]
+    }
+  ]
+}
