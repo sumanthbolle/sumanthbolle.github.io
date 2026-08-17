@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-18
 
-**Status:** Approved in chat; awaiting written-spec review
+**Status:** Approved
 
 **Product:** `upsc.html` / Anchor
 
@@ -252,17 +252,26 @@ IDs and hashes make ingestion idempotent. Re-published or corrected records reta
 ```json
 {
   "sourceId": "sha256-canonical-url",
+  "sourceContentHash": "sha256-normalized-record",
   "anchor": "fiscal federalism",
   "codes": ["GS2.2", "GS3.2"],
   "papers": ["GS2", "GS3"],
   "whyInNews": "",
+  "staticDefinition": "",
   "background": [],
+  "reusableAnchors": [
+    { "kind": "constitutional", "label": "" }
+  ],
   "officialFacts": [
     {
       "text": "",
       "evidenceUrl": "https://official.example/item",
       "evidenceLocator": "section or page",
-      "verification": "needs-review"
+      "verification": "needs-review",
+      "cloze": {
+        "prompt": "One evidence-backed token replaced by ____",
+        "answer": "the omitted token"
+      }
     }
   ],
   "argumentsFor": [],
@@ -270,7 +279,21 @@ IDs and hashes make ingestion idempotent. Re-published or corrected records reta
   "indiaImplications": [],
   "wayForward": [],
   "prelimsTraps": [],
-  "mainsPractice": [],
+  "mainsPractice": [
+    {
+      "directive": "examine",
+      "marks": 10,
+      "wordBudget": 150,
+      "timeMinutes": 7,
+      "stem": "",
+      "introChoices": [],
+      "bodyDimensions": [],
+      "counterPosition": "",
+      "diagramSuggestion": "",
+      "conclusionPrompt": "",
+      "skeleton": []
+    }
+  ],
   "use": "",
   "recallCard": "",
   "priority": 0,
@@ -280,6 +303,8 @@ IDs and hashes make ingestion idempotent. Re-published or corrected records reta
 ```
 
 The note is valid only with one anchor, one to three recognized codes, a source record, and a non-empty `use` line.
+
+`cloze` is optional and is retained only on a source-backed fact. Its prompt contains exactly one blank, and reconstructing that blank must reproduce wording supported by the cited source locator; the browser never guesses which token to hide.
 
 ### 6.4 Verification states
 
