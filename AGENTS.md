@@ -20,4 +20,5 @@ See [`docs/website-enhancement-review.md`](docs/website-enhancement-review.md) f
 ## Product sources of truth
 
 - **SkyFare** — [`docs/skyfare-product-handover.md`](docs/skyfare-product-handover.md) (vision, Value Score, Summaverick integration, Phase 1–3 roadmap).
+- **Anchor (UPSC tool)** — [`docs/upsc-anchor-handover.md`](docs/upsc-anchor-handover.md) (examinability filter, provisional scoring, verification gate, retrieval schedule, known limits).
 - **ServiceNow research domain pack** — [`research-agent/README.md`](research-agent/README.md) (Fluent SDK + ServiceNowDocs + optional read-only instance layer for Summaverick).
