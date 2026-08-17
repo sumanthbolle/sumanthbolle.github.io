@@ -8,6 +8,9 @@
  *                         body: { origin, destination, departureDate, ... }
  *   POST /flights/inspire — Summaverick destination ideas for SkyFare;
  *                         body: { query, origin?, currency? }
+ *   GET  /upsc/brief    — Anchor study tool: daily / weekly UPSC current-affairs
+ *                         brief, filtered, scored and verification-gated
+ *   POST /upsc/topic    — Anchor topic lookup; body: { topic, paper? }
  *   GET  /trending      — landing-page widgets (news / market / tech),
  *                         country-aware via cf.country (or ?country=XX override),
  *                         cached per country in Cloudflare Cache API
@@ -38,6 +41,15 @@ import {
   classifyServiceNowIntent,
   serviceNowSearchHint,
 } from './servicenow-domain.js';
+
+import {
+  upscScope,
+  upscScopeConfig,
+  buildUpscBriefPayload,
+  buildUpscTopicPayload,
+  normalizeUpscBrief,
+  normalizeUpscTopic,
+} from './upsc.js';
 
 const SYSTEM_PROMPT = `You are Summaverick, a general-purpose AI research assistant. You answer questions on any topic — world news, science, technology, business, culture, code, careers, personal decisions, and everyday curiosity — by synthesizing real sources into clear, grounded answers.
 
@@ -114,8 +126,16 @@ export default {
       return handleMetals(request, ctx, origin);
     }
 
+    if (request.method === 'GET' && url.pathname === '/upsc/brief') {
+      return handleUpscBrief(request, env, ctx, origin);
+    }
+
     if (request.method !== 'POST') {
       return new Response('Method not allowed', { status: 405 });
+    }
+
+    if (url.pathname === '/upsc/topic') {
+      return handleUpscTopic(request, env, origin);
     }
 
     if (url.pathname === '/flights') {
@@ -646,6 +666,130 @@ async function handleServiceNowFeed(request, env, ctx, origin) {
   }
 
   return jsonResponseRaw(responseBody, origin, { 'X-Summaverick-Cache': 'MISS' });
+}
+
+/* ───────────────── Anchor — UPSC study tool ─────────────────
+ * GET  /upsc/brief?scope=daily|weekly
+ * POST /upsc/topic   body: { topic, paper? }
+ *
+ * Same Perplexity Sonar key as the rest of the Worker. The prompts, the
+ * examinability filter, the probability scoring and the verification gate all
+ * live in api/upsc.js; this section only does IO, caching and CORS.
+ */
+const UPSC_BRIEF_TIMEOUT_MS = 45000;
+const UPSC_TOPIC_TIMEOUT_MS = 40000;
+
+async function handleUpscBrief(request, env, ctx, origin) {
+  const url = new URL(request.url);
+  const scope = upscScope(url.searchParams.get('scope'));
+  const cfg = upscScopeConfig(scope);
+  const today = new Date().toISOString().slice(0, 10);
+
+  const cache = caches.default;
+  const cacheKey = new Request(
+    `https://cache.summaverick.internal/upsc/brief/${scope}/${today}`,
+    { method: 'GET' }
+  );
+
+  const cached = await cache.match(cacheKey);
+  if (cached) {
+    const body = await cached.text();
+    return jsonResponseRaw(body, origin, { 'X-Summaverick-Cache': 'HIT' });
+  }
+
+  const apiKey = env.PERPLEXITY_API_KEY;
+  if (!apiKey) {
+    return jsonResponse({ success: false, error: 'Briefing service is not configured.' }, origin);
+  }
+
+  try {
+    const data = await callSonarWithTimeout(
+      apiKey,
+      buildUpscBriefPayload(scope, today),
+      UPSC_BRIEF_TIMEOUT_MS
+    );
+    const brief = normalizeUpscBrief(parseStructured(data), scope, {});
+
+    if (brief.items.length === 0) {
+      return jsonResponse({
+        success: false,
+        error: 'Nothing cleared the examinability filter on this run. Try again in a few minutes.',
+      }, origin, { 'Cache-Control': 'no-store' });
+    }
+
+    const payload = { success: true, data: brief };
+    const responseBody = JSON.stringify(payload);
+    const ttl = brief.items.length >= cfg.minItems ? cfg.ttl : cfg.partialTtl;
+
+    if (ctx && typeof ctx.waitUntil === 'function') {
+      const toCache = new Response(responseBody, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': `public, max-age=${ttl}`,
+        },
+      });
+      ctx.waitUntil(cache.put(cacheKey, toCache));
+    }
+
+    return jsonResponseRaw(responseBody, origin, { 'X-Summaverick-Cache': 'MISS' });
+  } catch (e) {
+    const message = e && e.message ? e.message : '';
+    let error = 'The briefing service could not be reached. Your saved notes and revision queue still work.';
+    if (message.indexOf('abort') >= 0) {
+      error = 'The brief took too long to build. Try again — retrieval runs can be slow at peak times.';
+    } else if (message.indexOf('Sonar') >= 0) {
+      error = 'The retrieval service returned an error. This is usually temporary.';
+    }
+    return jsonResponse({ success: false, error }, origin, { 'Cache-Control': 'no-store' });
+  }
+}
+
+const UPSC_PAPERS = ['any', 'GS1', 'GS2', 'GS3', 'GS4', 'ESSAY'];
+
+async function handleUpscTopic(request, env, origin) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ success: false, error: 'Invalid request body.' }, origin);
+  }
+
+  const topic = sanitize(String(body.topic || '')).slice(0, 160);
+  const paperRaw = sanitize(String(body.paper || 'any')).toUpperCase().replace(/\s+/g, '');
+  const paper = UPSC_PAPERS.indexOf(paperRaw) >= 0 ? paperRaw : 'any';
+
+  if (topic.length < 3) {
+    return jsonResponse({ success: false, error: 'Give me a topic or an anchor to look up.' }, origin);
+  }
+
+  const apiKey = env.PERPLEXITY_API_KEY;
+  if (!apiKey) {
+    return jsonResponse({ success: false, error: 'Lookup service is not configured.' }, origin);
+  }
+
+  try {
+    const data = await callSonarWithTimeout(
+      apiKey,
+      buildUpscTopicPayload(topic, paper),
+      UPSC_TOPIC_TIMEOUT_MS
+    );
+    const note = normalizeUpscTopic(parseStructured(data), topic);
+
+    if (!note) {
+      return jsonResponse({
+        success: false,
+        error: 'Could not build an exam-ready note for that. Try naming the concept rather than the headline.',
+      }, origin, { 'Cache-Control': 'no-store' });
+    }
+
+    return jsonResponse({ success: true, data: note }, origin, { 'Cache-Control': 'no-store' });
+  } catch (e) {
+    const message = e && e.message ? e.message : '';
+    const error = message.indexOf('abort') >= 0
+      ? 'The lookup timed out. Try a narrower topic.'
+      : 'The lookup service could not be reached. Try again in a moment.';
+    return jsonResponse({ success: false, error }, origin, { 'Cache-Control': 'no-store' });
+  }
 }
 
 /* ───────────────── Precious-metal market report ───────────────── */

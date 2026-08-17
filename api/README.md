@@ -9,6 +9,8 @@ Single Cloudflare Worker that powers both the Summaverick chat and the landing-p
 | POST   | `/`          | Chat completion. Body: `{ query: string, context?: Array<{role,content}> }` |
 | POST   | `/flights`   | SkyFare flight search + book-redirect enrichment + "best time to book" advisory. See below. |
 | POST   | `/flights/inspire` | Summaverick destination ideas for SkyFare (JSON suggestions + one-click search fields). |
+| GET    | `/upsc/brief`| Anchor study tool: daily / weekly UPSC brief, filtered, scored, verification-gated |
+| POST   | `/upsc/topic`| Anchor topic lookup: one-screen exam-ready note. Body: `{ topic, paper? }` |
 | GET    | `/trending`  | Landing widgets (news / market / tech), country-aware + cached          |
 | GET    | `/servicenow`| Latest ServiceNow articles across 4 tracks (AI / Agents / LLM / cost), cached |
 | GET    | `/metals`    | Live gold/silver spot references, local FX, and 30-day daily context |
@@ -30,6 +32,53 @@ Powers the human-first market report at `/metals.html`.
   route returns a non-cacheable failure so the client can use its last success.
 
 No AI or generated explanation is used for prices or market-causality claims.
+
+## `/upsc/brief` and `/upsc/topic` — Anchor
+
+Powers the UPSC study tool at `/upsc.html`. Prompts, normalisation, scoring and
+the verification gate live in [`api/upsc.js`](upsc.js); `worker.js` only does
+IO, caching and CORS. Both routes use the same `PERPLEXITY_API_KEY`.
+
+### `GET /upsc/brief?scope=daily|weekly`
+
+One `sonar` call with a JSON schema, `search_recency_filter` (`day` / `week`)
+and `user_location: { country: 'IN' }`. The model is asked to harvest from
+newspaper editorials, PIB, PRS, judgments and official reports, then apply the
+**examinability filter** — an item survives only if it passes at least two of
+syllabus linkage, static anchor, debate content and durability.
+
+The Worker then re-applies the rules rather than trusting the model:
+
+- **Filter enforcement** — an item with no static anchor, no valid syllabus
+  code, fewer than two passed tests or no source URL is dropped server-side.
+- **Probability score (0–100)** —
+  `0.35 × anchor_frequency + 0.25 × debate_strength + 0.20 × official_weight + 0.20 × recency_gap`,
+  mapped to a treatment band (`core` / `strong` / `thin` / `log`). The anchor
+  frequency term is an editorial estimate from the 20-year recurring-theme
+  table, so every response carries `scoring.provisional: true` and the UI says
+  so. Scores are revision triage, never prediction.
+- **Verification gate** — `verified: true` only when the source host is a
+  primary-source domain (upsc.gov.in, pib.gov.in, prsindia.org, ministry and
+  `*.gov.in` sites, RBI/MoSPI/NITI, UN/World Bank/IMF/UNFCCC and similar).
+  Everything else is returned as secondary coverage to be confirmed.
+- **Weekly extras** — anchor clusters with a two-line synthesis, kept only for
+  anchors that actually appear in the returned items.
+- **Discard log** — the headlines that failed the filter, with the test each
+  failed.
+
+Cached per `(scope, UTC date)` in the Cloudflare Cache API: **3 h** for daily,
+**6 h** for weekly on a full response, shorter when the item count is thin.
+Response: `{ success, data: { scope, generatedAt, items[], discarded[], clusters[], stats, scoring } }`.
+
+### `POST /upsc/topic`
+
+Body `{ topic: string, paper?: 'any'|'GS1'|'GS2'|'GS3'|'GS4'|'ESSAY' }`.
+Returns one exam-ready note: anchor, syllabus codes, an opening line, 4–6
+points, value-adds typed as constitutional / judicial / committee / data /
+scheme / international / thinker, both sides of the debate, Prelims facts,
+three probable Mains stems with directive verbs, the usual mark-losing trap,
+and sources. Depth is capped by prompt on purpose — the tool exists to stop
+over-reading. Not cached (queries are unbounded).
 
 ## `/servicenow` — ServiceNow live article feed
 
