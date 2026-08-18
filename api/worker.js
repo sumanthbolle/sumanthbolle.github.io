@@ -11,6 +11,7 @@
  *   GET  /upsc/brief    — Anchor study tool: daily / weekly UPSC current-affairs
  *                         brief, filtered, scored and verification-gated
  *   POST /upsc/topic    — Anchor topic lookup; body: { topic, paper? }
+ *   POST /upsc/enrich   — private source-bound publisher enrichment
  *   GET  /trending      — landing-page widgets (news / market / tech),
  *                         country-aware via cf.country (or ?country=XX override),
  *                         cached per country in Cloudflare Cache API
@@ -29,6 +30,7 @@
  *                         questions get domain-pack system guidance (see
  *                         research-agent/ for the full Node domain pack).
  *   SERVICENOW_RELEASE_FAMILY — optional; default australia
+ *   UPSC_PUBLISH_TOKEN  — bearer secret required by POST /upsc/enrich
  *
  * /flights source priority: Amadeus real inventory (when keys set & IATA codes
  * resolvable) → Perplexity Sonar fallback. Each response includes data.source
@@ -46,8 +48,10 @@ import {
   upscScope,
   upscScopeConfig,
   buildUpscBriefPayload,
+  buildUpscEnrichmentPayload,
   buildUpscTopicPayload,
   normalizeUpscBrief,
+  normalizeUpscExamNote,
   normalizeUpscTopic,
 } from './upsc.js';
 
@@ -128,6 +132,10 @@ export default {
 
     if (request.method === 'GET' && url.pathname === '/upsc/brief') {
       return handleUpscBrief(request, env, ctx, origin);
+    }
+
+    if (request.method === 'POST' && url.pathname === '/upsc/enrich') {
+      return handleUpscEnrich(request, env, origin);
     }
 
     if (request.method !== 'POST') {
@@ -671,6 +679,7 @@ async function handleServiceNowFeed(request, env, ctx, origin) {
 /* ───────────────── Anchor — UPSC study tool ─────────────────
  * GET  /upsc/brief?scope=daily|weekly
  * POST /upsc/topic   body: { topic, paper? }
+ * POST /upsc/enrich  body: one normalized official source record
  *
  * Same Perplexity Sonar key as the rest of the Worker. The prompts, the
  * examinability filter, the probability scoring and the verification gate all
@@ -678,6 +687,69 @@ async function handleServiceNowFeed(request, env, ctx, origin) {
  */
 const UPSC_BRIEF_TIMEOUT_MS = 45000;
 const UPSC_TOPIC_TIMEOUT_MS = 40000;
+const UPSC_ENRICH_TIMEOUT_MS = 55000;
+
+function hasUpscPublishToken(request, env) {
+  var expected = String(env.UPSC_PUBLISH_TOKEN || '');
+  var supplied = String(request.headers.get('Authorization') || '');
+  return Boolean(expected && supplied === 'Bearer ' + expected);
+}
+
+function upscEnrichmentResponse(data, origin, status) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': origin,
+      'Cache-Control': 'no-store',
+    },
+  });
+}
+
+async function handleUpscEnrich(request, env, origin) {
+  if (!hasUpscPublishToken(request, env)) {
+    return upscEnrichmentResponse({ success: false, error: 'Unauthorized' }, origin, 401);
+  }
+
+  let record;
+  try {
+    record = await request.json();
+  } catch {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid request body.' }, origin, 422);
+  }
+  const validRecord = record && typeof record === 'object'
+    && /^src_[a-f0-9]{16,64}$/i.test(String(record.id || ''))
+    && /^https?:\/\//.test(String(record.sourceUrl || ''))
+    && String(record.contentHash || '').length >= 16
+    && record.sourceVerified === true;
+  if (!validRecord) {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid source record.' }, origin, 422);
+  }
+  if (!env.PERPLEXITY_API_KEY) {
+    return upscEnrichmentResponse({ success: false, error: 'Enrichment service is not configured.' }, origin, 503);
+  }
+
+  try {
+    const data = await callSonarWithTimeout(
+      env.PERPLEXITY_API_KEY,
+      buildUpscEnrichmentPayload(record),
+      UPSC_ENRICH_TIMEOUT_MS
+    );
+    const note = normalizeUpscExamNote(parseStructured(data), record);
+    if (!note) {
+      return upscEnrichmentResponse({
+        success: false,
+        error: 'Provider response did not satisfy the source-bound exam-note contract.',
+      }, origin, 422);
+    }
+    return upscEnrichmentResponse({ success: true, data: note }, origin, 200);
+  } catch {
+    return upscEnrichmentResponse({
+      success: false,
+      error: 'Enrichment service could not process this record.',
+    }, origin, 503);
+  }
+}
 
 async function handleUpscBrief(request, env, ctx, origin) {
   const url = new URL(request.url);
@@ -2138,7 +2210,7 @@ function corsResponse(body, origin, status = 200) {
     headers: {
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       'Access-Control-Max-Age': '86400',
     }
   });

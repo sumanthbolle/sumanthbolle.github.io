@@ -51,11 +51,20 @@ function formatDate(dateStr) {
  */
 function generateUrlEntry(loc, lastmod, changefreq, priority) {
   return `  <url>
-    <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <loc>${xmlEscape(loc)}</loc>
+    <lastmod>${xmlEscape(lastmod)}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`;
+}
+
+function xmlEscape(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
 }
 
 /**
@@ -88,17 +97,21 @@ function slugify(text) {
 /**
  * Main function to generate sitemap
  */
-function generateSitemap() {
+function buildSitemap(options = {}) {
+  const siteUrl = options.siteUrl || SITE_URL;
+  const outputPath = options.outputPath || SITEMAP_FILE;
+  const archiveIndexPath = options.archiveIndexPath
+    || path.join(process.cwd(), 'data', 'upsc', 'archive-index.json');
   console.log('🗺️  Generating sitemap.xml...\n');
   
-  const today = new Date().toISOString().split('T')[0];
+  const today = options.today || new Date().toISOString().split('T')[0];
   const urls = [];
   
   // Add static pages
   console.log('📄 Adding static pages...');
   for (const page of STATIC_PAGES) {
     urls.push(generateUrlEntry(
-      `${SITE_URL}${page.url}`,
+      `${siteUrl}${page.url}`,
       today,
       page.changefreq,
       page.priority
@@ -108,12 +121,12 @@ function generateSitemap() {
   
   // Add blog posts
   console.log('📝 Adding blog posts...');
-  const posts = loadJson(POSTS_FILE);
+  const posts = options.posts || loadJson(POSTS_FILE);
   for (const post of posts) {
     const slug = slugify(post.title);
     const lastmod = formatDate(post.date);
     urls.push(generateUrlEntry(
-      `${SITE_URL}/blog/${post.id}/${slug}`,
+      `${siteUrl}/blog/${post.id}/${slug}`,
       lastmod,
       'weekly',
       '0.8'
@@ -123,18 +136,58 @@ function generateSitemap() {
   
   // Add interview pages
   console.log('📚 Adding interview questions...');
-  const interviews = loadJson(INTERVIEWS_FILE);
+  const interviews = options.interviews || loadJson(INTERVIEWS_FILE);
   for (const interview of interviews) {
     const slug = slugify(interview.question.substring(0, 50));
     const lastmod = formatDate(interview.date);
     urls.push(generateUrlEntry(
-      `${SITE_URL}/interviews/${interview.id}/${slug}`,
+      `${siteUrl}/interviews/${interview.id}/${slug}`,
       lastmod,
       'weekly',
       '0.7'
     ));
   }
   console.log(`   Added ${interviews.length} interview pages`);
+
+  console.log('📚 Adding UPSC study archive...');
+  const archive = loadJson(archiveIndexPath);
+  const notes = archive && Array.isArray(archive.notes) ? archive.notes : [];
+  const publishedNotes = notes.filter((note) => (
+    note && ['source-backed', 'reviewed'].includes(note.status)
+    && typeof note.path === 'string'
+    && note.path.startsWith('upsc-study/')
+    && !note.path.split('/').includes('..')
+    && !note.path.includes('://')
+  ));
+  const eligibleIds = new Set(publishedNotes.map((note) => note.sourceId).filter(Boolean));
+  const upscEntries = [{ path: 'upsc-study/', lastmod: today, changefreq: 'daily', priority: '0.9' }];
+  for (const note of publishedNotes) {
+    upscEntries.push({ path: note.path, lastmod: note.date || today, changefreq: 'weekly', priority: '0.8' });
+  }
+  const addGroups = (groups, folder, transform = (key) => key) => {
+    if (!groups || typeof groups !== 'object' || Array.isArray(groups)) return;
+    for (const [key, sourceIds] of Object.entries(groups)) {
+      if (!Array.isArray(sourceIds) || !sourceIds.some((id) => eligibleIds.has(id))) continue;
+      const slug = slugify(String(transform(key)));
+      if (!slug) continue;
+      upscEntries.push({ path: `upsc-study/${folder}/${slug}.html`, lastmod: today, changefreq: 'weekly', priority: '0.7' });
+    }
+  };
+  addGroups(archive.days, 'daily');
+  addGroups(archive.months, 'monthly');
+  addGroups(archive.codes, 'syllabus', (key) => key.replace(/\./g, '-'));
+  if (archive.anchors && typeof archive.anchors === 'object') {
+    for (const [key, row] of Object.entries(archive.anchors)) {
+      const ids = row && Array.isArray(row.noteIds) ? row.noteIds : [];
+      if (!ids.some((id) => eligibleIds.has(id))) continue;
+      const slug = slugify(key);
+      if (slug) upscEntries.push({ path: `upsc-study/anchors/${slug}.html`, lastmod: today, changefreq: 'weekly', priority: '0.7' });
+    }
+  }
+  for (const entry of upscEntries) {
+    urls.push(generateUrlEntry(`${siteUrl}/${entry.path}`, entry.lastmod, entry.changefreq, entry.priority));
+  }
+  console.log(`   Added ${upscEntries.length} UPSC study pages`);
   
   // Build the sitemap XML
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -143,11 +196,16 @@ ${urls.join('\n')}
 </urlset>`;
 
   // Write to file
-  fs.writeFileSync(SITEMAP_FILE, sitemap);
+  fs.writeFileSync(outputPath, sitemap);
   
-  console.log(`\n✅ Sitemap generated: ${SITEMAP_FILE}`);
+  console.log(`\n✅ Sitemap generated: ${outputPath}`);
   console.log(`   Total URLs: ${urls.length}`);
   console.log(`   File size: ${(sitemap.length / 1024).toFixed(2)} KB`);
+  return sitemap;
 }
 
-generateSitemap();
+if (require.main === module) {
+  buildSitemap();
+}
+
+module.exports = { buildSitemap, formatDate, generateUrlEntry, slugify };

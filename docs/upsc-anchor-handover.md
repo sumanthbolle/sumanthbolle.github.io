@@ -1,100 +1,130 @@
-# Anchor — UPSC study tool (handover)
+# Anchor UPSC publication — operator handover
 
-**Page:** [`upsc.html`](../upsc.html) → `https://sumanthbolle.com/upsc`
-**Grouping:** Utilities (fourth entry, alongside SkyFare, Metals, Save Yourself)
-**Retrieval:** Perplexity Sonar via the shared Worker — `GET /upsc/brief`, `POST /upsc/topic`
-**Storage:** browser `localStorage` only. No account, no sync, no server copy.
+**Interactive desk:** [`upsc.html`](../upsc.html) → `https://sumanthbolle.com/upsc`
 
----
+**Static archive:** [`upsc-study/`](../upsc-study/) → `https://sumanthbolle.com/upsc-study/`
 
-## What it is
+**Publisher:** [`scripts/upsc/`](../scripts/upsc/)
 
-A UPSC Civil Services current-affairs and notes tool built on one idea: **the
-skill is discarding**. Consumption feels like progress; retrieval is what
-produces marks. So the page is designed to throw away most of what it reads,
-compress what survives into one usable line, and then make you retrieve it on a
-schedule.
+**Schedule:** [`.github/workflows/upsc-publish.yml`](../.github/workflows/upsc-publish.yml)
 
-The name is the rule: **no static anchor, no entry**. If you cannot name the
-concept that outlives the news event, there is nothing to revise.
+Anchor is an official-source reading, answer-writing and active-recall system for
+UPSC Civil Services preparation. The public browser never calls publishers
+directly. A scheduled publisher validates each reviewed endpoint, stores every
+official record, enriches it behind a private route, rebuilds compact indexes,
+then creates crawlable pages only for evidence-cleared notes.
 
-## Provenance
+## Publication states
 
-The method is the `upsc-strategy-engine` skill, implemented as a web tool:
+| State | Meaning | Public treatment |
+|---|---|---|
+| `source-only` | Valid official host, canonical URL and normalized publisher text | Always visible in Source Desk; never memorised as an exam note |
+| `draft` | Mapped note contains unsupported or review-needed material | Can be inspected in the app; excluded from static pages and recall facts |
+| `source-backed` | Every hard fact is a literal claim in `officialSummary` with the same official URL | Eligible for Exam Brief, recall and static publication |
+| `reviewed` | A human editor has checked the source-bound note | Same publication rights as source-backed, with the stronger label |
 
-| Skill rule | Where it lives here |
-|---|---|
-| Cycle detection → BUILD / CONVERGE / COMPRESS / LOCK | `assets/js/upsc/store.js` → `AnchorCycle.compute` |
-| Examinability filter (two of four tests) | Prompted in `api/upsc.js`, then **re-enforced server-side** in `normalizeUpscBrief` |
-| Compression format (anchor / codes / what / why / debate / use) | Brief schema, the notes composer, and the Markdown export |
-| Probability score for triage + treatment bands | `scoreItem` / `scoreBand` in `api/upsc.js` |
-| Verification gate (primary source, or unverified) | `isPrimarySource` host allowlist; amber vs green in the UI |
-| Spaced repetition at day 1, 3, 7, 21, 60 then monthly | `AnchorStore.review`, Revise view |
-| Retrieval, not rereading | Revise shows the **title only** until you press Reveal; a miss resets to day 1 |
-| Discard log | Returned by the brief and rendered under it |
-| Anchor clustering at month end | Weekly clusters, plus grouping in the export |
-| Honesty guardrails | “What this tool will not do”, provisional scoring labels, UPSC precedence stated |
+The source record survives an enrichment failure. A correction changes its
+content hash, moves the former record into `data/upsc/history/`, and makes the old
+note stale until it is enriched again.
 
-## Structure
+## Reviewed publishers
 
+The feed URL is accepted only when its final host matches the registry allowlist,
+its MIME type matches the adapter, its body is at most 5 MiB and it produces
+complete records.
+
+| Publisher | Registry endpoint provenance | Notes |
+|---|---|---|
+| Press Information Bureau | PIB's official `ViewRss.aspx` page advertises `RssMain.aspx` | The feed omits item timestamps, so `datePolicy: fetched-at` is explicit and health reports say `fetch-time` |
+| Reserve Bank of India | RBI's official RSS directory → press releases feed | Official RSS summaries are normalized and capped |
+| SEBI | SEBI's official RSS page → `sebirss.xml` | Mixed circular, order and press-release stream |
+| Ministry of External Affairs | The official press-release page's own `FetchPublicationListingData` endpoint | Reviewed HTML adapter; visible dates and relative links are normalized |
+| United Nations News | UN News English all-news RSS | International institutional source |
+| World Health Organization | WHO English corporate-news RSS | The feed may be stale even while the newsroom is current; health metadata exposes this |
+| Council of the European Union | Council's official RSS directory → press releases | International policy and external-relations source |
+
+Do not add a URL merely because it returns XML. First find the endpoint on the
+publisher's official site, add its exact hosts, create a fixture for its format,
+run the strict probe and inspect its final URL and freshness.
+
+## Commands
+
+```bash
+# Contracts and regression suite
+python3 -m unittest discover -s scripts/upsc -p 'test_*.py'
+node scripts/test-upsc-api.mjs
+node scripts/test-upsc-content.js
+node scripts/test-upsc-render.js
+node scripts/test-upsc-memory.js
+node scripts/test-upsc-shell.js
+node scripts/test-upsc-sitemap.js
+
+# Live probe: default succeeds when any source is healthy; --strict requires all
+python3 scripts/upsc/publish.py check-sources \
+  --registry data/upsc/source-registry.json --strict
+
+# Idempotent official-record publication
+python3 scripts/upsc/publish.py ingest \
+  --registry data/upsc/source-registry.json --output data/upsc
+
+# Private, failure-isolated note enrichment
+python3 scripts/upsc/enrich.py \
+  --output data/upsc \
+  --endpoint "$UPSC_ENRICH_ENDPOINT" \
+  --token "$UPSC_PUBLISH_TOKEN"
+
+# Navigation, crawlable pages and sitemap
+python3 scripts/upsc/publish.py build-indexes --output data/upsc
+python3 scripts/upsc/publish.py build-pages \
+  --output data/upsc --site-root upsc-study \
+  --base-url https://sumanthbolle.com
+node scripts/generate-sitemap.js
 ```
-upsc.html                     markup, JSON-LD, SBHelpGuide steps
-assets/css/upsc.css           tokens + chrome + page (self-contained, like the other pages)
-assets/js/upsc/store.js       cycle mode, notes, retrieval schedule, Markdown export
-assets/js/upsc/render.js      HTML builders (brief entry, note, lookup, revise card)
-assets/js/upsc/app.js         wiring: views, filters, search, retrieval, export
-api/upsc.js                   prompts, schemas, normalisation, scoring, verification gate
-api/worker.js                 route dispatch, Sonar call, Cache API, CORS
-```
 
-Four views in one workspace, switched by the command bar: **Brief** (daily or
-weekly), **Lookup** (any concept → one screen), **Notes** (saved + your own),
-**Revise** (today's retrieval queue). The right rail carries session status and
-keeps the four-test filter visible while you work.
+The static generator will only clear a directory named exactly `upsc-study`
+that contains `.upsc-generated`. This prevents an incorrect output path from
+overwriting hand-authored site content.
 
-## Design decisions worth keeping
+## GitHub secrets
 
-- **Notebook, not cards.** Entries are ruled rows with a margin score, the way a
-  topper's register looks. No card mosaic, no icon-in-circle grid, no gradients.
-- **One highlighter.** The amber wash is reserved for the `Use in an answer`
-  line and the mark-losing trap. Blue stays the interactive accent. Two accents,
-  both already in the site palette.
-- **No new fonts.** The existing utility-page serif carries the display and
-  reading voice; the system sans carries chrome only. Nothing is fetched.
-- **Retrieval is explicit.** The brief loads on a button press, never on page
-  load: it costs an API call, it takes ~20 s, and an aspirant in LOCK mode
-  should not be handed new material automatically.
-- **Depth is capped by prompt.** Points are one line each; the lookup returns
-  4–6 of them and stops. Over-reading is the failure mode being designed against.
+Add these repository Actions secrets before enabling the schedule:
 
-## Known limits
+- `UPSC_ENRICH_ENDPOINT`: full HTTPS URL for the deployed Worker route, ending
+  in `/upsc/enrich`.
+- `UPSC_PUBLISH_TOKEN`: the same bearer secret configured on the Worker.
 
-- **Scores are provisional.** The anchor-frequency term is an editorial estimate
-  from the 20-year recurring-theme table, not a tagged PYQ corpus. Loading a
-  real corpus (see the skill's `pyq-pattern-decoder.md` §7) would replace
-  `ANCHOR_WEIGHTS` in `api/upsc.js` and let the `recency_gap` term stop being
-  neutral. Until then the UI and the API both say the score is provisional.
-- **Gate B is manual.** The Worker can only assert gate A (a primary-source
-  host). Two-model agreement is left to the aspirant, as it should be.
-- **The brief is not stored.** It lives in memory for the session; the Worker's
-  edge cache is what makes a revisit cheap.
-- **`assets/css/upsc.css` repeats the nav, footer and button chrome** that
-  `save-yourself.css` also carries. That duplication is the extraction target
-  named in Priority 4 of the site review — when the shared `tokens.css` /
-  `nav.css` split happens, this page should move onto it first.
+The workflow validates both before it mutates generated files. Per-record model
+failures do not hide the official source archive; successful notes continue to
+publish and failed IDs retry on the next run.
 
-## If you extend it
+## Reading and memory model
 
-Reasonable next steps, in order of value:
+- Source Desk retains all configured official records, even when not exam-worthy.
+- Exam Brief contains only current source-bound notes and loads full dossiers on
+  expansion.
+- Syllabus Library groups notes by canonical code and durable static anchor.
+- Answer Lab supplies directive-aware 10/15-mark scaffolds and keeps optional
+  live lookup separate from reviewed publication.
+- Memory Drill uses day 1, 3, 7, 21 and 60, then monthly. A miss resets to day 1;
+  two late successful passes graduate to monthly. Hard-fact cloze prompts exist
+  only when evidence cleared the official-summary boundary.
 
-1. **Load a PYQ corpus** so scores stop being provisional (the highest-value
-   change by a wide margin).
-2. **Answer evaluation** against the rubric in the skill's
-   `answer-writing-formats.md` §8 — a `POST /upsc/evaluate` route returning a
-   per-criterion breakdown and exactly three fixes. Route it to a model chosen
-   for rubric stability, not to whatever is already wired.
-3. **Intersection matrix** once the corpus exists: top anchors × live triggers,
-   presented as a writing list and labelled as prioritisation, not prediction.
+Browser storage contains only compact saved-note snapshots and review state. It
+does not contain the complete publication and is never synced to a server.
 
-Do not add: a second news source, streaks, badges, or anything that rewards
-time spent rather than items retrieved.
+## Recovery
+
+1. If one source fails, inspect `data/upsc/source-health.json` and the latest
+   `coverage.json`; do not delete its last valid feed partitions.
+2. If all sources fail, stop publication and check redirects, MIME changes,
+   login pages and host allowlists before changing an adapter.
+3. If the enrichment service fails, keep publishing Source Desk records. Repair
+   the Worker or secrets; unchanged records will be retried because no current
+   note exists.
+4. If a source corrects an item, keep the generated history file. Never edit a
+   content hash manually.
+5. If generated pages are wrong, fix the data or generator, rerun indexes and
+   pages, and then regenerate the sitemap. Do not hand-edit `upsc-study/`.
+
+UPSC's official notifications, syllabus and examination rules always take
+precedence over this tool.

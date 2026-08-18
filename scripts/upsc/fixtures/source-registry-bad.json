@@ -1,0 +1,22 @@
+[
+  {
+    "id": "login-html",
+    "name": "Login HTML",
+    "country": "IN",
+    "tier": "indian-primary",
+    "hosts": ["bad.example"],
+    "adapter": "rss",
+    "feedUrl": "https://bad.example/login.xml",
+    "enabled": true
+  },
+  {
+    "id": "off-host",
+    "name": "Off-host redirect",
+    "country": "IN",
+    "tier": "indian-primary",
+    "hosts": ["bad.example"],
+    "adapter": "rss",
+    "feedUrl": "https://bad.example/off-host.xml",
+    "enabled": true
+  }
+]

@@ -1,0 +1,8 @@
+[
+  {"id":"pib","name":"Press Information Bureau","country":"IN","tier":"indian-primary","hosts":["pib.gov.in"],"adapter":"rss","feedUrl":"https://pib.gov.in/feed.xml","enabled":true},
+  {"id":"rbi","name":"Reserve Bank of India","country":"IN","tier":"indian-primary","hosts":["rbi.org.in"],"adapter":"listing","listingUrl":"https://www.rbi.org.in/releases","linkClass":"official-item","enabled":true},
+  {"id":"prs","name":"PRS Legislative Research","country":"IN","tier":"indian-primary","hosts":["prsindia.org"],"adapter":"rss","feedUrl":"https://prsindia.org/feed.xml","enabled":true},
+  {"id":"un-news","name":"UN News","country":"INT","tier":"international-institution","hosts":["news.un.org"],"adapter":"atom","feedUrl":"https://news.un.org/feed.xml","enabled":true},
+  {"id":"who","name":"World Health Organization","country":"INT","tier":"international-institution","hosts":["who.int"],"adapter":"json-feed","apiUrl":"https://www.who.int/feed.json","enabled":true},
+  {"id":"world-bank","name":"World Bank","country":"INT","tier":"international-institution","hosts":["worldbank.org"],"adapter":"json-feed","apiUrl":"https://www.worldbank.org/feed.json","enabled":true}
+]

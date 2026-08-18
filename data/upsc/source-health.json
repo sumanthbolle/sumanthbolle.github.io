@@ -1,0 +1,92 @@
+{
+  "checkedAt": "2026-08-18T06:00:00Z",
+  "healthy": true,
+  "healthyCount": 7,
+  "sourceCount": 7,
+  "sources": {
+    "pib": {
+      "sourceId": "pib",
+      "status": "ok",
+      "finalHost": "www.pib.gov.in",
+      "contentType": "text/xml",
+      "checkedAt": "2026-08-18T06:00:00Z",
+      "latestPublishedAt": "2026-08-18T06:00:00Z",
+      "ageHours": 0.0,
+      "freshness": "fetch-time",
+      "datePolicy": "fetched-at",
+      "error": ""
+    },
+    "rbi": {
+      "sourceId": "rbi",
+      "status": "ok",
+      "finalHost": "rbi.org.in",
+      "contentType": "text/xml",
+      "checkedAt": "2026-08-18T06:00:00Z",
+      "latestPublishedAt": "2026-08-18T09:00:00Z",
+      "ageHours": 0.0,
+      "freshness": "fresh",
+      "datePolicy": "source",
+      "error": ""
+    },
+    "sebi": {
+      "sourceId": "sebi",
+      "status": "ok",
+      "finalHost": "www.sebi.gov.in",
+      "contentType": "text/xml",
+      "checkedAt": "2026-08-18T06:00:00Z",
+      "latestPublishedAt": "2026-08-16T18:30:00Z",
+      "ageHours": 35.5,
+      "freshness": "fresh",
+      "datePolicy": "source",
+      "error": ""
+    },
+    "mea": {
+      "sourceId": "mea",
+      "status": "ok",
+      "finalHost": "www.mea.gov.in",
+      "contentType": "text/html",
+      "checkedAt": "2026-08-18T06:00:00Z",
+      "latestPublishedAt": "2026-08-17T00:00:00Z",
+      "ageHours": 30.0,
+      "freshness": "fresh",
+      "datePolicy": "source",
+      "error": ""
+    },
+    "un-news": {
+      "sourceId": "un-news",
+      "status": "ok",
+      "finalHost": "news.un.org",
+      "contentType": "application/rss+xml",
+      "checkedAt": "2026-08-18T06:00:00Z",
+      "latestPublishedAt": "2026-08-17T12:00:00Z",
+      "ageHours": 18.0,
+      "freshness": "fresh",
+      "datePolicy": "source",
+      "error": ""
+    },
+    "who": {
+      "sourceId": "who",
+      "status": "ok",
+      "finalHost": "www.who.int",
+      "contentType": "application/rss+xml",
+      "checkedAt": "2026-08-18T06:00:00Z",
+      "latestPublishedAt": "2026-02-25T18:06:55Z",
+      "ageHours": 4163.9,
+      "freshness": "stale",
+      "datePolicy": "source",
+      "error": ""
+    },
+    "eu-council": {
+      "sourceId": "eu-council",
+      "status": "ok",
+      "finalHost": "www.consilium.europa.eu",
+      "contentType": "text/xml",
+      "checkedAt": "2026-08-18T06:00:00Z",
+      "latestPublishedAt": "2026-08-14T17:37:00Z",
+      "ageHours": 84.4,
+      "freshness": "aging",
+      "datePolicy": "source",
+      "error": ""
+    }
+  }
+}

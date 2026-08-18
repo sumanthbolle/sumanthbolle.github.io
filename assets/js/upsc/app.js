@@ -4,11 +4,12 @@
   'use strict';
 
   var ENDPOINT = (window.SB_UPSC_ENDPOINT || '').replace(/\/$/, '');
-  var BRIEF_TIMEOUT_MS = 60000;
   var LOOKUP_TIMEOUT_MS = 50000;
 
   var Store = window.AnchorStore;
   var Cycle = window.AnchorCycle;
+  var Content = window.AnchorContent;
+  var Memory = window.AnchorMemory;
   var Render = window.AnchorRender;
 
   function el(id) {
@@ -16,11 +17,28 @@
   }
 
   var state = {
-    view: 'brief',
+    view: 'source',
+    sources: [],
+    sourceGeneratedAt: '',
+    sourceError: '',
+    sourceLoading: false,
+    sourceFilters: {
+      query: '', publishers: [], papers: [], sourceTypes: [],
+      jurisdiction: 'all', date: '',
+    },
     scope: Store.getScope(),
-    briefs: { daily: null, weekly: null },
+    examSummaries: [],
+    examDetails: {},
+    examGeneratedAt: '',
+    examExpandedId: '',
+    examDetailLoading: '',
     briefError: '',
     briefLoading: false,
+    syllabusGroups: [],
+    syllabusGeneratedAt: '',
+    syllabusError: '',
+    syllabusLoading: false,
+    practiceLoading: false,
     papers: [],
     notePapers: [],
     verifiedOnly: false,
@@ -32,6 +50,8 @@
     queueIndex: 0,
     queuePassed: 0,
     queueReset: 0,
+    memoryMode: 'due',
+    drillQueue: [],
     mode: null,
   };
 
@@ -59,6 +79,7 @@
       lineEl.textContent = result.mode.line + (result.note ? ' ' + result.note : '');
     }
 
+    el('main').setAttribute('data-cycle', result.mode ? result.mode.name.toLowerCase() : '');
     renderRail();
     renderBriefMeta();
   }
@@ -66,11 +87,12 @@
   function savePosition() {
     Cycle.setPosition({ stage: el('stage').value, examDate: el('examDate').value });
     renderMode();
+    if (state.mode && state.mode.name === 'LOCK') setView('memory');
   }
 
   /* ─────────────────────────────── views ─────────────────────────────── */
 
-  var VIEWS = ['brief', 'lookup', 'notes', 'revise'];
+  var VIEWS = ['source', 'brief', 'syllabus', 'answer', 'memory'];
 
   function setView(name) {
     if (VIEWS.indexOf(name) === -1) return;
@@ -79,11 +101,113 @@
       var tab = el('tab-' + view);
       var panel = el('view-' + view);
       var active = view === name;
-      tab.setAttribute('aria-selected', active ? 'true' : 'false');
-      panel.hidden = !active;
+      if (tab) tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      if (panel) panel.hidden = !active;
     });
-    if (name === 'revise') startQueue();
-    if (name === 'notes') renderNotes();
+    if (name === 'source') renderSourceDesk();
+    if (name === 'brief') renderBrief();
+    if (name === 'syllabus') renderSyllabus();
+    if (name === 'answer') loadPracticeNotes();
+    if (name === 'memory') setMemoryMode(state.memoryMode);
+  }
+
+  /* ─────────────────────────── official sources ─────────────────────────── */
+
+  function sourceFiltersFromControls() {
+    state.sourceFilters = {
+      query: el('sourceQuery').value.trim().toLowerCase(),
+      publishers: el('sourcePublisher').value ? [el('sourcePublisher').value] : [],
+      papers: el('sourcePaper').value ? [el('sourcePaper').value] : [],
+      sourceTypes: el('sourceType').value ? [el('sourceType').value] : [],
+      jurisdiction: el('sourceJurisdiction').value || 'all',
+      date: el('sourceDate').value || '',
+    };
+  }
+
+  function populateSourceFilters() {
+    var publishers = Content.groupPublishers(state.sources);
+    var publisherSelect = el('sourcePublisher');
+    while (publisherSelect.options.length > 1) publisherSelect.remove(1);
+    publishers.forEach(function (publisher) {
+      var option = document.createElement('option');
+      option.value = publisher.id;
+      option.textContent = publisher.name + ' (' + publisher.count + ')';
+      publisherSelect.appendChild(option);
+    });
+    var types = {};
+    state.sources.forEach(function (row) { types[row.sourceType] = true; });
+    var typeSelect = el('sourceType');
+    while (typeSelect.options.length > 1) typeSelect.remove(1);
+    Object.keys(types).sort().forEach(function (type) {
+      var option = document.createElement('option');
+      option.value = type;
+      option.textContent = type;
+      typeSelect.appendChild(option);
+    });
+  }
+
+  function renderSourceDesk() {
+    if (!Content) return;
+    var list = el('sourceEntries');
+    var empty = el('sourceState');
+    if (state.sourceLoading) {
+      empty.hidden = false;
+      empty.innerHTML = '<h3>Loading official records</h3><p>Reading the last published source index.</p>';
+      list.innerHTML = '';
+      return;
+    }
+    if (state.sourceError && !state.sources.length) {
+      empty.hidden = false;
+      empty.innerHTML = '<h3>Source index unavailable</h3><p>' + Render.esc(state.sourceError) +
+        ' Open the official directory below or use the last generated static archive.</p>' +
+        '<p><a href="upsc-study/index.html">Browse static study archive</a> · ' +
+        '<a href="https://pib.gov.in" target="_blank" rel="noopener noreferrer">PIB</a> · ' +
+        '<a href="https://www.rbi.org.in" target="_blank" rel="noopener noreferrer">RBI</a> · ' +
+        '<a href="https://news.un.org" target="_blank" rel="noopener noreferrer">UN News</a></p>';
+      list.innerHTML = '';
+      el('sourceMeta').textContent = 'Last valid archive preserved.';
+      return;
+    }
+    var shown = Content.filterSources(state.sources, state.sourceFilters);
+    empty.hidden = shown.length > 0;
+    if (!shown.length) {
+      empty.innerHTML = '<h3>No official records match</h3><p>Clear one or more filters. Source Desk never deletes low-priority items.</p>';
+      list.innerHTML = '';
+    } else {
+      list.innerHTML = shown.map(Render.sourceEntry).join('');
+    }
+    el('sourceMeta').innerHTML = '<strong>' + shown.length + '</strong> of ' + state.sources.length +
+      ' official records' + (state.sourceGeneratedAt ? ' · index ' + Render.esc(state.sourceGeneratedAt.slice(0, 10)) : '') + '.';
+  }
+
+  function loadSourceIndex() {
+    if (!Content || state.sourceLoading) return;
+    state.sourceLoading = true;
+    state.sourceError = '';
+    renderSourceDesk();
+    fetch('data/upsc/source-index.json', { cache: 'no-cache' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('Published source data could not be loaded.');
+        return response.json();
+      })
+      .then(function (payload) {
+        var normalized = Content.normalizeSourceIndex(payload);
+        state.sources = normalized.records;
+        state.sourceGeneratedAt = normalized.generatedAt;
+        populateSourceFilters();
+      })
+      .catch(function (error) {
+        state.sourceError = (error && error.message) || 'Published source data could not be loaded.';
+      })
+      .then(function () {
+        state.sourceLoading = false;
+        renderSourceDesk();
+      });
+
+    fetch('data/upsc/coverage.json', { cache: 'no-cache' })
+      .then(function (response) { return response.ok ? response.json() : null; })
+      .then(function (payload) { el('sourceCoverage').innerHTML = Render.coverageStatus(payload); })
+      .catch(function () { el('sourceCoverage').innerHTML = Render.coverageStatus(null); });
   }
 
   /* ────────────────────────────── the brief ────────────────────────────── */
@@ -92,78 +216,67 @@
     return el('briefState');
   }
 
-  function showBriefState(title, body, buttonLabel) {
+  function showBriefState(title, body) {
     var node = briefStateEl();
     node.hidden = false;
-    node.innerHTML = '<h3>' + Render.esc(title) + '</h3><p>' + Render.esc(body) + '</p>' +
-      (buttonLabel
-        ? '<button type="button" class="btn btn-primary" id="loadBrief">' + Render.esc(buttonLabel) + '</button>'
-        : '');
+    node.innerHTML = '<h3>' + Render.esc(title) + '</h3><p>' + Render.esc(body) + '</p>';
   }
 
-  function loadBrief(force) {
-    if (!ENDPOINT) {
-      state.briefError = 'The retrieval endpoint is not configured for this page.';
-      renderBrief();
-      return;
-    }
+  function loadBrief() {
     if (state.briefLoading) return;
-    if (!force && state.briefs[state.scope]) {
-      renderBrief();
-      return;
-    }
-
     state.briefLoading = true;
     state.briefError = '';
-    briefStateEl().hidden = true;
-    el('briefEntries').innerHTML = '';
-    el('clusterBlock').hidden = true;
-    el('discardBlock').hidden = true;
     el('briefLoading').hidden = false;
-    el('briefMeta').textContent = 'Retrieving, filtering and scoring — about twenty seconds.';
-
-    var controller = new AbortController();
-    var timer = window.setTimeout(function () { controller.abort(); }, BRIEF_TIMEOUT_MS);
-
-    fetch(ENDPOINT + '/upsc/brief?scope=' + encodeURIComponent(state.scope), {
-      signal: controller.signal,
-    })
-      .then(function (response) { return response.json(); })
+    el('briefMeta').textContent = 'Loading the latest published exam index.';
+    fetch('data/upsc/exam-index.json', { cache: 'no-cache' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('The published exam index could not be loaded.');
+        return response.json();
+      })
       .then(function (payload) {
-        if (!payload || !payload.success || !payload.data) {
-          throw new Error((payload && payload.error) || 'The brief could not be built.');
-        }
-        state.briefs[state.scope] = payload.data;
+        var normalized = Content.normalizeExamIndex(payload);
+        Object.keys(state.examDetails).forEach(function (id) {
+          var summary = normalized.notes.find(function (note) { return note.sourceId === id; });
+          if (!summary || summary.sourceContentHash !== state.examDetails[id].sourceContentHash) {
+            delete state.examDetails[id];
+          }
+        });
+        state.examSummaries = normalized.notes;
+        state.examGeneratedAt = normalized.generatedAt;
       })
       .catch(function (error) {
-        state.briefError = error && error.name === 'AbortError'
-          ? 'The brief took too long. Retrieval can be slow at peak times — try again.'
-          : (error && error.message) || 'The brief could not be built.';
+        state.briefError = (error && error.message) || 'The published exam index could not be loaded.';
       })
       .then(function () {
-        window.clearTimeout(timer);
         state.briefLoading = false;
         el('briefLoading').hidden = true;
         renderBrief();
+        if (state.view === 'answer') loadPracticeNotes();
       });
   }
 
-  function currentBrief() {
-    return state.briefs[state.scope];
+  function latestExamDay() {
+    return state.examSummaries.reduce(function (latest, note) {
+      var day = note.publishedAt.slice(0, 10);
+      return day > latest ? day : latest;
+    }, '');
   }
 
   function matchesQuery(item) {
     if (!state.query) return true;
-    var haystack = [item.title, item.anchor, item.use, item.what, item.why, item.debate,
+    var haystack = [item.title, item.anchor, item.use, item.whyInNews,
       (item.codes || []).join(' ')].join(' ').toLowerCase();
     return haystack.indexOf(state.query) !== -1;
   }
 
   function filteredItems() {
-    var brief = currentBrief();
-    if (!brief) return [];
-    return brief.items.filter(function (item) {
-      if (state.verifiedOnly && !item.verified) return false;
+    var latest = latestExamDay();
+    var latestTime = latest ? Date.parse(latest + 'T00:00:00Z') : 0;
+    return state.examSummaries.filter(function (item) {
+      var day = item.publishedAt.slice(0, 10);
+      if (state.scope === 'daily' && latest && day !== latest) return false;
+      if (state.scope === 'weekly' && latest && latestTime - Date.parse(day + 'T00:00:00Z') > 6 * 86400000) return false;
+      if (state.verifiedOnly && ['source-backed', 'reviewed'].indexOf(item.editorialStatus) === -1) return false;
       if (state.papers.length) {
         var hit = item.papers.some(function (paper) { return state.papers.indexOf(paper) !== -1; });
         if (!hit) return false;
@@ -173,23 +286,12 @@
   }
 
   function renderBriefMeta() {
-    var brief = currentBrief();
     var meta = el('briefMeta');
-    if (!brief) {
-      if (!state.briefLoading) meta.textContent = 'Not loaded yet.';
+    if (!state.examSummaries.length) {
+      if (!state.briefLoading) meta.textContent = state.briefError ? 'Publication unavailable.' : 'No mapped notes published yet.';
       return;
     }
-
-    var time = new Date(brief.generatedAt);
-    var stamp = isNaN(time.getTime())
-      ? ''
-      : time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     var shown = filteredItems().length;
-    var bits = [];
-    bits.push('<strong>' + shown + '</strong> of ' + brief.stats.total + ' kept');
-    bits.push('<strong>' + brief.stats.verified + '</strong> from primary sources');
-    if (stamp) bits.push('retrieved ' + Render.esc(stamp));
-
     var lockNote = '';
     if (state.mode && state.mode.name === 'LOCK') {
       lockNote = ' In lock mode this is for confirming what you already hold — do not start anything new from it.';
@@ -197,65 +299,159 @@
       lockNote = ' In compress mode, save only what scores high enough to be worth a revision slot.';
     }
 
-    meta.innerHTML = bits.join(' · ') + '. Scores rank revision priority, not likelihood.' + Render.esc(lockNote);
+    meta.innerHTML = '<strong>' + shown + '</strong> of ' + state.examSummaries.length +
+      ' mapped notes · latest trigger ' + Render.esc(latestExamDay()) +
+      (state.examGeneratedAt ? ' · built ' + Render.esc(state.examGeneratedAt.slice(0, 16).replace('T', ' ')) + ' UTC' : '') +
+      '. Scores rank revision priority, not likelihood.' + Render.esc(lockNote);
   }
 
   function renderBrief() {
-    el('briefTitle').textContent = state.scope === 'weekly' ? 'Weekly brief' : 'Daily brief';
+    el('briefTitle').textContent = state.scope === 'weekly' ? 'Published weekly brief' : 'Published daily brief';
     var list = el('briefEntries');
-    var brief = currentBrief();
-
     if (state.briefLoading) return;
-
     if (state.briefError) {
       list.innerHTML = '';
       el('clusterBlock').hidden = true;
       el('discardBlock').hidden = true;
-      el('briefMeta').textContent = 'Retrieval failed.';
-      showBriefState('The brief could not be built', state.briefError +
-        ' Your saved notes and the revision queue are stored on this device and still work.', 'Try again');
+      el('briefMeta').textContent = 'Publication unavailable.';
+      showBriefState('The published brief is unavailable', state.briefError +
+        ' Source Desk, the static archive, and your device-local memory queue still work.');
       return;
     }
-
-    if (!brief) {
+    if (!state.examSummaries.length) {
       list.innerHTML = '';
-      showBriefState('Load ' + (state.scope === 'weekly' ? "the week's brief" : "today's brief"),
-        state.scope === 'weekly'
-          ? 'Seven days of news and government sources, filtered by the examinability test, with the repeated anchors clustered. It takes about twenty seconds.'
-          : "Retrieval runs against news and government sources from the last 24 hours, applies the examinability test, and keeps only what survives it. It takes about twenty seconds.",
-        'Build the brief');
+      showBriefState('No topper notes published yet',
+        'Every official record remains in Source Desk while mapping and evidence checks continue.');
       renderBriefMeta();
       return;
     }
-
     var items = filteredItems();
     briefStateEl().hidden = items.length > 0;
-
     if (!items.length) {
       list.innerHTML = '';
       showBriefState('Nothing matches those filters',
-        'Clear the paper filters, the search box or the primary-source toggle to see the rest of the brief.', '');
+        'Clear the paper filters, search box, or ready-for-recall toggle to see the rest of the publication.');
     } else {
-      list.innerHTML = items.map(Render.briefEntry).join('');
+      list.innerHTML = items.map(function (item) {
+        if (state.examExpandedId === item.sourceId && state.examDetails[item.sourceId]) {
+          return '<li class="an-exam-expanded">' + Render.examNote(state.examDetails[item.sourceId], {}) + '</li>';
+        }
+        return '<li>' + Render.examSummary(item, { loading: state.examDetailLoading === item.sourceId }) + '</li>';
+      }).join('');
     }
-
-    var clusterBlock = el('clusterBlock');
-    if (brief.clusters && brief.clusters.length) {
-      el('clusterList').innerHTML = Render.clusters(brief.clusters);
-      clusterBlock.hidden = false;
-    } else {
-      clusterBlock.hidden = true;
-    }
-
-    var discardBlock = el('discardBlock');
-    if (brief.discarded && brief.discarded.length) {
-      el('discardList').innerHTML = Render.discards(brief.discarded);
-      discardBlock.hidden = false;
-    } else {
-      discardBlock.hidden = true;
-    }
-
+    el('clusterBlock').hidden = true;
+    el('discardBlock').hidden = true;
     renderBriefMeta();
+  }
+
+  function loadExamDetail(sourceId) {
+    if (!/^src_[a-f0-9]{64}$/i.test(sourceId)) return Promise.reject(new Error('Invalid note identity.'));
+    if (state.examDetails[sourceId]) return Promise.resolve(state.examDetails[sourceId]);
+    return fetch('data/upsc/notes/' + encodeURIComponent(sourceId) + '.json', { cache: 'no-cache' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('The full note could not be loaded.');
+        return response.json();
+      })
+      .then(function (payload) {
+        var normalized = Content.normalizeExamIndex({ notes: [payload] }).notes[0];
+        if (!normalized || normalized.sourceId !== sourceId) throw new Error('The full note failed validation.');
+        state.examDetails[sourceId] = normalized;
+        return normalized;
+      });
+  }
+
+  function openExamDetail(sourceId) {
+    if (state.examExpandedId === sourceId && state.examDetails[sourceId]) {
+      state.examExpandedId = '';
+      renderBrief();
+      return;
+    }
+    state.examDetailLoading = sourceId;
+    renderBrief();
+    loadExamDetail(sourceId).then(function () {
+      state.examExpandedId = sourceId;
+    }).catch(function (error) {
+      state.briefError = error.message;
+    }).then(function () {
+      state.examDetailLoading = '';
+      renderBrief();
+    });
+  }
+
+  function loadSyllabus() {
+    if (state.syllabusLoading) return;
+    state.syllabusLoading = true;
+    fetch('data/upsc/syllabus-index.json', { cache: 'no-cache' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('The syllabus index could not be loaded.');
+        return response.json();
+      })
+      .then(function (payload) {
+        var normalized = Content.normalizeSyllabusIndex(payload);
+        state.syllabusGroups = normalized.groups;
+        state.syllabusGeneratedAt = normalized.generatedAt;
+      })
+      .catch(function (error) { state.syllabusError = error.message; })
+      .then(function () { state.syllabusLoading = false; renderSyllabus(); });
+  }
+
+  function renderSyllabus() {
+    var list = el('syllabusList');
+    var empty = el('syllabusState');
+    if (state.syllabusLoading) {
+      empty.hidden = false;
+      empty.innerHTML = '<h3>Loading the syllabus map</h3><p>Joining static anchors to current official triggers.</p>';
+      return;
+    }
+    if (state.syllabusError) {
+      list.innerHTML = '';
+      empty.hidden = false;
+      empty.innerHTML = '<h3>Syllabus map unavailable</h3><p>' + Render.esc(state.syllabusError) + '</p>';
+      return;
+    }
+    var groups = state.syllabusGroups.filter(function (group) {
+      if (!state.query) return true;
+      return [group.code, group.anchor, group.staticDefinition].join(' ').toLowerCase().indexOf(state.query) !== -1;
+    });
+    empty.hidden = groups.length > 0;
+    list.innerHTML = groups.map(Render.syllabusAnchor).join('');
+    el('syllabusMeta').innerHTML = '<strong>' + groups.length + '</strong> anchor-code groups' +
+      (state.syllabusGeneratedAt ? ' · built ' + Render.esc(state.syllabusGeneratedAt.slice(0, 10)) : '') + '.';
+  }
+
+  function loadPracticeNotes() {
+    renderAnswerLab();
+    if (state.practiceLoading || !state.examSummaries.length) return;
+    var missing = state.examSummaries.filter(function (note) { return !state.examDetails[note.sourceId]; });
+    if (!missing.length) return;
+    state.practiceLoading = true;
+    Promise.all(missing.map(function (note) {
+      return loadExamDetail(note.sourceId).catch(function () { return null; });
+    })).then(function () {
+      state.practiceLoading = false;
+      renderAnswerLab();
+    });
+  }
+
+  function renderAnswerLab() {
+    var list = el('answerPracticeList');
+    var empty = el('answerPracticeState');
+    if (!list || !empty) return;
+    var practices = [];
+    Object.keys(state.examDetails).forEach(function (id) {
+      state.examDetails[id].mainsPractice.forEach(function (practice) {
+        practices.push({ note: state.examDetails[id], practice: practice });
+      });
+    });
+    empty.hidden = practices.length > 0;
+    empty.innerHTML = state.practiceLoading
+      ? '<h3>Loading answer scaffolds</h3><p>Opening the published notes without calling a live model.</p>'
+      : '<h3>No published practice yet</h3><p>Use the optional lookup below while mapped answer scaffolds are prepared.</p>';
+    list.innerHTML = practices.map(function (row) {
+      return '<section class="an-practice-note"><p class="an-entry__tags">' +
+        '<span class="an-anchor"><span class="an-label">Anchor</span> ' + Render.esc(row.note.anchor) + '</span></p>' +
+        Render.answerOutline(row.practice) + '</section>';
+    }).join('');
   }
 
   /* ────────────────────────────── the lookup ────────────────────────────── */
@@ -268,13 +464,13 @@
     }
     if (!ENDPOINT) {
       state.lookupError = 'The lookup endpoint is not configured for this page.';
-      setView('lookup');
+      setView('answer');
       renderLookup();
       return;
     }
     if (state.lookupLoading) return;
 
-    setView('lookup');
+    setView('answer');
     state.lookupLoading = true;
     state.lookupError = '';
     state.lookup = null;
@@ -484,7 +680,7 @@
   /* ────────────────────────────── retrieval ────────────────────────────── */
 
   function startQueue() {
-    state.queue = Store.due();
+    state.queue = Memory ? Memory.buildSession(Store.due()) : Store.due();
     state.queueIndex = 0;
     state.queuePassed = 0;
     state.queueReset = 0;
@@ -546,6 +742,81 @@
       renderRevise();
       renderCounts();
     }
+  }
+
+  function drillsFor(note, mode) {
+    if (!Memory) return [];
+    if (mode === 'cloze') return Memory.createClozeDrills(note);
+    if (mode === 'prelims') return Memory.createPrelimsDrills(note);
+    if (mode === 'skeleton') {
+      var skeleton = Memory.createSkeletonDrill(note);
+      return skeleton ? [skeleton] : [];
+    }
+    return [];
+  }
+
+  function buildDrillQueue(mode) {
+    var due = Memory ? Memory.buildSession(Store.due()) : Store.due();
+    state.drillQueue = due.map(function (note) {
+      var drills = drillsFor(note, mode);
+      if (!drills.length) return null;
+      return { note: note, drill: drills[(note.stage || 0) % drills.length] };
+    }).filter(Boolean);
+  }
+
+  function renderDerivedDrill() {
+    var body = el('memoryDrillBody');
+    var meta = el('memoryDrillMeta');
+    buildDrillQueue(state.memoryMode);
+    if (!state.drillQueue.length) {
+      body.innerHTML = '<div class="an-state"><h3>No matching drill due</h3><p>' +
+        (Store.stats().due
+          ? 'The due notes do not contain this evidence-safe drill type. Use Due recall instead.'
+          : 'Nothing is due today. Derived drills follow the parent schedule rather than creating extra reviews.') +
+        '</p></div>';
+      meta.textContent = 'Derived from due notes; no separate schedule records.';
+      return;
+    }
+    var entry = state.drillQueue[0];
+    meta.innerHTML = '<strong>' + state.drillQueue.length + '</strong> parent notes available for this drill.';
+    body.innerHTML = Render.memoryDrill(entry.drill, entry.note, 0, state.drillQueue.length);
+  }
+
+  function handleDrillClick(event) {
+    var button = event.target.closest('[data-act]');
+    if (!button) return;
+    var card = button.closest('.an-memory-drill');
+    if (!card) return;
+    var act = button.getAttribute('data-act');
+    if (act === 'drill-reveal') {
+      var answer = card.querySelector('[data-drill-answer]');
+      answer.hidden = false;
+      button.hidden = true;
+      button.setAttribute('aria-expanded', 'true');
+      card.querySelector('[data-act="drill-pass"]').hidden = false;
+      card.querySelector('[data-act="drill-fail"]').hidden = false;
+      return;
+    }
+    if (act === 'drill-pass' || act === 'drill-fail') {
+      Store.review(card.getAttribute('data-id'), act === 'drill-pass' ? 'pass' : 'fail');
+      renderDerivedDrill();
+      renderCounts();
+      renderRail();
+    }
+  }
+
+  function setMemoryMode(mode) {
+    var allowed = ['due', 'cloze', 'prelims', 'skeleton', 'notes'];
+    state.memoryMode = allowed.indexOf(mode) === -1 ? 'due' : mode;
+    document.querySelectorAll('[data-memory-mode]').forEach(function (button) {
+      button.setAttribute('aria-pressed', button.getAttribute('data-memory-mode') === state.memoryMode ? 'true' : 'false');
+    });
+    el('memoryNotesPanel').hidden = state.memoryMode !== 'notes';
+    el('memoryDuePanel').hidden = state.memoryMode !== 'due';
+    el('memoryDrillPanel').hidden = ['cloze', 'prelims', 'skeleton'].indexOf(state.memoryMode) === -1;
+    if (state.memoryMode === 'notes') renderNotes();
+    else if (state.memoryMode === 'due') startQueue();
+    else renderDerivedDrill();
   }
 
   /* ───────────────────────────── rail, counts ───────────────────────────── */
@@ -653,6 +924,14 @@
       tab.addEventListener('click', function () { setView(tab.getAttribute('data-view')); });
     });
 
+    ['sourceQuery', 'sourcePublisher', 'sourceDate', 'sourceJurisdiction', 'sourceType', 'sourcePaper'].forEach(function (id) {
+      var control = el(id);
+      control.addEventListener(id === 'sourceQuery' ? 'input' : 'change', function () {
+        sourceFiltersFromControls();
+        renderSourceDesk();
+      });
+    });
+
     /* Scope */
     ['scopeDaily', 'scopeWeekly'].forEach(function (id) {
       el(id).addEventListener('click', function () {
@@ -690,17 +969,20 @@
     });
 
     /* Retrieval + lookup */
-    el('refreshBrief').addEventListener('click', function () { loadBrief(true); });
-    briefStateEl().addEventListener('click', function (event) {
-      if (event.target.id === 'loadBrief') loadBrief(true);
-    });
+    el('refreshBrief').addEventListener('click', loadBrief);
     el('lookupBtn').addEventListener('click', doLookup);
 
     /* Search: filters what is on screen; Enter fetches a fresh note. */
     var search = el('q');
     search.addEventListener('input', function () {
       state.query = search.value.trim().toLowerCase();
-      if (state.view === 'notes') renderNotes();
+      if (state.view === 'source') {
+        el('sourceQuery').value = search.value;
+        sourceFiltersFromControls();
+        renderSourceDesk();
+      } else if (state.view === 'memory') renderNotes();
+      else if (state.view === 'syllabus') renderSyllabus();
+      else if (state.view === 'answer') renderAnswerLab();
       else renderBrief();
     });
     search.addEventListener('keydown', function (event) {
@@ -711,7 +993,12 @@
       if (event.key === 'Escape') {
         search.value = '';
         state.query = '';
+        el('sourceQuery').value = '';
+        sourceFiltersFromControls();
+        renderSourceDesk();
         renderBrief();
+        renderSyllabus();
+        renderAnswerLab();
         renderNotes();
       }
     });
@@ -725,38 +1012,63 @@
       search.select();
     });
 
-    /* Saving from the brief */
+    /* Published topper-note expansion, recall reveal, and evidence-gated save. */
     el('briefEntries').addEventListener('click', function (event) {
-      var button = event.target.closest('[data-act="save"]');
+      var button = event.target.closest('[data-act]');
       if (!button) return;
-      var brief = currentBrief();
-      if (!brief) return;
+      var act = button.getAttribute('data-act');
       var id = button.getAttribute('data-id');
-      var item = null;
-      brief.items.forEach(function (candidate) {
-        if (candidate.id === id) item = candidate;
-      });
-      if (!item) return;
-
+      if (act === 'open-exam') {
+        openExamDetail(id);
+        return;
+      }
+      if (act === 'reveal-exam') {
+        var target = document.getElementById(button.getAttribute('aria-controls'));
+        if (!target) return;
+        var opening = target.hidden;
+        target.hidden = !opening;
+        button.setAttribute('aria-expanded', opening ? 'true' : 'false');
+        button.textContent = opening ? 'Hide recall' : 'Reveal recall';
+        return;
+      }
+      if (act !== 'save-exam') return;
+      var note = state.examDetails[id];
+      if (!note || !note.canMemorize) return;
+      if (state.mode && state.mode.name === 'LOCK' && button.getAttribute('data-lock-confirmed') !== 'true') {
+        button.setAttribute('data-lock-confirmed', 'true');
+        button.textContent = 'Save anyway';
+        status('LOCK mode: retrieve what you already hold. Save only if this closes a known gap.', 'error');
+        return;
+      }
       var result = Store.add({
-        title: item.title,
-        anchor: item.anchor,
-        codes: item.codes,
-        what: item.what,
-        why: item.why,
-        debate: item.debate,
-        use: item.use,
-        prelimsFact: item.prelimsFact,
-        sourceUrl: item.sourceUrl,
-        sourceName: item.sourceName,
-        verified: item.verified,
-        score: item.score,
-        band: item.band,
-        origin: 'brief',
+        title: note.title,
+        anchor: note.anchor,
+        codes: note.codes,
+        sourceId: note.sourceId,
+        what: note.staticDefinition,
+        why: note.whyInNews,
+        whyInNews: note.whyInNews,
+        debate: (note.argumentsFor[0] || '') + (note.argumentsAgainst[0] ? ' / ' + note.argumentsAgainst[0] : ''),
+        use: note.use,
+        prelimsFact: note.officialFacts[0] ? note.officialFacts[0].text : '',
+        sourceUrl: note.sourceUrl,
+        sourceName: note.publisherName,
+        verified: note.canMemorize,
+        score: note.priority,
+        band: note.priority >= 75 ? 'core' : (note.priority >= 50 ? 'strong' : 'thin'),
+        origin: 'publication',
+        recallPayload: {
+          officialFacts: note.officialFacts,
+          argumentsFor: note.argumentsFor,
+          argumentsAgainst: note.argumentsAgainst,
+          prelimsTraps: note.prelimsTraps,
+          mainsPractice: note.mainsPractice,
+          use: note.use,
+        },
       });
-
       button.disabled = true;
       button.textContent = result === 'duplicate' ? 'Already saved' : 'Saved · due tomorrow';
+      renderNotes();
       renderCounts();
       renderRail();
     });
@@ -790,6 +1102,12 @@
 
     /* Retrieval queue */
     el('reviseBody').addEventListener('click', handleReviseClick);
+    el('memoryDrillBody').addEventListener('click', handleDrillClick);
+    document.querySelectorAll('[data-memory-mode]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        setMemoryMode(button.getAttribute('data-memory-mode'));
+      });
+    });
 
     /* Export and reset */
     el('copyNotes').addEventListener('click', copyNotes);
@@ -814,14 +1132,10 @@
     renderCounts();
     renderRail();
     renderBrief();
-
-    /* ?topic= hands a concept over from the Pattern Atlas: the atlas holds the
-     * static anchor, this fetches the current trigger layer for it. */
-    var requested = new URLSearchParams(window.location.search).get('topic');
-    if (requested) {
-      search.value = requested.slice(0, 160);
-      doLookup();
-    }
+    loadSourceIndex();
+    loadBrief();
+    loadSyllabus();
+    if (state.mode && state.mode.name === 'LOCK') setView('memory');
   }
 
   if (document.readyState === 'loading') {

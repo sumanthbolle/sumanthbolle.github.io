@@ -28,6 +28,32 @@ The Summaverick research agent includes a modular ServiceNow domain intelligence
 - Node pack: [`research-agent/`](research-agent/README.md) (SDK explain/query, ServiceNowDocs, evidence, evals)
 - Worker routing: `api/servicenow-domain.js` + `api/worker.js` (domain detection for chat)
 
+## Anchor UPSC publication
+
+`upsc.html` is the interactive reading and recall desk. It reads the generated
+official-source publication in `data/upsc/`; `upsc-study/` is its crawlable,
+JavaScript-free archive.
+
+The registry currently covers PIB, RBI, SEBI, MEA, UN News, WHO and the Council
+of the EU. New records are source-only until the private Worker enrichment route
+binds them to a static anchor, syllabus codes and source-supported exam notes.
+Only `source-backed` and `reviewed` notes become static study pages.
+
+Run the complete publisher locally:
+
+```bash
+python3 scripts/upsc/publish.py check-sources --registry data/upsc/source-registry.json --strict
+python3 scripts/upsc/publish.py ingest --registry data/upsc/source-registry.json --output data/upsc
+python3 scripts/upsc/enrich.py --output data/upsc --endpoint "$UPSC_ENRICH_ENDPOINT" --token "$UPSC_PUBLISH_TOKEN"
+python3 scripts/upsc/publish.py build-indexes --output data/upsc
+python3 scripts/upsc/publish.py build-pages --output data/upsc --site-root upsc-study --base-url https://sumanthbolle.com
+node scripts/generate-sitemap.js
+```
+
+GitHub Actions runs the same publication at 00:15, 06:15, 12:15 and 18:15 UTC.
+See [`docs/upsc-anchor-handover.md`](docs/upsc-anchor-handover.md) for source
+policy, secrets, editorial states and recovery procedures.
+
 ##  Getting Started
 
 1. Fork or clone this repo:

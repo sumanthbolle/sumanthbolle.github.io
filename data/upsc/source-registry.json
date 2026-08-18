@@ -1,0 +1,74 @@
+[
+  {
+    "id": "pib",
+    "name": "Press Information Bureau",
+    "country": "IN",
+    "tier": "indian-primary",
+    "hosts": ["pib.gov.in"],
+    "adapter": "rss",
+    "feedUrl": "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3&reg=3",
+    "datePolicy": "fetched-at",
+    "enabled": true
+  },
+  {
+    "id": "rbi",
+    "name": "Reserve Bank of India",
+    "country": "IN",
+    "tier": "indian-primary",
+    "hosts": ["rbi.org.in"],
+    "adapter": "rss",
+    "feedUrl": "https://rbi.org.in/pressreleases_rss.xml",
+    "enabled": true
+  },
+  {
+    "id": "sebi",
+    "name": "Securities and Exchange Board of India",
+    "country": "IN",
+    "tier": "indian-primary",
+    "hosts": ["sebi.gov.in"],
+    "adapter": "rss",
+    "feedUrl": "https://www.sebi.gov.in/sebirss.xml",
+    "enabled": true
+  },
+  {
+    "id": "mea",
+    "name": "Ministry of External Affairs",
+    "country": "IN",
+    "tier": "indian-primary",
+    "hosts": ["mea.gov.in"],
+    "adapter": "listing",
+    "listingUrl": "https://www.mea.gov.in/FrontEnd/FetchPublicationListingData?publicationId=51&page=1&PageSize=20&SortBy=Latest&PLngId=1",
+    "linkClass": "pressTitle",
+    "enabled": true
+  },
+  {
+    "id": "un-news",
+    "name": "United Nations News",
+    "country": "INT",
+    "tier": "international-institution",
+    "hosts": ["news.un.org"],
+    "adapter": "rss",
+    "feedUrl": "https://news.un.org/feed/subscribe/en/news/all/rss.xml",
+    "enabled": true
+  },
+  {
+    "id": "who",
+    "name": "World Health Organization",
+    "country": "INT",
+    "tier": "international-institution",
+    "hosts": ["who.int"],
+    "adapter": "rss",
+    "feedUrl": "https://www.who.int/rss-feeds/news-english.xml",
+    "enabled": true
+  },
+  {
+    "id": "eu-council",
+    "name": "Council of the European Union",
+    "country": "INT",
+    "tier": "international-institution",
+    "hosts": ["consilium.europa.eu"],
+    "adapter": "rss",
+    "feedUrl": "https://www.consilium.europa.eu/en/rss/pressreleases.ashx",
+    "enabled": true
+  }
+]
