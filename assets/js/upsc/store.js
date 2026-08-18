@@ -157,12 +157,28 @@
 
   /* ───────────────────────────── notes store ───────────────────────────── */
 
-  function slug(value) {
-    return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
+  function fingerprintPart(value, max) {
+    var text = String(value || '');
+    if (text.normalize) text = text.normalize('NFKC');
+    return text.toLocaleLowerCase().replace(/\s+/g, ' ').trim().slice(0, max);
+  }
+
+  function safeHttpUrl(value) {
+    try {
+      var url = new URL(String(value || '').trim().slice(0, 500));
+      if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
+      return url.toString();
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function cleanText(value, max) {
+    return String(value || '').replace(/\s+/g, ' ').trim().slice(0, max);
   }
 
   function fingerprint(note) {
-    return slug(note.anchor) + '::' + slug(note.title).slice(0, 40);
+    return fingerprintPart(note.anchor, 60) + '::' + fingerprintPart(note.title, 40);
   }
 
   var CODE_SHAPE = /^(GS[1-4]\.\d{1,2}|ESSAY\.[AB])$/;
@@ -184,6 +200,30 @@
       if (paper && papers.indexOf(paper) === -1) papers.push(paper);
     });
     return papers;
+  }
+
+  function normalizeNoteContent(input) {
+    var value = input && typeof input === 'object' ? input : {};
+    var codes = normalizeCodes(value.codes);
+    var sourceUrl = safeHttpUrl(value.sourceUrl);
+
+    return {
+      title: cleanText(value.title, 160),
+      anchor: cleanText(value.anchor, 60),
+      codes: codes,
+      papers: papersFor(codes),
+      what: cleanText(value.what, 320),
+      why: cleanText(value.why, 320),
+      debate: cleanText(value.debate, 320),
+      use: cleanText(value.use, 320),
+      prelimsFact: cleanText(value.prelimsFact, 260),
+      sourceUrl: sourceUrl,
+      sourceName: sourceUrl ? cleanText(value.sourceName, 80) : '',
+      verified: value.verified === true && !!sourceUrl,
+      score: Number.isFinite(Number(value.score)) ? Number(value.score) : null,
+      band: value.band || '',
+      origin: value.origin || 'own',
+    };
   }
 
   function load() {
@@ -220,24 +260,24 @@
      * rather than silently doing nothing. */
     add: function (input) {
       var notes = load();
-      var codes = normalizeCodes(input.codes);
+      var content = normalizeNoteContent(input);
       var note = {
         id: 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-        title: String(input.title || '').slice(0, 160),
-        anchor: String(input.anchor || '').slice(0, 60),
-        codes: codes,
-        papers: papersFor(codes),
-        what: String(input.what || '').slice(0, 320),
-        why: String(input.why || '').slice(0, 320),
-        debate: String(input.debate || '').slice(0, 320),
-        use: String(input.use || '').slice(0, 320),
-        prelimsFact: String(input.prelimsFact || '').slice(0, 260),
-        sourceUrl: String(input.sourceUrl || '').slice(0, 500),
-        sourceName: String(input.sourceName || '').slice(0, 80),
-        verified: input.verified === true,
-        score: Number.isFinite(Number(input.score)) ? Number(input.score) : null,
-        band: input.band || '',
-        origin: input.origin || 'own',
+        title: content.title,
+        anchor: content.anchor,
+        codes: content.codes,
+        papers: content.papers,
+        what: content.what,
+        why: content.why,
+        debate: content.debate,
+        use: content.use,
+        prelimsFact: content.prelimsFact,
+        sourceUrl: content.sourceUrl,
+        sourceName: content.sourceName,
+        verified: content.verified,
+        score: content.score,
+        band: content.band,
+        origin: content.origin,
         createdAt: today(),
         stage: 0,
         streak: 0,

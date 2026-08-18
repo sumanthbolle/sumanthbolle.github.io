@@ -18,6 +18,16 @@
     return esc(value).replace(/\s+/g, ' ');
   }
 
+  function safeHttpUrl(value) {
+    try {
+      var url = new URL(String(value || '').trim());
+      if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
+      return url.toString();
+    } catch (e) {
+      return '';
+    }
+  }
+
   function anchorHtml(anchor) {
     return '<span class="an-anchor"><span class="an-label">Anchor</span> ' + esc(anchor) + '</span>';
   }
@@ -44,8 +54,9 @@
   }
 
   function sourceLink(url, name) {
-    if (!url) return '';
-    return '<a href="' + attr(url) + '" target="_blank" rel="noopener noreferrer">Open source' +
+    var safeUrl = safeHttpUrl(url);
+    if (!safeUrl) return '';
+    return '<a href="' + attr(safeUrl) + '" target="_blank" rel="noopener noreferrer">Open source' +
       (name ? ' · ' + esc(name) : '') + '</a>';
   }
 
@@ -152,6 +163,16 @@
 
   function lookupNote(note) {
     var parts = [];
+    var safeSources = (note.sources || []).map(function (row) {
+      var url = safeHttpUrl(row && row.url);
+      if (!url) return null;
+      return {
+        title: row.title,
+        url: url,
+        source: row.source,
+        primary: row.primary,
+      };
+    }).filter(Boolean);
 
     parts.push('<div class="an-lookup__head">' +
       '<p class="an-entry__tags">' +
@@ -213,9 +234,9 @@
       parts.push('<div class="an-trap"><span class="an-label">Where marks are lost</span><p>' + esc(note.trap) + '</p></div>');
     }
 
-    if (note.sources.length) {
+    if (safeSources.length) {
       parts.push('<div class="an-block"><h3>Sources</h3><ul class="an-sources">' +
-        note.sources.map(function (row) {
+        safeSources.map(function (row) {
           return '<li><a href="' + attr(row.url) + '" target="_blank" rel="noopener noreferrer">' + esc(row.title) + '</a> ' +
             '<span>' + esc(row.source) + (row.primary ? ' · primary' : '') + '</span></li>';
         }).join('') + '</ul></div>');
