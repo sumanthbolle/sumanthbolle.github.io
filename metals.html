@@ -17,6 +17,9 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -289,6 +292,223 @@
   </style>
   <link rel="stylesheet" href="assets/css/nav-utilities.css">
   <link rel="stylesheet" href="assets/css/utility-page.css">
+  <style>
+    :root {
+      --blue: #204e78;
+      --text: #151a20;
+      --gray: #5f6b76;
+      --bg: #f6f8fa;
+      --white: #fff;
+      --gold: #9a6a1f;
+      --silver: #77838f;
+      --card-line: #d8dee5;
+      --input-line: #b9c3cd;
+      --max: 1180px;
+    }
+    :root[data-theme="dark"] {
+      --blue: #9bc4ed;
+      --text: #eef2f5;
+      --gray: #aab4be;
+      --bg: #101419;
+      --white: #171d24;
+      --gold: #d8ad62;
+      --silver: #bac2ca;
+      --card-line: #35404b;
+      --input-line: #4b5865;
+    }
+    body {
+      font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      transition: background .18s ease, color .18s ease;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .util-head {
+      padding: 88px 22px 22px;
+    }
+    .util-head__kicker {
+      margin-bottom: 12px;
+      color: var(--gold);
+    }
+    .util-head h1 {
+      max-width: 16ch;
+      font-size: clamp(42px, 7vw, 72px);
+      font-weight: 600;
+      letter-spacing: -.055em;
+      text-wrap: balance;
+    }
+    .util-head__lede {
+      margin-top: 12px;
+      color: var(--gray);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .toolbar {
+      top: 54px;
+      padding: 11px 14px;
+      border-radius: 3px;
+      box-shadow: none;
+    }
+    select,
+    input[type=number],
+    input[type=text],
+    .btn,
+    .btn-sm {
+      min-height: 44px;
+      border-radius: 2px;
+    }
+    .btn-sm { padding: 0 14px; }
+    .theme-toggle,
+    .nav-logo {
+      min-height: 44px;
+      min-width: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .price-grid {
+      gap: 14px;
+      margin: 18px 0 14px;
+    }
+    .metal {
+      padding: 22px;
+      border-radius: 3px;
+      box-shadow: none;
+    }
+    .metal.gold { border-top: 3px solid var(--gold); }
+    .metal.silver { border-top: 3px solid var(--silver); }
+    .coin-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      box-shadow: none;
+      transform: none;
+      transition: none;
+    }
+    .metal:hover .coin-thumb { transform: none; }
+    .metal-name { font-size: 23px; }
+    .spot-label { margin-top: 20px; }
+    .spot-value { font-size: clamp(36px, 5vw, 56px); }
+    .chart-panel {
+      margin: 12px 0 16px;
+      padding: 0 12px;
+      border: 1px solid var(--card-line);
+      border-radius: 2px;
+      background: var(--bg);
+    }
+    .chart-panel > summary {
+      min-height: 44px;
+      margin: 0;
+    }
+    .chart-panel[open] .chart-wrap { margin-bottom: 8px; }
+    .chart-wrap { height: 150px; }
+    .local-grid { gap: 13px 18px; }
+    .market-change {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, auto);
+      gap: 24px;
+      align-items: center;
+      margin: 0 0 44px;
+      padding: 14px 0;
+      border-top: 1px solid var(--card-line);
+      border-bottom: 1px solid var(--card-line);
+    }
+    .change-summary {
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      font-size: 15px;
+    }
+    .market-change .control-note { text-align: right; }
+    .section {
+      margin: 0;
+      padding: 32px 0;
+      border: 0;
+      border-top: 1px solid var(--card-line);
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    .quote-tools {
+      margin-bottom: 40px;
+      border-top: 2px solid var(--text);
+      border-bottom: 1px solid var(--card-line);
+    }
+    .section-heading { margin-bottom: 18px; }
+    .section-label { color: var(--gold); }
+    .calc-card,
+    .calc-out,
+    .context-metal,
+    .ratio-card,
+    .alert-card,
+    .region-card,
+    .seller-card,
+    .hs-card,
+    .buy-sim,
+    .factor-list li,
+    .explain-grid div {
+      border-radius: 2px;
+      box-shadow: none;
+    }
+    .tool-panel {
+      padding: 0;
+    }
+    .tool-panel > summary {
+      min-height: 76px;
+      padding: 0;
+    }
+    .tool-panel > summary h2 {
+      margin: 0;
+      font-size: clamp(23px, 3vw, 30px);
+      font-weight: 500;
+      letter-spacing: -.025em;
+    }
+    .tool-panel > summary::after {
+      margin-left: auto;
+      color: var(--gray);
+    }
+    .tool-panel > .section-intro {
+      margin: -10px 0 22px;
+    }
+    .tool-panel > :last-child { margin-bottom: 28px; }
+    .sources-panel > h3 {
+      margin: 30px 0 12px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+    }
+    .footer-links a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      color: var(--gray);
+      text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--text); }
+    @media (max-width: 768px) {
+      .util-head { padding: 78px 18px 18px; }
+      .market-change { grid-template-columns: 1fr; gap: 5px; }
+      .market-change .control-note { text-align: left; }
+      .tool-panel > summary { min-height: 68px; }
+    }
+    @media (max-width: 480px) {
+      .main-wrap { padding: 0 18px; }
+      .price-grid { grid-template-columns: 1fr; }
+      .metal { padding: 18px; }
+      .local-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to prices</a>
@@ -336,10 +556,9 @@
   </nav>
 
   <header class="util-head">
-    <p class="util-head__kicker">Utilities</p>
+    <p class="util-head__kicker">Metals</p>
     <h1>Gold &amp; silver prices</h1>
-    <p class="util-head__lede">Spot prices in the currency you shop in, converted to grams, tola, sovereign and baht, with calculators, a holdings tracker, alerts and price history.</p>
-    <p class="util-head__meta">Spot data from Gold API, currency and daily history from Frankfurter. Your currency, holdings and alerts are stored in this browser.</p>
+    <p class="util-head__lede">Spot references, local units and a shop-quote checker.</p>
   </header>
 
   <main id="main" class="main-wrap">
@@ -347,13 +566,13 @@
       <div class="status-copy" role="status" aria-live="polite"><span class="status-dot" id="statusDot"></span><span id="statusText">Fetching the latest market price</span></div>
       <div class="toolbar-actions">
         <div class="field">
-          <label for="currency">Display currency</label>
+          <label for="currency">Currency</label>
           <select id="currency" aria-describedby="currencyNote"></select>
         </div>
         <button class="btn" id="refreshButton" type="button">Refresh</button>
         <button class="btn" id="shareButton" type="button">Share snapshot</button>
       </div>
-      <p class="control-note" id="currencyNote">Your selection is remembered on this device.</p>
+      <p class="sr-only" id="currencyNote">Your selection is stored on this device.</p>
     </div>
     <div class="notice" id="notice" role="alert"></div>
 
@@ -368,13 +587,13 @@
         <p class="spot-label">USD spot price per troy ounce</p>
         <p class="spot-value placeholder" data-field="usd">—<span class="per-unit">/ oz</span></p>
         <p class="move neutral" data-field="move">Waiting for the latest reference</p>
-        <div class="chart-panel">
-          <div class="chart-head"><span>30-day fluctuation</span><span data-field="chartCaption">—</span></div>
+        <details class="chart-panel">
+          <summary class="chart-head"><span>30-day chart</span><span data-field="chartCaption">—</span></summary>
           <div class="chart-wrap" data-chart="gold">
             <svg viewBox="0 0 640 168" preserveAspectRatio="none" role="img" aria-label="Gold 30-day price chart"></svg>
             <div class="chart-tooltip" data-tooltip aria-hidden="true"></div>
           </div>
-        </div>
+        </details>
         <div class="local-grid">
           <div><span class="data-label">Per troy ounce</span><strong class="data-value placeholder" data-field="localOz">—</strong></div>
           <div><span class="data-label">Per gram (24K)</span><strong class="data-value placeholder" data-field="localGram">—</strong></div>
@@ -397,13 +616,13 @@
         <p class="spot-label">USD spot price per troy ounce</p>
         <p class="spot-value placeholder" data-field="usd">—<span class="per-unit">/ oz</span></p>
         <p class="move neutral" data-field="move">Waiting for the latest reference</p>
-        <div class="chart-panel">
-          <div class="chart-head"><span>30-day fluctuation</span><span data-field="chartCaption">—</span></div>
+        <details class="chart-panel">
+          <summary class="chart-head"><span>30-day chart</span><span data-field="chartCaption">—</span></summary>
           <div class="chart-wrap" data-chart="silver">
             <svg viewBox="0 0 640 168" preserveAspectRatio="none" role="img" aria-label="Silver 30-day price chart"></svg>
             <div class="chart-tooltip" data-tooltip aria-hidden="true"></div>
           </div>
-        </div>
+        </details>
         <div class="local-grid">
           <div><span class="data-label">Per troy ounce</span><strong class="data-value placeholder" data-field="localOz">—</strong></div>
           <div><span class="data-label">Per gram</span><strong class="data-value placeholder" data-field="localGram">—</strong></div>
@@ -414,23 +633,21 @@
       </article>
     </section>
 
-    <section class="section highlight" aria-labelledby="changedTitle">
-      <div class="section-heading">
-        <div><p class="section-label">Since your last visit</p><h2 id="changedTitle">What changed</h2></div>
-        <p class="section-intro" id="changeIntro">Once prices load, this compares them with your previous visit or the latest daily reference.</p>
-      </div>
+    <section class="market-change" aria-labelledby="changedTitle">
+      <h2 class="sr-only" id="changedTitle">Latest change</h2>
       <div class="change-summary" id="changeSummary">Fetching the latest market price.</div>
+      <p class="control-note" id="changeIntro">Comparison loads with the latest price.</p>
     </section>
 
-    <section class="section" aria-labelledby="calcTitle">
+    <section class="section quote-tools" id="quoteTools" aria-labelledby="calcTitle">
       <div class="section-heading">
-        <div><p class="section-label">Unit converter &amp; calculators</p><h2 id="calcTitle">Converters and calculators</h2></div>
-        <p class="section-intro">Price any weight in grams, 10 grams, tola, sovereign, baht or troy ounces, at the purity you are buying, and check a shop quote against it.</p>
+        <div><p class="section-label">Calculator</p><h2 id="calcTitle">Check a price</h2></div>
+        <p class="section-intro">Compare a weight and purity with today’s spot reference.</p>
       </div>
       <div class="calc-grid">
         <div class="calc-card">
-          <h3>Value &amp; melt calculator</h3>
-          <p class="hint">Enter a weight and purity to see today’s pure-metal (melt) value at spot.</p>
+          <h3>Metal value</h3>
+          <p class="hint">Pure-metal value at spot.</p>
           <div class="calc-fields">
             <div><label for="vcMetal">Metal</label><select id="vcMetal"><option value="gold">Gold</option><option value="silver">Silver</option></select></div>
             <div><label for="vcWeight">Weight</label><input id="vcWeight" type="number" min="0" step="any" value="10"></div>
@@ -440,26 +657,24 @@
           <div class="calc-out"><div class="big" id="vcValue">—</div><div class="sub" id="vcSub">Pure metal content will appear here.</div></div>
         </div>
         <div class="calc-card">
-          <h3>Premium checker</h3>
-          <p class="hint">Enter what a shop quotes for an item to see the premium over spot metal value.</p>
+          <h3>Shop quote</h3>
+          <p class="hint">Premium above the pure-metal value.</p>
           <div class="calc-fields">
             <div><label for="pcMetal">Metal</label><select id="pcMetal"><option value="gold">Gold</option><option value="silver">Silver</option></select></div>
             <div><label for="pcWeight">Weight</label><input id="pcWeight" type="number" min="0" step="any" value="10"></div>
             <div><label for="pcUnit">Unit</label><select id="pcUnit"></select></div>
             <div><label for="pcPurity">Purity</label><select id="pcPurity"></select></div>
-            <div class="full"><label for="pcQuote">Price you were quoted (total, in selected currency)</label><input id="pcQuote" type="number" min="0" step="any" placeholder="e.g. 85000"></div>
+            <div class="full"><label for="pcQuote">Quoted total</label><input id="pcQuote" type="number" min="0" step="any" placeholder="e.g. 85000"></div>
           </div>
           <div class="calc-out"><div class="big" id="pcResult">—</div><div class="sub" id="pcSub">Enter a quote to compare with spot metal value.</div></div>
         </div>
       </div>
-      <p class="disclaimer">Melt value is the spot value of the pure metal only. Real shop prices add making charges, taxes, duties and dealer margins, so a positive premium is normal — especially for jewellery.</p>
+      <p class="disclaimer">Melt value uses spot price and purity. Retail quotes may also include taxes, fabrication and dealer margin.</p>
     </section>
 
-    <section class="section" aria-labelledby="holdingsTitle">
-      <div class="section-heading">
-        <div><p class="section-label">Your holdings</p><h2 id="holdingsTitle">What you own</h2></div>
-        <p class="section-intro">Add your items once to see what they are worth at today’s price and how that has moved. The list is stored in this browser.</p>
-      </div>
+    <details class="section tool-panel" id="holdingsPanel" aria-labelledby="holdingsTitle">
+      <summary><h2 id="holdingsTitle">Holdings</h2></summary>
+      <p class="section-intro">Value items at today’s spot reference. Saved in this browser.</p>
       <div class="holdings-summary">
         <div class="hs-card"><div class="lbl">Total value today</div><div class="val" id="holdTotal">—</div><div class="hs-breakdown" id="holdBreakdown"></div></div>
         <div class="hs-card"><div class="lbl">Since your last visit</div><div class="val small" id="holdVisit">—</div></div>
@@ -475,13 +690,11 @@
       <input id="hLabelInput" type="text" placeholder="Optional label (e.g. Mum's chain)" style="width:100%;margin-bottom:14px">
       <ul class="holdings-list" id="holdingsList"></ul>
       <p class="empty-note" id="holdingsEmpty">No items yet — add your first piece above. For example: <button type="button" class="example-chip" data-ex="chain">50 g · 22K chain</button> <button type="button" class="example-chip" data-ex="tola">10 tola · 24K bar</button> <button type="button" class="example-chip" data-ex="silver">1 kg silver coins</button></p>
-    </section>
+    </details>
 
-    <section class="section" aria-labelledby="historyTitle">
-      <div class="section-heading">
-        <div><p class="section-label">Price history</p><h2 id="historyTitle">Price over time</h2></div>
-        <p class="section-intro">Switch timeframes and metals, hover to read any day, and use the simulator to see what an amount bought on a past date would be worth now.</p>
-      </div>
+    <details class="section tool-panel" id="historyPanel" aria-labelledby="historyTitle">
+      <summary><h2 id="historyTitle">Price history</h2></summary>
+      <p class="section-intro">Daily references and a past-purchase comparison.</p>
       <div class="tf-row">
         <div class="tf-group" id="tfGroup" role="group" aria-label="Timeframe">
           <button class="tf-btn active" data-tf="1M" type="button">1M</button>
@@ -509,13 +722,11 @@
         <p class="bs-out" id="bsOut">Pick a timeframe and slide to a past date to simulate a purchase.</p>
       </div>
       <p class="disclaimer">History uses daily USD closes (weekly or monthly for long ranges) from Frankfurter, converted with the latest FX rate. Event markers are approximate context, not precise timestamps.</p>
-    </section>
+    </details>
 
-    <section class="section" aria-labelledby="compareTitle">
-      <div class="section-heading">
-        <div><p class="section-label">Price context</p><h2 id="compareTitle">How today compares</h2></div>
-        <p class="section-intro">Where today’s quote sits inside its recent daily range, with 1, 7 and 30 day changes. These describe movement, not what anyone should do about it.</p>
-      </div>
+    <details class="section tool-panel" id="marketContextPanel" aria-labelledby="compareTitle">
+      <summary><h2 id="compareTitle">Recent range</h2></summary>
+      <p class="section-intro">One-, seven- and thirty-day changes.</p>
       <div class="context-grid">
         <div class="context-metal gold" data-context="gold">
           <h3 class="context-title"><span>Gold</span><span data-field="rangePosition">—</span></h3>
@@ -545,13 +756,11 @@
         <div class="ratio-card"><span class="data-label">30-day ratio reference</span><div class="ratio-number" id="ratioReference">—</div><p class="ratio-copy">Calculated from the matching daily observation nearest to 30 days ago.</p></div>
       </div>
       <p class="disclaimer">This information is provided for education and general market context. It is not financial advice or a recommendation to trade or purchase precious metals.</p>
-    </section>
+    </details>
 
-    <section class="section" aria-labelledby="alertsTitle">
-      <div class="section-heading">
-        <div><p class="section-label">Price alerts</p><h2 id="alertsTitle">Price alerts</h2></div>
-        <p class="section-intro">Set a level, a gold/silver ratio band, or a big-move threshold. Alerts run in this browser while the page is open and can show a desktop notification.</p>
-      </div>
+    <details class="section tool-panel" id="alertsPanel" aria-labelledby="alertsTitle">
+      <summary><h2 id="alertsTitle">Price alerts</h2></summary>
+      <p class="section-intro">Runs only while this page is open.</p>
       <div class="alert-grid">
         <div class="alert-card">
           <h3>Price level</h3>
@@ -580,13 +789,11 @@
       </div>
       <div class="alert-log" id="alertLog" aria-live="polite"></div>
       <p class="disclaimer">Alerts are best-effort and run only while this page is open in your browser — they are not a substitute for a brokerage or exchange alert service.</p>
-    </section>
+    </details>
 
-    <section class="section" aria-labelledby="sellersTitle">
-      <div class="section-heading">
-        <div><p class="section-label">Where to buy</p><h2 id="sellersTitle">Local market &amp; sellers</h2></div>
-        <p class="section-intro" id="sellerIntro">Known sellers in your region, with the local pricing rules that apply: taxes, duties and the forms metal is usually sold in.</p>
-      </div>
+    <details class="section tool-panel" id="sellersPanel" aria-labelledby="sellersTitle">
+      <summary><h2 id="sellersTitle">Local sellers</h2></summary>
+      <p class="section-intro" id="sellerIntro">Seller references and local pricing notes.</p>
       <div class="tf-row">
         <div class="tf-group region-tabs" id="regionTabs" role="group" aria-label="Region">
           <button class="tf-btn active" data-region="auto" type="button">Auto</button>
@@ -600,13 +807,11 @@
       <div class="region-panel" id="regionPanel"></div>
       <div class="seller-grid" id="sellerGrid"></div>
       <p class="disclaimer">These sellers are listed for general reference only — not endorsements, and not live quotes. Estimated bands apply a typical premium to the current spot price and will differ from each seller’s actual price, which reflects live premiums, availability, taxes, import duties and (for jewellery) making charges. Always confirm the current price on the seller’s own website.</p>
-    </section>
+    </details>
 
-    <section class="section" aria-labelledby="factorsTitle">
-      <div class="section-heading">
-        <div><p class="section-label">General market context</p><h2 id="factorsTitle">What moves these prices</h2></div>
-        <p class="section-intro">Precious-metal prices react to several connected markets. These are the factors people commonly watch when reading a move.</p>
-      </div>
+    <details class="section tool-panel sources-panel" id="sourcesPanel" aria-labelledby="sourcesTitle">
+      <summary><h2 id="sourcesTitle">Sources &amp; basics</h2></summary>
+      <h3 id="factorsTitle">Market factors</h3>
       <ul class="factor-list">
         <li><strong>US dollar direction</strong><span>A stronger dollar can make dollar-priced metals more expensive in other currencies.</span></li>
         <li><strong>Interest rates and real yields</strong><span>Expectations for inflation-adjusted returns can affect demand for assets that do not pay interest.</span></li>
@@ -617,58 +822,34 @@
         <li><strong>Industrial demand for silver</strong><span>Solar, electronics, and manufacturing demand give silver an industrial dimension.</span></li>
         <li><strong>Mining supply and costs</strong><span>Production, energy, labour, and refining costs influence longer-run supply conditions.</span></li>
       </ul>
-      <p class="context-note">These factors are educational context, not a claim about the cause of today’s movement.</p>
-      <a class="ask" id="askFactors" href="summaverick.html" target="_blank" rel="noopener">Ask Summaverick to explain today’s drivers<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    </section>
+      <p class="context-note">Context only; it does not identify the cause of today’s move.</p>
 
-    <section class="section" aria-labelledby="understandTitle">
-      <div class="section-heading">
-        <div><p class="section-label">A short guide</p><h2 id="understandTitle">Understanding these prices</h2></div>
-        <p class="section-intro">A spot quote is a market reference. The amount paid at a jeweller or bullion dealer will usually differ.</p>
-      </div>
+      <h3 id="understandTitle">Units and purity</h3>
       <div class="explain-grid">
         <div><h3>Troy ounce, gram, tola, baht</h3><p>Metals trade in troy ounces (31.1035 g). A tola is 11.6638 g, a sovereign/pavan is taken as 8 g, and a Thai baht of gold is 15.244 g at 96.5% purity.</p></div>
         <div><h3>24K and 22K gold</h3><p>24K is near-pure. 22K (916) is about 91.7% gold; the metal value scales with purity, before making charges, tax or dealer margin.</p></div>
         <div><h3>Spot price and retail price</h3><p>Spot is the wholesale market reference. Coins, bars and jewellery trade above it because they are finished retail products.</p></div>
       </div>
-      <p class="disclaimer">These are spot-market reference prices. Retail jewellery and bullion prices may include taxes, dealer premiums, fabrication costs, making charges and local market spreads.</p>
-      <a class="ask" id="askUnderstand" href="summaverick.html" target="_blank" rel="noopener">Ask Summaverick about gold purity &amp; buying tips<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    </section>
+      <p class="disclaimer">Retail prices may add taxes, dealer premiums, fabrication and making charges.</p>
 
-    <section class="section" aria-labelledby="methodTitle">
-      <div class="section-heading">
-        <div><p class="section-label">Transparency</p><h2 id="methodTitle">Methodology and data sources</h2></div>
-        <p class="section-intro">Live quotes and daily context come from different feeds and are kept separate, so nothing on the page looks more precise than the source data is.</p>
+      <h3 id="methodTitle">Data</h3>
+      <div class="method-copy">
+        USD spot references come from <a href="https://gold-api.com/" target="_blank" rel="noopener noreferrer">Gold API</a>. Currency conversion and daily history come from <a href="https://frankfurter.dev/" target="_blank" rel="noopener noreferrer">Frankfurter</a>. Local prices use the latest available FX rate. Grams use 31.1034768 g per troy ounce; tola = 11.6638 g; sovereign = 8 g; baht = 15.244 g; 22K uses 22/24 of the metal value. Holdings and alerts stay in this browser. Seller bands are estimates; confirm prices with the seller.
       </div>
-      <details>
-        <summary>How prices and comparisons are calculated</summary>
-        <div class="method-copy">
-          Current USD spot references come from <a href="https://gold-api.com/" target="_blank" rel="noopener noreferrer">Gold API</a>. Currency conversion and daily historical references come from <a href="https://frankfurter.dev/" target="_blank" rel="noopener noreferrer">Frankfurter</a>. Local prices multiply the USD quote by the latest available FX rate. Grams use 31.1034768 g per troy ounce; tola = 11.6638 g; sovereign = 8 g; baht = 15.244 g; 22K uses 22/24 of the metal value. History uses daily closes (weekly/monthly for long ranges). Calculator, holdings and alert data stay in your browser’s local storage and are never sent to a server. Seller estimates apply a typical premium band to spot and are never fetched per seller — confirm live prices on each seller’s site.
-        </div>
-      </details>
       <div class="share-row">
-        <p>Copy the current rates as text, or save a snapshot image.</p>
+        <p>Export the current reference.</p>
         <div class="share-actions">
           <button class="btn btn-sm" id="shareButton2" type="button">Share snapshot</button>
           <button class="btn btn-sm" id="copyButton" type="button">Copy current rates</button>
         </div>
       </div>
-    </section>
+    </details>
   </main>
-
-  <section class="util-more" aria-label="Other utilities">
-    <p class="util-more__title">Other utilities</p>
-    <div class="util-more__grid">
-      <a class="util-more__card" href="flights.html"><strong>SkyFare</strong><span>Compare flights on price, travel time, stops and departure times before you book.</span></a>
-      <a class="util-more__card" href="save-yourself.html"><strong>Save Yourself</strong><span>Work out the monthly payment, the total repaid and the fees on a loan before you sign.</span></a>
-      <a class="util-more__card" href="upsc.html"><strong>Anchor</strong><span>A UPSC brief that keeps only what has an anchor, a syllabus code and a line you can use in an answer.</span></a>
-    </div>
-  </section>
 
   <footer>
     <div class="footer-inner">
-      <div>© 2026 Sumanth Bolle.</div>
-      <div class="attribution">Built by Sumanth Bolle. Spot prices are market references, not quotes from any dealer.</div>
+      <div class="footer-links" aria-label="Other utilities"><a href="flights.html">SkyFare</a><a href="save-yourself.html">Save Yourself</a><a href="upsc.html">Anchor</a></div>
+      <div class="attribution">Spot references are not dealer quotes. © 2026 Sumanth Bolle.</div>
     </div>
   </footer>
 
@@ -676,25 +857,6 @@
 
   <script src="assets/js/shared/nav-theme.js"></script>
   <script src="assets/js/shared/nav-utilities.js"></script>
-  <script src="assets/js/shared/help-panel.js"></script>
-  <script>
-  SBHelpGuide.init({
-    page: 'metals',
-    tabLabel: 'Guide',
-    title: 'How to use the Metals tracker',
-    intro: 'Live gold and silver prices, unit conversions, calculators and history.',
-    steps: [
-      { title: 'Read the live prices', desc: 'Gold and silver spot prices update at the top of the page in your selected currency.' },
-      { title: 'Switch units & currency', desc: 'Use the converter to view prices per gram, tola, sovereign, or baht, in the currency you actually shop in.' },
-      { title: 'Run the calculators', desc: 'Enter a quantity and purity in the calculator section to price your own holdings or a potential purchase.' },
-      { title: 'Track your holdings', desc: 'Add items to the holdings tracker to see your total value and gain/loss update live.' },
-      { title: 'Study the trend', desc: 'Hover the history chart for day-by-day context, and switch ranges to compare short- vs. long-term moves.' },
-      { title: 'Check regional context', desc: 'Scroll to the region panel for local premium and market notes (India, US, Middle East, and more).' },
-      { title: 'Set a price alert', desc: 'Use the Alerts section to log a target price you want to watch.' },
-      { title: 'Toggle dark mode', desc: 'Use the moon/sun icon in the nav — this guide switches with it automatically.' }
-    ]
-  });
-  </script>
   <script>
   (function(){
     'use strict';
@@ -993,7 +1155,6 @@
       historyCache['1M']={gold:seriesFromHistory(data.metals.gold),silver:seriesFromHistory(data.metals.silver)};
       if(!historyCache[histTf]||histTf==='1M')renderHistory();
       else renderHistory();
-      updateAskLinks(data);
       evaluateAlerts(data);
     }
 
@@ -1167,7 +1328,7 @@
       if(!Number.isFinite(quote)||quote<=0){res.textContent='—';sub.textContent='Spot metal value: '+formatMoney(melt,ccy,2)+'. Enter a quote to compare.';return;}
       var prem=quote-melt;var pct=melt>0?prem/melt*100:0;
       res.innerHTML='<span class="'+(prem>=0?'neutral':'positive')+'">'+escapeHtml(formatMoney(prem,ccy,0))+'</span> premium ('+escapeHtml(formatPct(pct))+')';
-      sub.textContent='Spot metal value ≈ '+formatMoney(melt,ccy,0)+'. Premium covers making charges, taxes and margin.';
+      sub.textContent='Spot value ≈ '+formatMoney(melt,ccy,0)+'. Difference includes taxes, fabrication and margin.';
     }
 
     /* ================= holdings ================= */
@@ -1265,7 +1426,7 @@
     function renderSellers(data){
       var grid=document.getElementById('sellerGrid');if(!grid)return;
       var rk=resolvedRegionKey(data);var config=SELLERS[rk]||SELLERS.DEFAULT;
-      var intro=document.getElementById('sellerIntro');if(intro)intro.textContent='Well-known sellers for '+config.region+', plus the local pricing realities — taxes, duties and the forms people actually buy. Prices shown in '+ccyOf(data)+'.';
+      var intro=document.getElementById('sellerIntro');if(intro)intro.textContent='Seller references for '+config.region+' · prices shown in '+ccyOf(data)+'.';
       renderRegion(rk);
       var fx=fxOf(data);var ccy=ccyOf(data);
       var minAvg=config.list.reduce(function(m,s){var a=(s.premium[0]+s.premium[1])/2;return a<m?a:m},Infinity);
@@ -1377,15 +1538,6 @@
       if(!currentData)return;var button=document.getElementById('copyButton');
       try{await navigator.clipboard.writeText(shareText());button.textContent='Copied';}catch(e){window.prompt('Copy current rates',shareText());}
       setTimeout(function(){button.textContent='Copy current rates'},1800);
-    }
-
-    /* ================= ask summaverick ================= */
-    function updateAskLinks(data){
-      var g=data.metals.gold.usdPerOunce,s=data.metals.silver.usdPerOunce,ratio=(g/s).toFixed(1);
-      var q1='Gold spot is about $'+g.toFixed(0)+'/oz and silver about $'+s.toFixed(0)+'/oz today. In plain English, what factors are commonly cited for recent precious-metal moves? Keep it educational, not financial advice.';
-      var q2='Explain gold purity (24K vs 22K), what a tola/sovereign/baht means, and practical tips for comparing jeweller prices vs spot. The gold/silver ratio is about '+ratio+'.';
-      document.getElementById('askFactors').href='summaverick.html?q='+encodeURIComponent(q1);
-      document.getElementById('askUnderstand').href='summaverick.html?q='+encodeURIComponent(q2);
     }
 
     /* ================= helpers ================= */

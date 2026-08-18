@@ -103,7 +103,7 @@
     var swPrin = strokeFor(principal, maxFlow);
     var swCost = strokeFor(cost, maxFlow);
 
-    var titleText = 'Money flow: what you receive and what you return';
+    var titleText = 'Money flow: cash received and total repaid';
     var descText =
       fmt(data, principal) + ' borrowed; ' +
       fmt(data, net) + ' reaches you after ' +
@@ -135,7 +135,7 @@
           '<text data-label="fees" x="860" y="48" text-anchor="end">UPFRONT FEES</text>' +
           '<text data-label="you-b" x="48" y="240">YOU</text>' +
           '<text data-label="principal" x="480" y="240" text-anchor="middle">PRINCIPAL RETURNED</text>' +
-          '<text data-label="rent" x="860" y="240" text-anchor="end">MONEY RENT</text>' +
+          '<text data-label="rent" x="860" y="240" text-anchor="end">INTEREST + FEES</text>' +
         '</g>' +
         '<g class="sy-money-flow__moment-a" data-moment="a">' +
           '<path data-flow="net" class="sy-money-flow__path sy-money-flow__path--principal" fill="none" stroke="var(--sy-principal, #2b6fd6)" stroke-linecap="round" stroke-linejoin="round" d="M 80 90 C 220 90, 280 130, 420 130" />' +
