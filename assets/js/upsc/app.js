@@ -9,6 +9,7 @@
 
   var Store = window.AnchorStore;
   var Cycle = window.AnchorCycle;
+  var Content = window.AnchorContent;
   var Render = window.AnchorRender;
 
   function el(id) {
@@ -16,7 +17,15 @@
   }
 
   var state = {
-    view: 'brief',
+    view: 'source',
+    sources: [],
+    sourceGeneratedAt: '',
+    sourceError: '',
+    sourceLoading: false,
+    sourceFilters: {
+      query: '', publishers: [], papers: [], sourceTypes: [],
+      jurisdiction: 'all', date: '',
+    },
     scope: Store.getScope(),
     briefs: { daily: null, weekly: null },
     briefError: '',
@@ -70,7 +79,7 @@
 
   /* ─────────────────────────────── views ─────────────────────────────── */
 
-  var VIEWS = ['brief', 'lookup', 'notes', 'revise'];
+  var VIEWS = ['source', 'brief', 'syllabus', 'answer', 'memory'];
 
   function setView(name) {
     if (VIEWS.indexOf(name) === -1) return;
@@ -79,11 +88,110 @@
       var tab = el('tab-' + view);
       var panel = el('view-' + view);
       var active = view === name;
-      tab.setAttribute('aria-selected', active ? 'true' : 'false');
-      panel.hidden = !active;
+      if (tab) tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      if (panel) panel.hidden = !active;
     });
-    if (name === 'revise') startQueue();
-    if (name === 'notes') renderNotes();
+    if (name === 'source') renderSourceDesk();
+    if (name === 'memory') renderNotes();
+  }
+
+  /* ─────────────────────────── official sources ─────────────────────────── */
+
+  function sourceFiltersFromControls() {
+    state.sourceFilters = {
+      query: el('sourceQuery').value.trim().toLowerCase(),
+      publishers: el('sourcePublisher').value ? [el('sourcePublisher').value] : [],
+      papers: el('sourcePaper').value ? [el('sourcePaper').value] : [],
+      sourceTypes: el('sourceType').value ? [el('sourceType').value] : [],
+      jurisdiction: el('sourceJurisdiction').value || 'all',
+      date: el('sourceDate').value || '',
+    };
+  }
+
+  function populateSourceFilters() {
+    var publishers = Content.groupPublishers(state.sources);
+    var publisherSelect = el('sourcePublisher');
+    while (publisherSelect.options.length > 1) publisherSelect.remove(1);
+    publishers.forEach(function (publisher) {
+      var option = document.createElement('option');
+      option.value = publisher.id;
+      option.textContent = publisher.name + ' (' + publisher.count + ')';
+      publisherSelect.appendChild(option);
+    });
+    var types = {};
+    state.sources.forEach(function (row) { types[row.sourceType] = true; });
+    var typeSelect = el('sourceType');
+    while (typeSelect.options.length > 1) typeSelect.remove(1);
+    Object.keys(types).sort().forEach(function (type) {
+      var option = document.createElement('option');
+      option.value = type;
+      option.textContent = type;
+      typeSelect.appendChild(option);
+    });
+  }
+
+  function renderSourceDesk() {
+    if (!Content) return;
+    var list = el('sourceEntries');
+    var empty = el('sourceState');
+    if (state.sourceLoading) {
+      empty.hidden = false;
+      empty.innerHTML = '<h3>Loading official records</h3><p>Reading the last published source index.</p>';
+      list.innerHTML = '';
+      return;
+    }
+    if (state.sourceError && !state.sources.length) {
+      empty.hidden = false;
+      empty.innerHTML = '<h3>Source index unavailable</h3><p>' + Render.esc(state.sourceError) +
+        ' Open the official directory below or use the last generated static archive.</p>' +
+        '<p><a href="upsc-study/index.html">Browse static study archive</a> · ' +
+        '<a href="https://pib.gov.in" target="_blank" rel="noopener noreferrer">PIB</a> · ' +
+        '<a href="https://www.rbi.org.in" target="_blank" rel="noopener noreferrer">RBI</a> · ' +
+        '<a href="https://news.un.org" target="_blank" rel="noopener noreferrer">UN News</a></p>';
+      list.innerHTML = '';
+      el('sourceMeta').textContent = 'Last valid archive preserved.';
+      return;
+    }
+    var shown = Content.filterSources(state.sources, state.sourceFilters);
+    empty.hidden = shown.length > 0;
+    if (!shown.length) {
+      empty.innerHTML = '<h3>No official records match</h3><p>Clear one or more filters. Source Desk never deletes low-priority items.</p>';
+      list.innerHTML = '';
+    } else {
+      list.innerHTML = shown.map(Render.sourceEntry).join('');
+    }
+    el('sourceMeta').innerHTML = '<strong>' + shown.length + '</strong> of ' + state.sources.length +
+      ' official records' + (state.sourceGeneratedAt ? ' · index ' + Render.esc(state.sourceGeneratedAt.slice(0, 10)) : '') + '.';
+  }
+
+  function loadSourceIndex() {
+    if (!Content || state.sourceLoading) return;
+    state.sourceLoading = true;
+    state.sourceError = '';
+    renderSourceDesk();
+    fetch('data/upsc/source-index.json', { cache: 'no-cache' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('Published source data could not be loaded.');
+        return response.json();
+      })
+      .then(function (payload) {
+        var normalized = Content.normalizeSourceIndex(payload);
+        state.sources = normalized.records;
+        state.sourceGeneratedAt = normalized.generatedAt;
+        populateSourceFilters();
+      })
+      .catch(function (error) {
+        state.sourceError = (error && error.message) || 'Published source data could not be loaded.';
+      })
+      .then(function () {
+        state.sourceLoading = false;
+        renderSourceDesk();
+      });
+
+    fetch('data/upsc/coverage.json', { cache: 'no-cache' })
+      .then(function (response) { return response.ok ? response.json() : null; })
+      .then(function (payload) { el('sourceCoverage').innerHTML = Render.coverageStatus(payload); })
+      .catch(function () { el('sourceCoverage').innerHTML = Render.coverageStatus(null); });
   }
 
   /* ────────────────────────────── the brief ────────────────────────────── */
@@ -268,13 +376,13 @@
     }
     if (!ENDPOINT) {
       state.lookupError = 'The lookup endpoint is not configured for this page.';
-      setView('lookup');
+      setView('answer');
       renderLookup();
       return;
     }
     if (state.lookupLoading) return;
 
-    setView('lookup');
+    setView('answer');
     state.lookupLoading = true;
     state.lookupError = '';
     state.lookup = null;
@@ -653,6 +761,14 @@
       tab.addEventListener('click', function () { setView(tab.getAttribute('data-view')); });
     });
 
+    ['sourceQuery', 'sourcePublisher', 'sourceDate', 'sourceJurisdiction', 'sourceType', 'sourcePaper'].forEach(function (id) {
+      var control = el(id);
+      control.addEventListener(id === 'sourceQuery' ? 'input' : 'change', function () {
+        sourceFiltersFromControls();
+        renderSourceDesk();
+      });
+    });
+
     /* Scope */
     ['scopeDaily', 'scopeWeekly'].forEach(function (id) {
       el(id).addEventListener('click', function () {
@@ -700,7 +816,11 @@
     var search = el('q');
     search.addEventListener('input', function () {
       state.query = search.value.trim().toLowerCase();
-      if (state.view === 'notes') renderNotes();
+      if (state.view === 'source') {
+        el('sourceQuery').value = search.value;
+        sourceFiltersFromControls();
+        renderSourceDesk();
+      } else if (state.view === 'memory') renderNotes();
       else renderBrief();
     });
     search.addEventListener('keydown', function (event) {
@@ -711,6 +831,9 @@
       if (event.key === 'Escape') {
         search.value = '';
         state.query = '';
+        el('sourceQuery').value = '';
+        sourceFiltersFromControls();
+        renderSourceDesk();
         renderBrief();
         renderNotes();
       }
@@ -790,6 +913,20 @@
 
     /* Retrieval queue */
     el('reviseBody').addEventListener('click', handleReviseClick);
+    el('memoryNotes').addEventListener('click', function () {
+      el('memoryNotes').setAttribute('aria-pressed', 'true');
+      el('memoryDue').setAttribute('aria-pressed', 'false');
+      el('memoryNotesPanel').hidden = false;
+      el('memoryDuePanel').hidden = true;
+      renderNotes();
+    });
+    el('memoryDue').addEventListener('click', function () {
+      el('memoryNotes').setAttribute('aria-pressed', 'false');
+      el('memoryDue').setAttribute('aria-pressed', 'true');
+      el('memoryNotesPanel').hidden = true;
+      el('memoryDuePanel').hidden = false;
+      startQueue();
+    });
 
     /* Export and reset */
     el('copyNotes').addEventListener('click', copyNotes);
@@ -814,6 +951,7 @@
     renderCounts();
     renderRail();
     renderBrief();
+    loadSourceIndex();
   }
 
   if (document.readyState === 'loading') {

@@ -60,6 +60,53 @@
       (name ? ' · ' + esc(name) : '') + '</a>';
   }
 
+  function editorialLabel(state) {
+    return {
+      'source-only': 'Source only',
+      draft: 'Needs review',
+      'source-backed': 'Exam note ready',
+      reviewed: 'Reviewed note',
+    }[state] || 'Source only';
+  }
+
+  function sourceEntry(record) {
+    var safeUrl = safeHttpUrl(record.sourceUrl);
+    var date = String(record.publishedAt || '').slice(0, 10);
+    var scope = record.jurisdiction === 'IN' ? 'India' : 'International';
+    return '<article class="an-source" data-source-id="' + attr(record.id) + '">' +
+      '<div class="an-source__stamp">' +
+        '<strong>' + esc(record.publisherName || record.publisherId) + '</strong>' +
+        '<span class="an-num">' + esc(date) + '</span>' +
+        '<span>' + esc(record.sourceType) + ' · ' + esc(scope) + '</span>' +
+      '</div>' +
+      '<div class="an-source__body">' +
+        '<h3>' + esc(record.title) + '</h3>' +
+        (record.officialSummary ? '<p class="an-source__summary">' + esc(record.officialSummary) + '</p>' : '') +
+        '<p class="an-entry__tags">' +
+          verifyHtml(record.sourceVerified, record.sourceVerified ? 'Reviewed official host' : 'Unverified host') +
+          '<span>' + esc(editorialLabel(record.editorialState)) + '</span>' +
+          (record.priority ? '<span class="an-num">Priority ' + esc(record.priority) + '</span>' : '') +
+          codesHtml(record.codes) +
+        '</p>' +
+        (safeUrl ? '<a class="an-source__link" href="' + attr(safeUrl) + '" target="_blank" rel="noopener noreferrer">Open official record</a>' : '') +
+      '</div>' +
+    '</article>';
+  }
+
+  function coverageStatus(coverage) {
+    var sources = coverage && coverage.sources && typeof coverage.sources === 'object'
+      ? coverage.sources : {};
+    var ids = Object.keys(sources);
+    if (!ids.length) return '<p>Coverage report unavailable. The last valid source archive remains readable.</p>';
+    var healthy = ids.filter(function (id) { return sources[id].status === 'ok'; }).length;
+    var failures = ids.filter(function (id) { return sources[id].status !== 'ok'; });
+    return '<p><strong>' + esc(healthy) + ' of ' + esc(ids.length) + '</strong> official adapters healthy' +
+      (coverage.generatedAt ? ' · checked ' + esc(String(coverage.generatedAt).slice(0, 16).replace('T', ' ')) + ' UTC' : '') +
+      '.</p>' +
+      (failures.length ? '<p class="an-coverage__warn">Unavailable now: ' + failures.map(esc).join(', ') +
+        '. Their last valid archive is preserved.</p>' : '');
+  }
+
   /* A brief item. The margin carries the triage score; the highlighted Use
    * line carries the only sentence that has to survive to the exam hall. */
   function briefEntry(item) {
@@ -275,6 +322,8 @@
 
   window.AnchorRender = {
     esc: esc,
+    sourceEntry: sourceEntry,
+    coverageStatus: coverageStatus,
     briefEntry: briefEntry,
     noteEntry: noteEntry,
     clusters: clusters,

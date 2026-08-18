@@ -75,3 +75,32 @@ test('does not render unsupported source URL protocols from lookup content', fun
   assert.equal(html.includes('data:text/html'), false);
   assert.equal(html.includes('Tampered source'), false);
 });
+
+test('renders a safe official Source Desk row', function () {
+  const Render = loadRender();
+  const html = Render.sourceEntry({
+    id: 'src_1', title: '<Cabinet policy>', publisherName: 'PIB & Government',
+    publishedAt: '2026-08-18T04:00:00Z',
+    sourceUrl: 'https://pib.gov.in/release/1',
+    officialSummary: '<b>Official</b> summary', sourceType: 'release',
+    jurisdiction: 'IN', sourceVerified: true, editorialState: 'source-only',
+    codes: [], priority: 0,
+  });
+  assert.equal(html.includes('&lt;Cabinet policy&gt;'), true);
+  assert.equal(html.includes('PIB &amp; Government'), true);
+  assert.equal(html.includes('&lt;b&gt;Official&lt;/b&gt; summary'), true);
+  assert.equal(html.includes('href="https://pib.gov.in/release/1"'), true);
+  assert.equal(html.includes('rel="noopener noreferrer"'), true);
+});
+
+test('does not render unsafe Source Desk links', function () {
+  const Render = loadRender();
+  const html = Render.sourceEntry({
+    id: 'src_bad', title: 'Bad', publisherName: 'Bad',
+    publishedAt: '2026-08-18T04:00:00Z', sourceUrl: 'data:text/html,bad',
+    officialSummary: 'Bad', sourceType: 'release', jurisdiction: 'IN',
+    sourceVerified: false, editorialState: 'source-only', codes: [], priority: 0,
+  });
+  assert.equal(html.includes('data:text/html'), false);
+  assert.equal(html.includes('Open official record'), false);
+});
