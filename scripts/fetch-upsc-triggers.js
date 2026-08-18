@@ -30,8 +30,8 @@
 //
 // Usage:
 //   node scripts/fetch-upsc-triggers.js --dry-run
-//   PPLX_API_KEY=... node scripts/fetch-upsc-triggers.js
-//   PPLX_API_KEY=... node scripts/fetch-upsc-triggers.js --anchor fiscal-federalism
+//   PERPLEXITY_API_KEY=... node scripts/fetch-upsc-triggers.js
+//   PERPLEXITY_API_KEY=... node scripts/fetch-upsc-triggers.js --anchor fiscal-federalism
 // =============================================================================
 
 const fs = require('fs');
@@ -245,7 +245,17 @@ function callSonar(payload) {
         response.on('data', (chunk) => { raw += chunk; });
         response.on('end', () => {
           if (response.statusCode < 200 || response.statusCode >= 300) {
-            reject(new Error(`Sonar ${response.statusCode}: ${raw.slice(0, 200)}`));
+            let providerCode = '';
+            try {
+              const parsed = JSON.parse(raw);
+              providerCode = String(parsed && parsed.error && parsed.error.code || '');
+            } catch (error) {
+              // The bounded response excerpt below remains useful for non-JSON errors.
+            }
+            const requestError = new Error(`Sonar ${response.statusCode}: ${raw.slice(0, 200)}`);
+            requestError.statusCode = response.statusCode;
+            requestError.providerCode = providerCode;
+            reject(requestError);
             return;
           }
           try {
@@ -261,6 +271,11 @@ function callSonar(payload) {
     request.write(body);
     request.end();
   });
+}
+
+function isQuotaUnavailable(error) {
+  return Number(error && error.statusCode) === 401
+    && String(error && error.providerCode) === 'insufficient_quota';
 }
 
 function extractJson(content) {
@@ -406,7 +421,7 @@ async function main() {
   }
 
   if (!API_KEY) {
-    console.error('✖ PPLX_API_KEY is not set');
+    console.error('✖ PERPLEXITY_API_KEY is not set');
     process.exit(1);
   }
 
@@ -448,6 +463,10 @@ async function main() {
 
 if (require.main === module) {
   main().catch((error) => {
+    if (isQuotaUnavailable(error)) {
+      console.error('No trigger refresh: Perplexity quota is unavailable; nothing was written.');
+      process.exit(2);
+    }
     console.error(`✖ ${error.message}`);
     process.exit(1);
   });
@@ -455,4 +474,11 @@ if (require.main === module) {
 
 /* Exported so the gate and the rotation can be tested without spending an API
  * call. Nothing else should import this file. */
-module.exports = { validate, chooseAnchor, extractJson, prune, daysSince };
+module.exports = {
+  validate,
+  chooseAnchor,
+  extractJson,
+  prune,
+  daysSince,
+  isQuotaUnavailable,
+};

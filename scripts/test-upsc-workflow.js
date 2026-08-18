@@ -31,5 +31,6 @@ assert.match(
   /PERPLEXITY_API_KEY:\s+\$\{\{ secrets\.PERPLEXITY_API_KEY \}\}/,
 );
 assert.doesNotMatch(dailyWorkflow, /secrets\.PPLX_API_KEY/);
+assert.match(dailyWorkflow, /node scripts\/test-upsc-triggers\.js/);
 
 console.log('UPSC workflow tests passed');
