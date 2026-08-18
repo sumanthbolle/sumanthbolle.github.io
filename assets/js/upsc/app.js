@@ -1,4 +1,4 @@
-/* Anchor — wiring: cycle position, brief retrieval, topic lookup, notes,
+/* Anchor — wiring for the official-source edition, subject routes, saved notes,
  * and the retrieval queue. Depends on store.js and render.js. */
 ;(function () {
   'use strict';
@@ -94,7 +94,24 @@
 
   var VIEWS = ['brief', 'syllabus', 'memory', 'source'];
 
-  function setView(name) {
+  function routeUrl(name, options) {
+    var url = new URL(window.location.href);
+    var settings = options || {};
+    if (name === 'brief') url.searchParams.delete('view');
+    else url.searchParams.set('view', name);
+    if (state.query) url.searchParams.set('q', state.query);
+    else url.searchParams.delete('q');
+    if (settings.subject) {
+      url.searchParams.set('subject', settings.subject);
+      url.hash = 'daily-' + settings.subject;
+    } else {
+      url.searchParams.delete('subject');
+      url.hash = '';
+    }
+    return url.pathname + url.search + url.hash;
+  }
+
+  function setView(name, updateHistory) {
     if (VIEWS.indexOf(name) === -1) return;
     state.view = name;
     VIEWS.forEach(function (view) {
@@ -111,6 +128,34 @@
       loadPracticeNotes();
     }
     if (name === 'memory') setMemoryMode(state.memoryMode);
+    if (updateHistory && window.history && window.history.pushState) {
+      window.history.pushState({ view: name }, '', routeUrl(name));
+    }
+  }
+
+  function requestedSubject() {
+    var url = new URL(window.location.href);
+    return url.searchParams.get('subject') || (url.hash.indexOf('#daily-') === 0 ? url.hash.slice(7) : '');
+  }
+
+  function scrollToRequestedSubject() {
+    var subjectId = requestedSubject();
+    if (!subjectId || state.view !== 'brief') return;
+    window.setTimeout(function () {
+      var target = document.getElementById('daily-' + subjectId);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 0);
+  }
+
+  function openSubject(subjectId) {
+    if (!subjectId) return;
+    state.query = '';
+    el('q').value = '';
+    setView('brief');
+    if (window.history && window.history.pushState) {
+      window.history.pushState({ view: 'brief', subject: subjectId }, '', routeUrl('brief', { subject: subjectId }));
+    }
+    scrollToRequestedSubject();
   }
 
   /* ─────────────────────────── official sources ─────────────────────────── */
@@ -154,14 +199,13 @@
     var empty = el('sourceState');
     if (state.sourceLoading) {
       empty.hidden = false;
-      empty.innerHTML = '<h3>Loading official records</h3><p>Reading the last published source index.</p>';
+      empty.innerHTML = '<h3>Loading sources…</h3>';
       list.innerHTML = '';
       return;
     }
     if (state.sourceError && !state.sources.length) {
       empty.hidden = false;
-      empty.innerHTML = '<h3>Source index unavailable</h3><p>' + Render.esc(state.sourceError) +
-        ' Open the official directory below or use the last generated static archive.</p>' +
+      empty.innerHTML = '<h3>Source index unavailable</h3><p>' + Render.esc(state.sourceError) + '</p>' +
         '<p><a href="upsc-study/index.html">Browse static study archive</a> · ' +
         '<a href="https://pib.gov.in" target="_blank" rel="noopener noreferrer">PIB</a> · ' +
         '<a href="https://www.rbi.org.in" target="_blank" rel="noopener noreferrer">RBI</a> · ' +
@@ -325,8 +369,8 @@
   function renderBrief() {
     el('briefTitle').textContent = state.query
       ? 'Search results for “' + el('q').value.trim() + '”'
-      : (state.scope === 'weekly' ? 'Your 7-day UPSC Catch-up' : 'Today’s UPSC Brief');
-    el('dailyTitle').textContent = state.query ? 'Matching current affairs' : 'Today’s current affairs';
+      : (state.scope === 'weekly' ? 'Seven-day edition' : 'Today');
+    el('dailyTitle').textContent = state.query ? 'Matching articles' : 'Latest articles';
     var list = el('briefEntries');
     if (state.sourceLoading) {
       el('briefLoading').hidden = false;
@@ -336,23 +380,19 @@
     var sources = blogSources();
     var edition = Content.buildDailyEdition(sources, { limit: state.scope === 'weekly' ? 15 : 12 });
     var topic = Content.selectTopicOfDay(sources, state.examSummaries);
-    if (topic && state.examDetails[topic.id]) topic = Object.assign({}, state.examDetails[topic.id], {
-      id: topic.id, kind: 'note', subject: Content.inferSubject(state.examDetails[topic.id]),
-    });
     briefStateEl().hidden = edition.items.length > 0;
     if (!edition.items.length) {
-      showBriefState(state.verifiedOnly ? 'No reviewed topper notes match yet' : 'No current affairs match',
-        state.verifiedOnly
-          ? 'Turn off Topper notes only to read the official-source edition while enrichment continues.'
-          : 'Clear the search or paper filter, or open Official sources for the complete archive.');
+      showBriefState(state.verifiedOnly ? 'No deep-dives match' : 'No articles match',
+        'Change the active filters.');
     }
     el('topicOfDay').innerHTML = Render.topicOfDay(topic);
     el('dailyEdition').innerHTML = Render.dailyEdition(edition);
     el('dailyEditionMeta').innerHTML = edition.items.length
       ? '<strong>' + edition.items.length + '</strong> developments across <strong>' + edition.groups.length + '</strong> subjects.'
-      : 'No developments match the current reading filters.';
+      : 'No matching articles.';
     el('subjectJump').innerHTML = edition.groups.map(function (group) {
-      return '<a href="#daily-' + Render.esc(group.subject.id) + '">' + Render.esc(group.subject.label) +
+      return '<a href="?view=brief&amp;subject=' + Render.esc(group.subject.id) + '#daily-' + Render.esc(group.subject.id) +
+        '" data-subject-jump="' + Render.esc(group.subject.id) + '">' + Render.esc(group.subject.label) +
         ' <span>' + group.items.length + '</span></a>';
     }).join('');
     list.innerHTML = state.examExpandedId && state.examDetails[state.examExpandedId]
@@ -361,6 +401,8 @@
     el('clusterBlock').hidden = true;
     el('discardBlock').hidden = true;
     renderBriefMeta();
+    if (edition.editionDate) el('editionStamp').textContent = edition.editionDate;
+    scrollToRequestedSubject();
   }
 
   function loadExamDetail(sourceId) {
@@ -419,7 +461,7 @@
     var empty = el('syllabusState');
     if (state.syllabusLoading && !state.sources.length) {
       empty.hidden = false;
-      empty.innerHTML = '<h3>Building the subject shelves</h3><p>Joining the static syllabus to current official triggers.</p>';
+      empty.innerHTML = '<h3>Loading subjects…</h3>';
       return;
     }
     var subjects = Content.subjectLibrary(state.sources).filter(function (subject) {
@@ -466,8 +508,8 @@
     });
     empty.hidden = practices.length > 0;
     empty.innerHTML = state.practiceLoading
-      ? '<h3>Loading answer scaffolds</h3><p>Opening the published notes without calling a live model.</p>'
-      : '<h3>No published practice yet</h3><p>Use the optional lookup below while mapped answer scaffolds are prepared.</p>';
+      ? '<h3>Loading…</h3>'
+      : '<h3>No published practice yet</h3>';
     list.innerHTML = practices.map(function (row) {
       return '<section class="an-practice-note"><p class="an-entry__tags">' +
         '<span class="an-anchor"><span class="an-label">Anchor</span> ' + Render.esc(row.note.anchor) + '</span></p>' +
@@ -618,8 +660,7 @@
     if (!notes.length) {
       list.innerHTML = '';
       empty.hidden = false;
-      empty.innerHTML = '<h3>Nothing saved yet</h3><p>Save items from the brief or from a lookup. ' +
-        'Each saved note enters the revision queue at day 1, 3, 7, 21 and 60 — and a note you never retrieve should never have been recorded.</p>';
+      empty.innerHTML = '<h3>Nothing saved yet</h3>';
       el('notesMeta').textContent = 'Nothing saved yet.';
       return;
     }
@@ -716,19 +757,15 @@
     if (!total) {
       var stats = Store.stats();
       body.innerHTML = '<div class="an-state"><h3>' +
-        (stats.total ? 'Nothing due' : 'Nothing saved yet') + '</h3><p>' +
-        (stats.total
-          ? 'You hold ' + stats.total + ' notes and none are due today. Come back tomorrow rather than rereading them — rereading is what produces the feeling of knowing.'
-          : 'Save a few notes first. When something is due you will see its title alone, and reconstruct the rest from memory before revealing it.') +
-        '</p></div>';
-      meta.textContent = 'Retrieval, not rereading.';
+        (stats.total ? 'Nothing due' : 'Nothing saved yet') + '</h3></div>';
+      meta.textContent = stats.total ? stats.total + ' saved' : '';
       return;
     }
 
     if (state.queueIndex >= total) {
       body.innerHTML = '<div class="an-state"><h3>Queue clear</h3><p>' +
         state.queuePassed + ' reconstructed, ' + state.queueReset +
-        ' reset to day 1. Items that keep failing at day 60 are either badly written — fix the note — or genuinely hard, in which case write a practice answer on them.</p></div>';
+        ' reset.</p></div>';
       meta.textContent = 'Done for today.';
       renderCounts();
       renderRail();
@@ -790,12 +827,8 @@
     var meta = el('memoryDrillMeta');
     buildDrillQueue(state.memoryMode);
     if (!state.drillQueue.length) {
-      body.innerHTML = '<div class="an-state"><h3>No matching drill due</h3><p>' +
-        (Store.stats().due
-          ? 'The due notes do not contain this evidence-safe drill type. Use Due recall instead.'
-          : 'Nothing is due today. Derived drills follow the parent schedule rather than creating extra reviews.') +
-        '</p></div>';
-      meta.textContent = 'Derived from due notes; no separate schedule records.';
+      body.innerHTML = '<div class="an-state"><h3>No matching drill due</h3></div>';
+      meta.textContent = '';
       return;
     }
     var entry = state.drillQueue[0];
@@ -850,13 +883,6 @@
 
   function renderRail() {
     var stats = Store.stats();
-    el('railMode').textContent = state.mode ? state.mode.name : '—';
-    var days = Cycle.compute(el('stage').value, el('examDate').value).days;
-    el('railDays').textContent = days === null || days < 0 ? '—' : days;
-    el('railDue').textContent = stats.due;
-    el('railNotes').textContent = stats.total;
-    el('railUnverified').textContent = stats.unverifiedPct + '%';
-    el('railUnverifiedStat').setAttribute('data-warn', stats.unverifiedPct > 15 ? 'true' : 'false');
     renderCounts();
   }
 
@@ -940,9 +966,18 @@
     el('examDate').addEventListener('change', savePosition);
     renderMode();
 
+    var initialUrl = new URL(window.location.href);
+    var initialView = initialUrl.searchParams.get('view');
+    state.view = VIEWS.indexOf(initialView) === -1 ? 'brief' : initialView;
+    state.query = (initialUrl.searchParams.get('q') || '').trim().toLowerCase();
+    el('q').value = initialUrl.searchParams.get('q') || '';
+
     /* Views */
     document.querySelectorAll('[role="tab"][data-view]').forEach(function (tab) {
-      tab.addEventListener('click', function () { setView(tab.getAttribute('data-view')); });
+      tab.addEventListener('click', function (event) {
+        event.preventDefault();
+        setView(tab.getAttribute('data-view'), true);
+      });
     });
 
     ['sourceQuery', 'sourcePublisher', 'sourceDate', 'sourceJurisdiction', 'sourceType', 'sourcePaper'].forEach(function (id) {
@@ -989,11 +1024,10 @@
       renderBrief();
     });
 
-    /* Retrieval + lookup */
+    /* Retrieval */
     el('refreshBrief').addEventListener('click', loadBrief);
-    el('lookupBtn').addEventListener('click', doLookup);
 
-    /* Search: filters what is on screen; Enter fetches a fresh note. */
+    /* Search filters published articles and subjects. */
     var search = el('q');
     search.addEventListener('input', function () {
       state.query = search.value.trim().toLowerCase();
@@ -1004,11 +1038,14 @@
       } else if (state.view === 'memory') renderNotes();
       else if (state.view === 'syllabus') renderSyllabus();
       else renderBrief();
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({ view: state.view }, '', routeUrl(state.view));
+      }
     });
     search.addEventListener('keydown', function (event) {
       if (event.key === 'Enter') {
         event.preventDefault();
-        doLookup();
+        if (state.view !== 'brief') setView('brief', true);
       }
       if (event.key === 'Escape') {
         search.value = '';
@@ -1020,6 +1057,9 @@
         renderSyllabus();
         renderAnswerLab();
         renderNotes();
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState({ view: state.view }, '', routeUrl(state.view));
+        }
       }
     });
 
@@ -1038,12 +1078,6 @@
       if (!button) return;
       var act = button.getAttribute('data-act');
       var id = button.getAttribute('data-id');
-      if (act === 'expand-topic') {
-        el('q').value = button.getAttribute('data-topic') || '';
-        state.query = '';
-        doLookup();
-        return;
-      }
       if (act === 'open-exam') {
         openExamDetail(id);
         return;
@@ -1101,26 +1135,22 @@
     el('briefEntries').addEventListener('click', handlePublishedNoteClick);
     el('topicOfDay').addEventListener('click', handlePublishedNoteClick);
 
-    el('syllabusList').addEventListener('click', function (event) {
-      var button = event.target.closest('[data-subject-jump]');
-      if (!button) return;
-      var subjectId = button.getAttribute('data-subject-jump');
-      setView('brief');
-      window.setTimeout(function () {
-        var target = document.getElementById('daily-' + subjectId);
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 0);
+    [el('syllabusList'), el('subjectJump'), el('topicOfDay')].forEach(function (container) {
+      container.addEventListener('click', function (event) {
+        var link = event.target.closest('[data-subject-jump]');
+        if (!link) return;
+        event.preventDefault();
+        openSubject(link.getAttribute('data-subject-jump'));
+      });
     });
 
-    /* Saving from a lookup */
-    el('lookupResult').addEventListener('click', function (event) {
-      var button = event.target.closest('[data-act="save-lookup"]');
-      if (!button || !state.lookup) return;
-      var result = Store.add(lookupToNote(state.lookup));
-      button.disabled = true;
-      button.textContent = result === 'duplicate' ? 'Already saved' : 'Saved · due tomorrow';
-      renderCounts();
-      renderRail();
+    window.addEventListener('popstate', function () {
+      var url = new URL(window.location.href);
+      var view = url.searchParams.get('view');
+      state.query = (url.searchParams.get('q') || '').trim().toLowerCase();
+      el('q').value = url.searchParams.get('q') || '';
+      setView(VIEWS.indexOf(view) === -1 ? 'brief' : view);
+      scrollToRequestedSubject();
     });
 
     /* Notes list + composer */
@@ -1170,7 +1200,7 @@
     renderNotes();
     renderCounts();
     renderRail();
-    renderBrief();
+    setView(state.view);
     loadSourceIndex();
     loadBrief();
     loadSyllabus();

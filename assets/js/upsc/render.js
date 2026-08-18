@@ -120,77 +120,53 @@
       values.map(function (row) { return '<li>' + esc(row) + '</li>'; }).join('') + '</ul>';
   }
 
+  function subjectHref(subjectId) {
+    var id = encodeURIComponent(String(subjectId || ''));
+    return '?view=brief&amp;subject=' + id + '#daily-' + id;
+  }
+
   function topicOfDay(topic) {
-    if (!topic) return '<div class="an-state"><h3>Today’s lead topic is being prepared</h3><p>The daily official-source edition is still available below.</p></div>';
+    if (!topic) return '';
     var subject = topic.subject || {};
     var safeUrl = safeHttpUrl(topic.sourceUrl);
-    var noteReady = topic.kind === 'note';
     var sourceSummary = compactText(topic.officialSummary || '', 1500);
     var sourceHasAbstract = sourceSummary && sourceSummary.toLowerCase() !== String(topic.title || '').toLowerCase() &&
-      sourceSummary.length > String(topic.title || '').length + 24;
-    var body = noteReady
-      ? '<section class="an-topic__section"><h3>Why it matters today</h3><p>' + esc(topic.whyInNews) + '</p></section>' +
-        '<section class="an-topic__section"><h3>Static foundation</h3><p>' + esc(topic.staticDefinition || topic.anchor) + '</p>' +
-          simpleList(topic.background) + '</section>' +
-        ((topic.argumentsFor || []).length || (topic.argumentsAgainst || []).length
-          ? '<section class="an-topic__section"><h3>Build the Mains argument</h3><div class="an-topic__debate"><div><h4>Case for</h4>' + simpleList(topic.argumentsFor) + '</div><div><h4>Limits</h4>' + simpleList(topic.argumentsAgainst) + '</div></div></section>'
-          : '') +
-        (topic.use ? '<p class="an-topic__use"><strong>Use in an answer</strong>' + esc(topic.use) + '</p>' : '')
-      : '<section class="an-topic__section"><h3>Why it matters today</h3><p>' +
-        esc(sourceHasAbstract ? sourceSummary : 'The official feed supplied the headline without an abstract. Open the official document for the complete release.') + '</p></section>' +
-        '<section class="an-topic__section"><h3>Static foundation</h3><p>Place this development under ' +
-          esc(subject.label || 'the relevant syllabus subject') + ' and revise these durable areas:</p>' +
-          simpleList((subject.coreTopics || []).length ? subject.coreTopics : [subject.lens]) + '</section>' +
-        '<section class="an-topic__section"><h3>Study this through</h3>' + simpleList(topic.studyLens, 'an-topic__checklist') + '</section>' +
-        '<div class="an-topic__examgrid"><section><h3>Prelims check</h3><p>' + esc(subject.prelimsPrompt) + '</p></section>' +
-          '<section><h3>Mains lens</h3><p>' + esc(subject.mainsPrompt) + '</p></section></div>' +
-        '<p class="an-topic__notice">This is an official-source briefing. A fuller topper note appears only after static background and every hard fact clear evidence review.</p>';
+      sourceSummary.length >= 24;
+    var title = safeUrl
+      ? '<a href="' + attr(safeUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(topic.title) + '</a>'
+      : esc(topic.title);
     return '<article class="an-today-topic" data-source-id="' + attr(topic.id) + '">' +
-      '<aside class="an-study-margin" aria-label="Exam use"><span>Topic of the Day</span><strong>' +
-        esc(subject.label || 'Current Affairs') + '</strong><span>' + esc(subject.paper || 'GS') +
-        '</span><span>' + esc(subject.readMinutes || 10) + ' min</span></aside>' +
-      '<div class="an-topic__body"><p class="an-topic__eyebrow">Topic of the Day · ' +
-        esc(String(topic.publishedAt || '').slice(0, 10)) + '</p><h2>' + esc(topic.title) + '</h2>' +
-        '<p class="an-topic__source">' + esc(topic.publisherName || '') +
-          (noteReady ? ' · evidence-ready note' : ' · official-source briefing') + '</p>' +
-        body +
-        '<section class="an-topic__section an-topic__recall"><h3>Recall before moving on</h3>' +
-          simpleList([
-            'Explain the development in two sentences without looking.',
-            'Name the static syllabus topic to which it belongs.',
-            'State one fact you would verify for Prelims.',
-            'Build one balanced Mains argument and a practical way forward.',
-          ], 'an-topic__checklist') + '</section>' +
-        '<div class="an-topic__actions">' +
-          (noteReady
-            ? '<button type="button" class="btn btn-primary" data-act="open-exam" data-id="' + attr(topic.id) + '">Read complete topper note</button>'
-            : '<button type="button" class="btn btn-primary" data-act="expand-topic" data-topic="' + attr(topic.title) + '">Build full topic note</button>') +
-          (safeUrl ? '<a href="' + attr(safeUrl) + '" target="_blank" rel="noopener noreferrer">Read the official document</a>' : '') +
-        '</div></div></article>';
+      '<aside class="an-study-margin"><span>Lead</span><a href="' + subjectHref(subject.id) + '" data-subject-jump="' +
+        attr(subject.id) + '">' +
+        esc(subject.label || 'Current affairs') + '</a><strong>' + esc(subject.paper || 'GS') + '</strong></aside>' +
+      '<div class="an-topic__body"><p class="an-topic__eyebrow"><time datetime="' + attr(topic.publishedAt) + '">' +
+        esc(String(topic.publishedAt || '').slice(0, 10)) + '</time></p><h2>' + title + '</h2>' +
+        (sourceHasAbstract ? '<p class="an-topic__dek">' + esc(sourceSummary) + '</p>' : '') +
+        '<footer><span>' + esc(topic.publisherName || '') + '</span>' +
+          (safeUrl ? '<a href="' + attr(safeUrl) + '" target="_blank" rel="noopener noreferrer">Read article <span aria-hidden="true">↗</span></a>' : '') +
+        '</footer></div></article>';
   }
 
   function dailyEdition(edition) {
     var groups = edition && Array.isArray(edition.groups) ? edition.groups : [];
-    if (!groups.length) return '<div class="an-state"><h3>Today’s edition is being prepared</h3><p>Open Official sources for the complete incoming archive.</p></div>';
+    if (!groups.length) return '';
     return groups.map(function (group) {
       var subject = group.subject || {};
       return '<section class="an-daily-group" id="daily-' + attr(subject.id) + '">' +
-        '<header><div><p class="an-label">' + esc(subject.paper) + '</p><h3>' + esc(subject.label) + '</h3></div>' +
-          '<p>' + esc(subject.lens) + '</p></header>' +
+        '<header><p class="an-label">' + esc(subject.paper) + '</p><h3><a href="' + subjectHref(subject.id) + '" data-subject-jump="' +
+          attr(subject.id) + '">' +
+          esc(subject.label) + '</a></h3></header>' +
         '<div class="an-daily-list">' + group.items.map(function (item) {
           var safeUrl = safeHttpUrl(item.sourceUrl);
           var titleText = compactText(item.title, 520).toLowerCase();
           var summaryText = compactText(item.officialSummary || '', 520);
-          var feedHasAbstract = summaryText && summaryText.toLowerCase() !== titleText &&
-            summaryText.length > String(item.title || '').length + 24;
+          var feedHasAbstract = summaryText && summaryText.toLowerCase() !== titleText && summaryText.length >= 24;
           return '<article class="an-daily-item" data-source-id="' + attr(item.id) + '">' +
             '<p class="an-daily-item__meta"><span>' + esc(item.publisherName) + '</span><time datetime="' +
               attr(item.publishedAt) + '">' + esc(String(item.publishedAt || '').slice(0, 10)) + '</time></p>' +
-            '<h4>' + esc(item.title) + '</h4>' +
-            '<div class="an-daily-item__brief"><strong>Why in news</strong><p>' +
-              esc(feedHasAbstract ? summaryText : 'The official feed supplied a headline without an abstract. Open the source for the complete release.') + '</p></div>' +
-            '<details><summary>Read with this lens</summary><p>' + esc(subject.lens) + '</p></details>' +
-            (safeUrl ? '<a class="an-daily-item__source" href="' + attr(safeUrl) + '" target="_blank" rel="noopener noreferrer">Official source</a>' : '') +
+            '<h4>' + (safeUrl ? '<a href="' + attr(safeUrl) + '" target="_blank" rel="noopener noreferrer">' +
+              esc(item.title) + '</a>' : esc(item.title)) + '</h4>' +
+            (feedHasAbstract ? '<p class="an-daily-item__summary">' + esc(summaryText) + '</p>' : '') +
           '</article>';
         }).join('') + '</div></section>';
     }).join('');
@@ -201,9 +177,12 @@
       return '<article class="an-subject" data-subject="' + attr(subject.id) + '">' +
         '<p class="an-subject__paper">' + esc(subject.paper) + '</p><h3>' + esc(subject.label) + '</h3>' +
         '<p class="an-subject__count">' + esc(subject.currentCount) + ' current updates</p>' +
-        '<p>' + esc(subject.lens) + '</p><h4>Build your foundation</h4>' +
-        simpleList(subject.coreTopics, 'an-subject__topics') +
-        '<button type="button" class="an-subject__open" data-subject-jump="' + attr(subject.id) + '">Read current updates</button>' +
+        '<ul class="an-subject__topics">' + (subject.coreTopics || []).map(function (topic) {
+          return '<li><a href="' + subjectHref(subject.id) + '" data-subject-jump="' +
+            attr(subject.id) + '">' + esc(topic) + '</a></li>';
+        }).join('') + '</ul>' +
+        '<a class="an-subject__open" href="' + subjectHref(subject.id) + '" data-subject-jump="' +
+          attr(subject.id) + '">Current articles</a>' +
       '</article>';
     }).join('');
   }

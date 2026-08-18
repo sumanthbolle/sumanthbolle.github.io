@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UPSC Today — Topic of the Day and daily current affairs | Anchor</title>
-  <meta name="description" content="Read one complete UPSC Topic of the Day, a subject-wise daily current-affairs edition, official sources and recall-ready notes.">
+  <title>UPSC Today — Current affairs from official sources</title>
+  <meta name="description" content="Daily UPSC current-affairs articles from PIB, Indian public institutions and authorised international organisations.">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
-  <meta name="theme-color" content="#f5f5f7">
+  <meta name="theme-color" content="#f7f9fb">
   <link rel="canonical" href="https://sumanthbolle.com/upsc">
-  <meta property="og:title" content="UPSC Today — Topic of the Day and current affairs">
-  <meta property="og:description" content="A simple daily UPSC reading edition: one lead topic, current affairs grouped by subject, official sources and active recall.">
+  <meta property="og:title" content="UPSC Today — Current affairs from official sources">
+  <meta property="og:description" content="Daily UPSC current-affairs articles arranged by subject and linked to their official sources.">
   <meta property="og:url" content="https://sumanthbolle.com/upsc">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
@@ -19,20 +19,20 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "UPSC Today by Anchor",
+    "@type": "CollectionPage",
+    "name": "UPSC Today",
     "url": "https://sumanthbolle.com/upsc",
-    "applicationCategory": "EducationalApplication",
-    "operatingSystem": "Web",
-    "description": "A daily UPSC study publication with a Topic of the Day, subject-wise current affairs, official-source reading and active recall.",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "description": "Daily UPSC current-affairs articles from official Indian and international sources.",
     "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
   }
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/utility-chrome.css">
-  <link rel="stylesheet" href="assets/css/upsc.css">
   <link rel="stylesheet" href="assets/css/nav-utilities.css">
   <link rel="stylesheet" href="assets/css/utility-page.css">
+  <link rel="stylesheet" href="assets/css/upsc.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to the brief</a>
@@ -79,66 +79,29 @@
     </div>
   </nav>
 
-  <header class="util-head an-masthead">
-    <p class="util-head__kicker">Anchor · Daily UPSC study edition</p>
+  <header class="an-editorial-masthead">
+    <p class="an-publication-mark">Anchor</p>
     <h1>UPSC Today</h1>
-    <p class="util-head__lede">One important topic explained properly. The day’s current affairs arranged by subject. Every factual claim traceable to an official source.</p>
-    <p class="util-head__meta">
-      Updated from PIB, Indian institutions and authorised international organisations. Browse the <a href="upsc-study/">study archive</a> or
-      <button type="button" class="an-textbtn" id="clearData">Clear saved data</button>
-    </p>
-    <p class="an-namenote">Start with the lead topic. Scan only your weak subjects. Save what you can use in an answer. Then close the page and recall it.</p>
+    <div class="an-edition-line">
+      <span id="editionStamp">Daily edition</span>
+      <a href="upsc-study/">Archive</a>
+    </div>
   </header>
-
-  <section class="an-position" aria-label="Revision settings">
-    <details>
-      <summary>Personalise revision plan</summary>
-      <div class="an-position__inner">
-      <div>
-        <h2 class="an-label" id="positionTitle">Personalise revision</h2>
-        <div class="an-position__form">
-          <div class="an-field">
-            <label for="stage">Stage</label>
-            <select id="stage">
-              <option value="foundation">Foundation</option>
-              <option value="prelims" selected>Prelims</option>
-              <option value="mains">Mains</option>
-              <option value="interview">Interview</option>
-            </select>
-          </div>
-          <div class="an-field">
-            <label for="examDate">Next paper</label>
-            <input type="date" id="examDate">
-          </div>
-        </div>
-      </div>
-      <div class="an-mode">
-        <div class="an-mode__head">
-          <span class="an-mode__name" id="modeName" data-mode="">Set a date</span>
-          <span class="an-mode__t an-num" id="modeT">—</span>
-        </div>
-        <p class="an-mode__line" id="modeLine">Add the date of your next paper and this page switches to the mode that suits it.</p>
-        <p class="an-mode__caveat">Derived from the date you enter — confirm it against the calendar on <a href="https://upsc.gov.in" rel="noopener noreferrer" target="_blank">upsc.gov.in</a>, which is the only source that counts.</p>
-      </div>
-      </div>
-    </details>
-  </section>
 
   <div class="an-command">
     <div class="an-command__inner">
+      <div class="an-views" role="tablist" aria-label="UPSC sections">
+        <a href="?view=brief" role="tab" id="tab-brief" aria-selected="true" aria-controls="view-brief" data-view="brief">Today</a>
+        <a href="?view=syllabus" role="tab" id="tab-syllabus" aria-selected="false" aria-controls="view-syllabus" data-view="syllabus">Subjects</a>
+        <a href="?view=memory" role="tab" id="tab-memory" aria-selected="false" aria-controls="view-memory" data-view="memory">Revision<span class="an-count" id="countDue">0</span><span class="sr-only"> due, </span><span class="an-count" id="countNotes">0</span></a>
+        <a href="?view=source" role="tab" id="tab-source" aria-selected="false" aria-controls="view-source" data-view="source">Official sources</a>
+      </div>
       <search class="an-search" role="search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
-        <label class="sr-only" for="q">Search a subject or topic</label>
-        <input type="search" id="q" placeholder="Search a subject or topic — federalism, inflation, climate…" autocomplete="off" spellcheck="false">
+        <label class="sr-only" for="q">Search articles</label>
+        <input type="search" id="q" placeholder="Search articles" autocomplete="off" spellcheck="false">
         <kbd>/</kbd>
       </search>
-      <button type="button" class="btn btn-primary" id="lookupBtn">Build full topic note</button>
-      <div class="an-views" role="tablist" aria-label="Workspace">
-        <button type="button" role="tab" id="tab-brief" aria-selected="true" aria-controls="view-brief" data-view="brief">Today</button>
-        <button type="button" role="tab" id="tab-syllabus" aria-selected="false" aria-controls="view-syllabus" data-view="syllabus">Subjects</button>
-        <button type="button" role="tab" id="tab-memory" aria-selected="false" aria-controls="view-memory" data-view="memory">Revision<span class="an-count" id="countDue">0</span><span class="sr-only"> due, </span><span class="an-count" id="countNotes">0</span></button>
-        <button type="button" role="tab" id="tab-source" aria-selected="false" aria-controls="view-source" data-view="source">Official sources</button>
-      </div>
     </div>
   </div>
 
@@ -149,8 +112,8 @@
         <!-- Official source archive: deliberately secondary to the reading edition. -->
         <section class="an-view" id="view-source" role="tabpanel" aria-labelledby="tab-source" hidden>
           <div class="an-viewhead">
-            <div><p class="an-label">For verification and completeness</p><h2>Official source archive</h2></div>
-            <p class="an-viewhead__meta" id="sourceMeta">Loading the latest published index.</p>
+            <div><p class="an-label">Archive</p><h2>Official sources</h2></div>
+            <p class="an-viewhead__meta" id="sourceMeta">Loading…</p>
           </div>
 
           <details class="an-sourcefilters" open>
@@ -166,15 +129,15 @@
           </details>
 
           <div class="an-coverage" id="sourceCoverage" aria-live="polite"></div>
-          <div class="an-state" id="sourceState"><h3>Loading official records</h3><p>The last valid archive remains readable if an adapter is temporarily unavailable.</p></div>
+          <div class="an-state" id="sourceState"><h3>Loading sources…</h3></div>
           <div class="an-sourcesdesk" id="sourceEntries"></div>
         </section>
 
         <!-- Today's reading edition -->
         <section class="an-view" id="view-brief" role="tabpanel" aria-labelledby="tab-brief">
           <header class="an-edition-head">
-            <div><p class="an-label">Daily reading edition</p><h2 id="briefTitle">Today’s UPSC Brief</h2></div>
-            <p class="an-viewhead__meta" id="briefMeta">Loading today’s official updates.</p>
+            <div><p class="an-label">Latest edition</p><h2 id="briefTitle">Today</h2></div>
+            <p class="an-viewhead__meta" id="briefMeta">Loading…</p>
           </header>
 
           <ol class="an-skeleton" id="briefLoading" hidden aria-hidden="true">
@@ -184,8 +147,7 @@
           </ol>
 
           <div class="an-state" id="briefState">
-            <h3>Preparing today’s reading</h3>
-            <p>The latest valid official-source edition remains available if one publisher is temporarily unavailable.</p>
+            <h3>Loading edition…</h3>
           </div>
 
           <div id="topicOfDay" aria-live="polite"></div>
@@ -194,8 +156,8 @@
 
           <section class="an-daily" aria-labelledby="dailyTitle">
             <header class="an-daily__head">
-              <div><p class="an-label">Read selectively</p><h2 id="dailyTitle">Today’s current affairs</h2></div>
-              <p class="an-viewhead__meta" id="dailyEditionMeta">Eight to fifteen developments, arranged by subject.</p>
+              <div><p class="an-label">By subject</p><h2 id="dailyTitle">Latest articles</h2></div>
+              <p class="an-viewhead__meta" id="dailyEditionMeta"></p>
             </header>
             <div id="dailyEdition"></div>
           </section>
@@ -203,7 +165,7 @@
           <div class="an-entries" id="briefEntries"></div>
 
           <details class="an-reading-tools">
-            <summary>Change reading window or paper</summary>
+            <summary>Filter articles</summary>
             <div class="an-toolbar">
               <div class="an-segmented" role="group" aria-label="Brief window">
                 <button type="button" id="scopeDaily" aria-pressed="true" data-scope="daily">Today</button>
@@ -216,20 +178,18 @@
                 <button type="button" class="an-chip" aria-pressed="false" data-paper="GS4">GS4</button>
                 <button type="button" class="an-chip" aria-pressed="false" data-paper="ESSAY">Essay</button>
               </div>
-              <label class="an-check"><input type="checkbox" id="verifiedOnly"> Topper notes only</label>
-              <div class="an-toolbar__right"><button type="button" class="btn btn-sm" id="refreshBrief">Refresh edition</button></div>
+              <label class="an-check"><input type="checkbox" id="verifiedOnly"> With deep-dives</label>
+              <div class="an-toolbar__right"><button type="button" class="btn btn-sm" id="refreshBrief">Refresh</button></div>
             </div>
           </details>
 
           <section class="an-block" id="clusterBlock" hidden>
             <h3>Anchors that repeated this week</h3>
-            <p class="an-block__intro">Clustering by anchor rather than by date is what turns a diary into a syllabus supplement. Revise the synthesis, not the individual items.</p>
             <ul class="an-clusters" id="clusterList"></ul>
           </section>
 
           <section class="an-block" id="discardBlock" hidden>
             <h3>Discarded</h3>
-            <p class="an-block__intro">Kept deliberately. Reading your own discard log is how you find out whether the filter is calibrated — if very little is being thrown away, your notes are about to bloat.</p>
             <ul class="an-discards" id="discardList"></ul>
           </section>
         </section>
@@ -237,51 +197,19 @@
         <!-- Subject Library -->
         <section class="an-view" id="view-syllabus" role="tabpanel" aria-labelledby="tab-syllabus" hidden>
           <div class="an-viewhead">
-            <div><p class="an-label">Static foundation × today’s triggers</p><h2>Subject Library</h2></div>
-            <p class="an-viewhead__meta" id="syllabusMeta">Nine familiar subjects. Start with your weakest.</p>
+            <div><p class="an-label">Index</p><h2>Subjects</h2></div>
+            <p class="an-viewhead__meta" id="syllabusMeta"></p>
           </div>
-          <div class="an-state" id="syllabusState"><h3>Building the subject shelves</h3><p>Joining the static syllabus with the latest official developments.</p></div>
+          <div class="an-state" id="syllabusState"><h3>Loading subjects…</h3></div>
           <div class="an-subject-grid" id="syllabusList"></div>
 
           <section class="an-subject-tools" aria-labelledby="subjectToolsTitle">
-            <div class="an-viewhead"><div><p class="an-label">Go deeper</p><h2 id="subjectToolsTitle">Topic notes and answer practice</h2></div></div>
+            <div class="an-viewhead"><div><p class="an-label">Practice</p><h2 id="subjectToolsTitle">Answer writing</h2></div></div>
 
           <section class="an-published-practice" aria-labelledby="publishedPracticeTitle">
             <h3 id="publishedPracticeTitle">Answer-writing practice</h3>
-            <p class="an-block__intro">Attempt the directive and dimensions before opening the scaffold. These are study prompts, not paper predictions.</p>
-            <div class="an-state" id="answerPracticeState"><h3>Loading answer scaffolds</h3><p>Published note details load only when this view is opened.</p></div>
+            <div class="an-state" id="answerPracticeState"><h3>Loading…</h3></div>
             <div id="answerPracticeList"></div>
-          </section>
-
-          <section class="an-optional-lookup" aria-labelledby="optionalLookupTitle">
-            <h3 id="optionalLookupTitle">Build a full topic note</h3>
-            <p class="an-block__intro">Search a durable concept such as fiscal federalism, monetary policy or climate finance. Live notes remain separate from the reviewed daily publication.</p>
-
-          <div class="an-toolbar">
-            <div class="an-field" style="flex:0 0 auto;max-width:180px">
-              <label for="lookupPaper">Bias towards</label>
-              <select id="lookupPaper">
-                <option value="any">Any paper</option>
-                <option value="GS1">GS1</option>
-                <option value="GS2">GS2</option>
-                <option value="GS3">GS3</option>
-                <option value="GS4">GS4</option>
-                <option value="ESSAY">Essay</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="an-state" id="lookupState">
-            <h3>Search a concept, not a headline</h3>
-            <p>A full topic note gives you the definition, core dimensions, both sides of the debate, Prelims facts, answer practice and official sources.</p>
-          </div>
-
-          <ol class="an-skeleton" id="lookupLoading" hidden aria-hidden="true">
-            <li><span></span><div><span></span><span></span></div></li>
-            <li><span></span><div><span></span><span></span></div></li>
-          </ol>
-
-          <div class="an-lookup" id="lookupResult" hidden></div>
           </section>
           </section>
         </section>
@@ -289,9 +217,34 @@
         <!-- Memory Drill -->
         <section class="an-view" id="view-memory" role="tabpanel" aria-labelledby="tab-memory" hidden>
           <div class="an-viewhead">
-            <div><p class="an-label">Close the page and retrieve</p><h2>Revision</h2></div>
+            <div><p class="an-label">Saved</p><h2>Revision</h2></div>
             <p class="an-viewhead__meta" id="notesMeta">Nothing saved yet.</p>
           </div>
+
+          <details class="an-revision-settings">
+            <summary>Exam settings</summary>
+            <div class="an-revision-settings__grid">
+              <div class="an-field">
+                <label for="stage">Stage</label>
+                <select id="stage">
+                  <option value="foundation">Foundation</option>
+                  <option value="prelims" selected>Prelims</option>
+                  <option value="mains">Mains</option>
+                  <option value="interview">Interview</option>
+                </select>
+              </div>
+              <div class="an-field">
+                <label for="examDate">Next paper</label>
+                <input type="date" id="examDate">
+              </div>
+              <div class="an-mode" aria-live="polite">
+                <span class="an-mode__name" id="modeName" data-mode="">—</span>
+                <span class="an-mode__t an-num" id="modeT">—</span>
+                <span id="modeLine" hidden></span>
+              </div>
+              <button type="button" class="btn btn-quiet" id="clearData">Clear saved data</button>
+            </div>
+          </details>
 
           <div class="an-segmented an-memorymodes" role="group" aria-label="Memory Drill mode">
             <button type="button" id="memoryDue" aria-pressed="true" data-memory-mode="due">Due recall</button>
@@ -358,7 +311,6 @@
                 <button type="button" class="btn btn-primary" id="saveNote">Save note</button>
                 <span class="an-counter" id="wordCount" data-over="false">0 / 60 words across the four lines</span>
               </div>
-              <p class="an-railnote">If it will not fit in sixty words, you have not understood it yet. Go back to the source rather than writing more.</p>
             </div>
           </details>
 
@@ -366,136 +318,45 @@
 
           <div class="an-state" id="notesState">
             <h3>Nothing saved yet</h3>
-            <p>Save items from the brief or from a lookup. Each saved note enters the revision queue at day 1, 3, 7, 21 and 60 — and a note you never retrieve should never have been recorded.</p>
           </div>
 
           <ol class="an-entries" id="notesList"></ol>
           </div>
 
           <div id="memoryDuePanel">
-            <p class="an-viewhead__meta" id="reviseMeta">Retrieval, not rereading.</p>
+            <p class="an-viewhead__meta" id="reviseMeta"></p>
             <div class="an-revise" id="reviseBody">
               <div class="an-state" id="reviseState">
                 <h3>Nothing due</h3>
-                <p>Save a few notes first. When something is due you will see its title alone — you reconstruct the anchor, the debate and the use from memory before revealing it.</p>
               </div>
             </div>
-            <p class="an-revise__legend">The queue runs at day 1, 3, 7, 21 and 60, then monthly. Read only the title, reconstruct the rest out loud, then reveal. A failed reconstruction resets the item to day 1.</p>
           </div>
 
           <div id="memoryDrillPanel" hidden>
-            <p class="an-viewhead__meta" id="memoryDrillMeta">Derived from due notes; no separate schedule records.</p>
+            <p class="an-viewhead__meta" id="memoryDrillMeta"></p>
             <div class="an-revise" id="memoryDrillBody"></div>
-            <p class="an-revise__legend">One pass or miss updates the parent note once. Facts appear here only when their official evidence cleared the source boundary.</p>
           </div>
         </section>
 
       </div>
 
-      <aside class="an-rail" aria-label="Today’s study plan">
-        <div class="an-railblock">
-          <h3>Your 45-minute plan</h3>
-          <ol class="an-reading-plan">
-            <li><strong>15 min</strong> Topic of the Day</li>
-            <li><strong>20 min</strong> Weak-subject updates</li>
-            <li><strong>10 min</strong> Recall without looking</li>
-          </ol>
-          <div class="an-stats">
-            <div class="an-stat"><span>Revision mode</span><strong id="railMode">—</strong></div>
-            <div class="an-stat"><span>Days to paper</span><strong class="an-num" id="railDays">—</strong></div>
-            <div class="an-stat"><span>Due today</span><strong class="an-num" id="railDue">0</strong></div>
-            <div class="an-stat"><span>Saved notes</span><strong class="an-num" id="railNotes">0</strong></div>
-            <div class="an-stat" id="railUnverifiedStat" data-warn="false"><span>Need source check</span><strong class="an-num" id="railUnverified">0%</strong></div>
-          </div>
-          <p class="an-railnote" id="railHint">Save fewer notes than you read. Retrieval is the work that produces marks.</p>
-        </div>
-
-        <div class="an-railblock">
-          <h3>Keep an item only when</h3>
-          <ol class="an-tests">
-            <li>You can name the syllabus topic.</li>
-            <li>You can connect it to a static concept.</li>
-            <li>You can use it in a Prelims elimination or Mains argument.</li>
-          </ol>
-          <p class="an-railnote">An item that clears the filter has a static anchor behind it. The 20-year pattern for every anchor is in the <a href="upsc-patterns.html">Pattern Atlas</a>.</p>
-        </div>
-      </aside>
     </div>
   </main>
 
-  <section class="an-how" id="how" aria-labelledby="howTitle">
-    <div class="an-how__inner">
-      <h2 id="howTitle">How to use this</h2>
-      <p class="an-how__intro">Read for forty-five minutes. Retain fewer than fifteen items. Recall before you reread.</p>
-
-      <ol class="an-steps">
-        <li>
-          <h3>Read the lead topic</h3>
-          <p>Understand the static foundation, the current trigger and the answer-writing dimensions before scanning the rest of the day.</p>
-        </li>
-        <li>
-          <h3>Scan by subject</h3>
-          <p>Open your weak subjects first. For every item, identify why it is in news and the static concept to which it belongs.</p>
-        </li>
-        <li>
-          <h3>Close and recall</h3>
-          <p>Reconstruct the topic, one Prelims fact and one Mains argument without looking. Saved notes return on day 1, 3, 7, 21 and 60.</p>
-        </li>
-      </ol>
-
-      <div class="an-honesty">
-        <h3>What this tool will not do</h3>
-        <ul>
-          <li>It will not predict your paper. Scores rank items for revision priority; the anchor-frequency term is an editorial estimate from twenty years of recurring themes, not a tagged corpus of past questions, and every score says so.</li>
-          <li>It will not replace the primary document. Language models fabricate article numbers, committee names and statistics fluently. Nothing here is trustworthy as a fact until you have opened the source.</li>
-          <li>It will not add a source to your stack. If you are already behind on what you own, the answer to “should I read this too?” is no.</li>
-          <li>It is not affiliated with the Union Public Service Commission. Dates, eligibility and the syllabus come from <a href="https://upsc.gov.in" rel="noopener noreferrer" target="_blank">upsc.gov.in</a>, and where this page and the Commission disagree, the Commission is right.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="util-more" aria-label="Other utilities">
-    <p class="util-more__title">Other utilities</p>
-    <div class="util-more__grid">
-      <a class="util-more__card" href="upsc-patterns.html"><strong>Pattern Atlas</strong><span>Twenty years of UPSC question patterns as 57 anchors, with a recall drill for the ones you keep missing.</span></a>
-      <a class="util-more__card" href="flights.html"><strong>SkyFare</strong><span>Compare flights on price, travel time, stops and departure times before you book.</span></a>
-      <a class="util-more__card" href="save-yourself.html"><strong>Save Yourself</strong><span>Work out the monthly payment, the total repaid and the fees on a loan before you sign.</span></a>
-    </div>
-  </section>
-
   <footer>
     <div class="footer-inner">
-      <div>© 2026 Sumanth Bolle.</div>
-      <div class="attribution">Built by Sumanth Bolle. Retrieved items are cited; verify every figure against the primary source before you memorise it.</div>
+      <div>© 2026 Sumanth Bolle</div>
+      <div class="an-footer-links"><a href="upsc-study/">Archive</a><a href="upsc-patterns.html">Pattern Atlas</a><a href="https://upsc.gov.in" rel="noopener noreferrer" target="_blank">UPSC</a></div>
     </div>
   </footer>
 
   <script src="assets/js/shared/nav-theme.js"></script>
   <script src="assets/js/shared/nav-utilities.js"></script>
-  <script src="assets/js/shared/help-panel.js"></script>
   <script>window.SB_UPSC_ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';</script>
   <script src="assets/js/upsc/store.js"></script>
   <script src="assets/js/upsc/content.js"></script>
   <script src="assets/js/upsc/memory.js"></script>
   <script src="assets/js/upsc/render.js"></script>
   <script src="assets/js/upsc/app.js"></script>
-  <script>
-    SBHelpGuide.init({
-      page: 'upsc',
-      tabLabel: 'Guide',
-      title: 'Your daily UPSC reading loop',
-      intro: 'One lead topic, a selective subject-wise scan, then retrieval without looking.',
-      steps: [
-        { title: 'Read Topic of the Day', desc: 'Connect the current trigger to its static foundation, Prelims checks, Mains dimensions and recall questions.' },
-        { title: 'Scan by subject', desc: 'Read weak subjects first. Keep only items that give you a syllabus link or something usable in an answer.' },
-        { title: 'Open the official source', desc: 'A feed headline is never presented as a complete explanation. Verify important facts in the linked document.' },
-        { title: 'Revise by retrieval', desc: 'Close the page, reconstruct the topic, then use the day 1, 3, 7, 21 and 60 queue for saved notes.' },
-        { title: 'Go behind the news', desc: 'Use the Pattern Atlas to connect recurring concepts to twenty years of UPSC question patterns.' }
-      ],
-      footerNote: 'Notes and the queue live in this browser only.',
-      footerLink: { href: 'https://upsc.gov.in', label: 'Official UPSC calendar' }
-    });
-  </script>
 </body>
 </html>
