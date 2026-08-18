@@ -287,17 +287,6 @@
   }
 
   function selectTopicOfDay(records, notes) {
-    var ready = (Array.isArray(notes) ? notes : []).filter(function (note) {
-      return note && (note.editorialStatus === 'source-backed' || note.editorialStatus === 'reviewed');
-    }).sort(function (a, b) {
-      return b.priority - a.priority || b.publishedAt.localeCompare(a.publishedAt);
-    });
-    if (ready.length) {
-      var note = ready[0];
-      return Object.assign({}, note, {
-        id: note.sourceId, kind: 'note', subject: inferSubject(note),
-      });
-    }
     var edition = buildDailyEdition(records, { limit: 15 });
     var ranked = edition.items.slice().sort(function (a, b) {
       var aDepth = String(a.officialSummary || '').length - String(a.title || '').length;
@@ -308,9 +297,7 @@
     });
     if (!ranked.length) return null;
     var source = ranked[0];
-    return Object.assign({}, source, {
-      kind: 'source', studyLens: source.subject.studyLens.slice(),
-    });
+    return Object.assign({}, source, { kind: 'source' });
   }
 
   function subjectLibrary(records) {

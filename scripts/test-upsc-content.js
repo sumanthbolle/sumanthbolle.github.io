@@ -200,7 +200,7 @@ test('builds a bounded current-affairs edition with subject diversity', function
   assert.equal(edition.items.some(row => row.publishedAt.startsWith('2026-08-10')), false);
 });
 
-test('prefers an evidence-ready exam note for Topic of the Day', function () {
+test('keeps Topic of the Day grounded in an official article instead of an enriched note', function () {
   const Content = loadContent();
   const records = Content.normalizeSourceIndex(FIXTURE_INDEX).records;
   const notes = Content.normalizeExamIndex({
@@ -208,9 +208,11 @@ test('prefers an evidence-ready exam note for Topic of the Day', function () {
   }).notes;
   const topic = Content.selectTopicOfDay(records, notes);
 
-  assert.equal(topic.kind, 'note');
+  assert.equal(topic.kind, 'source');
   assert.equal(topic.id, 'src_pib');
-  assert.equal(topic.subject.id, 'economy');
+  assert.equal(topic.officialSummary, 'Cabinet approved fiscal policy.');
+  assert.equal(topic.whyInNews, undefined);
+  assert.equal(topic.subject.id, 'polity-governance');
 });
 
 test('falls back to a useful official record for Topic of the Day', function () {
@@ -231,7 +233,7 @@ test('falls back to a useful official record for Topic of the Day', function () 
   assert.equal(topic.kind, 'source');
   assert.equal(topic.id, 'src_policy');
   assert.equal(topic.subject.id, 'environment');
-  assert.ok(topic.studyLens.length >= 4);
+  assert.equal(topic.studyLens, undefined);
 });
 
 test('selects a durable multi-dimensional topic over a routine portal launch', function () {
