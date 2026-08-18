@@ -1,5 +1,5 @@
 /**
- * Save Yourself — Financial X-Ray UI wiring (client-side only).
+ * Save Yourself — loan cost calculator UI wiring (client-side only).
  */
 (function () {
   'use strict';
@@ -653,7 +653,7 @@
     rows.push(['Interest paid', money(result.totalInterestPaid, ccy)]);
     rows.push(['Fees paid', money(result.totalFeesPaid != null ? result.totalFeesPaid : fees, ccy)]);
     rows.push(['Total leaving you', money(result.totalPaid, ccy), 'total']);
-    rows.push(['Money rent', money(result.borrowingCost, ccy), 'cost']);
+    rows.push(['Interest + fees', money(result.borrowingCost, ccy), 'cost']);
 
     var html = '';
     rows.forEach(function (r) {
@@ -987,10 +987,9 @@
         return;
       }
       $('liveSummary').textContent =
-        'You borrow ' + money(result.principal, result.currency)
-        + '. You return ' + money(result.totalPaid, result.currency)
-        + '. ' + money(result.borrowingCost, result.currency) + ' is the rent on the money.'
-        + ' Monthly payment ' + money(result.emi, result.currency) + '.';
+        'Monthly payment ' + money(result.emi, result.currency)
+        + '. Total repaid ' + money(result.totalPaid, result.currency)
+        + '. Interest and fees ' + money(result.borrowingCost, result.currency) + '.';
     }, 400);
   }
 
@@ -1037,7 +1036,7 @@
     renderAll(result, form);
   }
 
-  /* ---------- Summary export (handover-style Financial X-Ray) ---------- */
+  /* ---------- Summary export ---------- */
   function buildSummaryText() {
     var r = state.lastValidResult;
     if (!r || !r.ok) return '';
@@ -1046,12 +1045,12 @@
     var includeAmort = $('includeAmort') && $('includeAmort').checked;
 
     var lines = [
-      'SAVE YOURSELF — FINANCIAL X-RAY',
+      'SAVE YOURSELF — LOAN COST SUMMARY',
       'Generated in the browser',
       '',
-      'YOU BORROW:  ' + money(r.principal, r.currency),
-      'YOU RETURN:  ' + money(r.totalPaid, r.currency),
-      'MONEY RENT:  ' + money(r.borrowingCost, r.currency),
+      'AMOUNT BORROWED:  ' + money(r.principal, r.currency),
+      'TOTAL REPAID:  ' + money(r.totalPaid, r.currency),
+      'INTEREST + FEES:  ' + money(r.borrowingCost, r.currency),
       '',
       'Cash received: ' + money(r.netProceeds, r.currency),
       'Monthly payment: ' + money(r.emi, r.currency),

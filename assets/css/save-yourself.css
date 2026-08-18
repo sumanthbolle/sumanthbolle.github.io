@@ -1,4 +1,4 @@
-/* Save Yourself — Financial X-Ray
+/* Save Yourself — loan cost checker
    Editorial / measurement-line aesthetic. No gradient blobs, glass, glow, or pill clusters. */
 
 *,
@@ -1047,7 +1047,7 @@ input[aria-invalid="true"],
   line-height: 1.4;
 }
 
-/* Reality receipt — paper-like, not heavy card */
+/* Full cost breakdown */
 .sy-receipt {
   background: color-mix(in srgb, var(--sy-panel) 92%, var(--sy-text) 2%);
   border: 1px solid var(--sy-border);
@@ -2127,5 +2127,387 @@ footer {
 
   .sy-sticky {
     transition: none;
+  }
+}
+
+/* Refined loan reader: literal inputs, one cost summary, quiet secondary detail. */
+:root {
+  --blue: #204e78;
+  --text: #151a20;
+  --gray: #5f6b76;
+  --bg: #f6f8fa;
+  --white: #fff;
+  --card-line: #d8dee5;
+  --input-line: #b9c3cd;
+  --flame: #b55325;
+  --cost-text: #9f451d;
+  --max: 1180px;
+  --radius: 3px;
+  --radius-sm: 3px;
+  --radius-xs: 2px;
+  --sy-motion-normal: 180ms;
+}
+
+:root[data-theme="dark"] {
+  --blue: #9bc4ed;
+  --text: #eef2f5;
+  --gray: #aab4be;
+  --bg: #101419;
+  --white: #171d24;
+  --card-line: #35404b;
+  --input-line: #4b5865;
+  --flame: #e29672;
+  --cost-text: #f1ad8d;
+}
+
+body {
+  font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
+  transition: background var(--sy-motion-normal) var(--sy-ease-standard),
+    color var(--sy-motion-normal) var(--sy-ease-standard);
+}
+
+button,
+select,
+input,
+textarea,
+.nav-links,
+.nav-logo,
+.theme-toggle,
+.menu-toggle,
+.btn,
+.sy-label,
+.sy-metric__label,
+.sy-receipt,
+.sy-sticky,
+.field label,
+.field .lbl,
+.segmented,
+.combo,
+.hint,
+.sy-section__eyebrow,
+.util-head__kicker,
+.util-head__meta,
+.sy-section__intro,
+.sy-invite,
+.sy-footer-links,
+.footer-inner {
+  font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.util-head {
+  max-width: var(--max);
+  padding: 88px 22px 26px;
+}
+
+.util-head__kicker {
+  margin-bottom: 12px;
+  color: var(--sy-cost);
+}
+
+.util-head h1 {
+  max-width: 15ch;
+  font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
+  font-size: clamp(44px, 7vw, 74px);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.util-head__lede {
+  margin-top: 12px;
+  color: var(--sy-text-muted);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.util-head__meta {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.sy-clear {
+  min-height: 44px;
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.theme-toggle,
+.nav-logo {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.sy-main {
+  max-width: var(--max);
+  padding-top: 16px;
+}
+
+.sy-workspace {
+  gap: clamp(32px, 5vw, 64px);
+  margin-bottom: 32px;
+}
+
+.sy-controls {
+  padding-top: 20px;
+  border-top: 2px solid var(--sy-text);
+}
+
+.field label,
+.field .lbl {
+  color: var(--sy-text-muted);
+}
+
+.field input,
+.field select,
+.field textarea,
+.combo input,
+.btn,
+.combo-toggle,
+.sy-sticky__view {
+  min-height: 44px;
+  border-radius: 2px;
+}
+
+.combo-toggle {
+  min-width: 44px;
+}
+
+.segmented label span,
+.choice-grid label span {
+  min-height: 44px;
+  border-radius: 2px;
+}
+
+.sy-drawer {
+  border-radius: 0;
+}
+
+.sy-reality {
+  padding-top: 20px;
+  border-top: 2px solid var(--sy-text);
+}
+
+.sy-reality__headline {
+  margin-bottom: 18px;
+}
+
+.sy-reality__headline .sy-section__eyebrow {
+  margin: 0 0 7px;
+}
+
+.sy-reality__headline h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.sy-primary-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 24px;
+  border-top: 1px solid var(--sy-border);
+  border-bottom: 1px solid var(--sy-border);
+}
+
+.sy-primary-metric {
+  min-width: 0;
+  padding: 18px 18px 20px 0;
+}
+
+.sy-primary-metric + .sy-primary-metric {
+  padding-left: 18px;
+  border-left: 1px solid var(--sy-border);
+}
+
+.sy-primary-metric .sy-metric__value {
+  font-size: clamp(25px, 3vw, 38px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.sy-primary-metric--cost .sy-metric__value {
+  color: var(--sy-cost);
+}
+
+.sy-reality-bar {
+  height: 8px;
+  margin-bottom: 9px;
+}
+
+.sy-reality-bar__legend {
+  margin-bottom: 26px;
+}
+
+.sy-metrics--secondary {
+  gap: 14px 24px;
+  margin-bottom: 26px;
+}
+
+.sy-metrics--secondary .sy-metric__value {
+  font-size: clamp(17px, 2vw, 22px);
+  font-weight: 500;
+}
+
+.sy-receipt {
+  padding: 0;
+  border-width: 1px 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.sy-receipt > summary {
+  min-height: 48px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.sy-receipt > summary::after {
+  content: "+";
+  color: var(--sy-text-muted);
+  font-size: 18px;
+}
+
+.sy-receipt[open] > summary::after {
+  content: "−";
+}
+
+.sy-receipt[open] > summary {
+  margin-bottom: 8px;
+}
+
+.sy-receipt dl {
+  padding-bottom: 16px;
+}
+
+.sy-section {
+  margin-bottom: 64px;
+  padding-top: 24px;
+}
+
+.sy-section + .sy-section {
+  margin-top: 0;
+}
+
+.sy-section h2 {
+  font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.sy-section__intro {
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.sy-detail-section {
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.sy-detail-section > summary {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.sy-detail-section > summary h2 {
+  margin: 0;
+  font-size: clamp(23px, 3vw, 30px);
+}
+
+.sy-detail-section > summary::after {
+  content: "+";
+  color: var(--sy-text-muted);
+  font-family: "Public Sans", sans-serif;
+  font-size: 20px;
+}
+
+.sy-detail-section[open] > summary::after {
+  content: "−";
+}
+
+.sy-detail-section > .sy-section__intro {
+  margin: -10px 0 24px;
+}
+
+.sy-detail-section > :last-child {
+  margin-bottom: 32px;
+}
+
+.sy-signal,
+.sy-scenario,
+.sy-checks li,
+.sy-flags li,
+.sy-verdict,
+.sy-details,
+.sy-advice,
+.sy-pressure {
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+.sy-footer-links {
+  display: flex;
+  gap: 18px;
+}
+
+.sy-footer-links a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--sy-text-muted);
+  text-decoration: none;
+}
+
+.sy-footer-links a:hover {
+  color: var(--sy-text);
+}
+
+@media (max-width: 759px) {
+  .util-head {
+    padding: 78px 18px 20px;
+  }
+
+  .sy-main {
+    padding: 8px 18px 120px;
+  }
+
+  .sy-workspace {
+    gap: 44px;
+    margin-bottom: 60px;
+  }
+
+  .sy-primary-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .sy-primary-metric {
+    padding: 16px 0;
+  }
+
+  .sy-primary-metric + .sy-primary-metric {
+    padding-left: 0;
+    border-top: 1px solid var(--sy-border);
+    border-left: 0;
+  }
+
+  .sy-detail-section > summary {
+    min-height: 68px;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+  }
+
+  .attribution {
+    text-align: left;
   }
 }

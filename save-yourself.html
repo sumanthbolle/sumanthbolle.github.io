@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://sumanthbolle.com/save-yourself">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://sumanthbolle.com/assets/images/save-yourself-og.png">
-  <meta property="og:image:alt" content="Save Yourself — private Financial X-Ray for loans">
+  <meta property="og:image:alt" content="Save Yourself loan cost calculator">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://sumanthbolle.com/assets/images/save-yourself-og.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -27,14 +27,17 @@
     "url": "https://sumanthbolle.com/save-yourself",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web",
-    "description": "Loan calculator showing cash received, total repaid, money rent, estimated annual cost and checks to run before signing. Runs entirely in the browser.",
+    "description": "Loan calculator showing cash received, monthly payment, total repaid, interest and fees, and estimated annual cost. Runs entirely in the browser.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
   }
   </script>
-  <link rel="stylesheet" href="assets/css/save-yourself.css">
-  <link rel="stylesheet" href="assets/css/nav-utilities.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/utility-page.css">
+  <link rel="stylesheet" href="assets/css/save-yourself.css?v=20260818.3">
+  <link rel="stylesheet" href="assets/css/nav-utilities.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to calculator</a>
@@ -82,11 +85,11 @@
   </nav>
 
   <header class="util-head">
-    <p class="util-head__kicker">Utilities</p>
-    <h1>Save Yourself</h1>
-    <p class="util-head__lede">Enter the loan you have been offered to see the monthly payment, the total you repay, what the fees add on top, and how that compares with saving up first.</p>
+    <p class="util-head__kicker">Save Yourself</p>
+    <h1>Loan cost checker</h1>
+    <p class="util-head__lede">Enter the amount, rate, term and fees. Results update as you type.</p>
     <p class="util-head__meta">
-      Calculations run in this browser and your inputs are saved on this device.
+      Saved on this device.
       <button type="button" class="sy-clear" id="clearData">Clear saved data</button>
     </p>
     <span class="sy-example-badge" id="exampleBadge" hidden>Example numbers</span>
@@ -157,7 +160,7 @@
                 <option value="percent">%</option>
               </select>
             </div>
-            <div class="hint sr-only" id="processingHint">One-time fee. Treatment below controls how it enters the X-Ray.</div>
+            <div class="hint sr-only" id="processingHint">One-time fee. Choose below whether it is deducted, paid separately or financed.</div>
           </div>
 
           <div class="field">
@@ -179,7 +182,7 @@
         </div>
 
         <details class="sy-drawer" id="advancedDrawer">
-          <summary><span class="chev" aria-hidden="true">+</span> Add income, extra payments and alternatives</summary>
+          <summary><span class="chev" aria-hidden="true">+</span> More inputs</summary>
           <div class="sy-drawer__body">
             <div class="sy-drawer__group">
               <h3>Affordability</h3>
@@ -256,8 +259,8 @@
                   <select id="lender"></select>
                 </div>
                 <div class="field full">
-                  <label for="problemSentence">What problem are you really solving?</label>
-                  <textarea id="problemSentence" maxlength="280" placeholder="One sentence. Optional."></textarea>
+                  <label for="problemSentence">Notes</label>
+                  <textarea id="problemSentence" maxlength="280" placeholder="Optional"></textarea>
                 </div>
                 <div class="field full">
                   <label for="shortfallType">One-time or recurring?</label>
@@ -283,70 +286,82 @@
 
       <div class="sy-reality" id="realityCanvas">
         <div class="sy-reality__headline">
-          <p class="sy-reality__line">You borrow <span class="sy-num reality-primary" id="realityBorrow">—</span>.</p>
-          <p class="sy-reality__line">You return <span class="sy-num reality-primary" id="realityReturn">—</span>.</p>
-          <p class="sy-reality__rent reality-cost"><span id="realityRent">—</span> is the rent on the money.</p>
+          <p class="sy-section__eyebrow">Loan summary</p>
+          <h2>At a glance</h2>
         </div>
 
-        <div class="sy-reality-bar" id="realityBar" role="img" aria-label="Principal versus money rent">
+        <div class="sy-primary-metrics">
+          <div class="sy-primary-metric" id="metricEmi">
+            <div class="sy-metric__label">Monthly payment</div>
+            <div class="sy-metric__value" id="metricEmiValue">—</div>
+          </div>
+          <div class="sy-primary-metric">
+            <div class="sy-metric__label">Total repaid</div>
+            <div class="sy-metric__value" id="realityReturn">—</div>
+          </div>
+          <div class="sy-primary-metric sy-primary-metric--cost">
+            <div class="sy-metric__label">Interest + fees</div>
+            <div class="sy-metric__value" id="realityRent">—</div>
+          </div>
+        </div>
+
+        <div class="sy-reality-bar" id="realityBar" role="img" aria-label="Principal, interest and fees">
           <div class="sy-reality-bar__seg sy-reality-bar__seg--principal" id="barPrincipal" style="flex:1"></div>
           <div class="sy-reality-bar__seg sy-reality-bar__seg--interest" id="barInterest" style="flex:0"></div>
           <div class="sy-reality-bar__seg sy-reality-bar__seg--fees" id="barFees" style="flex:0"></div>
         </div>
         <div class="sy-reality-bar__legend">
-          <span data-key="principal">Principal returned <strong id="legendPrincipal">—</strong></span>
-          <span data-key="interest">Money rent <strong id="legendCost">—</strong></span>
+          <span data-key="principal">Principal <strong id="legendPrincipal">—</strong></span>
+          <span data-key="interest">Interest <strong id="legendCost">—</strong></span>
           <span data-key="fees" id="feesLegend" hidden>Fees <strong id="legendFees">—</strong></span>
         </div>
 
-        <div class="sy-metrics">
+        <div class="sy-metrics sy-metrics--secondary">
           <div class="sy-metric" id="metricCash">
             <div class="sy-metric__label">Cash received</div>
             <div class="sy-metric__value" id="metricCashValue">—</div>
           </div>
-          <div class="sy-metric" id="metricEmi">
-            <div class="sy-metric__label">Monthly payment</div>
-            <div class="sy-metric__value" id="metricEmiValue">—</div>
-          </div>
-          <div class="sy-metric" id="metricPerHundred">
-            <div class="sy-metric__label">Cost per 100</div>
-            <div class="sy-metric__value" id="metricPerHundredValue">—</div>
-            <div class="sy-metric__sub" id="metricPerHundredSub"></div>
+          <div class="sy-metric">
+            <div class="sy-metric__label">Amount borrowed</div>
+            <div class="sy-metric__value" id="realityBorrow">—</div>
           </div>
           <div class="sy-metric" id="metricAnnual">
             <div class="sy-metric__label">Estimated annual cost</div>
             <div class="sy-metric__value" id="metricAnnualValue">—</div>
           </div>
+          <div class="sy-metric" id="metricPerHundred">
+            <div class="sy-metric__label">Repaid per 100</div>
+            <div class="sy-metric__value" id="metricPerHundredValue">—</div>
+            <div class="sy-metric__sub" id="metricPerHundredSub"></div>
+          </div>
         </div>
 
-        <div class="sy-receipt" aria-labelledby="receiptTitle">
-          <p class="sy-receipt__title" id="receiptTitle">Reality receipt</p>
+        <details class="sy-receipt" aria-labelledby="receiptTitle">
+          <summary class="sy-receipt__title" id="receiptTitle">Full cost breakdown</summary>
           <dl id="receiptBody"></dl>
-        </div>
+        </details>
 
         <p class="sy-live" id="liveSummary" aria-live="polite"></p>
         <div id="warnings"></div>
       </div>
     </div>
 
-    <section class="sy-section" id="moneyFlow" aria-labelledby="moneyFlowTitle">
-      <p class="sy-section__eyebrow">Cash path</p>
-      <h2 id="moneyFlowTitle">Where the money moves</h2>
-      <p class="sy-section__intro">What lands in your account after fees, and what leaves it over the full term.</p>
+    <details class="sy-section sy-detail-section" id="moneyFlow" aria-labelledby="moneyFlowTitle">
+      <summary><h2 id="moneyFlowTitle">Money flow</h2></summary>
+      <p class="sy-section__intro">Cash received, fees and repayment.</p>
       <div id="moneyFlowMount"></div>
-    </section>
+    </details>
 
-    <section class="sy-section" id="repaymentTimeline" aria-labelledby="timelineTitle">
-      <p class="sy-section__eyebrow">Schedule</p>
-      <h2 id="timelineTitle">Repayment over time</h2>
-      <p class="sy-section__intro">Each bar is a payment. Interest sits on top early; principal takes over later on reducing-balance loans.</p>
+    <details class="sy-section sy-detail-section" id="repaymentTimeline" aria-labelledby="timelineTitle">
+      <summary><h2 id="timelineTitle">Repayment timeline</h2></summary>
+      <p class="sy-section__intro">Principal and interest across the term.</p>
       <div id="timelineMount"></div>
-    </section>
+    </details>
 
     <section class="sy-section" id="decisionSignals" aria-labelledby="signalsTitle">
       <p class="sy-section__eyebrow">Signals</p>
       <h2 id="signalsTitle">Cost and cash-flow pressure</h2>
-      <p class="sy-section__intro">The estimated annual cost of this loan, and how the payment sits against your income once you enter it.</p>
+      <p class="sy-section__intro">Annual cost and payment-to-income ratio.</p>
       <div class="sy-signals">
         <div class="sy-signal" id="costSignal">
           <h3>Cost signal</h3>
@@ -379,7 +394,7 @@
     <section class="sy-section" id="scenarios" aria-labelledby="scenariosTitle">
       <p class="sy-section__eyebrow">Alternatives</p>
       <h2 id="scenariosTitle">What changes the total</h2>
-      <p class="sy-section__intro">Three comparisons: a better offer, saving up first, and paying extra each month.</p>
+      <p class="sy-section__intro">Compare a lower rate, saving first or paying extra.</p>
       <div class="sy-scenarios">
         <div class="sy-scenario" id="scenarioBetter">
           <h3>Better offer</h3>
@@ -403,8 +418,8 @@
 
     <section class="sy-section" id="beforeSign" aria-labelledby="beforeSignTitle">
       <p class="sy-section__eyebrow">Before you sign</p>
-      <h2 id="beforeSignTitle">Decision board</h2>
-      <p class="sy-section__intro">Four checks to answer first. Deeper checks and red flags are in the sections below them.</p>
+      <h2 id="beforeSignTitle">Checks</h2>
+      <p class="sy-section__intro">Confirm the essentials and mark any red flags.</p>
 
       <ul class="sy-checks" id="primaryChecks"></ul>
 
@@ -414,15 +429,15 @@
       </details>
 
       <h3 class="sy-section__eyebrow" style="margin-top:28px">Red flags</h3>
-      <p class="hint" style="margin-bottom:8px">Selecting any flag stops the decision board.</p>
+      <p class="hint" style="margin-bottom:8px">Any selected flag sets the result to stop.</p>
       <ul class="sy-flags" id="redFlagList"></ul>
 
       <p class="sy-verdict" id="filterVerdict" role="status" aria-live="polite" data-state="pause">Complete the checks before you decide.</p>
 
       <details class="sy-details" id="escapeWrap">
-        <summary>Escape routes and lender ladder</summary>
+        <summary>Alternatives and lender costs</summary>
         <div id="escapeTiers"></div>
-        <h4 class="sy-section__eyebrow">If you must borrow</h4>
+        <h4 class="sy-section__eyebrow">Lender cost reference</h4>
         <p class="hint">Indicative ranges only — confirm the written offer.</p>
         <div class="ladder-wrap">
           <table class="ladder-table">
@@ -435,7 +450,7 @@
       </details>
 
       <details class="sy-details" id="commitWrap">
-        <summary>If you do borrow — write a commitment</summary>
+        <summary>Optional repayment commitment</summary>
         <div class="field-grid" style="margin-top:12px">
           <div class="field">
             <label for="commitDate">Payoff by</label>
@@ -463,10 +478,9 @@
       </details>
     </section>
 
-    <section class="sy-section" id="detailedResults" aria-labelledby="detailedTitle">
-      <p class="sy-section__eyebrow">Detail</p>
-      <h2 id="detailedTitle">Assumptions, schedule and export</h2>
-      <p class="sy-section__intro">Open the schedule to see every month. The assumptions behind the figures are listed underneath.</p>
+    <details class="sy-section sy-detail-section" id="detailedResults" aria-labelledby="detailedTitle">
+      <summary><h2 id="detailedTitle">Schedule &amp; export</h2></summary>
+      <p class="sy-section__intro">Monthly amortization, assumptions and a downloadable summary.</p>
 
       <details class="sy-details" id="amortWrap">
         <summary>Amortization schedule</summary>
@@ -507,21 +521,10 @@
         <p class="action-status" id="actionStatus" hidden></p>
       </div>
 
-      <p class="disclaimer">
-        This is an educational Financial X-Ray, not financial advice. Figures are estimates from the inputs you provide and cannot capture every fee, tax, variable-rate change, or lender rounding. Always confirm exact terms with the lender.
-      </p>
-    </section>
+      <p class="disclaimer">Estimates only—not financial advice. Confirm fees, rates and repayment terms with the lender.</p>
+    </details>
 
   </main>
-
-  <section class="util-more" aria-label="Other utilities">
-    <p class="util-more__title">Other utilities</p>
-    <div class="util-more__grid">
-      <a class="util-more__card" href="flights.html"><strong>SkyFare</strong><span>Compare flights on price, travel time, stops and departure times before you book.</span></a>
-      <a class="util-more__card" href="metals.html"><strong>Metals</strong><span>Gold and silver spot prices in your currency, with converters and a holdings tracker.</span></a>
-      <a class="util-more__card" href="upsc.html"><strong>Anchor</strong><span>A UPSC brief that keeps only what has an anchor, a syllabus code and a line you can use in an answer.</span></a>
-    </div>
-  </section>
 
   <div class="sy-sticky" id="stickyResults" aria-hidden="true">
     <div class="sy-sticky__inner">
@@ -531,7 +534,7 @@
           <strong id="stickyEmi">—</strong>
         </div>
         <div data-rent>
-          <div class="sy-sticky__meta">Money rent</div>
+          <div class="sy-sticky__meta">Interest + fees</div>
           <strong id="stickyInterest">—</strong>
         </div>
       </div>
@@ -541,37 +544,20 @@
 
   <footer>
     <div class="footer-inner">
-      <div>© 2026 Sumanth Bolle.</div>
-      <div class="attribution">Built by Sumanth Bolle. Estimates only — confirm the exact terms with the lender.</div>
+      <div class="sy-footer-links" aria-label="Other utilities"><a href="flights.html">SkyFare</a><a href="metals.html">Metals</a><a href="upsc.html">Anchor</a></div>
+      <div class="attribution">Estimates only—confirm terms with the lender. © 2026 Sumanth Bolle.</div>
     </div>
   </footer>
 
   <script src="assets/js/shared/nav-theme.js"></script>
   <script src="assets/js/shared/nav-utilities.js"></script>
-  <script src="assets/js/shared/help-panel.js"></script>
   <script src="assets/js/save-yourself/currency.js"></script>
   <script src="assets/js/save-yourself/loan-math.js"></script>
   <script src="assets/js/save-yourself/advice-rules.js"></script>
   <script src="assets/js/save-yourself/decision.js"></script>
   <script src="assets/js/save-yourself/storage.js"></script>
-  <script src="assets/js/save-yourself/money-flow.js"></script>
+  <script src="assets/js/save-yourself/money-flow.js?v=20260818"></script>
   <script src="assets/js/save-yourself/repayment-timeline.js"></script>
-  <script src="assets/js/save-yourself/app.js"></script>
-  <script>
-    SBHelpGuide.init({
-      page: 'save-yourself',
-      tabLabel: 'Guide',
-      title: 'Financial X-Ray guide',
-      intro: 'The numbers update as you type, and everything is calculated in your browser.',
-      steps: [
-        { title: 'Enter the loan', desc: 'Amount, rate, tenure, interest type, and fees. Fee treatment controls whether charges come from payout, sit separate, or join the principal.' },
-        { title: 'Read the reality canvas', desc: 'Borrow → return → money rent. The receipt and four metrics spell out cash received, EMI, cost per 100, and estimated annual cost.' },
-        { title: 'Follow the cash path', desc: 'Money flow and the repayment timeline show what reaches you and how each payment splits principal vs interest.' },
-        { title: 'Add income when ready', desc: 'Open “Add income…” for affordability, extra payments, opportunity rate, and borrowing context. Cash-flow pressure appears once income is set.' },
-        { title: 'Run the decision board', desc: 'Four primary checks, optional deeper ones, and selectable red flags. A stop state means pause before signing.' },
-        { title: 'Export or clear', desc: 'Copy or download a summary (optional checks, commitment, amortization). Clear saved data anytime from the trust strip.' }
-      ]
-    });
-  </script>
+  <script src="assets/js/save-yourself/app.js?v=20260818"></script>
 </body>
 </html>
