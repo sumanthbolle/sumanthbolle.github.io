@@ -1,0 +1,94 @@
+name: Publish UPSC official-source study archive
+
+on:
+  schedule:
+    - cron: "15 0,6,12,18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: upsc-official-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Verify publisher configuration
+        env:
+          UPSC_ENRICH_ENDPOINT: ${{ secrets.UPSC_ENRICH_ENDPOINT }}
+          UPSC_PUBLISH_TOKEN: ${{ secrets.UPSC_PUBLISH_TOKEN }}
+        run: |
+          test -n "$UPSC_ENRICH_ENDPOINT" || { echo "Missing UPSC_ENRICH_ENDPOINT"; exit 1; }
+          test -n "$UPSC_PUBLISH_TOKEN" || { echo "Missing UPSC_PUBLISH_TOKEN"; exit 1; }
+
+      - name: Run publisher tests
+        run: |
+          python -m unittest discover -s scripts/upsc -p 'test_*.py'
+          node scripts/test-upsc-api.mjs
+          node scripts/test-upsc-content.js
+          node scripts/test-upsc-render.js
+          node scripts/test-upsc-memory.js
+          node scripts/test-upsc-shell.js
+          node scripts/test-upsc-sitemap.js
+          node scripts/test-upsc-workflow.js
+
+      - name: Verify all official source contracts
+        run: >-
+          python scripts/upsc/publish.py check-sources
+          --registry data/upsc/source-registry.json
+          --strict > data/upsc/source-health.json
+
+      - name: Ingest official records
+        run: >-
+          python scripts/upsc/publish.py ingest
+          --registry data/upsc/source-registry.json
+          --output data/upsc
+
+      - name: Enrich source records
+        continue-on-error: true
+        env:
+          UPSC_ENRICH_ENDPOINT: ${{ secrets.UPSC_ENRICH_ENDPOINT }}
+          UPSC_PUBLISH_TOKEN: ${{ secrets.UPSC_PUBLISH_TOKEN }}
+        run: >-
+          python scripts/upsc/enrich.py
+          --output data/upsc
+          --endpoint "$UPSC_ENRICH_ENDPOINT"
+          --token "$UPSC_PUBLISH_TOKEN"
+
+      - name: Build indexes and crawlable pages
+        run: |
+          python scripts/upsc/publish.py build-indexes --output data/upsc
+          python scripts/upsc/publish.py build-pages --output data/upsc --site-root upsc-study --base-url https://sumanthbolle.com
+          node scripts/generate-sitemap.js
+
+      - name: Commit generated publication
+        run: |
+          git config user.name "upsc-publisher[bot]"
+          git config user.email "upsc-publisher[bot]@users.noreply.github.com"
+          git add data/upsc upsc-study sitemap.xml
+          if git diff --cached --quiet; then
+            echo "No UPSC publication changes"
+          else
+            git commit -m "chore: publish UPSC official-source update"
+            git push origin HEAD:main
+          fi

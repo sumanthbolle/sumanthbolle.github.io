@@ -9,8 +9,8 @@ Single Cloudflare Worker that powers both the Summaverick chat and the landing-p
 | POST   | `/`          | Chat completion. Body: `{ query: string, context?: Array<{role,content}> }` |
 | POST   | `/flights`   | SkyFare flight search + book-redirect enrichment + "best time to book" advisory. See below. |
 | POST   | `/flights/inspire` | Summaverick destination ideas for SkyFare (JSON suggestions + one-click search fields). |
-| GET    | `/upsc/brief`| Anchor study tool: daily / weekly UPSC brief, filtered, scored, verification-gated |
-| POST   | `/upsc/topic`| Anchor topic lookup: one-screen exam-ready note. Body: `{ topic, paper? }` |
+| GET    | `/upsc/brief`| Compatibility route for an on-demand daily / weekly model brief |
+| POST   | `/upsc/topic`| Optional live topic lookup, separate from reviewed publication. Body: `{ topic, paper? }` |
 | POST   | `/upsc/enrich`| Private publisher route: transform one normalized official record into a source-bound exam note |
 | GET    | `/trending`  | Landing widgets (news / market / tech), country-aware + cached          |
 | GET    | `/servicenow`| Latest ServiceNow articles across 4 tracks (AI / Agents / LLM / cost), cached |
@@ -36,9 +36,16 @@ No AI or generated explanation is used for prices or market-causality claims.
 
 ## `/upsc/brief`, `/upsc/topic`, and `/upsc/enrich` — Anchor
 
-Powers the UPSC study tool at `/upsc.html`. Prompts, normalisation, scoring and
-the verification gate live in [`api/upsc.js`](upsc.js); `worker.js` only does
-IO, caching and CORS. Both routes use the same `PERPLEXITY_API_KEY`.
+The reviewed UPSC publication does not depend on a public model request. Its
+scheduled pipeline reads `data/upsc/source-registry.json`, validates and stores
+official records, calls the private `/upsc/enrich` route, then publishes static
+indexes and `upsc-study/` pages. `/upsc/topic` remains an explicitly optional
+live lookup. `/upsc/brief` is retained for compatibility but is not the source
+of the reviewed Exam Brief.
+
+Prompts, normalisation, scoring and evidence gates live in
+[`api/upsc.js`](upsc.js); `worker.js` only does IO, caching and CORS. Model-backed
+routes use `PERPLEXITY_API_KEY`.
 
 ### `GET /upsc/brief?scope=daily|weekly`
 
@@ -105,6 +112,11 @@ Every response uses `Cache-Control: no-store`. The publisher isolates failures
 per record, leaves the Source Desk record available, and retries later. A
 corrected source changes `contentHash`, invalidating the old note until a new
 enrichment succeeds.
+
+The scheduled job requires two GitHub Actions secrets: `UPSC_ENRICH_ENDPOINT`
+(the full deployed URL ending in `/upsc/enrich`) and `UPSC_PUBLISH_TOKEN`. The
+same token must be configured as an encrypted Worker variable. The browser must
+never receive either value.
 
 ## `/servicenow` — ServiceNow live article feed
 

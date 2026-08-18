@@ -8,12 +8,13 @@ import urllib.error
 from pathlib import Path
 
 from scripts.upsc.enrich import enrich_records
-from scripts.upsc.publish import build_indexes, publish
+from scripts.upsc.publish import build_indexes, check_sources, publish
 
 
 FIXTURES = Path(__file__).with_name("fixtures")
 FIXTURE_REGISTRY = FIXTURES / "source-registry.json"
 FAILURE_REGISTRY = FIXTURES / "source-registry-with-failure.json"
+BAD_REGISTRY = FIXTURES / "source-registry-bad.json"
 NOW = "2026-08-18T05:00:00Z"
 
 
@@ -105,6 +106,48 @@ class PublisherTests(unittest.TestCase):
             ], cwd=Path(__file__).parents[2], capture_output=True, text=True)
             self.assertEqual(completed.returncode, 0, completed.stderr)
             self.assertTrue((Path(directory) / "coverage.json").is_file())
+
+    def test_source_check_reports_contract_and_freshness_per_source(self):
+        report = check_sources(FIXTURE_REGISTRY, fixture_opener(), NOW)
+        self.assertTrue(report["healthy"])
+        self.assertEqual(report["healthyCount"], len(report["sources"]))
+        source = report["sources"]["pib"]
+        self.assertEqual(source["status"], "ok")
+        self.assertEqual(source["finalHost"], "pib.gov.in")
+        self.assertEqual(source["contentType"], "application/rss+xml")
+        self.assertEqual(source["latestPublishedAt"], "2026-08-18T04:00:00Z")
+        self.assertIn(source["freshness"], ("fresh", "aging", "stale", "fetch-time"))
+
+    def test_source_check_isolates_login_html_and_off_host_redirects(self):
+        report = check_sources(BAD_REGISTRY, fixture_opener(), NOW)
+        self.assertFalse(report["healthy"])
+        self.assertEqual(report["healthyCount"], 0)
+        self.assertEqual(report["sources"]["login-html"]["status"], "error")
+        self.assertIn("content type", report["sources"]["login-html"]["error"])
+        self.assertEqual(report["sources"]["off-host"]["status"], "error")
+        self.assertIn("reviewed host", report["sources"]["off-host"]["error"])
+
+    def test_source_check_cli_default_and_strict_exit_policies(self):
+        command = [
+            sys.executable, "scripts/upsc/publish.py", "check-sources",
+            "--registry", str(FAILURE_REGISTRY), "--fixtures", str(FIXTURES),
+            "--now", NOW,
+        ]
+        default = subprocess.run(
+            command, cwd=Path(__file__).parents[2], capture_output=True, text=True
+        )
+        strict = subprocess.run(
+            command + ["--strict"], cwd=Path(__file__).parents[2],
+            capture_output=True, text=True,
+        )
+        none_healthy = subprocess.run([
+            sys.executable, "scripts/upsc/publish.py", "check-sources",
+            "--registry", str(BAD_REGISTRY), "--fixtures", str(FIXTURES),
+            "--now", NOW,
+        ], cwd=Path(__file__).parents[2], capture_output=True, text=True)
+        self.assertEqual(default.returncode, 0, default.stderr)
+        self.assertEqual(strict.returncode, 1, strict.stderr)
+        self.assertEqual(none_healthy.returncode, 1, none_healthy.stderr)
 
     def test_second_run_is_idempotent_and_builds_source_index(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -52,12 +52,40 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual([row["title"] for row in rows], ["RBI releases policy statement"])
         self.assertEqual(rows[0]["url"], "https://www.rbi.org.in/release/1")
 
+    def test_listing_supports_official_container_class_relative_links_and_visible_dates(self):
+        config = SourceConfig(
+            id="mea", name="Ministry of External Affairs", country="IN",
+            tier="indian-primary", hosts=("mea.gov.in",), adapter="listing",
+            endpoint=(
+                "https://www.mea.gov.in/FrontEnd/FetchPublicationListingData"
+                "?publicationId=51&page=1&PageSize=20&SortBy=Latest&PLngId=1"
+            ),
+            enabled=True, link_class="pressTitle",
+        )
+        rows = parse_payload(
+            config, fixture_bytes("mea-listing.html"), "text/html; charset=utf-8"
+        )
+        self.assertEqual(rows[0]["title"], "India and partner conclude consultations")
+        self.assertEqual(
+            rows[0]["url"],
+            "https://www.mea.gov.in/press-releases?dtl/41684/consultations",
+        )
+        self.assertEqual(rows[0]["publishedAt"], "2026-08-17T00:00:00Z")
+
     def test_malformed_payload_fails_that_adapter(self):
         with self.assertRaisesRegex(ValueError, "malformed"):
             parse_payload(
                 source_config("rss"), fixture_bytes("malformed.xml"),
                 "application/rss+xml",
             )
+
+    def test_rss_prefers_link_over_non_url_guid(self):
+        body = b'''<?xml version="1.0"?><rss version="2.0"><channel><item>
+          <guid>150192</guid><link>https://pib.gov.in/release/150192</link>
+          <title>Official update</title><pubDate>2026-08-18T04:00:00Z</pubDate>
+        </item></channel></rss>'''
+        rows = parse_payload(source_config("rss"), body, "text/xml")
+        self.assertEqual(rows[0]["url"], "https://pib.gov.in/release/150192")
 
 
 if __name__ == "__main__":

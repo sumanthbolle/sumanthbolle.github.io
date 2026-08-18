@@ -99,6 +99,21 @@ class SourceContractTests(unittest.TestCase):
             record["canonicalUrl"], "https://pib.gov.in/release/1?a=2"
         )
         self.assertEqual(record["publishedAt"], "2026-08-18T04:00:00Z")
+        listing = SourceConfig(
+            id="mea", name="MEA", country="IN", tier="indian-primary",
+            hosts=("mea.gov.in",), adapter="listing",
+            endpoint="https://www.mea.gov.in/list", enabled=True,
+            link_class="pressTitle",
+        )
+        listing_record = normalize_source_record(listing, {
+            "title": "Consultations",
+            "url": "https://www.mea.gov.in/press-releases?dtl/41684/consultations",
+            "publishedAt": "2026-08-17T00:00:00Z", "summary": "Consultations",
+        }, "2026-08-18T05:00:00Z")
+        self.assertEqual(
+            listing_record["canonicalUrl"],
+            "https://www.mea.gov.in/press-releases?dtl/41684/consultations",
+        )
         with self.assertRaisesRegex(ValueError, "publishedAt"):
             normalize_source_record(config, {
                 "title": "Policy", "url": "https://pib.gov.in/release/2",

@@ -4,7 +4,9 @@ from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
 import json
+import re
 from typing import Any, Callable, Optional
+from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
 
@@ -12,18 +14,38 @@ from scripts.upsc.models import SourceConfig, validate_final_url
 
 
 MAX_PAYLOAD_BYTES = 5 * 1024 * 1024
-USER_AGENT = "Anchor-UPSC-Publisher/1.0 (+https://sumanthbolle.com/upsc)"
+USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/140.0.0.0 Safari/537.36"
+)
 
 
 def _iso_date(value: str) -> str:
     raw = str(value or "").strip()
-    try:
-        if "," in raw:
-            parsed = parsedate_to_datetime(raw)
-        else:
-            parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
-    except (TypeError, ValueError) as error:
-        raise ValueError("malformed or missing publication date") from error
+    parsed = None
+    parsers = (
+        lambda text: parsedate_to_datetime(text),
+        lambda text: datetime.fromisoformat(text.replace("Z", "+00:00")),
+    )
+    for parser in parsers:
+        try:
+            parsed = parser(raw)
+            break
+        except (TypeError, ValueError):
+            continue
+    if parsed is None:
+        for date_format in (
+            "%d %B, %Y", "%d %b, %Y %z", "%d %b %Y %H:%M:%S %z",
+            "%d %b %Y %z", "%d %b, %Y", "%d %b %Y",
+        ):
+            try:
+                parsed = datetime.strptime(raw, date_format)
+                break
+            except ValueError:
+                continue
+    if parsed is None:
+        raise ValueError("malformed or missing publication date")
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace(
@@ -32,10 +54,11 @@ def _iso_date(value: str) -> str:
 
 
 def _child_text(node: ET.Element, names: tuple[str, ...]) -> str:
-    for child in list(node):
-        local = child.tag.rsplit("}", 1)[-1]
-        if local in names and child.text:
-            return child.text.strip()
+    for name in names:
+        for child in list(node):
+            local = child.tag.rsplit("}", 1)[-1]
+            if local == name and child.text:
+                return child.text.strip()
     return ""
 
 
@@ -58,7 +81,7 @@ def _parse_xml(config: SourceConfig, body: bytes) -> list[dict[str, str]]:
         title = _child_text(node, ("title",))
         if config.adapter == "rss":
             url = _child_text(node, ("link", "guid"))
-            published = _child_text(node, ("pubDate", "published", "date"))
+            published = _child_text(node, ("pubDate", "published", "updated", "date"))
             summary = _child_text(node, ("description", "summary", "content"))
             source_type = _child_text(node, ("category",)) or "release"
         else:
@@ -76,12 +99,12 @@ def _parse_xml(config: SourceConfig, body: bytes) -> list[dict[str, str]]:
                 if child.tag.rsplit("}", 1)[-1] == "category":
                     source_type = child.attrib.get("term", source_type)
                     break
-        if title and url and published:
+        if title and url and (published or config.date_policy == "fetched-at"):
             rows.append({
                 "title": title,
                 "url": url,
-                "publishedAt": _iso_date(published),
-                "summary": summary,
+                "publishedAt": _iso_date(published) if published else "",
+                "summary": summary or title,
                 "sourceType": source_type,
             })
     if not rows:
@@ -125,39 +148,69 @@ class _ListingParser(HTMLParser):
         self.config = config
         self.current: Optional[dict[str, Any]] = None
         self.rows: list[dict[str, str]] = []
+        self.container_depth = 0
+        self.date_parts: Optional[list[str]] = None
+        self.latest_date = ""
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, Optional[str]]]) -> None:
-        if tag.lower() != "a":
-            return
+        tag = tag.lower()
         values = {key: value or "" for key, value in attrs}
         classes = values.get("class", "").split()
-        if self.config.link_class not in classes:
+        opened_container = tag != "a" and self.config.link_class in classes
+        if opened_container:
+            self.container_depth = 1
+        elif self.container_depth:
+            self.container_depth += 1
+        if tag == "span" and "date" in classes:
+            self.date_parts = []
+        if tag != "a" or not (
+            self.config.link_class in classes or self.container_depth > 0
+        ):
             return
         try:
-            url = validate_final_url(self.config, values.get("href", ""))
+            url = validate_final_url(
+                self.config, urljoin(self.config.endpoint, values.get("href", ""))
+            )
         except ValueError:
             return
         self.current = {
             "titleParts": [],
             "url": url,
-            "publishedAt": values.get("data-published-at", ""),
+            "publishedAt": values.get("data-published-at", "") or self.latest_date,
             "summary": values.get("data-summary", ""),
             "sourceType": values.get("data-source-type", "listing"),
         }
 
     def handle_data(self, data: str) -> None:
+        if self.date_parts is not None:
+            self.date_parts.append(data)
         if self.current is not None:
             self.current["titleParts"].append(data)
 
     def handle_endtag(self, tag: str) -> None:
-        if tag.lower() != "a" or self.current is None:
-            return
-        title = " ".join(self.current.pop("titleParts")).strip()
-        if title and self.current["publishedAt"]:
-            self.current["title"] = title
-            self.current["publishedAt"] = _iso_date(self.current["publishedAt"])
-            self.rows.append(self.current)
-        self.current = None
+        tag = tag.lower()
+        if tag == "span" and self.date_parts is not None:
+            self.latest_date = re.sub(r"\s+", " ", " ".join(self.date_parts)).strip()
+            self.date_parts = None
+        if tag == "a" and self.current is not None:
+            title = re.sub(
+                r"\s+", " ", " ".join(self.current.pop("titleParts"))
+            ).strip()
+            if title and self.current["publishedAt"]:
+                try:
+                    self.current["publishedAt"] = _iso_date(
+                        self.current["publishedAt"]
+                    )
+                except ValueError:
+                    self.current = None
+                else:
+                    self.current["title"] = title
+                    if not self.current.get("summary"):
+                        self.current["summary"] = title
+                    self.rows.append(self.current)
+            self.current = None
+        if self.container_depth:
+            self.container_depth -= 1
 
 
 def parse_payload(
@@ -193,14 +246,24 @@ def fetch_source(
     config: SourceConfig,
     opener: Callable[..., Any] = urlopen,
 ) -> list[dict[str, str]]:
+    rows, _ = fetch_source_details(config, opener)
+    return rows
+
+
+def fetch_source_details(
+    config: SourceConfig,
+    opener: Callable[..., Any] = urlopen,
+) -> tuple[list[dict[str, str]], dict[str, str]]:
     request = Request(config.endpoint, headers={
         "User-Agent": USER_AGENT,
-        "Accept": "application/rss+xml, application/atom+xml, application/feed+json, application/json, text/html;q=0.8",
+        "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, application/feed+json, application/json, text/html;q=0.8, */*;q=0.5",
     })
     with opener(request, timeout=20) as response:
-        validate_final_url(config, response.geturl())
+        final_url = response.geturl()
+        validate_final_url(config, final_url)
         body = response.read(MAX_PAYLOAD_BYTES + 1)
         if len(body) > MAX_PAYLOAD_BYTES:
             raise ValueError("source payload exceeds 5 MiB")
         content_type = response.headers.get("Content-Type", "")
-    return parse_payload(config, body, content_type)
+    rows = parse_payload(config, body, content_type)
+    return rows, {"finalUrl": final_url, "contentType": content_type}

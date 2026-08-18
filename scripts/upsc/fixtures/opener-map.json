@@ -5,5 +5,7 @@
   "https://news.un.org/feed.xml":{"sourceId":"un-news","file":"un-atom.xml","contentType":"application/atom+xml"},
   "https://www.who.int/feed.json":{"sourceId":"who","file":"who-json-feed.json","contentType":"application/feed+json"},
   "https://www.worldbank.org/feed.json":{"sourceId":"world-bank","file":"world-bank-json-feed.json","contentType":"application/feed+json"},
-  "https://un.org/broken.xml":{"sourceId":"broken","file":"malformed.xml","contentType":"application/rss+xml"}
+  "https://un.org/broken.xml":{"sourceId":"broken","file":"malformed.xml","contentType":"application/rss+xml"},
+  "https://bad.example/login.xml":{"sourceId":"login-html","file":"official-listing.html","contentType":"text/html; charset=utf-8"},
+  "https://bad.example/off-host.xml":{"sourceId":"off-host","file":"pib-rss.xml","contentType":"application/rss+xml","finalUrl":"https://evil.example/feed.xml"}
 }

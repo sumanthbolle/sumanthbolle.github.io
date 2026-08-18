@@ -37,6 +37,7 @@ class SourceConfig:
     endpoint: str
     enabled: bool
     link_class: str
+    date_policy: str = "source"
 
 
 class _TextParser(HTMLParser):
@@ -92,13 +93,15 @@ def canonical_url(config: SourceConfig, value: str) -> str:
         parts.scheme == "http" and port == 80
     )
     netloc = hostname if port is None or default_port else f"{hostname}:{port}"
+    preserve_path_query = parts.query.startswith("dtl/") and "=" not in parts.query
     query = sorted(
         (key, item)
         for key, item in parse_qsl(parts.query, keep_blank_values=True)
         if not key.lower().startswith("utm_")
     )
     path = parts.path or "/"
-    return urlunsplit((parts.scheme.lower(), netloc, path, urlencode(query), ""))
+    canonical_query = parts.query if preserve_path_query else urlencode(query)
+    return urlunsplit((parts.scheme.lower(), netloc, path, canonical_query, ""))
 
 
 def _iso_utc(value: Any, field: str) -> str:
@@ -154,6 +157,9 @@ def load_registry(path: Path) -> list[SourceConfig]:
         link_class = _clean(row.get("linkClass"), 80)
         if adapter == "listing" and not link_class:
             raise ValueError(f"listing source {source_id} requires linkClass")
+        date_policy = _clean(row.get("datePolicy"), 32) or "source"
+        if date_policy not in ("source", "fetched-at"):
+            raise ValueError(f"unsupported date policy for {source_id}")
 
         config = SourceConfig(
             id=source_id,
@@ -165,6 +171,7 @@ def load_registry(path: Path) -> list[SourceConfig]:
             endpoint=str(endpoint_values[0]).strip(),
             enabled=row.get("enabled") is True,
             link_class=link_class if adapter == "listing" else "",
+            date_policy=date_policy,
         )
         if not config.name or not config.country:
             raise ValueError(f"source {source_id} requires name and country")

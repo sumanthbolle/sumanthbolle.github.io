@@ -54,3 +54,9 @@ test('loads the public content contract before render and app', function () {
   const app = html.indexOf('assets/js/upsc/app.js');
   assert.ok(content > 0 && content < memory && memory < render && render < app);
 });
+
+test('links the crawlable archive and keeps every HTML id unique', function () {
+  assert.match(html, /href="upsc-study\/"/);
+  const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(new Set(ids).size, ids.length);
+});
