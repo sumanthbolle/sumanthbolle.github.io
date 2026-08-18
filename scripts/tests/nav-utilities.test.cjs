@@ -80,17 +80,21 @@ function createDrop() {
   return { root, button, panel };
 }
 
-function createEnvironment(count, withSiteMenu = false) {
+function createEnvironment(count, withSiteMenu = false, withStandardMenu = false) {
   const drops = Array.from({ length: count }, createDrop);
   const document = new FakeTarget();
   const siteTrigger = withSiteMenu ? new FakeTarget() : null;
   const sitePanel = withSiteMenu ? new FakeTarget() : null;
+  const standardTrigger = withStandardMenu ? new FakeTarget() : null;
+  const standardPanel = withStandardMenu ? new FakeTarget() : null;
   document.querySelectorAll = selector => (
     selector === '[data-nav-drop]' ? drops.map(drop => drop.root) : []
   );
   document.querySelector = selector => {
     if (selector === '[data-site-menu-toggle]') return siteTrigger;
     if (selector === '[data-site-mobile-menu]') return sitePanel;
+    if (selector === '.menu-toggle') return standardTrigger;
+    if (selector === '.mobile-menu[data-mobile-nav]') return standardPanel;
     return null;
   };
 
@@ -99,6 +103,8 @@ function createEnvironment(count, withSiteMenu = false) {
     document,
     siteTrigger,
     sitePanel,
+    standardTrigger,
+    standardPanel,
     pending: null
   };
   let timerId = 0;
@@ -190,4 +196,21 @@ test('optional site mobile menu toggles and Escape restores focus', () => {
   env.document.dispatch('keydown', { key: 'Escape' });
   assert.equal(env.sitePanel.classList.contains('open'), false);
   assert.equal(env.siteTrigger.focused, true);
+});
+
+test('standard mobile menu synchronizes expanded state and closes on Escape', () => {
+  const env = createEnvironment(0, false, true);
+  env.standardTrigger.addEventListener('click', () => {
+    env.standardTrigger.classList.add('active');
+    env.standardPanel.classList.add('active');
+  });
+  init(env.document, env.runtime);
+
+  env.standardTrigger.dispatch('click', { preventDefault() {} });
+  assert.equal(env.standardTrigger.getAttribute('aria-expanded'), 'true');
+
+  env.document.dispatch('keydown', { key: 'Escape' });
+  assert.equal(env.standardPanel.classList.contains('active'), false);
+  assert.equal(env.standardTrigger.getAttribute('aria-expanded'), 'false');
+  assert.equal(env.standardTrigger.focused, true);
 });

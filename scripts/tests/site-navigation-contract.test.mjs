@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   extractPrimaryNavigation,
   extractMobileNavigation,
@@ -88,4 +89,14 @@ test('detects changes outside navigation', () => {
   assert.equal(compareOutsideNavigation(validPage, changedNav), true);
   assert.equal(compareOutsideNavigation(validPage, changedBody), false);
   assert.equal(stripNavigation(validPage), stripNavigation(changedNav));
+});
+
+test('shared mobile navigation keeps the 768px layout and 44px targets', () => {
+  const css = readFileSync(new URL('../../assets/css/nav-utilities.css', import.meta.url), 'utf8');
+  const flights = readFileSync(new URL('../../flights.html', import.meta.url), 'utf8');
+
+  assert.match(css, /\.menu-toggle\s*\{[^}]*min-width:\s*44px;[^}]*min-height:\s*44px;/s);
+  assert.match(css, /\.mobile-menu a\s*\{[^}]*min-height:\s*44px;/s);
+  assert.match(css, /@media \(max-width:\s*768px\)/);
+  assert.match(flights, /class="menu-toggle"[^>]*aria-expanded="false"/);
 });

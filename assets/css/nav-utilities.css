@@ -129,8 +129,18 @@ html:not(.nav-enhanced) .nav-drop:focus-within .nav-drop__menu {
   border-bottom: 0;
 }
 
-.mobile-menu a.mobile-menu__sub {
+.mobile-menu a.mobile-menu__sub,
+.site-mobile-menu a.mobile-menu__sub {
   padding-left: 14px;
+}
+
+.menu-toggle {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.mobile-menu a {
+  min-height: 44px;
 }
 
 .site-menu-toggle,
@@ -138,7 +148,7 @@ html:not(.nav-enhanced) .nav-drop:focus-within .nav-drop__menu {
   display: none;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .site-menu-toggle {
     display: inline-flex;
     min-width: 44px;

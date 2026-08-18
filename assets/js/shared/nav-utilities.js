@@ -99,6 +99,7 @@
       });
     });
 
+    initStandardMobileMenu(doc, listen);
     initSiteMobileMenu(doc, listen);
 
     return {
@@ -111,6 +112,29 @@
         });
       }
     };
+  }
+
+  function initStandardMobileMenu(doc, listen) {
+    var trigger = doc.querySelector && doc.querySelector('.menu-toggle');
+    var panel = doc.querySelector && doc.querySelector('.mobile-menu[data-mobile-nav]');
+    if (!trigger || !panel) return;
+
+    function sync() {
+      trigger.setAttribute('aria-expanded', panel.classList.contains('active') ? 'true' : 'false');
+    }
+
+    sync();
+    listen(trigger, 'click', sync);
+    Array.prototype.slice.call(panel.querySelectorAll('a')).forEach(function (link) {
+      listen(link, 'click', sync);
+    });
+    listen(doc, 'keydown', function (event) {
+      if (event.key !== 'Escape' || !panel.classList.contains('active')) return;
+      panel.classList.remove('active');
+      trigger.classList.remove('active');
+      sync();
+      trigger.focus();
+    });
   }
 
   function initSiteMobileMenu(doc, listen) {
