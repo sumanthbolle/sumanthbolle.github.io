@@ -14,6 +14,8 @@
  * Nothing here predicts the paper. The score is a revision-priority signal.
  */
 
+import { ANCHOR_INDEX, PATTERN_META } from './upsc-anchors.js';
+
 /* Canonical syllabus codes. Sent to the model so codes stay machine-readable,
  * and used to reject anything outside the list. */
 export const SYLLABUS_CODES = {
@@ -69,52 +71,13 @@ const PRIMARY_SOURCE_HOSTS = [
   'fao.org', 'ilo.org', 'iea.org', 'wipo.int', 'icj-cij.org',
 ];
 
-/* Editorial estimate of 20-year anchor recurrence, from the recurring-theme
- * table in the pattern decoder. This is a heuristic prior, NOT a tagged PYQ
- * corpus — every score built on it is reported as provisional so the number
- * is never mistaken for measured frequency. */
-const ANCHOR_WEIGHTS = [
-  [/women|gender|patriarch/i, 92],
-  [/fiscal federalis|centre.state|finance commission|devolution/i, 88],
-  [/judicial (review|activism|overreach)|separation of powers|collegium/i, 86],
-  [/climate|cop\b|emission|net zero|carbon/i, 86],
-  [/urbanis|urban local|municipal|city govern/i, 82],
-  [/agricultur|msp|farm|irrigation|food security|pds/i, 82],
-  [/federalis|governor|inter.state/i, 80],
-  [/corrupt|probity|transparen|rti|accountab/i, 80],
-  [/poverty|inequality|inclusive growth|employment|informal sector/i, 78],
-  [/local (self.)?govern|panchayat|73rd|74th|pesa/i, 78],
-  [/welfare scheme|social security|vulnerable section|delivery gap/i, 76],
-  [/monsoon|cyclone|flood|drought|disaster/i, 76],
-  [/india.china|india.pakistan|neighbourhood|indo.pacific|maritime security/i, 76],
-  [/energy transition|renewable|coal|power sector/i, 74],
-  [/artificial intelligence|\bai\b|data (governance|protection)|privacy|surveillance/i, 74],
-  [/banking|npa|monetary policy|financial inclusion|insolvency/i, 74],
-  [/environment(al)? (clearance|impact)|eia|conservation|biodiversity|forest/i, 74],
-  [/parliament|legislature|committee system|anti.defection|ordinance/i, 72],
-  [/constitutional (body|bodies)|election commission|cag|nhrc/i, 72],
-  [/health (policy|system)|education (policy|system)|nep\b|human resource/i, 72],
-  [/internal security|extremis|naxal|insurgen|terror|border management/i, 70],
-  [/cyber ?security|money launder|organised crime/i, 70],
-  [/civil service|bureaucra|administrative reform|ethics in (public )?administration/i, 70],
-  [/emotional intelligence|integrity|values|conflict of interest|whistleblow/i, 68],
-  [/globalisation|liberalis|trade|wto|tariff|supply chain/i, 68],
-  [/tax|gst|budget|subsid|deficit/i, 68],
-  [/infrastructure|ppp|logistics|port|railway|highway/i, 66],
-  [/space|nuclear|biotech|semiconductor|indigenis|ipr\b/i, 66],
-  [/caste|tribal|scheduled (caste|tribe)|adivasi|reservation/i, 66],
-  [/migration|diaspora|refugee/i, 62],
-  [/freedom struggle|gandhi|nationalis|1857|partition/i, 62],
-  [/art|architecture|heritage|temple|dance|music|unesco/i, 58],
-  [/manufactur|msme|industrial policy|pli\b|investment model/i, 58],
-  [/multilateral|unsc|brics|quad|g20|sco|asean/i, 58],
-  [/land (reform|acquisition)/i, 54],
-  [/world (war|history)|cold war|decolonis|industrial revolution/i, 52],
-  [/moral (thinker|philosoph)|thinker|kant|aristotle|utilitarian/i, 52],
-  [/ocean|plate tectonic|earthquake|volcan|geomorph/i, 50],
-];
-
+/* Anchor recurrence comes from the standing compilation in
+ * data/upsc-patterns.json, compiled into api/upsc-anchors.js by
+ * scripts/generate-upsc-anchor-weights.js. Both terms it supplies are editorial
+ * estimates rather than counts from a tagged corpus, which is why every scored
+ * response is reported as provisional. */
 const DEFAULT_ANCHOR_WEIGHT = 45;
+const DEFAULT_RECENCY_GAP = 50;
 
 const FILTER_TESTS = ['syllabus', 'anchor', 'debate', 'durability'];
 
@@ -538,27 +501,63 @@ function bounded(value, fallback) {
   return Math.max(0, Math.min(100, Math.round(num)));
 }
 
-export function anchorWeight(anchor) {
-  const text = String(anchor || '');
-  let best = 0;
-  ANCHOR_WEIGHTS.forEach(([pattern, weight]) => {
-    if (weight > best && pattern.test(text)) best = weight;
-  });
-  return best || DEFAULT_ANCHOR_WEIGHT;
+function normaliseForMatch(value) {
+  return ' ' + String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim() + ' ';
 }
 
-/* Probability score, used for triage only: what gets revised five times
- * versus once. anchor_frequency is a heuristic prior until a tagged PYQ
- * corpus exists, so every score returned here is flagged provisional. */
+/* Resolve a free-text anchor string against the compilation. Matching is
+ * whole-word substring in both directions — a brief item may say "centre-state
+ * financial relations" where the compilation says "fiscal federalism", or the
+ * reverse. The longest matching alias wins rather than the first, so a specific
+ * phrase beats a broad one belonging to a more frequent anchor. */
+export function matchAnchor(anchor) {
+  const text = normaliseForMatch(anchor);
+  if (text.trim().length < 2) return null;
+
+  let best = null;
+  let bestLength = 0;
+
+  for (const entry of ANCHOR_INDEX) {
+    for (const alias of entry.match) {
+      if (alias.length <= bestLength) continue;
+      const padded = ' ' + alias + ' ';
+      const hit = text.indexOf(padded) !== -1 || (alias.length >= 8 && padded.indexOf(text) !== -1);
+      if (hit) {
+        best = entry;
+        bestLength = alias.length;
+      }
+    }
+  }
+
+  return best;
+}
+
+export function anchorWeight(anchor) {
+  const match = matchAnchor(anchor);
+  return match ? match.frequency : DEFAULT_ANCHOR_WEIGHT;
+}
+
+/* Probability score, used for triage only: what gets revised five times versus
+ * once. Two of the four terms now come from the standing compilation instead of
+ * being constants, but both are editorial estimates, so the result stays
+ * flagged provisional until the official papers are tagged. */
 export function scoreItem(item) {
-  const frequency = anchorWeight(item.anchor);
+  const match = matchAnchor(item.anchor);
+  const frequency = match ? match.frequency : DEFAULT_ANCHOR_WEIGHT;
+  const recencyGap = match ? match.recencyGap : DEFAULT_RECENCY_GAP;
   const debate = bounded(item.debate_strength, 45);
   const official = bounded(item.official_weight, 45);
-  const recencyGap = 50; // no corpus yet, so the gap term is neutral
   const score = Math.round(
     0.35 * frequency + 0.25 * debate + 0.20 * official + 0.20 * recencyGap
   );
-  return { score: Math.max(0, Math.min(100, score)), frequency, debate, official, recencyGap };
+  return {
+    score: Math.max(0, Math.min(100, score)),
+    frequency,
+    debate,
+    official,
+    recencyGap,
+    matched: match || null,
+  };
 }
 
 /* Treatment bands from the current-affairs protocol. The band is the point of
@@ -596,6 +595,11 @@ function normalizeItem(raw, index) {
     id: 'b' + (index + 1),
     title,
     anchor,
+    /* When the item's anchor resolves to the standing compilation, carry the id
+     * so the UI can offer the twenty-year pattern for it. */
+    anchorId: scored.matched ? scored.matched.id : '',
+    anchorName: scored.matched ? scored.matched.anchor : '',
+    anchorBand: scored.matched ? scored.matched.band : '',
     codes,
     papers: Array.from(new Set(codes.map((code) => code.split('.')[0]))),
     what: clip(raw.what, 220),
@@ -673,9 +677,15 @@ export function normalizeUpscBrief(parsed, scope, meta) {
       core: items.filter((item) => item.band === 'core').length,
     },
     scoring: {
-      provisional: true,
+      provisional: PATTERN_META.provisional,
       formula: '0.35 × anchor frequency + 0.25 × debate strength + 0.20 × official weight + 0.20 × recency gap',
-      note: 'Anchor frequency is an editorial estimate from the 20-year recurring-theme table, not a tagged PYQ corpus. Scores are for revision triage, never prediction.',
+      note: 'Anchor frequency and recency gap come from the standing pattern compilation, where both are editorial estimates rather than counts from a tagged PYQ corpus. Scores are for revision triage, never prediction.',
+      compilation: {
+        version: PATTERN_META.version,
+        compiled: PATTERN_META.compiled,
+        anchorCount: PATTERN_META.anchorCount,
+        matched: items.filter((item) => item.anchorId).length,
+      },
     },
   };
 }
@@ -724,10 +734,13 @@ export function normalizeUpscTopic(parsed, topic) {
     .slice(0, 5);
 
   const codes = cleanCodes(source.codes);
+  const matched = matchAnchor(anchor) || matchAnchor(topic);
 
   return {
     topic: clip(topic, 120),
     anchor,
+    anchorId: matched ? matched.id : '',
+    anchorName: matched ? matched.anchor : '',
     codes,
     papers: Array.from(new Set(codes.map((code) => code.split('.')[0]))),
     oneLiner: clip(source.one_liner, 220),

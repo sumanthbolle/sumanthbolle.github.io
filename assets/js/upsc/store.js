@@ -517,4 +517,110 @@
   };
 
   window.AnchorStore = Store;
+
+  /* ─────────────────────── anchor mastery (Pattern Atlas) ───────────────────────
+   * The notes store schedules news items. This schedules concepts: which of the
+   * standing anchors you can still reconstruct from the name alone. Same ladder,
+   * separate key, because the two corpora are pruned on different logic — a news
+   * item can be deleted once it stops mattering, an anchor cannot.
+   */
+  var KEY_MASTERY = 'anchor.mastery';
+
+  function loadMastery() {
+    var data = read(KEY_MASTERY, {});
+    return data && typeof data === 'object' && !Array.isArray(data) ? data : {};
+  }
+
+  var Mastery = {
+    all: function () {
+      return loadMastery();
+    },
+
+    get: function (anchorId) {
+      return loadMastery()[anchorId] || null;
+    },
+
+    /* result: 'held' reconstructed from the anchor name alone, 'missed' did not. */
+    record: function (anchorId, result) {
+      if (!anchorId) return null;
+      var data = loadMastery();
+      var entry = data[anchorId] || {
+        stage: 0, streak: 0, lateStreak: 0, graduated: false,
+        attempts: 0, held: 0, dueOn: today(), firstSeen: today(),
+      };
+
+      entry.attempts += 1;
+      entry.lastSeen = today();
+      entry.lastResult = result === 'held' ? 'held' : 'missed';
+
+      if (result === 'held') {
+        entry.held += 1;
+        entry.streak += 1;
+        entry.lateStreak = entry.stage >= GRADUATE_STAGE ? (entry.lateStreak || 0) + 1 : 0;
+        if (entry.graduated || entry.lateStreak >= GRADUATE_STREAK) {
+          entry.graduated = true;
+          entry.dueOn = addDays(today(), MONTHLY);
+        } else {
+          entry.stage = Math.min(entry.stage + 1, INTERVALS.length - 1);
+          entry.dueOn = addDays(today(), INTERVALS[entry.stage]);
+        }
+      } else {
+        entry.stage = 0;
+        entry.streak = 0;
+        entry.lateStreak = 0;
+        entry.graduated = false;
+        entry.dueOn = addDays(today(), INTERVALS[0]);
+      }
+
+      data[anchorId] = entry;
+      write(KEY_MASTERY, data);
+      return entry;
+    },
+
+    /* held → reconstructed at least once and not currently failing.
+     * weak  → last attempt was a miss.
+     * cold  → never drilled. */
+    state: function (anchorId) {
+      var entry = loadMastery()[anchorId];
+      if (!entry) return 'cold';
+      if (entry.lastResult === 'missed') return 'weak';
+      return entry.graduated ? 'secure' : 'held';
+    },
+
+    dueToday: function (anchorIds) {
+      var data = loadMastery();
+      var now = today();
+      return (anchorIds || Object.keys(data)).filter(function (id) {
+        var entry = data[id];
+        return !entry || entry.dueOn <= now;
+      });
+    },
+
+    stats: function (anchorIds) {
+      var data = loadMastery();
+      var ids = anchorIds || Object.keys(data);
+      var counts = { total: ids.length, cold: 0, weak: 0, held: 0, secure: 0, due: 0 };
+      var now = today();
+      ids.forEach(function (id) {
+        var entry = data[id];
+        if (!entry) { counts.cold += 1; counts.due += 1; return; }
+        if (entry.dueOn <= now) counts.due += 1;
+        if (entry.lastResult === 'missed') counts.weak += 1;
+        else if (entry.graduated) counts.secure += 1;
+        else counts.held += 1;
+      });
+      return counts;
+    },
+
+    clear: function () {
+      try {
+        localStorage.removeItem(KEY_MASTERY);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
+  };
+
+  window.AnchorMastery = Mastery;
 })();
