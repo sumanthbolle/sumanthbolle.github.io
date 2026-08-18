@@ -34,6 +34,15 @@ test('keeps Notes and Due modes inside Memory Drill', function () {
   assert.match(html, /id="reviseBody"/);
 });
 
+test('provides published brief, syllabus, and answer-practice targets', function () {
+  for (const id of [
+    'briefEntries', 'briefState', 'syllabusList', 'syllabusState',
+    'answerPracticeList', 'answerPracticeState', 'lookupResult',
+  ]) assert.match(html, new RegExp('id="' + id + '"'));
+  assert.match(html, /Ready for recall only/);
+  assert.match(html, /Optional live topic lookup/);
+});
+
 test('loads the public content contract before render and app', function () {
   const content = html.indexOf('assets/js/upsc/content.js');
   const render = html.indexOf('assets/js/upsc/render.js');

@@ -104,3 +104,89 @@ test('does not render unsafe Source Desk links', function () {
   assert.equal(html.includes('data:text/html'), false);
   assert.equal(html.includes('Open official record'), false);
 });
+
+const EXAM_NOTE = {
+  sourceId: 'src_pib', title: 'Cabinet <policy>', publisherName: 'PIB',
+  publishedAt: '2026-08-18T04:00:00Z', sourceUrl: 'https://pib.gov.in/release/1',
+  anchor: 'fiscal federalism', codes: ['GS2.2', 'GS3.2'],
+  whyInNews: 'Cabinet approval created a current trigger.',
+  staticDefinition: 'Fiscal federalism divides public financial powers.',
+  background: ['Constitutional division of fiscal powers.'],
+  reusableAnchors: [{ kind: 'constitutional', label: 'Finance Commission' }],
+  officialFacts: [{ text: 'Cabinet approved the <fiscal> policy.',
+    evidenceUrl: 'https://pib.gov.in/release/1', evidenceLocator: 'officialSummary',
+    verification: 'source-backed' }],
+  argumentsFor: ['Improves coordination.'],
+  argumentsAgainst: ['May reduce state flexibility.'],
+  indiaImplications: ['Changes fiscal implementation.'],
+  wayForward: ['Use transparent intergovernmental review.'],
+  prelimsTraps: [{ statement: 'The policy is constitutional text.', correct: false,
+    explanation: 'It is an executive policy.' }],
+  mainsPractice: [{ directive: 'examine', marks: 10, wordBudget: 150,
+    timeMinutes: 7, stem: 'Examine fiscal federalism.',
+    introChoices: ['Define fiscal federalism.'],
+    bodyDimensions: ['Context', 'Benefits', 'Limits'],
+    counterPosition: 'Account for state flexibility.',
+    diagramSuggestion: 'Centre-state fiscal flow diagram.',
+    conclusionPrompt: 'End with transparent review.' }],
+  use: 'Use as a current example of fiscal coordination.',
+  recallCard: 'Link executive coordination to fiscal federalism.',
+  priority: 78, priorityProvisional: true,
+  editorialStatus: 'source-backed', canMemorize: true,
+};
+
+test('renders the topper dossier in approved reading order with fact and analysis labels', function () {
+  const Render = loadRender();
+  const html = Render.examNote(EXAM_NOTE, { revealed: false });
+  const labels = [
+    'Why in news', 'Static anchor', 'Background', 'Reusable anchors',
+    'Official facts', 'Arguments', 'India implications', 'Way forward',
+    'Prelims traps', 'Mains practice', 'Use in an answer', 'Recall card',
+  ];
+  let previous = -1;
+  labels.forEach(function (label) {
+    const index = html.indexOf(label);
+    assert.ok(index > previous, label + ' should follow the previous section');
+    previous = index;
+  });
+  assert.equal(html.includes('Official fact'), true);
+  assert.equal(html.includes('Analysis'), true);
+  assert.equal(html.includes('Cabinet &lt;policy&gt;'), true);
+  assert.equal(html.includes('Cabinet approved the &lt;fiscal&gt; policy.'), true);
+  assert.equal(html.includes('aria-expanded="false"'), true);
+  assert.equal(html.includes('data-act="save-exam"'), true);
+  assert.equal(html.includes('disabled'), false);
+});
+
+test('blocks draft hard facts from the save-for-recall action', function () {
+  const Render = loadRender();
+  const draft = Object.assign({}, EXAM_NOTE, {
+    sourceId: 'src_draft', editorialStatus: 'draft', canMemorize: false,
+    officialFacts: [{ text: 'Unsupported number.', evidenceUrl: '',
+      evidenceLocator: '', verification: 'needs-review' }],
+  });
+  const html = Render.examNote(draft, {});
+  assert.match(html, /data-act="save-exam"[^>]*disabled/);
+  assert.equal(html.includes('Needs review'), true);
+  assert.equal(html.includes('href=""'), false);
+});
+
+test('renders directive-aware answer scaffolds without prediction claims', function () {
+  const Render = loadRender();
+  const html = Render.answerOutline(EXAM_NOTE.mainsPractice[0]);
+  assert.equal(html.includes('examine'), true);
+  assert.equal(html.includes('10 marks'), true);
+  assert.equal(html.includes('150 words'), true);
+  assert.equal(html.includes('7 minutes'), true);
+  assert.equal(html.includes('Context'), true);
+  assert.equal(html.includes('Practice prioritisation, not prediction'), true);
+});
+
+test('renders a safe expandable published-note summary', function () {
+  const Render = loadRender();
+  const html = Render.examSummary(EXAM_NOTE, { loading: false });
+  assert.equal(html.includes('Cabinet &lt;policy&gt;'), true);
+  assert.equal(html.includes('data-act="open-exam"'), true);
+  assert.equal(html.includes('Priority 78'), true);
+  assert.equal(html.includes('Exam note ready'), true);
+});

@@ -1144,6 +1144,280 @@ select {
   text-underline-offset: 3px;
 }
 
+/* ---------- Published topper dossiers ---------- */
+.an-exam-summary {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 18px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.an-exam-summary__score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-right: 14px;
+  border-right: 2px solid var(--an-maroon);
+  color: var(--gray);
+  font-family: var(--sans);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.an-exam-summary__score strong {
+  color: var(--an-navy);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.an-exam-summary h3 {
+  margin-top: 5px;
+  color: var(--an-ink);
+  font-size: 20px;
+}
+
+.an-exam-summary > div:last-child > p:not(.an-entry__tags, .an-use, .an-exam-summary__meta) {
+  margin-top: 6px;
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+
+.an-exam-summary__meta {
+  margin: 11px 0;
+  color: var(--gray);
+  font-family: var(--sans);
+  font-size: 11.5px;
+}
+
+.an-exam-expanded {
+  padding: 24px 0 34px;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.an-dossier {
+  display: grid;
+  gap: 22px;
+  padding: 18px;
+  border: 1px solid var(--card-line);
+  border-top: 3px solid var(--an-navy);
+  border-radius: var(--radius-sm);
+  background:
+    repeating-linear-gradient(to bottom, transparent 0, transparent 31px,
+      color-mix(in srgb, var(--rule) 55%, transparent) 32px),
+    var(--paper);
+}
+
+@media (min-width: 1100px) {
+  .an-dossier {
+    grid-template-columns: 132px minmax(0, 1fr) 184px;
+    gap: 24px;
+    padding: 22px;
+  }
+}
+
+.an-dossier__source {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--gray);
+  font-family: var(--sans);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.an-dossier__source strong {
+  color: var(--an-navy);
+  font-size: 12px;
+}
+
+.an-dossier__source a {
+  color: var(--an-navy);
+  text-underline-offset: 3px;
+}
+
+.an-dossier__issue h3 {
+  color: var(--an-ink);
+  font-size: clamp(22px, 3vw, 30px);
+  line-height: 1.18;
+}
+
+.an-note-section {
+  padding: 17px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.an-note-section h4 {
+  margin-bottom: 7px;
+  color: var(--an-navy);
+  font-size: 17px;
+}
+
+.an-note-section > p {
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+
+.an-note-section--analysis > .an-label {
+  display: inline-block;
+  margin-bottom: 5px;
+  color: var(--amber);
+}
+
+.an-note-section--facts {
+  border-left: 3px solid var(--green);
+  padding-left: 14px;
+}
+
+.an-note-section--use {
+  margin-top: 8px;
+  padding: 13px 14px;
+  border-bottom: 0;
+  background: var(--mark);
+  box-shadow: inset 3px 0 0 var(--mark-edge);
+}
+
+.an-main[data-cycle="build"] .an-note-section:nth-of-type(2),
+.an-main[data-cycle="build"] .an-note-section:nth-of-type(3),
+.an-main[data-cycle="converge"] .an-note-section--analysis,
+.an-main[data-cycle="converge"] .an-answer-outline {
+  border-color: var(--an-navy);
+}
+
+.an-main[data-cycle="compress"] .an-dossier__recall,
+.an-main[data-cycle="lock"] .an-dossier__recall {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--mark-edge) 32%, transparent);
+}
+
+.an-facts,
+.an-traps {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+}
+
+.an-facts li,
+.an-traps li {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.an-facts li:last-child,
+.an-traps li:last-child {
+  border-bottom: 0;
+}
+
+.an-facts li > p,
+.an-traps li > p {
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.an-dossier__recall {
+  align-self: start;
+  padding: 15px;
+  border-left: 4px solid var(--mark-edge);
+  background: color-mix(in srgb, var(--mark) 64%, var(--paper));
+  font-family: var(--sans);
+}
+
+.an-dossier__recall ol {
+  margin: 10px 0 14px 17px;
+  color: var(--text);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.an-dossier__recall button + div {
+  margin-top: 12px;
+  animation: an-recall-reveal 180ms var(--ease);
+}
+
+.an-dossier__recall button + div p {
+  margin-top: 7px;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.an-dossier__recall .btn-primary {
+  margin-top: 12px;
+}
+
+@keyframes an-recall-reveal {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.an-answer-outline {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid var(--card-line);
+  border-left: 3px solid var(--an-maroon);
+  border-radius: var(--radius-xs);
+  background: var(--paper);
+}
+
+.an-answer-outline h4 {
+  margin-top: 6px;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.an-answer-outline__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 14px;
+  margin-top: 8px;
+  color: var(--gray);
+  font-family: var(--sans);
+  font-size: 11.5px;
+}
+
+.an-answer-outline__steps {
+  margin: 12px 0 0 20px;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+.an-syllabus-anchor,
+.an-practice-note,
+.an-published-practice,
+.an-optional-lookup {
+  margin-top: 18px;
+}
+
+.an-syllabus-anchor {
+  padding: 16px 0 18px 16px;
+  border-bottom: 1px solid var(--rule);
+  border-left: 3px solid var(--an-navy);
+}
+
+.an-syllabus-anchor h3 {
+  margin-top: 7px;
+  font-size: 20px;
+}
+
+.an-syllabus-anchor > p:not(.an-entry__tags, .an-treatment) {
+  margin-top: 6px;
+  max-width: 70ch;
+  color: var(--gray);
+  line-height: 1.55;
+}
+
+.an-published-practice,
+.an-optional-lookup {
+  padding-top: 18px;
+  border-top: 1px solid var(--rule-strong);
+}
+
+.an-published-practice > h3,
+.an-optional-lookup > h3 {
+  font-size: 20px;
+}
+
 /* ---------- Clusters, discard log ---------- */
 .an-block {
   margin-top: 40px;
@@ -1887,6 +2161,23 @@ footer {
   .an-entry {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .an-exam-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .an-exam-summary__score {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 7px;
+    padding: 0 0 8px;
+    border-right: 0;
+    border-bottom: 2px solid var(--an-maroon);
+  }
+
+  .an-dossier {
+    padding: 15px;
   }
 
   .an-entry__margin {

@@ -184,9 +184,9 @@
               <button type="button" class="an-chip" aria-pressed="false" data-paper="GS4">GS4</button>
               <button type="button" class="an-chip" aria-pressed="false" data-paper="ESSAY">Essay</button>
             </div>
-            <label class="an-check"><input type="checkbox" id="verifiedOnly"> Primary sources only</label>
+            <label class="an-check"><input type="checkbox" id="verifiedOnly"> Ready for recall only</label>
             <div class="an-toolbar__right">
-              <button type="button" class="btn btn-sm" id="refreshBrief">Refresh</button>
+              <button type="button" class="btn btn-sm" id="refreshBrief">Reload publication</button>
             </div>
           </div>
 
@@ -197,9 +197,8 @@
           </ol>
 
           <div class="an-state" id="briefState">
-            <h3>Load today's brief</h3>
-            <p>Retrieval runs against news and government sources from the last 24 hours, applies the examinability test, and keeps only what survives it. It takes about twenty seconds.</p>
-            <button type="button" class="btn btn-primary" id="loadBrief">Build the brief</button>
+            <h3>Loading the published brief</h3>
+            <p>Official records that cleared syllabus mapping and the evidence boundary will appear here. Every other record remains available in Source Desk.</p>
           </div>
 
           <ol class="an-entries" id="briefEntries"></ol>
@@ -234,6 +233,17 @@
             <p class="an-viewhead__meta">Directive-aware 10/15-mark scaffolds and optional topic lookup.</p>
           </div>
 
+          <section class="an-published-practice" aria-labelledby="publishedPracticeTitle">
+            <h3 id="publishedPracticeTitle">Published answer scaffolds</h3>
+            <p class="an-block__intro">Write from the directive and dimensions before reading the outline. These are practice priorities, never paper predictions.</p>
+            <div class="an-state" id="answerPracticeState"><h3>Loading answer scaffolds</h3><p>Published note details load only when this view is opened.</p></div>
+            <div id="answerPracticeList"></div>
+          </section>
+
+          <section class="an-optional-lookup" aria-labelledby="optionalLookupTitle">
+            <h3 id="optionalLookupTitle">Optional live topic lookup</h3>
+            <p class="an-block__intro">Use this for a named static concept. It is separate from the reviewed publication and must pass the same source check before memorisation.</p>
+
           <div class="an-toolbar">
             <div class="an-field" style="flex:0 0 auto;max-width:180px">
               <label for="lookupPaper">Bias towards</label>
@@ -259,6 +269,7 @@
           </ol>
 
           <div class="an-lookup" id="lookupResult" hidden></div>
+          </section>
         </section>
 
         <!-- Memory Drill -->

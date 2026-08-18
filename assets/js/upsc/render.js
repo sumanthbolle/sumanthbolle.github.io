@@ -297,6 +297,146 @@
     return parts.join('');
   }
 
+  function listSection(title, rows, className) {
+    if (!rows || !rows.length) return '';
+    return '<section class="an-note-section ' + attr(className || '') + '">' +
+      '<h4>' + esc(title) + '</h4><ul class="an-list">' + rows.map(function (row) {
+        return '<li>' + esc(row) + '</li>';
+      }).join('') + '</ul></section>';
+  }
+
+  function answerOutline(practice) {
+    var row = practice || {};
+    var skeleton = row.skeleton && row.skeleton.length
+      ? row.skeleton
+      : (row.introChoices || []).concat(row.bodyDimensions || [],
+        row.counterPosition || '', row.conclusionPrompt || '').filter(Boolean);
+    return '<article class="an-answer-outline">' +
+      '<p class="an-label">Practice prioritisation, not prediction</p>' +
+      '<h4>' + esc(row.stem) + '</h4>' +
+      '<p class="an-answer-outline__meta"><strong>' + esc(row.directive) + '</strong>' +
+        '<span class="an-num">' + esc(row.marks) + ' marks</span>' +
+        '<span class="an-num">' + esc(row.wordBudget) + ' words</span>' +
+        '<span class="an-num">' + esc(row.timeMinutes) + ' minutes</span></p>' +
+      (skeleton.length ? '<ol class="an-answer-outline__steps">' + skeleton.map(function (item) {
+        return '<li>' + esc(item) + '</li>';
+      }).join('') + '</ol>' : '') +
+      (row.diagramSuggestion ? '<p><span class="an-label">Diagram</span> ' + esc(row.diagramSuggestion) + '</p>' : '') +
+    '</article>';
+  }
+
+  function examSummary(note, options) {
+    var value = note || {};
+    var loading = options && options.loading === true;
+    return '<article class="an-exam-summary" data-source-id="' + attr(value.sourceId) + '">' +
+      '<div class="an-exam-summary__score"><strong class="an-num">' + esc(value.priority) +
+        '</strong><span>priority</span></div>' +
+      '<div><p class="an-entry__tags">' + anchorHtml(value.anchor) + codesHtml(value.codes) +
+        '<span>' + esc(editorialLabel(value.editorialStatus)) + '</span></p>' +
+        '<h3>' + esc(value.title) + '</h3>' +
+        (value.whyInNews ? '<p>' + esc(value.whyInNews) + '</p>' : '') +
+        useHtml(value.use) +
+        '<p class="an-exam-summary__meta">' + esc(value.publisherName) + ' · ' +
+          esc(String(value.publishedAt || '').slice(0, 10)) + ' · Priority ' + esc(value.priority) + '</p>' +
+        '<button type="button" class="btn btn-sm" data-act="open-exam" data-id="' +
+          attr(value.sourceId) + '"' + (loading ? ' disabled' : '') + '>' +
+          (loading ? 'Loading note…' : 'Read topper note') + '</button>' +
+      '</div></article>';
+  }
+
+  function examNote(note, options) {
+    var value = note || {};
+    var opts = options || {};
+    var safeUrl = safeHttpUrl(value.sourceUrl);
+    var revealed = opts.revealed === true;
+    var recallId = 'recall-' + String(value.sourceId || '').replace(/[^a-z0-9_-]/gi, '');
+    var ready = value.canMemorize === true;
+    var status = editorialLabel(value.editorialStatus);
+    var background = listSection('Background', value.background, 'an-note-section--analysis');
+    var implications = listSection('India implications', value.indiaImplications, 'an-note-section--analysis');
+    var wayForward = listSection('Way forward', value.wayForward, 'an-note-section--analysis');
+    var reusable = value.reusableAnchors && value.reusableAnchors.length
+      ? '<section class="an-note-section an-note-section--analysis"><h4>Reusable anchors</h4><ul class="an-valueadds">' +
+          value.reusableAnchors.map(function (row) {
+            return '<li><span class="an-label">' + esc(row.kind) + '</span><strong>' + esc(row.label) + '</strong></li>';
+          }).join('') + '</ul></section>'
+      : '';
+    var facts = value.officialFacts && value.officialFacts.length
+      ? '<section class="an-note-section an-note-section--facts"><h4>Official facts</h4><ul class="an-facts">' +
+          value.officialFacts.map(function (fact) {
+            var evidence = safeHttpUrl(fact.evidenceUrl);
+            var backed = fact.verification === 'source-backed' || fact.verification === 'reviewed';
+            return '<li><span class="an-label">Official fact</span><p>' + esc(fact.text) + '</p>' +
+              '<p class="an-entry__tags">' + verifyHtml(backed, backed ? 'Source-backed' : 'Needs review') +
+              (evidence ? '<a href="' + attr(evidence) + '" target="_blank" rel="noopener noreferrer">Evidence · ' +
+                esc(fact.evidenceLocator) + '</a>' : '') + '</p></li>';
+          }).join('') + '</ul></section>'
+      : '<section class="an-note-section an-note-section--facts"><h4>Official facts</h4><p>No hard fact cleared the evidence gate.</p></section>';
+    var argumentsBlock = '<section class="an-note-section an-note-section--analysis"><h4>Arguments</h4>' +
+      '<span class="an-label">Analysis</span><div class="an-two">' +
+      '<div><strong>For</strong><ul class="an-list">' + (value.argumentsFor || []).map(function (row) {
+        return '<li>' + esc(row) + '</li>';
+      }).join('') + '</ul></div>' +
+      '<div><strong>Against</strong><ul class="an-list">' + (value.argumentsAgainst || []).map(function (row) {
+        return '<li>' + esc(row) + '</li>';
+      }).join('') + '</ul></div></div></section>';
+    var traps = '<section class="an-note-section"><h4>Prelims traps</h4>' +
+      ((value.prelimsTraps || []).length ? '<ul class="an-traps">' + value.prelimsTraps.map(function (trap) {
+        return '<li><strong>' + esc(trap.correct ? 'Correct' : 'Incorrect') + ':</strong> ' +
+          esc(trap.statement) + '<p>' + esc(trap.explanation) + '</p></li>';
+      }).join('') + '</ul>' : '<p>No source-safe trap was published.</p>') + '</section>';
+    var practice = '<section class="an-note-section"><h4>Mains practice</h4>' +
+      (value.mainsPractice || []).map(answerOutline).join('') + '</section>';
+
+    return '<article class="an-dossier" data-source-id="' + attr(value.sourceId) + '">' +
+      '<aside class="an-dossier__source"><span class="an-label">Source stamp</span>' +
+        '<strong>' + esc(value.publisherName || 'Official source') + '</strong>' +
+        '<span class="an-num">' + esc(String(value.publishedAt || '').slice(0, 10)) + '</span>' +
+        '<span>' + esc(status) + '</span>' +
+        '<span class="an-num">Priority ' + esc(value.priority) + '</span>' +
+        (safeUrl ? '<a href="' + attr(safeUrl) + '" target="_blank" rel="noopener noreferrer">Open official record</a>' : '') +
+      '</aside>' +
+      '<div class="an-dossier__issue"><h3>' + esc(value.title) + '</h3>' +
+        '<p class="an-entry__tags">' + anchorHtml(value.anchor) + codesHtml(value.codes) + '</p>' +
+        '<section class="an-note-section an-note-section--analysis"><h4>Why in news</h4><span class="an-label">Analysis</span><p>' + esc(value.whyInNews) + '</p></section>' +
+        '<section class="an-note-section an-note-section--analysis"><h4>Static anchor</h4><span class="an-label">Analysis</span><p>' + esc(value.staticDefinition) + '</p></section>' +
+        background + reusable + facts + argumentsBlock + implications + wayForward + traps + practice +
+        '<section class="an-note-section an-note-section--use"><h4>Use in an answer</h4><p>' + esc(value.use) + '</p></section>' +
+        '<section class="an-note-section"><h4>Recall card</h4><p>' + esc(value.recallCard) + '</p></section>' +
+      '</div>' +
+      '<aside class="an-dossier__recall"><span class="an-label">Recall margin</span>' +
+        '<ol><li>What is the static anchor?</li><li>Why does this matter structurally?</li>' +
+          '<li>What are the two positions?</li><li>What exact line would you use?</li></ol>' +
+        '<button type="button" class="btn btn-sm" data-act="reveal-exam" aria-expanded="' +
+          (revealed ? 'true' : 'false') + '" aria-controls="' + attr(recallId) + '">' +
+          (revealed ? 'Hide recall' : 'Reveal recall') + '</button>' +
+        '<div id="' + attr(recallId) + '"' + (revealed ? '' : ' hidden') + '>' +
+          '<p><strong>' + esc(value.anchor) + '</strong></p><p>' + esc(value.whyInNews) + '</p>' +
+          '<p>' + esc((value.argumentsFor || [])[0]) + ' / ' + esc((value.argumentsAgainst || [])[0]) + '</p>' +
+          '<p>' + esc(value.use) + '</p></div>' +
+        '<button type="button" class="btn btn-primary btn-sm" data-act="save-exam" data-id="' +
+          attr(value.sourceId) + '"' + (ready ? '' : ' disabled') + '>Save for recall</button>' +
+        (ready ? '' : '<p class="an-railnote">Needs review: hard facts require safe evidence before memorisation.</p>') +
+      '</aside>' +
+    '</article>';
+  }
+
+  function syllabusAnchor(group) {
+    var row = group || {};
+    return '<article class="an-syllabus-anchor">' +
+      '<p class="an-entry__tags"><span class="an-code">' + esc(row.code) + '</span>' +
+        '<span class="an-num">' + esc((row.noteIds || []).length) + ' triggers</span></p>' +
+      '<h3>' + esc(row.anchor) + '</h3>' +
+      (row.staticDefinition ? '<p>' + esc(row.staticDefinition) + '</p>' : '') +
+      ((row.reusableAnchors || []).length ? '<ul class="an-valueadds">' +
+        row.reusableAnchors.map(function (item) {
+          return '<li><span class="an-label">' + esc(item.kind) + '</span><strong>' + esc(item.label) + '</strong></li>';
+        }).join('') + '</ul>' : '') +
+      ((row.monthlySyntheses || []).length ? '<p class="an-treatment">Monthly synthesis available for ' +
+        esc(row.monthlySyntheses[0].month) + '.</p>' : '') +
+    '</article>';
+  }
+
   function reviseCard(note, index, total) {
     return '<div class="an-card" data-id="' + attr(note.id) + '">' +
       '<p class="an-revise__progress">' + esc(index + 1) + ' of ' + esc(total) +
@@ -329,6 +469,10 @@
     clusters: clusters,
     discards: discards,
     lookupNote: lookupNote,
+    examNote: examNote,
+    examSummary: examSummary,
+    syllabusAnchor: syllabusAnchor,
+    answerOutline: answerOutline,
     reviseCard: reviseCard,
   };
 })();
