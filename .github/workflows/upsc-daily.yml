@@ -41,7 +41,9 @@ jobs:
           node-version: '22'
 
       - name: Validate the pattern compilation
-        run: node scripts/validate-upsc-patterns.js
+        run: |
+          node scripts/validate-upsc-patterns.js
+          node scripts/test-upsc-triggers.js
 
       - name: Check the generated anchor index is in sync
         run: |
@@ -55,7 +57,7 @@ jobs:
       - name: Refresh one anchor's trigger layer
         id: refresh
         env:
-          PPLX_API_KEY: ${{ secrets.PPLX_API_KEY }}
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
         run: |
           set +e
           if [ -n "${{ github.event.inputs.anchor }}" ]; then
@@ -69,7 +71,7 @@ jobs:
             echo "refreshed=true" >> "$GITHUB_OUTPUT"
           elif [ "$code" -eq 2 ]; then
             echo "refreshed=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Nothing cleared the validation gate on this run. Nothing was written."
+            echo "::notice::No verified trigger update was produced. Nothing was written."
           else
             exit "$code"
           fi
