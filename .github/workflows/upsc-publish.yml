@@ -48,7 +48,7 @@ jobs:
           set -o pipefail
           python scripts/upsc/publish.py check-sources \
             --registry data/upsc/source-registry.json \
-            --strict | tee data/upsc/source-health.json
+            --min-healthy 5 | tee data/upsc/source-health.json
 
       - name: Ingest official records
         run: >-

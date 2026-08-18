@@ -722,6 +722,7 @@ def main() -> int:
     source_check.add_argument("--fixtures", type=Path)
     source_check.add_argument("--now")
     source_check.add_argument("--strict", action="store_true")
+    source_check.add_argument("--min-healthy", type=int, default=1)
     pages = subparsers.add_parser("build-pages")
     pages.add_argument("--output", type=Path, required=True)
     pages.add_argument("--site-root", type=Path, required=True)
@@ -740,8 +741,8 @@ def main() -> int:
         else:
             report = check_sources(args.registry, opener, now)
             print(json.dumps(report, indent=2))
-            all_healthy = report["healthyCount"] == report["sourceCount"]
-            return 0 if (all_healthy if args.strict else report["healthy"]) else 1
+            required = report["sourceCount"] if args.strict else max(1, args.min_healthy)
+            return 0 if report["healthyCount"] >= required else 1
     elif args.command == "build-indexes":
         print(json.dumps(build_indexes(args.output, now), indent=2))
     else:

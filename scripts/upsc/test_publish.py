@@ -140,6 +140,10 @@ class PublisherTests(unittest.TestCase):
             command + ["--strict"], cwd=Path(__file__).parents[2],
             capture_output=True, text=True,
         )
+        quorum = subprocess.run(
+            command + ["--min-healthy", "2"], cwd=Path(__file__).parents[2],
+            capture_output=True, text=True,
+        )
         none_healthy = subprocess.run([
             sys.executable, "scripts/upsc/publish.py", "check-sources",
             "--registry", str(BAD_REGISTRY), "--fixtures", str(FIXTURES),
@@ -147,6 +151,7 @@ class PublisherTests(unittest.TestCase):
         ], cwd=Path(__file__).parents[2], capture_output=True, text=True)
         self.assertEqual(default.returncode, 0, default.stderr)
         self.assertEqual(strict.returncode, 1, strict.stderr)
+        self.assertEqual(quorum.returncode, 1, quorum.stderr)
         self.assertEqual(none_healthy.returncode, 1, none_healthy.stderr)
 
     def test_second_run_is_idempotent_and_builds_source_index(self):
