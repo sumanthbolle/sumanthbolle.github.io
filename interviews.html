@@ -264,30 +264,30 @@
     <div class="nav-c">
       <a href="index.html" class="nav-logo">Sumanth Bolle</a>
       <ul class="nav-links">
-        <li><a href="index.html#about">About</a></li>
-        <!--<li><a href="index.html#expertise">Experience</a></li>-->
-        <!--<li><a href="index.html#skills">Skills</a></li>-->
-        <li><a href="servicenow.html">ServiceNow</a></li>
-        <li><a href="blog.html">Blog</a></li>
-        <li><a href="interviews.html" class="active">Interviews</a></li>
-        <!--<li><a href="index.html#integrations">Integrations</a></li>-->
-        <li><a href="summaverick.html">Summaverick</a></li>
-        <li class="nav-drop" data-nav-drop>
-          <button type="button" class="nav-drop__btn" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-          <div class="nav-drop__menu" id="navUtilities" role="menu">
-            <a href="flights.html" role="menuitem"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
-            <a href="metals.html" role="menuitem"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
-            <a href="save-yourself.html" role="menuitem"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
-            <a href="upsc.html" role="menuitem"><span class="nav-drop__name">Anchor</span><span class="nav-drop__desc">UPSC brief and revision notes</span></a>
-            <a href="upsc-patterns.html" role="menuitem"><span class="nav-drop__name">Pattern Atlas</span><span class="nav-drop__desc">20 years of UPSC question patterns</span></a>
+        <li class="nav-drop" data-nav-drop data-nav-group="learn">
+          <button type="button" class="nav-drop__btn active" aria-expanded="false" aria-controls="navLearn">Learn<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="nav-drop__menu" id="navLearn" data-nav-panel="learn">
+            <a href="servicenow.html"><span class="nav-drop__name">ServiceNow Central</span><span class="nav-drop__desc">Platform guides and practice</span></a>
+            <a href="blog.html"><span class="nav-drop__name">Articles &amp; Tutorials</span><span class="nav-drop__desc">Technical articles and walkthroughs</span></a>
+            <a href="interviews.html" aria-current="page"><span class="nav-drop__name">Interview Prep</span><span class="nav-drop__desc">Scenario questions and explanations</span></a>
+            <a href="upsc.html"><span class="nav-drop__name">UPSC Today</span><span class="nav-drop__desc">Current affairs and revision</span></a>
           </div>
         </li>
-        <li><a href="index.html#contact">Contact</a></li>
+        <li class="nav-drop" data-nav-drop data-nav-group="tools">
+          <button type="button" class="nav-drop__btn" aria-expanded="false" aria-controls="navTools">Tools<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="nav-drop__menu" id="navTools" data-nav-panel="tools">
+            <a href="flights.html"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+            <a href="metals.html"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+            <a href="save-yourself.html"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+          </div>
+        </li>
+        <li><a data-nav-link="summaverick" href="summaverick.html">Summaverick</a></li>
+        <li><a data-nav-link="about" href="index.html#about">About</a></li>
       </ul>
       <button class="menu-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
-    <div class="mobile-menu">
-      <a href="index.html">Home</a><a href="index.html#about">About</a><a href="servicenow.html">ServiceNow</a><a href="blog.html">Blog</a><a href="interviews.html" class="active">Interviews</a><a href="summaverick.html">Summaverick</a><span class="mobile-menu__label">Utilities</span><a class="mobile-menu__sub" href="flights.html">SkyFare</a><a class="mobile-menu__sub" href="metals.html">Metals</a><a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a><a class="mobile-menu__sub" href="upsc.html">Anchor</a><a class="mobile-menu__sub" href="upsc-patterns.html">Pattern Atlas</a><a href="index.html#contact">Contact</a>
+    <div class="mobile-menu" data-mobile-nav>
+      <a href="index.html">Home</a><span class="mobile-menu__label" data-mobile-group="learn">Learn</span><a class="mobile-menu__sub" href="servicenow.html">ServiceNow Central</a><a class="mobile-menu__sub" href="blog.html">Articles &amp; Tutorials</a><a class="mobile-menu__sub active" href="interviews.html" aria-current="page">Interview Prep</a><a class="mobile-menu__sub" href="upsc.html">UPSC Today</a><span class="mobile-menu__label" data-mobile-group="tools">Tools</span><a class="mobile-menu__sub" href="flights.html">SkyFare</a><a class="mobile-menu__sub" href="metals.html">Metals</a><a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a><a href="summaverick.html">Summaverick</a><a href="index.html#about">About</a>
     </div>
   </nav>
   <div class="sub-tabs">
