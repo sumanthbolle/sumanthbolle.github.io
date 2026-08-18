@@ -4,8 +4,10 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import urllib.error
 from pathlib import Path
 
+from scripts.upsc.enrich import enrich_records
 from scripts.upsc.publish import build_indexes, publish
 
 
@@ -56,9 +58,41 @@ def fixture_opener(fail_ids=(), overrides=None):
     return open_fixture
 
 
+def fixture_source_record():
+    return {
+        "id": "src_pib", "title": "Cabinet approves policy",
+        "publisherId": "pib", "publishedAt": "2026-08-18T04:00:00Z",
+        "sourceUrl": "https://pib.gov.in/release/1",
+        "officialSummary": "Cabinet approved the fiscal policy.",
+        "contentHash": "sha256_fixture_content", "sourceVerified": True,
+    }
+
+
+def failing_enrichment_opener():
+    def open_failure(request, timeout=55):
+        raise urllib.error.HTTPError(
+            request.full_url, 503, "Service Unavailable", {}, None
+        )
+    return open_failure
+
+
+class EnrichmentResponse:
+    def __init__(self, payload):
+        self._body = json.dumps(payload).encode("utf-8")
+
+    def read(self, limit=-1):
+        return self._body if limit < 0 else self._body[:limit]
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, traceback):
+        return False
+
+
 class PublisherTests(unittest.TestCase):
     def test_publisher_source_parses_as_python_39(self):
-        for name in ("models.py", "adapters.py", "publish.py"):
+        for name in ("models.py", "adapters.py", "publish.py", "enrich.py"):
             source = (Path(__file__).with_name(name)).read_text(encoding="utf-8")
             ast.parse(source, filename=name, feature_version=(3, 9))
 
@@ -114,6 +148,124 @@ class PublisherTests(unittest.TestCase):
             )
             self.assertEqual(report["updatedRecords"], 1)
             self.assertEqual(len(list((root / "history").glob("*/*.json"))), 1)
+
+    def test_enrichment_failure_keeps_source_record_and_omits_exam_note(self):
+        source = fixture_source_record()
+        notes, failures = enrich_records(
+            [source], "https://worker.example/upsc/enrich", "token",
+            failing_enrichment_opener(),
+        )
+        self.assertEqual(notes, [])
+        self.assertEqual(failures[source["id"]], "HTTP 503")
+        self.assertTrue(source["sourceVerified"])
+
+    def test_enrichment_accepts_only_source_bound_worker_note(self):
+        source = fixture_source_record()
+        worker_note = {
+            "sourceId": source["id"],
+            "sourceContentHash": source["contentHash"],
+            "sourceUrl": source["sourceUrl"],
+            "anchor": "fiscal federalism", "codes": ["GS2.2"],
+            "use": "Use as a fiscal coordination example.",
+            "editorialStatus": "source-backed",
+        }
+
+        def opener(request, timeout=55):
+            self.assertEqual(request.get_header("Authorization"), "Bearer token")
+            self.assertEqual(timeout, 55)
+            return EnrichmentResponse({"success": True, "data": worker_note})
+
+        notes, failures = enrich_records(
+            [source], "https://worker.example/upsc/enrich", "token", opener
+        )
+        self.assertEqual(failures, {})
+        self.assertEqual(notes[0]["sourceId"], source["id"])
+        self.assertEqual(notes[0]["sourceContentHash"], source["contentHash"])
+
+        skipped, failures = enrich_records(
+            [source], "https://worker.example/upsc/enrich", "token", opener,
+            {source["id"]: notes[0]},
+        )
+        self.assertEqual(skipped, [])
+        self.assertEqual(failures, {})
+
+    def test_indexes_join_current_exam_notes_and_build_navigation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            publish(FIXTURE_REGISTRY, root, fixture_opener(), NOW)
+            source = next(
+                row for row in json.loads(
+                    (root / "feed/2026/08/18.json").read_text(encoding="utf-8")
+                ) if row["publisherId"] == "pib"
+            )
+            note = {
+                "sourceId": source["id"],
+                "sourceContentHash": source["contentHash"],
+                "sourceUrl": source["sourceUrl"],
+                "sourceTitle": source["title"],
+                "publisherName": source["publisherName"],
+                "publishedAt": source["publishedAt"],
+                "anchor": "fiscal federalism", "codes": ["GS2.2", "GS3.2"],
+                "papers": ["GS2", "GS3"], "whyInNews": "Policy trigger.",
+                "staticDefinition": "Division of fiscal powers.",
+                "reusableAnchors": [{"kind": "constitutional", "label": "Finance Commission"}],
+                "officialFacts": [{
+                    "text": source["officialSummary"],
+                    "evidenceUrl": source["sourceUrl"],
+                    "evidenceLocator": "officialSummary",
+                    "verification": "source-backed",
+                }],
+                "mainsPractice": [{"stem": "Examine fiscal federalism."}],
+                "use": "Use as a current fiscal coordination example.",
+                "recallCard": "Recall fiscal coordination.",
+                "priority": 78, "priorityProvisional": True,
+                "editorialStatus": "source-backed",
+            }
+            (root / "notes").mkdir()
+            (root / "notes" / f"{source['id']}.json").write_text(
+                json.dumps(note), encoding="utf-8"
+            )
+
+            build_indexes(root, NOW)
+            source_index = json.loads((root / "source-index.json").read_text())
+            mapped = next(row for row in source_index["records"] if row["id"] == source["id"])
+            exam = json.loads((root / "exam-index.json").read_text())
+            syllabus = json.loads((root / "syllabus-index.json").read_text())
+            archive = json.loads((root / "archive-index.json").read_text())
+
+            self.assertEqual(mapped["codes"], ["GS2.2", "GS3.2"])
+            self.assertEqual(mapped["editorialState"], "source-backed")
+            self.assertEqual(exam["notes"][0]["sourceId"], source["id"])
+            anchor = syllabus["codes"]["GS2.2"]["anchors"]["fiscal-federalism"]
+            self.assertEqual(anchor["noteIds"], [source["id"]])
+            self.assertEqual(archive["notes"][0]["status"], "source-backed")
+            self.assertTrue(archive["notes"][0]["path"].startswith("upsc-study/notes/"))
+
+    def test_stale_note_is_excluded_but_source_remains_visible(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            publish(FIXTURE_REGISTRY, root, fixture_opener(), NOW)
+            source = json.loads(
+                (root / "feed/2026/08/18.json").read_text(encoding="utf-8")
+            )[0]
+            stale = {
+                "sourceId": source["id"], "sourceContentHash": "stale-hash",
+                "sourceUrl": source["sourceUrl"], "anchor": "climate governance",
+                "codes": ["GS3.5"], "use": "Use line", "priority": 75,
+                "editorialStatus": "source-backed",
+            }
+            (root / "notes").mkdir()
+            (root / "notes" / f"{source['id']}.json").write_text(
+                json.dumps(stale), encoding="utf-8"
+            )
+
+            build_indexes(root, NOW)
+            source_index = json.loads((root / "source-index.json").read_text())
+            exam = json.loads((root / "exam-index.json").read_text())
+            visible = next(row for row in source_index["records"] if row["id"] == source["id"])
+            self.assertEqual(exam["notes"], [])
+            self.assertEqual(visible["codes"], [])
+            self.assertEqual(visible["editorialState"], "source-only")
 
 
 if __name__ == "__main__":

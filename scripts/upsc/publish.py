@@ -2,18 +2,20 @@
 """Idempotent official-source publisher for the Anchor UPSC study tool."""
 
 import argparse
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import json
 from pathlib import Path
+import re
 import sys
 import tempfile
 from typing import Any, Callable, Optional
+import unicodedata
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from scripts.upsc.adapters import fetch_source
-from scripts.upsc.models import load_registry, normalize_source_record
+from scripts.upsc.models import load_registry, normalize_source_record, validate_exam_note
 
 
 def _write_json(path: Path, payload: Any) -> None:
@@ -128,26 +130,227 @@ def publish(
     return report
 
 
+def _slug(value: Any, fallback: str = "item") -> str:
+    ascii_text = unicodedata.normalize("NFKD", str(value or "")).encode(
+        "ascii", "ignore"
+    ).decode("ascii").lower()
+    slug = re.sub(r"[^a-z0-9]+", "-", ascii_text).strip("-")
+    return (slug or fallback)[:100].rstrip("-")
+
+
+def _current_notes(
+    output_root: Path,
+    records: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    notes: list[dict[str, Any]] = []
+    for path in sorted((output_root / "notes").glob("*.json")):
+        payload = _read_json(path, {})
+        if not isinstance(payload, dict):
+            continue
+        try:
+            note = validate_exam_note(payload)
+        except ValueError:
+            continue
+        source = records.get(note["sourceId"])
+        if not source:
+            continue
+        if note["sourceContentHash"] != source.get("contentHash"):
+            continue
+        if note.get("sourceUrl") != source.get("sourceUrl"):
+            continue
+        notes.append(note)
+    return notes
+
+
+def _exam_summary(note: dict[str, Any], source: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "sourceId": note["sourceId"],
+        "sourceContentHash": note["sourceContentHash"],
+        "sourceUrl": source.get("sourceUrl"),
+        "title": note.get("sourceTitle") or source.get("title"),
+        "publisherName": note.get("publisherName") or source.get("publisherName"),
+        "publishedAt": note.get("publishedAt") or source.get("publishedAt"),
+        "anchor": note.get("anchor"),
+        "codes": note.get("codes", []),
+        "papers": note.get("papers", []),
+        "whyInNews": note.get("whyInNews", ""),
+        "use": note.get("use", ""),
+        "recallCard": note.get("recallCard", ""),
+        "priority": int(note.get("priority") or 0),
+        "priorityProvisional": note.get("priorityProvisional") is True,
+        "editorialStatus": note.get("editorialStatus", "draft"),
+        "notePath": f"data/upsc/notes/{note['sourceId']}.json",
+    }
+
+
+def _iso_week(value: str) -> str:
+    parsed = date.fromisoformat(value[:10])
+    iso = parsed.isocalendar()
+    return f"{iso[0]:04d}-W{iso[1]:02d}"
+
+
+def _dedupe_dicts(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    seen: set[tuple[str, str]] = set()
+    result: list[dict[str, Any]] = []
+    for row in rows:
+        key = (str(row.get("kind") or ""), str(row.get("label") or "").lower())
+        if key in seen or not key[1]:
+            continue
+        seen.add(key)
+        result.append(row)
+    return result
+
+
+def _build_syllabus_index(
+    notes: list[dict[str, Any]],
+    records: dict[str, dict[str, Any]],
+    generated_at: str,
+) -> dict[str, Any]:
+    codes: dict[str, dict[str, Any]] = {}
+    for note in sorted(
+        notes,
+        key=lambda row: records[row["sourceId"]].get("publishedAt", ""),
+        reverse=True,
+    ):
+        anchor_key = _slug(note.get("anchor"), "anchor")
+        practice_ids = [
+            f"{note['sourceId']}:practice:{index + 1}"
+            for index, _ in enumerate(note.get("mainsPractice", []))
+        ]
+        for code in note.get("codes", []):
+            code_row = codes.setdefault(code, {"anchors": {}})
+            anchor = code_row["anchors"].setdefault(anchor_key, {
+                "anchor": note.get("anchor", ""),
+                "staticDefinition": "",
+                "noteIds": [],
+                "reusableAnchors": [],
+                "sourceIds": [],
+                "practiceIds": [],
+                "monthlySyntheses": [],
+            })
+            if not anchor["staticDefinition"] and note.get("staticDefinition"):
+                anchor["staticDefinition"] = note["staticDefinition"]
+            anchor["noteIds"].append(note["sourceId"])
+            anchor["sourceIds"].append(note["sourceId"])
+            anchor["practiceIds"].extend(practice_ids)
+            anchor["reusableAnchors"] = _dedupe_dicts(
+                anchor["reusableAnchors"] + list(note.get("reusableAnchors", []))
+            )
+
+    for code_row in codes.values():
+        for anchor in code_row["anchors"].values():
+            by_month: dict[str, list[dict[str, Any]]] = {}
+            for note_id in anchor["noteIds"]:
+                note = next(row for row in notes if row["sourceId"] == note_id)
+                month = records[note_id].get("publishedAt", "")[:7]
+                by_month.setdefault(month, []).append(note)
+            for month, month_notes in sorted(by_month.items(), reverse=True):
+                if len(month_notes) >= 3:
+                    anchor["monthlySyntheses"].append({
+                        "month": month,
+                        "noteIds": [row["sourceId"] for row in month_notes],
+                        "uses": [row.get("use", "")[:360] for row in month_notes if row.get("use")],
+                    })
+    return {"generatedAt": generated_at, "codes": codes}
+
+
+def _build_archive_index(
+    notes: list[dict[str, Any]],
+    records: dict[str, dict[str, Any]],
+    generated_at: str,
+) -> dict[str, Any]:
+    result: dict[str, Any] = {
+        "generatedAt": generated_at,
+        "notes": [], "days": {}, "months": {}, "codes": {}, "anchors": {},
+    }
+    for note in notes:
+        source = records[note["sourceId"]]
+        published = str(source.get("publishedAt") or "")[:10]
+        month = published[:7]
+        anchor_slug = _slug(note.get("anchor"), "anchor")
+        title_slug = _slug(note.get("sourceTitle") or source.get("title"), "note")
+        status = note.get("editorialStatus", "draft")
+        path = f"upsc-study/notes/{note['sourceId']}/{title_slug}.html"
+        row = {
+            "sourceId": note["sourceId"], "title": note.get("sourceTitle") or source.get("title"),
+            "path": path, "date": published, "month": month,
+            "codes": note.get("codes", []), "anchor": note.get("anchor", ""),
+            "anchorSlug": anchor_slug, "status": status,
+        }
+        result["notes"].append(row)
+        result["days"].setdefault(published, []).append(note["sourceId"])
+        result["months"].setdefault(month, []).append(note["sourceId"])
+        for code in note.get("codes", []):
+            result["codes"].setdefault(code, []).append(note["sourceId"])
+        anchor_row = result["anchors"].setdefault(anchor_slug, {
+            "anchor": note.get("anchor", ""), "noteIds": [],
+        })
+        anchor_row["noteIds"].append(note["sourceId"])
+    return result
+
+
 def build_indexes(output_root: Path, now: Optional[str] = None) -> dict[str, Any]:
+    generated_at = now or datetime.now(timezone.utc).replace(
+        microsecond=0
+    ).isoformat().replace("+00:00", "Z")
     records, _ = _all_current_records(output_root)
     ordered = sorted(
         records.values(), key=lambda row: (row.get("publishedAt", ""), row["id"]),
         reverse=True,
     )
+    current_notes = _current_notes(output_root, records)
+    notes_by_source = {note["sourceId"]: note for note in current_notes}
     compact = []
     for row in ordered:
-        compact.append({
+        compact_row = {
             key: row.get(key) for key in (
                 "id", "title", "publisherId", "publisherName", "publishedAt",
                 "sourceUrl", "officialSummary", "sourceType", "jurisdiction",
                 "sourceVerified", "editorialState",
             )
-        } | {"codes": [], "priority": 0})
+        }
+        note = notes_by_source.get(row["id"])
+        compact_row.update({
+            "codes": note.get("codes", []) if note else [],
+            "priority": int(note.get("priority") or 0) if note else 0,
+            "editorialState": note.get("editorialStatus", "source-only") if note else "source-only",
+        })
+        compact.append(compact_row)
     payload = {
-        "generatedAt": now or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "generatedAt": generated_at,
         "records": compact,
     }
     _write_json(output_root / "source-index.json", payload)
+    ordered_notes = sorted(
+        current_notes,
+        key=lambda note: (
+            int(note.get("priority") or 0),
+            records[note["sourceId"]].get("publishedAt", ""),
+        ),
+        reverse=True,
+    )
+    exam = {
+        "generatedAt": generated_at,
+        "notes": [_exam_summary(note, records[note["sourceId"]]) for note in ordered_notes],
+    }
+    daily: dict[str, list[str]] = {}
+    weekly: dict[str, list[str]] = {}
+    for note in ordered_notes:
+        published = records[note["sourceId"]].get("publishedAt", "")[:10]
+        if not published:
+            continue
+        daily.setdefault(published, []).append(note["sourceId"])
+        try:
+            weekly.setdefault(_iso_week(published), []).append(note["sourceId"])
+        except ValueError:
+            continue
+    syllabus = _build_syllabus_index(ordered_notes, records, generated_at)
+    archive = _build_archive_index(ordered_notes, records, generated_at)
+    _write_json(output_root / "exam-index.json", exam)
+    _write_json(output_root / "exam-daily-index.json", {"generatedAt": generated_at, "days": daily})
+    _write_json(output_root / "exam-weekly-index.json", {"generatedAt": generated_at, "weeks": weekly})
+    _write_json(output_root / "syllabus-index.json", syllabus)
+    _write_json(output_root / "archive-index.json", archive)
     return payload
 
 

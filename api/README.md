@@ -11,6 +11,7 @@ Single Cloudflare Worker that powers both the Summaverick chat and the landing-p
 | POST   | `/flights/inspire` | Summaverick destination ideas for SkyFare (JSON suggestions + one-click search fields). |
 | GET    | `/upsc/brief`| Anchor study tool: daily / weekly UPSC brief, filtered, scored, verification-gated |
 | POST   | `/upsc/topic`| Anchor topic lookup: one-screen exam-ready note. Body: `{ topic, paper? }` |
+| POST   | `/upsc/enrich`| Private publisher route: transform one normalized official record into a source-bound exam note |
 | GET    | `/trending`  | Landing widgets (news / market / tech), country-aware + cached          |
 | GET    | `/servicenow`| Latest ServiceNow articles across 4 tracks (AI / Agents / LLM / cost), cached |
 | GET    | `/metals`    | Live gold/silver spot references, local FX, and 30-day daily context |
@@ -33,7 +34,7 @@ Powers the human-first market report at `/metals.html`.
 
 No AI or generated explanation is used for prices or market-causality claims.
 
-## `/upsc/brief` and `/upsc/topic` — Anchor
+## `/upsc/brief`, `/upsc/topic`, and `/upsc/enrich` — Anchor
 
 Powers the UPSC study tool at `/upsc.html`. Prompts, normalisation, scoring and
 the verification gate live in [`api/upsc.js`](upsc.js); `worker.js` only does
@@ -79,6 +80,31 @@ scheme / international / thinker, both sides of the debate, Prelims facts,
 three probable Mains stems with directive verbs, the usual mark-losing trap,
 and sources. Depth is capped by prompt on purpose — the tool exists to stop
 over-reading. Not cached (queries are unbounded).
+
+### `POST /upsc/enrich`
+
+This route is for the scheduled publisher, not the public browser. Send exactly
+one normalized source record as the JSON body and authenticate with
+`Authorization: Bearer <UPSC_PUBLISH_TOKEN>`. The record must contain a stable
+`src_…` ID, canonical official `sourceUrl`, `contentHash`, `officialSummary`,
+and `sourceVerified: true`.
+
+Success returns `{ "success": true, "data": <exam-note> }`. The normalizer
+copies the source ID, URL, and content hash from the request; model output
+cannot replace them. A hard fact is `source-backed` only when its locator is
+exactly `officialSummary` and the complete normalized fact occurs in that
+summary. Unsupported facts remain `needs-review`, lose any cloze, and force
+the note to `draft`. Enrichment is compression and classification, not an
+independent factual-verification step.
+
+- `401`: publish token absent or incorrect.
+- `422`: invalid source record or provider output failed the strict note schema.
+- `503`: provider credentials or enrichment service unavailable.
+
+Every response uses `Cache-Control: no-store`. The publisher isolates failures
+per record, leaves the Source Desk record available, and retries later. A
+corrected source changes `contentHash`, invalidating the old note until a new
+enrichment succeeds.
 
 ## `/servicenow` — ServiceNow live article feed
 
@@ -144,6 +170,7 @@ Set these as **secrets** in the Cloudflare Workers dashboard (Settings → Varia
 | `AMADEUS_ENV`        | no       | `test` (default, free quota) or `production`. Optionally override the host entirely with `AMADEUS_BASE_URL`.                                    |
 | `SERVICENOW_DOMAIN_ENABLED` | no | Default `true`. When enabled, ServiceNow questions get the domain-intelligence system addon (see `research-agent/`). |
 | `SERVICENOW_RELEASE_FAMILY` | no | Default `australia`. Release family used for ServiceNowDocs guidance. |
+| `UPSC_PUBLISH_TOKEN` | for publishing | Secret shared only with the scheduled UPSC publisher. Required by `POST /upsc/enrich`; never expose it to browser JavaScript. |
 
 No other keys are required. The tech widget uses the public Hacker News API (no auth).
 
@@ -197,6 +224,7 @@ If deploying with `wrangler`:
 wrangler deploy
 wrangler secret put PERPLEXITY_API_KEY
 wrangler secret put ALLOWED_ORIGIN
+wrangler secret put UPSC_PUBLISH_TOKEN
 ```
 
 Or via the dashboard: paste `worker.js` into the Quick Edit editor of the existing Worker, save, and add the secrets under Settings.
