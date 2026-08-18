@@ -225,6 +225,22 @@ const SCHEMA = {
 
 /* ─────────────────────────────── the API call ─────────────────────────────── */
 
+function buildSonarError(statusCode, raw) {
+  let providerCode = '';
+  try {
+    const parsed = JSON.parse(raw);
+    providerCode = String(
+      parsed && parsed.error && (parsed.error.type || parsed.error.code) || '',
+    );
+  } catch (error) {
+    // The bounded response excerpt below remains useful for non-JSON errors.
+  }
+  const requestError = new Error(`Sonar ${statusCode}: ${raw.slice(0, 200)}`);
+  requestError.statusCode = statusCode;
+  requestError.providerCode = providerCode;
+  return requestError;
+}
+
 function callSonar(payload) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify(payload);
@@ -245,17 +261,7 @@ function callSonar(payload) {
         response.on('data', (chunk) => { raw += chunk; });
         response.on('end', () => {
           if (response.statusCode < 200 || response.statusCode >= 300) {
-            let providerCode = '';
-            try {
-              const parsed = JSON.parse(raw);
-              providerCode = String(parsed && parsed.error && parsed.error.code || '');
-            } catch (error) {
-              // The bounded response excerpt below remains useful for non-JSON errors.
-            }
-            const requestError = new Error(`Sonar ${response.statusCode}: ${raw.slice(0, 200)}`);
-            requestError.statusCode = response.statusCode;
-            requestError.providerCode = providerCode;
-            reject(requestError);
+            reject(buildSonarError(response.statusCode, raw));
             return;
           }
           try {
@@ -480,5 +486,6 @@ module.exports = {
   extractJson,
   prune,
   daysSince,
+  buildSonarError,
   isQuotaUnavailable,
 };

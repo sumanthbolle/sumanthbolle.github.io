@@ -1,6 +1,19 @@
 const assert = require('node:assert/strict');
 
-const { isQuotaUnavailable } = require('./fetch-upsc-triggers.js');
+const {
+  buildSonarError,
+  isQuotaUnavailable,
+} = require('./fetch-upsc-triggers.js');
+
+const quotaError = buildSonarError(401, JSON.stringify({
+  error: {
+    message: 'You exceeded your current quota',
+    type: 'insufficient_quota',
+    code: 401,
+  },
+}));
+
+assert.equal(isQuotaUnavailable(quotaError), true);
 
 assert.equal(
   isQuotaUnavailable({ statusCode: 401, providerCode: 'insufficient_quota' }),
