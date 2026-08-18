@@ -105,6 +105,92 @@ test('does not render unsafe Source Desk links', function () {
   assert.equal(html.includes('Open official record'), false);
 });
 
+test('renders a source-backed Topic of the Day as a readable study article', function () {
+  const Render = loadRender();
+  const html = Render.topicOfDay({
+    kind: 'source', id: 'src_today', title: 'National biodiversity restoration policy',
+    publisherName: 'Press Information Bureau', publishedAt: '2026-08-18T05:00:00Z',
+    sourceUrl: 'https://pib.gov.in/release/2',
+    officialSummary: 'The policy links wetland restoration with climate resilience.',
+    subject: {
+      id: 'environment', label: 'Environment', paper: 'GS3', readMinutes: 10,
+      lens: 'Connect ecology, governance, finance and community participation.',
+      prelimsPrompt: 'Identify the institution, ecosystem and governing instrument.',
+      mainsPrompt: 'Assess implementation, equity and long-term ecological outcomes.',
+    },
+    studyLens: ['Define the durable concept.', 'Locate the institution.', 'Test implementation.', 'Build a balanced conclusion.'],
+  });
+
+  for (const label of ['Topic of the Day', 'Why it matters today', 'Static foundation',
+    'Study this through', 'Prelims check', 'Mains lens', 'Recall before moving on']) {
+    assert.equal(html.includes(label), true, label);
+  }
+  assert.equal(html.includes('GS3'), true);
+  assert.equal(html.includes('10 min'), true);
+  assert.equal(html.includes('href="https://pib.gov.in/release/2"'), true);
+  assert.equal(html.includes('data-act="expand-topic"'), true);
+});
+
+test('renders the daily edition by subject with safe official links', function () {
+  const Render = loadRender();
+  const html = Render.dailyEdition({ editionDate: '2026-08-18', groups: [{
+    subject: { id: 'economy', label: 'Economy', paper: 'GS3',
+      lens: 'Connect policy instruments to growth, inflation and inclusion.' },
+    items: [{ id: 'src_rbi', title: 'Monetary policy decision',
+      officialSummary: 'RBI published its policy decision.',
+      publisherName: 'Reserve Bank of India', publishedAt: '2026-08-18T04:00:00Z',
+      sourceUrl: 'https://rbi.org.in/release/1', sourceVerified: true }],
+  }] });
+
+  assert.equal(html.includes('Economy'), true);
+  assert.equal(html.includes('Why in news'), true);
+  assert.equal(html.includes('Read with this lens'), true);
+  assert.equal(html.includes('href="https://rbi.org.in/release/1"'), true);
+  assert.equal(html.includes('Official source'), true);
+});
+
+test('labels a headline-only feed item instead of pretending it is a full summary', function () {
+  const Render = loadRender();
+  const html = Render.dailyEdition({ editionDate: '2026-08-18', groups: [{
+    subject: { id: 'environment', label: 'Environment', paper: 'GS3', lens: 'Read the ecology and governance link.' },
+    items: [{ id: 'src_title', title: 'India launches a grasslands guide',
+      officialSummary: 'India launches a grasslands guide', publisherName: 'PIB',
+      publishedAt: '2026-08-18T04:00:00Z', sourceUrl: 'https://pib.gov.in/grasslands' }],
+  }] });
+
+  assert.equal(html.includes('The official feed supplied a headline without an abstract.'), true);
+});
+
+test('labels a headline-only Topic of the Day source honestly', function () {
+  const Render = loadRender();
+  const html = Render.topicOfDay({
+    kind: 'source', id: 'src_title', title: 'India launches a grasslands guide',
+    officialSummary: 'India launches a grasslands guide', publisherName: 'PIB',
+    publishedAt: '2026-08-18T04:00:00Z', sourceUrl: 'https://pib.gov.in/grasslands',
+    subject: { label: 'Environment', paper: 'GS3', readMinutes: 10,
+      coreTopics: ['Ecology'], lens: 'Read the ecology link.',
+      prelimsPrompt: 'Identify the institution.', mainsPrompt: 'Assess implementation.' },
+    studyLens: ['Define the concept.'],
+  });
+
+  assert.equal(html.includes('The official feed supplied the headline without an abstract.'), true);
+});
+
+test('renders subject shelves as a useful static-to-current reading map', function () {
+  const Render = loadRender();
+  const html = Render.subjectShelves([{
+    id: 'economy', label: 'Economy', paper: 'GS3', currentCount: 12,
+    coreTopics: ['Growth and inflation', 'Fiscal and monetary policy', 'Banking and markets', 'Infrastructure'],
+    lens: 'Connect instruments to growth, inflation, jobs and inclusion.',
+  }]);
+
+  assert.equal(html.includes('Economy'), true);
+  assert.equal(html.includes('GS3'), true);
+  assert.equal(html.includes('12 current updates'), true);
+  assert.equal(html.includes('Growth and inflation'), true);
+  assert.equal(html.includes('Connect instruments'), true);
+});
+
 const EXAM_NOTE = {
   sourceId: 'src_pib', title: 'Cabinet <policy>', publisherName: 'PIB',
   publishedAt: '2026-08-18T04:00:00Z', sourceUrl: 'https://pib.gov.in/release/1',

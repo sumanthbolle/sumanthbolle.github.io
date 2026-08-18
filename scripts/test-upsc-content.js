@@ -142,6 +142,153 @@ test('groups publishers with stable counts', function () {
   );
 });
 
+test('classifies official updates into aspirant-facing subjects', function () {
+  const Content = loadContent();
+  const records = Content.normalizeSourceIndex({ generatedAt: FIXTURE_INDEX.generatedAt, records: [
+    Object.assign({}, FIXTURE_INDEX.records[0], {
+      id: 'src_rbi', title: 'RBI monetary policy decision', publisherId: 'rbi',
+      publisherName: 'Reserve Bank of India', sourceUrl: 'https://rbi.org.in/release/1',
+    }),
+    Object.assign({}, FIXTURE_INDEX.records[1], {
+      id: 'src_mea', title: 'India and ASEAN strategic partnership', publisherId: 'mea',
+      publisherName: 'Ministry of External Affairs', sourceUrl: 'https://mea.gov.in/release/1',
+    }),
+    Object.assign({}, FIXTURE_INDEX.records[2], {
+      id: 'src_bio', title: 'Wetland and biodiversity restoration programme',
+      publisherId: 'pib', publisherName: 'Press Information Bureau',
+      sourceUrl: 'https://pib.gov.in/release/2',
+    }),
+    Object.assign({}, FIXTURE_INDEX.records[2], {
+      id: 'src_seed', title: 'Economic empowerment of de-notified and nomadic communities under SEED',
+      publisherId: 'pib', publisherName: 'Press Information Bureau',
+      sourceUrl: 'https://pib.gov.in/release/3',
+    }),
+  ] }).records;
+
+  assert.deepEqual(Array.from(records, row => Content.inferSubject(row).id), [
+    'economy', 'international-relations', 'environment', 'society-social-justice',
+  ]);
+});
+
+test('builds a bounded current-affairs edition with subject diversity', function () {
+  const Content = loadContent();
+  const subjects = [
+    ['rbi', 'Reserve Bank of India', 'Monetary policy and inflation outlook'],
+    ['mea', 'Ministry of External Affairs', 'India ASEAN strategic partnership'],
+    ['pib', 'Press Information Bureau', 'National biodiversity restoration mission'],
+    ['who', 'World Health Organization', 'Universal health coverage guidance'],
+    ['sebi', 'Securities and Exchange Board of India', 'Capital market investor protection'],
+  ];
+  const rows = Array.from({ length: 18 }, function (_, index) {
+    const seed = subjects[index % subjects.length];
+    return {
+      id: 'src_daily_' + index, title: seed[2] + ' ' + index,
+      publisherId: seed[0], publisherName: seed[1],
+      publishedAt: index < 14 ? '2026-08-18T0' + (index % 9) + ':00:00Z' : '2026-08-10T04:00:00Z',
+      sourceUrl: 'https://example.gov/' + index,
+      officialSummary: 'An official update with enough context for a concise UPSC reading note.',
+      sourceType: 'release', jurisdiction: seed[0] === 'mea' || seed[0] === 'who' ? 'INT' : 'IN',
+      sourceVerified: true, editorialState: 'source-only', codes: [], priority: 0,
+    };
+  });
+  const records = Content.normalizeSourceIndex({ generatedAt: '2026-08-18T10:00:00Z', records: rows }).records;
+  const edition = Content.buildDailyEdition(records, { limit: 10 });
+
+  assert.equal(edition.editionDate, '2026-08-18');
+  assert.equal(edition.items.length, 10);
+  assert.ok(edition.groups.length >= 4);
+  assert.equal(edition.items.some(row => row.publishedAt.startsWith('2026-08-10')), false);
+});
+
+test('prefers an evidence-ready exam note for Topic of the Day', function () {
+  const Content = loadContent();
+  const records = Content.normalizeSourceIndex(FIXTURE_INDEX).records;
+  const notes = Content.normalizeExamIndex({
+    generatedAt: FIXTURE_INDEX.generatedAt, notes: [EXAM_NOTE],
+  }).notes;
+  const topic = Content.selectTopicOfDay(records, notes);
+
+  assert.equal(topic.kind, 'note');
+  assert.equal(topic.id, 'src_pib');
+  assert.equal(topic.subject.id, 'economy');
+});
+
+test('falls back to a useful official record for Topic of the Day', function () {
+  const Content = loadContent();
+  const rows = FIXTURE_INDEX.records.map(row => Object.assign({}, row, {
+    priority: 0, editorialState: 'source-only',
+  })).concat([{
+    id: 'src_policy', title: 'National biodiversity restoration policy', publisherId: 'pib',
+    publisherName: 'Press Information Bureau', publishedAt: '2026-08-18T05:00:00Z',
+    sourceUrl: 'https://pib.gov.in/release/2',
+    officialSummary: 'The policy links wetland restoration, biodiversity and climate resilience.',
+    sourceType: 'release', jurisdiction: 'IN', sourceVerified: true,
+    editorialState: 'source-only', codes: [], priority: 0,
+  }]);
+  const records = Content.normalizeSourceIndex({ generatedAt: FIXTURE_INDEX.generatedAt, records: rows }).records;
+  const topic = Content.selectTopicOfDay(records, []);
+
+  assert.equal(topic.kind, 'source');
+  assert.equal(topic.id, 'src_policy');
+  assert.equal(topic.subject.id, 'environment');
+  assert.ok(topic.studyLens.length >= 4);
+});
+
+test('selects a durable multi-dimensional topic over a routine portal launch', function () {
+  const Content = loadContent();
+  const rows = [{
+    id: 'src_portal', title: 'Central Information Commission launches upgraded appeals portal',
+    publisherId: 'pib', publisherName: 'Press Information Bureau',
+    publishedAt: '2026-08-18T05:00:00Z', sourceUrl: 'https://pib.gov.in/portal',
+    officialSummary: 'The Commission launched an upgraded portal.', sourceType: 'release',
+    jurisdiction: 'IN', sourceVerified: true, editorialState: 'source-only', codes: [], priority: 0,
+  }, {
+    id: 'src_grasslands', title: 'India launches first guide to grasslands at UNCCD COP17',
+    publisherId: 'pib', publisherName: 'Press Information Bureau',
+    publishedAt: '2026-08-18T04:00:00Z', sourceUrl: 'https://pib.gov.in/grasslands',
+    officialSummary: 'India launches its first guide to grasslands at UNCCD COP17.',
+    sourceType: 'release', jurisdiction: 'IN', sourceVerified: true,
+    editorialState: 'source-only', codes: [], priority: 0,
+  }];
+  const records = Content.normalizeSourceIndex({ generatedAt: FIXTURE_INDEX.generatedAt, records: rows }).records;
+
+  assert.equal(Content.selectTopicOfDay(records, []).id, 'src_grasslands');
+});
+
+test('prefers a substantive official briefing over a headline-only tie', function () {
+  const Content = loadContent();
+  const rows = [{
+    id: 'src_headline', title: 'India launches a grasslands guide at UNCCD COP17',
+    publisherId: 'pib', publisherName: 'Press Information Bureau',
+    publishedAt: '2026-08-18T05:00:00Z', sourceUrl: 'https://pib.gov.in/headline',
+    officialSummary: 'India launches a grasslands guide at UNCCD COP17', sourceType: 'release',
+    jurisdiction: 'IN', sourceVerified: true, editorialState: 'source-only', codes: [], priority: 0,
+  }, {
+    id: 'src_briefing', title: 'Why grasslands matter for desertification and climate resilience',
+    publisherId: 'un-news', publisherName: 'United Nations News',
+    publishedAt: '2026-08-18T04:00:00Z', sourceUrl: 'https://news.un.org/grasslands',
+    officialSummary: 'Grasslands support biodiversity, livelihoods and carbon storage. Their degradation accelerates desertification, while restoration requires local participation, land governance and long-term finance.',
+    sourceType: 'release', jurisdiction: 'INT', sourceVerified: true,
+    editorialState: 'source-only', codes: [], priority: 0,
+  }];
+  const records = Content.normalizeSourceIndex({ generatedAt: FIXTURE_INDEX.generatedAt, records: rows }).records;
+
+  assert.equal(Content.selectTopicOfDay(records, []).id, 'src_briefing');
+});
+
+test('builds complete subject shelves with current-affairs counts', function () {
+  const Content = loadContent();
+  const records = Content.normalizeSourceIndex(FIXTURE_INDEX).records;
+  const subjects = Content.subjectLibrary(records);
+
+  assert.equal(subjects.length, 9);
+  assert.deepEqual(Array.from(subjects.slice(0, 4), subject => subject.label), [
+    'Polity & Governance', 'Economy', 'Environment', 'International Relations',
+  ]);
+  assert.ok(subjects.every(subject => subject.coreTopics.length === 4));
+  assert.equal(subjects.find(subject => subject.id === 'environment').currentCount, 1);
+});
+
 test('groups a multi-paper note under each code without duplicating its identity', function () {
   const Content = loadContent();
   const groups = Content.groupBySyllabus([EXAM_NOTE]);

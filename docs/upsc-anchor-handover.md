@@ -99,13 +99,16 @@ publish and failed IDs retry on the next run.
 
 ## Reading and memory model
 
-- Source Desk retains all configured official records, even when not exam-worthy.
-- Exam Brief contains only current source-bound notes and loads full dossiers on
-  expansion.
-- Syllabus Library groups notes by canonical code and durable static anchor.
-- Answer Lab supplies directive-aware 10/15-mark scaffolds and keeps optional
-  live lookup separate from reviewed publication.
-- Memory Drill uses day 1, 3, 7, 21 and 60, then monthly. A miss resets to day 1;
+- Today is the default view: one substantive Topic of the Day followed by a
+  bounded 8–15 item official-source edition grouped by aspirant-facing subject.
+- Topic selection prefers evidence-ready notes, then durable official briefings
+  with actual abstracts over headline-only records. Headline-only feeds are
+  labelled honestly and link to the full official document.
+- Subjects provides nine permanent shelves, their static foundations, current
+  update counts, answer scaffolds and optional full-topic lookup.
+- Official sources retains every configured record, even when not exam-worthy,
+  but remains secondary to the reading experience.
+- Revision uses day 1, 3, 7, 21 and 60, then monthly. A miss resets to day 1;
   two late successful passes graduate to monthly. Hard-fact cloze prompts exist
   only when evidence cleared the official-summary boundary.
 
