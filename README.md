@@ -30,9 +30,11 @@ The Summaverick research agent includes a modular ServiceNow domain intelligence
 
 ## Anchor UPSC publication
 
-`upsc.html` is the interactive reading and recall desk. It reads the generated
-official-source publication in `data/upsc/`; `upsc-study/` is its crawlable,
-JavaScript-free archive.
+`upsc.html` is a reading-first daily study publication. It opens with one Topic
+of the Day, then a bounded current-affairs edition grouped into nine familiar
+UPSC subjects. Subjects, revision and the complete official-source archive sit
+behind that primary reading flow. It reads the generated publication in
+`data/upsc/`; `upsc-study/` is its crawlable, JavaScript-free archive.
 
 The registry currently covers PIB, RBI, SEBI, MEA, UN News, WHO and the Council
 of the EU. New records are source-only until the private Worker enrichment route

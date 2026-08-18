@@ -11,13 +11,17 @@ function test(name, body) {
   catch (error) { console.error('not ok - ' + name); throw error; }
 }
 
-test('exposes the five approved workspace views with Source Desk selected', function () {
-  for (const view of ['source', 'brief', 'syllabus', 'answer', 'memory']) {
+test('opens on the reading-first Today view and keeps technical sources last', function () {
+  for (const view of ['brief', 'syllabus', 'memory', 'source']) {
     assert.match(html, new RegExp('id="tab-' + view + '"'));
     assert.match(html, new RegExp('id="view-' + view + '"'));
   }
-  assert.match(html, /id="tab-source"[^>]*aria-selected="true"/);
-  assert.doesNotMatch(html, /id="view-source"[^>]*hidden/);
+  assert.match(html, /id="tab-brief"[^>]*aria-selected="true"[^>]*>Today</);
+  assert.doesNotMatch(html, /id="view-brief"[^>]*hidden/);
+  assert.match(html, /id="tab-syllabus"[^>]*>Subjects</);
+  assert.match(html, /id="tab-memory"[^>]*>Revision/);
+  assert.match(html, /id="tab-source"[^>]*>Official sources</);
+  assert.ok(html.indexOf('id="tab-brief"') < html.indexOf('id="tab-source"'));
 });
 
 test('provides complete Source Desk filters and status targets', function () {
@@ -38,13 +42,15 @@ test('keeps Notes and Due modes inside Memory Drill', function () {
   assert.match(html, /id="reviseBody"/);
 });
 
-test('provides published brief, syllabus, and answer-practice targets', function () {
+test('provides Topic of the Day, daily edition, subject library, and practice targets', function () {
   for (const id of [
+    'topicOfDay', 'dailyEdition', 'dailyEditionMeta', 'subjectJump',
     'briefEntries', 'briefState', 'syllabusList', 'syllabusState',
     'answerPracticeList', 'answerPracticeState', 'lookupResult',
   ]) assert.match(html, new RegExp('id="' + id + '"'));
-  assert.match(html, /Ready for recall only/);
-  assert.match(html, /Optional live topic lookup/);
+  assert.match(html, /Topic of the Day/);
+  assert.match(html, /Today’s current affairs/);
+  assert.match(html, /Search a subject or topic/);
 });
 
 test('loads the public content contract before render and app', function () {

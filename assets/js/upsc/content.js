@@ -106,6 +106,224 @@
     return Object.keys(groups).sort().map(function (id) { return groups[id]; });
   }
 
+  var SUBJECTS = [
+    {
+      id: 'polity-governance', label: 'Polity & Governance', paper: 'GS2', readMinutes: 10,
+      keywords: ['constitution', 'parliament', 'court', 'judicial', 'governance', 'election', 'rights', 'commission', 'ministry', 'scheme', 'welfare', 'cabinet', 'regulation', 'portal'],
+      publishers: [],
+      coreTopics: ['Constitution and institutions', 'Parliament and judiciary', 'Federalism', 'Governance and welfare delivery'],
+      lens: 'Connect the institution, legal basis, implementation design and accountability gap.',
+      prelimsPrompt: 'Identify the institution, legal instrument, eligibility rule and implementing authority.',
+      mainsPrompt: 'Assess constitutional fit, implementation capacity, federal implications and accountability.',
+      studyLens: ['Name the institution and its mandate.', 'Locate the legal or policy basis.', 'Separate design from implementation.', 'Build a balanced reform-oriented conclusion.'],
+    },
+    {
+      id: 'economy', label: 'Economy', paper: 'GS3', readMinutes: 10,
+      keywords: ['fiscal federalism', 'monetary policy', 'economy', 'economic', 'fiscal', 'monetary', 'inflation', 'bank', 'market', 'securities', 'investment', 'manufacturing', 'trade', 'finance', 'liquidity', 'repo', 'gdp', 'agriculture', 'crop', 'msme', 'infrastructure'],
+      publishers: ['rbi', 'sebi'],
+      coreTopics: ['Growth and inflation', 'Fiscal and monetary policy', 'Banking and markets', 'Agriculture, industry and infrastructure'],
+      lens: 'Connect the policy instrument to growth, inflation, jobs, inclusion and fiscal or financial stability.',
+      prelimsPrompt: 'Identify the institution, instrument, target variable and transmission channel.',
+      mainsPrompt: 'Examine intended outcomes, transmission, distributional effects and policy trade-offs.',
+      studyLens: ['Define the economic instrument.', 'Trace its transmission channel.', 'Identify winners, costs and exclusions.', 'End with stability plus inclusive growth.'],
+    },
+    {
+      id: 'environment', label: 'Environment', paper: 'GS3', readMinutes: 10,
+      keywords: ['climate', 'biodiversity', 'forest', 'wildlife', 'wetland', 'pollution', 'ecosystem', 'environment', 'grassland', 'desertification', 'energy transition', 'conservation', 'disaster'],
+      publishers: [],
+      coreTopics: ['Ecology and biodiversity', 'Climate mitigation and adaptation', 'Pollution', 'Disaster resilience'],
+      lens: 'Connect ecology, governance, finance, livelihoods and community participation.',
+      prelimsPrompt: 'Identify the ecosystem, species or convention, responsible institution and protected status.',
+      mainsPrompt: 'Assess ecological outcomes, implementation capacity, climate justice and livelihood trade-offs.',
+      studyLens: ['Define the ecological problem.', 'Map institutions and obligations.', 'Connect livelihoods with conservation.', 'Conclude with resilience and participation.'],
+    },
+    {
+      id: 'international-relations', label: 'International Relations', paper: 'GS2', readMinutes: 9,
+      keywords: ['bilateral', 'multilateral', 'strategic', 'diplomatic', 'foreign', 'summit', 'brics', 'asean', 'united nations', 'sanction', 'war', 'conflict', 'council', 'treaty', 'partnership', 'global south'],
+      publishers: ['mea', 'un-news', 'eu-council'],
+      coreTopics: ['India and its neighbourhood', 'Major-power relations', 'Multilateral institutions', 'Global governance'],
+      lens: 'Connect the actors and institution to India’s interests, strategic autonomy and the Global South.',
+      prelimsPrompt: 'Identify membership, headquarters, mandate, geography and the nature of the agreement.',
+      mainsPrompt: 'Evaluate convergences, constraints, India’s interests and the wider balance of power.',
+      studyLens: ['Name the actors and forum.', 'State India’s concrete interest.', 'Separate convergence from constraint.', 'Link the issue to strategic autonomy.'],
+    },
+    {
+      id: 'science-technology', label: 'Science & Technology', paper: 'GS3', readMinutes: 9,
+      keywords: ['technology', 'digital', 'space', 'satellite', 'quantum', 'semiconductor', 'electronics', 'artificial intelligence', 'cyber', 'biotechnology', 'research', 'innovation', 'telecom', 'network'],
+      publishers: [],
+      coreTopics: ['Digital public infrastructure', 'Space and defence technology', 'Biotechnology', 'Emerging technology governance'],
+      lens: 'Connect how the technology works to public value, strategic capacity, risk and regulation.',
+      prelimsPrompt: 'Identify the basic mechanism, application, responsible institution and technical limitation.',
+      mainsPrompt: 'Assess capacity, access, security, ethics, regulation and dependence on critical inputs.',
+      studyLens: ['Explain the mechanism simply.', 'Name the public or strategic application.', 'Identify access and security risks.', 'End with responsible innovation.'],
+    },
+    {
+      id: 'society-social-justice', label: 'Society & Social Justice', paper: 'GS1 · GS2', readMinutes: 9,
+      keywords: ['de-notified', 'social justice', 'health', 'education', 'youth', 'women', 'child', 'community', 'social', 'rehabilitation', 'inclusion', 'empowerment', 'nomadic', 'poverty', 'nutrition', 'disability', 'tribal', 'caste', 'migration', 'housing', 'skill'],
+      publishers: ['who'],
+      coreTopics: ['Health and education', 'Vulnerable groups', 'Urbanisation and migration', 'Social empowerment'],
+      lens: 'Connect the affected group to rights, access, state capacity and measurable outcomes.',
+      prelimsPrompt: 'Identify the target group, entitlement, nodal institution and delivery mechanism.',
+      mainsPrompt: 'Examine structural exclusion, access barriers, implementation and rights-based remedies.',
+      studyLens: ['Identify the affected group.', 'Name the access barrier.', 'Separate entitlement from delivery.', 'Conclude with dignity and capability.'],
+    },
+    {
+      id: 'history-culture', label: 'History & Culture', paper: 'GS1', readMinutes: 8,
+      keywords: ['heritage', 'culture', 'archaeology', 'history', 'civilisation', 'museum', 'manuscript', 'language', 'literature', 'art', 'architecture', 'anniversary'],
+      publishers: [],
+      coreTopics: ['Ancient and medieval India', 'Modern India', 'Art and architecture', 'Living cultural traditions'],
+      lens: 'Place the development in chronology, identify its cultural form and explain continuity or change.',
+      prelimsPrompt: 'Identify period, region, patronage, material features and associated tradition.',
+      mainsPrompt: 'Explain historical context, cultural significance, continuity and conservation challenges.',
+      studyLens: ['Place it in time and region.', 'Identify defining features.', 'Explain wider significance.', 'Connect preservation with living culture.'],
+    },
+    {
+      id: 'geography', label: 'Geography', paper: 'GS1', readMinutes: 8,
+      keywords: ['geography', 'monsoon', 'ocean', 'river', 'mountain', 'urban', 'population', 'earthquake', 'cyclone', 'map', 'region', 'natural resource'],
+      publishers: [],
+      coreTopics: ['Physical geography', 'Indian geography', 'Resources', 'Population and settlements'],
+      lens: 'Connect spatial pattern, physical process, human use and regional consequence.',
+      prelimsPrompt: 'Locate the region and identify the physical process, resource or spatial pattern.',
+      mainsPrompt: 'Explain the process, spatial variation, human impact and region-specific response.',
+      studyLens: ['Locate it on a map.', 'Explain the physical process.', 'Connect people and resources.', 'Use a region-specific response.'],
+    },
+    {
+      id: 'ethics-essay', label: 'Ethics & Essay', paper: 'GS4 · Essay', readMinutes: 8,
+      keywords: ['ethics', 'integrity', 'accountability', 'transparency', 'probity', 'civil service', 'leadership', 'values', 'dignity', 'courage'],
+      publishers: [],
+      coreTopics: ['Public-service values', 'Probity and accountability', 'Ethical dilemmas', 'Essay examples'],
+      lens: 'Identify stakeholders, competing values, consequences and the option that best serves constitutional morality.',
+      prelimsPrompt: 'Treat the item as an example; do not memorise moral claims as factual rules.',
+      mainsPrompt: 'Map stakeholders, value conflict, feasible options, consequences and a reasoned public-interest choice.',
+      studyLens: ['Map every stakeholder.', 'Name the value conflict.', 'Test options against consequences.', 'Choose with constitutional morality.'],
+    },
+  ];
+
+  function publicSubject(subject) {
+    return {
+      id: subject.id, label: subject.label, paper: subject.paper,
+      readMinutes: subject.readMinutes, coreTopics: subject.coreTopics.slice(),
+      lens: subject.lens, prelimsPrompt: subject.prelimsPrompt,
+      mainsPrompt: subject.mainsPrompt, studyLens: subject.studyLens.slice(),
+    };
+  }
+
+  function subjectText(record) {
+    return [record && record.title, record && record.officialSummary, record && record.anchor]
+      .join(' ').toLowerCase();
+  }
+
+  function inferSubject(record) {
+    var row = record || {};
+    var text = subjectText(row);
+    var scores = {};
+    SUBJECTS.forEach(function (subject) {
+      var score = subject.publishers.indexOf(row.publisherId) === -1 ? 0 : 2;
+      subject.keywords.forEach(function (keyword) {
+        if (text.indexOf(keyword) !== -1) score += keyword.indexOf(' ') === -1 ? 3 : 5;
+      });
+      scores[subject.id] = score;
+    });
+    var codes = Array.isArray(row.codes) ? row.codes : [];
+    if (codes.some(function (code) { return code.indexOf('GS4.') === 0 || code.indexOf('ESSAY.') === 0; })) scores['ethics-essay'] += 2;
+    if (codes.some(function (code) { return code.indexOf('GS2.') === 0; })) scores['polity-governance'] += 2;
+    if (codes.some(function (code) { return code.indexOf('GS3.') === 0; })) scores.economy += 1;
+    if (codes.some(function (code) { return code.indexOf('GS1.') === 0; })) scores['society-social-justice'] += 1;
+    var best = SUBJECTS[0];
+    SUBJECTS.forEach(function (subject) {
+      if (scores[subject.id] > scores[best.id]) best = subject;
+    });
+    return publicSubject(best);
+  }
+
+  function importanceScore(record) {
+    var text = subjectText(record);
+    var score = Number(record.priority) || 0;
+    if (record.sourceVerified) score += 4;
+    if (/\bpolicy\b|\bmission\b|\bscheme\b|\bact\b|\bbill\b|judgment|\breport\b|agreement|summit|guidance|regulation|rights|climate|biodiversity|grassland|desertification|unccd|health|reform/.test(text)) score += 18;
+    if (/money market operations as on|auction of government|tender|vacancy|appointment|courtesy call/.test(text)) score -= 24;
+    score += Math.min(8, Math.floor(String(record.officialSummary || '').length / 250));
+    return score;
+  }
+
+  function buildDailyEdition(records, options) {
+    var value = options || {};
+    var limit = Math.max(1, Math.min(15, Number(value.limit) || 12));
+    var rows = (Array.isArray(records) ? records : []).slice().sort(function (a, b) {
+      return b.publishedAt.localeCompare(a.publishedAt);
+    });
+    if (!rows.length) return { editionDate: '', items: [], groups: [] };
+    var editionDate = rows[0].publishedAt.slice(0, 10);
+    var editionTime = Date.parse(editionDate + 'T23:59:59Z');
+    var cutoff = editionTime - (3 * 24 * 60 * 60 * 1000);
+    var candidates = rows.filter(function (row) {
+      var parsed = Date.parse(row.publishedAt);
+      return Number.isFinite(parsed) && parsed >= cutoff && parsed <= editionTime;
+    }).map(function (row) {
+      return Object.assign({}, row, { subject: inferSubject(row), editionScore: importanceScore(row) });
+    }).sort(function (a, b) {
+      return b.editionScore - a.editionScore || b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id);
+    });
+    var buckets = {};
+    candidates.forEach(function (row) {
+      if (!buckets[row.subject.id]) buckets[row.subject.id] = [];
+      buckets[row.subject.id].push(row);
+    });
+    var selected = [];
+    while (selected.length < limit) {
+      var added = false;
+      SUBJECTS.forEach(function (subject) {
+        if (selected.length >= limit || !buckets[subject.id] || !buckets[subject.id].length) return;
+        selected.push(buckets[subject.id].shift());
+        added = true;
+      });
+      if (!added) break;
+    }
+    var groups = SUBJECTS.map(function (subject) {
+      var items = selected.filter(function (row) { return row.subject.id === subject.id; });
+      return items.length ? { subject: publicSubject(subject), items: items } : null;
+    }).filter(Boolean);
+    return { editionDate: editionDate, items: selected, groups: groups };
+  }
+
+  function selectTopicOfDay(records, notes) {
+    var ready = (Array.isArray(notes) ? notes : []).filter(function (note) {
+      return note && (note.editorialStatus === 'source-backed' || note.editorialStatus === 'reviewed');
+    }).sort(function (a, b) {
+      return b.priority - a.priority || b.publishedAt.localeCompare(a.publishedAt);
+    });
+    if (ready.length) {
+      var note = ready[0];
+      return Object.assign({}, note, {
+        id: note.sourceId, kind: 'note', subject: inferSubject(note),
+      });
+    }
+    var edition = buildDailyEdition(records, { limit: 15 });
+    var ranked = edition.items.slice().sort(function (a, b) {
+      var aDepth = String(a.officialSummary || '').length - String(a.title || '').length;
+      var bDepth = String(b.officialSummary || '').length - String(b.title || '').length;
+      var aTopicScore = a.editionScore + (aDepth <= 24 ? -12 : Math.min(12, Math.floor(aDepth / 20)));
+      var bTopicScore = b.editionScore + (bDepth <= 24 ? -12 : Math.min(12, Math.floor(bDepth / 20)));
+      return bTopicScore - aTopicScore || b.publishedAt.localeCompare(a.publishedAt);
+    });
+    if (!ranked.length) return null;
+    var source = ranked[0];
+    return Object.assign({}, source, {
+      kind: 'source', studyLens: source.subject.studyLens.slice(),
+    });
+  }
+
+  function subjectLibrary(records) {
+    var counts = {};
+    (Array.isArray(records) ? records : []).forEach(function (row) {
+      var id = inferSubject(row).id;
+      counts[id] = (counts[id] || 0) + 1;
+    });
+    return SUBJECTS.map(function (subject) {
+      return Object.assign(publicSubject(subject), { currentCount: counts[subject.id] || 0 });
+    });
+  }
+
   function cleanList(value, limit, max) {
     return (Array.isArray(value) ? value : []).map(function (row) {
       return clean(row, max);
@@ -310,6 +528,10 @@
     normalizeSourceIndex: normalizeSourceIndex,
     filterSources: filterSources,
     groupPublishers: groupPublishers,
+    inferSubject: inferSubject,
+    buildDailyEdition: buildDailyEdition,
+    selectTopicOfDay: selectTopicOfDay,
+    subjectLibrary: subjectLibrary,
     normalizeExamIndex: normalizeExamIndex,
     groupBySyllabus: groupBySyllabus,
     normalizeSyllabusIndex: normalizeSyllabusIndex,

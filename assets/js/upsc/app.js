@@ -17,7 +17,7 @@
   }
 
   var state = {
-    view: 'source',
+    view: 'brief',
     sources: [],
     sourceGeneratedAt: '',
     sourceError: '',
@@ -92,7 +92,7 @@
 
   /* ─────────────────────────────── views ─────────────────────────────── */
 
-  var VIEWS = ['source', 'brief', 'syllabus', 'answer', 'memory'];
+  var VIEWS = ['brief', 'syllabus', 'memory', 'source'];
 
   function setView(name) {
     if (VIEWS.indexOf(name) === -1) return;
@@ -106,8 +106,10 @@
     });
     if (name === 'source') renderSourceDesk();
     if (name === 'brief') renderBrief();
-    if (name === 'syllabus') renderSyllabus();
-    if (name === 'answer') loadPracticeNotes();
+    if (name === 'syllabus') {
+      renderSyllabus();
+      loadPracticeNotes();
+    }
     if (name === 'memory') setMemoryMode(state.memoryMode);
   }
 
@@ -185,6 +187,7 @@
     state.sourceLoading = true;
     state.sourceError = '';
     renderSourceDesk();
+    renderBrief();
     fetch('data/upsc/source-index.json', { cache: 'no-cache' })
       .then(function (response) {
         if (!response.ok) throw new Error('Published source data could not be loaded.');
@@ -202,6 +205,8 @@
       .then(function () {
         state.sourceLoading = false;
         renderSourceDesk();
+        renderBrief();
+        renderSyllabus();
       });
 
     fetch('data/upsc/coverage.json', { cache: 'no-cache' })
@@ -251,7 +256,7 @@
         state.briefLoading = false;
         el('briefLoading').hidden = true;
         renderBrief();
-        if (state.view === 'answer') loadPracticeNotes();
+        if (state.view === 'syllabus') loadPracticeNotes();
       });
   }
 
@@ -287,58 +292,72 @@
 
   function renderBriefMeta() {
     var meta = el('briefMeta');
-    if (!state.examSummaries.length) {
-      if (!state.briefLoading) meta.textContent = state.briefError ? 'Publication unavailable.' : 'No mapped notes published yet.';
+    if (state.sourceLoading) {
+      meta.textContent = 'Reading the latest official publication.';
       return;
     }
-    var shown = filteredItems().length;
-    var lockNote = '';
-    if (state.mode && state.mode.name === 'LOCK') {
-      lockNote = ' In lock mode this is for confirming what you already hold — do not start anything new from it.';
-    } else if (state.mode && state.mode.name === 'COMPRESS') {
-      lockNote = ' In compress mode, save only what scores high enough to be worth a revision slot.';
+    if (!state.sources.length) {
+      meta.textContent = state.sourceError ? 'Today’s source edition is unavailable.' : 'No official updates published yet.';
+      return;
     }
+    var edition = Content.buildDailyEdition(blogSources(), { limit: state.scope === 'weekly' ? 15 : 12 });
+    meta.innerHTML = '<strong>' + edition.items.length + '</strong> selected official updates' +
+      (edition.editionDate ? ' · edition ' + Render.esc(edition.editionDate) : '') +
+      (state.sourceGeneratedAt ? ' · refreshed ' + Render.esc(state.sourceGeneratedAt.slice(11, 16)) + ' UTC' : '') + '.';
+  }
 
-    meta.innerHTML = '<strong>' + shown + '</strong> of ' + state.examSummaries.length +
-      ' mapped notes · latest trigger ' + Render.esc(latestExamDay()) +
-      (state.examGeneratedAt ? ' · built ' + Render.esc(state.examGeneratedAt.slice(0, 16).replace('T', ' ')) + ' UTC' : '') +
-      '. Scores rank revision priority, not likelihood.' + Render.esc(lockNote);
+  function blogSources() {
+    var query = state.query;
+    return state.sources.filter(function (row) {
+      if (query && [row.title, row.officialSummary, row.publisherName, Content.inferSubject(row).label]
+        .join(' ').toLowerCase().indexOf(query) === -1) return false;
+      if (state.papers.length) {
+        var paper = Content.inferSubject(row).paper;
+        if (!state.papers.some(function (value) { return paper.indexOf(value) !== -1; })) return false;
+      }
+      if (state.verifiedOnly) {
+        return state.examSummaries.some(function (note) { return note.sourceId === row.id; });
+      }
+      return true;
+    });
   }
 
   function renderBrief() {
-    el('briefTitle').textContent = state.scope === 'weekly' ? 'Published weekly brief' : 'Published daily brief';
+    el('briefTitle').textContent = state.query
+      ? 'Search results for “' + el('q').value.trim() + '”'
+      : (state.scope === 'weekly' ? 'Your 7-day UPSC Catch-up' : 'Today’s UPSC Brief');
+    el('dailyTitle').textContent = state.query ? 'Matching current affairs' : 'Today’s current affairs';
     var list = el('briefEntries');
-    if (state.briefLoading) return;
-    if (state.briefError) {
-      list.innerHTML = '';
-      el('clusterBlock').hidden = true;
-      el('discardBlock').hidden = true;
-      el('briefMeta').textContent = 'Publication unavailable.';
-      showBriefState('The published brief is unavailable', state.briefError +
-        ' Source Desk, the static archive, and your device-local memory queue still work.');
+    if (state.sourceLoading) {
+      el('briefLoading').hidden = false;
       return;
     }
-    if (!state.examSummaries.length) {
-      list.innerHTML = '';
-      showBriefState('No topper notes published yet',
-        'Every official record remains in Source Desk while mapping and evidence checks continue.');
-      renderBriefMeta();
-      return;
+    el('briefLoading').hidden = true;
+    var sources = blogSources();
+    var edition = Content.buildDailyEdition(sources, { limit: state.scope === 'weekly' ? 15 : 12 });
+    var topic = Content.selectTopicOfDay(sources, state.examSummaries);
+    if (topic && state.examDetails[topic.id]) topic = Object.assign({}, state.examDetails[topic.id], {
+      id: topic.id, kind: 'note', subject: Content.inferSubject(state.examDetails[topic.id]),
+    });
+    briefStateEl().hidden = edition.items.length > 0;
+    if (!edition.items.length) {
+      showBriefState(state.verifiedOnly ? 'No reviewed topper notes match yet' : 'No current affairs match',
+        state.verifiedOnly
+          ? 'Turn off Topper notes only to read the official-source edition while enrichment continues.'
+          : 'Clear the search or paper filter, or open Official sources for the complete archive.');
     }
-    var items = filteredItems();
-    briefStateEl().hidden = items.length > 0;
-    if (!items.length) {
-      list.innerHTML = '';
-      showBriefState('Nothing matches those filters',
-        'Clear the paper filters, search box, or ready-for-recall toggle to see the rest of the publication.');
-    } else {
-      list.innerHTML = items.map(function (item) {
-        if (state.examExpandedId === item.sourceId && state.examDetails[item.sourceId]) {
-          return '<li class="an-exam-expanded">' + Render.examNote(state.examDetails[item.sourceId], {}) + '</li>';
-        }
-        return '<li>' + Render.examSummary(item, { loading: state.examDetailLoading === item.sourceId }) + '</li>';
-      }).join('');
-    }
+    el('topicOfDay').innerHTML = Render.topicOfDay(topic);
+    el('dailyEdition').innerHTML = Render.dailyEdition(edition);
+    el('dailyEditionMeta').innerHTML = edition.items.length
+      ? '<strong>' + edition.items.length + '</strong> developments across <strong>' + edition.groups.length + '</strong> subjects.'
+      : 'No developments match the current reading filters.';
+    el('subjectJump').innerHTML = edition.groups.map(function (group) {
+      return '<a href="#daily-' + Render.esc(group.subject.id) + '">' + Render.esc(group.subject.label) +
+        ' <span>' + group.items.length + '</span></a>';
+    }).join('');
+    list.innerHTML = state.examExpandedId && state.examDetails[state.examExpandedId]
+      ? '<section class="an-complete-note"><p class="an-label">Complete topper note</p>' +
+        Render.examNote(state.examDetails[state.examExpandedId], {}) + '</section>' : '';
     el('clusterBlock').hidden = true;
     el('discardBlock').hidden = true;
     renderBriefMeta();
@@ -398,25 +417,27 @@
   function renderSyllabus() {
     var list = el('syllabusList');
     var empty = el('syllabusState');
-    if (state.syllabusLoading) {
+    if (state.syllabusLoading && !state.sources.length) {
       empty.hidden = false;
-      empty.innerHTML = '<h3>Loading the syllabus map</h3><p>Joining static anchors to current official triggers.</p>';
+      empty.innerHTML = '<h3>Building the subject shelves</h3><p>Joining the static syllabus to current official triggers.</p>';
       return;
     }
-    if (state.syllabusError) {
-      list.innerHTML = '';
-      empty.hidden = false;
-      empty.innerHTML = '<h3>Syllabus map unavailable</h3><p>' + Render.esc(state.syllabusError) + '</p>';
-      return;
-    }
+    var subjects = Content.subjectLibrary(state.sources).filter(function (subject) {
+      if (!state.query) return true;
+      return [subject.label, subject.paper, subject.lens].concat(subject.coreTopics)
+        .join(' ').toLowerCase().indexOf(state.query) !== -1;
+    });
     var groups = state.syllabusGroups.filter(function (group) {
       if (!state.query) return true;
       return [group.code, group.anchor, group.staticDefinition].join(' ').toLowerCase().indexOf(state.query) !== -1;
     });
-    empty.hidden = groups.length > 0;
-    list.innerHTML = groups.map(Render.syllabusAnchor).join('');
-    el('syllabusMeta').innerHTML = '<strong>' + groups.length + '</strong> anchor-code groups' +
-      (state.syllabusGeneratedAt ? ' · built ' + Render.esc(state.syllabusGeneratedAt.slice(0, 10)) : '') + '.';
+    empty.hidden = subjects.length > 0;
+    list.innerHTML = Render.subjectShelves(subjects) +
+      (groups.length ? '<section class="an-mapped-anchors"><p class="an-label">Published static anchors</p><h2>Current topics with complete notes</h2>' +
+        groups.map(Render.syllabusAnchor).join('') + '</section>' : '');
+    el('syllabusMeta').innerHTML = '<strong>' + subjects.length + '</strong> subjects · <strong>' +
+      state.sources.length + '</strong> current official updates' +
+      (state.syllabusError ? ' · detailed anchor map temporarily unavailable' : '') + '.';
   }
 
   function loadPracticeNotes() {
@@ -464,13 +485,13 @@
     }
     if (!ENDPOINT) {
       state.lookupError = 'The lookup endpoint is not configured for this page.';
-      setView('answer');
+      setView('syllabus');
       renderLookup();
       return;
     }
     if (state.lookupLoading) return;
 
-    setView('answer');
+    setView('syllabus');
     state.lookupLoading = true;
     state.lookupError = '';
     state.lookup = null;
@@ -982,7 +1003,6 @@
         renderSourceDesk();
       } else if (state.view === 'memory') renderNotes();
       else if (state.view === 'syllabus') renderSyllabus();
-      else if (state.view === 'answer') renderAnswerLab();
       else renderBrief();
     });
     search.addEventListener('keydown', function (event) {
@@ -1013,11 +1033,17 @@
     });
 
     /* Published topper-note expansion, recall reveal, and evidence-gated save. */
-    el('briefEntries').addEventListener('click', function (event) {
+    function handlePublishedNoteClick(event) {
       var button = event.target.closest('[data-act]');
       if (!button) return;
       var act = button.getAttribute('data-act');
       var id = button.getAttribute('data-id');
+      if (act === 'expand-topic') {
+        el('q').value = button.getAttribute('data-topic') || '';
+        state.query = '';
+        doLookup();
+        return;
+      }
       if (act === 'open-exam') {
         openExamDetail(id);
         return;
@@ -1071,6 +1097,19 @@
       renderNotes();
       renderCounts();
       renderRail();
+    }
+    el('briefEntries').addEventListener('click', handlePublishedNoteClick);
+    el('topicOfDay').addEventListener('click', handlePublishedNoteClick);
+
+    el('syllabusList').addEventListener('click', function (event) {
+      var button = event.target.closest('[data-subject-jump]');
+      if (!button) return;
+      var subjectId = button.getAttribute('data-subject-jump');
+      setView('brief');
+      window.setTimeout(function () {
+        var target = document.getElementById('daily-' + subjectId);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 0);
     });
 
     /* Saving from a lookup */
@@ -1135,7 +1174,6 @@
     loadSourceIndex();
     loadBrief();
     loadSyllabus();
-    if (state.mode && state.mode.name === 'LOCK') setView('memory');
   }
 
   if (document.readyState === 'loading') {
