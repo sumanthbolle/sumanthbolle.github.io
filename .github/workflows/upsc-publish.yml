@@ -33,14 +33,6 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Verify publisher configuration
-        env:
-          UPSC_ENRICH_ENDPOINT: ${{ secrets.UPSC_ENRICH_ENDPOINT }}
-          UPSC_PUBLISH_TOKEN: ${{ secrets.UPSC_PUBLISH_TOKEN }}
-        run: |
-          test -n "$UPSC_ENRICH_ENDPOINT" || { echo "Missing UPSC_ENRICH_ENDPOINT"; exit 1; }
-          test -n "$UPSC_PUBLISH_TOKEN" || { echo "Missing UPSC_PUBLISH_TOKEN"; exit 1; }
-
       - name: Run publisher tests
         run: |
           python -m unittest discover -s scripts/upsc -p 'test_*.py'
@@ -69,11 +61,15 @@ jobs:
         env:
           UPSC_ENRICH_ENDPOINT: ${{ secrets.UPSC_ENRICH_ENDPOINT }}
           UPSC_PUBLISH_TOKEN: ${{ secrets.UPSC_PUBLISH_TOKEN }}
-        run: >-
-          python scripts/upsc/enrich.py
-          --output data/upsc
-          --endpoint "$UPSC_ENRICH_ENDPOINT"
-          --token "$UPSC_PUBLISH_TOKEN"
+        run: |
+          if [ -z "$UPSC_ENRICH_ENDPOINT" ] || [ -z "$UPSC_PUBLISH_TOKEN" ]; then
+            echo "::notice::Optional enrichment is not configured; publishing verified official-source records without generated notes."
+            exit 0
+          fi
+          python scripts/upsc/enrich.py \
+            --output data/upsc \
+            --endpoint "$UPSC_ENRICH_ENDPOINT" \
+            --token "$UPSC_PUBLISH_TOKEN"
 
       - name: Build indexes and crawlable pages
         run: |

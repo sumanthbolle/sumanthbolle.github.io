@@ -2,7 +2,9 @@
 
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
+import gzip
 from html.parser import HTMLParser
+import io
 import json
 import re
 from typing import Any, Callable, Optional
@@ -265,5 +267,14 @@ def fetch_source_details(
         if len(body) > MAX_PAYLOAD_BYTES:
             raise ValueError("source payload exceeds 5 MiB")
         content_type = response.headers.get("Content-Type", "")
+        content_encoding = str(response.headers.get("Content-Encoding", ""))
+    if content_encoding.split(",", 1)[0].strip().lower() == "gzip":
+        try:
+            with gzip.GzipFile(fileobj=io.BytesIO(body)) as compressed:
+                body = compressed.read(MAX_PAYLOAD_BYTES + 1)
+        except (EOFError, OSError) as error:
+            raise ValueError("malformed gzip payload") from error
+        if len(body) > MAX_PAYLOAD_BYTES:
+            raise ValueError("source payload exceeds 5 MiB after decompression")
     rows = parse_payload(config, body, content_type)
     return rows, {"finalUrl": final_url, "contentType": content_type}

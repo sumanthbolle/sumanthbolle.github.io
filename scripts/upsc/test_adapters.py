@@ -1,7 +1,8 @@
+import gzip
 import unittest
 from pathlib import Path
 
-from scripts.upsc.adapters import parse_payload
+from scripts.upsc.adapters import fetch_source_details, parse_payload
 from scripts.upsc.models import SourceConfig
 
 
@@ -86,6 +87,34 @@ class AdapterTests(unittest.TestCase):
         </item></channel></rss>'''
         rows = parse_payload(source_config("rss"), body, "text/xml")
         self.assertEqual(rows[0]["url"], "https://pib.gov.in/release/150192")
+
+    def test_fetch_decompresses_gzip_feed_sent_without_negotiation(self):
+        compressed = gzip.compress(fixture_bytes("pib-rss.xml"))
+
+        class GzipResponse:
+            headers = {
+                "Content-Type": "application/rss+xml; charset=utf-8",
+                "Content-Encoding": "gzip",
+            }
+
+            def read(self, limit=-1):
+                return compressed if limit < 0 else compressed[:limit]
+
+            def geturl(self):
+                return "https://pib.gov.in/feed.xml"
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, traceback):
+                return False
+
+        rows, details = fetch_source_details(
+            source_config("rss"), lambda request, timeout=20: GzipResponse()
+        )
+
+        self.assertEqual(rows[0]["title"], "Cabinet approves fiscal policy")
+        self.assertEqual(details["contentType"], "application/rss+xml; charset=utf-8")
 
 
 if __name__ == "__main__":

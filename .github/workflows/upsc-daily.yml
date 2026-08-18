@@ -55,7 +55,7 @@ jobs:
       - name: Refresh one anchor's trigger layer
         id: refresh
         env:
-          PPLX_API_KEY: ${{ secrets.PPLX_API_KEY }}
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
         run: |
           set +e
           if [ -n "${{ github.event.inputs.anchor }}" ]; then
