@@ -374,7 +374,48 @@
   <link rel="stylesheet" href="assets/css/nav-utilities.css">
 </head>
 <body>
-  <nav><div class="nav-c"><a href="index.html" class="nav-logo">Sumanth Bolle</a><ul class="nav-links"><li><a href="index.html#about">About</a></li><li><a href="servicenow.html">ServiceNow</a></li><li><a href="blog.html">Blog</a></li><li><a href="interviews.html">Interviews</a></li><li><a href="summaverick.html">Summaverick</a></li><li class="nav-drop" data-nav-drop><button type="button" class="nav-drop__btn" aria-expanded="false" aria-haspopup="true" aria-controls="navUtilities">Utilities<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="nav-drop__menu" id="navUtilities" role="menu"><a href="flights.html" role="menuitem"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a><a href="metals.html" role="menuitem"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a><a href="save-yourself.html" role="menuitem"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a><a href="upsc.html" role="menuitem"><span class="nav-drop__name">Anchor</span><span class="nav-drop__desc">UPSC brief and revision notes</span></a><a href="upsc-patterns.html" role="menuitem"><span class="nav-drop__name">Pattern Atlas</span><span class="nav-drop__desc">20 years of UPSC question patterns</span></a></div></li><li><a href="index.html#contact">Contact</a></li><li><button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><svg class="sun" viewBox="0 0 24 24"><path d="M12 17.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zm0 1.5a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-17a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 2zm0 18a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 20zM4.22 4.22a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06L4.22 5.28a.75.75 0 0 1 0-1.06zm13.44 13.44a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.06zM2 12a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 2 12zm18 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 20 12zM5.28 18.72a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 1 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0zm13.44-13.44a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 1 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0z"/></svg><svg class="moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg></button></li></ul><button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button></div><div class="mobile-menu" id="mobileMenu"><a href="index.html">Home</a><a href="servicenow.html">ServiceNow</a><a href="blog.html">Blog</a><a href="interviews.html">Interviews</a><a href="summaverick.html">Summaverick</a><span class="mobile-menu__label">Utilities</span><a class="mobile-menu__sub" href="flights.html">SkyFare</a><a class="mobile-menu__sub" href="metals.html">Metals</a><a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a><a class="mobile-menu__sub" href="upsc.html">Anchor</a><a class="mobile-menu__sub" href="upsc-patterns.html">Pattern Atlas</a><a href="index.html#contact">Contact</a></div></nav>
+  <nav>
+  <div class="nav-c">
+    <a href="index.html" class="nav-logo">Sumanth Bolle</a>
+    <ul class="nav-links">
+      <li class="nav-drop" data-nav-drop data-nav-group="learn">
+        <button type="button" class="nav-drop__btn active" aria-expanded="false" aria-controls="navLearn">Learn<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-drop__menu" id="navLearn" data-nav-panel="learn">
+          <a href="servicenow.html"><span class="nav-drop__name">ServiceNow Central</span><span class="nav-drop__desc">Platform guides and practice</span></a>
+          <a href="blog.html"><span class="nav-drop__name">Articles &amp; Tutorials</span><span class="nav-drop__desc">Technical articles and walkthroughs</span></a>
+          <a href="interviews.html"><span class="nav-drop__name">Interview Prep</span><span class="nav-drop__desc">Scenario questions and explanations</span></a>
+          <a href="upsc.html"><span class="nav-drop__name">UPSC Today</span><span class="nav-drop__desc">Current affairs and revision</span></a>
+        </div>
+      </li>
+      <li class="nav-drop" data-nav-drop data-nav-group="tools">
+        <button type="button" class="nav-drop__btn" aria-expanded="false" aria-controls="navTools">Tools<svg class="nav-drop__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="nav-drop__menu" id="navTools" data-nav-panel="tools">
+          <a href="flights.html"><span class="nav-drop__name">SkyFare</span><span class="nav-drop__desc">Flight search and fare comparison</span></a>
+          <a href="metals.html"><span class="nav-drop__name">Metals</span><span class="nav-drop__desc">Gold and silver prices</span></a>
+          <a href="save-yourself.html"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
+        </div>
+      </li>
+      <li><a data-nav-link="summaverick" href="summaverick.html">Summaverick</a></li>
+      <li><a data-nav-link="about" href="index.html#about">About</a></li>
+      <li><button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><svg class="sun" viewBox="0 0 24 24"><path d="M12 17.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zm0 1.5a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-17a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 2zm0 18a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 20zM4.22 4.22a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06L4.22 5.28a.75.75 0 0 1 0-1.06zm13.44 13.44a.75.75 0 0 1 1.06 0l1.06 1.06a.75.75 0 0 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.06zM2 12a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 2 12zm18 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 20 12zM5.28 18.72a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 1 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0zm13.44-13.44a.75.75 0 0 1 0-1.06l1.06-1.06a.75.75 0 1 1 1.06 1.06l-1.06 1.06a.75.75 0 0 1-1.06 0z"/></svg><svg class="moon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu" data-mobile-nav>
+    <a href="index.html">Home</a>
+    <span class="mobile-menu__label" data-mobile-group="learn">Learn</span>
+    <a class="mobile-menu__sub" href="servicenow.html">ServiceNow Central</a>
+    <a class="mobile-menu__sub" href="blog.html">Articles &amp; Tutorials</a>
+    <a class="mobile-menu__sub" href="interviews.html">Interview Prep</a>
+    <a class="mobile-menu__sub" href="upsc.html">UPSC Today</a>
+    <span class="mobile-menu__label" data-mobile-group="tools">Tools</span>
+    <a class="mobile-menu__sub" href="flights.html">SkyFare</a>
+    <a class="mobile-menu__sub" href="metals.html">Metals</a>
+    <a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a>
+    <a href="summaverick.html">Summaverick</a>
+    <a href="index.html#about">About</a>
+  </div>
+</nav>
   <div class="sub-tabs">
     <a href="interviews.html" class="sub-tab">Interviews</a>
     <a href="quiz.html" class="sub-tab active">Quiz</a>
