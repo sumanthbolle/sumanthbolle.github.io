@@ -16,6 +16,8 @@ const dailyWorkflow = fs.readFileSync(
 assert.match(publishWorkflow, /cron: "15 0,6,12,18 \* \* \*"/);
 assert.match(publishWorkflow, /workflow_dispatch:/);
 assert.match(publishWorkflow, /permissions:\s+contents: write/);
+assert.doesNotMatch(publishWorkflow, /ref:\s+main/);
+assert.match(publishWorkflow, /git push origin "HEAD:\$\{GITHUB_REF_NAME\}"/);
 assert.match(publishWorkflow, /UPSC_ENRICH_ENDPOINT/);
 assert.match(publishWorkflow, /UPSC_PUBLISH_TOKEN/);
 assert.doesNotMatch(publishWorkflow, /Verify publisher configuration/);
