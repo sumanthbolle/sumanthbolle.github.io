@@ -44,10 +44,11 @@ jobs:
           node scripts/test-upsc-workflow.js
 
       - name: Verify all official source contracts
-        run: >-
-          python scripts/upsc/publish.py check-sources
-          --registry data/upsc/source-registry.json
-          --strict > data/upsc/source-health.json
+        run: |
+          set -o pipefail
+          python scripts/upsc/publish.py check-sources \
+            --registry data/upsc/source-registry.json \
+            --strict | tee data/upsc/source-health.json
 
       - name: Ingest official records
         run: >-

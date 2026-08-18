@@ -22,6 +22,7 @@ assert.match(publishWorkflow, /UPSC_ENRICH_ENDPOINT/);
 assert.match(publishWorkflow, /UPSC_PUBLISH_TOKEN/);
 assert.doesNotMatch(publishWorkflow, /Verify publisher configuration/);
 assert.match(publishWorkflow, /Optional enrichment is not configured/);
+assert.match(publishWorkflow, /set -o pipefail[\s\S]*check-sources[\s\S]*tee data\/upsc\/source-health\.json/);
 assert.ok(publishWorkflow.indexOf('Ingest official records') < publishWorkflow.indexOf('Enrich source records'));
 assert.match(publishWorkflow, /check-sources[\s\S]*--strict/);
 assert.match(publishWorkflow, /publish\.py build-pages/);
