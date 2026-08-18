@@ -202,11 +202,76 @@
     return papers;
   }
 
+  function cleanList(value, limit, max) {
+    return (Array.isArray(value) ? value : []).map(function (row) {
+      return cleanText(row, max);
+    }).filter(Boolean).slice(0, limit);
+  }
+
+  function normalizeRecallPayload(value, verified) {
+    var payload = value && typeof value === 'object' ? value : {};
+    var facts = [];
+    if (verified) {
+      facts = (Array.isArray(payload.officialFacts) ? payload.officialFacts : [])
+        .map(function (fact) {
+          var text = cleanText(fact && fact.text, 360);
+          var evidenceUrl = safeHttpUrl(fact && fact.evidenceUrl);
+          var evidenceLocator = cleanText(fact && fact.evidenceLocator, 80);
+          var verification = cleanText(fact && fact.verification, 24);
+          if (!text || !evidenceUrl || !evidenceLocator ||
+              ['source-backed', 'reviewed'].indexOf(verification) === -1) return null;
+          var result = {
+            text: text,
+            evidenceUrl: evidenceUrl,
+            evidenceLocator: evidenceLocator,
+            verification: verification,
+          };
+          var prompt = cleanText(fact && fact.cloze && fact.cloze.prompt, 360);
+          var answer = cleanText(fact && fact.cloze && fact.cloze.answer, 120);
+          if (prompt && answer && prompt.split('____').length === 2) {
+            result.cloze = { prompt: prompt, answer: answer };
+          }
+          return result;
+        }).filter(Boolean).slice(0, 6);
+    }
+    var prelimsTraps = (Array.isArray(payload.prelimsTraps) ? payload.prelimsTraps : [])
+      .map(function (trap) {
+        var statement = cleanText(trap && trap.statement, 260);
+        var explanation = cleanText(trap && trap.explanation, 260);
+        return statement && explanation ? {
+          statement: statement, correct: !!(trap && trap.correct), explanation: explanation,
+        } : null;
+      }).filter(Boolean).slice(0, 4);
+    var mainsPractice = (Array.isArray(payload.mainsPractice) ? payload.mainsPractice : [])
+      .map(function (practice) {
+        var directive = cleanText(practice && practice.directive, 30).toLowerCase();
+        var marks = Number(practice && practice.marks);
+        var stem = cleanText(practice && practice.stem, 320);
+        var skeleton = cleanList(practice && practice.skeleton, 8, 220);
+        if (!directive || [10, 15].indexOf(marks) === -1 || !stem || !skeleton.length) return null;
+        return {
+          directive: directive, marks: marks,
+          wordBudget: marks === 10 ? 150 : 250,
+          timeMinutes: marks === 10 ? 7 : 11,
+          stem: stem, skeleton: skeleton,
+        };
+      }).filter(Boolean).slice(0, 3);
+    return {
+      officialFacts: facts,
+      argumentsFor: cleanList(payload.argumentsFor, 4, 240),
+      argumentsAgainst: cleanList(payload.argumentsAgainst, 4, 240),
+      prelimsTraps: prelimsTraps,
+      mainsPractice: mainsPractice,
+      use: cleanText(payload.use, 360),
+    };
+  }
+
   function normalizeNoteContent(input) {
     var value = input && typeof input === 'object' ? input : {};
     var codes = normalizeCodes(value.codes);
     var sourceUrl = safeHttpUrl(value.sourceUrl);
 
+    var verified = value.verified === true && !!sourceUrl;
     return {
       title: cleanText(value.title, 160),
       anchor: cleanText(value.anchor, 60),
@@ -219,10 +284,13 @@
       prelimsFact: cleanText(value.prelimsFact, 260),
       sourceUrl: sourceUrl,
       sourceName: sourceUrl ? cleanText(value.sourceName, 80) : '',
-      verified: value.verified === true && !!sourceUrl,
+      verified: verified,
       score: Number.isFinite(Number(value.score)) ? Number(value.score) : null,
       band: value.band || '',
       origin: value.origin || 'own',
+      sourceId: cleanText(value.sourceId, 80),
+      whyInNews: cleanText(value.whyInNews, 320),
+      recallPayload: normalizeRecallPayload(value.recallPayload, verified),
     };
   }
 
@@ -278,6 +346,9 @@
         score: content.score,
         band: content.band,
         origin: content.origin,
+        sourceId: content.sourceId,
+        whyInNews: content.whyInNews,
+        recallPayload: content.recallPayload,
         createdAt: today(),
         stage: 0,
         streak: 0,

@@ -30,6 +30,10 @@ test('provides complete Source Desk filters and status targets', function () {
 test('keeps Notes and Due modes inside Memory Drill', function () {
   assert.match(html, /id="memoryNotes"/);
   assert.match(html, /id="memoryDue"/);
+  assert.match(html, /id="memoryCloze"/);
+  assert.match(html, /id="memoryPrelims"/);
+  assert.match(html, /id="memorySkeleton"/);
+  assert.match(html, /id="memoryDrillBody"/);
   assert.match(html, /id="notesList"/);
   assert.match(html, /id="reviseBody"/);
 });
@@ -45,7 +49,8 @@ test('provides published brief, syllabus, and answer-practice targets', function
 
 test('loads the public content contract before render and app', function () {
   const content = html.indexOf('assets/js/upsc/content.js');
+  const memory = html.indexOf('assets/js/upsc/memory.js');
   const render = html.indexOf('assets/js/upsc/render.js');
   const app = html.indexOf('assets/js/upsc/app.js');
-  assert.ok(content > 0 && content < render && render < app);
+  assert.ok(content > 0 && content < memory && memory < render && render < app);
 });

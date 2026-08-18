@@ -9,6 +9,7 @@
   var Store = window.AnchorStore;
   var Cycle = window.AnchorCycle;
   var Content = window.AnchorContent;
+  var Memory = window.AnchorMemory;
   var Render = window.AnchorRender;
 
   function el(id) {
@@ -49,6 +50,8 @@
     queueIndex: 0,
     queuePassed: 0,
     queueReset: 0,
+    memoryMode: 'due',
+    drillQueue: [],
     mode: null,
   };
 
@@ -105,7 +108,7 @@
     if (name === 'brief') renderBrief();
     if (name === 'syllabus') renderSyllabus();
     if (name === 'answer') loadPracticeNotes();
-    if (name === 'memory') renderNotes();
+    if (name === 'memory') setMemoryMode(state.memoryMode);
   }
 
   /* ─────────────────────────── official sources ─────────────────────────── */
@@ -677,7 +680,7 @@
   /* ────────────────────────────── retrieval ────────────────────────────── */
 
   function startQueue() {
-    state.queue = Store.due();
+    state.queue = Memory ? Memory.buildSession(Store.due()) : Store.due();
     state.queueIndex = 0;
     state.queuePassed = 0;
     state.queueReset = 0;
@@ -739,6 +742,81 @@
       renderRevise();
       renderCounts();
     }
+  }
+
+  function drillsFor(note, mode) {
+    if (!Memory) return [];
+    if (mode === 'cloze') return Memory.createClozeDrills(note);
+    if (mode === 'prelims') return Memory.createPrelimsDrills(note);
+    if (mode === 'skeleton') {
+      var skeleton = Memory.createSkeletonDrill(note);
+      return skeleton ? [skeleton] : [];
+    }
+    return [];
+  }
+
+  function buildDrillQueue(mode) {
+    var due = Memory ? Memory.buildSession(Store.due()) : Store.due();
+    state.drillQueue = due.map(function (note) {
+      var drills = drillsFor(note, mode);
+      if (!drills.length) return null;
+      return { note: note, drill: drills[(note.stage || 0) % drills.length] };
+    }).filter(Boolean);
+  }
+
+  function renderDerivedDrill() {
+    var body = el('memoryDrillBody');
+    var meta = el('memoryDrillMeta');
+    buildDrillQueue(state.memoryMode);
+    if (!state.drillQueue.length) {
+      body.innerHTML = '<div class="an-state"><h3>No matching drill due</h3><p>' +
+        (Store.stats().due
+          ? 'The due notes do not contain this evidence-safe drill type. Use Due recall instead.'
+          : 'Nothing is due today. Derived drills follow the parent schedule rather than creating extra reviews.') +
+        '</p></div>';
+      meta.textContent = 'Derived from due notes; no separate schedule records.';
+      return;
+    }
+    var entry = state.drillQueue[0];
+    meta.innerHTML = '<strong>' + state.drillQueue.length + '</strong> parent notes available for this drill.';
+    body.innerHTML = Render.memoryDrill(entry.drill, entry.note, 0, state.drillQueue.length);
+  }
+
+  function handleDrillClick(event) {
+    var button = event.target.closest('[data-act]');
+    if (!button) return;
+    var card = button.closest('.an-memory-drill');
+    if (!card) return;
+    var act = button.getAttribute('data-act');
+    if (act === 'drill-reveal') {
+      var answer = card.querySelector('[data-drill-answer]');
+      answer.hidden = false;
+      button.hidden = true;
+      button.setAttribute('aria-expanded', 'true');
+      card.querySelector('[data-act="drill-pass"]').hidden = false;
+      card.querySelector('[data-act="drill-fail"]').hidden = false;
+      return;
+    }
+    if (act === 'drill-pass' || act === 'drill-fail') {
+      Store.review(card.getAttribute('data-id'), act === 'drill-pass' ? 'pass' : 'fail');
+      renderDerivedDrill();
+      renderCounts();
+      renderRail();
+    }
+  }
+
+  function setMemoryMode(mode) {
+    var allowed = ['due', 'cloze', 'prelims', 'skeleton', 'notes'];
+    state.memoryMode = allowed.indexOf(mode) === -1 ? 'due' : mode;
+    document.querySelectorAll('[data-memory-mode]').forEach(function (button) {
+      button.setAttribute('aria-pressed', button.getAttribute('data-memory-mode') === state.memoryMode ? 'true' : 'false');
+    });
+    el('memoryNotesPanel').hidden = state.memoryMode !== 'notes';
+    el('memoryDuePanel').hidden = state.memoryMode !== 'due';
+    el('memoryDrillPanel').hidden = ['cloze', 'prelims', 'skeleton'].indexOf(state.memoryMode) === -1;
+    if (state.memoryMode === 'notes') renderNotes();
+    else if (state.memoryMode === 'due') startQueue();
+    else renderDerivedDrill();
   }
 
   /* ───────────────────────────── rail, counts ───────────────────────────── */
@@ -966,8 +1044,10 @@
         title: note.title,
         anchor: note.anchor,
         codes: note.codes,
+        sourceId: note.sourceId,
         what: note.staticDefinition,
         why: note.whyInNews,
+        whyInNews: note.whyInNews,
         debate: (note.argumentsFor[0] || '') + (note.argumentsAgainst[0] ? ' / ' + note.argumentsAgainst[0] : ''),
         use: note.use,
         prelimsFact: note.officialFacts[0] ? note.officialFacts[0].text : '',
@@ -977,9 +1057,18 @@
         score: note.priority,
         band: note.priority >= 75 ? 'core' : (note.priority >= 50 ? 'strong' : 'thin'),
         origin: 'publication',
+        recallPayload: {
+          officialFacts: note.officialFacts,
+          argumentsFor: note.argumentsFor,
+          argumentsAgainst: note.argumentsAgainst,
+          prelimsTraps: note.prelimsTraps,
+          mainsPractice: note.mainsPractice,
+          use: note.use,
+        },
       });
       button.disabled = true;
       button.textContent = result === 'duplicate' ? 'Already saved' : 'Saved · due tomorrow';
+      renderNotes();
       renderCounts();
       renderRail();
     });
@@ -1013,19 +1102,11 @@
 
     /* Retrieval queue */
     el('reviseBody').addEventListener('click', handleReviseClick);
-    el('memoryNotes').addEventListener('click', function () {
-      el('memoryNotes').setAttribute('aria-pressed', 'true');
-      el('memoryDue').setAttribute('aria-pressed', 'false');
-      el('memoryNotesPanel').hidden = false;
-      el('memoryDuePanel').hidden = true;
-      renderNotes();
-    });
-    el('memoryDue').addEventListener('click', function () {
-      el('memoryNotes').setAttribute('aria-pressed', 'false');
-      el('memoryDue').setAttribute('aria-pressed', 'true');
-      el('memoryNotesPanel').hidden = true;
-      el('memoryDuePanel').hidden = false;
-      startQueue();
+    el('memoryDrillBody').addEventListener('click', handleDrillClick);
+    document.querySelectorAll('[data-memory-mode]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        setMemoryMode(button.getAttribute('data-memory-mode'));
+      });
     });
 
     /* Export and reset */

@@ -280,11 +280,14 @@
           </div>
 
           <div class="an-segmented an-memorymodes" role="group" aria-label="Memory Drill mode">
-            <button type="button" id="memoryNotes" aria-pressed="true">Notes</button>
-            <button type="button" id="memoryDue" aria-pressed="false">Due recall</button>
+            <button type="button" id="memoryDue" aria-pressed="true" data-memory-mode="due">Due recall</button>
+            <button type="button" id="memoryCloze" aria-pressed="false" data-memory-mode="cloze">Cloze facts</button>
+            <button type="button" id="memoryPrelims" aria-pressed="false" data-memory-mode="prelims">Prelims traps</button>
+            <button type="button" id="memorySkeleton" aria-pressed="false" data-memory-mode="skeleton">10-second skeletons</button>
+            <button type="button" id="memoryNotes" aria-pressed="false" data-memory-mode="notes">Notes</button>
           </div>
 
-          <div id="memoryNotesPanel">
+          <div id="memoryNotesPanel" hidden>
 
           <div class="an-toolbar">
             <div class="an-chips" id="notesFilter" role="group" aria-label="Filter notes by paper">
@@ -355,7 +358,7 @@
           <ol class="an-entries" id="notesList"></ol>
           </div>
 
-          <div id="memoryDuePanel" hidden>
+          <div id="memoryDuePanel">
             <p class="an-viewhead__meta" id="reviseMeta">Retrieval, not rereading.</p>
             <div class="an-revise" id="reviseBody">
               <div class="an-state" id="reviseState">
@@ -364,6 +367,12 @@
               </div>
             </div>
             <p class="an-revise__legend">The queue runs at day 1, 3, 7, 21 and 60, then monthly. Read only the title, reconstruct the rest out loud, then reveal. A failed reconstruction resets the item to day 1.</p>
+          </div>
+
+          <div id="memoryDrillPanel" hidden>
+            <p class="an-viewhead__meta" id="memoryDrillMeta">Derived from due notes; no separate schedule records.</p>
+            <div class="an-revise" id="memoryDrillBody"></div>
+            <p class="an-revise__legend">One pass or miss updates the parent note once. Facts appear here only when their official evidence cleared the source boundary.</p>
           </div>
         </section>
 
@@ -462,6 +471,7 @@
   <script>window.SB_UPSC_ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';</script>
   <script src="assets/js/upsc/store.js"></script>
   <script src="assets/js/upsc/content.js"></script>
+  <script src="assets/js/upsc/memory.js"></script>
   <script src="assets/js/upsc/render.js"></script>
   <script src="assets/js/upsc/app.js"></script>
   <script>

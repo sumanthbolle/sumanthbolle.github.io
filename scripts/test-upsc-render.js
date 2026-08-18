@@ -190,3 +190,28 @@ test('renders a safe expandable published-note summary', function () {
   assert.equal(html.includes('Priority 78'), true);
   assert.equal(html.includes('Exam note ready'), true);
 });
+
+test('keeps drill answers hidden until reveal and links safe evidence', function () {
+  const Render = loadRender();
+  const html = Render.memoryDrill({
+    type: 'cloze', prompt: 'Cabinet approved the ____ policy.', answer: 'fiscal',
+    fact: 'Cabinet approved the fiscal policy.',
+    evidenceUrl: 'https://pib.gov.in/release/1', evidenceLocator: 'officialSummary',
+  }, { id: 'n1', title: 'Cabinet policy' }, 0, 1);
+  assert.equal(html.includes('Cabinet approved the ____ policy.'), true);
+  assert.match(html, /data-drill-answer[^>]*hidden/);
+  assert.equal(html.includes('aria-expanded="false"'), true);
+  assert.equal(html.includes('href="https://pib.gov.in/release/1"'), true);
+  assert.match(html, /data-act="drill-pass"[^>]*hidden/);
+  assert.match(html, /data-act="drill-fail"[^>]*hidden/);
+});
+
+test('does not render unsafe drill evidence links', function () {
+  const Render = loadRender();
+  const html = Render.memoryDrill({
+    type: 'cloze', prompt: 'A ____ prompt.', answer: 'safe',
+    evidenceUrl: 'javascript:alert(1)', evidenceLocator: 'officialSummary',
+  }, { id: 'n1', title: 'Unsafe evidence' }, 0, 1);
+  assert.equal(html.includes('javascript:'), false);
+  assert.equal(html.includes('Open evidence'), false);
+});

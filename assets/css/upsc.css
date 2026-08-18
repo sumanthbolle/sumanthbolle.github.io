@@ -902,8 +902,57 @@ select {
 }
 
 .an-memorymodes {
-  width: max-content;
+  width: fit-content;
+  max-width: 100%;
+  flex-wrap: wrap;
   margin: 14px 0;
+}
+
+.an-memory-drill {
+  max-width: 760px;
+}
+
+.an-memory-drill > h3 {
+  margin-top: 7px;
+  font-size: 22px;
+}
+
+.an-memory-drill__prompt,
+.an-memory-drill > ol {
+  margin: 18px 0;
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.an-memory-drill > ol {
+  padding-left: 22px;
+}
+
+.an-memory-drill__answer {
+  margin-top: 16px;
+  padding: 15px;
+  border-left: 4px solid var(--green);
+  background: var(--panel-muted);
+  animation: an-recall-reveal 180ms var(--ease);
+}
+
+.an-memory-drill__answer p,
+.an-memory-drill__answer li {
+  margin-top: 5px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.an-memory-drill__answer ol {
+  margin-left: 20px;
+}
+
+.an-memory-drill__answer a {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--an-navy);
+  font-family: var(--sans);
+  font-size: 12px;
 }
 
 @media (max-width: 980px) {

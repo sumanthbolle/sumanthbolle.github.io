@@ -437,6 +437,52 @@
     '</article>';
   }
 
+  function memoryDrill(drill, note, index, total) {
+    var value = drill || {};
+    var parent = note || {};
+    var answerId = 'drill-answer-' + String(parent.id || '').replace(/[^a-z0-9_-]/gi, '');
+    var kind = {
+      cloze: 'Source-backed cloze',
+      'prelims-trap': 'Prelims statement trap',
+      skeleton: '10-second answer skeleton',
+      recall: 'Cover · blurt · check',
+    }[value.type] || 'Recall drill';
+    var answer = '';
+    if (value.type === 'cloze') {
+      var evidence = safeHttpUrl(value.evidenceUrl);
+      answer = '<p><strong>' + esc(value.answer) + '</strong></p>' +
+        (value.fact ? '<p>' + esc(value.fact) + '</p>' : '') +
+        (evidence ? '<a href="' + attr(evidence) + '" target="_blank" rel="noopener noreferrer">Open evidence · ' +
+          esc(value.evidenceLocator) + '</a>' : '');
+    } else if (value.type === 'prelims-trap') {
+      answer = '<p><strong>' + esc(value.answer ? 'Correct' : 'Incorrect') + '</strong></p><p>' +
+        esc(value.explanation) + '</p>';
+    } else if (value.type === 'skeleton') {
+      answer = '<p class="an-entry__tags"><strong>' + esc(value.directive) + '</strong><span class="an-num">' +
+        esc(value.marks) + ' marks</span></p><ol>' + (value.answer || []).map(function (row) {
+          return '<li>' + esc(row) + '</li>';
+        }).join('') + '</ol>';
+    } else {
+      var recall = value.answer || {};
+      answer = '<p><strong>' + esc(recall.anchor) + '</strong></p><p>' + esc(recall.whyInNews) + '</p>' +
+        '<p>' + esc((recall.argumentsFor || [])[0]) + ' / ' + esc((recall.argumentsAgainst || [])[0]) +
+        '</p><p>' + esc(recall.use) + '</p>';
+    }
+    var prompt = value.type === 'recall'
+      ? '<ol>' + (value.questions || []).map(function (row) { return '<li>' + esc(row) + '</li>'; }).join('') + '</ol>'
+      : '<p class="an-memory-drill__prompt">' + esc(value.prompt) + '</p>';
+    return '<article class="an-card an-memory-drill" data-id="' + attr(parent.id) + '">' +
+      '<p class="an-revise__progress">' + esc(index + 1) + ' of ' + esc(total) + ' · ' + esc(kind) + '</p>' +
+      '<h3>' + esc(parent.title) + '</h3>' + prompt +
+      '<button type="button" class="btn" data-act="drill-reveal" aria-expanded="false" aria-controls="' +
+        attr(answerId) + '">Reveal answer</button>' +
+      '<div class="an-memory-drill__answer" data-drill-answer id="' + attr(answerId) + '" hidden>' + answer + '</div>' +
+      '<div class="an-revise__actions">' +
+        '<button type="button" class="btn btn-primary" data-act="drill-pass" hidden>Reconstructed it</button>' +
+        '<button type="button" class="btn" data-act="drill-fail" hidden>Missed it</button>' +
+      '</div></article>';
+  }
+
   function reviseCard(note, index, total) {
     return '<div class="an-card" data-id="' + attr(note.id) + '">' +
       '<p class="an-revise__progress">' + esc(index + 1) + ' of ' + esc(total) +
@@ -473,6 +519,7 @@
     examSummary: examSummary,
     syllabusAnchor: syllabusAnchor,
     answerOutline: answerOutline,
+    memoryDrill: memoryDrill,
     reviseCard: reviseCard,
   };
 })();
