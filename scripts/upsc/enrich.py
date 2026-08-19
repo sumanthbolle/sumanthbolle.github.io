@@ -37,6 +37,7 @@ def _valid_endpoint(endpoint: str) -> str:
 
 
 def sibling_endpoint(endpoint: str, path: str) -> str:
+    """Keep scheme/host from the private enrich URL and swap the path."""
     parts = urlsplit(_valid_endpoint(endpoint))
     return urlunsplit((parts.scheme, parts.netloc, path, "", ""))
 
@@ -85,10 +86,10 @@ def _decode_note(response: Any, source: Mapping[str, Any]) -> dict[str, Any]:
         payload = json.loads(body.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
         raise ValueError("invalid enrichment JSON") from error
-    return _note_from_payload(payload, source)
+    return _decode_note_payload(payload, source)
 
 
-def _note_from_payload(payload: Mapping[str, Any], source: Mapping[str, Any]) -> dict[str, Any]:
+def _decode_note_payload(payload: Mapping[str, Any], source: Mapping[str, Any]) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise ValueError("invalid enrichment response")
     note = payload.get("data")
@@ -129,7 +130,7 @@ def enrich_records(
             continue
         try:
             payload = post_worker(url, bearer, source, opener, timeout=55)
-            notes.append(_note_from_payload(payload, source))
+            notes.append(_decode_note_payload(payload, source))
         except Exception as error:  # one bad record never blocks the publication
             failures[source_id] = _failure_text(error)
             close = getattr(error, "close", None)

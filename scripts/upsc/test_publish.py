@@ -93,7 +93,7 @@ class EnrichmentResponse:
 
 class PublisherTests(unittest.TestCase):
     def test_publisher_source_parses_as_python_39(self):
-        for name in ("models.py", "adapters.py", "publish.py", "enrich.py", "verify.py"):
+        for name in ("models.py", "adapters.py", "publish.py", "enrich.py", "alerting.py"):
             source = (Path(__file__).with_name(name)).read_text(encoding="utf-8")
             ast.parse(source, filename=name, feature_version=(3, 9))
 

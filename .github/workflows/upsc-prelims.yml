@@ -1,0 +1,52 @@
+name: UPSC Prelims quiz refresh
+
+# Runs after the last official-source publish slot and the 19:30 revision job.
+# 20:00 UTC avoids overlap with upsc-daily (01:30) and upsc-publish
+# (00:15/06:15/12:15/18:15). Shares the publisher concurrency group so commits
+# to data/upsc/ cannot race.
+
+on:
+  schedule:
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: upsc-official-publisher
+  cancel-in-progress: false
+
+jobs:
+  prelims:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out triggering ref
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run publisher tests
+        run: python -m unittest discover -s scripts/upsc -p 'test_*.py'
+
+      - name: Generate Prelims quiz
+        run: >-
+          python scripts/upsc/prelims_quiz.py
+          --patterns data/upsc-patterns.json
+          --output data/upsc
+
+      - name: Commit Prelims quiz
+        run: |
+          git config user.name "upsc-publisher[bot]"
+          git config user.email "upsc-publisher[bot]@users.noreply.github.com"
+          git add data/upsc/prelims-quiz.json
+          if git diff --cached --quiet; then
+            echo "No Prelims quiz changes"
+          else
+            git commit -m "chore: refresh UPSC Prelims quiz"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi

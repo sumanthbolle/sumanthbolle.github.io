@@ -946,48 +946,72 @@ export function normalizeUpscExamNote(parsed, record) {
   };
 }
 
-const VERIFY_SCHEMA = {
+const MAINS_SCHEMA = {
   type: 'object',
   additionalProperties: false,
   properties: {
-    agrees: { type: 'boolean' },
-    confidence: { type: 'number' },
-    flagged_claims: { type: 'array', items: { type: 'string' } },
+    question: { type: 'string' },
+    dimension_skeleton: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          dimension: { type: 'string' },
+          value_addition_anchor: { type: 'string' },
+        },
+        required: ['dimension', 'value_addition_anchor'],
+      },
+    },
+    word_limit: { type: 'integer' },
+    time_budget_minutes: { type: 'integer' },
   },
-  required: ['agrees', 'confidence', 'flagged_claims'],
+  required: ['question', 'dimension_skeleton'],
 };
 
-export function buildUpscVerifyPayload(source, note) {
-  const task = `You are a second-pass examiner, not the writer of this note.\n` +
-    `Official title: ${clip(source && source.title, 240)}\n` +
-    `Official summary: ${clip(source && source.officialSummary, 1200)}\n` +
-    `Proposed static topic / anchor: ${clip(note && note.anchor, 120)}\n` +
-    `Proposed codes: ${(Array.isArray(note && note.codes) ? note.codes : []).join(', ')}\n` +
-    `Proposed use line: ${clip(note && note.use, 360)}\n` +
-    `Does the static-topic tag and any factual claims match the official summary? ` +
-    `Return agrees=false if the anchor is the wrong syllabus topic. confidence is 0-1.`;
+export function buildUpscMainsPayload(anchor, directive, paper) {
+  const topic = clip(anchor && (anchor.anchor || anchor.id), 160);
+  const core = Array.isArray(anchor && anchor.static_core) ? anchor.static_core : [];
+  const skeleton = Array.isArray(anchor && anchor.skeleton) ? anchor.skeleton : [];
+  const task = `Write one UPSC Mains practice question.\n` +
+    `Directive word (must lead the question): ${clip(directive, 40)}\n` +
+    `Paper: ${clip(paper, 8)}\n` +
+    `Anchor: ${topic}\n` +
+    `Static core: ${core.map((row) => clip(row, 180)).join(' | ')}\n` +
+    `Skeleton: ${skeleton.map((row) => clip(row, 180)).join(' | ')}\n` +
+    `Return a 250-word, 12-minute GS question and two to four answer dimensions, each with a value-addition hook (Article, ARC, case law, committee). Do not predict the paper.`;
   return {
-    model: 'sonar-pro',
+    model: 'sonar',
     messages: [
-      { role: 'system', content: 'You verify UPSC exam-note tagging. Disagree when the static topic is wrong. No citation markers.' },
+      { role: 'system', content: 'You write UPSC Mains practice questions. Use the given directive word. No citation markers.' },
       { role: 'user', content: task },
     ],
-    temperature: 0,
-    max_tokens: 400,
-    response_format: { type: 'json_schema', json_schema: { schema: VERIFY_SCHEMA } },
+    temperature: 0.2,
+    max_tokens: 900,
+    response_format: { type: 'json_schema', json_schema: { schema: MAINS_SCHEMA } },
   };
 }
 
-export function normalizeUpscVerification(parsed) {
+export function normalizeUpscMainsDrill(parsed, fallback) {
   const source = parsed && typeof parsed === 'object' ? parsed : {};
-  const confidence = Number(source.confidence);
-  if (!Number.isFinite(confidence)) return null;
-  const flagged = Array.isArray(source.flagged_claims)
-    ? source.flagged_claims.map((row) => clip(row, 240)).filter(Boolean).slice(0, 8)
-    : [];
+  const question = clip(source.question, 400);
+  if (!question) return null;
+  const skeleton = (Array.isArray(source.dimension_skeleton) ? source.dimension_skeleton : [])
+    .map((row) => ({
+      dimension: clip(row && row.dimension, 220),
+      value_addition_anchor: clip(row && row.value_addition_anchor, 180),
+    }))
+    .filter((row) => row.dimension)
+    .slice(0, 6);
+  if (!skeleton.length) return null;
+  const directive = clip(fallback && fallback.directive_word, 40);
+  if (directive && question.toLowerCase().indexOf(directive.toLowerCase()) === -1) {
+    return null;
+  }
   return {
-    agrees: source.agrees === true,
-    confidence: Math.max(0, Math.min(1, confidence)),
-    flagged_claims: flagged,
+    question,
+    dimension_skeleton: skeleton,
+    word_limit: Number(source.word_limit) || 250,
+    time_budget_minutes: Number(source.time_budget_minutes) || 12,
   };
 }

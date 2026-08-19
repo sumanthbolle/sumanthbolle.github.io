@@ -44,12 +44,82 @@ jobs:
           node scripts/test-upsc-sitemap.js
           node scripts/test-upsc-workflow.js
 
+      - name: Snapshot previous source health
+        run: |
+          if [ -f data/upsc/source-health.json ]; then
+            cp data/upsc/source-health.json /tmp/source-health.previous.json
+          else
+            echo '{}' > /tmp/source-health.previous.json
+          fi
+
       - name: Verify all official source contracts
+        id: source-check
         run: |
           set -o pipefail
           python scripts/upsc/publish.py check-sources \
             --registry data/upsc/source-registry.json \
             --min-healthy 5 | tee data/upsc/source-health.json
+
+      - name: Open or close source-health issues
+        if: always() && hashFiles('data/upsc/source-health.json') != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execFileSync } = require('child_process');
+            const fs = require('fs');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const label = 'upsc-source-health';
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: label });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.issues.createLabel({
+                owner, repo, name: label, color: 'B60205',
+                description: 'Official UPSC source feed failed the publisher health probe',
+              });
+            }
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', labels: label, per_page: 100,
+            });
+            fs.writeFileSync(
+              '/tmp/open-health-issues.json',
+              JSON.stringify(issues.map((issue) => ({
+                number: issue.number,
+                title: issue.title,
+                labels: (issue.labels || []).map((row) => (
+                  typeof row === 'string' ? row : row.name
+                )),
+                pull_request: issue.pull_request || null,
+              }))),
+            );
+            const output = execFileSync('python', [
+              'scripts/upsc/alerting.py', 'reconcile',
+              '--health', 'data/upsc/source-health.json',
+              '--previous', '/tmp/source-health.previous.json',
+              '--open-issues', '/tmp/open-health-issues.json',
+            ], { encoding: 'utf8' });
+            const plan = JSON.parse(output);
+            for (const item of plan.create || []) {
+              await github.rest.issues.create({
+                owner, repo, title: item.title, body: item.body, labels: item.labels,
+              });
+            }
+            for (const item of plan.update || []) {
+              await github.rest.issues.update({
+                owner, repo, issue_number: item.number, body: item.body,
+              });
+            }
+            for (const item of plan.close || []) {
+              if (item.comment) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: item.number, body: item.comment,
+                });
+              }
+              await github.rest.issues.update({
+                owner, repo, issue_number: item.number, state: 'closed',
+              });
+            }
 
       - name: Ingest official records
         run: >-
@@ -72,54 +142,20 @@ jobs:
             --endpoint "$UPSC_ENRICH_ENDPOINT" \
             --token "$UPSC_PUBLISH_TOKEN"
 
-      - name: Open or close verification-hold issues
-        if: always() && hashFiles('data/upsc/needs-review.json') != ''
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { execFileSync } = require('child_process');
-            const fs = require('fs');
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const label = 'upsc-needs-review';
-            try {
-              await github.rest.issues.getLabel({ owner, repo, name: label });
-            } catch (error) {
-              if (error.status !== 404) throw error;
-              await github.rest.issues.createLabel({
-                owner, repo, name: label, color: 'FBCA04',
-                description: 'UPSC enrichment failed second-pass verification',
-              });
-            }
-            const issues = await github.paginate(github.rest.issues.listForRepo, {
-              owner, repo, state: 'open', labels: label, per_page: 100,
-            });
-            fs.writeFileSync('/tmp/open-review-issues.json', JSON.stringify(issues.map((issue) => ({
-              number: issue.number, title: issue.title,
-              labels: (issue.labels || []).map((row) => typeof row === 'string' ? row : row.name),
-              pull_request: issue.pull_request || null,
-            }))));
-            const output = execFileSync('python', [
-              'scripts/upsc/verify.py', 'reconcile-issues',
-              '--queue', 'data/upsc/needs-review.json',
-              '--open-issues', '/tmp/open-review-issues.json',
-            ], { encoding: 'utf8' });
-            const plan = JSON.parse(output);
-            for (const item of plan.create || []) {
-              await github.rest.issues.create({
-                owner, repo, title: item.title, body: item.body, labels: item.labels,
-              });
-            }
-            for (const item of plan.close || []) {
-              if (item.comment) {
-                await github.rest.issues.createComment({
-                  owner, repo, issue_number: item.number, body: item.comment,
-                });
-              }
-              await github.rest.issues.update({
-                owner, repo, issue_number: item.number, state: 'closed',
-              });
-            }
+      - name: Generate Mains drills
+        continue-on-error: true
+        env:
+          UPSC_ENRICH_ENDPOINT: ${{ secrets.UPSC_ENRICH_ENDPOINT }}
+          UPSC_PUBLISH_TOKEN: ${{ secrets.UPSC_PUBLISH_TOKEN }}
+        run: |
+          extra=()
+          if [ -n "$UPSC_ENRICH_ENDPOINT" ] && [ -n "$UPSC_PUBLISH_TOKEN" ]; then
+            extra+=(--endpoint "$UPSC_ENRICH_ENDPOINT" --token "$UPSC_PUBLISH_TOKEN")
+          fi
+          python scripts/upsc/mains_generator.py \
+            --patterns data/upsc-patterns.json \
+            --output data/upsc \
+            "${extra[@]}"
 
       - name: Build indexes and crawlable pages
         run: |
