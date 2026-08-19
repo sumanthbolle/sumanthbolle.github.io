@@ -4,13 +4,12 @@
   "provisional": true,
   "anchorCount": 57,
   "methodology": {
-    "whatThisIs": "A standing compilation of the static anchors UPSC has examined repeatedly over roughly twenty years, expressed as data so a tool can query it. An anchor is the syllabus concept that outlives the news event; a question is that anchor crossed with a current trigger and a directive verb.",
-    "frequencyEst": "frequency_est is an editorial weight from 0-100 derived from the recurring-theme compilation, NOT a count of questions from a tagged corpus. It ranks anchors against each other for revision priority. It is not evidence about any single year.",
-    "recencyGapEst": "recency_gap_est is an editorial 0-100 judgement of how overdue an anchor feels, where 100 means long absent and 0 means asked very recently. It is the weakest field here and the first that should be replaced with measured last-asked years.",
-    "stems": "question_stems are written in authentic UPSC phrasing for answer-writing practice. They are practice prioritisation, never prediction. Nobody can tell you what will be asked.",
-    "facts": "static_core names institutions, statutes and judgments only where the naming is settled. Every figure, percentage, ranking and award year is deliberately absent and pushed into the verify field instead, because a fluent wrong number written into a Mains answer costs marks silently.",
-    "howToMakeItReal": "Tag the official papers from upsc.gov.in into the schema in the skill's pyq-pattern-decoder (§7), replace frequency_est with real counts and recency_gap_est with the actual last-asked year, then drop the provisional flag. That is the highest-value work available on this dataset and everything downstream improves the moment it exists.",
-    "conflicts": "Where this file and the Union Public Service Commission disagree, the Commission is right."
+    "whatThisIs": "The static anchors UPSC has examined repeatedly over roughly twenty years. An anchor is the syllabus concept that outlives the news event; a question is that anchor crossed with a current trigger and a directive verb.",
+    "frequencyEst": "An editorial 0–100 weight for revision priority, not a count of questions. It ranks anchors against each other, not any single year.",
+    "recencyGapEst": "An editorial 0–100 estimate of how overdue an anchor is — 100 means long absent, 0 means recently asked.",
+    "stems": "Practice stems in authentic UPSC phrasing, for answer-writing — never prediction.",
+    "facts": "The static core names only settled institutions, statutes and judgments. Every figure and year is left to the verify field, since a fluent wrong number costs marks silently.",
+    "conflicts": "Where this file and the Commission disagree, the Commission is right."
   },
   "bands": {
     "perennial": "Appears in most cycles in some form. Floor competence here is not optional.",
