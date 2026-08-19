@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: upsc-official-publisher
@@ -70,6 +71,55 @@ jobs:
             --output data/upsc \
             --endpoint "$UPSC_ENRICH_ENDPOINT" \
             --token "$UPSC_PUBLISH_TOKEN"
+
+      - name: Open or close verification-hold issues
+        if: always() && hashFiles('data/upsc/needs-review.json') != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execFileSync } = require('child_process');
+            const fs = require('fs');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const label = 'upsc-needs-review';
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: label });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.issues.createLabel({
+                owner, repo, name: label, color: 'FBCA04',
+                description: 'UPSC enrichment failed second-pass verification',
+              });
+            }
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', labels: label, per_page: 100,
+            });
+            fs.writeFileSync('/tmp/open-review-issues.json', JSON.stringify(issues.map((issue) => ({
+              number: issue.number, title: issue.title,
+              labels: (issue.labels || []).map((row) => typeof row === 'string' ? row : row.name),
+              pull_request: issue.pull_request || null,
+            }))));
+            const output = execFileSync('python', [
+              'scripts/upsc/verify.py', 'reconcile-issues',
+              '--queue', 'data/upsc/needs-review.json',
+              '--open-issues', '/tmp/open-review-issues.json',
+            ], { encoding: 'utf8' });
+            const plan = JSON.parse(output);
+            for (const item of plan.create || []) {
+              await github.rest.issues.create({
+                owner, repo, title: item.title, body: item.body, labels: item.labels,
+              });
+            }
+            for (const item of plan.close || []) {
+              if (item.comment) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: item.number, body: item.comment,
+                });
+              }
+              await github.rest.issues.update({
+                owner, repo, issue_number: item.number, state: 'closed',
+              });
+            }
 
       - name: Build indexes and crawlable pages
         run: |

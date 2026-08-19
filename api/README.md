@@ -12,6 +12,7 @@ Single Cloudflare Worker that powers both the Summaverick chat and the landing-p
 | GET    | `/upsc/brief`| Compatibility route for an on-demand daily / weekly model brief |
 | POST   | `/upsc/topic`| Optional live topic lookup, separate from reviewed publication. Body: `{ topic, paper? }` |
 | POST   | `/upsc/enrich`| Private publisher route: transform one normalized official record into a source-bound exam note |
+| POST   | `/upsc/verify`| Private second-pass check of the proposed static-topic tag (uses `sonar-pro`) |
 | GET    | `/trending`  | Landing widgets (news / market / tech), country-aware + cached          |
 | GET    | `/servicenow`| Latest ServiceNow articles across 4 tracks (AI / Agents / LLM / cost), cached |
 | GET    | `/metals`    | Live gold/silver spot references, local FX, and 30-day daily context |

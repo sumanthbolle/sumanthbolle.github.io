@@ -945,3 +945,49 @@ export function normalizeUpscExamNote(parsed, record) {
     editorialStatus: allFactsBacked ? 'source-backed' : 'draft',
   };
 }
+
+const VERIFY_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    agrees: { type: 'boolean' },
+    confidence: { type: 'number' },
+    flagged_claims: { type: 'array', items: { type: 'string' } },
+  },
+  required: ['agrees', 'confidence', 'flagged_claims'],
+};
+
+export function buildUpscVerifyPayload(source, note) {
+  const task = `You are a second-pass examiner, not the writer of this note.\n` +
+    `Official title: ${clip(source && source.title, 240)}\n` +
+    `Official summary: ${clip(source && source.officialSummary, 1200)}\n` +
+    `Proposed static topic / anchor: ${clip(note && note.anchor, 120)}\n` +
+    `Proposed codes: ${(Array.isArray(note && note.codes) ? note.codes : []).join(', ')}\n` +
+    `Proposed use line: ${clip(note && note.use, 360)}\n` +
+    `Does the static-topic tag and any factual claims match the official summary? ` +
+    `Return agrees=false if the anchor is the wrong syllabus topic. confidence is 0-1.`;
+  return {
+    model: 'sonar-pro',
+    messages: [
+      { role: 'system', content: 'You verify UPSC exam-note tagging. Disagree when the static topic is wrong. No citation markers.' },
+      { role: 'user', content: task },
+    ],
+    temperature: 0,
+    max_tokens: 400,
+    response_format: { type: 'json_schema', json_schema: { schema: VERIFY_SCHEMA } },
+  };
+}
+
+export function normalizeUpscVerification(parsed) {
+  const source = parsed && typeof parsed === 'object' ? parsed : {};
+  const confidence = Number(source.confidence);
+  if (!Number.isFinite(confidence)) return null;
+  const flagged = Array.isArray(source.flagged_claims)
+    ? source.flagged_claims.map((row) => clip(row, 240)).filter(Boolean).slice(0, 8)
+    : [];
+  return {
+    agrees: source.agrees === true,
+    confidence: Math.max(0, Math.min(1, confidence)),
+    flagged_claims: flagged,
+  };
+}

@@ -12,6 +12,7 @@
  *                         brief, filtered, scored and verification-gated
  *   POST /upsc/topic    — Anchor topic lookup; body: { topic, paper? }
  *   POST /upsc/enrich   — private source-bound publisher enrichment
+ *   POST /upsc/verify   — private second-pass verification (different model)
  *   GET  /trending      — landing-page widgets (news / market / tech),
  *                         country-aware via cf.country (or ?country=XX override),
  *                         cached per country in Cloudflare Cache API
@@ -50,9 +51,11 @@ import {
   buildUpscBriefPayload,
   buildUpscEnrichmentPayload,
   buildUpscTopicPayload,
+  buildUpscVerifyPayload,
   normalizeUpscBrief,
   normalizeUpscExamNote,
   normalizeUpscTopic,
+  normalizeUpscVerification,
 } from './upsc.js';
 
 const SYSTEM_PROMPT = `You are Summaverick, a general-purpose AI research assistant. You answer questions on any topic — world news, science, technology, business, culture, code, careers, personal decisions, and everyday curiosity — by synthesizing real sources into clear, grounded answers.
@@ -136,6 +139,10 @@ export default {
 
     if (request.method === 'POST' && url.pathname === '/upsc/enrich') {
       return handleUpscEnrich(request, env, origin);
+    }
+
+    if (request.method === 'POST' && url.pathname === '/upsc/verify') {
+      return handleUpscVerify(request, env, origin);
     }
 
     if (request.method !== 'POST') {
@@ -747,6 +754,46 @@ async function handleUpscEnrich(request, env, origin) {
     return upscEnrichmentResponse({
       success: false,
       error: 'Enrichment service could not process this record.',
+    }, origin, 503);
+  }
+}
+
+async function handleUpscVerify(request, env, origin) {
+  if (!hasUpscPublishToken(request, env)) {
+    return upscEnrichmentResponse({ success: false, error: 'Unauthorized' }, origin, 401);
+  }
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid request body.' }, origin, 422);
+  }
+  const note = body && body.note && typeof body.note === 'object' ? body.note : null;
+  const source = body && body.source && typeof body.source === 'object' ? body.source : {};
+  if (!note || !note.anchor) {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid verification request.' }, origin, 422);
+  }
+  if (!env.PERPLEXITY_API_KEY) {
+    return upscEnrichmentResponse({ success: false, error: 'Verification service is not configured.' }, origin, 503);
+  }
+  try {
+    const data = await callSonarWithTimeout(
+      env.PERPLEXITY_API_KEY,
+      buildUpscVerifyPayload(source, note),
+      UPSC_ENRICH_TIMEOUT_MS
+    );
+    const result = normalizeUpscVerification(parseStructured(data));
+    if (!result) {
+      return upscEnrichmentResponse({
+        success: false,
+        error: 'Provider response did not satisfy the verification contract.',
+      }, origin, 422);
+    }
+    return upscEnrichmentResponse({ success: true, data: result }, origin, 200);
+  } catch {
+    return upscEnrichmentResponse({
+      success: false,
+      error: 'Verification service could not process this note.',
     }, origin, 503);
   }
 }
