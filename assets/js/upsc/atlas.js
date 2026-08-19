@@ -10,6 +10,7 @@
 
   var PATTERNS_URL = 'data/upsc-patterns.json';
   var TRIGGERS_URL = 'data/upsc-triggers.json';
+  var PYQ_URL = 'data/upsc/pyq-links.json';
   var ENDPOINT = (window.SB_UPSC_ENDPOINT || '').replace(/\/$/, '');
   var LIVE_TIMEOUT_MS = 50000;
 
@@ -28,6 +29,7 @@
     open: '',
     live: {},          // anchorId -> { loading, error, note }
     drill: null,
+    pyqs: {},
   };
 
   function el(id) {
@@ -87,6 +89,16 @@
         }
       })
       .catch(function () { /* no persisted trigger layer yet */ });
+
+    fetch(PYQ_URL)
+      .then(function (response) { return response.ok ? response.json() : null; })
+      .then(function (data) {
+        if (data && data.byAnchor) {
+          state.pyqs = data.byAnchor;
+          if (state.data) render();
+        }
+      })
+      .catch(function () { /* PYQ bank not generated yet */ });
   }
 
   function anchors() {
@@ -277,6 +289,19 @@
     return parts.join('');
   }
 
+  function seenBeforeHtml(anchor) {
+    var rows = (state.pyqs && state.pyqs[anchor.id]) || [];
+    if (!rows.length) return '';
+    return '<div class="atlas-group atlas-detail__wide"><span class="an-label">Seen before</span><ul class="an-list">' +
+      rows.map(function (row) {
+        var meta = [row.year, row.exam, row.paper].filter(Boolean).join(' · ');
+        return '<li><strong>' + esc(meta) + '</strong> — ' + esc(row.question) +
+          (row.source ? ' <span class="atlas-recurrence">(' + esc(row.source) + ')</span>' : '') +
+          '</li>';
+      }).join('') +
+    '</ul></div>';
+  }
+
   function rowHtml(anchor) {
     var recall = Mastery.state(anchor.id);
     var open = state.open === anchor.id;
@@ -304,6 +329,7 @@
               }).join('') +
             '</div></div>'
           : '') +
+        seenBeforeHtml(anchor) +
       '</div>' +
       triggerHtml(anchor) +
       '<div class="atlas-actions">' +
