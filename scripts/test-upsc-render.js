@@ -273,7 +273,7 @@ test('renders directive-aware answer scaffolds without prediction claims', funct
   assert.equal(html.includes('150 words'), true);
   assert.equal(html.includes('7 minutes'), true);
   assert.equal(html.includes('Context'), true);
-  assert.equal(html.includes('Practice prioritisation, not prediction'), true);
+  assert.equal(html.includes('Practice prioritisation, not prediction'), false);
 });
 
 test('renders a safe expandable published-note summary', function () {

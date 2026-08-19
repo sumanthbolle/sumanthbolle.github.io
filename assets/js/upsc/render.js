@@ -213,9 +213,7 @@
                 line('Debate', item.debate) +
                 line('Prelims', item.prelimsFact) +
               '</div>' +
-              '<p class="an-treatment">' + esc(item.treatment) +
-                (item.verified ? '' : ' Confirm the claim in the source before this enters permanent notes.') +
-              '</p>' +
+              '<p class="an-treatment">' + esc(item.treatment) + '</p>' +
             '</details>'
           : '') +
         '<div class="an-entry__actions">' +
@@ -323,7 +321,6 @@
 
     if (note.valueAdds.length) {
       parts.push('<div class="an-block"><h3>Value-adds</h3>' +
-        '<p class="an-block__intro">Anchors an examiner rewards. Verify each one in the source before you write it down — an invented committee name loses marks silently.</p>' +
         '<ul class="an-valueadds">' + note.valueAdds.map(function (row) {
           return '<li>' +
             '<span class="an-label">' + esc(VALUE_ADD_LABELS[row.type] || row.type) + '</span>' +
@@ -351,7 +348,6 @@
 
     if (note.questionStems.length) {
       parts.push('<div class="an-block"><h3>Probable stems</h3>' +
-        '<p class="an-block__intro">Practice prioritisation, not prediction. Write these; do not read them.</p>' +
         '<ul class="an-stems">' + note.questionStems.map(function (stem) {
           return '<li class="an-stem"><p>' + esc(stem.stem) + '</p>' +
             '<p class="an-stem__meta">' +
@@ -397,7 +393,6 @@
       : (row.introChoices || []).concat(row.bodyDimensions || [],
         row.counterPosition || '', row.conclusionPrompt || '').filter(Boolean);
     return '<article class="an-answer-outline">' +
-      '<p class="an-label">Practice prioritisation, not prediction</p>' +
       '<h4>' + esc(row.stem) + '</h4>' +
       '<p class="an-answer-outline__meta"><strong>' + esc(row.directive) + '</strong>' +
         '<span class="an-num">' + esc(row.marks) + ' marks</span>' +
@@ -501,7 +496,6 @@
           '<p>' + esc(value.use) + '</p></div>' +
         '<button type="button" class="btn btn-primary btn-sm" data-act="save-exam" data-id="' +
           attr(value.sourceId) + '"' + (ready ? '' : ' disabled') + '>Save for recall</button>' +
-        (ready ? '' : '<p class="an-railnote">Needs review: hard facts require safe evidence before memorisation.</p>') +
       '</aside>' +
     '</article>';
   }
