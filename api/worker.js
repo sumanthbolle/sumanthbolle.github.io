@@ -12,6 +12,7 @@
  *                         brief, filtered, scored and verification-gated
  *   POST /upsc/topic    — Anchor topic lookup; body: { topic, paper? }
  *   POST /upsc/enrich   — private source-bound publisher enrichment
+ *   POST /upsc/mains    — private Mains drill generation (same publish token)
  *   GET  /trending      — landing-page widgets (news / market / tech),
  *                         country-aware via cf.country (or ?country=XX override),
  *                         cached per country in Cloudflare Cache API
@@ -49,9 +50,11 @@ import {
   upscScopeConfig,
   buildUpscBriefPayload,
   buildUpscEnrichmentPayload,
+  buildUpscMainsPayload,
   buildUpscTopicPayload,
   normalizeUpscBrief,
   normalizeUpscExamNote,
+  normalizeUpscMainsDrill,
   normalizeUpscTopic,
 } from './upsc.js';
 
@@ -136,6 +139,10 @@ export default {
 
     if (request.method === 'POST' && url.pathname === '/upsc/enrich') {
       return handleUpscEnrich(request, env, origin);
+    }
+
+    if (request.method === 'POST' && url.pathname === '/upsc/mains') {
+      return handleUpscMains(request, env, origin);
     }
 
     if (request.method !== 'POST') {
@@ -747,6 +754,49 @@ async function handleUpscEnrich(request, env, origin) {
     return upscEnrichmentResponse({
       success: false,
       error: 'Enrichment service could not process this record.',
+    }, origin, 503);
+  }
+}
+
+async function handleUpscMains(request, env, origin) {
+  if (!hasUpscPublishToken(request, env)) {
+    return upscEnrichmentResponse({ success: false, error: 'Unauthorized' }, origin, 401);
+  }
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid request body.' }, origin, 422);
+  }
+  const anchor = body && body.anchor && typeof body.anchor === 'object' ? body.anchor : null;
+  const directive = String(body && body.directive_word || '');
+  const paper = String(body && body.gs_paper || 'GS2');
+  if (!anchor || !anchor.id || !directive) {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid mains request.' }, origin, 422);
+  }
+  if (!env.PERPLEXITY_API_KEY) {
+    return upscEnrichmentResponse({ success: false, error: 'Mains service is not configured.' }, origin, 503);
+  }
+  try {
+    const data = await callSonarWithTimeout(
+      env.PERPLEXITY_API_KEY,
+      buildUpscMainsPayload(anchor, directive, paper),
+      UPSC_ENRICH_TIMEOUT_MS
+    );
+    const drill = normalizeUpscMainsDrill(parseStructured(data), {
+      directive_word: directive,
+    });
+    if (!drill) {
+      return upscEnrichmentResponse({
+        success: false,
+        error: 'Provider response did not satisfy the mains-drill contract.',
+      }, origin, 422);
+    }
+    return upscEnrichmentResponse({ success: true, data: drill }, origin, 200);
+  } catch {
+    return upscEnrichmentResponse({
+      success: false,
+      error: 'Mains service could not process this anchor.',
     }, origin, 503);
   }
 }

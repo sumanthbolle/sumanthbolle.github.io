@@ -12,6 +12,7 @@ Single Cloudflare Worker that powers both the Summaverick chat and the landing-p
 | GET    | `/upsc/brief`| Compatibility route for an on-demand daily / weekly model brief |
 | POST   | `/upsc/topic`| Optional live topic lookup, separate from reviewed publication. Body: `{ topic, paper? }` |
 | POST   | `/upsc/enrich`| Private publisher route: transform one normalized official record into a source-bound exam note |
+| POST   | `/upsc/mains` | Private publisher route: turn one Pattern Atlas anchor into a Mains drill (same publish token) |
 | GET    | `/trending`  | Landing widgets (news / market / tech), country-aware + cached          |
 | GET    | `/servicenow`| Latest ServiceNow articles across 4 tracks (AI / Agents / LLM / cost), cached |
 | GET    | `/metals`    | Live gold/silver spot references, local FX, and 30-day daily context |
@@ -117,6 +118,13 @@ The scheduled job requires two GitHub Actions secrets: `UPSC_ENRICH_ENDPOINT`
 (the full deployed URL ending in `/upsc/enrich`) and `UPSC_PUBLISH_TOKEN`. The
 same token must be configured as an encrypted Worker variable. The browser must
 never receive either value.
+
+### `POST /upsc/mains`
+
+Same bearer token as `/upsc/enrich`. Body: `{ "anchor": <atlas-anchor>, "directive_word": "...", "gs_paper": "GS2" }`.
+Success returns `{ "success": true, "data": { "question", "dimension_skeleton", "word_limit", "time_budget_minutes" } }`.
+The existing `/upsc/enrich` contract is unchanged. The publisher still writes a
+local drill if this route is undeployed or fails.
 
 ## `/servicenow` — ServiceNow live article feed
 

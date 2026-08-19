@@ -71,6 +71,21 @@ jobs:
             --endpoint "$UPSC_ENRICH_ENDPOINT" \
             --token "$UPSC_PUBLISH_TOKEN"
 
+      - name: Generate Mains drills
+        continue-on-error: true
+        env:
+          UPSC_ENRICH_ENDPOINT: ${{ secrets.UPSC_ENRICH_ENDPOINT }}
+          UPSC_PUBLISH_TOKEN: ${{ secrets.UPSC_PUBLISH_TOKEN }}
+        run: |
+          extra=()
+          if [ -n "$UPSC_ENRICH_ENDPOINT" ] && [ -n "$UPSC_PUBLISH_TOKEN" ]; then
+            extra+=(--endpoint "$UPSC_ENRICH_ENDPOINT" --token "$UPSC_PUBLISH_TOKEN")
+          fi
+          python scripts/upsc/mains_generator.py \
+            --patterns data/upsc-patterns.json \
+            --output data/upsc \
+            "${extra[@]}"
+
       - name: Build indexes and crawlable pages
         run: |
           python scripts/upsc/publish.py build-indexes --output data/upsc

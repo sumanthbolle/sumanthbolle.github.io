@@ -8,7 +8,7 @@ import sys
 from typing import Any, Callable, Iterable, Mapping, Optional
 import urllib.error
 import urllib.request
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urlunsplit
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -35,6 +35,48 @@ def _valid_endpoint(endpoint: str) -> str:
     return parts.geturl()
 
 
+def sibling_endpoint(endpoint: str, path: str) -> str:
+    """Keep scheme/host from the private enrich URL and swap the path."""
+    parts = urlsplit(_valid_endpoint(endpoint))
+    return urlunsplit((parts.scheme, parts.netloc, path, "", ""))
+
+
+def post_worker(
+    endpoint: str,
+    token: str,
+    payload: Mapping[str, Any],
+    opener: Callable[..., Any],
+    timeout: int = 55,
+) -> dict[str, Any]:
+    """POST JSON to the private Worker route and return the parsed object."""
+    url = _valid_endpoint(endpoint)
+    bearer = str(token or "")
+    if not bearer:
+        raise ValueError("enrichment token is required")
+    request = urllib.request.Request(
+        url,
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        headers={
+            "Accept": "application/json",
+            "Authorization": "Bearer " + bearer,
+            "Content-Type": "application/json",
+            "User-Agent": "Anchor-UPSC-Publisher/1.0",
+        },
+        method="POST",
+    )
+    with opener(request, timeout=timeout) as response:
+        body = response.read(MAX_RESPONSE_BYTES + 1)
+    if len(body) > MAX_RESPONSE_BYTES:
+        raise ValueError("enrichment response exceeded 2 MiB")
+    try:
+        parsed = json.loads(body.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError("invalid enrichment JSON") from error
+    if not isinstance(parsed, dict):
+        raise ValueError("invalid enrichment response")
+    return parsed
+
+
 def _decode_note(response: Any, source: Mapping[str, Any]) -> dict[str, Any]:
     body = response.read(MAX_RESPONSE_BYTES + 1)
     if len(body) > MAX_RESPONSE_BYTES:
@@ -43,6 +85,10 @@ def _decode_note(response: Any, source: Mapping[str, Any]) -> dict[str, Any]:
         payload = json.loads(body.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
         raise ValueError("invalid enrichment JSON") from error
+    return _decode_note_payload(payload, source)
+
+
+def _decode_note_payload(payload: Mapping[str, Any], source: Mapping[str, Any]) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise ValueError("invalid enrichment response")
     note = payload.get("data")
@@ -81,20 +127,9 @@ def enrich_records(
         current = existing.get(source_id)
         if current and current.get("sourceContentHash") == source.get("contentHash"):
             continue
-        request = urllib.request.Request(
-            url,
-            data=json.dumps(source, ensure_ascii=False).encode("utf-8"),
-            headers={
-                "Accept": "application/json",
-                "Authorization": "Bearer " + bearer,
-                "Content-Type": "application/json",
-                "User-Agent": "Anchor-UPSC-Publisher/1.0",
-            },
-            method="POST",
-        )
         try:
-            with opener(request, timeout=55) as response:
-                notes.append(_decode_note(response, source))
+            payload = post_worker(url, bearer, source, opener, timeout=55)
+            notes.append(_decode_note_payload(payload, source))
         except Exception as error:  # one bad record never blocks the publication
             failures[source_id] = _failure_text(error)
             close = getattr(error, "close", None)
