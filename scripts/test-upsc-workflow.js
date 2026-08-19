@@ -20,6 +20,7 @@ const revisionWorkflow = fs.readFileSync(
 assert.match(publishWorkflow, /cron: "15 0,6,12,18 \* \* \*"/);
 assert.match(publishWorkflow, /workflow_dispatch:/);
 assert.match(publishWorkflow, /permissions:\s+contents: write/);
+assert.match(publishWorkflow, /issues:\s+write/);
 assert.doesNotMatch(publishWorkflow, /ref:\s+main/);
 assert.match(publishWorkflow, /git push origin "HEAD:\$\{GITHUB_REF_NAME\}"/);
 assert.match(publishWorkflow, /UPSC_ENRICH_ENDPOINT/);
@@ -28,6 +29,10 @@ assert.doesNotMatch(publishWorkflow, /Verify publisher configuration/);
 assert.match(publishWorkflow, /Optional enrichment is not configured/);
 assert.match(publishWorkflow, /set -o pipefail[\s\S]*check-sources[\s\S]*tee data\/upsc\/source-health\.json/);
 assert.match(publishWorkflow, /--min-healthy 5/);
+assert.match(publishWorkflow, /scripts\/upsc\/alerting\.py/);
+assert.match(publishWorkflow, /upsc-source-health/);
+assert.match(publishWorkflow, /actions\/github-script@v7/);
+assert.match(publishWorkflow, /Snapshot previous source health/);
 assert.doesNotMatch(publishWorkflow, /--strict/);
 assert.ok(publishWorkflow.indexOf('Ingest official records') < publishWorkflow.indexOf('Enrich source records'));
 assert.match(publishWorkflow, /publish\.py build-pages/);
