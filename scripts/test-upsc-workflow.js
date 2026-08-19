@@ -12,6 +12,10 @@ const dailyWorkflow = fs.readFileSync(
   path.join(__dirname, '..', '.github', 'workflows', 'upsc-daily.yml'),
   'utf8',
 );
+const revisionWorkflow = fs.readFileSync(
+  path.join(__dirname, '..', '.github', 'workflows', 'upsc-revision.yml'),
+  'utf8',
+);
 
 assert.match(publishWorkflow, /cron: "15 0,6,12,18 \* \* \*"/);
 assert.match(publishWorkflow, /workflow_dispatch:/);
@@ -36,5 +40,12 @@ assert.match(
 );
 assert.doesNotMatch(dailyWorkflow, /secrets\.PPLX_API_KEY/);
 assert.match(dailyWorkflow, /node scripts\/test-upsc-triggers\.js/);
+
+assert.match(revisionWorkflow, /cron: "30 19 \* \* \*"/);
+assert.match(revisionWorkflow, /scripts\/upsc\/revision\.py/);
+assert.match(revisionWorkflow, /data\/upsc\/revision-queue\.json/);
+assert.match(revisionWorkflow, /group: upsc-official-publisher/);
+assert.doesNotMatch(revisionWorkflow, /cron: "15 0,6,12,18 \* \* \*"/);
+assert.doesNotMatch(revisionWorkflow, /cron: '30 1 \* \* \*'/);
 
 console.log('UPSC workflow tests passed');
