@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Needs review — UPSC notes held after verification</title>
+  <meta name="description" content="UPSC exam notes held out of auto-publish because a second-pass checker disagreed with the primary enrichment.">
+  <meta name="author" content="Sumanth Bolle">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f7f9fb">
+  <link rel="canonical" href="https://sumanthbolle.com/needs-review">
+  <link rel="stylesheet" href="assets/css/utility-chrome.css">
+  <link rel="stylesheet" href="assets/css/nav-utilities.css">
+  <link rel="stylesheet" href="assets/css/utility-page.css">
+  <link rel="stylesheet" href="assets/css/upsc.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to held notes</a>
+  <header class="an-editorial-masthead">
+    <p class="an-publication-mark">Anchor</p>
+    <h1>Needs review</h1>
+    <div class="an-edition-line">
+      <span>Second-pass verification hold</span>
+      <a href="upsc.html">UPSC Today</a>
+    </div>
+  </header>
+  <main id="main" class="an-main">
+    <section class="an-view">
+      <p class="an-viewhead__meta" id="reviewMeta">Loading…</p>
+      <div class="an-state" id="reviewState"><h3>Loading…</h3></div>
+      <ol class="an-entries" id="reviewList" hidden></ol>
+    </section>
+  </main>
+  <script src="assets/js/shared/nav-theme.js"></script>
+  <script>
+    (function () {
+      var meta = document.getElementById('reviewMeta');
+      var state = document.getElementById('reviewState');
+      var list = document.getElementById('reviewList');
+      function escapeHtml(value) {
+        return String(value || '').replace(/[&<>"']/g, function (char) {
+          return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
+        });
+      }
+      fetch('data/upsc/needs-review.json', { cache: 'no-cache' })
+        .then(function (response) { return response.ok ? response.json() : Promise.reject(); })
+        .then(function (payload) {
+          var items = Array.isArray(payload.items) ? payload.items : [];
+          meta.textContent = items.length ? items.length + ' held notes' : 'Nothing is held';
+          if (!items.length) {
+            state.innerHTML = '<h3>Nothing held</h3><p>Disagreements from the second-pass checker land here instead of the public exam note.</p>';
+            return;
+          }
+          state.hidden = true;
+          list.hidden = false;
+          list.innerHTML = items.map(function (item) {
+            var result = item.verification || {};
+            return '<li class="an-entry"><div class="an-entry__body">' +
+              '<p class="an-entry__tags"><span class="an-code">' + escapeHtml(item.anchor || item.sourceId) + '</span></p>' +
+              '<h3>' + escapeHtml(item.sourceId) + '</h3>' +
+              '<p>agrees=' + escapeHtml(result.agrees) + ' · confidence=' + escapeHtml(result.confidence) + '</p>' +
+              '<p>' + escapeHtml((result.flagged_claims || []).join(' · ')) + '</p>' +
+            '</div></li>';
+          }).join('');
+        })
+        .catch(function () {
+          meta.textContent = 'Queue unavailable';
+          state.innerHTML = '<h3>Verification queue not generated yet</h3>';
+        });
+    }());
+  </script>
+</body>
+</html>

@@ -52,10 +52,12 @@ import {
   buildUpscEnrichmentPayload,
   buildUpscMainsPayload,
   buildUpscTopicPayload,
+  buildUpscVerifyPayload,
   normalizeUpscBrief,
   normalizeUpscExamNote,
   normalizeUpscMainsDrill,
   normalizeUpscTopic,
+  normalizeUpscVerification,
 } from './upsc.js';
 
 const SYSTEM_PROMPT = `You are Summaverick, a general-purpose AI research assistant. You answer questions on any topic — world news, science, technology, business, culture, code, careers, personal decisions, and everyday curiosity — by synthesizing real sources into clear, grounded answers.

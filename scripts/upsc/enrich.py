@@ -2,6 +2,7 @@
 """Enrich normalized official UPSC records through the private Worker route."""
 
 import argparse
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 import sys
@@ -152,18 +153,44 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--endpoint", required=True)
     parser.add_argument("--token", required=True)
+    parser.add_argument("--verify-endpoint", default="")
+    parser.add_argument("--skip-verify", action="store_true")
+    parser.add_argument("--now")
     args = parser.parse_args()
+    from scripts.upsc.verify import (
+        apply_verification,
+        record_verification_stats,
+        write_review_queue,
+    )
+    now = args.now or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace(
+        "+00:00", "Z"
+    )
     records, _ = _all_current_records(args.output)
     notes, failures = enrich_records(
         records.values(), args.endpoint, args.token, urllib.request.urlopen,
         _existing_notes(args.output),
     )
-    for note in notes:
+    verify_url = "" if args.skip_verify else (
+        args.verify_endpoint or sibling_endpoint(args.endpoint, "/upsc/verify")
+    )
+    published, held, stats = apply_verification(
+        notes, records, verify_url, args.token,
+        None if args.skip_verify else urllib.request.urlopen, now,
+    )
+    for note in published:
         _write_json(args.output / "notes" / f"{note['sourceId']}.json", note)
+    write_review_queue(
+        args.output, held,
+        published_ids=[note["sourceId"] for note in published],
+        now=now,
+    )
+    record_verification_stats(args.output, stats, now)
     print(json.dumps({
-        "enriched": len(notes),
+        "enriched": len(published),
+        "held": len(held),
         "failed": len(failures),
         "failures": failures,
+        "verification": stats,
     }, indent=2, sort_keys=True))
     return 0 if not failures else 2
 
