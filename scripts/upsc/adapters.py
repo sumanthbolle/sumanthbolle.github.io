@@ -1,4 +1,9 @@
-"""Small, reviewed adapters for official RSS, Atom, JSON Feed, and listings."""
+"""Small, reviewed adapters for official RSS, Atom, JSON Feed, and listings.
+
+Before adding a publisher, read docs/upsc-source-criteria.md — it documents
+the live `tier` values (`indian-primary`, `international-institution`) and the
+checklist for a registry change. Do not invent a new tier in JSON alone.
+"""
 
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime

@@ -1,4 +1,5 @@
 import gzip
+import json
 import unittest
 from pathlib import Path
 
@@ -115,6 +116,17 @@ class AdapterTests(unittest.TestCase):
 
         self.assertEqual(rows[0]["title"], "Cabinet approves fiscal policy")
         self.assertEqual(details["contentType"], "application/rss+xml; charset=utf-8")
+
+    def test_module_docstring_points_at_source_criteria_covering_registry_tiers(self):
+        root = Path(__file__).parents[2]
+        adapters = (root / "scripts/upsc/adapters.py").read_text(encoding="utf-8")
+        self.assertIn("docs/upsc-source-criteria.md", adapters)
+        doc = (root / "docs/upsc-source-criteria.md").read_text(encoding="utf-8")
+        registry = json.loads((root / "data/upsc/source-registry.json").read_text(encoding="utf-8"))
+        tiers = {row["tier"] for row in registry}
+        self.assertTrue(tiers)
+        for tier in tiers:
+            self.assertIn(tier, doc)
 
 
 if __name__ == "__main__":
