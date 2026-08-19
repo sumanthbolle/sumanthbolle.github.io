@@ -16,6 +16,18 @@ const revisionWorkflow = fs.readFileSync(
   path.join(__dirname, '..', '.github', 'workflows', 'upsc-revision.yml'),
   'utf8',
 );
+const prelimsWorkflow = fs.readFileSync(
+  path.join(__dirname, '..', '.github', 'workflows', 'upsc-prelims.yml'),
+  'utf8',
+);
+const workerSource = fs.readFileSync(
+  path.join(__dirname, '..', 'api', 'worker.js'),
+  'utf8',
+);
+const upscApi = fs.readFileSync(
+  path.join(__dirname, '..', 'api', 'upsc.js'),
+  'utf8',
+);
 
 assert.match(publishWorkflow, /cron: "15 0,6,12,18 \* \* \*"/);
 assert.match(publishWorkflow, /workflow_dispatch:/);
@@ -28,6 +40,8 @@ assert.match(publishWorkflow, /UPSC_PUBLISH_TOKEN/);
 assert.doesNotMatch(publishWorkflow, /Verify publisher configuration/);
 assert.match(publishWorkflow, /Optional enrichment is not configured/);
 assert.match(publishWorkflow, /scripts\/upsc\/mains_generator\.py/);
+assert.match(publishWorkflow, /scripts\/upsc\/verify\.py/);
+assert.match(publishWorkflow, /upsc-needs-review/);
 assert.match(publishWorkflow, /set -o pipefail[\s\S]*check-sources[\s\S]*tee data\/upsc\/source-health\.json/);
 assert.match(publishWorkflow, /--min-healthy 5/);
 assert.match(publishWorkflow, /scripts\/upsc\/alerting\.py/);
@@ -53,5 +67,17 @@ assert.match(revisionWorkflow, /data\/upsc\/revision-queue\.json/);
 assert.match(revisionWorkflow, /group: upsc-official-publisher/);
 assert.doesNotMatch(revisionWorkflow, /cron: "15 0,6,12,18 \* \* \*"/);
 assert.doesNotMatch(revisionWorkflow, /cron: '30 1 \* \* \*'/);
+
+assert.match(prelimsWorkflow, /cron: "0 20 \* \* \*"/);
+assert.match(prelimsWorkflow, /scripts\/upsc\/prelims_quiz\.py/);
+assert.match(prelimsWorkflow, /data\/upsc\/prelims-quiz\.json/);
+assert.match(prelimsWorkflow, /group: upsc-official-publisher/);
+assert.doesNotMatch(prelimsWorkflow, /quiz-questions\.json/);
+
+assert.match(workerSource, /pathname === '\/upsc\/verify'/);
+assert.match(workerSource, /function handleUpscVerify/);
+assert.match(upscApi, /export function buildUpscVerifyPayload/);
+assert.match(upscApi, /export function normalizeUpscVerification/);
+assert.match(upscApi, /model: 'sonar-pro'/);
 
 console.log('UPSC workflow tests passed');

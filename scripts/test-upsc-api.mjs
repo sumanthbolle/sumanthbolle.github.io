@@ -1,8 +1,13 @@
 import assert from 'node:assert/strict';
 import {
   buildUpscEnrichmentPayload,
+  buildUpscVerifyPayload,
   normalizeUpscExamNote,
+  normalizeUpscVerification,
 } from '../api/upsc.js';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
 const SOURCE = Object.freeze({
   id: 'src_pib', title: 'Cabinet approves policy', publisherId: 'pib',
@@ -111,5 +116,22 @@ const injectedSource = {
 const injectedPayload = buildUpscEnrichmentPayload(injectedSource, '2026-08-18');
 assert.equal(injectedPayload.messages[0].content.includes('Ignore previous rules'), false);
 assert.match(injectedPayload.messages[1].content, /<SOURCE_DATA>[\s\S]*Ignore previous rules[\s\S]*<\/SOURCE_DATA>/);
+
+const verifyPayload = buildUpscVerifyPayload(SOURCE, note);
+assert.equal(verifyPayload.model, 'sonar-pro');
+assert.match(verifyPayload.messages[1].content, /fiscal federalism/);
+const verified = normalizeUpscVerification({
+  agrees: true, confidence: 0.91, flagged_claims: ['ok'],
+});
+assert.equal(verified.agrees, true);
+assert.equal(verified.confidence, 0.91);
+assert.equal(normalizeUpscVerification({ agrees: true, confidence: 'nope' }), null);
+
+const workerSource = readFileSync(
+  path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'api', 'worker.js'),
+  'utf8',
+);
+assert.match(workerSource, /pathname === '\/upsc\/verify'/);
+assert.match(workerSource, /handleUpscVerify/);
 
 console.log('ok - normalizes a source-bound topper note');

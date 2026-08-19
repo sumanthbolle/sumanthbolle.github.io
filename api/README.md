@@ -13,6 +13,7 @@ Single Cloudflare Worker that powers both the Summaverick chat and the landing-p
 | POST   | `/upsc/topic`| Optional live topic lookup, separate from reviewed publication. Body: `{ topic, paper? }` |
 | POST   | `/upsc/enrich`| Private publisher route: transform one normalized official record into a source-bound exam note |
 | POST   | `/upsc/mains` | Private publisher route: turn one Pattern Atlas anchor into a Mains drill (same publish token) |
+| POST   | `/upsc/verify`| Private second-pass check of the proposed static-topic tag (uses `sonar-pro`) |
 | GET    | `/trending`  | Landing widgets (news / market / tech), country-aware + cached          |
 | GET    | `/servicenow`| Latest ServiceNow articles across 4 tracks (AI / Agents / LLM / cost), cached |
 | GET    | `/metals`    | Live gold/silver spot references, local FX, and 30-day daily context |
@@ -125,6 +126,15 @@ Same bearer token as `/upsc/enrich`. Body: `{ "anchor": <atlas-anchor>, "directi
 Success returns `{ "success": true, "data": { "question", "dimension_skeleton", "word_limit", "time_budget_minutes" } }`.
 The existing `/upsc/enrich` contract is unchanged. The publisher still writes a
 local drill if this route is undeployed or fails.
+
+### `POST /upsc/verify`
+
+Same bearer token as `/upsc/enrich`. Body: `{ "source": <official-record>, "note": <exam-note> }`.
+Uses `sonar-pro` (not the enrich `sonar` model). Success returns
+`{ "success": true, "data": { "agrees", "confidence", "flagged_claims" } }`.
+The publisher holds notes that disagree or score below 0.7 in
+`data/upsc/needs-review.json` and still publishes when this route is undeployed
+or fails. The existing `/upsc/enrich` contract is unchanged.
 
 ## `/servicenow` — ServiceNow live article feed
 
