@@ -3010,7 +3010,9 @@ footer {
   display: grid;
   grid-template-columns: 132px minmax(0, 1fr);
   gap: clamp(28px, 5vw, 72px);
+  margin-top: 0;
   padding: clamp(30px, 5vw, 58px) 0;
+  border: 0;
   border-top: 3px solid var(--rule-strong);
   border-bottom: 1px solid var(--rule);
   border-radius: 0;
@@ -3025,6 +3027,7 @@ footer {
   gap: 10px;
   padding: 4px 18px 0 0;
   border-right: 1px solid var(--rule);
+  background: none;
   color: var(--gray);
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -3050,6 +3053,7 @@ footer {
 }
 
 .an-study-margin strong {
+  margin: 0;
   color: var(--gray);
   font-size: 10px;
   font-weight: 500;
@@ -3057,6 +3061,7 @@ footer {
 
 .an-topic__body {
   max-width: 880px;
+  padding: 0;
 }
 
 .an-topic__eyebrow {
@@ -3119,6 +3124,7 @@ footer {
   margin: 0;
   padding: 15px 0;
   display: flex;
+  flex-wrap: nowrap;
   gap: 6px 22px;
   overflow-x: auto;
   border-bottom: 1px solid var(--rule);
@@ -3127,9 +3133,12 @@ footer {
 
 .an-subject-jump a {
   min-height: 44px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  border: 0;
+  border-radius: 0;
   color: var(--gray);
   font-family: var(--sans);
   font-size: 11px;
@@ -3206,6 +3215,7 @@ footer {
   grid-column: 1 / -1;
   margin: 0;
   display: flex;
+  justify-content: flex-start;
   gap: 12px;
   color: var(--gray);
   font-size: 10px;
@@ -3291,12 +3301,17 @@ footer {
 }
 
 .an-subject {
+  position: static;
   padding: 22px 0 28px;
   border: 0;
   border-top: 1px solid var(--rule-strong);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+}
+
+.an-subject::before {
+  display: none;
 }
 
 .an-subject__paper,
@@ -3342,8 +3357,11 @@ footer {
 .an-subject__open {
   min-height: 44px;
   margin-top: 12px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
+  border: 0;
+  background: none;
   color: var(--blue);
   font-family: var(--sans);
   font-size: 12px;
