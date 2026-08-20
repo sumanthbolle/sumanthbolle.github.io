@@ -47,6 +47,12 @@ import {
 } from './servicenow-domain.js';
 
 import {
+  UPSC_DOMAIN_SYSTEM_ADDON,
+  isUpscDomainQuery,
+  classifyUpscIntent,
+} from './upsc-domain.js';
+
+import {
   upscScope,
   upscScopeConfig,
   buildUpscBriefPayload,
@@ -193,14 +199,31 @@ async function handleChat(request, env, origin) {
       return jsonResponse({ success: false, error: 'API key not configured' }, origin);
     }
 
+    // Explicit domain hint from the caller (the UPSC study-page widget sends
+    // { domain: 'upsc' }); fall back to text detection otherwise.
+    const requestedDomain = typeof body.domain === 'string' ? body.domain.toLowerCase() : '';
+    const upscDomain = requestedDomain === 'upsc' || isUpscDomainQuery(query);
+
+    // The widget marks structure-only asks (a model-answer skeleton) so we can
+    // skip expensive live search for them. Defaults to full search.
+    const liveSearch = body.liveSearch !== false;
+
     const domainEnabled = env.SERVICENOW_DOMAIN_ENABLED !== 'false';
-    const snDomain = domainEnabled && isServiceNowDomainQuery(query);
+    // UPSC takes precedence: an aspirant's page never wants the ServiceNow pack.
+    const snDomain = !upscDomain && domainEnabled && isServiceNowDomainQuery(query);
     const snIntent = snDomain ? classifyServiceNowIntent(query) : null;
     const releaseFamily =
       (env.SERVICENOW_RELEASE_FAMILY || snIntent?.releaseFamily || 'australia').toLowerCase();
 
     let systemContent = SYSTEM_PROMPT;
-    if (snDomain) {
+    if (upscDomain) {
+      const upscIntent = classifyUpscIntent(query);
+      systemContent =
+        SYSTEM_PROMPT +
+        '\n\n' +
+        UPSC_DOMAIN_SYSTEM_ADDON +
+        (upscIntent.paper ? `\n\nLikely paper for this topic: ${upscIntent.paper}.` : '');
+    } else if (snDomain) {
       systemContent =
         SYSTEM_PROMPT +
         '\n\n' +
@@ -228,18 +251,26 @@ async function handleChat(request, env, origin) {
 
     messages.push({ role: 'user', content: query });
 
+    // UPSC answers want exam determinism; a model-answer skeleton needs no
+    // live search, so shrink its search context to keep it fast and clean.
+    const temperature = upscDomain ? 0.15 : (snDomain ? 0.1 : 0.2);
+    const maxTokens = upscDomain ? 1200 : (snDomain ? 1600 : 1024);
+    const searchContextSize = liveSearch ? 'high' : 'low';
+
     const sonarPayload = {
       model: 'sonar',
       messages,
-      temperature: snDomain ? 0.1 : 0.2,
-      max_tokens: snDomain ? 1600 : 1024,
-      web_search_options: { search_context_size: 'high' },
+      temperature,
+      max_tokens: maxTokens,
+      web_search_options: { search_context_size: searchContextSize },
       return_related_questions: true
     };
 
     const data = await callSonar(apiKey, sonarPayload);
     const result = buildResult(data);
-    if (result && snDomain) {
+    if (result && upscDomain) {
+      result.domain = 'upsc';
+    } else if (result && snDomain) {
       result.domain = 'servicenow';
       result.servicenow = {
         intent: snIntent.intent,

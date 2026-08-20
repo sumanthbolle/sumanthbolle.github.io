@@ -209,6 +209,73 @@
   padding: 0;
 }
 
+/* Live Perplexity citations under an answer. */
+.sv-coach-sources {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule, rgba(35, 73, 96, 0.11));
+  font-family: var(--sans, system-ui, sans-serif);
+}
+
+.sv-coach-sources__title {
+  margin: 0 0 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray, #6e6e73);
+}
+
+.sv-coach-sources ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 3px;
+}
+
+.sv-coach-sources a {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  color: var(--blue, #245f78);
+  text-decoration: none;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.sv-coach-sources a:hover {
+  text-decoration: underline;
+}
+
+.sv-coach-src__n {
+  flex: 0 0 auto;
+  color: var(--gray, #6e6e73);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+/* Perplexity related-question follow-ups. */
+.sv-coach-related {
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+.sv-coach-related__title {
+  margin: 0 0 4px;
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray, #6e6e73);
+}
+
+.sv-coach-related .sv-coach-chip {
+  margin: 0 4px 4px 0;
+  text-align: left;
+}
+
 .sv-coach-form {
   display: grid;
   grid-template-columns: 1fr auto;
