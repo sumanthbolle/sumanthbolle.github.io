@@ -3,7 +3,9 @@ import json
 import unittest
 from pathlib import Path
 
-from scripts.upsc.adapters import fetch_source_details, parse_payload
+from scripts.upsc.adapters import (
+    FEED_ACCEPT, LISTING_ACCEPT, fetch_source_details, parse_payload, request_headers,
+)
 from scripts.upsc.models import SourceConfig
 
 
@@ -116,6 +118,53 @@ class AdapterTests(unittest.TestCase):
 
         self.assertEqual(rows[0]["title"], "Cabinet approves fiscal policy")
         self.assertEqual(details["contentType"], "application/rss+xml; charset=utf-8")
+
+    def test_listing_fetch_asks_for_html_with_a_same_origin_referer(self):
+        mea = SourceConfig(
+            id="mea", name="Ministry of External Affairs", country="IN",
+            tier="indian-primary", hosts=("mea.gov.in",), adapter="listing",
+            endpoint=(
+                "https://www.mea.gov.in/FrontEnd/FetchPublicationListingData"
+                "?publicationId=51&page=1&PageSize=20&SortBy=Latest&PLngId=1"
+            ),
+            enabled=True, link_class="pressTitle",
+        )
+        headers = request_headers(mea)
+        self.assertEqual(headers["Accept"], LISTING_ACCEPT)
+        self.assertEqual(headers["Referer"], "https://www.mea.gov.in/")
+        self.assertIn("en-IN", headers["Accept-Language"])
+        seen = {}
+
+        class HtmlResponse:
+            headers = {"Content-Type": "text/html; charset=utf-8"}
+
+            def read(self, limit=-1):
+                body = fixture_bytes("mea-listing.html")
+                return body if limit < 0 else body[:limit]
+
+            def geturl(self):
+                return mea.endpoint
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, traceback):
+                return False
+
+        def opener(request, timeout=20):
+            seen["accept"] = request.get_header("Accept")
+            seen["referer"] = request.get_header("Referer")
+            return HtmlResponse()
+
+        rows, _ = fetch_source_details(mea, opener)
+        self.assertEqual(rows[0]["title"], "India and partner conclude consultations")
+        self.assertEqual(seen["accept"], LISTING_ACCEPT)
+        self.assertEqual(seen["referer"], "https://www.mea.gov.in/")
+
+    def test_feed_fetch_still_prefers_xml_accept(self):
+        headers = request_headers(source_config("rss"))
+        self.assertEqual(headers["Accept"], FEED_ACCEPT)
+        self.assertEqual(headers["Referer"], "https://pib.gov.in/")
 
     def test_module_docstring_points_at_source_criteria_covering_registry_tiers(self):
         root = Path(__file__).parents[2]

@@ -945,10 +945,32 @@ select {
   gap: 16px;
   padding: 22px 0;
   border-bottom: 1px solid var(--rule);
+  text-align: left;
 }
 
 .an-entry:last-child {
   border-bottom: 0;
+}
+
+.an-entry__body {
+  min-width: 0;
+}
+
+.an-entry > .an-entry__body:only-child {
+  grid-column: 1 / -1;
+}
+
+.an-entry ol,
+.an-entry ul {
+  margin: 10px 0 10px 1.35em;
+}
+
+.an-entry ol {
+  list-style: decimal;
+}
+
+.an-entry ul {
+  list-style: disc;
 }
 
 .an-entry__margin {
@@ -2993,6 +3015,12 @@ footer {
 .an-state {
   max-width: 52ch;
   padding: 28px 0;
+}
+
+.an-view > p {
+  max-width: 68ch;
+  margin: 16px 0 4px;
+  text-align: left;
 }
 
 .an-state h3 {
