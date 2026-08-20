@@ -28,7 +28,54 @@ test('keeps chat queries inside the public Worker limit', function () {
   assert.ok(request.query.length <= coach.QUERY_MAX);
   assert.equal(request.context.length <= 10, true);
   assert.equal(request.context[0].role, 'user');
-  assert.match(request.context[0].content, /^Study context:/);
+  assert.match(request.context[0].content, /^Study context/);
+});
+
+test('flags the UPSC domain and search mode so the Worker applies the exam pack', function () {
+  const searched = coach.buildRequest({ query: 'Mains POV on federalism', pageContext: 'Fiscal federalism' });
+  assert.equal(searched.domain, 'upsc');
+  assert.equal(searched.liveSearch, true);
+  const skeleton = coach.buildRequest({ query: 'Model answer', liveSearch: false });
+  assert.equal(skeleton.liveSearch, false);
+  // The model-answer prompt opts out of live search; researched prompts keep it.
+  assert.equal(coach.PROMPTS.answer.search, false);
+  assert.equal(coach.PROMPTS.mains.search, true);
+  assert.equal(coach.PROMPTS.prelims.search, true);
+});
+
+test('renders live Perplexity citations and caps auto-continue/retry loops', function () {
+  const html = coach.sourcesHtml([
+    { index: 1, title: 'Cabinet decision', url: 'https://pib.gov.in/x', source: 'pib.gov.in' },
+    { index: 2, title: '', url: 'javascript:alert(1)' },
+    { title: 'no url dropped' }
+  ]);
+  assert.match(html, /Sources/);
+  assert.match(html, /https:\/\/pib\.gov\.in\/x/);
+  assert.doesNotMatch(html, /alert\(1\)/); // non-http(s) citation dropped, never linked
+  assert.equal(coach.sourcesHtml([]), '');
+  assert.equal(coach.sourcesHtml([{ title: 'no url' }]), '');
+  const related = coach.relatedQuestions(['How does Article 246 divide powers?', 'ok', 42, null]);
+  assert.equal(related.length, 1);
+  assert.match(related[0], /Article 246/);
+  assert.equal(coach.MAX_RETRIES >= 1, true);
+  assert.equal(coach.MAX_TRUNCATE_CONTINUES, 1);
+});
+
+test('grounds on an expanded Pattern Atlas anchor when one is open', function () {
+  const openDetail = {
+    parentNode: { querySelector: function () { return { textContent: 'Fiscal federalism' }; } },
+    textContent: 'Pattern Static core: Article 280, Finance Commission. Verify: current devolution %.'
+  };
+  const fakeDoc = {
+    querySelector: function (sel) {
+      if (sel.indexOf('an-entry__expand[open]') !== -1) return openDetail;
+      return null;
+    },
+    getSelection: function () { return ''; }
+  };
+  const ctx = coach.pageContextFromDom(fakeDoc);
+  assert.match(ctx, /Anchor: Fiscal federalism/);
+  assert.match(ctx, /Finance Commission/);
 });
 
 test('never-stop helpers keep a live quiz moving', function () {

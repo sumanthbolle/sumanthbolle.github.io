@@ -20,31 +20,40 @@
   var QUERY_MAX = 1000;
   var CONTEXT_MAX = 4000;
   var HISTORY_KEEP = 8;
+  var MAX_RETRIES = 3;          // give up (with a manual retry) after this many failures
+  var MAX_TRUNCATE_CONTINUES = 1; // never chase a truncated reply more than once
   var MUTE_KEY = 'anchor-coach-muted';
+  var DOMAIN = 'upsc';         // tells the Worker to apply the UPSC exam-coach pack
 
+  // search: whether this ask needs live Perplexity research. A model-answer
+  // skeleton is structure only, so it opts out — faster, cheaper, cleaner.
   var PROMPTS = {
     prelims: {
       id: 'prelims',
       label: 'Prelims angle',
       hint: 'How this can be asked or answered in Prelims',
+      search: true,
       query: 'Check how this topic can be asked or answered in UPSC Prelims. Give 2 or 3 statement-style items, the likely trap (only/except/threshold/date), and the exact fact to verify in the official source. Do not invent figures.'
     },
     mains: {
       id: 'mains',
       label: 'Mains POV',
       hint: 'What the Mains question wants',
+      search: true,
       query: 'What is the Mains point of view on this topic? Name the GS paper, a fitting directive word, the demand of the question, and three answer dimensions with one value-addition hook each. No prediction.'
     },
     answer: {
       id: 'answer',
       label: 'Model answer',
       hint: 'How your answer should look',
+      search: false,
       query: 'How should my answer look? Give a 150-word GS skeleton: one intro line, three body dimensions, a counter-point, and a one-line close. Lead with a directive verb. Keep it exam-hall short.'
     },
     quiz: {
       id: 'quiz',
       label: 'Quick quiz',
       hint: 'One question at a time — it keeps going',
+      search: true,
       query: 'Start a UPSC quick quiz on this topic. Ask exactly ONE question now (Prelims statements or a short Mains stem). Wait for my answer. After each answer: mark it in one line, then immediately ask the next question. Never say we are done. Never wrap up. Keep going until I say stop.'
     }
   };
@@ -99,21 +108,26 @@
     var query = clip(settings.query, QUERY_MAX);
     if (query.length < 2) query = 'Continue.';
     var context = [];
-    var snapshot = clip(settings.pageContext || '', 800);
+    var snapshot = clip(settings.pageContext || '', 1400);
     if (snapshot) {
-      context.push({ role: 'user', content: 'Study context: ' + snapshot });
+      context.push({ role: 'user', content: 'Study context (treat as the settled static scaffold): ' + snapshot });
       context.push({
         role: 'assistant',
         content: settings.quiz
-          ? 'Understood. I will quiz you one question at a time and keep going until you say stop.'
-          : 'Understood. I will stay on this topic and keep answering until you stop.'
+          ? 'Understood. I will quiz you one question at a time on this anchor and keep going until you say stop.'
+          : 'Understood. I will build on this static scaffold and use live search only for the current trigger.'
       });
     }
     (Array.isArray(settings.history) ? settings.history : []).slice(-HISTORY_KEEP).forEach(function (msg) {
       if (!msg || (msg.role !== 'user' && msg.role !== 'assistant')) return;
       context.push({ role: msg.role, content: clip(msg.content, CONTEXT_MAX) });
     });
-    return { query: query, context: context.slice(-10) };
+    return {
+      query: query,
+      context: context.slice(-10),
+      domain: DOMAIN,
+      liveSearch: settings.liveSearch !== false
+    };
   }
 
   function formatReply(answer) {
@@ -124,6 +138,42 @@
     escaped = escaped.replace(/\n{2,}/g, '</p><p>');
     escaped = escaped.replace(/\n/g, '<br>');
     return escaped ? '<p>' + escaped + '</p>' : '';
+  }
+
+  function escAttr(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
+    });
+  }
+
+  function safeHttpUrl(value) {
+    var raw = String(value == null ? '' : value).trim();
+    return /^https?:\/\//i.test(raw) ? raw : '';
+  }
+
+  // Render the live Perplexity citations under an answer so the [1][2] markers
+  // resolve and the reply reads as research, not opinion. Only http(s) links
+  // survive — a javascript:/data: citation is dropped, never linked.
+  function sourcesHtml(sources) {
+    var rows = (Array.isArray(sources) ? sources : []).map(function (s, i) {
+      return s ? { url: safeHttpUrl(s.url), index: s.index || i + 1, title: s.title, source: s.source } : null;
+    }).filter(function (s) {
+      return s && s.url;
+    }).slice(0, 8);
+    if (!rows.length) return '';
+    var items = rows.map(function (s) {
+      var label = clip(s.title || s.source || s.url, 90) || s.url;
+      return '<li><a href="' + escAttr(s.url) + '" target="_blank" rel="noopener noreferrer">' +
+        '<span class="sv-coach-src__n">' + escAttr(s.index) + '</span>' + escAttr(label) + '</a></li>';
+    }).join('');
+    return '<div class="sv-coach-sources"><p class="sv-coach-sources__title">Sources</p><ol>' +
+      items + '</ol></div>';
+  }
+
+  function relatedQuestions(list) {
+    return (Array.isArray(list) ? list : []).map(function (q) {
+      return clip(q, 140);
+    }).filter(function (q) { return q.length > 4; }).slice(0, 4);
   }
 
   function pageContextFromDom(doc) {
@@ -139,6 +189,13 @@
       selection = '';
     }
     if (clip(selection, 400).length >= 12) return clip(selection, 400);
+
+    // If a Pattern Atlas anchor is expanded, ground on its vetted scaffold
+    // (static core, traps, verify) so the model reuses it instead of
+    // re-deriving the static half — and researches only the live trigger.
+    var grounded = openAnchorContext(root);
+    if (grounded) return grounded;
+
     var bits = [
       textOf(root.querySelector('#topicOfDay h2')),
       textOf(root.querySelector('#topicOfDay .an-topic__dek')),
@@ -153,6 +210,18 @@
       if (seen.indexOf(bit) === -1) seen.push(bit);
     });
     return clip(seen.join('. '), 800);
+  }
+
+  function openAnchorContext(root) {
+    if (!root || !root.querySelector) return '';
+    var open = root.querySelector('.an-entry__expand[open], details.an-entry__expand[open]');
+    if (!open) return '';
+    var body = open.parentNode || open;
+    var titleNode = body && body.querySelector ? body.querySelector('.an-entry__title, h3') : null;
+    var title = textOf(titleNode);
+    var detail = open.textContent ? clip(open.textContent.replace(/^\s*Pattern\s*/i, ''), 1100) : '';
+    if (!title && !detail) return '';
+    return clip((title ? 'Anchor: ' + title + '. ' : '') + detail, 1400);
   }
 
   function textOf(node) {
@@ -253,7 +322,10 @@
       muted: readMuted(),
       history: [],
       generation: 0,
-      retryTimer: null
+      retryTimer: null,
+      liveSearch: true,
+      truncateStreak: 0,
+      lastAsk: null
     };
 
     var toggle = el(
@@ -349,6 +421,12 @@
       }
       armAudio();
       if (info.quiz) setQuiz(true);
+      // A fresh, user-initiated turn resets the truncation guard and adopts
+      // that prompt's search mode; silent auto-continues inherit it.
+      if (!info.silent) {
+        state.truncateStreak = 0;
+        if (typeof info.liveSearch === 'boolean') state.liveSearch = info.liveSearch;
+      }
       state.stopped = false;
       var generation = ++state.generation;
       if (state.retryTimer) {
@@ -377,7 +455,8 @@
         query: query,
         history: state.history.slice(0, -1),
         pageContext: pageContextFromDom(document),
-        quiz: state.quiz
+        quiz: state.quiz,
+        liveSearch: state.liveSearch !== false
       });
 
       opener(endpoint, {
@@ -389,30 +468,61 @@
         return response.json();
       }).then(function (payload) {
         if (generation !== state.generation || state.stopped) return;
-        var answer = payload && payload.success && payload.result
-          ? String(payload.result.answer || '')
-          : '';
+        var result = payload && payload.success && payload.result ? payload.result : null;
+        var answer = result ? String(result.answer || '') : '';
         if (!answer) throw new Error('empty');
         state.loading = false;
         panel.querySelector('#svCoachSend').disabled = false;
         setStatus('');
         state.history.push({ role: 'assistant', content: answer });
-        appendBubble('assistant', formatReply(answer));
+        var bubble = appendBubble('assistant', formatReply(answer) + sourcesHtml(result && result.sources));
+        renderRelated(result && result.relatedQuestions);
+        void bubble;
         playSweetTone({ muted: state.muted });
         var move = nextQuizMove(answer, state.quiz);
-        if (move === 'continue-truncated') {
+        if (move === 'continue-truncated' && state.truncateStreak < MAX_TRUNCATE_CONTINUES) {
+          state.truncateStreak += 1;
           send(CONTINUE_TRUNCATED, { silent: true, note: 'Finishing that thought…' });
         } else if (move === 'continue-quiz') {
+          state.truncateStreak = 0;
           send(CONTINUE_QUIZ, { silent: true, note: 'Next question…' });
+        } else {
+          state.truncateStreak = 0;
         }
       }).catch(function () {
         if (generation !== state.generation || state.stopped) return;
+        if (attempt + 1 >= MAX_RETRIES) {
+          state.loading = false;
+          panel.querySelector('#svCoachSend').disabled = false;
+          state.lastAsk = query;
+          setStatus('Could not reach Summaverick. Tap Send to try again.');
+          return;
+        }
         var wait = backoffMs(attempt);
         setStatus('Still here — retrying in ' + Math.round(wait / 1000) + 's.');
         state.retryTimer = setTimeout(function () {
           ask(query, generation, attempt + 1);
         }, wait);
       });
+    }
+
+    function renderRelated(list) {
+      var items = relatedQuestions(list);
+      if (!items.length) return;
+      var wrap = document.createElement('div');
+      wrap.className = 'sv-coach-related';
+      wrap.innerHTML = '<p class="sv-coach-related__title">Follow-ups</p>';
+      items.forEach(function (q) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'sv-coach-chip';
+        b.dataset.related = '1';
+        b.textContent = q;
+        wrap.appendChild(b);
+      });
+      var log = panel.querySelector('#svCoachLog');
+      log.appendChild(wrap);
+      log.scrollTop = log.scrollHeight;
     }
 
     toggle.addEventListener('click', function () { setOpen(!state.open); });
@@ -435,15 +545,29 @@
       var prompt = PROMPTS[chip.dataset.prompt];
       if (!prompt) return;
       setOpen(true);
-      send(prompt.query, { quiz: prompt.id === 'quiz' });
+      send(prompt.query, { quiz: prompt.id === 'quiz', liveSearch: prompt.search !== false });
+    });
+    panel.querySelector('#svCoachLog').addEventListener('click', function (event) {
+      var chip = event.target.closest('[data-related]');
+      if (!chip) return;
+      send(chip.textContent, { liveSearch: true });
     });
     panel.querySelector('#svCoachForm').addEventListener('submit', function (event) {
       event.preventDefault();
       var input = panel.querySelector('#svCoachInput');
       var text = input.value.trim();
-      if (!text) return;
+      if (!text) {
+        // Empty Send retries the last ask that failed, if any.
+        if (state.lastAsk) {
+          var retry = state.lastAsk;
+          state.lastAsk = null;
+          send(retry, { silent: true, note: 'Retrying…', liveSearch: state.liveSearch !== false });
+        }
+        return;
+      }
       input.value = '';
-      send(text);
+      state.lastAsk = null;
+      send(text, { liveSearch: true });
     });
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && state.open) setOpen(false);
@@ -454,6 +578,9 @@
 
   return {
     QUERY_MAX: QUERY_MAX,
+    MAX_RETRIES: MAX_RETRIES,
+    MAX_TRUNCATE_CONTINUES: MAX_TRUNCATE_CONTINUES,
+    DOMAIN: DOMAIN,
     PROMPTS: PROMPTS,
     TONE: TONE,
     CONTINUE_QUIZ: CONTINUE_QUIZ,
@@ -466,6 +593,8 @@
     shouldKeepTrying: shouldKeepTrying,
     buildRequest: buildRequest,
     formatReply: formatReply,
+    sourcesHtml: sourcesHtml,
+    relatedQuestions: relatedQuestions,
     pageContextFromDom: pageContextFromDom,
     endpointFromWindow: endpointFromWindow,
     playSweetTone: playSweetTone,
