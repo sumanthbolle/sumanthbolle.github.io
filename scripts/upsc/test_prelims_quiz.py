@@ -88,6 +88,10 @@ class PrelimsQuizTests(unittest.TestCase):
         self.assertIn("data/upsc/prelims-quiz.json", page)
         self.assertNotIn("quiz-questions.json", page)
         self.assertTrue((root / "quiz.html").is_file())
+        css = (root / "assets/css/upsc.css").read_text(encoding="utf-8")
+        self.assertIn(".an-entry > .an-entry__body:only-child", css)
+        self.assertIn("class=\"an-entry__body\"", page)
+        self.assertNotIn("an-entry__margin", page)
 
     def test_generate_quiz_skips_anchors_without_facts(self):
         payload = generate_quiz([{"id": "empty"}], NOW)

@@ -123,6 +123,9 @@ class MainsGeneratorTests(unittest.TestCase):
         self.assertIn('data-theme="light"', markup)
         self.assertIn("assets/css/upsc.css", markup)
         self.assertIn("data/upsc/mains-drills.json", markup)
+        css = (Path(__file__).parents[2] / "assets/css/upsc.css").read_text(encoding="utf-8")
+        self.assertIn(".an-entry > .an-entry__body:only-child", css)
+        self.assertIn("class=\"an-entry__body\"", markup)
 
 
 class ExistingEnrichmentClientStillWorks(unittest.TestCase):

@@ -141,6 +141,10 @@ class RevisionPageTests(unittest.TestCase):
         self.assertIn("assets/css/utility-chrome.css", markup)
         self.assertIn("data/upsc/revision-queue.json", markup)
         self.assertIn("Revisit Today", markup)
+        css = (Path(__file__).parents[2] / "assets/css/upsc.css").read_text(encoding="utf-8")
+        self.assertIn(".an-entry > .an-entry__body:only-child", css)
+        self.assertIn("class=\"an-entry__body\"", markup)
+        self.assertNotIn("an-entry__margin", markup)
 
 
 if __name__ == "__main__":

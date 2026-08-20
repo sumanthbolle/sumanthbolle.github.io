@@ -13,7 +13,7 @@ import io
 import json
 import re
 from typing import Any, Callable, Optional
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlsplit
 from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
 
@@ -26,6 +26,24 @@ USER_AGENT = (
     "AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/140.0.0.0 Safari/537.36"
 )
+FEED_ACCEPT = (
+    "application/rss+xml, application/atom+xml, application/xml, text/xml, "
+    "application/feed+json, application/json, text/html;q=0.8, */*;q=0.5"
+)
+LISTING_ACCEPT = "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8"
+
+
+def request_headers(config: SourceConfig) -> dict[str, str]:
+    """Browser-like headers. Listing endpoints are HTML pages, not feeds."""
+    parts = urlsplit(config.endpoint)
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept-Language": "en-IN,en;q=0.9",
+        "Accept": LISTING_ACCEPT if config.adapter == "listing" else FEED_ACCEPT,
+    }
+    if parts.scheme and parts.netloc:
+        headers["Referer"] = f"{parts.scheme}://{parts.netloc}/"
+    return headers
 
 
 def _iso_date(value: str) -> str:
@@ -261,10 +279,7 @@ def fetch_source_details(
     config: SourceConfig,
     opener: Callable[..., Any] = urlopen,
 ) -> tuple[list[dict[str, str]], dict[str, str]]:
-    request = Request(config.endpoint, headers={
-        "User-Agent": USER_AGENT,
-        "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, application/feed+json, application/json, text/html;q=0.8, */*;q=0.5",
-    })
+    request = Request(config.endpoint, headers=request_headers(config))
     with opener(request, timeout=20) as response:
         final_url = response.geturl()
         validate_final_url(config, final_url)
