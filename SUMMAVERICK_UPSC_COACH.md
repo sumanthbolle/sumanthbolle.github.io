@@ -6,11 +6,12 @@ feeds (Today, Pattern Atlas, Mains drills, Prelims quiz, Revisit).
 
 ---
 
-## 0. Status — what already landed on this branch
+## 0. Status — what has landed on this branch
 
-This branch (`claude/upsc-coach-research-mode`) implements the foundation the
-rest of this spec builds on. Treat the sections below as the remaining roadmap;
-the items here are done and must not be regressed.
+This branch (`claude/upsc-coach-research-mode`) now implements the whole of this
+spec. The sections below are the design record; the table is the source of
+truth for what shipped. Do not regress the reliability features (retry, quiz
+never-stop, HTML escaping, loop caps).
 
 | Area | Status | Where |
 | --- | --- | --- |
@@ -20,26 +21,37 @@ the items here are done and must not be regressed.
 | Live Perplexity citations rendered as a numbered **Sources** list; related questions rendered as follow-up chips (http(s)-only, escaped) | **Done** | `assets/js/upsc/coach.js`, `assets/css/upsc-coach.css` |
 | Grounding on an expanded Pattern Atlas anchor's static core / traps / verify | **Done (DOM-based)** | `assets/js/upsc/coach.js` `openAnchorContext()` |
 | Loop caps: one truncation auto-continue, retry ceiling + manual retry | **Done** | `assets/js/upsc/coach.js` |
-| Tests for the above | **Done** | `scripts/test-upsc-coach.js` (runs in `upsc-publish.yml`) |
+| **Page metadata `meta` contract (§3):** widget derives `gs_paper`/`static_topic`/`pattern_tag`/`source`/`date` from the DOM (or `window.UPSC_CONTEXT` / `data-upsc-*` override), sends `{ meta }`, Worker folds it in and echoes it, widget shows a header line | **Done** | `pageMetaFromDom()`, `upscMetaLine()` |
+| **Per-chip schemas + structured UI (§4):** Prelims JSON → radio MCQ with reveal; Mains POV JSON → GS/directive/demand/dimensions; Model answer → IBC sections + word count + value-add highlight; Quick quiz → alternating MCQ/Mains prompt with counters; graceful text fallback | **Done** | `upscChipInstruction()`, render helpers in `coach.js` |
+| **Exam-hall discipline (§5):** Study/Exam mode toggle (`localStorage` `summaverick_upsc_mode`), exam mode = strict word limits + Mains writing timer + tone default-muted; rubric badges for Model answer; paste-your-answer evaluation | **Done** | `coach.js`, `upsc-domain.js` |
+| Tests for all of the above | **Done** | `scripts/test-upsc-coach.js` (runs in `upsc-publish.yml`) |
 
 **Repo reality (path mapping for anyone reading the older PR text):**
 
 - The widget script is `assets/js/upsc/coach.js` (the spec sometimes calls it
   `scripts/upsc-coach.js`).
-- The Worker is `api/worker.js`; the UPSC system pack lives in
-  `api/upsc-domain.js`. The Worker must be redeployed (`wrangler deploy`) for
-  server-side prompt changes to take effect on the live endpoint.
+- The Worker is `api/worker.js`; the UPSC system pack and per-chip instructions
+  live in `api/upsc-domain.js`. **The Worker must be redeployed
+  (`wrangler deploy`)** for the server-side chip instructions and JSON schemas
+  to take effect on the live endpoint — until then the widget still sends the
+  new fields (ignored harmlessly) and renders replies with its text fallback.
 - The five study pages are `upsc.html` (Today), `upsc-patterns.html` (Pattern
   Atlas), `mains.html` (Mains drills), `upsc-quiz.html` (Prelims quiz),
   `revision.html` (Revisit Today).
 - Structured anchor data already exists in `data/upsc-patterns.json`
   (`static_core`, `traps`, `verify`, `skeleton`, `stems`, `codes`, `band`,
-  `prelims_angle`). This is the natural source for the `meta` object below.
+  `prelims_angle`).
 
-**Grounding upgrade to prefer next:** the current grounding reads the *open
-anchor's rendered DOM*. Section 3 asks for structured `meta` fields. The clean
-path is to expose a `window.UPSC_CONTEXT` (or `data-upsc-*` attributes) from
-each page's app code and have the widget prefer that over DOM scraping.
+**JSON-vs-search trade-off:** the structured chips (Prelims, Mains POV, Quick
+quiz) run with `liveSearch: false` so the reply is clean JSON the widget can
+parse into exam artefacts, rather than prose interleaved with citations. Live
+research + a **Sources** list still applies to free-form follow-ups. If a JSON
+reply can't be parsed, the widget falls back to rendering it as text.
+
+**Metadata reliability:** `pageMetaFromDom()` is best-effort from the rendered
+DOM (open atlas anchor → Today topic → list entry). A page may set
+`window.UPSC_CONTEXT` or `data-upsc-*` attributes to override any field; the
+widget prefers those when present.
 
 ---
 
@@ -186,10 +198,11 @@ widget MUST:
   object.
 - Add a `meta` object to the body of the `POST` request to `/`.
 
-> The current build already sends `domain` and `liveSearch` and grounds on the
-> open anchor's DOM. Adding a structured `meta` object is the next step; the
-> Worker should read `body.meta` and fold the fields into the system/user
-> context (and echo them back for the header line).
+> **Implemented.** The widget derives `meta` in `pageMetaFromDom()` (DOM, with
+> `window.UPSC_CONTEXT` / `data-upsc-*` override), sends it as `body.meta`, and
+> the Worker folds it into the system prompt via `upscMetaLine()` and echoes it
+> back on `result.meta`. The widget shows it as a header line
+> (`metaHeaderText()`).
 
 ---
 
