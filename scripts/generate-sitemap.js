@@ -18,6 +18,8 @@ const STATIC_PAGES = [
   { url: '/save-yourself', priority: '0.9', changefreq: 'weekly' },
   { url: '/upsc', priority: '0.9', changefreq: 'daily' },
   { url: '/revision', priority: '0.8', changefreq: 'daily' },
+  { url: '/mains', priority: '0.8', changefreq: 'daily' },
+  { url: '/upsc-quiz', priority: '0.8', changefreq: 'weekly' },
   { url: '/upsc-patterns', priority: '0.9', changefreq: 'weekly' },
   { url: '/blog', priority: '0.9', changefreq: 'daily' },
   { url: '/interviews', priority: '0.9', changefreq: 'daily' },

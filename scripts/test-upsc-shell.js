@@ -87,8 +87,12 @@ test('loads the public content contract before render and app', function () {
   assert.ok(content > 0 && content < memory && memory < render && render < app);
 });
 
-test('links the crawlable archive and keeps every HTML id unique', function () {
+test('links the crawlable archive and practice pages and keeps every HTML id unique', function () {
   assert.match(html, /href="upsc-study\/"/);
+  assert.match(html, /href="revision\.html"/);
+  assert.match(html, /href="mains\.html"/);
+  assert.match(html, /href="upsc-quiz\.html"/);
+  assert.match(html, /href="needs-review\.html"/);
   const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
   assert.equal(new Set(ids).size, ids.length);
 });
