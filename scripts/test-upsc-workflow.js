@@ -51,6 +51,8 @@ assert.match(publishWorkflow, /Snapshot previous source health/);
 assert.doesNotMatch(publishWorkflow, /--strict/);
 assert.ok(publishWorkflow.indexOf('Ingest official records') < publishWorkflow.indexOf('Enrich source records'));
 assert.match(publishWorkflow, /publish\.py build-pages/);
+assert.match(publishWorkflow, /node scripts\/test-upsc-shell\.js/);
+assert.match(publishWorkflow, /node scripts\/test-upsc-coach\.js/);
 assert.match(publishWorkflow, /node scripts\/generate-sitemap\.js/);
 assert.match(publishWorkflow, /git add data\/upsc upsc-study sitemap\.xml/);
 

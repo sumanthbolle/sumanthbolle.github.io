@@ -84,7 +84,9 @@ test('loads the public content contract before render and app', function () {
   const memory = html.indexOf('assets/js/upsc/memory.js');
   const render = html.indexOf('assets/js/upsc/render.js');
   const app = html.indexOf('assets/js/upsc/app.js');
+  const coach = html.indexOf('assets/js/upsc/coach.js');
   assert.ok(content > 0 && content < memory && memory < render && render < app);
+  assert.ok(coach > app);
 });
 
 test('links the crawlable archive and practice pages and keeps every HTML id unique', function () {
