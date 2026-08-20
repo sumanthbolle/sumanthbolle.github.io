@@ -50,6 +50,8 @@ import {
   UPSC_DOMAIN_SYSTEM_ADDON,
   isUpscDomainQuery,
   classifyUpscIntent,
+  upscChipInstruction,
+  upscMetaLine,
 } from './upsc-domain.js';
 
 import {
@@ -215,14 +217,26 @@ async function handleChat(request, env, origin) {
     const releaseFamily =
       (env.SERVICENOW_RELEASE_FAMILY || snIntent?.releaseFamily || 'australia').toLowerCase();
 
+    // Structured chip the widget is driving (prelims/mains/answer/quiz/rubric/
+    // evaluate), plus the study/exam mode and marks that shape word limits.
+    const upscChip = typeof body.chip === 'string' ? body.chip.toLowerCase() : '';
+    const upscMode = body.mode === 'exam' ? 'exam' : 'study';
+    const upscMarks = Number(body.marks) === 15 ? 15 : (Number(body.marks) === 10 ? 10 : 0);
+    const upscMeta = body.meta && typeof body.meta === 'object' ? body.meta : null;
+    const wantsJson = body.format === 'json';
+
     let systemContent = SYSTEM_PROMPT;
     if (upscDomain) {
       const upscIntent = classifyUpscIntent(query);
+      const metaLine = upscMetaLine(upscMeta);
+      const chipLine = upscChipInstruction(upscChip, { mode: upscMode, marks: upscMarks || undefined });
       systemContent =
         SYSTEM_PROMPT +
         '\n\n' +
         UPSC_DOMAIN_SYSTEM_ADDON +
-        (upscIntent.paper ? `\n\nLikely paper for this topic: ${upscIntent.paper}.` : '');
+        (upscIntent.paper && !upscMeta ? `\n\nLikely paper for this topic: ${upscIntent.paper}.` : '') +
+        (metaLine ? `\n\n${metaLine}` : '') +
+        (chipLine ? `\n\n${chipLine}` : '');
     } else if (snDomain) {
       systemContent =
         SYSTEM_PROMPT +
@@ -251,9 +265,10 @@ async function handleChat(request, env, origin) {
 
     messages.push({ role: 'user', content: query });
 
-    // UPSC answers want exam determinism; a model-answer skeleton needs no
-    // live search, so shrink its search context to keep it fast and clean.
-    const temperature = upscDomain ? 0.15 : (snDomain ? 0.1 : 0.2);
+    // UPSC answers want exam determinism; JSON chips want maximum determinism.
+    // A model-answer skeleton needs no live search, so shrink its search
+    // context to keep it fast and clean.
+    const temperature = upscDomain ? (wantsJson ? 0.1 : 0.15) : (snDomain ? 0.1 : 0.2);
     const maxTokens = upscDomain ? 1200 : (snDomain ? 1600 : 1024);
     const searchContextSize = liveSearch ? 'high' : 'low';
 
@@ -270,6 +285,8 @@ async function handleChat(request, env, origin) {
     const result = buildResult(data);
     if (result && upscDomain) {
       result.domain = 'upsc';
+      if (upscChip) result.chip = upscChip;
+      if (upscMeta) result.meta = upscMeta;
     } else if (result && snDomain) {
       result.domain = 'servicenow';
       result.servicenow = {

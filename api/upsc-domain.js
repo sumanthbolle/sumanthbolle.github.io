@@ -32,6 +32,60 @@ Using live search and the study context:
 - Use web search only to attach the current trigger (a recent event, report, judgment, scheme, or data release) to that static anchor. Prefer official and credible Indian sources — PIB, PRS Legislative Research, ministry and regulator sites (RBI, SEBI, NITI Aayog), the Supreme Court, the Union Budget and Economic Survey, and explainer journalism (The Hindu, Indian Express Explained). Down-rank coaching-site and blog regurgitation.
 - Cite live facts inline with [1], [2] matching the sources you actually used. Keep the static core uncited — it is settled syllabus, not news.`;
 
+/**
+ * One-line page-metadata context the widget passes as { meta: {...} }.
+ * @param {object} meta
+ * @returns {string}
+ */
+export function upscMetaLine(meta) {
+  if (!meta || typeof meta !== 'object') return '';
+  const parts = [];
+  if (meta.gs_paper) parts.push(`GS paper: ${meta.gs_paper}`);
+  if (meta.static_topic) parts.push(`Static topic: ${meta.static_topic}`);
+  if (meta.pattern_tag) parts.push(`Pattern: ${meta.pattern_tag}`);
+  if (meta.source) parts.push(`Source: ${meta.source}`);
+  if (meta.date) parts.push(`Date: ${meta.date}`);
+  if (!parts.length) return '';
+  return `Page metadata (use it to map the paper and the static concept; do not contradict it): ${parts.join('; ')}.`;
+}
+
+/**
+ * Per-chip exam-coach instruction. The widget sends { chip, mode, marks, format };
+ * JSON chips must return a single raw JSON object so the widget can render exam
+ * artefacts (MCQs, a Mains skeleton, a rubric) instead of chat prose.
+ * @param {string} chip
+ * @param {{mode?: string, marks?: number}} [opts]
+ * @returns {string}
+ */
+export function upscChipInstruction(chip, opts) {
+  const o = opts || {};
+  const exam = o.mode === 'exam';
+  const marks = Number(o.marks) === 15 ? 15 : 10;
+  const words = marks === 15 ? 250 : 150;
+  const introW = marks === 15 ? '30-40' : '20-25';
+  const bodyW = marks === 15 ? '165-180' : '100-110';
+  const strict = exam
+    ? ` Exam mode: hold the word limit within 10% and keep coaching asides out.`
+    : '';
+
+  switch (chip) {
+    case 'prelims':
+      return `Task: PRELIMS ANGLE. Generate 1-2 UPSC Prelims-style questions on the STATIC concept behind this topic (provisions, schemes, committees, constitutional bodies), not headline trivia. Prefer statement-based ("Which of the statements is/are correct?") or match-the-pairs. Each question needs four options and a one-line explanation. Return ONLY a single raw JSON object — no prose, no markdown fences, no citation markers — of exactly this shape: {"questions":[{"stem":"...","options":["...","...","...","..."],"correct":"...","explanation":"..."}],"meta":{"format":"statement-based|match-pairs","topic":"...","difficulty":"Easy|Medium|Hard"}}`;
+    case 'mains':
+      return `Task: MAINS POV. Identify the most likely UPSC Mains question this topic leads to. Do NOT write a full answer. Return ONLY a single raw JSON object — no prose, no fences — of exactly this shape: {"gs_paper":"GS1|GS2|GS3|GS4","question":"...","directive":"Discuss|Examine|Analyse|Evaluate|Critically examine|Comment","demand":"...","dimensions":["...","...","..."]} with three or four dimensions.`;
+    case 'answer':
+      return `Task: MODEL ANSWER for a ${marks}-mark question (~${words} words).${strict} Use Introduction-Body-Conclusion and label the three sections on their own lines exactly as "Introduction:", "Body:", "Conclusion:". Introduction ${introW} words (define the key term or give context). Body ${bodyW} words as three to six sub-headed points, each backed by an example, datum, or scheme. Conclusion ${introW} words (forward-looking way forward or balanced judgment). Include at least one constitutional Article, committee/report, government scheme, or verifiable data point. Match the structure to the directive word. Plain text with the three labels — no JSON, no fences.`;
+    case 'quiz':
+      return `Task: QUICK QUIZ. Ask exactly ONE question now and never wrap up. Alternate between Prelims MCQs and short Mains prompts across turns. If the student answered the previous item, mark it in the "mark" field. Return ONLY a single raw JSON object — no prose, no fences. Prelims item: {"type":"prelims","mark":"...optional one-line mark of my last answer...","question":{"stem":"...","options":["...","...","...","..."],"correct":"...","explanation":"..."}}. Mains item: {"type":"mains","mark":"...optional...","question":"...","marks":${marks}}.`;
+    case 'rubric':
+      return `Task: RUBRIC. For the model answer you just gave, mark whether each criterion is present. Return ONLY a single raw JSON object — no prose, no fences: {"structure":true,"relevance":true,"data_examples":false,"committees_schemes":false,"way_forward":true}`;
+    case 'evaluate':
+      return `Task: EVALUATE the student's answer against UPSC Mains standards (structure, relevance to the demand, depth, value-addition, way forward). Be specific and encouraging but honest. Return ONLY a single raw JSON object — no prose, no fences: {"rubric":{"structure":true,"relevance":true,"data_examples":false,"committees_schemes":false,"way_forward":true},"suggestions":["...","...","..."]} with three to five concrete suggestions.`;
+    default:
+      return '';
+  }
+}
+
 const DOMAIN_MARKERS = [
   'upsc', 'civil services exam', 'civil service exam', 'ias exam', 'cse mains',
   'prelims', 'mains answer', 'gs1', 'gs2', 'gs3', 'gs4', 'gs paper',

@@ -31,16 +31,77 @@ test('keeps chat queries inside the public Worker limit', function () {
   assert.match(request.context[0].content, /^Study context/);
 });
 
-test('flags the UPSC domain and search mode so the Worker applies the exam pack', function () {
-  const searched = coach.buildRequest({ query: 'Mains POV on federalism', pageContext: 'Fiscal federalism' });
+test('flags the UPSC domain, chip, mode, marks and meta on the request body', function () {
+  const searched = coach.buildRequest({ query: 'follow-up on federalism', pageContext: 'Fiscal federalism' });
   assert.equal(searched.domain, 'upsc');
   assert.equal(searched.liveSearch, true);
-  const skeleton = coach.buildRequest({ query: 'Model answer', liveSearch: false });
+  const skeleton = coach.buildRequest({
+    query: 'Model answer', liveSearch: false, chip: 'answer', format: 'text', mode: 'exam', marks: 15,
+    meta: { gs_paper: 'GS2', static_topic: 'Fiscal federalism' }
+  });
   assert.equal(skeleton.liveSearch, false);
-  // The model-answer prompt opts out of live search; researched prompts keep it.
-  assert.equal(coach.PROMPTS.answer.search, false);
-  assert.equal(coach.PROMPTS.mains.search, true);
-  assert.equal(coach.PROMPTS.prelims.search, true);
+  assert.equal(skeleton.chip, 'answer');
+  assert.equal(skeleton.format, 'text');
+  assert.equal(skeleton.mode, 'exam');
+  assert.equal(skeleton.marks, 15);
+  assert.equal(skeleton.meta.gs_paper, 'GS2');
+  // Structured chips carry a kind + format so the Worker returns exam artefacts.
+  assert.equal(coach.PROMPTS.prelims.kind, 'prelims');
+  assert.equal(coach.PROMPTS.prelims.format, 'json');
+  assert.equal(coach.PROMPTS.answer.format, 'text');
+});
+
+test('parses structured chip payloads: JSON, IBC, word count, rubric, value-adds', function () {
+  // extractJson survives prose/fences around the object.
+  assert.deepEqual(coach.extractJson('Here you go:\n```json\n{"a":1}\n```'), { a: 1 });
+  assert.equal(coach.extractJson('no json here'), null);
+  // Model-answer helpers.
+  const ibc = coach.parseIBC('Introduction:\nContext line.\nBody:\nOne. Two.\nConclusion:\nWay forward.');
+  assert.match(ibc.intro, /Context line/);
+  assert.match(ibc.body, /One\. Two/);
+  assert.match(ibc.conclusion, /Way forward/);
+  assert.equal(coach.marksToWords(15), 250);
+  assert.equal(coach.marksToWords(10), 150);
+  assert.equal(coach.mainsMinutes(15), 13);
+  assert.ok(coach.wordCount('one two three four') === 4);
+  // Value-add highlighting for examiner anchors.
+  const va = coach.valueAddHtml('Under Article 280 the Finance Commission set 41%');
+  assert.match(va, /<mark class="sv-va">Article 280<\/mark>/);
+  assert.match(va, /<mark class="sv-va">Finance Commission<\/mark>/);
+  // Rubric parsing → labelled badges.
+  const rubric = coach.parseRubric({ structure: true, relevance: false, data_examples: true, committees_schemes: false, way_forward: true });
+  assert.equal(rubric.length, 5);
+  assert.equal(rubric[0].ok, true);
+  assert.equal(rubric[1].ok, false);
+});
+
+test('derives page metadata and a header line from the DOM', function () {
+  const openDetail = {
+    parentNode: {
+      querySelector: function (sel) {
+        if (sel.indexOf('an-entry__title') !== -1) return { textContent: 'Fiscal federalism' };
+        if (sel.indexOf('an-code') !== -1) return { textContent: 'GS2.2' };
+        return null;
+      }
+    },
+    textContent: 'Pattern Static core: Article 280.'
+  };
+  const fakeDoc = {
+    querySelector: function (sel) {
+      if (sel.indexOf('an-entry__expand[open]') !== -1) return openDetail;
+      return null;
+    }
+  };
+  const meta = coach.pageMetaFromDom(fakeDoc, {});
+  assert.equal(meta.gs_paper, 'GS2');
+  assert.equal(meta.static_topic, 'Fiscal federalism');
+  const header = coach.metaHeaderText(meta);
+  assert.match(header, /GS2/);
+  assert.match(header, /Fiscal federalism/);
+  // window.UPSC_CONTEXT overrides derived fields.
+  const overridden = coach.pageMetaFromDom({ querySelector: function () { return null; } }, { UPSC_CONTEXT: { gs_paper: 'GS3', static_topic: 'Renewables' } });
+  assert.equal(overridden.gs_paper, 'GS3');
+  assert.equal(overridden.static_topic, 'Renewables');
 });
 
 test('renders live Perplexity citations and caps auto-continue/retry loops', function () {
