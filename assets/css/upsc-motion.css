@@ -1,0 +1,135 @@
+/* Classic scroll motion for the UPSC editorial suite.
+   Hairline rules, unhurried settle, Apple-style rise. */
+
+:root {
+  --sb-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --sb-dur: 820ms;
+}
+
+.sb-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2400;
+  width: 100%;
+  height: 1px;
+  background: var(--an-maroon, #8b1e2d);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+html.sb-motion .an-editorial-masthead {
+  transform: translate3d(0, calc(var(--sb-scroll, 0) * -22px), 0);
+}
+
+html.sb-motion .an-editorial-masthead::after {
+  content: "";
+  display: block;
+  width: min(7.5rem, 28vw);
+  height: 1px;
+  margin: 22px auto 0;
+  background: var(--rule-strong, rgba(35, 73, 96, 0.22));
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  animation: sb-draw 1100ms var(--sb-ease) 240ms forwards;
+}
+
+html.sb-motion .an-publication-mark {
+  animation: sb-rise 900ms var(--sb-ease) both;
+}
+
+html.sb-motion .an-editorial-masthead h1 {
+  animation: sb-title 1150ms var(--sb-ease) 70ms both;
+}
+
+html.sb-motion .an-edition-line {
+  animation: sb-rise 900ms var(--sb-ease) 160ms both;
+}
+
+html.sb-motion .util-head {
+  transform: translate3d(0, calc(var(--sb-scroll, 0) * -16px), 0);
+}
+
+html.sb-motion .util-head__kicker {
+  animation: sb-rise 800ms var(--sb-ease) both;
+}
+
+html.sb-motion .util-head h1 {
+  animation: sb-title 1100ms var(--sb-ease) 60ms both;
+}
+
+html.sb-motion .util-head__kicker::after {
+  transform-origin: 0 50%;
+  animation: sb-draw 1000ms var(--sb-ease) 180ms both;
+}
+
+html.sb-motion .util-head__meta,
+html.sb-motion .an-command {
+  animation: sb-rise 800ms var(--sb-ease) 220ms both;
+}
+
+html.sb-motion .an-command.is-scrolled {
+  background: color-mix(in srgb, var(--bg, #f7f9fb) 88%, transparent);
+}
+
+html.sb-motion .sb-reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity var(--sb-dur) var(--sb-ease),
+    transform var(--sb-dur) var(--sb-ease);
+  transition-delay: var(--sb-delay, 0ms);
+}
+
+html.sb-motion .sb-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes sb-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes sb-title {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+    letter-spacing: 0.01em;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes sb-draw {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb-progress,
+  html.sb-motion .an-editorial-masthead,
+  html.sb-motion .util-head,
+  html.sb-motion .sb-reveal,
+  html.sb-motion .sb-reveal.is-in {
+    transform: none !important;
+    opacity: 1 !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}

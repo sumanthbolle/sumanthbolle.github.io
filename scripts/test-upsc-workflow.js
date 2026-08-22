@@ -54,6 +54,7 @@ assert.match(publishWorkflow, /publish\.py build-pages/);
 assert.match(publishWorkflow, /node scripts\/test-upsc-shell\.js/);
 assert.match(publishWorkflow, /node scripts\/test-upsc-packet\.js/);
 assert.match(publishWorkflow, /node scripts\/test-upsc-guide\.js/);
+assert.match(publishWorkflow, /node scripts\/test-upsc-scroll\.js/);
 assert.match(publishWorkflow, /node scripts\/test-upsc-coach\.js/);
 assert.match(publishWorkflow, /node scripts\/generate-sitemap\.js/);
 assert.match(publishWorkflow, /git add data\/upsc upsc-study sitemap\.xml/);
