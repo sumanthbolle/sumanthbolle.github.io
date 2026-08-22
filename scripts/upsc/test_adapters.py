@@ -1,10 +1,15 @@
 import gzip
 import json
 import unittest
+import urllib.error
 from pathlib import Path
+from unittest.mock import patch
+from urllib.request import Request
 
+from scripts.upsc import adapters as adapters_mod
 from scripts.upsc.adapters import (
-    FEED_ACCEPT, LISTING_ACCEPT, fetch_source_details, parse_payload, request_headers,
+    FEED_ACCEPT, LISTING_ACCEPT, curl_open, fetch_source_details, listing_referer,
+    parse_payload, request_headers,
 )
 from scripts.upsc.models import SourceConfig
 
@@ -131,7 +136,10 @@ class AdapterTests(unittest.TestCase):
         )
         headers = request_headers(mea)
         self.assertEqual(headers["Accept"], LISTING_ACCEPT)
-        self.assertEqual(headers["Referer"], "https://www.mea.gov.in/")
+        self.assertEqual(headers["Referer"], "https://www.mea.gov.in/press-releases")
+        self.assertEqual(listing_referer(mea), "https://www.mea.gov.in/press-releases")
+        self.assertEqual(headers["X-Requested-With"], "XMLHttpRequest")
+        self.assertIn("gzip", headers["Accept-Encoding"])
         self.assertIn("en-IN", headers["Accept-Language"])
         seen = {}
 
@@ -154,17 +162,135 @@ class AdapterTests(unittest.TestCase):
         def opener(request, timeout=20):
             seen["accept"] = request.get_header("Accept")
             seen["referer"] = request.get_header("Referer")
+            seen["requested_with"] = request.get_header("X-requested-with")
             return HtmlResponse()
 
         rows, _ = fetch_source_details(mea, opener)
         self.assertEqual(rows[0]["title"], "India and partner conclude consultations")
         self.assertEqual(seen["accept"], LISTING_ACCEPT)
-        self.assertEqual(seen["referer"], "https://www.mea.gov.in/")
+        self.assertEqual(seen["referer"], "https://www.mea.gov.in/press-releases")
+        self.assertEqual(seen["requested_with"], "XMLHttpRequest")
 
     def test_feed_fetch_still_prefers_xml_accept(self):
         headers = request_headers(source_config("rss"))
         self.assertEqual(headers["Accept"], FEED_ACCEPT)
         self.assertEqual(headers["Referer"], "https://pib.gov.in/")
+        self.assertNotIn("X-Requested-With", headers)
+        self.assertIn("gzip", headers["Accept-Encoding"])
+
+    def test_live_urlopen_forbidden_retries_with_curl(self):
+        mea = SourceConfig(
+            id="mea", name="Ministry of External Affairs", country="IN",
+            tier="indian-primary", hosts=("mea.gov.in",), adapter="listing",
+            endpoint=(
+                "https://www.mea.gov.in/FrontEnd/FetchPublicationListingData"
+                "?publicationId=51&page=1&PageSize=20&SortBy=Latest&PLngId=1"
+            ),
+            enabled=True, link_class="pressTitle",
+        )
+        seen = {"urlopen": 0, "curl": 0}
+
+        def forbidden(request, timeout=20):
+            seen["urlopen"] += 1
+            raise urllib.error.HTTPError(
+                request.full_url, 403, "Forbidden", {}, None
+            )
+
+        class HtmlResponse:
+            headers = {"Content-Type": "text/html; charset=utf-8"}
+
+            def read(self, limit=-1):
+                body = fixture_bytes("mea-listing.html")
+                return body if limit < 0 else body[:limit]
+
+            def geturl(self):
+                return mea.endpoint
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, traceback):
+                return False
+
+        def fake_curl(request, timeout=20):
+            seen["curl"] += 1
+            seen["curl_url"] = request.full_url
+            return HtmlResponse()
+
+        with patch.object(adapters_mod, "urlopen", forbidden), patch.object(
+            adapters_mod, "curl_open", fake_curl
+        ):
+            rows, _ = fetch_source_details(mea, adapters_mod.urlopen)
+        self.assertEqual(seen["urlopen"], 1)
+        self.assertEqual(seen["curl"], 1)
+        self.assertEqual(seen["curl_url"], mea.endpoint)
+        self.assertEqual(rows[0]["title"], "India and partner conclude consultations")
+
+    def test_injected_opener_forbidden_does_not_call_curl(self):
+        mea = SourceConfig(
+            id="mea", name="Ministry of External Affairs", country="IN",
+            tier="indian-primary", hosts=("mea.gov.in",), adapter="listing",
+            endpoint=(
+                "https://www.mea.gov.in/FrontEnd/FetchPublicationListingData"
+                "?publicationId=51&page=1&PageSize=20&SortBy=Latest&PLngId=1"
+            ),
+            enabled=True, link_class="pressTitle",
+        )
+
+        def forbidden(request, timeout=20):
+            raise urllib.error.HTTPError(
+                request.full_url, 403, "Forbidden", {}, None
+            )
+
+        def fail_if_called(request, timeout=20):
+            raise AssertionError("curl fallback must not run for injected openers")
+
+        with patch.object(adapters_mod, "curl_open", fail_if_called):
+            with self.assertRaises(urllib.error.HTTPError):
+                fetch_source_details(mea, forbidden)
+
+    def test_curl_open_reads_body_and_raises_http_errors(self):
+        class Result:
+            def __init__(self, stdout, returncode=0, stderr=""):
+                self.stdout = stdout
+                self.stderr = stderr
+                self.returncode = returncode
+
+        def run_ok(command, capture_output=True, text=True, check=False):
+            body_path = command[command.index("-o") + 1]
+            with open(body_path, "wb") as handle:
+                handle.write(fixture_bytes("mea-listing.html"))
+            return Result(
+                "https://www.mea.gov.in/FrontEnd/FetchPublicationListingData\n200\n"
+                "text/html; charset=utf-8"
+            )
+
+        request = Request(
+            "https://www.mea.gov.in/FrontEnd/FetchPublicationListingData"
+            "?publicationId=51&page=1&PageSize=20&SortBy=Latest&PLngId=1",
+            headers={
+                "User-Agent": "test",
+                "Referer": "https://www.mea.gov.in/press-releases",
+            },
+        )
+        with patch("scripts.upsc.adapters.subprocess.run", run_ok):
+            response = curl_open(request, timeout=5)
+            body = response.read()
+        self.assertIn(b"pressTitle", body)
+        self.assertEqual(
+            response.geturl(),
+            "https://www.mea.gov.in/FrontEnd/FetchPublicationListingData",
+        )
+
+        def run_forbidden(command, capture_output=True, text=True, check=False):
+            body_path = command[command.index("-o") + 1]
+            open(body_path, "wb").close()
+            return Result("https://www.mea.gov.in/blocked\n403\ntext/html")
+
+        with patch("scripts.upsc.adapters.subprocess.run", run_forbidden):
+            with self.assertRaises(urllib.error.HTTPError) as raised:
+                curl_open(request, timeout=5)
+        self.assertEqual(raised.exception.code, 403)
 
     def test_module_docstring_points_at_source_criteria_covering_registry_tiers(self):
         root = Path(__file__).parents[2]
