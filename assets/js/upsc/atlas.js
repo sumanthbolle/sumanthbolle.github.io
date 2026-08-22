@@ -65,7 +65,6 @@
         state.data = data;
         el('atlasLoading').hidden = true;
         buildVerbFilter();
-        renderMethodology();
         renderHead();
         applyDeepLink();
         render();
@@ -74,8 +73,7 @@
         el('atlasLoading').hidden = true;
         var node = el('atlasState');
         node.hidden = false;
-        node.innerHTML = '<h3>The atlas could not be loaded</h3><p>' + esc(error.message) +
-          ' The file is a plain JSON dataset at <a href="' + PATTERNS_URL + '">' + PATTERNS_URL + '</a>.</p>';
+        node.innerHTML = '<h3>The atlas could not be loaded</h3><p>' + esc(error.message) + '</p>';
       });
 
     /* The trigger file only exists once the daily refresh has run, so a 404 is
@@ -134,20 +132,7 @@
   }
 
   function renderMethodology() {
-    var method = (state.data && state.data.methodology) || {};
-    el('methodIntro').textContent = method.whatThisIs || '';
-    var blocks = [
-      ['Frequency', method.frequencyEst],
-      ['Recency gap', method.recencyGapEst],
-      ['Question stems', method.stems],
-      ['Figures', method.facts],
-      ['Making it real', method.howToMakeItReal],
-      ['Conflicts', method.conflicts],
-    ].filter(function (row) { return row[1]; });
-
-    el('methodGrid').innerHTML = blocks.map(function (row) {
-      return '<div><h3>' + esc(row[0]) + '</h3><p>' + esc(row[1]) + '</p></div>';
-    }).join('');
+    if (!el('methodIntro') || !el('methodGrid')) return;
   }
 
   /* ─────────────────────────────── filtering ─────────────────────────────── */
@@ -203,7 +188,7 @@
 
   function stemsHtml(stems) {
     if (!stems || !stems.length) return '';
-    return '<div class="atlas-group atlas-detail__wide"><span class="an-label">Practice stems — write these, do not read them</span>' +
+    return '<div class="atlas-group atlas-detail__wide"><span class="an-label">Practice stems</span>' +
       '<ul class="an-stems">' + stems.map(function (stem) {
         return '<li class="an-stem"><p>' + esc(stem.stem) + '</p><p class="an-stem__meta">' +
           '<span class="an-stem__verb">' + esc(stem.verb) + '</span>' +
@@ -233,11 +218,11 @@
           '<p class="atlas-trigger__meta">' +
             (item.url ? '<a href="' + attr(item.url) + '" target="_blank" rel="noopener noreferrer">' + esc(item.source || 'source') + '</a>' : '') +
             (item.date ? '<span class="an-num">' + esc(item.date) + '</span>' : '') +
-            (item.primary ? '<span>primary source</span>' : '<span>confirm against the primary document</span>') +
+            (item.primary ? '<span>primary source</span>' : '<span>secondary</span>') +
           '</p></li>';
       }).join('') + '</ul>');
     } else {
-      parts.push('<p class="atlas-live__intro">No stored trigger layer for this anchor yet. Pull what is live on it now — you get points, the anchors an examiner rewards, and sources.</p>');
+      parts.push('<p class="atlas-live__intro">No live trigger.</p>');
     }
 
     if (live && live.loading) {
@@ -282,7 +267,6 @@
 
     parts.push('<div class="atlas-actions">' +
       '<button type="button" class="btn btn-sm" data-act="save-live" data-id="' + attr(anchor.id) + '">Save to my notes</button>' +
-      '<span class="an-treatment" style="margin:0">Verify every figure and name in the source before it enters permanent notes.</span>' +
       '</div>');
 
     parts.push('</div>');
@@ -312,7 +296,7 @@
         labelledList('Answer skeleton', anchor.skeleton, true) +
         '<div class="atlas-group"><span class="an-label">Prelims angle</span>' +
           '<p class="atlas-prelims">' + esc(anchor.prelims_angle) + '</p></div>' +
-        labelledList('Verify before you memorise', anchor.verify, false) +
+        labelledList('Verify', anchor.verify, false) +
         '<div class="atlas-group atlas-detail__wide"><div class="an-trap" style="margin-top:0">' +
           '<span class="an-label">Where marks are lost</span>' +
           '<ul class="an-list" style="margin-top:6px">' +
@@ -340,7 +324,7 @@
 
     return '<li class="an-entry" id="a-' + attr(anchor.id) + '" data-id="' + attr(anchor.id) + '" data-band="' + attr(anchor.band) + '">' +
       '<div class="an-entry__margin">' +
-        '<span class="an-entry__score" title="Editorial recurrence estimate, not a count">' + esc(anchor.frequency_est) + '</span>' +
+        '<span class="an-entry__score" title="Recurrence">' + esc(anchor.frequency_est) + '</span>' +
         '<span class="an-entry__band">' + esc(BAND_LABEL[anchor.band] || anchor.band) + '</span>' +
       '</div>' +
       '<div class="an-entry__body">' +
@@ -369,15 +353,14 @@
     if (!list.length) {
       listNode.innerHTML = '';
       stateNode.hidden = false;
-      stateNode.innerHTML = '<h3>Nothing matches</h3><p>Clear the filters or the search box to see the whole compilation.</p>';
+      stateNode.innerHTML = '<h3>Nothing matches</h3>';
     } else {
       stateNode.hidden = true;
       listNode.innerHTML = list.map(rowHtml).join('');
     }
 
     var total = anchors().length;
-    el('atlasMeta').innerHTML = '<strong>' + list.length + '</strong> of ' + total +
-      ' anchors · ' + (state.data.provisional ? 'recurrence is an editorial estimate' : 'recurrence from a tagged corpus');
+    el('atlasMeta').innerHTML = '<strong>' + list.length + '</strong> of ' + total + ' anchors';
     el('countAnchors').textContent = list.length;
     renderRail();
   }
@@ -548,12 +531,11 @@
           '<div><strong>' + drill.missed + '</strong><span>Reset to day 1</span></div>' +
         '</div>' +
         (drill.missedIds.length
-          ? '<p class="an-railnote" style="margin-top:20px">These are now flagged weak. Open the pattern and write the skeleton once before you drill them again.</p>' +
-            '<ul class="atlas-weaklist">' + drill.missedIds.map(function (id) {
+          ? '<ul class="atlas-weaklist">' + drill.missedIds.map(function (id) {
               var anchor = anchorById(id);
               return anchor ? '<li><button type="button" data-act="goto" data-id="' + attr(id) + '">' + esc(anchor.anchor) + '</button></li>' : '';
             }).join('') + '</ul>'
-          : '<p class="an-railnote" style="margin-top:20px">Nothing missed. Move the scope to “everything” and raise the length rather than repeating this set.</p>') +
+          : '') +
         '</div>';
       el('drillMeta').textContent = 'Done for now.';
       renderRail();
@@ -575,10 +557,6 @@
       ? '<p class="atlas-drill__prompt atlas-drill__prompt--stem">' + esc(stem.stem) + '</p>'
       : '<p class="atlas-drill__prompt">' + esc(anchor.anchor) + '</p>';
 
-    var ask = direction === 'stem' && stem
-      ? 'Name the static anchor this belongs to, the directive verb it uses, and the scope qualifier you would have to respect.'
-      : 'Reconstruct the static core, the verbs this anchor attracts, and the trap it sets — out loud, before you reveal.';
-
     var revealed = direction === 'stem' && stem
       ? '<div><span class="an-label">Anchor</span><p class="atlas-prelims"><strong>' + esc(anchor.anchor) + '</strong> · ' +
           esc((anchor.papers || []).join(', ')) + ' · ' + esc(stem.verb) + '</p></div>' +
@@ -596,7 +574,6 @@
         '<span>' + esc(BAND_LABEL[anchor.band] || anchor.band) + '</span>' +
         '<span class="an-num">recurrence ' + esc(anchor.frequency_est) + '</span>' +
       '</p>' +
-      '<p class="atlas-drill__ask">' + esc(ask) + '</p>' +
       '<div class="atlas-drill__reveal" id="drillReveal" hidden>' + revealed + '</div>' +
       '<div class="an-revise__actions">' +
         '<button type="button" class="btn" data-act="reveal">Reveal</button>' +

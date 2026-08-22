@@ -36,6 +36,7 @@ assert(xml.includes('https://sumanthbolle.com/upsc-study/anchors/fiscal-federali
 assert(xml.includes('https://sumanthbolle.com/revision'));
 assert(xml.includes('https://sumanthbolle.com/mains'));
 assert(xml.includes('https://sumanthbolle.com/upsc-quiz'));
+assert(xml.includes('https://sumanthbolle.com/upsc-guide'));
 assert(!xml.includes('evil.example'));
 assert(!xml.includes('draft.html'));
 assert.strictEqual(fs.readFileSync(outputPath, 'utf8'), xml);

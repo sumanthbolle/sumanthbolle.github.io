@@ -81,6 +81,7 @@
     <div class="an-edition-line">
       <span id="editionStamp">Answer-writing practice</span>
       <a href="upsc.html">UPSC Today</a>
+      <a href="upsc-guide.html">How to use</a>
       <a href="upsc-patterns.html">Pattern Atlas</a>
     </div>
   </header>
@@ -96,7 +97,6 @@
             </div>
             <p class="an-viewhead__meta" id="mainsMeta">Loading Mains drills…</p>
           </header>
-          <p>Each drill uses one of eight directive words, a GS paper tag, a 250-word / 12-minute budget, and a dimension skeleton. These are practice prompts, not predictions.</p>
           <div class="an-state" id="mainsState"><h3>Loading…</h3></div>
           <ol class="an-entries" id="mainsList" hidden></ol>
         </section>
@@ -107,7 +107,7 @@
   <footer>
     <div class="footer-inner">
       <div>© 2026 Sumanth Bolle</div>
-      <div class="an-footer-links"><a href="upsc.html">UPSC Today</a><a href="upsc-patterns.html">Pattern Atlas</a><a href="https://upsc.gov.in" rel="noopener noreferrer" target="_blank">UPSC</a></div>
+      <div class="an-footer-links"><a href="upsc-guide.html">How to use</a><a href="upsc.html">UPSC Today</a><a href="upsc-patterns.html">Pattern Atlas</a><a href="https://upsc.gov.in" rel="noopener noreferrer" target="_blank">UPSC</a></div>
     </div>
   </footer>
 
@@ -133,7 +133,7 @@
             ? drills.length + ' drills · directive rotation over 14 days'
             : 'No drills generated yet';
           if (!drills.length) {
-            state.innerHTML = '<h3>No Mains drills yet</h3><p>The publisher writes <code>data/upsc/mains-drills.json</code> from Pattern Atlas anchors.</p>';
+            state.innerHTML = '<h3>No Mains drills yet</h3>';
             return;
           }
           state.hidden = true;
