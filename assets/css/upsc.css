@@ -3617,3 +3617,251 @@ footer {
     transition: none;
   }
 }
+
+/* Flagship Topic Packet desk — editorial, low noise, colour only for state. */
+.pk-hero,
+.pk-due,
+.pk-themes,
+.pk-stack,
+.pk-packet,
+.pk-catchup,
+.pk-session {
+  margin: 0 0 36px;
+  padding: 0 0 28px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.pk-hero h2,
+.pk-packet h2,
+.pk-catchup h2,
+.pk-session h3,
+.pk-stack h3,
+.pk-themes h3 {
+  font-family: var(--serif);
+  font-weight: 550;
+  letter-spacing: -0.02em;
+}
+
+.pk-hero h2 {
+  font-size: clamp(32px, 6vw, 48px);
+  margin: 6px 0 12px;
+}
+
+.pk-hero__budget,
+.pk-hero__note,
+.pk-card__why,
+.pk-card__counts,
+.pk-packet__status,
+.pk-sources__meta,
+.pk-sources__note,
+.pk-upsc-link {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--gray);
+}
+
+.pk-hero__note {
+  margin: 8px 0 18px;
+}
+
+.pk-hero__actions,
+.pk-card__actions,
+.pk-sticky {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pk-badge,
+.pk-paper,
+.pk-subject,
+.pk-read {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--rule-strong);
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pk-badge[data-priority="must_know"] {
+  background: var(--mark);
+  border-color: var(--mark-edge);
+  color: var(--text);
+}
+
+.pk-badge[data-priority="useful"] {
+  color: var(--an-navy);
+}
+
+.pk-badge[data-priority="skip"] {
+  opacity: 0.7;
+}
+
+.pk-card,
+.pk-packet {
+  padding: 18px 0 8px;
+}
+
+.pk-card + .pk-card {
+  border-top: 1px solid var(--rule);
+}
+
+.pk-card__meta,
+.pk-packet__head .pk-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.pk-card h3 {
+  font-size: 24px;
+  margin: 0 0 8px;
+}
+
+.pk-card__changed,
+.pk-card__anchor,
+.pk-card__why {
+  margin: 0 0 8px;
+}
+
+.pk-card__anchor a {
+  color: var(--blue);
+}
+
+.pk-layers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 22px;
+}
+
+.pk-layers button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--rule-strong);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.pk-layers button[aria-selected="true"] {
+  background: var(--an-navy);
+  color: var(--paper);
+  border-color: var(--an-navy);
+}
+
+.pk-block,
+.pk-bridge,
+.pk-changed,
+.pk-vault,
+.pk-kit,
+.pk-pyq,
+.pk-sources {
+  margin: 22px 0;
+}
+
+.pk-block h3,
+.pk-bridge h3,
+.pk-changed h3,
+.pk-vault h3,
+.pk-kit h3,
+.pk-pyq h3,
+.pk-sources h3 {
+  font-family: var(--sans);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-bottom: 8px;
+}
+
+.pk-block ul,
+.pk-pyq ul,
+.pk-sources ul,
+.pk-themes ul,
+.pk-traps,
+.pk-questions,
+.pk-skeleton {
+  padding-left: 1.15em;
+}
+
+.pk-matrix__row,
+.pk-changed dl {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.pk-changed dl {
+  grid-template-columns: 1fr;
+}
+
+.pk-changed dl div {
+  display: grid;
+  grid-template-columns: 8em 1fr;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.pk-changed dt {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.pk-sticky {
+  position: sticky;
+  bottom: 0;
+  padding: 12px 0;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  border-top: 1px solid var(--rule);
+}
+
+.pk-due,
+.pk-session {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pk-empty {
+  color: var(--gray);
+}
+
+.an-source-stream {
+  margin-top: 48px;
+}
+
+.an-edition-kicker {
+  max-width: 40rem;
+  margin: 8px auto 0;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--gray);
+}
+
+@media (max-width: 680px) {
+  .pk-matrix__row,
+  .pk-changed dl div {
+    grid-template-columns: 1fr;
+  }
+
+  .pk-sticky {
+    padding-bottom: 18px;
+  }
+
+  .pk-card h3,
+  .pk-packet h2 {
+    font-size: 22px;
+  }
+}

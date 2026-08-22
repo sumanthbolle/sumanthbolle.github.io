@@ -17,8 +17,13 @@ When designing or reviewing UI for this site, use these skills:
 
 See [`docs/website-enhancement-review.md`](docs/website-enhancement-review.md) for the full site review, IA priorities, AI-slop findings, and recommended roadmap.
 
+## Flagship product
+
+**UPSC Today** is the flagship study product. Treat [`docs/upsc-today-flagship.md`](docs/upsc-today-flagship.md) as the salient instruction and [`docs/upsc-today-enhancement-spec.md`](docs/upsc-today-enhancement-spec.md) as the full product specification.
+
 ## Product sources of truth
 
+- **UPSC Today (flagship)** — [`docs/upsc-today-flagship.md`](docs/upsc-today-flagship.md) (Topic Packet, study priority, Today / catch-up desk).
 - **SkyFare** — [`docs/skyfare-product-handover.md`](docs/skyfare-product-handover.md) (vision, Value Score, Summaverick integration, Phase 1–3 roadmap).
-- **Anchor (UPSC tool)** — [`docs/upsc-anchor-handover.md`](docs/upsc-anchor-handover.md) (examinability filter, provisional scoring, verification gate, retrieval schedule, known limits).
+- **Anchor (UPSC publication)** — [`docs/upsc-anchor-handover.md`](docs/upsc-anchor-handover.md) (examinability filter, provisional scoring, verification gate, retrieval schedule, known limits).
 - **ServiceNow research domain pack** — [`research-agent/README.md`](research-agent/README.md) (Fluent SDK + ServiceNowDocs + optional read-only instance layer for Summaverick).

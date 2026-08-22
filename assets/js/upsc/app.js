@@ -9,6 +9,7 @@
   var Store = window.AnchorStore;
   var Cycle = window.AnchorCycle;
   var Content = window.AnchorContent;
+  var Packet = window.AnchorPacket;
   var Memory = window.AnchorMemory;
   var Render = window.AnchorRender;
 
@@ -53,6 +54,14 @@
     memoryMode: 'due',
     drillQueue: [],
     mode: null,
+    atlasAnchors: [],
+    pyqIndex: {},
+    packets: [],
+    openPacketId: '',
+    packetLayer: 'brief',
+    session: null,
+    sessionMode: '',
+    understood: {},
   };
 
   /* ───────────────────────────── position ───────────────────────────── */
@@ -92,7 +101,7 @@
 
   /* ─────────────────────────────── views ─────────────────────────────── */
 
-  var VIEWS = ['brief', 'syllabus', 'memory', 'source'];
+  var VIEWS = ['brief', 'catchup', 'syllabus', 'memory', 'source'];
 
   function routeUrl(name, options) {
     var url = new URL(window.location.href);
@@ -123,6 +132,7 @@
     });
     if (name === 'source') renderSourceDesk();
     if (name === 'brief') renderBrief();
+    if (name === 'catchup') renderCatchUp();
     if (name === 'syllabus') {
       renderSyllabus();
       loadPracticeNotes();
@@ -242,14 +252,17 @@
         state.sources = normalized.records;
         state.sourceGeneratedAt = normalized.generatedAt;
         populateSourceFilters();
+        rebuildPackets();
       })
       .catch(function (error) {
         state.sourceError = (error && error.message) || 'Published source data could not be loaded.';
       })
       .then(function () {
         state.sourceLoading = false;
+        rebuildPackets();
         renderSourceDesk();
         renderBrief();
+        renderCatchUp();
         renderSyllabus();
       });
 
@@ -292,6 +305,7 @@
         });
         state.examSummaries = normalized.notes;
         state.examGeneratedAt = normalized.generatedAt;
+        rebuildPackets();
       })
       .catch(function (error) {
         state.briefError = (error && error.message) || 'The published exam index could not be loaded.';
@@ -299,9 +313,32 @@
       .then(function () {
         state.briefLoading = false;
         el('briefLoading').hidden = true;
+        rebuildPackets();
         renderBrief();
+        renderCatchUp();
         if (state.view === 'syllabus') loadPracticeNotes();
       });
+  }
+
+  function loadAtlasAndPyqs() {
+    fetch('data/upsc-patterns.json', { cache: 'no-cache' })
+      .then(function (response) { return response.ok ? response.json() : { anchors: [] }; })
+      .then(function (payload) {
+        state.atlasAnchors = payload && Array.isArray(payload.anchors) ? payload.anchors : [];
+        rebuildPackets();
+        renderBrief();
+        renderCatchUp();
+      })
+      .catch(function () { state.atlasAnchors = []; });
+    fetch('data/upsc/pyq-links.json', { cache: 'no-cache' })
+      .then(function (response) { return response.ok ? response.json() : {}; })
+      .then(function (payload) {
+        state.pyqIndex = payload && payload.byAnchor ? payload.byAnchor : {};
+        rebuildPackets();
+        renderBrief();
+        renderCatchUp();
+      })
+      .catch(function () { state.pyqIndex = {}; });
   }
 
   function latestExamDay() {
@@ -366,11 +403,85 @@
     });
   }
 
+  function rebuildPackets() {
+    if (!Packet || !Content) {
+      state.packets = [];
+      return;
+    }
+    var sources = state.sources.map(function (row) {
+      return Object.assign({}, row, { subject: Content.inferSubject(row) });
+    });
+    state.packets = Packet.buildPackets(sources, {
+      notes: state.examSummaries,
+      anchors: state.atlasAnchors,
+      pyqIndex: state.pyqIndex,
+    });
+  }
+
+  function visiblePackets() {
+    var latest = latestSourceDay();
+    var latestTime = latest ? Date.parse(latest + 'T00:00:00Z') : 0;
+    var rows = Packet ? Packet.searchPackets(state.packets, state.query) : [];
+    return rows.filter(function (packet) {
+      var day = packet.date;
+      if (state.scope === 'daily' && latest && day !== latest) return false;
+      if (state.scope === 'weekly' && latest && latestTime - Date.parse(day + 'T00:00:00Z') > 6 * 86400000) return false;
+      if (state.verifiedOnly && ['source-backed', 'reviewed'].indexOf(packet.status) === -1) return false;
+      if (state.papers.length) {
+        var hit = (packet.papers || []).some(function (paper) { return state.papers.indexOf(paper) !== -1; });
+        if (!hit) return false;
+      }
+      return true;
+    });
+  }
+
+  function latestSourceDay() {
+    return state.sources.reduce(function (latest, row) {
+      var day = String(row.publishedAt || '').slice(0, 10);
+      return day > latest ? day : latest;
+    }, latestExamDay());
+  }
+
+  function packetById(id) {
+    var found = null;
+    state.packets.forEach(function (packet) {
+      if (packet.id === id) found = packet;
+    });
+    return found;
+  }
+
+  function formatEditionDate(iso) {
+    if (!iso) return 'Today';
+    var date = new Date(iso + 'T00:00:00Z');
+    if (isNaN(date.getTime())) return iso;
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  }
+
+  function renderPacketDesk() {
+    var desk = el('packetDesk');
+    if (!desk) return;
+    var packet = packetById(state.openPacketId);
+    desk.innerHTML = packet ? Render.topicPacket(packet, { layer: state.packetLayer }) : '';
+  }
+
+  function renderCatchUp() {
+    if (!Packet || !el('catchupDesk')) return;
+    var catchup = Packet.buildCatchUp(state.packets, {
+      days: 7,
+      editionDate: latestSourceDay(),
+    });
+    el('catchupDesk').innerHTML = Render.catchUpDesk(catchup);
+    if (el('catchupMeta')) {
+      el('catchupMeta').innerHTML = '<strong>' + catchup.must_know.length + '</strong> Must Know · <strong>' +
+        catchup.useful.length + '</strong> Useful · <strong>' + catchup.discarded.length + '</strong> discarded.';
+    }
+  }
+
   function renderBrief() {
     el('briefTitle').textContent = state.query
       ? 'Search results for “' + el('q').value.trim() + '”'
       : (state.scope === 'weekly' ? 'Seven-day edition' : 'Today');
-    el('dailyTitle').textContent = state.query ? 'Matching articles' : 'Latest articles';
+    el('dailyTitle').textContent = state.query ? 'Matching articles' : 'Worth your time today';
     var list = el('briefEntries');
     if (state.sourceLoading) {
       el('briefLoading').hidden = false;
@@ -380,15 +491,34 @@
     var sources = blogSources();
     var edition = Content.buildDailyEdition(sources, { limit: state.scope === 'weekly' ? 15 : 12 });
     var topic = Content.selectTopicOfDay(sources, state.examSummaries);
-    briefStateEl().hidden = edition.items.length > 0;
-    if (!edition.items.length) {
+    var packets = visiblePackets();
+    var stack = Packet ? Packet.buildTodayStack(packets, { editionDate: state.scope === 'weekly' ? '' : latestSourceDay() }) : {
+      essential_count: 0, read_minutes: 0, recall_minutes: 0, must_know: [], useful: [], background: [], skip: [],
+    };
+    briefStateEl().hidden = edition.items.length > 0 || stack.essential_count > 0;
+    if (!edition.items.length && !stack.essential_count) {
       showBriefState(state.verifiedOnly ? 'No deep-dives match' : 'No articles match',
         'Change the active filters.');
     }
+    if (el('todayHero')) {
+      el('todayHero').innerHTML = Render.todayHero(stack, { dateLabel: formatEditionDate(stack.editionDate || latestSourceDay()) });
+    }
+    if (el('todaySession')) {
+      el('todaySession').innerHTML = state.session ? Render.sessionCard(state.session) : '';
+    }
+    if (el('dueRevision')) el('dueRevision').innerHTML = Render.dueStrip(Store.stats());
+    if (el('weekThemes')) {
+      el('weekThemes').innerHTML = Render.repeatedThemes(Packet ? Packet.clusterByAnchor(state.packets) : []);
+    }
+    if (el('priorityMust')) el('priorityMust').innerHTML = Render.stackSection('Must Know', stack.must_know, 'No Must Know items today — that is an editorial decision, not a gap in the feed.');
+    if (el('priorityUseful')) el('priorityUseful').innerHTML = Render.stackSection('Useful', stack.useful);
+    if (el('priorityBackground')) el('priorityBackground').innerHTML = Render.stackSection('Background', stack.background);
+    if (el('prioritySkip')) el('prioritySkip').innerHTML = Render.stackSection('Skip / archive only', stack.skip);
+    renderPacketDesk();
     el('topicOfDay').innerHTML = Render.topicOfDay(topic);
     el('dailyEdition').innerHTML = Render.dailyEdition(edition);
     el('dailyEditionMeta').innerHTML = edition.items.length
-      ? '<strong>' + edition.items.length + '</strong> developments across <strong>' + edition.groups.length + '</strong> subjects.'
+      ? '<strong>' + edition.items.length + '</strong> official updates across <strong>' + edition.groups.length + '</strong> subjects.'
       : 'No matching articles.';
     el('subjectJump').innerHTML = edition.groups.map(function (group) {
       return '<a href="?view=brief&amp;subject=' + Render.esc(group.subject.id) + '#daily-' + Render.esc(group.subject.id) +
@@ -914,6 +1044,105 @@
     status('Downloaded.');
   }
 
+  function savePacket(id) {
+    var packet = packetById(id);
+    if (!packet || !Packet) return;
+    var payload = Packet.packetToNote(packet);
+    if (state.mode && state.mode.name === 'LOCK') {
+      status('LOCK mode: retrieve what you already hold. Save only if this closes a known gap.', 'error');
+    }
+    var result = Store.add(payload);
+    status(result === 'duplicate' ? 'Already in the revision queue.' :
+      (result === 'added' ? 'Added to revision. First recall is due tomorrow.' : 'Could not save that topic.'),
+      result === 'added' ? 'ok' : 'error');
+    renderNotes();
+    renderCounts();
+    renderBrief();
+  }
+
+  function openPacket(id, layer) {
+    state.openPacketId = id;
+    state.packetLayer = layer || 'brief';
+    if (state.view !== 'brief') setView('brief');
+    renderPacketDesk();
+    var desk = el('packetDesk');
+    if (desk) desk.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function startSession(mode) {
+    var packets = visiblePackets();
+    var stack = Packet ? Packet.buildTodayStack(packets, { editionDate: latestSourceDay() }) : { must_know: [], useful: [] };
+    var queue = stack.must_know.concat(stack.useful).slice(0, 3);
+    state.sessionMode = mode || '';
+    state.session = {
+      done: false,
+      phase: mode === 'mains' ? 'Reconstruct one Mains skeleton' : (mode === 'prelims' ? 'Answer three Prelims traps' : 'Scan the top three'),
+      line: mode === 'mains'
+        ? 'Outline before opening the model dimensions.'
+        : 'Read the 60-second layer first. Expand only if the static anchor is unclear.',
+      understood: 0,
+      correct: 0,
+      asked: 0,
+      weak: 0,
+      queue: queue.map(function (row) { return row.id; }),
+    };
+    if (queue[0]) openPacket(queue[0].id, mode === 'mains' ? 'understand' : 'brief');
+    renderBrief();
+  }
+
+  function markUnderstood(id) {
+    state.understood[id] = true;
+    if (state.session) {
+      state.session.understood += 1;
+      var next = state.session.queue.filter(function (item) { return !state.understood[item]; })[0];
+      if (next) openPacket(next, state.packetLayer);
+      else {
+        state.session.done = true;
+        state.session.weak = Store.due().length ? 1 : 0;
+      }
+    }
+    status('Marked understood. It stays in the desk if you need it again.');
+    renderBrief();
+  }
+
+  function testPacket(id) {
+    var packet = packetById(id);
+    if (!packet) return;
+    openPacket(id, 'understand');
+    window.setTimeout(function () {
+      var vault = document.getElementById('packet-vault');
+      if (vault) vault.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 0);
+    if (state.session) {
+      state.session.asked += Math.min(3, (packet.prelims.traps || []).length);
+      state.session.phase = 'Check the traps, then add weak items';
+    }
+    renderBrief();
+  }
+
+  function handleDeskClick(event) {
+    var viewLink = event.target.closest('[data-view="catchup"]');
+    if (viewLink) {
+      event.preventDefault();
+      setView('catchup', true);
+      return;
+    }
+    var button = event.target.closest('[data-act]');
+    if (!button) return;
+    var act = button.getAttribute('data-act');
+    var id = button.getAttribute('data-id');
+    if (act === 'start-session') { startSession(''); return; }
+    if (act === 'session-mode') { startSession(button.getAttribute('data-mode')); return; }
+    if (act === 'open-packet') { openPacket(id, button.getAttribute('data-layer') || 'brief'); return; }
+    if (act === 'save-packet') { savePacket(id); return; }
+    if (act === 'understood-packet') { markUnderstood(id); return; }
+    if (act === 'test-packet') { testPacket(id); return; }
+    if (act === 'packet-layer') {
+      state.packetLayer = button.getAttribute('data-layer') || 'brief';
+      renderPacketDesk();
+    }
+  }
+
   /* ─────────────────────────────── wiring ─────────────────────────────── */
 
   function toggleChip(button, bucket) {
@@ -1037,6 +1266,7 @@
         renderSourceDesk();
       } else if (state.view === 'memory') renderNotes();
       else if (state.view === 'syllabus') renderSyllabus();
+      else if (state.view === 'catchup') renderCatchUp();
       else renderBrief();
       if (window.history && window.history.replaceState) {
         window.history.replaceState({ view: state.view }, '', routeUrl(state.view));
@@ -1134,6 +1364,7 @@
     }
     el('briefEntries').addEventListener('click', handlePublishedNoteClick);
     el('topicOfDay').addEventListener('click', handlePublishedNoteClick);
+    el('main').addEventListener('click', handleDeskClick);
 
     [el('syllabusList'), el('subjectJump'), el('topicOfDay')].forEach(function (container) {
       container.addEventListener('click', function (event) {
@@ -1201,6 +1432,7 @@
     renderCounts();
     renderRail();
     setView(state.view);
+    loadAtlasAndPyqs();
     loadSourceIndex();
     loadBrief();
     loadSyllabus();

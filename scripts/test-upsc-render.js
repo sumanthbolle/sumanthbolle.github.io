@@ -309,3 +309,70 @@ test('does not render unsafe drill evidence links', function () {
   assert.equal(html.includes('javascript:'), false);
   assert.equal(html.includes('Open evidence'), false);
 });
+
+const PACKET = {
+  id: 'src_pib', title: 'Finance Commission <report>',
+  priority: 'must_know', priority_score: 86,
+  priority_note: 'Study priority, not a prediction of what UPSC will ask.',
+  papers: ['GS2'], subjects: ['Polity & Governance'], syllabus_codes: ['GS2.2'],
+  read_minutes: 5, status: 'source-backed', hasExamNote: true, date: '2026-08-22',
+  sourceUrl: 'https://pib.gov.in/release/1', publisherName: 'PIB',
+  trigger: { type: 'REPORT', summary: 'A revised devolution share.' },
+  anchors: [{ id: 'fiscal-federalism', label: 'Fiscal federalism', relationship: 'primary' }],
+  layers: {
+    scan: { why_upsc: 'Maps to fiscal federalism.', remember: ['Article 280'] },
+    brief: {
+      what_happened: 'The Commission recommended a revised share.',
+      why_it_matters: ['Federal transfers'],
+      remember: ['Divisible pool'],
+      upsc_link: { prelims: 'Commission composition', mains: 'Examine devolution.' },
+    },
+    understand: {
+      static_anchor: 'Fiscal federalism divides public financial powers.',
+      how_it_works: ['Article 280'],
+      what_changed: { before: 'Previous award', now: 'Revised share', unresolved: 'Cess share' },
+      debate: [{ left: 'State autonomy', tension: 'vs', right: 'National uniformity' }],
+    },
+    deep_dive: { background: ['Constitutional allocation'], arguments: ['Predictability'], counterarguments: ['Cesses'], way_forward: ['Publish cess share'], stakeholders: ['Finance Commission'] },
+  },
+  prelims: { facts: ['Article 280'], traps: [{ statement: 'Cesses are in the pool.', correct: false, explanation: 'They sit outside.' }], do_not_memorize: [] },
+  mains: { skeleton: ['Open on Article 280'], opening_line: 'Article 280', questions: [{ marks: 15, directive: 'examine', question: 'Examine devolution.' }], evidence: ['XV FC'], counter_view: 'Cesses leak', way_forward: ['Disclose cesses'], closing_line: 'Use the current award.' },
+  pyq_links: [{ year: 2018, paper: 'GS2', type: 'direct', theme: 'Fiscal federalism', paraphrase: 'How is the Finance Commission constituted?', why_linked: 'Shares the same static anchor.' }],
+  sources: [{ publisher: 'PIB <Gov>', url: 'https://pib.gov.in/release/1', tier: 1 }],
+  claims: [{ text: 'Revised share', status: 'verified' }],
+};
+
+test('renders a Topic Packet with escaped content and progressive layers', function () {
+  const Render = loadRender();
+  const html = Render.topicPacket(PACKET, { layer: 'understand' });
+  assert.equal(html.includes('Finance Commission &lt;report&gt;'), true);
+  assert.equal(html.includes('Must Know'), true);
+  assert.equal(html.includes('Static ↔ current'), true);
+  assert.equal(html.includes('Prelims Vault'), true);
+  assert.equal(html.includes('Mains Kit'), true);
+  assert.equal(html.includes('Related UPSC patterns'), true);
+  assert.equal(html.includes('Study priority, not a prediction'), true);
+  assert.equal(html.includes('href="https://pib.gov.in/release/1"'), true);
+  assert.equal(html.includes('upsc-patterns.html?anchor=fiscal-federalism'), true);
+  assert.equal(html.includes('data-act="save-packet"'), true);
+});
+
+test('does not render unsafe Topic Packet source URLs', function () {
+  const Render = loadRender();
+  const html = Render.topicPacket(Object.assign({}, PACKET, {
+    sources: [{ publisher: 'Bad', url: 'javascript:alert(1)', tier: 1 }],
+  }), { layer: 'brief' });
+  assert.equal(html.includes('javascript:'), false);
+});
+
+test('Today hero states the session budget without prediction copy', function () {
+  const Render = loadRender();
+  const html = Render.todayHero({
+    editionDate: '2026-08-22', essential_count: 4, read_minutes: 9, recall_minutes: 6,
+  }, { dateLabel: '22 Aug 2026' });
+  assert.equal(html.includes('UPSC Today — 22 Aug 2026'), true);
+  assert.equal(html.includes('4'), true);
+  assert.equal(html.includes('Study priority, not a prediction'), true);
+  assert.equal(html.includes('Start 15-minute session'), true);
+  assert.equal(html.includes('probability'), false);
+});

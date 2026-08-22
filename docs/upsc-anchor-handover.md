@@ -1,6 +1,8 @@
 # Anchor UPSC publication — operator handover
 
-**Interactive desk:** [`upsc.html`](../upsc.html) → `https://sumanthbolle.com/upsc`
+**Interactive desk (flagship):** [`upsc.html`](../upsc.html) → `https://sumanthbolle.com/upsc`
+
+The public desk is now the Topic Packet study system. Product instruction: [`docs/upsc-today-flagship.md`](upsc-today-flagship.md). Full spec: [`docs/upsc-today-enhancement-spec.md`](upsc-today-enhancement-spec.md).
 
 **Static archive:** [`upsc-study/`](../upsc-study/) → `https://sumanthbolle.com/upsc-study/`
 
@@ -99,8 +101,8 @@ publish and failed IDs retry on the next run.
 
 ## Reading and memory model
 
-- Today is the default view: one substantive Topic of the Day followed by a
-  bounded 8–15 item official-source edition grouped by aspirant-facing subject.
+- Today is the default view: a Topic Packet priority stack (Must Know / Useful /
+  Background / Skip), then the official-source stream grouped by subject.
 - Topic selection prefers evidence-ready notes, then durable official briefings
   with actual abstracts over headline-only records. Headline-only feeds are
   labelled honestly and link to the full official document.
