@@ -93,8 +93,11 @@ test('loads the public content contract before render and app', function () {
   const render = html.indexOf('assets/js/upsc/render.js');
   const app = html.indexOf('assets/js/upsc/app.js');
   const coach = html.indexOf('assets/js/upsc/coach.js');
+  const scroll = html.indexOf('assets/js/upsc/scroll.js');
   assert.ok(content > 0 && content < packet && packet < memory && memory < render && render < app);
   assert.ok(coach > app);
+  assert.ok(scroll > coach);
+  assert.match(html, /assets\/css\/upsc-motion\.css/);
 });
 
 test('links the crawlable archive and practice pages and keeps every HTML id unique', function () {
