@@ -16,7 +16,7 @@ const STATIC_PAGES = [
   { url: '/flights', priority: '1.0', changefreq: 'daily' },
   { url: '/metals', priority: '0.9', changefreq: 'hourly' },
   { url: '/save-yourself', priority: '0.9', changefreq: 'weekly' },
-  { url: '/upsc', priority: '0.9', changefreq: 'daily' },
+  { url: '/upsc', priority: '1.0', changefreq: 'daily' },
   { url: '/revision', priority: '0.8', changefreq: 'daily' },
   { url: '/mains', priority: '0.8', changefreq: 'daily' },
   { url: '/upsc-quiz', priority: '0.8', changefreq: 'weekly' },

@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UPSC Today — Current affairs from official sources</title>
-  <meta name="description" content="Daily UPSC current-affairs articles from PIB, Indian public institutions and authorised international organisations.">
+  <title>UPSC Today — Current affairs reduced to what the exam can use</title>
+  <meta name="description" content="Understand the issue, connect it to the syllabus, test yourself, and see it again before you forget it. Official-source UPSC Topic Packets with study priority, not prediction.">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#f7f9fb">
   <link rel="canonical" href="https://sumanthbolle.com/upsc">
-  <meta property="og:title" content="UPSC Today — Current affairs from official sources">
-  <meta property="og:description" content="Daily UPSC current-affairs articles arranged by subject and linked to their official sources.">
+  <meta property="og:title" content="UPSC Today — Current affairs reduced to what the exam can use">
+  <meta property="og:description" content="Read less. Understand the static. Recall more. Official-source Topic Packets for UPSC.">
   <meta property="og:url" content="https://sumanthbolle.com/upsc">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
@@ -22,7 +22,7 @@
     "@type": "CollectionPage",
     "name": "UPSC Today",
     "url": "https://sumanthbolle.com/upsc",
-    "description": "Daily UPSC current-affairs articles from official Indian and international sources.",
+    "description": "Official-source UPSC Topic Packets: study priority, static anchors, PYQ bridges and spaced revision.",
     "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
   }
   </script>
@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="assets/css/upsc-coach.css">
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to the brief</a>
+  <a class="skip-link" href="#main">Skip to today’s desk</a>
   <nav aria-label="Portfolio navigation">
     <div class="nav-c">
       <a href="index.html" class="nav-logo">Sumanth Bolle</a>
@@ -48,7 +48,7 @@
               <a href="servicenow.html"><span class="nav-drop__name">ServiceNow Central</span><span class="nav-drop__desc">Platform guides and practice</span></a>
               <a href="blog.html"><span class="nav-drop__name">Articles &amp; Tutorials</span><span class="nav-drop__desc">Technical articles and walkthroughs</span></a>
               <a href="interviews.html"><span class="nav-drop__name">Interview Prep</span><span class="nav-drop__desc">Scenario questions and explanations</span></a>
-              <a href="upsc.html" aria-current="page"><span class="nav-drop__name">UPSC Today</span><span class="nav-drop__desc">Current affairs and revision</span></a>
+              <a href="upsc.html" aria-current="page"><span class="nav-drop__name">UPSC Today</span><span class="nav-drop__desc">Flagship study desk</span></a>
             </div>
           </li>
           <li class="nav-drop" data-nav-drop data-nav-group="tools">
@@ -86,14 +86,16 @@
   </nav>
 
   <header class="an-editorial-masthead">
-    <p class="an-publication-mark">Anchor</p>
+    <p class="an-publication-mark">Flagship</p>
     <h1>UPSC Today</h1>
+    <p class="an-edition-kicker">Current affairs reduced to what the exam can actually use.</p>
     <div class="an-edition-line">
       <span id="editionStamp">Daily edition</span>
-      <a href="upsc-study/">Archive</a>
+      <a href="upsc-patterns.html">Patterns</a>
+      <a href="mains.html">Practice</a>
+      <a href="upsc-quiz.html">Test recall</a>
       <a href="revision.html">Revisit today</a>
-      <a href="mains.html">Mains drills</a>
-      <a href="upsc-quiz.html">Prelims quiz</a>
+      <a href="upsc-study/">Archive</a>
     </div>
   </header>
 
@@ -101,14 +103,15 @@
     <div class="an-command__inner">
       <div class="an-views" role="tablist" aria-label="UPSC sections">
         <a href="?view=brief" role="tab" id="tab-brief" aria-selected="true" aria-controls="view-brief" data-view="brief">Today</a>
-        <a href="?view=syllabus" role="tab" id="tab-syllabus" aria-selected="false" aria-controls="view-syllabus" data-view="syllabus">Subjects</a>
+        <a href="?view=catchup" role="tab" id="tab-catchup" aria-selected="false" aria-controls="view-catchup" data-view="catchup">Catch up</a>
+        <a href="?view=syllabus" role="tab" id="tab-syllabus" aria-selected="false" aria-controls="view-syllabus" data-view="syllabus">Topics</a>
         <a href="?view=memory" role="tab" id="tab-memory" aria-selected="false" aria-controls="view-memory" data-view="memory">Revision<span class="an-count" id="countDue">0</span><span class="sr-only"> due, </span><span class="an-count" id="countNotes">0</span></a>
-        <a href="?view=source" role="tab" id="tab-source" aria-selected="false" aria-controls="view-source" data-view="source">Official sources</a>
+        <a href="?view=source" role="tab" id="tab-source" aria-selected="false" aria-controls="view-source" data-view="source">Sources</a>
       </div>
       <search class="an-search" role="search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
-        <label class="sr-only" for="q">Search articles</label>
-        <input type="search" id="q" placeholder="Search articles" autocomplete="off" spellcheck="false">
+        <label class="sr-only" for="q">Search anchors, triggers and PYQ themes</label>
+        <input type="search" id="q" placeholder="Search anchors, triggers, PYQs" autocomplete="off" spellcheck="false">
         <kbd>/</kbd>
       </search>
     </div>
@@ -121,7 +124,7 @@
         <!-- Official source archive: deliberately secondary to the reading edition. -->
         <section class="an-view" id="view-source" role="tabpanel" aria-labelledby="tab-source" hidden>
           <div class="an-viewhead">
-            <div><p class="an-label">Archive</p><h2>Official sources</h2></div>
+            <div><p class="an-label">Archive</p><h2>Sources</h2></div>
             <p class="an-viewhead__meta" id="sourceMeta">Loading…</p>
             <p class="an-viewhead__meta"><a href="needs-review.html">Notes held for verification</a></p>
           </div>
@@ -146,7 +149,7 @@
         <!-- Today's reading edition -->
         <section class="an-view" id="view-brief" role="tabpanel" aria-labelledby="tab-brief">
           <header class="an-edition-head">
-            <div><p class="an-label">Latest edition</p><h2 id="briefTitle">Today</h2></div>
+            <div><p class="an-label">Study desk</p><h2 id="briefTitle">Today</h2></div>
             <p class="an-viewhead__meta" id="briefMeta">Loading…</p>
           </header>
 
@@ -160,13 +163,26 @@
             <h3>Loading edition…</h3>
           </div>
 
+          <div id="todayHero"></div>
+          <div id="todaySession"></div>
+          <div id="dueRevision"></div>
+          <div id="weekThemes"></div>
+          <div id="priorityMust"></div>
+          <div id="packetDesk" aria-live="polite"></div>
+          <div id="priorityUseful"></div>
+          <details class="pk-low" id="priorityBackgroundWrap">
+            <summary>Background and lower-priority triggers</summary>
+            <div id="priorityBackground"></div>
+            <div id="prioritySkip"></div>
+          </details>
+
           <div id="topicOfDay" aria-live="polite"></div>
 
           <nav class="an-subject-jump" id="subjectJump" aria-label="Subjects in today’s edition"></nav>
 
-          <section class="an-daily" aria-labelledby="dailyTitle">
+          <section class="an-daily an-source-stream" aria-labelledby="dailyTitle">
             <header class="an-daily__head">
-              <div><p class="an-label">By subject</p><h2 id="dailyTitle">Latest articles</h2></div>
+              <div><p class="an-label">Official stream</p><h2 id="dailyTitle">Worth your time today</h2></div>
               <p class="an-viewhead__meta" id="dailyEditionMeta"></p>
             </header>
             <div id="dailyEdition"></div>
@@ -204,10 +220,18 @@
           </section>
         </section>
 
+        <section class="an-view" id="view-catchup" role="tabpanel" aria-labelledby="tab-catchup" hidden>
+          <div class="an-viewhead">
+            <div><p class="an-label">Recovery</p><h2>Catch up</h2></div>
+            <p class="an-viewhead__meta" id="catchupMeta">Merged week, not seven daily pages.</p>
+          </div>
+          <div id="catchupDesk"></div>
+        </section>
+
         <!-- Subject Library -->
         <section class="an-view" id="view-syllabus" role="tabpanel" aria-labelledby="tab-syllabus" hidden>
           <div class="an-viewhead">
-            <div><p class="an-label">Index</p><h2>Subjects</h2></div>
+            <div><p class="an-label">Index</p><h2>Topics</h2></div>
             <p class="an-viewhead__meta" id="syllabusMeta"></p>
           </div>
           <div class="an-state" id="syllabusState"><h3>Loading subjects…</h3></div>
@@ -365,6 +389,7 @@
   <script>window.SB_UPSC_ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';</script>
   <script src="assets/js/upsc/store.js"></script>
   <script src="assets/js/upsc/content.js"></script>
+  <script src="assets/js/upsc/packet.js"></script>
   <script src="assets/js/upsc/memory.js"></script>
   <script src="assets/js/upsc/render.js"></script>
   <script src="assets/js/upsc/app.js"></script>

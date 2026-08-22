@@ -562,6 +562,306 @@
       '</div></article>';
   }
 
+  function priorityBadge(band) {
+    var label = {
+      must_know: 'Must Know',
+      useful: 'Useful',
+      background: 'Background',
+      skip: 'Skip',
+    }[band] || 'Skip';
+    return '<span class="pk-badge" data-priority="' + attr(band || 'skip') + '">' + esc(label) + '</span>';
+  }
+
+  function paperBadges(papers) {
+    return (papers || []).map(function (paper) {
+      return '<span class="pk-paper">' + esc(paper) + '</span>';
+    }).join('');
+  }
+
+  function listBlock(title, rows) {
+    var values = (Array.isArray(rows) ? rows : []).filter(Boolean);
+    if (!values.length) return '';
+    return '<section class="pk-block"><h3>' + esc(title) + '</h3><ul>' +
+      values.map(function (row) { return '<li>' + esc(row) + '</li>'; }).join('') +
+      '</ul></section>';
+  }
+
+  function topicCard(packet) {
+    var row = packet || {};
+    var why = (row.layers && row.layers.scan && row.layers.scan.why_upsc) || '';
+    var changed = (row.trigger && row.trigger.summary) || '';
+    var prelims = (row.prelims && row.prelims.facts) ? row.prelims.facts.length : 0;
+    var mains = (row.mains && row.mains.questions) ? row.mains.questions.length : 0;
+    var pyq = (row.pyq_links || []).length;
+    var anchor = row.anchors && row.anchors[0] ? row.anchors[0] : null;
+    return '<article class="pk-card" data-packet-id="' + attr(row.id) + '" data-priority="' + attr(row.priority) + '">' +
+      '<p class="pk-card__meta">' + priorityBadge(row.priority) + paperBadges(row.papers) +
+        (row.subjects && row.subjects[0] ? '<span class="pk-subject">' + esc(row.subjects[0]) + '</span>' : '') +
+        '<span class="pk-read">' + esc(row.read_minutes || 3) + ' min</span></p>' +
+      '<h3>' + esc(row.title) + '</h3>' +
+      (changed ? '<p class="pk-card__changed">' + esc(compactText(changed, 180)) + '</p>' : '') +
+      (why ? '<p class="pk-card__why"><span>Why UPSC cares</span> ' + esc(why) + '</p>' : '') +
+      (anchor ? '<p class="pk-card__anchor">Static anchor: <a href="upsc-patterns.html?anchor=' +
+        attr(anchor.id) + '">' + esc(anchor.label) + '</a></p>' : '') +
+      '<p class="pk-card__counts">Prelims: ' + esc(prelims) + ' facts · Mains: ' + esc(mains) +
+        ' questions · PYQ: ' + esc(pyq) + ' related</p>' +
+      '<div class="pk-card__actions">' +
+        '<button type="button" class="btn btn-sm" data-act="open-packet" data-id="' + attr(row.id) + '" data-layer="brief">60 sec</button>' +
+        '<button type="button" class="btn btn-sm" data-act="open-packet" data-id="' + attr(row.id) + '" data-layer="understand">Understand in 5 min</button>' +
+        '<button type="button" class="btn btn-sm btn-quiet" data-act="open-packet" data-id="' + attr(row.id) + '" data-layer="master">Master the topic</button>' +
+        '<button type="button" class="btn btn-sm btn-quiet" data-act="save-packet" data-id="' + attr(row.id) + '">Add to revision</button>' +
+      '</div></article>';
+  }
+
+  function todayHero(stack, options) {
+    var value = stack || {};
+    var extras = options || {};
+    var date = extras.dateLabel || value.editionDate || 'Today';
+    return '<section class="pk-hero" aria-labelledby="todayHeroTitle">' +
+      '<p class="an-label">Worth your time today</p>' +
+      '<h2 id="todayHeroTitle">UPSC Today — ' + esc(date) + '</h2>' +
+      '<p class="pk-hero__budget"><strong>' + esc(value.essential_count || 0) + '</strong> essential topics · ' +
+        '<strong>' + esc(value.read_minutes || 0) + '</strong> min reading · ' +
+        '<strong>' + esc(value.recall_minutes || 0) + '</strong> min recall</p>' +
+      '<p class="pk-hero__note">Study priority, not a prediction of the paper.</p>' +
+      '<div class="pk-hero__actions">' +
+        '<button type="button" class="btn btn-primary" data-act="start-session">Start 15-minute session</button>' +
+        '<button type="button" class="btn" data-act="session-mode" data-mode="prelims">Prelims mode</button>' +
+        '<button type="button" class="btn" data-act="session-mode" data-mode="mains">Mains mode</button>' +
+        '<a class="btn" href="?view=catchup" data-view="catchup">7-day catch-up</a>' +
+      '</div></section>';
+  }
+
+  function dueStrip(stats) {
+    var value = stats || {};
+    if (!value.due) return '';
+    return '<section class="pk-due" aria-label="Due revision">' +
+      '<p><strong>' + esc(value.due) + '</strong> items due for retrieval.</p>' +
+      '<a href="?view=memory">Revisit today</a></section>';
+  }
+
+  function repeatedThemes(clusters) {
+    var rows = (Array.isArray(clusters) ? clusters : []).filter(function (row) { return row.count > 1; }).slice(0, 6);
+    if (!rows.length) return '';
+    return '<section class="pk-themes" aria-labelledby="weekThemesTitle">' +
+      '<h3 id="weekThemesTitle">Themes gaining weight this week</h3><ul>' +
+      rows.map(function (row) {
+        var href = row.latest && row.latest.atlas
+          ? 'upsc-patterns.html?anchor=' + attr(row.latest.atlas.id)
+          : '?view=catchup';
+        return '<li><a href="' + href + '">' + esc(row.anchor) + '</a> · ' +
+          esc(row.count) + ' triggers</li>';
+      }).join('') + '</ul></section>';
+  }
+
+  function stackSection(title, packets, empty) {
+    var rows = Array.isArray(packets) ? packets : [];
+    if (!rows.length) return empty ? '<section class="pk-stack"><h3>' + esc(title) + '</h3><p class="pk-empty">' + esc(empty) + '</p></section>' : '';
+    return '<section class="pk-stack" data-stack="' + attr(title) + '"><h3>' + esc(title) + '</h3>' +
+      rows.map(topicCard).join('') + '</section>';
+  }
+
+  function layerSwitcher(active) {
+    var current = active || 'brief';
+    var layers = [
+      { id: 'brief', label: '60 sec' },
+      { id: 'understand', label: 'Understand in 5 min' },
+      { id: 'master', label: 'Master the topic' },
+    ];
+    return '<div class="pk-layers" role="tablist" aria-label="Reading depth">' +
+      layers.map(function (layer) {
+        var selected = layer.id === current;
+        return '<button type="button" role="tab" aria-selected="' + (selected ? 'true' : 'false') +
+          '" data-act="packet-layer" data-layer="' + attr(layer.id) + '">' + esc(layer.label) + '</button>';
+      }).join('') + '</div>';
+  }
+
+  function debateMatrix(rows) {
+    var values = Array.isArray(rows) ? rows : [];
+    if (!values.length) return '';
+    return '<section class="pk-block"><h3>Debate</h3><div class="pk-matrix">' +
+      values.map(function (row) {
+        return '<div class="pk-matrix__row"><span>' + esc(row.left) + '</span><span>' +
+          esc(row.tension || 'vs') + '</span><span>' + esc(row.right) + '</span></div>';
+      }).join('') + '</div></section>';
+  }
+
+  function sourceStrip(packet) {
+    var sources = (packet && packet.sources) || [];
+    var claims = (packet && packet.claims) || [];
+    var verified = claims.filter(function (row) { return row.status === 'verified'; }).length;
+    var opinion = claims.filter(function (row) { return row.status === 'opinion'; }).length;
+    var open = claims.filter(function (row) { return row.status === 'provisional' || row.status === 'contested'; }).length;
+    return '<section class="pk-sources"><h3>Sources</h3><ul>' +
+      sources.map(function (row) {
+        var url = safeHttpUrl(row.url);
+        var mark = row.tier <= 2 ? '✓' : '○';
+        var role = row.tier <= 2 ? 'primary' : 'context';
+        return '<li><span aria-hidden="true">' + mark + '</span> ' +
+          (url ? '<a href="' + attr(url) + '" target="_blank" rel="noopener noreferrer">' +
+            esc(row.publisher) + '</a>' : esc(row.publisher)) +
+          ' — ' + esc(role) + '</li>';
+      }).join('') + '</ul>' +
+      '<p class="pk-sources__meta">Verified facts: ' + esc(verified) +
+        ' · Opinion statements: ' + esc(opinion) +
+        ' · Open/contested: ' + esc(open) +
+        (packet && packet.date ? ' · Last checked: ' + esc(packet.date) : '') +
+        '</p><p class="pk-sources__note">' + esc((packet && packet.priority_note) || '') + '</p></section>';
+  }
+
+  function prelimsVault(packet) {
+    var vault = (packet && packet.prelims) || {};
+    var traps = vault.traps || [];
+    return '<section class="pk-vault" id="packet-vault"><h3>Prelims Vault</h3>' +
+      listBlock('Must remember', (vault.facts || []).slice(0, 5)).replace('pk-block', 'pk-block pk-vault__facts') +
+      ((vault.confusing_pairs || []).length ? listBlock('Confusing pairs', vault.confusing_pairs) : '') +
+      (traps.length ? '<section class="pk-block"><h3>Statement traps</h3><ul class="pk-traps">' +
+        traps.map(function (trap) {
+          return '<li><strong>' + esc(trap.correct ? 'Correct' : 'Incorrect') + ':</strong> ' +
+            esc(trap.statement) + (trap.explanation ? '<p>' + esc(trap.explanation) + '</p>' : '') + '</li>';
+        }).join('') + '</ul></section>' : '') +
+      ((vault.do_not_memorize || []).length ? listBlock('Do not memorize', vault.do_not_memorize) : '') +
+      (traps.length ? '<button type="button" class="btn btn-sm" data-act="test-packet" data-id="' +
+        attr(packet.id) + '">Test recall</button>' : '') +
+      '</section>';
+  }
+
+  function mainsKit(packet) {
+    var kit = (packet && packet.mains) || {};
+    return '<section class="pk-kit" id="packet-kit"><h3>Mains Kit</h3>' +
+      (kit.opening_line ? '<p class="pk-kit__open"><span>Opening line</span> ' + esc(kit.opening_line) + '</p>' : '') +
+      ((kit.skeleton || []).length ? '<ol class="pk-skeleton">' + kit.skeleton.map(function (row) {
+        return '<li>' + esc(row) + '</li>';
+      }).join('') + '</ol>' : '') +
+      listBlock('Evidence bank', kit.evidence) +
+      (kit.counter_view ? '<p><span class="an-label">Counter-view</span> ' + esc(kit.counter_view) + '</p>' : '') +
+      listBlock('Way forward', kit.way_forward) +
+      (kit.closing_line ? '<p class="pk-kit__close">' + esc(kit.closing_line) + '</p>' : '') +
+      ((kit.questions || []).length ? '<ul class="pk-questions">' + kit.questions.map(function (row) {
+        return '<li><span class="an-num">' + esc(row.marks) + ' marks</span> <strong>' +
+          esc(row.directive) + '</strong> ' + esc(row.question) + '</li>';
+      }).join('') + '</ul>' : '') +
+      '</section>';
+  }
+
+  function pyqBridge(packet) {
+    var rows = (packet && packet.pyq_links) || [];
+    if (!rows.length) {
+      return '<section class="pk-pyq"><h3>PYQ bridge</h3><p>No official PYQ theme is linked yet. That is better than a fake association.</p></section>';
+    }
+    return '<section class="pk-pyq"><h3>Related UPSC patterns</h3><ul>' +
+      rows.map(function (row) {
+        return '<li><span class="an-num">' + esc(row.year) + '</span> ' +
+          esc(row.paper) + ' · ' + esc(row.type) + ' · ' + esc(row.theme) +
+          (row.paraphrase ? '<p>' + esc(compactText(row.paraphrase, 180)) + '</p>' : '') +
+          (row.why_linked ? '<p class="pk-pyq__why">' + esc(row.why_linked) + '</p>' : '') +
+          '</li>';
+      }).join('') + '</ul></section>';
+  }
+
+  function topicPacket(packet, options) {
+    var row = packet || {};
+    var extras = options || {};
+    var layer = extras.layer || 'brief';
+    var brief = row.layers && row.layers.brief ? row.layers.brief : {};
+    var understand = row.layers && row.layers.understand ? row.layers.understand : {};
+    var deep = row.layers && row.layers.deep_dive ? row.layers.deep_dive : {};
+    var anchor = row.anchors && row.anchors[0] ? row.anchors[0] : null;
+    var status = editorialLabel(row.status);
+    var body = '';
+    if (layer === 'understand' || layer === 'master') {
+      body += '<section class="pk-bridge"><h3>Static ↔ current</h3><p>' +
+        esc(brief.what_happened || '') + ' → ' +
+        (anchor ? '<a href="upsc-patterns.html?anchor=' + attr(anchor.id) + '">' + esc(anchor.label) + '</a>' : 'unmapped') +
+        ' → PYQ themes</p></section>';
+      body += understand.static_anchor ? '<section class="pk-block"><h3>Static anchor</h3><p>' + esc(understand.static_anchor) + '</p></section>' : '';
+      body += listBlock('How it works', understand.how_it_works);
+      if (understand.what_changed) {
+        body += '<section class="pk-changed"><h3>What changed</h3><dl>' +
+          '<div><dt>Before</dt><dd>' + esc(understand.what_changed.before || '—') + '</dd></div>' +
+          '<div><dt>Now</dt><dd>' + esc(understand.what_changed.now || '—') + '</dd></div>' +
+          '<div><dt>Still unresolved</dt><dd>' + esc(understand.what_changed.unresolved || '—') + '</dd></div>' +
+          '</dl></section>';
+      }
+      body += debateMatrix(understand.debate);
+    }
+    if (layer === 'master') {
+      body += listBlock('Background', deep.background);
+      body += listBlock('Arguments', deep.arguments);
+      body += listBlock('Counterarguments', deep.counterarguments);
+      body += listBlock('Way forward', deep.way_forward);
+      body += listBlock('Stakeholders', deep.stakeholders);
+    }
+    return '<article class="pk-packet" data-packet-id="' + attr(row.id) + '" data-layer="' + attr(layer) + '">' +
+      '<header class="pk-packet__head">' +
+        '<p class="pk-card__meta">' + paperBadges(row.papers) +
+          (row.subjects && row.subjects[0] ? '<span class="pk-subject">' + esc(row.subjects[0]) + '</span>' : '') +
+          (row.syllabus_codes || []).map(function (code) {
+            return '<span class="an-code">' + esc(code) + '</span>';
+          }).join('') +
+          '<span class="pk-read">' + esc(row.read_minutes || 5) + ' min</span>' +
+          priorityBadge(row.priority) + '</p>' +
+        '<h2>' + esc(row.title) + '</h2>' +
+        (anchor ? '<p class="pk-card__anchor">Static anchor: <a href="upsc-patterns.html?anchor=' +
+          attr(anchor.id) + '">' + esc(anchor.label) + '</a></p>' : '') +
+        '<p class="pk-packet__status">' + esc(status) +
+          (row.hasExamNote ? ' · Exam note ready' : ' · Official record') +
+          (row.date ? ' · updated ' + esc(row.date) : '') + '</p>' +
+      '</header>' +
+      layerSwitcher(layer) +
+      '<section class="pk-block"><h3>What happened</h3><p>' + esc(brief.what_happened || '') + '</p></section>' +
+      listBlock('Why UPSC cares', brief.why_it_matters) +
+      listBlock('Remember these', brief.remember) +
+      (brief.upsc_link ? '<p class="pk-upsc-link"><span>Prelims</span> ' + esc(brief.upsc_link.prelims) +
+        '<br><span>Mains</span> ' + esc(brief.upsc_link.mains) + '</p>' : '') +
+      body +
+      (layer !== 'brief' ? prelimsVault(row) + mainsKit(row) + pyqBridge(row) : pyqBridge(row)) +
+      sourceStrip(row) +
+      '<div class="pk-sticky" role="group" aria-label="Topic actions">' +
+        '<button type="button" class="btn btn-primary" data-act="save-packet" data-id="' + attr(row.id) + '">Add to revision</button>' +
+        '<button type="button" class="btn" data-act="test-packet" data-id="' + attr(row.id) + '">Test recall</button>' +
+        '<button type="button" class="btn btn-quiet" data-act="understood-packet" data-id="' + attr(row.id) + '">Understood</button>' +
+      '</div></article>';
+  }
+
+  function catchUpDesk(catchup) {
+    var row = catchup || {};
+    return '<section class="pk-catchup">' +
+      '<header><p class="an-label">Recovery</p><h2>This week in 25 minutes</h2>' +
+        '<p><strong>' + esc((row.must_know || []).length) + '</strong> Must Know · ' +
+        '<strong>' + esc((row.useful || []).length) + '</strong> Useful · ' +
+        '<strong>' + esc((row.discarded || []).length) + '</strong> discarded</p></header>' +
+      ((row.clusters || []).length ? '<section class="pk-block"><h3>Most repeated anchors</h3><ol>' +
+        row.clusters.slice(0, 5).map(function (cluster) {
+          return '<li>' + esc(cluster.anchor) + ' · ' + esc(cluster.count) + ' triggers</li>';
+        }).join('') + '</ol></section>' : '') +
+      listBlock('Prelims fact pack', row.prelims_facts) +
+      ((row.mains_debates || []).length ? '<section class="pk-block"><h3>Mains pack</h3><ul>' +
+        row.mains_debates.map(function (debate) {
+          return '<li>' + esc(debate.left || '') +
+            (debate.right ? ' — ' + esc(debate.right) : '') + '</li>';
+        }).join('') + '</ul></section>' : '') +
+      (row.test ? '<p class="pk-catchup__test">Test: ' + esc(row.test.mcqs) + ' MCQs · ' +
+        esc(row.test.skeletons) + ' skeletons</p>' : '') +
+      stackSection('Must Know', row.must_know) +
+      stackSection('Useful', row.useful) +
+      '</section>';
+  }
+
+  function sessionCard(session) {
+    var row = session || {};
+    if (row.done) {
+      return '<section class="pk-session" aria-live="polite"><h3>Today complete</h3>' +
+        '<p>' + esc(row.understood || 0) + ' topics understood · ' +
+        esc(row.correct || 0) + '/' + esc(row.asked || 0) + ' MCQs correct · ' +
+        esc(row.weak || 0) + ' weak anchors added to revision.</p>' +
+        '<p>Next recall: tomorrow.</p></section>';
+    }
+    return '<section class="pk-session" aria-live="polite"><p class="an-label">15-minute session</p>' +
+      '<h3>' + esc(row.phase || 'Scan the top three') + '</h3>' +
+      '<p>' + esc(row.line || 'Read the 60-second layer first. Expand only if the static anchor is unclear.') + '</p></section>';
+  }
+
   function reviseCard(note, index, total) {
     return '<div class="an-card" data-id="' + attr(note.id) + '">' +
       '<p class="an-revise__progress">' + esc(index + 1) + ' of ' + esc(total) +
@@ -603,5 +903,18 @@
     answerOutline: answerOutline,
     memoryDrill: memoryDrill,
     reviseCard: reviseCard,
+    priorityBadge: priorityBadge,
+    topicCard: topicCard,
+    todayHero: todayHero,
+    dueStrip: dueStrip,
+    repeatedThemes: repeatedThemes,
+    stackSection: stackSection,
+    topicPacket: topicPacket,
+    sourceStrip: sourceStrip,
+    prelimsVault: prelimsVault,
+    mainsKit: mainsKit,
+    pyqBridge: pyqBridge,
+    catchUpDesk: catchUpDesk,
+    sessionCard: sessionCard,
   };
 })();

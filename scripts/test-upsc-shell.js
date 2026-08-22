@@ -17,16 +17,19 @@ function test(name, body) {
 }
 
 test('opens on the editorial Today view and keeps archive routes secondary', function () {
-  for (const view of ['brief', 'syllabus', 'memory', 'source']) {
+  for (const view of ['brief', 'catchup', 'syllabus', 'memory', 'source']) {
     assert.match(html, new RegExp('id="tab-' + view + '"'));
     assert.match(html, new RegExp('id="view-' + view + '"'));
   }
   assert.match(html, /id="tab-brief"[^>]*aria-selected="true"[^>]*>Today</);
   assert.doesNotMatch(html, /id="view-brief"[^>]*hidden/);
-  assert.match(html, /id="tab-syllabus"[^>]*>Subjects</);
+  assert.match(html, /id="tab-catchup"[^>]*>Catch up</);
+  assert.match(html, /id="tab-syllabus"[^>]*>Topics</);
   assert.match(html, /id="tab-memory"[^>]*>Revision/);
-  assert.match(html, /id="tab-source"[^>]*>Official sources</);
-  assert.ok(html.indexOf('id="tab-brief"') < html.indexOf('id="tab-source"'));
+  assert.match(html, /id="tab-source"[^>]*>Sources</);
+  assert.ok(html.indexOf('id="tab-brief"') < html.indexOf('id="tab-catchup"'));
+  assert.ok(html.indexOf('id="tab-catchup"') < html.indexOf('id="tab-source"'));
+  assert.match(tagWithId('tab-catchup'), /href="\?view=catchup"/);
   assert.match(tagWithId('tab-syllabus'), /href="\?view=syllabus"/);
   assert.match(tagWithId('tab-memory'), /href="\?view=memory"/);
   assert.match(tagWithId('tab-source'), /href="\?view=source"/);
@@ -50,15 +53,17 @@ test('keeps Notes and Due modes inside Memory Drill', function () {
   assert.match(html, /id="reviseBody"/);
 });
 
-test('provides the lead article, edition stream, subject archive, and revision targets', function () {
+test('provides the flagship desk, official stream, topic archive, and revision targets', function () {
   for (const id of [
+    'todayHero', 'priorityMust', 'packetDesk', 'catchupDesk',
     'topicOfDay', 'dailyEdition', 'dailyEditionMeta', 'subjectJump',
     'briefEntries', 'briefState', 'syllabusList', 'syllabusState',
     'answerPracticeList', 'answerPracticeState',
   ]) assert.match(html, new RegExp('id="' + id + '"'));
   assert.match(html, /class="an-editorial-masthead"/);
-  assert.match(html, /Latest articles/);
-  assert.match(html, /Search articles/);
+  assert.match(html, /Worth your time today/);
+  assert.match(html, /Search anchors, triggers and PYQ themes/);
+  assert.match(html, /Current affairs reduced to what the exam can actually use/);
 });
 
 test('removes tutorials and live-generated copy from the reading surface', function () {
@@ -81,11 +86,12 @@ test('keeps exam settings within Revision instead of interrupting articles', fun
 
 test('loads the public content contract before render and app', function () {
   const content = html.indexOf('assets/js/upsc/content.js');
+  const packet = html.indexOf('assets/js/upsc/packet.js');
   const memory = html.indexOf('assets/js/upsc/memory.js');
   const render = html.indexOf('assets/js/upsc/render.js');
   const app = html.indexOf('assets/js/upsc/app.js');
   const coach = html.indexOf('assets/js/upsc/coach.js');
-  assert.ok(content > 0 && content < memory && memory < render && render < app);
+  assert.ok(content > 0 && content < packet && packet < memory && memory < render && render < app);
   assert.ok(coach > app);
 });
 

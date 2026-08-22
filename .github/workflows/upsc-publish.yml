@@ -38,6 +38,7 @@ jobs:
           python -m unittest discover -s scripts/upsc -p 'test_*.py'
           node scripts/test-upsc-api.mjs
           node scripts/test-upsc-content.js
+          node scripts/test-upsc-packet.js
           node scripts/test-upsc-render.js
           node scripts/test-upsc-memory.js
           node scripts/test-upsc-shell.js
