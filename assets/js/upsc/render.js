@@ -193,7 +193,7 @@
     var expandable = item.what || item.why || item.debate || item.prelimsFact;
     return '<li class="an-entry" data-id="' + attr(item.id) + '" data-band="' + attr(item.band) + '">' +
       '<div class="an-entry__margin">' +
-        '<span class="an-entry__score" title="Revision priority, not a prediction">' + esc(item.score) + '</span>' +
+        '<span class="an-entry__score" title="Study priority">' + esc(item.score) + '</span>' +
         '<span class="an-entry__band">' + esc(item.bandLabel) + '</span>' +
       '</div>' +
       '<div class="an-entry__body">' +
@@ -623,7 +623,6 @@
       '<p class="pk-hero__budget"><strong>' + esc(value.essential_count || 0) + '</strong> essential topics · ' +
         '<strong>' + esc(value.read_minutes || 0) + '</strong> min reading · ' +
         '<strong>' + esc(value.recall_minutes || 0) + '</strong> min recall</p>' +
-      '<p class="pk-hero__note">Study priority, not a prediction of the paper.</p>' +
       '<div class="pk-hero__actions">' +
         '<button type="button" class="btn btn-primary" data-act="start-session">Start 15-minute session</button>' +
         '<button type="button" class="btn" data-act="session-mode" data-mode="prelims">Prelims mode</button>' +
@@ -706,7 +705,7 @@
         ' · Opinion statements: ' + esc(opinion) +
         ' · Open/contested: ' + esc(open) +
         (packet && packet.date ? ' · Last checked: ' + esc(packet.date) : '') +
-        '</p><p class="pk-sources__note">' + esc((packet && packet.priority_note) || '') + '</p></section>';
+        '</p></section>';
   }
 
   function prelimsVault(packet) {
@@ -747,7 +746,7 @@
   function pyqBridge(packet) {
     var rows = (packet && packet.pyq_links) || [];
     if (!rows.length) {
-      return '<section class="pk-pyq"><h3>PYQ bridge</h3><p>No official PYQ theme is linked yet. That is better than a fake association.</p></section>';
+      return '<section class="pk-pyq"><h3>PYQ bridge</h3><p>No PYQ links for this packet.</p></section>';
     }
     return '<section class="pk-pyq"><h3>Related UPSC patterns</h3><ul>' +
       rows.map(function (row) {
@@ -858,8 +857,7 @@
         '<p>Next recall: tomorrow.</p></section>';
     }
     return '<section class="pk-session" aria-live="polite"><p class="an-label">15-minute session</p>' +
-      '<h3>' + esc(row.phase || 'Scan the top three') + '</h3>' +
-      '<p>' + esc(row.line || 'Read the 60-second layer first. Expand only if the static anchor is unclear.') + '</p></section>';
+      '<h3>' + esc(row.phase || 'Scan the top three') + '</h3></section>';
   }
 
   function reviseCard(note, index, total) {
@@ -868,7 +866,6 @@
         ' · day ' + esc(AnchorStore.intervals[note.stage || 0]) +
         (note.graduated ? ' · monthly' : '') + '</p>' +
       '<h3 class="an-revise__title">' + esc(note.title) + '</h3>' +
-      '<p class="an-revise__prompt">Reconstruct the anchor, the debate and the line you would use — out loud, from the title alone. Then reveal.</p>' +
       '<div class="an-revise__reveal" id="reveal" hidden>' +
         '<p class="an-entry__tags">' + anchorHtml(note.anchor) + codesHtml(note.codes) + '</p>' +
         useHtml(note.use) +

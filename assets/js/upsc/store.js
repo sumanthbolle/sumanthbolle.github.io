@@ -463,7 +463,7 @@
      * straight into a notes file or handed to another assistant. */
     toMarkdown: function () {
       var notes = load();
-      if (!notes.length) return '# Anchor notes\n\nNothing saved yet.\n';
+      if (!notes.length) return '# Anchor notes\n\nNothing saved.\n';
 
       var byAnchor = {};
       notes.forEach(function (note) {
@@ -479,9 +479,6 @@
       lines.push('**Held:** ' + stats.total + ' · **Due for retrieval:** ' + stats.due +
         ' · **Unverified:** ' + stats.unverified + ' (' + stats.unverifiedPct + '%)');
       lines.push('');
-      lines.push('Clustered by static anchor. Any anchor with three or more items is a candidate for one 250-word synthesis — that synthesis, not the individual items, is what you revise later.');
-      lines.push('');
-
       Object.keys(byAnchor).sort().forEach(function (anchor) {
         var group = byAnchor[anchor];
         lines.push('## ' + anchor + ' (' + group.length + ')');
@@ -508,10 +505,6 @@
         });
       });
 
-      lines.push('---');
-      lines.push('');
-      lines.push('Scores rank items for revision priority. The anchor-frequency term is an editorial estimate from twenty years of recurring themes, not a tagged corpus of past questions. Verify every figure, article number and committee name against the primary source before memorising it.');
-      lines.push('');
       return lines.join('\n');
     },
   };

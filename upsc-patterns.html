@@ -92,9 +92,9 @@
   <header class="util-head">
     <p class="util-head__kicker">Utilities · UPSC</p>
     <h1>Pattern Atlas</h1>
-    <p class="util-head__lede">Twenty years of questions reduced to <span id="headAnchorCount">57</span> static anchors. Each one carries the verbs it attracts, the triggers that make it topical, the marks it loses people, and the skeleton of an answer that works. Filter it, or let it drill you.</p>
     <p class="util-head__meta">
-      Compiled <span id="headCompiled">—</span>. Recurrence is an editorial estimate — <a href="#method">how the numbers work</a>.
+      Compiled <span id="headCompiled">—</span> · <span id="headAnchorCount">57</span> anchors
+      · <a href="upsc-guide.html">How to use</a>
       <button type="button" class="an-textbtn" id="clearMastery">Clear recall record</button>
     </p>
   </header>
@@ -169,7 +169,7 @@
         <section class="an-view" id="view-drill" role="tabpanel" aria-labelledby="tab-drill" hidden>
           <div class="an-viewhead">
             <h2>Recall drill</h2>
-            <p class="an-viewhead__meta" id="drillMeta">Reconstruct first, read second.</p>
+            <p class="an-viewhead__meta" id="drillMeta"></p>
           </div>
 
           <div class="atlas-setup" id="drillSetup">
@@ -204,10 +204,6 @@
           </div>
 
           <div id="drillBody"></div>
-
-          <p class="an-revise__legend">
-            You get the anchor name alone — reconstruct its static core, verbs and trap out loud before revealing. Held anchors return at day 1, 3, 7, 21 and 60; a miss resets to day 1 and flags the anchor weak.
-          </p>
         </section>
 
       </div>
@@ -223,81 +219,32 @@
             <div class="an-stat"><span>Never drilled</span><strong class="an-num" id="railCold">0</strong></div>
             <div class="an-stat"><span>Due today</span><strong class="an-num" id="railDue">0</strong></div>
           </div>
-          <p class="an-railnote">A weak anchor is one you failed to reconstruct on the last attempt. Those are the hours worth spending.</p>
-        </div>
-
-        <div class="an-railblock">
-          <h3>Question grammar</h3>
-          <ol class="an-tests">
-            <li>Static anchor <em>— the syllabus concept. Finite, and revisable in advance.</em></li>
-            <li>Current trigger <em>— what made it topical. Rotates every year.</em></li>
-            <li>Directive verb <em>— decides the shape of the answer.</em></li>
-            <li>Scope qualifier <em>— the narrowing phrase most people ignore.</em></li>
-          </ol>
-          <p class="an-railnote">This atlas holds the first. <a href="upsc.html">Anchor</a> retrieves the second daily.</p>
         </div>
       </aside>
     </div>
   </main>
 
-  <section class="an-how" id="how" aria-labelledby="howTitle">
-    <div class="an-how__inner">
-      <div class="an-honesty" id="method">
-        <h3 id="howTitle">How the numbers work</h3>
-        <p class="an-railnote" style="margin-top:8px" id="methodIntro">—</p>
-        <div class="atlas-method" id="methodGrid"></div>
-        <p class="atlas-formula">
-          Revision priority on <a href="upsc.html">Anchor</a> = 0.35 × anchor frequency + 0.25 × debate strength + 0.20 × official weight + 0.20 × recency gap.
-        </p>
-        <ul>
-          <li>Frequency and recency gap are editorial estimates that rank anchors against each other — not evidence about any single year.</li>
-          <li>Question stems are for answer-writing practice, never prediction.</li>
-          <li>Dataset: <a href="data/upsc-patterns.json">data/upsc-patterns.json</a>. This site is not affiliated with the Commission; the syllabus and dates come from <a href="https://upsc.gov.in" rel="noopener noreferrer" target="_blank">upsc.gov.in</a>.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
   <section class="util-more" aria-label="Other utilities">
     <p class="util-more__title">Other utilities</p>
     <div class="util-more__grid">
-      <a class="util-more__card" href="upsc.html"><strong>Anchor</strong><span>The daily loop: a brief that discards most of what it reads, and a revision queue for what survives.</span></a>
-      <a class="util-more__card" href="save-yourself.html"><strong>Save Yourself</strong><span>Work out the monthly payment, the total repaid and the fees on a loan before you sign.</span></a>
-      <a class="util-more__card" href="metals.html"><strong>Metals</strong><span>Gold and silver spot prices in your currency, with converters and a holdings tracker.</span></a>
+      <a class="util-more__card" href="upsc.html"><strong>UPSC Today</strong><span>Daily Topic Packets and revision.</span></a>
+      <a class="util-more__card" href="save-yourself.html"><strong>Save Yourself</strong><span>Loan cost calculator.</span></a>
+      <a class="util-more__card" href="metals.html"><strong>Metals</strong><span>Gold and silver prices.</span></a>
     </div>
   </section>
 
   <footer>
     <div class="footer-inner">
       <div>© 2026 Sumanth Bolle.</div>
-      <div class="attribution">Recurrence weights are editorial estimates — verify every figure against the primary source.</div>
+      <div class="an-footer-links"><a href="upsc-guide.html">How to use</a><a href="upsc.html">UPSC Today</a></div>
     </div>
   </footer>
 
   <script src="assets/js/shared/nav-theme.js"></script>
   <script src="assets/js/shared/nav-utilities.js"></script>
-  <script src="assets/js/shared/help-panel.js"></script>
   <script>window.SB_UPSC_ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';</script>
   <script src="assets/js/upsc/store.js"></script>
   <script src="assets/js/upsc/atlas.js"></script>
   <script src="assets/js/upsc/coach.js"></script>
-  <script>
-    SBHelpGuide.init({
-      page: 'upsc-patterns',
-      tabLabel: 'Guide',
-      title: 'Using the Pattern Atlas',
-      intro: 'The anchor is the part of a question you can prepare in advance. This is the standing list of them.',
-      steps: [
-        { title: 'Filter to a gap', desc: 'Paper and band chips, plus sort by longest absent or weakest recall. Search covers aliases, static core, traps and stems.' },
-        { title: 'Open the pattern', desc: 'Static core, Prelims angle, the trap, an answer skeleton, two practice stems, linked anchors, and what to verify.' },
-        { title: 'Pull the current trigger', desc: 'Each anchor can fetch what is live on it right now, with sources. That is the term that changes every year.' },
-        { title: 'Drill, do not reread', desc: 'Anchor to pattern, or stem to anchor. The reveal sits behind a button on purpose.' },
-        { title: 'Track the weak ones', desc: 'A miss resets the anchor to day 1 and flags it weak. The rail keeps the count honest.' },
-        { title: 'Verify the figures', desc: 'Nothing here asserts a statistic. Each anchor names what to confirm in the primary source first.' }
-      ],
-      footerNote: 'Recall record stays in this browser.',
-      footerLink: { href: 'upsc.html', label: 'Anchor — the daily loop' }
-    });
-  </script>
 </body>
 </html>

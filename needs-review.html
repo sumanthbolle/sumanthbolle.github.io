@@ -22,6 +22,7 @@
     <div class="an-edition-line">
       <span>Second-pass verification hold</span>
       <a href="upsc.html">UPSC Today</a>
+      <a href="upsc-guide.html">How to use</a>
     </div>
   </header>
   <main id="main" class="an-main">
@@ -48,7 +49,7 @@
           var items = Array.isArray(payload.items) ? payload.items : [];
           meta.textContent = items.length ? items.length + ' held notes' : 'Nothing is held';
           if (!items.length) {
-            state.innerHTML = '<h3>Nothing held</h3><p>Disagreements from the second-pass checker land here instead of the public exam note.</p>';
+            state.innerHTML = '<h3>Nothing held</h3>';
             return;
           }
           state.hidden = true;

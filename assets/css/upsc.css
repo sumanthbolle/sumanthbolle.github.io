@@ -3850,6 +3850,44 @@ footer {
   color: var(--gray);
 }
 
+.ug {
+  max-width: 40rem;
+  padding: 8px 0 64px;
+}
+
+.ug-block + .ug-block {
+  margin-top: 36px;
+}
+
+.ug-block h2 {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  margin: 0 0 10px;
+}
+
+.ug-block p,
+.ug-block li {
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.ug-block p + p,
+.ug-block p + ul,
+.ug-block p + ol,
+.ug-block ul + p,
+.ug-block ol + p {
+  margin-top: 10px;
+}
+
+.ug-block ul,
+.ug-block ol {
+  padding-left: 1.2em;
+}
+
+.ug-block li + li {
+  margin-top: 6px;
+}
+
 @media (max-width: 680px) {
   .pk-matrix__row,
   .pk-changed dl div {

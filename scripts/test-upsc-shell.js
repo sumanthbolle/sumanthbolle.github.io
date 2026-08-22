@@ -63,7 +63,8 @@ test('provides the flagship desk, official stream, topic archive, and revision t
   assert.match(html, /class="an-editorial-masthead"/);
   assert.match(html, /Worth your time today/);
   assert.match(html, /Search anchors, triggers and PYQ themes/);
-  assert.match(html, /Current affairs reduced to what the exam can actually use/);
+  assert.match(html, /href="upsc-guide\.html"/);
+  assert.match(html, />How to use</);
 });
 
 test('removes tutorials and live-generated copy from the reading surface', function () {
@@ -72,6 +73,7 @@ test('removes tutorials and live-generated copy from the reading surface', funct
     /id="lookupResult"/, /help-panel\.js/, /SBHelpGuide\.init/,
     /Personalise revision plan/, /Your 45-minute plan/, /How to use this/,
     /What this tool will not do/, /Build full topic note/,
+    /Current affairs reduced/, /Merged week, not seven/,
   ]) assert.doesNotMatch(html, pattern);
 });
 

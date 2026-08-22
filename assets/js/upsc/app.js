@@ -227,7 +227,7 @@
     var shown = Content.filterSources(state.sources, state.sourceFilters);
     empty.hidden = shown.length > 0;
     if (!shown.length) {
-      empty.innerHTML = '<h3>No official records match</h3><p>Clear one or more filters. Source Desk never deletes low-priority items.</p>';
+      empty.innerHTML = '<h3>No official records match</h3>';
       list.innerHTML = '';
     } else {
       list.innerHTML = shown.map(Render.sourceEntry).join('');
@@ -510,7 +510,7 @@
     if (el('weekThemes')) {
       el('weekThemes').innerHTML = Render.repeatedThemes(Packet ? Packet.clusterByAnchor(state.packets) : []);
     }
-    if (el('priorityMust')) el('priorityMust').innerHTML = Render.stackSection('Must Know', stack.must_know, 'No Must Know items today — that is an editorial decision, not a gap in the feed.');
+    if (el('priorityMust')) el('priorityMust').innerHTML = Render.stackSection('Must Know', stack.must_know, 'Nothing in this band today.');
     if (el('priorityUseful')) el('priorityUseful').innerHTML = Render.stackSection('Useful', stack.useful);
     if (el('priorityBackground')) el('priorityBackground').innerHTML = Render.stackSection('Background', stack.background);
     if (el('prioritySkip')) el('prioritySkip').innerHTML = Render.stackSection('Skip / archive only', stack.skip);
@@ -790,8 +790,8 @@
     if (!notes.length) {
       list.innerHTML = '';
       empty.hidden = false;
-      empty.innerHTML = '<h3>Nothing saved yet</h3>';
-      el('notesMeta').textContent = 'Nothing saved yet.';
+      empty.innerHTML = '<h3>Nothing saved</h3>';
+      el('notesMeta').textContent = 'Nothing saved.';
       return;
     }
 
@@ -852,11 +852,11 @@
     });
 
     if (result === 'error') {
-      status('A title and a static anchor are both required — no anchor, no entry.', 'error');
+      status('Title and static anchor are required.', 'error');
       return;
     }
     if (result === 'duplicate') {
-      status('You already hold a note with that anchor and title.', 'error');
+      status('Already saved.', 'error');
       return;
     }
 
@@ -864,7 +864,7 @@
       el(id).value = '';
     });
     updateWordCount();
-    status('Saved. First retrieval is due tomorrow.');
+    status('Saved.');
     renderNotes();
     renderCounts();
   }
@@ -887,7 +887,7 @@
     if (!total) {
       var stats = Store.stats();
       body.innerHTML = '<div class="an-state"><h3>' +
-        (stats.total ? 'Nothing due' : 'Nothing saved yet') + '</h3></div>';
+        (stats.total ? 'Nothing due' : 'Nothing saved') + '</h3></div>';
       meta.textContent = stats.total ? stats.total + ' saved' : '';
       return;
     }
@@ -1049,11 +1049,11 @@
     if (!packet || !Packet) return;
     var payload = Packet.packetToNote(packet);
     if (state.mode && state.mode.name === 'LOCK') {
-      status('LOCK mode: retrieve what you already hold. Save only if this closes a known gap.', 'error');
+      status('Cannot save in LOCK mode.', 'error');
     }
     var result = Store.add(payload);
-    status(result === 'duplicate' ? 'Already in the revision queue.' :
-      (result === 'added' ? 'Added to revision. First recall is due tomorrow.' : 'Could not save that topic.'),
+    status(result === 'duplicate' ? 'Already saved.' :
+      (result === 'added' ? 'Added to revision.' : 'Could not save that topic.'),
       result === 'added' ? 'ok' : 'error');
     renderNotes();
     renderCounts();
@@ -1077,9 +1077,7 @@
     state.session = {
       done: false,
       phase: mode === 'mains' ? 'Reconstruct one Mains skeleton' : (mode === 'prelims' ? 'Answer three Prelims traps' : 'Scan the top three'),
-      line: mode === 'mains'
-        ? 'Outline before opening the model dimensions.'
-        : 'Read the 60-second layer first. Expand only if the static anchor is unclear.',
+      line: '',
       understood: 0,
       correct: 0,
       asked: 0,
@@ -1101,7 +1099,7 @@
         state.session.weak = Store.due().length ? 1 : 0;
       }
     }
-    status('Marked understood. It stays in the desk if you need it again.');
+    status('Marked understood.');
     renderBrief();
   }
 
@@ -1327,7 +1325,7 @@
       if (state.mode && state.mode.name === 'LOCK' && button.getAttribute('data-lock-confirmed') !== 'true') {
         button.setAttribute('data-lock-confirmed', 'true');
         button.textContent = 'Save anyway';
-        status('LOCK mode: retrieve what you already hold. Save only if this closes a known gap.', 'error');
+        status('Cannot save in LOCK mode.', 'error');
         return;
       }
       var result = Store.add({
@@ -1391,7 +1389,7 @@
       Store.remove(button.getAttribute('data-id'));
       renderNotes();
       renderCounts();
-      status('Deleted. Pruning is maintenance, not loss.');
+      status('Deleted.');
     });
 
     ['nWhat', 'nWhy', 'nDebate', 'nUse'].forEach(function (id) {

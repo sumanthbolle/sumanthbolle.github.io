@@ -351,7 +351,7 @@ test('renders a Topic Packet with escaped content and progressive layers', funct
   assert.equal(html.includes('Prelims Vault'), true);
   assert.equal(html.includes('Mains Kit'), true);
   assert.equal(html.includes('Related UPSC patterns'), true);
-  assert.equal(html.includes('Study priority, not a prediction'), true);
+  assert.equal(html.includes('Study priority, not a prediction'), false);
   assert.equal(html.includes('href="https://pib.gov.in/release/1"'), true);
   assert.equal(html.includes('upsc-patterns.html?anchor=fiscal-federalism'), true);
   assert.equal(html.includes('data-act="save-packet"'), true);
@@ -372,7 +372,7 @@ test('Today hero states the session budget without prediction copy', function ()
   }, { dateLabel: '22 Aug 2026' });
   assert.equal(html.includes('UPSC Today — 22 Aug 2026'), true);
   assert.equal(html.includes('4'), true);
-  assert.equal(html.includes('Study priority, not a prediction'), true);
+  assert.equal(html.includes('Study priority, not a prediction'), false);
   assert.equal(html.includes('Start 15-minute session'), true);
   assert.equal(html.includes('probability'), false);
 });
