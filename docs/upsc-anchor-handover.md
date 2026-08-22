@@ -40,7 +40,7 @@ complete records.
 | Press Information Bureau | PIB's official `ViewRss.aspx` page advertises `RssMain.aspx` | The feed omits item timestamps, so `datePolicy: fetched-at` is explicit and health reports say `fetch-time` |
 | Reserve Bank of India | RBI's official RSS directory → press releases feed | Official RSS summaries are normalized and capped |
 | SEBI | SEBI's official RSS page → `sebirss.xml` | Mixed circular, order and press-release stream |
-| Ministry of External Affairs | The official press-release page's own `FetchPublicationListingData` endpoint | Reviewed HTML adapter; visible dates and relative links are normalized |
+| Ministry of External Affairs | The official press-release page's own `FetchPublicationListingData` endpoint | Reviewed HTML adapter; visible dates and relative links are normalized. GitHub Actions `urllib` often receives HTTP 403 from the NIC WAF, so a live probe retries once with `curl` (HTTP/2, cookie warmup from `/press-releases`) against the same reviewed URL |
 | United Nations News | UN News English all-news RSS | International institutional source |
 | World Health Organization | WHO English corporate-news RSS | The feed may be stale even while the newsroom is current; health metadata exposes this |
 | Council of the European Union | Council's official RSS directory → press releases | International policy and external-relations source |
@@ -120,7 +120,9 @@ does not contain the complete publication and is never synced to a server.
 ## Recovery
 
 1. If one source fails, inspect `data/upsc/source-health.json` and the latest
-   `coverage.json`; do not delete its last valid feed partitions.
+   `coverage.json`; do not delete its last valid feed partitions. A listing
+   HTTP 403 from GitHub Actions should first be retried with `curl` against
+   the same reviewed URL.
 2. If all sources fail, stop publication and check redirects, MIME changes,
    login pages and host allowlists before changing an adapter.
 3. If the enrichment service fails, keep publishing Source Desk records. Repair

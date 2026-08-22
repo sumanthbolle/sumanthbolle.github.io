@@ -86,8 +86,9 @@ Copy this into the PR body and tick it:
       irregular). Irregular is acceptable only for high-value Indian
       primary sources.
 - [ ] **Reliability.** A strict `check-sources` probe succeeds against the
-      live URL, or the PR explains a known, isolated failure (for example MEA
-      returning HTTP 403) without disabling other sources.
+      live URL, or the PR explains a known, isolated failure without
+      disabling other sources. Listing adapters send the parent-page Referer
+      and `X-Requested-With`; a live HTTP 403 retries once with `curl`.
 - [ ] **Signal.** This source does not duplicate another registry entry's
       stream (PIB already covers most Union ministries' press releases).
 

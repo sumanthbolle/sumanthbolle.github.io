@@ -9,10 +9,14 @@ from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 import gzip
 from html.parser import HTMLParser
+from http.client import responses
 import io
 import json
 import re
+import subprocess
+import tempfile
 from typing import Any, Callable, Optional
+from urllib.error import HTTPError
 from urllib.parse import urljoin, urlsplit
 from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
@@ -33,16 +37,40 @@ FEED_ACCEPT = (
 LISTING_ACCEPT = "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8"
 
 
+def _origin(config: SourceConfig) -> str:
+    parts = urlsplit(config.endpoint)
+    if not parts.scheme or not parts.netloc:
+        return ""
+    return f"{parts.scheme}://{parts.netloc}"
+
+
+def listing_referer(config: SourceConfig) -> str:
+    """Parent page that loads a listing endpoint. MEA fetches via jQuery AJAX."""
+    origin = _origin(config)
+    if not origin:
+        return ""
+    host = (urlsplit(config.endpoint).hostname or "").lower()
+    if host == "mea.gov.in" or host.endswith(".mea.gov.in"):
+        return origin + "/press-releases"
+    return origin + "/"
+
+
 def request_headers(config: SourceConfig) -> dict[str, str]:
     """Browser-like headers. Listing endpoints are HTML pages, not feeds."""
-    parts = urlsplit(config.endpoint)
     headers = {
         "User-Agent": USER_AGENT,
         "Accept-Language": "en-IN,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate",
         "Accept": LISTING_ACCEPT if config.adapter == "listing" else FEED_ACCEPT,
+        "Connection": "keep-alive",
     }
-    if parts.scheme and parts.netloc:
-        headers["Referer"] = f"{parts.scheme}://{parts.netloc}/"
+    referer = listing_referer(config) if config.adapter == "listing" else (
+        _origin(config) + "/" if _origin(config) else ""
+    )
+    if referer:
+        headers["Referer"] = referer
+    if config.adapter == "listing":
+        headers["X-Requested-With"] = "XMLHttpRequest"
     return headers
 
 
@@ -267,17 +295,114 @@ def parse_payload(
     raise ValueError("unsupported adapter")
 
 
-def fetch_source(
-    config: SourceConfig,
-    opener: Callable[..., Any] = urlopen,
-) -> list[dict[str, str]]:
-    rows, _ = fetch_source_details(config, opener)
-    return rows
+class _CurlResponse:
+    def __init__(self, body: bytes, url: str, content_type: str) -> None:
+        self._body = body
+        self._url = url
+        self.headers = {"Content-Type": content_type}
+
+    def read(self, limit: int = -1) -> bytes:
+        return self._body if limit < 0 else self._body[:limit]
+
+    def geturl(self) -> str:
+        return self._url
+
+    def __enter__(self) -> "_CurlResponse":
+        return self
+
+    def __exit__(self, exc_type: Any, exc: Any, traceback: Any) -> bool:
+        return False
 
 
-def fetch_source_details(
+def _curl_headers(request: Request) -> dict[str, str]:
+    headers = {key: value for key, value in request.header_items()}
+    headers.setdefault("User-Agent", USER_AGENT)
+    return headers
+
+
+def _run_curl(
+    url: str,
+    headers: dict[str, str],
+    timeout: int,
+    body_path: str,
+    header_path: str,
+    cookie_path: str,
+    use_http2: bool,
+) -> tuple[str, int, str]:
+    command = [
+        "curl", "-sS", "-L", "--compressed",
+        "--max-redirs", "5",
+        "--max-time", str(max(1, int(timeout))),
+        "-A", headers.get("User-Agent", USER_AGENT),
+        "-b", cookie_path,
+        "-c", cookie_path,
+        "-o", body_path,
+        "-D", header_path,
+        "-w", "%{url_effective}\n%{http_code}\n%{content_type}",
+    ]
+    if use_http2:
+        command.append("--http2")
+    for key, value in headers.items():
+        if key.lower() in ("user-agent", "accept-encoding"):
+            continue
+        command.extend(["-H", f"{key}: {value}"])
+    command.append(url)
+    completed = subprocess.run(
+        command, capture_output=True, text=True, check=False,
+    )
+    if completed.returncode != 0:
+        detail = (completed.stderr or completed.stdout or "curl failed").strip()
+        raise OSError(detail[:500] or "curl failed")
+    lines = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+    if len(lines) < 2:
+        raise OSError("curl did not report a status code")
+    content_type = lines[-1] if len(lines) >= 3 else ""
+    try:
+        status = int(lines[-2])
+    except ValueError as error:
+        raise OSError("curl reported a malformed status code") from error
+    final_url = lines[-3] if len(lines) >= 3 else url
+    return final_url, status, content_type
+
+
+def curl_open(request: Request, timeout: int = 20) -> _CurlResponse:
+    """Fetch with curl. GitHub Actions urllib is often 403'd by NIC bot filters."""
+    url = request.full_url
+    headers = _curl_headers(request)
+    referer = headers.get("Referer") or headers.get("referer") or ""
+    with tempfile.TemporaryDirectory() as directory:
+        body_path = directory + "/body"
+        header_path = directory + "/headers"
+        cookie_path = directory + "/cookies"
+        open(cookie_path, "wb").close()
+        if referer and referer.rstrip("/") != url.rstrip("/"):
+            try:
+                _run_curl(
+                    referer, headers, timeout,
+                    directory + "/warmup", directory + "/warmup-headers",
+                    cookie_path, True,
+                )
+            except OSError:
+                pass
+        try:
+            final_url, status, content_type = _run_curl(
+                url, headers, timeout, body_path, header_path, cookie_path, True,
+            )
+        except OSError:
+            final_url, status, content_type = _run_curl(
+                url, headers, timeout, body_path, header_path, cookie_path, False,
+            )
+        with open(body_path, "rb") as handle:
+            body = handle.read(MAX_PAYLOAD_BYTES + 1)
+    if status >= 400:
+        reason = responses.get(status, "Error")
+        raise HTTPError(final_url or url, status, reason, None, None)
+    return _CurlResponse(body, final_url or url, content_type)
+
+
+def _read_source_response(
     config: SourceConfig,
-    opener: Callable[..., Any] = urlopen,
+    opener: Callable[..., Any],
 ) -> tuple[list[dict[str, str]], dict[str, str]]:
     request = Request(config.endpoint, headers=request_headers(config))
     with opener(request, timeout=20) as response:
@@ -298,3 +423,26 @@ def fetch_source_details(
             raise ValueError("source payload exceeds 5 MiB after decompression")
     rows = parse_payload(config, body, content_type)
     return rows, {"finalUrl": final_url, "contentType": content_type}
+
+
+def fetch_source(
+    config: SourceConfig,
+    opener: Callable[..., Any] = urlopen,
+) -> list[dict[str, str]]:
+    rows, _ = fetch_source_details(config, opener)
+    return rows
+
+
+def fetch_source_details(
+    config: SourceConfig,
+    opener: Callable[..., Any] = urlopen,
+) -> tuple[list[dict[str, str]], dict[str, str]]:
+    try:
+        return _read_source_response(config, opener)
+    except HTTPError as error:
+        if error.code != 403 or opener is not urlopen:
+            raise
+        try:
+            return _read_source_response(config, curl_open)
+        except FileNotFoundError:
+            raise error
