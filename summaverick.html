@@ -1716,6 +1716,7 @@
     }
   </style>
   <link rel="stylesheet" href="assets/css/nav-utilities.css">
+  <link rel="stylesheet" href="assets/css/summaverick-how.css">
 </head>
 <body>
   <div class="ambient"><div class="orb"></div></div>
@@ -1834,6 +1835,46 @@
                 </div>
               </div>
             </section>
+          </div>
+        </section>
+
+        <section class="sm-how" id="summaverick-how" aria-label="How Summaverick works">
+          <div class="sm-how__pin">
+            <canvas class="sm-how__canvas" id="smHowCanvas" aria-hidden="true"></canvas>
+            <div class="sm-how__veil"></div>
+            <div class="sm-how__copy">
+              <p class="sm-how__kicker">How it works</p>
+              <div class="sm-how__acts">
+                <article class="sm-how__act" data-act="0">
+                  <span class="sm-how__index">01 / 04</span>
+                  <h2 class="sm-how__title">Search</h2>
+                  <p class="sm-how__body">You ask once. Summaverick queries the live web — not a frozen training cutoff.</p>
+                </article>
+                <article class="sm-how__act" data-act="1">
+                  <span class="sm-how__index">02 / 04</span>
+                  <h2 class="sm-how__title">Live search</h2>
+                  <p class="sm-how__body">Sources stream in as they are found. Headlines, docs, and papers land on the desk while the answer is still being built.</p>
+                </article>
+                <article class="sm-how__act" data-act="2">
+                  <span class="sm-how__index">03 / 04</span>
+                  <h2 class="sm-how__title">Reasoning</h2>
+                  <p class="sm-how__body">Each claim is walked: understand, search, read, then check. Nothing is guessed in one leap.</p>
+                </article>
+                <article class="sm-how__act" data-act="3">
+                  <span class="sm-how__index">04 / 04</span>
+                  <h2 class="sm-how__title">Accuracy</h2>
+                  <p class="sm-how__body">The answer keeps its receipts. Citations stay attached, and disagreement between sources stays visible.</p>
+                </article>
+              </div>
+              <button class="sm-how__cta" type="button">
+                Ask from here
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg>
+              </button>
+            </div>
+            <ol class="sm-how__pips" aria-hidden="true">
+              <li></li><li></li><li></li><li></li>
+            </ol>
+            <div class="sm-how__progress" aria-hidden="true"><span></span></div>
           </div>
         </section>
 
@@ -3154,6 +3195,9 @@
       init();
     })();
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="assets/js/summaverick-how.js"></script>
   <script src="assets/js/shared/help-panel.js"></script>
   <script>
     SBHelpGuide.init({
