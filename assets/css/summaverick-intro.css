@@ -124,6 +124,9 @@
 }
 
 a.sm-intro__cta {
+  position: relative;
+  z-index: 8;
+  cursor: pointer;
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
