@@ -54,7 +54,13 @@
     var bIn = smoothstep(0.36, 0.50, p);
     setCopy(copy.brand, bIn, lerp(28, 0, bIn), (1 - bIn) * 10);
     setCopy(copy.sub, smoothstep(0.44, 0.56, p), lerp(16, 0, smoothstep(0.44, 0.56, p)), 0);
-    setCopy(copy.cta, smoothstep(0.52, 0.62, p), lerp(10, 0, smoothstep(0.52, 0.62, p)), 0);
+    if (copy.cta) {
+      var ctaOn = p > 0.54;
+      copy.cta.style.opacity = ctaOn ? '1' : '0';
+      copy.cta.style.transform = ctaOn ? 'translateY(0)' : 'translateY(12px)';
+      copy.cta.style.filter = 'none';
+      copy.cta.style.pointerEvents = ctaOn ? 'auto' : 'none';
+    }
     if (copy.hint) setCopy(copy.hint, 1 - smoothstep(0.04, 0.12, p), 0, 0);
     if (bar) bar.style.width = (p * 100).toFixed(2) + '%';
   }
@@ -128,13 +134,13 @@
 
   function createArrowShape() {
     var s = new THREE.Shape();
-    s.moveTo(-1.85, -0.42);
-    s.lineTo(0.42, -0.42);
-    s.lineTo(0.42, -0.78);
-    s.lineTo(1.92, 0);
-    s.lineTo(0.42, 0.78);
-    s.lineTo(0.42, 0.42);
-    s.lineTo(-1.85, 0.42);
+    s.moveTo(-2.15, -0.32);
+    s.lineTo(0.28, -0.32);
+    s.lineTo(0.28, -0.72);
+    s.lineTo(1.95, 0);
+    s.lineTo(0.28, 0.72);
+    s.lineTo(0.28, 0.32);
+    s.lineTo(-2.15, 0.32);
     s.closePath();
     return s;
   }
@@ -389,29 +395,31 @@
       var mark = smoothstep(0.38, 0.68, p);
       var settle = smoothstep(0.62, 0.9, p);
 
-      core.scale.setScalar(lerp(0.15, 1.05, form) * lerp(1, 0.08, mark));
-      core.material.opacity = lerp(0.15, 1, form) * (1 - mark);
+      var keepCore = mark < 0.58;
+      core.visible = keepCore;
+      coreWire.visible = keepCore;
+      core.scale.setScalar(lerp(0.15, 1.05, form));
+      core.material.opacity = lerp(0.15, 1, form);
       core.material.transmission = lerp(0.2, 0.88, glass);
-      core.visible = mark < 0.96;
-      coreWire.material.opacity = lerp(0.7, 0.08, glass) * (1 - mark);
+      coreWire.material.opacity = lerp(0.7, 0.08, glass);
       core.rotation.y = t * 0.25 + p * 1.4;
       core.rotation.x = t * 0.12;
 
       arrow.material.opacity = mark;
-      arrowEdge.material.opacity = mark * 0.7;
-      innerArrow.material.opacity = mark * 0.28;
-      arrow.scale.setScalar(lerp(0.38, 1.22, mark));
-      arrow.rotation.y = lerp(-1.45, -0.28, mark) + Math.sin(t * 0.28) * 0.025;
-      arrow.rotation.x = lerp(0.85, 0.04, mark);
-      arrow.rotation.z = lerp(0.2, 0, mark);
-      arrow.position.set(0, lerp(0.15, 0, mark), lerp(-1.8, 0.35, mark));
-      group.position.y = lerp(0.05, -0.95, mark);
+      arrowEdge.material.opacity = mark * 0.85;
+      innerArrow.material.opacity = mark * 0.22;
+      arrow.scale.setScalar(lerp(0.4, 1.35, mark));
+      arrow.rotation.y = lerp(-1.55, 0.08, mark);
+      arrow.rotation.x = lerp(0.9, 0, mark);
+      arrow.rotation.z = lerp(0.25, 0, mark);
+      arrow.position.set(0, lerp(0.1, 0.02, mark), lerp(-1.8, 0.2, mark));
+      group.position.y = lerp(0.05, -1.05, mark);
 
       rings.forEach(function (ring, i) {
         ring.material.transparent = true;
-        ring.material.opacity = (1 - mark) * 0.9;
-        ring.visible = form > 0.08 && mark < 0.92;
-        ring.scale.setScalar(lerp(0.2, 1, form) * lerp(1, 0.2, mark));
+        ring.material.opacity = keepCore ? 0.9 : 0;
+        ring.visible = form > 0.08 && keepCore;
+        ring.scale.setScalar(lerp(0.2, 1, form));
         ring.rotation.z += 0.003 + i * 0.0012;
         ring.rotation.x += 0.0015 * (i + 1);
       });
