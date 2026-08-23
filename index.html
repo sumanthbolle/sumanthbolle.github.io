@@ -100,36 +100,6 @@
     .hero-link{font-size:19px;color:var(--blue);text-decoration:none;display:flex;align-items:center;gap:6px}
     .hero-link:hover{text-decoration:underline}
 
-    /* Summaverick announcement banner */
-    .sm-announce{display:block;text-decoration:none;background:var(--black);padding:48px 20px;position:relative;overflow:hidden;cursor:pointer}
-    .sm-announce-inner{position:relative;max-width:680px;margin:0 auto;display:flex;align-items:center;justify-content:center}
-    .sm-announce-shape{position:relative;display:flex;align-items:center;gap:18px;padding:22px 22px 22px 44px;border-radius:22px 22px 22px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);overflow:hidden;transition:transform 0.5s cubic-bezier(.22,1,.36,1),box-shadow 0.5s ease}
-    .sm-announce:hover .sm-announce-shape{transform:translateY(-3px) scale(1.01);box-shadow:0 24px 80px rgba(120,168,255,0.18),0 0 0 1px rgba(255,255,255,0.12)}
-    .sm-announce-aurora{position:absolute;inset:-40%;width:180%;height:180%;background:conic-gradient(from 180deg at 50% 50%,rgba(120,168,255,0.55),rgba(167,139,250,0.6),rgba(192,132,252,0.55),rgba(244,114,182,0.55),rgba(251,146,60,0.4),rgba(52,211,153,0.45),rgba(6,182,212,0.55),rgba(120,168,255,0.55));animation:smAuroraRotate 8s linear infinite;filter:blur(36px);opacity:0.85;pointer-events:none}
-    @keyframes smAuroraRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-    .sm-announce-edge{position:absolute;inset:0;border-radius:22px 22px 22px 4px;padding:1px;background:linear-gradient(135deg,rgba(120,168,255,0.55),rgba(167,139,250,0.45),rgba(244,114,182,0.45),rgba(52,211,153,0.5),rgba(6,182,212,0.55));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:0.85}
-    .sm-announce-logo{position:relative;z-index:2;height:64px;width:auto;border-radius:14px;flex-shrink:0}
-    .sm-announce-content{position:relative;z-index:2;flex:1;min-width:0}
-    .sm-announce-text{font-size:clamp(22px,4vw,34px);font-weight:600;letter-spacing:-0.03em;color:var(--white);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .sm-announce-sub{font-size:13px;color:rgba(255,255,255,0.55);margin-top:6px;letter-spacing:0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .sm-announce-pointer{position:relative;z-index:2;flex-shrink:0;width:38px;height:38px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;display:grid;place-items:center;overflow:hidden;transition:transform 0.4s cubic-bezier(.22,1,.36,1),background 0.3s ease}
-    .sm-announce:hover .sm-announce-pointer{transform:translateX(4px);background:rgba(255,255,255,0.1)}
-    .sm-announce-pointer::before{content:'';position:absolute;inset:-80%;width:260%;height:260%;background:conic-gradient(from 0deg,rgba(120,168,255,0.5),rgba(244,114,182,0.5),rgba(52,211,153,0.5),rgba(120,168,255,0.5));animation:smAuroraRotate 5s linear infinite;filter:blur(14px);opacity:0.9}
-    .sm-announce-pointer svg{position:relative;z-index:1;width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-    .sm-announce-glow{position:absolute;width:340px;height:340px;border-radius:50%;filter:blur(100px);pointer-events:none;opacity:0.18}
-    .sm-announce-glow.g1{left:-80px;top:-100px;background:#818cf8}
-    .sm-announce-glow.g2{right:-80px;bottom:-100px;background:#f472b6}
-    .sm-announce-pulse{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 0 0 rgba(52,211,153,0.5);animation:smPulse 2.4s ease infinite;z-index:3}
-    @keyframes smPulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.5)}70%{box-shadow:0 0 0 10px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
-    @media(max-width:640px){
-      .sm-announce{padding:32px 16px}
-      .sm-announce-shape{padding:18px 16px 18px 36px;gap:12px}
-      .sm-announce-logo{height:44px;border-radius:10px}
-      .sm-announce-pointer{width:32px;height:32px}
-      .sm-announce-pointer svg{width:14px;height:14px}
-      .sm-announce-pulse{left:14px;width:7px;height:7px}
-    }
-
     .section{padding:100px 0;background:var(--white)}
     .section-dark{background:var(--black);color:var(--white)}
     .section-gray{background:var(--bg)}
@@ -480,6 +450,7 @@
     /* old semantic scene CSS removed — replaced by canvas system */
   </style>
   <link rel="stylesheet" href="assets/css/nav-utilities.css">
+  <link rel="stylesheet" href="assets/css/summaverick-intro.css">
 </head>
 <body>
   <a href="#main" class="skip-nav">Skip to main content</a>
@@ -539,25 +510,44 @@
       </div>
     </section>
 
-    <a href="summaverick.html" class="sm-announce" aria-label="Meet Summaverick — AI Research Assistant">
-      <div class="sm-announce-glow g1"></div>
-      <div class="sm-announce-glow g2"></div>
-      <div class="sm-announce-inner">
-        <div class="sm-announce-shape">
-          <div class="sm-announce-aurora"></div>
-          <div class="sm-announce-edge"></div>
-          <div class="sm-announce-pulse"></div>
-          <img class="sm-announce-logo" src="summaverick-logo.png" alt="" aria-hidden="true" width="122" height="64" />
-          <div class="sm-announce-content">
-            <div class="sm-announce-text">Meet Summaverick</div>
-            <div class="sm-announce-sub">AI-powered research assistant — try it now</div>
-          </div>
-          <div class="sm-announce-pointer">
-            <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+    <section class="sm-intro" id="summaverick-intro" aria-label="Meet Summaverick">
+      <div class="sm-intro__pin">
+        <canvas class="sm-intro__canvas" id="smIntroCanvas" aria-hidden="true"></canvas>
+        <div class="sm-intro__fallback" aria-hidden="true">
+          <div class="sm-intro__orb">
+            <div class="sm-intro__ring sm-intro__ring--a"></div>
+            <div class="sm-intro__ring sm-intro__ring--b"></div>
+            <div class="sm-intro__ring sm-intro__ring--c"></div>
+            <div class="sm-intro__orb-core"></div>
           </div>
         </div>
+        <div class="sm-intro__veil"></div>
+        <div class="sm-intro__grain"></div>
+        <div class="sm-intro__copy">
+          <p class="sm-intro__kicker">Introducing</p>
+          <p class="sm-intro__manifesto">
+            <span class="sm-intro__line sm-intro__line--1">Where questions find their edge</span>
+            <span class="sm-intro__line sm-intro__line--2">and research rewrites what comes next</span>
+          </p>
+          <div class="sm-intro__reveal">
+            <h2 class="sm-intro__brand">Meet Summaverick</h2>
+            <p class="sm-intro__sub">a sourced research assistant — where curiosity and machine clarity converge as one</p>
+            <a class="sm-intro__cta" href="summaverick.html">
+              Ask Summaverick
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+        <noscript>
+          <a class="sm-intro__cta" href="summaverick.html">Meet Summaverick</a>
+        </noscript>
+        <div class="sm-intro__hint">
+          <span>Scroll to meet</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="sm-intro__progress" aria-hidden="true"><span></span></div>
       </div>
-    </a>
+    </section>
 
     <section class="section section-gray" id="about">
       <div class="section-c">
@@ -848,6 +838,8 @@
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="assets/js/shared/subscribe.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
+  <script src="assets/js/summaverick-intro.js"></script>
   <script>
     var ICONS={bolt:'<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',gear:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',rocket:'<svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09zM12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/></svg>',cloud:'<svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>',code:'<svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',database:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',tool:'<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',shield:'<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',trophy:'<svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6M18 9h1.5a2.5 2.5 0 000-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 1012 0V2z"/></svg>',target:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',layers:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',brain:'<svg viewBox="0 0 24 24"><path d="M12 4.5a2.5 2.5 0 00-4.96-.46 2.5 2.5 0 00-1.98 3 2.5 2.5 0 00-1.32 4.24 3 3 0 00.34 5.58 2.5 2.5 0 002.96 3.08A2.5 2.5 0 0012 19.5M12 4.5a2.5 2.5 0 014.96-.46 2.5 2.5 0 011.98 3 2.5 2.5 0 011.32 4.24 3 3 0 01-.34 5.58 2.5 2.5 0 01-2.96 3.08A2.5 2.5 0 0112 19.5"/></svg>',server:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>',link:'<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>',refresh:'<svg viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>'};
     
