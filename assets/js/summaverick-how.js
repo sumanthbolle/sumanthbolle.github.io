@@ -146,8 +146,8 @@
   }
 
   function drawSearch(cx, cy, local, t) {
-    var w = Math.min(520, W * 0.72);
-    var h = 64;
+    var w = Math.min(640, W * 0.8);
+    var h = 78;
     var x = cx - w / 2;
     var y = cy - h / 2;
     var appear = smoothstep(0, 0.18, local);
@@ -156,15 +156,15 @@
     glassPanel(x, y, w, h, 20, appear);
     ctx.fillStyle = 'rgba(255,255,255,0.34)';
     ctx.font = '600 12px ui-sans-serif, system-ui, sans-serif';
-    ctx.fillText('SUMMAVERICK', x + 22, y + 22);
+    ctx.fillText('SUMMAVERICK', x + 26, y + 26);
     var q = 'Is it true that this claim holds up?';
     var typed = q.slice(0, Math.floor(smoothstep(0.16, 0.62, local) * q.length));
     ctx.fillStyle = '#f5f5f7';
-    ctx.font = '500 17px ui-sans-serif, system-ui, sans-serif';
-    ctx.fillText(typed, x + 22, y + 44);
+    ctx.font = '500 20px ui-sans-serif, system-ui, sans-serif';
+    ctx.fillText(typed, x + 26, y + 54);
     if (local < 0.72 && Math.floor(t * 0.006) % 2 === 0) {
       var tw = ctx.measureText(typed).width;
-      ctx.fillRect(x + 22 + tw + 3, y + 30, 1.5, 16);
+      ctx.fillRect(x + 26 + tw + 4, y + 38, 1.6, 18);
     }
     var pulse = smoothstep(0.58, 1, local);
     if (pulse > 0) {
