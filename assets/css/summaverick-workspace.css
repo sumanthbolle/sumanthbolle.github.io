@@ -909,7 +909,7 @@ body.input-focused .composer,
 
   .hamburger { display: inline-flex; }
   .brand-wordmark { display: inline; }
-  .brand-logo { height: 28px; }
+  .brand-logo { display: none; }
 
   .topnav > a,
   .topnav > .nav-drop,
@@ -920,22 +920,23 @@ body.input-focused .composer,
   .new-btn-label { display: none !important; }
 
   .hero {
-    padding: 18px 0 10px;
+    padding: 14px 0 6px;
   }
 
-  .hero-logo { height: 40px; margin-bottom: 10px; }
+  .hero-logo { display: none; }
 
   .hero-title {
-    font-size: clamp(1.85rem, 9vw, 2.4rem);
+    font-size: clamp(1.85rem, 9vw, 2.35rem);
     max-width: none;
   }
 
   .hero-sub { display: none; }
 
-  .trust-row { margin-top: 12px; gap: 8px 12px; }
+  .trust-row { margin-top: 10px; gap: 6px 12px; }
   .hero-notes { display: none; }
 
-  .starter-wrap { padding-top: 14px; }
+  .starter-wrap { padding-top: 12px; }
+  .starter-head { margin-bottom: 8px; }
   .support-block { margin-top: 36px; }
 
   .composer-wrap { padding: 10px 12px; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
