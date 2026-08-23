@@ -378,10 +378,8 @@
   if (cta) {
     cta.addEventListener('click', function () {
       var input = document.getElementById('queryInput');
-      if (input) {
-        input.focus();
-        input.scrollIntoView({ block: 'end', behavior: reduced ? 'auto' : 'smooth' });
-      }
+      if (!input) return;
+      input.focus();
     });
   }
 
