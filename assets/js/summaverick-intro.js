@@ -45,17 +45,17 @@
 
   function applyCopy(p) {
     var aIn = smoothstep(0.02, 0.12, p);
-    var aHold = 1 - smoothstep(0.34, 0.46, p);
+    var aHold = 1 - smoothstep(0.30, 0.40, p);
     var manifesto = aIn * aHold;
     setCopy(copy.kicker, manifesto, lerp(14, 0, aIn), (1 - aIn) * 6);
-    setCopy(copy.line1, manifesto * smoothstep(0.06, 0.18, p), lerp(22, 0, smoothstep(0.06, 0.18, p)), (1 - smoothstep(0.06, 0.2, p)) * 8);
-    setCopy(copy.line2, manifesto * smoothstep(0.12, 0.24, p), lerp(22, 0, smoothstep(0.12, 0.24, p)), (1 - smoothstep(0.12, 0.26, p)) * 8);
+    setCopy(copy.line1, manifesto * smoothstep(0.06, 0.16, p), lerp(22, 0, smoothstep(0.06, 0.16, p)), (1 - smoothstep(0.06, 0.18, p)) * 8);
+    setCopy(copy.line2, manifesto * smoothstep(0.10, 0.22, p), lerp(22, 0, smoothstep(0.10, 0.22, p)), (1 - smoothstep(0.10, 0.24, p)) * 8);
 
-    var bIn = smoothstep(0.42, 0.58, p);
+    var bIn = smoothstep(0.36, 0.50, p);
     setCopy(copy.brand, bIn, lerp(28, 0, bIn), (1 - bIn) * 10);
-    setCopy(copy.sub, smoothstep(0.52, 0.66, p), lerp(16, 0, smoothstep(0.52, 0.66, p)), 0);
-    setCopy(copy.cta, smoothstep(0.6, 0.74, p), lerp(12, 0, smoothstep(0.6, 0.74, p)), 0);
-    if (copy.hint) setCopy(copy.hint, 1 - smoothstep(0.04, 0.14, p), 0, 0);
+    setCopy(copy.sub, smoothstep(0.44, 0.56, p), lerp(16, 0, smoothstep(0.44, 0.56, p)), 0);
+    setCopy(copy.cta, smoothstep(0.52, 0.62, p), lerp(10, 0, smoothstep(0.52, 0.62, p)), 0);
+    if (copy.hint) setCopy(copy.hint, 1 - smoothstep(0.04, 0.12, p), 0, 0);
     if (bar) bar.style.width = (p * 100).toFixed(2) + '%';
   }
 
@@ -128,14 +128,13 @@
 
   function createArrowShape() {
     var s = new THREE.Shape();
-    var w = 3.55;
-    var h = 1.08;
-    var tip = 1.05;
-    s.moveTo(-w / 2, -h / 2);
-    s.lineTo(w / 2 - tip, -h / 2);
-    s.lineTo(w / 2, 0);
-    s.lineTo(w / 2 - tip, h / 2);
-    s.lineTo(-w / 2, h / 2);
+    s.moveTo(-1.85, -0.42);
+    s.lineTo(0.42, -0.42);
+    s.lineTo(0.42, -0.78);
+    s.lineTo(1.92, 0);
+    s.lineTo(0.42, 0.78);
+    s.lineTo(0.42, 0.42);
+    s.lineTo(-1.85, 0.42);
     s.closePath();
     return s;
   }
@@ -247,30 +246,51 @@
     group.add(core, coreWire);
 
     var arrowGeo = new THREE.ExtrudeGeometry(createArrowShape(), {
-      depth: 0.46,
+      depth: 0.2,
       bevelEnabled: true,
-      bevelThickness: 0.07,
-      bevelSize: 0.06,
-      bevelSegments: 3,
-      curveSegments: 6
+      bevelThickness: 0.045,
+      bevelSize: 0.04,
+      bevelSegments: 2,
+      curveSegments: 4
     });
     arrowGeo.center();
     var arrow = new THREE.Mesh(
       arrowGeo,
       new THREE.MeshPhysicalMaterial({
-        color: 0xeef3fb,
-        metalness: 0.08,
-        roughness: 0.05,
-        transmission: 0.93,
-        thickness: 1.8,
-        ior: 1.5,
+        color: 0xf4f7fb,
+        metalness: 0.05,
+        roughness: 0.04,
+        transmission: 0.86,
+        thickness: 1.2,
+        ior: 1.48,
         clearcoat: 1,
-        clearcoatRoughness: 0.04,
+        clearcoatRoughness: 0.03,
         transparent: true,
         opacity: 0
       })
     );
-    arrow.scale.set(0.82, 0.82, 0.82);
+    var arrowEdge = new THREE.LineSegments(
+      new THREE.EdgesGeometry(arrowGeo, 18),
+      new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0
+      })
+    );
+    arrow.add(arrowEdge);
+    var innerArrow = new THREE.Mesh(
+      arrowGeo,
+      new THREE.MeshBasicMaterial({
+        color: 0x5ce1ff,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      })
+    );
+    innerArrow.scale.set(0.9, 0.9, 0.55);
+    arrow.add(innerArrow);
+    arrow.scale.set(0.95, 0.95, 0.95);
     group.add(arrow);
 
     var rings = [0.95, 1.22, 1.48].map(function (r, i) {
@@ -369,23 +389,29 @@
       var mark = smoothstep(0.38, 0.68, p);
       var settle = smoothstep(0.62, 0.9, p);
 
-      core.scale.setScalar(lerp(0.15, 1.05, form) * lerp(1, 0.22, mark));
-      core.material.opacity = lerp(0.15, 1, form) * lerp(1, 0.15, mark);
+      core.scale.setScalar(lerp(0.15, 1.05, form) * lerp(1, 0.08, mark));
+      core.material.opacity = lerp(0.15, 1, form) * (1 - mark);
       core.material.transmission = lerp(0.2, 0.88, glass);
+      core.visible = mark < 0.96;
       coreWire.material.opacity = lerp(0.7, 0.08, glass) * (1 - mark);
       core.rotation.y = t * 0.25 + p * 1.4;
       core.rotation.x = t * 0.12;
 
       arrow.material.opacity = mark;
-      arrow.scale.setScalar(lerp(0.35, 0.92, mark));
-      arrow.rotation.y = lerp(-1.15, -0.18, mark) + Math.sin(t * 0.35) * 0.04;
-      arrow.rotation.x = lerp(0.55, 0.08, mark);
-      arrow.position.z = lerp(-1.4, 0.15, mark);
+      arrowEdge.material.opacity = mark * 0.7;
+      innerArrow.material.opacity = mark * 0.28;
+      arrow.scale.setScalar(lerp(0.38, 1.22, mark));
+      arrow.rotation.y = lerp(-1.45, -0.28, mark) + Math.sin(t * 0.28) * 0.025;
+      arrow.rotation.x = lerp(0.85, 0.04, mark);
+      arrow.rotation.z = lerp(0.2, 0, mark);
+      arrow.position.set(0, lerp(0.15, 0, mark), lerp(-1.8, 0.35, mark));
+      group.position.y = lerp(0.05, -0.95, mark);
 
       rings.forEach(function (ring, i) {
-        ring.material.opacity = 1;
-        ring.visible = form > 0.08;
-        ring.scale.setScalar(lerp(0.2, 1, form) * lerp(1, 0.55, mark));
+        ring.material.transparent = true;
+        ring.material.opacity = (1 - mark) * 0.9;
+        ring.visible = form > 0.08 && mark < 0.92;
+        ring.scale.setScalar(lerp(0.2, 1, form) * lerp(1, 0.2, mark));
         ring.rotation.z += 0.003 + i * 0.0012;
         ring.rotation.x += 0.0015 * (i + 1);
       });

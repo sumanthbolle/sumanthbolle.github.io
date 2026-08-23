@@ -84,9 +84,9 @@
 
 .sm-intro__reveal {
   position: absolute;
+  top: 16%;
   left: 20px;
   right: 20px;
-  bottom: 16%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -131,12 +131,13 @@
   margin-top: 28px;
   padding: 11px 22px;
   border-radius: 999px;
-  background: #fff;
+  background: #ffffff;
   color: #0a0a0a;
   text-decoration: none;
   font-size: 14px;
   font-weight: 550;
   letter-spacing: -0.01em;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45);
   transition: opacity 0.25s cubic-bezier(0.23, 1, 0.32, 1), transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -267,7 +268,7 @@
 
 @media (max-width: 640px) {
   .sm-intro__copy { padding: 84px 18px 72px; }
-  .sm-intro__reveal { bottom: 12%; }
+  .sm-intro__reveal { top: 14%; }
   .sm-intro__cta { margin-top: 22px; }
 }
 
@@ -281,7 +282,7 @@
     gap: 20px;
     padding-bottom: 80px;
   }
-  .sm-intro__reveal { position: relative; bottom: auto; left: auto; right: auto; }
+  .sm-intro__reveal { position: relative; top: auto; bottom: auto; left: auto; right: auto; }
   .sm-intro__kicker,
   .sm-intro__line,
   .sm-intro__brand,
