@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Summaverick — AI Search Assistant | Source-Backed AI Answers</title>
   <meta
     name="description"
@@ -108,9 +108,9 @@
 
     :root {
       --max: 1180px;
-      --chat: 780px;
+      --chat: 860px;
       --drawer-w: 300px;
-      --composer-h: 168px;
+      --composer-h: 132px;
       --ease: cubic-bezier(.22, 1, .36, 1);
       --shadow-xl: 0 28px 90px rgba(0, 0, 0, 0.22);
       --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.14);
@@ -124,6 +124,22 @@
       --rgb-pink: #ff4fd8;
       --rgb-cyan: #33d6ff;
       --rgb-violet: #8b5cf6;
+      --motion-instant: 100ms;
+      --motion-fast: 160ms;
+      --motion-normal: 260ms;
+      --motion-slow: 420ms;
+      --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+      --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+      --answer-max-width: 860px;
+      --bg-primary: #050608;
+      --bg-secondary: #090b10;
+      --surface-hover: rgba(255, 255, 255, 0.065);
+      --text-primary: #f5f5f7;
+      --text-secondary: rgba(255, 255, 255, 0.58);
+      --accent: #8ec5ff;
+      --accent-soft: rgba(142, 197, 255, 0.14);
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.14);
     }
 
     html[data-theme="dark"] {
@@ -186,19 +202,28 @@
       --bottom-fade: linear-gradient(to top, rgba(246, 247, 251, 0.95), rgba(246, 247, 251, 0.78) 56%, transparent);
       --send-bg: #0f172a;
       --send-fg: #ffffff;
+      --bg-primary: #f6f7fb;
+      --bg-secondary: #eef1f7;
+      --surface-hover: rgba(255, 255, 255, 0.88);
+      --text-primary: #0f172a;
+      --text-secondary: rgba(15, 23, 42, 0.62);
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.08);
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      min-height: 100vh;
+      min-height: 100svh;
+      min-height: 100dvh;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
       color: var(--text);
       background: var(--body-bg);
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       overflow-x: hidden;
-      transition: background 400ms var(--ease), color 250ms ease;
+      transition: background 160ms var(--ease), color 160ms ease;
     }
 
     body.input-focused { --ambient-opacity: 1.08; }
@@ -223,8 +248,9 @@
       content: "";
       position: absolute;
       border-radius: 999px;
-      filter: blur(110px);
-      transition: transform 700ms var(--ease), opacity 450ms ease;
+      filter: none;
+      opacity: 0.55;
+      transition: transform 420ms var(--ease), opacity 260ms ease;
     }
 
     .ambient::before {
@@ -255,7 +281,8 @@
     .shell {
       position: relative;
       z-index: 1;
-      min-height: 100vh;
+      min-height: 100svh;
+      min-height: 100dvh;
     }
 
     .topbar {
@@ -445,8 +472,8 @@
 
     .app-active .landing {
       opacity: 0;
-      transform: translateY(-20px) scale(0.985);
-      filter: blur(6px);
+      transform: translateY(-8px);
+      filter: none;
       pointer-events: none;
       height: 0;
       overflow: hidden;
@@ -455,13 +482,12 @@
     }
 
     .hero {
-      padding: 54px 0 34px;
-      display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
-      gap: 48px;
-      align-items: end;
-      /* leave room below for the task starters to stay above the fold */
-      min-height: calc(100vh - 60px - var(--composer-h) - 170px);
+      padding: 36px 0 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      align-items: flex-start;
+      min-height: 0;
     }
 
     .hero-copy { max-width: 680px; }
@@ -477,9 +503,9 @@
     }
 
     .hero-title {
-      font-size: clamp(44px, 5.4vw, 72px);
-      line-height: 0.94;
-      letter-spacing: -0.055em;
+      font-size: clamp(2.25rem, 5vw, 5rem);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
       font-weight: 620;
     }
 
@@ -493,26 +519,7 @@
     }
 
     .rgb-text {
-      background: linear-gradient(
-        92deg,
-        var(--rgb-red) 0%,
-        var(--rgb-pink) 18%,
-        var(--rgb-violet) 36%,
-        var(--rgb-blue) 54%,
-        var(--rgb-cyan) 72%,
-        var(--rgb-green) 100%
-      );
-      background-size: 220% 220%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      color: transparent;
-      animation: rgbShift 7s linear infinite;
-    }
-
-    @keyframes rgbShift {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
+      color: var(--text);
     }
 
     .phrase {
@@ -802,12 +809,13 @@
 
     .conversation {
       display: none;
-      max-width: var(--chat);
+      max-width: var(--answer-max-width);
       margin: 0 auto;
-      padding: 34px 0 calc(var(--composer-h) + 38px);
+      padding: 20px 0 calc(var(--composer-h) + 28px);
       opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 600ms var(--ease), transform 700ms var(--ease);
+      transform: translateY(10px);
+      min-width: 0;
+      transition: opacity 420ms var(--ease), transform 420ms var(--ease);
     }
 
     .app-active .conversation {
@@ -885,8 +893,15 @@
       font-family: ui-monospace, "SF Mono", Menlo, monospace;
     }
 
+    .content,
+    .answer-content {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
     .content pre {
       position: relative;
+      max-width: 100%;
       overflow-x: auto;
       padding: 14px 16px;
       border-radius: 16px;
@@ -897,11 +912,18 @@
       font-family: ui-monospace, "SF Mono", Menlo, monospace;
     }
 
+    .content table {
+      display: block;
+      max-width: 100%;
+      overflow-x: auto;
+      overscroll-behavior-inline: contain;
+    }
+
     .pre-copy {
       position: absolute;
       top: 8px;
       right: 8px;
-      height: 26px;
+      min-height: 32px;
       padding: 0 10px;
       border-radius: 8px;
       border: 1px solid var(--border);
@@ -910,7 +932,7 @@
       font-size: 11px;
       font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       cursor: pointer;
-      opacity: 0;
+      opacity: 1;
       transition: opacity 160ms ease, color 160ms ease, background 160ms ease;
     }
 
@@ -1078,9 +1100,15 @@
     .rstep.active { color: var(--text-soft); }
 
     .rstep.active .ring {
-      opacity: 1;
-      border-top-color: transparent;
-      animation: stepSpin 0.8s linear infinite;
+      display: none;
+    }
+
+    .rstep.active .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: activity-pulse 1.6s ease-in-out infinite;
     }
 
     .rstep.done { color: var(--text-muted); }
@@ -1095,7 +1123,10 @@
       stroke-linejoin: round;
     }
 
-    @keyframes stepSpin { to { transform: rotate(360deg); } }
+    @keyframes activity-pulse {
+      0%, 100% { opacity: 0.35; transform: scale(0.92); }
+      50% { opacity: 1; transform: scale(1); }
+    }
 
     /* ── Source chips shown above the answer (research-agent pattern) ── */
     .src-chips {
@@ -1281,9 +1312,10 @@
       right: 0;
       bottom: 0;
       z-index: 45;
-      padding: 18px 18px 22px;
+      padding: 12px 16px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
       background: var(--bottom-fade);
-      transition: background 250ms ease;
+      transition: background 160ms ease;
     }
 
     .composer-shell {
@@ -1371,7 +1403,7 @@
     .composer textarea {
       flex: 1;
       min-height: 28px;
-      max-height: 140px;
+      max-height: 160px;
       resize: none;
       border: 0;
       outline: 0;
@@ -1411,8 +1443,8 @@
     .composer-hint .phrase { min-width: 1px; }
 
     .send {
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
       border-radius: 999px;
       border: 0;
       background: var(--send-bg);
@@ -1709,23 +1741,29 @@
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
         scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
   <link rel="stylesheet" href="assets/css/nav-utilities.css">
   <link rel="stylesheet" href="assets/css/summaverick-how.css">
+  <link rel="stylesheet" href="assets/css/summaverick-workspace.css">
 </head>
 <body>
   <div class="ambient"><div class="orb"></div></div>
 
-  <div class="shell" id="appShell">
-    <header class="topbar">
+  <div class="shell app-shell" id="appShell" data-app-state="resting">
+    <header class="topbar app-header">
       <div class="topbar-inner">
+        <button class="hamburger" id="workspaceMenuBtn" type="button" aria-label="Open navigation and chats" aria-controls="chatDrawer" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
         <a class="brand" href="index.html" aria-label="Summaverick — back to portfolio">
-          <img class="brand-logo" src="summaverick-logo.png" alt="Summaverick" width="76" height="40" />
+          <img class="brand-logo" src="summaverick-logo.png" alt="" width="76" height="40" />
+          <span class="brand-wordmark">Summaverick</span>
         </a>
 
         <nav class="topnav" aria-label="Primary">
@@ -1781,35 +1819,75 @@
       </div>
     </header>
 
-    <main class="page">
+    <main class="page workspace">
+      <div class="workspace-main">
       <section class="landing" id="landing">
         <section class="hero">
           <div class="hero-copy">
-            <img class="hero-logo" src="summaverick-logo.png" alt="Summaverick" width="209" height="110" />
+            <img class="hero-logo hero-item" src="summaverick-logo.png" alt="" width="209" height="110" />
 
-            <h1 class="hero-title">
+            <h1 class="hero-title hero-item">
               <span class="hero-line hero-static">Search less.</span>
-              <span class="hero-line hero-phrase-wrap">
-                <span class="phrase rgb-text" id="heroPhrase">Ask anything</span>
-              </span>
+              <span class="hero-line">Ask anything.</span>
             </h1>
 
-            <p class="hero-sub">
+            <p class="hero-sub hero-item">
               For questions that need more than a quick answer.
               News, code, work, career decisions, and the strange corners of the internet —
               with the sources left visible.
             </p>
 
-            <div class="hero-notes">
-              <div class="hero-note">free — no account needed</div>
-              <div class="hero-note">every answer shows its sources</div>
-              <div class="hero-note">nothing stored on servers</div>
-              <div class="hero-note">keeps context across turns</div>
+            <div class="trust-row hero-item" aria-label="Product promises">
+              <span class="trust-item"><i aria-hidden="true"></i> Live web</span>
+              <span class="trust-item"><i aria-hidden="true"></i> Sources shown</span>
+              <span class="trust-item"><i aria-hidden="true"></i> Private</span>
+              <span class="trust-item"><i aria-hidden="true"></i> No account</span>
             </div>
           </div>
+        </section>
 
-          <div class="hero-right">
-            <section class="editorial" aria-label="Today">
+        <section class="starter-wrap">
+          <div class="starter-head">Try one of these</div>
+          <div class="starter-grid" id="starterGrid"></div>
+        </section>
+
+        <section class="sm-how" id="summaverick-how" aria-label="How Summaverick works">
+          <div class="sm-how__pin">
+            <div class="sm-how__copy">
+              <p class="sm-how__kicker">How it works</p>
+              <div class="sm-how__acts">
+                <div class="sm-how-line" aria-hidden="true"><span></span></div>
+                <article class="sm-how__act" data-act="0">
+                  <span class="sm-how__index">01</span>
+                  <h2 class="sm-how__title">Search</h2>
+                  <p class="sm-how__body">You ask once. Summaverick queries the live web — not a frozen training cutoff.</p>
+                </article>
+                <article class="sm-how__act" data-act="1">
+                  <span class="sm-how__index">02</span>
+                  <h2 class="sm-how__title">Live search</h2>
+                  <p class="sm-how__body">Sources arrive as they are found. Headlines, docs, and papers land while the answer is still being built.</p>
+                </article>
+                <article class="sm-how__act" data-act="2">
+                  <span class="sm-how__index">03</span>
+                  <h2 class="sm-how__title">Reasoning</h2>
+                  <p class="sm-how__body">Each claim is walked: understand, search, read, then check. Nothing is guessed in one leap.</p>
+                </article>
+                <article class="sm-how__act" data-act="3">
+                  <span class="sm-how__index">04</span>
+                  <h2 class="sm-how__title">Accuracy</h2>
+                  <p class="sm-how__body">The answer keeps its receipts. Citations stay attached, and disagreement between sources stays visible.</p>
+                </article>
+              </div>
+              <button class="sm-how__cta" type="button">
+                Ask from here
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="support-block" aria-label="Today">
+            <section class="editorial">
               <div class="editorial-head">
                 <div class="editorial-label">Today</div>
                 <div class="editorial-region" id="trendingRegion">Loading</div>
@@ -1835,57 +1913,18 @@
                 </div>
               </div>
             </section>
-          </div>
-        </section>
-
-        <section class="sm-how" id="summaverick-how" aria-label="How Summaverick works">
-          <div class="sm-how__pin">
-            <canvas class="sm-how__canvas" id="smHowCanvas" aria-hidden="true"></canvas>
-            <div class="sm-how__veil"></div>
-            <div class="sm-how__copy">
-              <p class="sm-how__kicker">How it works</p>
-              <div class="sm-how__acts">
-                <article class="sm-how__act" data-act="0">
-                  <span class="sm-how__index">01 / 04</span>
-                  <h2 class="sm-how__title">Search</h2>
-                  <p class="sm-how__body">You ask once. Summaverick queries the live web — not a frozen training cutoff.</p>
-                </article>
-                <article class="sm-how__act" data-act="1">
-                  <span class="sm-how__index">02 / 04</span>
-                  <h2 class="sm-how__title">Live search</h2>
-                  <p class="sm-how__body">Sources stream in as they are found. Headlines, docs, and papers land on the desk while the answer is still being built.</p>
-                </article>
-                <article class="sm-how__act" data-act="2">
-                  <span class="sm-how__index">03 / 04</span>
-                  <h2 class="sm-how__title">Reasoning</h2>
-                  <p class="sm-how__body">Each claim is walked: understand, search, read, then check. Nothing is guessed in one leap.</p>
-                </article>
-                <article class="sm-how__act" data-act="3">
-                  <span class="sm-how__index">04 / 04</span>
-                  <h2 class="sm-how__title">Accuracy</h2>
-                  <p class="sm-how__body">The answer keeps its receipts. Citations stay attached, and disagreement between sources stays visible.</p>
-                </article>
-              </div>
-              <button class="sm-how__cta" type="button">
-                Ask from here
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg>
-              </button>
-            </div>
-            <ol class="sm-how__pips" aria-hidden="true">
-              <li></li><li></li><li></li><li></li>
-            </ol>
-            <div class="sm-how__progress" aria-hidden="true"><span></span></div>
-          </div>
-        </section>
-
-        <section class="starter-wrap">
-          <div class="starter-head">What do you want to do?</div>
-          <div class="starter-grid" id="starterGrid"></div>
         </section>
       </section>
 
       <section class="conversation" id="chatArea"></section>
       <div class="footer-space"></div>
+      </div>
+      <aside class="source-rail" id="sourceRail" hidden>
+        <div class="source-rail-head">
+          <div class="source-rail-title">Sources</div>
+        </div>
+        <div class="source-rail-list" id="sourceRailList"></div>
+      </aside>
     </main>
 
     <button class="jump-latest" id="jumpLatest" type="button" aria-label="Jump to latest">
@@ -1897,10 +1936,11 @@
       <div class="composer-shell">
         <div class="composer" id="composer">
           <div class="composer-top">
-            <div class="mode-group" id="depthModes">
-              <button class="mode-pill active" type="button" data-mode="quick">Quick</button>
-              <button class="mode-pill" type="button" data-mode="deeper">Deeper</button>
-              <button class="mode-pill" type="button" data-mode="research">Full picture</button>
+            <div class="mode-group" id="depthModes" role="radiogroup" aria-label="Research depth">
+              <span class="mode-indicator" aria-hidden="true"></span>
+              <button class="mode-pill active" type="button" role="radio" aria-checked="true" data-mode="quick">Quick</button>
+              <button class="mode-pill" type="button" role="radio" aria-checked="false" data-mode="deeper">Deeper</button>
+              <button class="mode-pill" type="button" role="radio" aria-checked="false" data-mode="research">Full picture</button>
             </div>
             <div class="composer-mode-note" id="modeNote">Direct answer, less context.</div>
           </div>
@@ -1909,7 +1949,7 @@
             <div class="composer-stage">
               <textarea id="queryInput" rows="1" autocomplete="off" spellcheck="false" aria-label="Ask Summaverick"></textarea>
               <div class="composer-hint" id="composerHint" aria-hidden="true">
-                <span class="phrase rgb-text" id="composerPhrase">Ask anything</span>
+                <span class="phrase" id="composerPhrase">Ask anything</span>
               </div>
             </div>
 
@@ -1936,14 +1976,50 @@
           <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
+      <nav class="drawer-site" aria-label="Site">
+        <a href="index.html">Home</a>
+        <span class="mobile-menu__label">Learn</span>
+        <a href="servicenow.html">ServiceNow Central</a>
+        <a href="blog.html">Articles &amp; Tutorials</a>
+        <a href="interviews.html">Interview Prep</a>
+        <a href="upsc.html">UPSC Today</a>
+        <span class="mobile-menu__label">Tools</span>
+        <a href="flights.html">SkyFare</a>
+        <a href="metals.html">Metals</a>
+        <a href="save-yourself.html">Save Yourself</a>
+        <a href="index.html#about">About</a>
+      </nav>
       <div class="drawer-body">
         <div class="chat-list" id="chatList"></div>
       </div>
       <div class="drawer-foot">
+        <div class="theme-toggle drawer-theme" aria-label="Theme">
+          <button class="theme-btn" type="button" data-theme="light">Light</button>
+          <button class="theme-btn" type="button" data-theme="dark">Dark</button>
+        </div>
         <button class="clear-all" id="clearAllBtn" type="button">Clear all chats</button>
         <div class="drawer-note">Saved on this device only. Clears when you clear your browser data.</div>
       </div>
     </aside>
+  </div>
+
+  <div class="cite-sheet-overlay" id="citeSheetOverlay" hidden></div>
+  <div class="cite-preview" id="citePreview" hidden>
+    <div class="cite-preview__source" data-cite-source></div>
+    <div class="cite-preview__title" data-cite-title></div>
+    <p class="cite-preview__excerpt" data-cite-excerpt hidden></p>
+    <a class="cite-preview__open" data-cite-open href="#" target="_blank" rel="noopener">Open source</a>
+  </div>
+  <div class="cite-sheet" id="citeSheet" hidden role="dialog" aria-label="Source preview">
+    <div class="cite-sheet-head">
+      <div class="cite-preview__source" data-cite-source></div>
+      <button class="cite-sheet-close" type="button" aria-label="Close source preview">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="cite-preview__title" data-cite-title></div>
+    <p class="cite-preview__excerpt" data-cite-excerpt hidden></p>
+    <a class="cite-sheet__open" data-cite-open href="#" target="_blank" rel="noopener">Open source</a>
   </div>
 
   <script>
@@ -1958,22 +2034,14 @@
       const CHATS_KEY = 'summaverick-chats';
       const MAX_CHATS = 60;
 
-      const PHRASES = [
-        'Ask anything',
-        'Ask what matters',
-        'Understand more'
-      ];
-
-      /* Task-shaped starters: everyday jobs rather than example questions.
+      /* Lightweight prompt chips — four jobs, not a wall of AI cards.
        * `run` submits immediately; `fill` drops a template into the composer
        * with the [blank] pre-selected so typing replaces it. */
       const starters = [
-        { kicker: 'Today', run: 'What are the 5 most important news stories today? Explain each one briefly, in plain language.', text: 'Catch me up on today’s news, in plain language.' },
-        { kicker: 'Before you buy', fill: 'Compare [thing one] and [thing two] — price, reliability, and which is better value for me.', text: 'Compare <em>two products</em> — price, reliability, value.' },
-        { kicker: 'Fact-check', fill: 'Is it true that [something you heard or saw online]? Check it against reliable sources.', text: 'Is it true that <em>something you saw online</em>?' },
-        { kicker: 'Learn something', fill: 'Explain [a topic] in simple words, like I’m completely new to it.', text: 'Explain <em>a topic</em> in simple words.' },
-        { kicker: 'Plan it', fill: 'Help me plan [a trip, a budget, a week of meals] — give me clear steps and options.', text: 'Plan <em>a trip, a budget, a week of meals</em> step by step.' },
-        { kicker: 'Decide carefully', fill: 'Give me the full picture on [a decision you’re weighing]: trade-offs, evidence, and where experts disagree.', text: 'Get the full picture on <em>a decision</em> before you commit.' }
+        { kicker: 'Understand', fill: 'Explain [a topic] in simple words, like I’m completely new to it.', text: 'Understand something' },
+        { kicker: 'Compare', fill: 'Compare [option one] and [option two] — trade-offs, evidence, and which is better for me.', text: 'Compare options' },
+        { kicker: 'Research', fill: 'Research [a topic]: what is settled, what is disputed, and which sources matter.', text: 'Research a topic' },
+        { kicker: 'Debug', fill: 'Help me debug [this error or unexpected behavior]. Walk through likely causes and what to check first.', text: 'Debug something' }
       ];
 
       const followUps = {
@@ -1992,19 +2060,19 @@
           note: 'Direct answer, less context.',
           prefix: '',
           label: 'Quick',
-          steps: ['Understanding the question', 'Searching the web', 'Writing the answer']
+          steps: ['Understanding', 'Searching', 'Writing']
         },
         deeper: {
           note: 'More nuance, more context.',
           prefix: 'Answer with extra context and trade-offs: ',
           label: 'Deeper',
-          steps: ['Understanding the question', 'Searching the web', 'Reading sources', 'Writing with context']
+          steps: ['Understanding', 'Searching', 'Reading', 'Writing']
         },
         research: {
           note: 'Fuller answer, stronger context.',
           prefix: 'Give a fuller research-style answer with context and strong sourcing: ',
           label: 'Full picture',
-          steps: ['Understanding the question', 'Searching broadly', 'Reading sources', 'Cross-checking claims', 'Writing the full picture']
+          steps: ['Understanding', 'Searching', 'Reading', 'Cross-checking', 'Writing']
         }
       };
 
@@ -2026,8 +2094,7 @@
         mode: 'quick',
         loadingTimer: null,
         loadingIndex: 0,
-        phraseIndex: 0,
-        phraseTimer: null
+        followAnswer: true
       };
 
       const root = document.documentElement;
@@ -2045,8 +2112,10 @@
       const modeNote = document.getElementById('modeNote');
       const trendingGrid = document.getElementById('trendingGrid');
       const trendingRegion = document.getElementById('trendingRegion');
-      const heroPhrase = document.getElementById('heroPhrase');
       const composerPhrase = document.getElementById('composerPhrase');
+      const sourceRail = document.getElementById('sourceRail');
+      const sourceRailList = document.getElementById('sourceRailList');
+      const workspaceMenuBtn = document.getElementById('workspaceMenuBtn');
       const themeButtons = Array.from(document.querySelectorAll('.theme-btn'));
       const historyBtn = document.getElementById('historyBtn');
       const chatDrawer = document.getElementById('chatDrawer');
@@ -2069,7 +2138,6 @@
         updateSendState();
         setMode('quick');
         loadTrending();
-        startPhraseCycle();
         renderChatList();
         syncDrawerMode();
         if (window.matchMedia) {
@@ -2166,15 +2234,24 @@
           }
 
           const chip = e.target.closest('.src-chip');
-          if (chip && chip.dataset.url) {
-            window.open(chip.dataset.url, '_blank', 'noopener');
+          if (chip) {
+            e.preventDefault();
+            if (window.SVWorkspace && window.SVWorkspace.openCite) {
+              window.SVWorkspace.openCite(chip, {
+                url: chip.dataset.url || '',
+                title: chip.dataset.title || chip.title || '',
+                source: chip.dataset.source || '',
+                excerpt: chip.dataset.excerpt || ''
+              });
+            } else if (chip.dataset.url) {
+              window.open(chip.dataset.url, '_blank', 'noopener');
+            }
             return;
           }
 
           const cite = e.target.closest('.cite');
-          if (cite && cite.dataset.url) {
+          if (cite) {
             e.preventDefault();
-            window.open(cite.dataset.url, '_blank', 'noopener');
           }
         });
 
@@ -2183,7 +2260,10 @@
           jumpLatest.classList.remove('show');
         });
 
-        window.addEventListener('scroll', updateJumpPill, { passive: true });
+        window.addEventListener('scroll', function () {
+          state.followAnswer = isNearBottom();
+          updateJumpPill();
+        }, { passive: true });
 
         // "/" focuses the composer from anywhere (standard research-agent shortcut)
         document.addEventListener('keydown', function (e) {
@@ -2197,6 +2277,11 @@
         newChatBtn.addEventListener('click', resetChat);
 
         historyBtn.addEventListener('click', toggleDrawer);
+        if (workspaceMenuBtn) {
+          workspaceMenuBtn.addEventListener('click', function () {
+            toggleDrawer();
+          });
+        }
         drawerClose.addEventListener('click', closeDrawer);
         drawerOverlay.addEventListener('click', closeDrawer);
         clearAllBtn.addEventListener('click', clearAllChats);
@@ -2258,9 +2343,13 @@
         }
       }
 
+      function composerMaxHeight() {
+        return window.matchMedia && window.matchMedia('(max-width: 767px)').matches ? 140 : 172;
+      }
+
       function resizeTextarea() {
         queryInput.style.height = 'auto';
-        queryInput.style.height = Math.min(queryInput.scrollHeight, 140) + 'px';
+        queryInput.style.height = Math.min(queryInput.scrollHeight, composerMaxHeight()) + 'px';
       }
 
       function updateComposerState() {
@@ -2275,9 +2364,14 @@
       function setMode(mode) {
         state.mode = mode;
         Array.from(depthModes.querySelectorAll('.mode-pill')).forEach(function (pill) {
-          pill.classList.toggle('active', pill.dataset.mode === mode);
+          var on = pill.dataset.mode === mode;
+          pill.classList.toggle('active', on);
+          pill.setAttribute('aria-checked', on ? 'true' : 'false');
         });
         modeNote.textContent = modeMeta[mode].note;
+        if (window.SVWorkspace && window.SVWorkspace.syncModePill) {
+          window.requestAnimationFrame(window.SVWorkspace.syncModePill);
+        }
       }
 
       function renderStarters() {
@@ -2306,9 +2400,17 @@
         }
       }
 
+      function setAppState(name) {
+        appShell.setAttribute('data-app-state', name);
+        body.classList.toggle('loading-active', name === 'researching');
+      }
+
       function enterConversationMode() {
         appShell.classList.add('app-active');
         inputMeta.classList.add('faded');
+        if (appShell.getAttribute('data-app-state') === 'resting') {
+          setAppState('researching');
+        }
       }
 
       function resetChat() {
@@ -2319,9 +2421,11 @@
         state.currentId = null;
         state.loading = false;
         chatArea.innerHTML = '';
-        appShell.classList.remove('app-active');
+        appShell.classList.remove('app-active', 'has-sources');
         inputMeta.classList.remove('faded');
         body.classList.remove('loading-active');
+        setAppState('resting');
+        clearSourceRail();
         jumpLatest.classList.remove('show');
         queryInput.value = '';
         updateComposerState();
@@ -2420,6 +2524,7 @@
         });
         chatDrawer.setAttribute('aria-hidden', 'false');
         historyBtn.setAttribute('aria-expanded', 'true');
+        if (workspaceMenuBtn) workspaceMenuBtn.setAttribute('aria-expanded', 'true');
         renderChatList();
       }
 
@@ -2434,6 +2539,7 @@
         drawerOverlay.classList.remove('open');
         chatDrawer.setAttribute('aria-hidden', 'true');
         historyBtn.setAttribute('aria-expanded', 'false');
+        if (workspaceMenuBtn) workspaceMenuBtn.setAttribute('aria-expanded', 'false');
         window.setTimeout(function () {
           if (!chatDrawer.classList.contains('open')) drawerOverlay.hidden = true;
         }, 320);
@@ -2447,9 +2553,11 @@
           drawerOverlay.classList.remove('open');
           drawerOverlay.hidden = true;
           historyBtn.setAttribute('aria-expanded', 'true');
+          if (workspaceMenuBtn) workspaceMenuBtn.setAttribute('aria-expanded', 'false');
         } else if (!chatDrawer.classList.contains('open')) {
           chatDrawer.setAttribute('aria-hidden', 'true');
           historyBtn.setAttribute('aria-expanded', 'false');
+          if (workspaceMenuBtn) workspaceMenuBtn.setAttribute('aria-expanded', 'false');
         }
       }
 
@@ -2481,11 +2589,17 @@
         });
 
         enterConversationMode();
+        setAppState('ready');
         chatArea.innerHTML = '';
+        var lastSources = [];
         state.messages.forEach(function (m) {
           if (m.role === 'user') appendUserMessage(m.content);
-          else if (m.role === 'assistant' && m.result) appendAIMessage(m.result, false);
+          else if (m.role === 'assistant' && m.result) {
+            appendAIMessage(m.result, false);
+            if (m.result.sources && m.result.sources.length) lastSources = m.result.sources;
+          }
         });
+        renderSourceRail(lastSources);
 
         queryInput.value = '';
         updateComposerState();
@@ -2504,9 +2618,11 @@
           state.history = [];
           state.messages = [];
           chatArea.innerHTML = '';
-          appShell.classList.remove('app-active');
+          appShell.classList.remove('app-active', 'has-sources');
           inputMeta.classList.remove('faded');
           jumpLatest.classList.remove('show');
+          setAppState('resting');
+          clearSourceRail();
           loadTrending();
         }
         renderChatList();
@@ -2547,6 +2663,7 @@
         updateComposerState();
         resizeTextarea();
         setLoading(true);
+        state.followAnswer = true;
         appendThinking();
         fetchResponse(query);
       }
@@ -2605,33 +2722,36 @@
           '<div class="research-steps" role="status" aria-live="polite">' +
           steps.map(function (label, i) {
             return '<div class="rstep' + (i === 0 ? ' active' : '') + '" data-step="' + i + '">' +
-              '<span class="rstep-ic"><span class="ring"></span></span>' +
+              '<span class="rstep-ic">' +
+                (i === 0 ? '<span class="activity-dot"></span>' : '<span class="ring"></span>') +
+              '</span>' +
               '<span>' + esc(label) + '</span></div>';
           }).join('') +
           '</div>';
         chatArea.appendChild(node);
-        startLoadingCycle(steps.length);
+        state.loadingIndex = 0;
       }
 
-      /* Advance through the research steps while waiting; the final step
-       * stays active until the response lands. */
-      function startLoadingCycle(stepCount) {
-        clearLoadingCycle();
-        state.loadingIndex = 0;
-        state.loadingTimer = window.setInterval(function () {
-          const wrap = document.getElementById('loadingMsg');
-          if (!wrap) return;
-          if (state.loadingIndex >= stepCount - 1) { clearLoadingCycle(); return; }
-          const current = wrap.querySelector('.rstep[data-step="' + state.loadingIndex + '"]');
-          if (current) {
-            current.classList.remove('active');
-            current.classList.add('done');
-            current.querySelector('.rstep-ic').innerHTML = icons.check;
+      function setResearchStage(index) {
+        const wrap = document.getElementById('loadingMsg');
+        if (!wrap) return;
+        const steps = wrap.querySelectorAll('.rstep');
+        steps.forEach(function (step, i) {
+          const ic = step.querySelector('.rstep-ic');
+          if (i < index) {
+            step.classList.remove('active');
+            step.classList.add('done');
+            if (ic) ic.innerHTML = icons.check;
+          } else if (i === index) {
+            step.classList.add('active');
+            step.classList.remove('done');
+            if (ic) ic.innerHTML = '<span class="activity-dot"></span>';
+          } else {
+            step.classList.remove('active', 'done');
+            if (ic) ic.innerHTML = '<span class="ring"></span>';
           }
-          state.loadingIndex += 1;
-          const next = wrap.querySelector('.rstep[data-step="' + state.loadingIndex + '"]');
-          if (next) next.classList.add('active');
-        }, 1500);
+        });
+        state.loadingIndex = index;
       }
 
       function clearLoadingCycle() {
@@ -2649,6 +2769,13 @@
 
       async function fetchResponse(query) {
         const startedAt = performance.now();
+        const steps = modeMeta[state.mode].steps;
+        const searchAt = Math.max(0, steps.indexOf('Searching'));
+        const readAt = steps.indexOf('Reading');
+        const checkAt = steps.indexOf('Cross-checking');
+        const writeAt = Math.max(0, steps.indexOf('Writing'));
+        setAppState('researching');
+        if (searchAt > 0) setResearchStage(searchAt);
         try {
           const res = await fetch(ENDPOINT, {
             method: 'POST',
@@ -2657,10 +2784,14 @@
           });
 
           if (!res.ok) throw new Error('API error: ' + res.status);
+          if (readAt > -1) setResearchStage(readAt);
           const data = await res.json();
+          if (checkAt > -1) setResearchStage(checkAt);
+          if (writeAt > -1) setResearchStage(writeAt);
 
           removeLoading();
           setLoading(false);
+          setAppState('ready');
 
           if (data.success && data.result) {
             data.result.elapsed = ((performance.now() - startedAt) / 1000).toFixed(1);
@@ -2675,6 +2806,7 @@
         } catch (err) {
           removeLoading();
           setLoading(false);
+          setAppState('ready');
           appendErrorMessage('Something went wrong. Please try again.');
         }
       }
@@ -2690,7 +2822,7 @@
           const citeRe = new RegExp('\\[' + s.index + '\\]', 'g');
           formattedAnswer = formattedAnswer.replace(
             citeRe,
-            `<a class="cite" href="#" data-url="${escAttr(s.url || '')}" title="${escAttr(s.title || s.source || '')}">${esc(String(s.index))}</a>`
+            `<a class="cite" href="#" data-url="${escAttr(s.url || '')}" data-title="${escAttr(s.title || s.source || '')}" data-source="${escAttr(s.source || '')}" data-excerpt="${escAttr(s.snippet || s.excerpt || '')}" title="${escAttr(s.title || s.source || '')}">${esc(String(s.index))}</a>`
           );
         });
 
@@ -2700,7 +2832,7 @@
         if (sources.length > 0) {
           chipsHtml = sources.map(function (s) {
             return `
-              <button class="src-chip" type="button" data-url="${escAttr(s.url || '')}" title="${escAttr(s.title || s.source || '')}">
+              <button class="src-chip" type="button" data-url="${escAttr(s.url || '')}" data-title="${escAttr(s.title || s.source || '')}" data-source="${escAttr(s.source || '')}" data-excerpt="${escAttr(s.snippet || s.excerpt || '')}" title="${escAttr(s.title || s.source || '')}">
                 <span class="src-chip-top">
                   <span class="source-index">${esc(String(s.index))}</span>
                   <span class="src-chip-domain">${esc(s.source || 'Source')}</span>
@@ -2758,6 +2890,8 @@
           tailEl.innerHTML = actionsHtml + relatedHtml;
           bindCopyAnswer(tailEl, contentEl);
           addPreCopyButtons(contentEl);
+          wrapAnswerTables(contentEl);
+          renderSourceRail(sources);
           updateJumpPill();
         }
 
@@ -2814,16 +2948,80 @@
 
       function addPreCopyButtons(contentEl) {
         Array.from(contentEl.querySelectorAll('pre')).forEach(function (pre) {
-          if (pre.querySelector('.pre-copy')) return;
-          const code = pre.innerText;
+          if (pre.closest('.code-block')) return;
+          const lang = pre.getAttribute('data-lang') || 'code';
+          const wrap = document.createElement('div');
+          wrap.className = 'code-block';
+          const bar = document.createElement('div');
+          bar.className = 'code-block__bar';
+          bar.innerHTML = '<span>' + esc(lang) + '</span>';
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'pre-copy';
           btn.textContent = 'Copy';
           btn.addEventListener('click', function () {
-            copyText(code, btn);
+            copyText(pre.innerText, btn);
           });
-          pre.appendChild(btn);
+          bar.appendChild(btn);
+          pre.parentNode.insertBefore(wrap, pre);
+          wrap.appendChild(bar);
+          wrap.appendChild(pre);
+        });
+      }
+
+      function wrapAnswerTables(contentEl) {
+        Array.from(contentEl.querySelectorAll('table')).forEach(function (table) {
+          if (table.parentNode && table.parentNode.classList.contains('table-scroll')) return;
+          const wrap = document.createElement('div');
+          wrap.className = 'table-scroll';
+          table.parentNode.insertBefore(wrap, table);
+          wrap.appendChild(table);
+        });
+      }
+
+      function sourceHost(url) {
+        if (window.SVWorkspace && window.SVWorkspace.hostFrom) return window.SVWorkspace.hostFrom(url);
+        try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
+      }
+
+      function clearSourceRail() {
+        if (sourceRailList) sourceRailList.innerHTML = '';
+        if (sourceRail) {
+          sourceRail.hidden = true;
+          sourceRail.classList.remove('is-on');
+        }
+        appShell.classList.remove('has-sources');
+      }
+
+      function renderSourceRail(sources) {
+        if (!sourceRail || !sourceRailList) return;
+        if (!sources || !sources.length) {
+          clearSourceRail();
+          return;
+        }
+        sourceRailList.innerHTML = sources.map(function (s, i) {
+          const host = s.source || sourceHost(s.url) || 'Source';
+          return '<button class="source-card" type="button" data-url="' + escAttr(s.url || '') + '" data-title="' + escAttr(s.title || host) + '" data-source="' + escAttr(host) + '" data-excerpt="' + escAttr(s.snippet || s.excerpt || '') + '">' +
+            '<img class="source-card__favicon" alt="" src="https://www.google.com/s2/favicons?domain=' + escAttr(host) + '&sz=32" width="18" height="18" />' +
+            '<span class="source-card__domain">' + esc(host) + '</span>' +
+            '<span class="source-card__title">' + esc(s.title || host) + '</span>' +
+            '<span class="source-card__meta">' + (i === 0 ? 'just now' : 'used in answer') + '</span>' +
+          '</button>';
+        }).join('');
+        sourceRail.hidden = false;
+        sourceRail.classList.add('is-on');
+        appShell.classList.add('has-sources');
+        Array.from(sourceRailList.querySelectorAll('.source-card')).forEach(function (card) {
+          card.addEventListener('click', function () {
+            if (window.SVWorkspace && window.SVWorkspace.openCite) {
+              window.SVWorkspace.openCite(card, {
+                url: card.dataset.url || '',
+                title: card.dataset.title || '',
+                source: card.dataset.source || '',
+                excerpt: card.dataset.excerpt || ''
+              });
+            }
+          });
         });
       }
 
@@ -2854,6 +3052,9 @@
           wrapper.className = 'stream-block';
           wrapper.appendChild(node.cloneNode(true));
           target.appendChild(wrapper.firstChild);
+          if (state.followAnswer && isNearBottom()) {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
+          }
           updateJumpPill();
           await wait(delay);
         }
@@ -3050,33 +3251,9 @@
         };
       }
 
-      function startPhraseCycle() {
-        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        state.phraseTimer = window.setInterval(function () {
-          state.phraseIndex = (state.phraseIndex + 1) % PHRASES.length;
-          const next = PHRASES[state.phraseIndex];
-          transitionPhrase(heroPhrase, next);
-          transitionPhrase(composerPhrase, next);
-        }, 2600);
-      }
+      function startPhraseCycle() {}
 
-      function transitionPhrase(el, nextText) {
-        if (!el) return;
-        el.classList.remove('is-enter', 'is-enter-active');
-        el.classList.add('is-exit');
-
-        window.setTimeout(function () {
-          el.textContent = nextText;
-          el.classList.remove('is-exit');
-          el.classList.add('is-enter');
-          requestAnimationFrame(function () {
-            el.classList.add('is-enter-active');
-          });
-          window.setTimeout(function () {
-            el.classList.remove('is-enter', 'is-enter-active');
-          }, 430);
-        }, 280);
-      }
+      function transitionPhrase() {}
 
       function scrollToBottom() {
         requestAnimationFrame(function () {
@@ -3121,7 +3298,8 @@
               i += 1;
             }
             i += 1; // skip the closing fence
-            out.push('<pre>' + esc(code.join('\n').trim()) + '</pre>');
+            var lang = trimmed.replace(/^```/, '').trim() || 'code';
+            out.push('<pre data-lang="' + escAttr(lang) + '">' + esc(code.join('\n').trim()) + '</pre>');
             continue;
           }
 
@@ -3195,8 +3373,7 @@
       init();
     })();
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="assets/js/summaverick-workspace.js"></script>
   <script src="assets/js/summaverick-how.js"></script>
   <script src="assets/js/shared/help-panel.js"></script>
   <script>
@@ -3206,7 +3383,7 @@
       title: 'How to use Summaverick',
       intro: 'An AI research assistant built for fast, sourced answers.',
       steps: [
-        { title: 'Start with a task', desc: 'Tap one of the starter cards under "What do you want to do?" for a ready-made prompt, or just type your own question in the composer.' },
+        { title: 'Start with a task', desc: 'Tap a prompt chip under the welcome line, or type your own question in the composer at the bottom of the page.' },
         { title: 'Pick a depth', desc: 'Choose Quick, Deeper, or Full picture above the composer to control how much context and research goes into the answer.' },
         { title: 'Keep the thread going', desc: 'Follow-up questions stay in the same conversation — Summaverick remembers the context, so you don\'t have to repeat yourself.' },
         { title: 'Browse chat history', desc: 'Open the history icon in the top bar to revisit, rename, or delete past conversations.' },

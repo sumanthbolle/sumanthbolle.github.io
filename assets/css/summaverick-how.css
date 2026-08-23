@@ -1,130 +1,131 @@
-/* Summaverick product page — how search / live / reason / accuracy work.
-   Same pin language as the homepage intro. Always a dark cinematic island. */
+/* Summaverick — How it works as a quiet research timeline.
+   Desktop: horizontal SEARCH → LIVE SEARCH → REASON → VERIFY
+   Mobile: compact vertical steps. Reveals once on scroll. */
 
 .sm-how {
-  --sm-how-composer: var(--composer-h, 168px);
+  --sm-how-composer: var(--composer-h, 132px);
   position: relative;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  background: #050608;
-  color: #f5f5f7;
+  width: 100%;
+  margin: 40px 0 8px;
+  color: inherit;
   isolation: isolate;
 }
 
 .sm-how__pin {
   position: relative;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
-  background: #050608;
+  height: auto;
+  overflow: visible;
+  background: transparent;
 }
 
-.sm-how__canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.sm-how__veil {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(5, 6, 8, 0.55) 0%, transparent 28%, transparent 58%, rgba(5, 6, 8, 0.72) 100%),
-    radial-gradient(ellipse 70% 50% at 50% 62%, transparent 0%, rgba(5, 6, 8, 0.28) 100%);
+.sm-how__canvas,
+.sm-how__veil,
+.sm-how__pips,
+.sm-how__progress {
+  display: none;
 }
 
 .sm-how__copy {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: 4;
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 88px 22px 0;
-  pointer-events: none;
+  align-items: flex-start;
+  text-align: left;
+  padding: 0;
 }
 
 .sm-how__kicker {
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.46);
-  margin-bottom: 16px;
+  color: var(--text-faint, rgba(255, 255, 255, 0.34));
+  margin-bottom: 18px;
 }
 
 .sm-how__acts {
   position: relative;
-  width: min(42rem, 100%);
-  min-height: 9.5rem;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .sm-how__act {
+  position: relative;
+  opacity: 0.42;
+  transform: none;
+  filter: none;
+  padding: 0 0 22px 22px;
+  transition: opacity var(--motion-normal, 260ms) var(--ease-standard, ease);
+}
+
+.sm-how__act::before {
+  content: "";
   position: absolute;
-  inset: 0;
-  opacity: 0;
-  transform: translateY(16px);
-  filter: blur(8px);
-  will-change: opacity, transform, filter;
+  left: 5px;
+  top: 10px;
+  bottom: 0;
+  width: 1px;
+  background: var(--border, rgba(255, 255, 255, 0.08));
+}
+
+.sm-how__act:last-of-type {
+  padding-bottom: 8px;
+}
+
+.sm-how__act:last-of-type::before {
+  display: none;
+}
+
+.sm-how.is-revealed .sm-how__act {
+  opacity: 1;
 }
 
 .sm-how__index {
   display: block;
-  font-family: "Courier New", Courier, ui-monospace, monospace;
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 10px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-faint, rgba(255, 255, 255, 0.34));
+  margin-bottom: 6px;
 }
 
 .sm-how__title {
-  font-size: clamp(1.8rem, 5vw, 2.7rem);
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
   font-weight: 560;
-  letter-spacing: -0.035em;
-  line-height: 1.08;
-  color: #fff;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--text, inherit);
 }
 
 .sm-how__body {
-  margin: 12px auto 0;
-  max-width: 28rem;
-  font-size: clamp(14px, 1.8vw, 16px);
+  margin: 6px 0 0;
+  max-width: 36rem;
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.58);
+  color: var(--text-muted, rgba(255, 255, 255, 0.58));
 }
 
 .sm-how__cta {
   position: relative;
-  z-index: 8;
-  pointer-events: none;
-  opacity: 0;
-  margin-top: 22px;
+  z-index: 2;
+  margin-top: 10px;
+  margin-left: 22px;
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 22px;
+  min-height: 44px;
+  padding: 10px 18px;
   border: 0;
   border-radius: 999px;
-  background: #fff;
-  color: #050608;
+  background: var(--send-bg, #fff);
+  color: var(--send-fg, #050608);
   font: inherit;
   font-size: 14px;
   font-weight: 560;
   cursor: pointer;
-  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45);
 }
-
-.sm-how__cta.is-on { pointer-events: auto; }
 
 .sm-how__cta svg {
   width: 15px;
@@ -136,81 +137,64 @@
   stroke-linejoin: round;
 }
 
-.sm-how__pips {
-  position: absolute;
-  left: 50%;
-  bottom: calc(var(--sm-how-composer) + 22px);
-  transform: translateX(-50%);
-  z-index: 5;
-  display: flex;
-  gap: 8px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  pointer-events: none;
+.sm-how-line {
+  display: none;
 }
 
-.sm-how__pips li {
-  width: 22px;
-  height: 3px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.16);
+@media (min-width: 1024px) {
+  .sm-how { margin-top: 56px; }
+
+  .sm-how__acts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+    padding-top: 18px;
+  }
+
+  .sm-how__act {
+    padding: 12px 0 0;
+  }
+
+  .sm-how__act::before { display: none; }
+
+  .sm-how-line {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 6%;
+    right: 6%;
+    height: 1px;
+    background: var(--border, rgba(255, 255, 255, 0.08));
+    overflow: hidden;
+  }
+
+  .sm-how-line > span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--text-faint, rgba(255, 255, 255, 0.34));
+  }
+
+  .sm-how.is-revealed .sm-how-line > span {
+    animation: sm-how-line 720ms var(--ease-standard, ease) forwards;
+  }
+
+  .sm-how__cta { margin-left: 0; }
 }
 
-.sm-how__pips li.is-on {
-  background: #fff;
-}
-
-.sm-how__progress {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  z-index: 5;
-  background: rgba(255, 255, 255, 0.08);
-  pointer-events: none;
-}
-
-.sm-how__progress > span {
-  display: block;
-  height: 100%;
-  width: 0;
-  background: linear-gradient(90deg, #33d6ff, #ffffff, #ff4fd8);
-}
-
-@media (max-width: 720px) {
-  .sm-how__copy { padding-top: 76px; }
-  .sm-how__acts { min-height: 11rem; }
-  .sm-how__pips { bottom: calc(var(--sm-how-composer) + 14px); }
+@keyframes sm-how-line {
+  to { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sm-how__pin {
-    height: auto;
-    min-height: 0;
-    padding: 72px 22px calc(var(--sm-how-composer) + 28px);
+  .sm-how__act,
+  .sm-how.is-revealed .sm-how__act {
+    opacity: 1;
+    transition: none;
   }
-  .sm-how__canvas,
-  .sm-how__veil,
-  .sm-how__progress { display: none; }
-  .sm-how__copy { position: relative; padding: 0; }
-  .sm-how__acts {
-    min-height: 0;
-    display: grid;
-    gap: 28px;
+
+  .sm-how.is-revealed .sm-how-line > span {
+    animation: none;
+    width: 100%;
   }
-  .sm-how__act {
-    position: relative;
-    inset: auto;
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-  }
-  .sm-how__cta {
-    opacity: 1 !important;
-    pointer-events: auto;
-    margin-top: 28px;
-  }
-  .sm-how__pips { display: none; }
 }

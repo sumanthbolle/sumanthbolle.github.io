@@ -1,5 +1,5 @@
 /**
- * Summaverick how-it-works film — structure and wiring.
+ * Summaverick how-it-works timeline — structure and wiring.
  * Run: node scripts/test-summaverick-how.js
  */
 'use strict';
@@ -23,11 +23,13 @@ function test(name, fn) {
   }
 }
 
-test('how section sits on the landing, before starters', function () {
-  var how = html.indexOf('id="summaverick-how"');
+test('how section sits after starters, before supporting Today', function () {
   var starters = html.indexOf('class="starter-wrap"');
-  assert.ok(how > -1);
-  assert.ok(starters > how);
+  var how = html.indexOf('id="summaverick-how"');
+  var today = html.indexOf('class="support-block"');
+  assert.ok(starters > -1);
+  assert.ok(how > starters);
+  assert.ok(today > how);
 });
 
 test('four capability acts are present', function () {
@@ -37,23 +39,25 @@ test('four capability acts are present', function () {
   assert.ok(html.indexOf('Ask from here') > -1);
 });
 
-test('assets and scroll library are linked', function () {
+test('assets are linked and cinematic film is gone', function () {
   assert.ok(html.indexOf('assets/css/summaverick-how.css') > -1);
   assert.ok(html.indexOf('assets/js/summaverick-how.js') > -1);
-  assert.ok(html.indexOf('ScrollTrigger.min.js') > -1);
+  assert.equal(html.indexOf('ScrollTrigger.min.js') === -1, true);
+  assert.equal(html.indexOf('id="smHowCanvas"') === -1, true);
 });
 
-test('script is scroll-driven and chat-aware', function () {
-  assert.ok(js.indexOf('ScrollTrigger') > -1);
+test('script reveals once and is reduced-motion aware', function () {
+  assert.ok(js.indexOf('IntersectionObserver') > -1);
   assert.ok(js.indexOf('prefers-reduced-motion') > -1);
-  assert.ok(js.indexOf('app-active') > -1);
+  assert.ok(js.indexOf('is-revealed') > -1);
   assert.ok(js.indexOf('queryInput') > -1);
 });
 
-test('CSS pins a full-viewport island', function () {
-  assert.ok(css.indexOf('.sm-how__pin') > -1);
-  assert.ok(css.indexOf('100dvh') > -1);
+test('CSS is a timeline, not a pinned film', function () {
+  assert.ok(css.indexOf('.sm-how__acts') > -1);
+  assert.ok(css.indexOf('grid-template-columns: repeat(4') > -1);
   assert.ok(css.indexOf('prefers-reduced-motion') > -1);
+  assert.equal(css.indexOf('100dvh') === -1, true);
 });
 
 console.log('All Summaverick how-it-works checks passed.');
