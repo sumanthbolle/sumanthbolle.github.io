@@ -119,6 +119,14 @@ const PYQ_INDEX = Object.freeze({
   }],
 });
 
+// Recency is 10% of study priority. Fixtures are dated 22 Aug 2026; freeze
+// "now" so a calendar crossing the 7-day recency cliff cannot fail CI.
+const NOW = '2026-08-22T12:00:00Z';
+
+function withNow(extra) {
+  return Object.assign({ now: NOW }, extra || {});
+}
+
 function loadPacket() {
   const context = { URL, window: {} };
   vm.runInNewContext(fs.readFileSync(SOURCE, 'utf8'), context, { filename: SOURCE });
@@ -145,6 +153,20 @@ test('converts component scores into an explained study-priority band', function
   assert.equal(low.band, 'skip');
 });
 
+test('scores recency against a frozen clock so the 7-day cliff is deterministic', function () {
+  const Packet = loadPacket();
+  assert.equal(Packet.recencyScore(SOURCE_RECORD.publishedAt, '2026-08-22T12:00:00Z'), 100);
+  assert.equal(Packet.recencyScore(SOURCE_RECORD.publishedAt, '2026-08-29T06:00:00Z'), 70);
+  assert.equal(Packet.recencyScore(SOURCE_RECORD.publishedAt, '2026-08-30T12:00:00Z'), 50);
+  const weekOld = Packet.packetFromSource(SOURCE_RECORD, withNow({
+    atlas: ATLAS,
+    pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX),
+    now: '2026-08-30T12:00:00Z',
+  }));
+  assert.equal(weekOld.priority_components.recency, 50);
+  assert.equal(weekOld.priority, 'useful');
+});
+
 test('matches a Finance Commission trigger to the fiscal-federalism atlas anchor', function () {
   const Packet = loadPacket();
   const matched = Packet.matchAtlas(SOURCE_RECORD, [ATLAS]);
@@ -158,10 +180,10 @@ test('does not invent an atlas match for a routine auction', function () {
 
 test('builds a source packet with layers, vault, kit, PYQ bridge and source strip', function () {
   const Packet = loadPacket();
-  const packet = Packet.packetFromSource(SOURCE_RECORD, {
+  const packet = Packet.packetFromSource(SOURCE_RECORD, withNow({
     atlas: ATLAS,
     pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX),
-  });
+  }));
   assert.equal(packet.id, 'src_pib');
   assert.equal(packet.priority, 'must_know');
   assert.match(packet.priority_note, /not a prediction/);
@@ -177,18 +199,18 @@ test('builds a source packet with layers, vault, kit, PYQ bridge and source stri
 
 test('marks low-value market operations as Skip', function () {
   const Packet = loadPacket();
-  const packet = Packet.packetFromSource(AUCTION, { anchors: [ATLAS] });
+  const packet = Packet.packetFromSource(AUCTION, withNow({ anchors: [ATLAS] }));
   assert.equal(packet.priority, 'skip');
   assert.equal(packet.anchors.length, 0);
 });
 
 test('upgrades a source packet when a source-backed exam note exists', function () {
   const Packet = loadPacket();
-  const packet = Packet.packetFromExamNote(EXAM_NOTE, {
+  const packet = Packet.packetFromExamNote(EXAM_NOTE, withNow({
     atlas: ATLAS,
     pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX),
     subject: SOURCE_RECORD.subject,
-  });
+  }));
   assert.equal(packet.hasExamNote, true);
   assert.equal(packet.revision.eligible, true);
   assert.equal(packet.layers.understand.debate[0].right.indexOf('Cesses') !== -1, true);
@@ -203,8 +225,8 @@ test('Today stack keeps at most three Must Know items and explains the session b
     return Packet.packetFromSource(Object.assign({}, SOURCE_RECORD, {
       id: 'src_' + index,
       title: SOURCE_RECORD.title + ' ' + index,
-    }), { atlas: ATLAS, pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX) });
-  }).concat([Packet.packetFromSource(AUCTION, { anchors: [ATLAS] })]);
+    }), withNow({ atlas: ATLAS, pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX) }));
+  }).concat([Packet.packetFromSource(AUCTION, withNow({ anchors: [ATLAS] }))]);
   const stack = Packet.buildTodayStack(packets, { editionDate: '2026-08-22' });
   assert.ok(stack.must_know.length <= 3);
   assert.equal(stack.skip.length, 1);
@@ -215,13 +237,13 @@ test('Today stack keeps at most three Must Know items and explains the session b
 test('seven-day catch-up merges repeated anchors and discards Skip items', function () {
   const Packet = loadPacket();
   const packets = [
-    Packet.packetFromSource(SOURCE_RECORD, { atlas: ATLAS, pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX) }),
+    Packet.packetFromSource(SOURCE_RECORD, withNow({ atlas: ATLAS, pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX) })),
     Packet.packetFromSource(Object.assign({}, SOURCE_RECORD, {
       id: 'src_pib_2',
       publishedAt: '2026-08-20T04:00:00Z',
       title: 'GST Council reviews tax devolution',
-    }), { atlas: ATLAS, pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX) }),
-    Packet.packetFromSource(Object.assign({}, AUCTION, { publishedAt: '2026-08-21T04:00:00Z' }), { anchors: [ATLAS] }),
+    }), withNow({ atlas: ATLAS, pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX) })),
+    Packet.packetFromSource(Object.assign({}, AUCTION, { publishedAt: '2026-08-21T04:00:00Z' }), withNow({ anchors: [ATLAS] })),
   ];
   const catchup = Packet.buildCatchUp(packets, { days: 7, editionDate: '2026-08-22' });
   assert.equal(catchup.discarded.length, 1);
@@ -234,7 +256,7 @@ test('seven-day catch-up merges repeated anchors and discards Skip items', funct
 
 test('packet-to-note mapping keeps the static anchor for local revision', function () {
   const Packet = loadPacket();
-  const packet = Packet.packetFromExamNote(EXAM_NOTE, { atlas: ATLAS, subject: SOURCE_RECORD.subject });
+  const packet = Packet.packetFromExamNote(EXAM_NOTE, withNow({ atlas: ATLAS, subject: SOURCE_RECORD.subject }));
   const note = Packet.packetToNote(packet);
   assert.equal(note.anchor, 'Fiscal federalism');
   assert.equal(note.origin, 'topic-packet');
@@ -245,8 +267,8 @@ test('packet-to-note mapping keeps the static anchor for local revision', functi
 test('search understands UPSC intent across anchors, PYQ themes and codes', function () {
   const Packet = loadPacket();
   const packets = [
-    Packet.packetFromSource(SOURCE_RECORD, { atlas: ATLAS, pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX) }),
-    Packet.packetFromSource(AUCTION, { anchors: [ATLAS] }),
+    Packet.packetFromSource(SOURCE_RECORD, withNow({ atlas: ATLAS, pyqs: Packet.linkPyqs('fiscal-federalism', PYQ_INDEX) })),
+    Packet.packetFromSource(AUCTION, withNow({ anchors: [ATLAS] })),
   ];
   assert.equal(Packet.searchPackets(packets, 'federalism').length, 1);
   assert.equal(Packet.searchPackets(packets, 'GS2.2')[0].id, 'src_pib');

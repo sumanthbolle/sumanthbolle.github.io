@@ -190,7 +190,7 @@
     return { score: score, band: band, components: components };
   }
 
-  function inferPriorityInputs(record, atlas, pyqs) {
+  function inferPriorityInputs(record, atlas, pyqs, nowISO) {
     var text = [record && record.title, record && record.officialSummary].join(' ');
     var codes = (record && record.codes) || (atlas && atlas.codes) || [];
     var syllabus = codes.length ? 78 : (atlas ? 62 : 28);
@@ -213,7 +213,7 @@
       pyq_proximity: pyqScore,
       anchor_recurrence: recurrence,
       conceptual_depth: depth,
-      recency: recencyScore(record && record.publishedAt),
+      recency: recencyScore(record && record.publishedAt, nowISO),
     };
   }
 
@@ -245,7 +245,7 @@
     var extras = context || {};
     var atlas = extras.atlas || matchAtlas(record, extras.anchors);
     var pyqs = extras.pyqs || linkPyqs(atlas && atlas.id, extras.pyqIndex);
-    var scored = extras.priority || scorePriority(inferPriorityInputs(record, atlas, pyqs));
+    var scored = extras.priority || scorePriority(inferPriorityInputs(record, atlas, pyqs, extras.now));
     var subject = record.subject || extras.subject || null;
     var codes = unique((record.codes || []).concat((atlas && atlas.codes) || [])).slice(0, 3);
     var papers = unique(codes.map(primaryPaper).concat((atlas && atlas.papers) || [])
@@ -387,7 +387,7 @@
       editorialState: note.editorialStatus,
       codes: note.codes,
       subject: extras.subject,
-    }, extras.atlas, base.pyq_links), {
+    }, extras.atlas, base.pyq_links, extras.now), {
       conceptual_depth: note.canMemorize ? 88 : 54,
       syllabus_fit: 90,
     }));
@@ -497,6 +497,7 @@
         anchors: extras.anchors,
         subject: source.subject || extras.inferSubject && extras.inferSubject(source),
         source: source,
+        now: extras.now,
       };
       if (notes[source.id]) return packetFromExamNote(notes[source.id], context);
       return packetFromSource(Object.assign({}, source, { subject: context.subject }), context);
@@ -680,6 +681,7 @@
     BAND_LABELS: BAND_LABELS,
     CONTENT_TYPES: CONTENT_TYPES,
     WEIGHTS: WEIGHTS,
+    recencyScore: recencyScore,
     scorePriority: scorePriority,
     bandLabel: function (band) { return BAND_LABELS[band] || 'Skip'; },
     inferContentType: inferContentType,
