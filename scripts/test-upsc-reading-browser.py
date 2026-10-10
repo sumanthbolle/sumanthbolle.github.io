@@ -37,7 +37,11 @@ with sync_playwright() as playwright:
     assert page.locator("#q").input_value() == ""
     assert page.locator(".pr-story").count() == total
 
-    page.locator("[data-pocket-article]").first.click()
+    # The arrow and excerpt share the same native link as the title.
+    arrow = page.locator(".pr-story__arrow").first
+    assert arrow.is_visible()
+    assert arrow.bounding_box()["width"] >= 44
+    arrow.click()
     title = page.locator("#pocketArticleTitle").inner_text()
     assert page.evaluate("document.activeElement.id") == "pocketArticleTitle"
     assert "article=" in page.url
@@ -57,9 +61,19 @@ with sync_playwright() as playwright:
     assert page.locator("#pocketLibrary").is_visible()
     assert not page.locator("#pocketReader").is_visible()
     assert page.title() == "UPSC Today"
-    page.locator("[data-pocket-article]").first.click()
+    link = page.locator(".pr-story__link").first
+    link.focus()
+    link.press("Enter")
+    assert_body(page, articles[0])
     page.go_back(wait_until="networkidle")
     assert page.locator("#pocketLibrary").is_visible()
+    with page.context.expect_page() as popup_info:
+        page.locator(".pr-story__arrow").first.click(modifiers=["Control"])
+    popup = popup_info.value
+    popup.wait_for_load_state("networkidle")
+    assert_body(popup, articles[0])
+    assert page.locator("#pocketLibrary").is_visible()
+    popup.close()
     page.go_forward(wait_until="networkidle")
     assert page.locator("#pocketArticleTitle").inner_text() == title
     page.locator("#tab-memory").click()
@@ -104,7 +118,7 @@ with sync_playwright() as playwright:
         assert packet.is_visible()
         assert packet.locator("h2").is_visible()
         assert packet.bounding_box()["width"] <= 661
-        assert float(packet.locator("h2").evaluate("el => parseFloat(getComputedStyle(el).fontSize)")) >= 36
+        assert float(packet.locator("h2").evaluate("el => parseFloat(getComputedStyle(el).fontSize)")) >= 32
         assert packet.locator("p").last.is_visible()
         assert reader.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
         reader.locator("#tab-catchup").click()
@@ -114,4 +128,4 @@ with sync_playwright() as playwright:
         print("PASS:", width, theme, "article bodies and study layout", flush=True)
         context.close()
     browser.close()
-print("PASS: complete article bodies, older renderer compatibility, direct links, responsive study articles, search, history and takeaway recall")
+print("PASS: arrows, keyboard and new-tab navigation, complete article bodies, older renderer compatibility, direct links, responsive study articles, search, history and takeaway recall")

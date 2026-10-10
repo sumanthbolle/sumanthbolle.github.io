@@ -481,7 +481,7 @@ def _page_shell(
         ).replace("</", "<\\/")
         structured = f'<script type="application/ld+json">{json_ld}</script>'
     return f'''<!doctype html>
-<html lang="en"><head>
+<html lang="en" class="upsc-static"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{escape(title)}</title>
 <meta name="description" content="{escape(description, quote=True)}">
@@ -489,16 +489,17 @@ def _page_shell(
 <meta property="og:type" content="article"><meta property="og:title" content="{escape(title, quote=True)}">
 <meta property="og:description" content="{escape(description, quote=True)}">
 <meta property="og:url" content="{escape(canonical, quote=True)}">{structured}
+<link rel="stylesheet" href="/assets/css/upsc-reading.css?v=20261010-3">
 <style>
-:root{{--ink:#18221d;--muted:#59645f;--paper:#fbfaf5;--line:#d8d6c9;--green:#1f5b47;--amber:#f5dfa2}}
-*{{box-sizing:border-box}}body{{margin:0;background:var(--paper);color:var(--ink);font:17px/1.7 Georgia,serif}}
-header,main,footer{{width:min(860px,calc(100% - 32px));margin:auto}}header{{padding:24px 0;border-bottom:1px solid var(--line)}}
-nav a{{color:var(--green);font:700 14px/1.2 system-ui,sans-serif;text-decoration:none;margin-right:18px}}
-h1{{font-size:clamp(2rem,7vw,4rem);line-height:1.02;margin:54px 0 14px}}h2{{font-size:1.2rem;margin:0 0 10px}}
-.dek,.meta,.awaiting{{color:var(--muted)}}.meta{{font:600 13px/1.5 system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase}}
-section{{padding:25px 0;border-top:1px solid var(--line)}}section ul{{margin:0;padding-left:22px}}.answer-use{{background:var(--amber);padding:22px;margin:20px -22px;border:0}}
+:root{{--ink:var(--text);--muted:var(--gray);--line:var(--rule);--green:var(--blue);--amber:var(--editorial-wash)}}
+*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--ink);font:19px/1.75 var(--serif);overflow-wrap:anywhere}}
+header,main,footer{{width:min(660px,calc(100% - 40px));margin:auto}}header{{padding:16px 0;border-bottom:1px solid var(--line)}}
+nav{{display:flex;flex-wrap:wrap;gap:4px 24px}}nav a{{display:inline-flex;align-items:center;min-height:44px;color:var(--green);font:600 14px/1.4 var(--sans);text-decoration:none}}
+h1{{font-size:clamp(2rem,7vw,3.4rem);font-weight:500;line-height:1.08;margin:40px 0 14px}}h2{{font-size:1.5rem;line-height:1.3;margin:0 0 10px}}
+.dek,.meta,.awaiting{{color:var(--muted)}}.meta{{font:600 13px/1.5 var(--sans);letter-spacing:.04em;text-transform:uppercase}}
+section{{padding:25px 0;border-top:1px solid var(--line)}}section ul{{margin:0;padding-left:22px}}.answer-use{{background:var(--amber);padding:22px;margin:20px 0;border:0}}
 .official-facts{{border-left:4px solid var(--green);padding-left:20px}}.analysis{{border-left:4px solid #9b7130;padding-left:20px}}
-a{{color:#125a78}}footer{{padding:35px 0 60px;border-top:1px solid var(--line);color:var(--muted);font:14px/1.5 system-ui,sans-serif}}
+a{{color:var(--green);text-underline-offset:3px}}footer{{padding:35px 0 60px;border-top:1px solid var(--line);color:var(--muted);font:14px/1.5 var(--sans)}}
 </style></head><body><header><nav><a href="/upsc">Open study desk</a><a href="/upsc-study/">Study archive</a></nav></header>
 <main>{body}</main><footer>Generated {escape(generated_at)} from reviewed official-source records. UPSC notifications and syllabus remain controlling.</footer></body></html>'''
 

@@ -49,3 +49,13 @@ Run `node scripts/test-upsc-reading.js` and the existing UPSC JavaScript checks.
 Browser checks should cover article links and reloads, back/forward navigation, keyboard focus, search and no-result states, saving and duplicate saves, existing revision notes, retry after an article-fetch failure, light/dark themes, and all tabs on narrow screens. New takeaways reuse the existing local revision store and do not silently mark themselves as verified.
 
 With Playwright available and the static server running, `python3 scripts/test-upsc-reading-browser.py` checks search reset, article routes, focus, history and saving. Pass a different server origin as its first argument if needed.
+
+### Topic navigation and responsive subpages
+
+The Pocket read arrows were decorative spans outside the title links. Each article row now contains one native link around its title, excerpt and arrow, with its accessible name taken from the title. Arrow taps and keyboard Enter open the complete article; Ctrl-click and middle-click retain native new-tab behavior. Arrows remain visible on small screens.
+
+All seven interactive UPSC pages load the shared reading stylesheet and local fonts. Tabs, subject links, filters and form controls wrap within the viewport, buttons and disclosures have a 44px minimum height, and long references can break without widening the page. Standalone guide, revision, Mains, quiz and review pages initialize their mobile navigation, existing theme controls and saved theme. Published archive pages stay JavaScript-free and follow the device colour preference.
+
+The reader's scroll offset follows the measured sticky navigation height instead of fixed desktop/mobile constants. The generated note template shares the 660px reading width and uses safe margins for answer-use panels. Its data and publication eligibility rules are unchanged.
+
+`python3 scripts/test-upsc-responsive-browser.py` checks eight UPSC routes at 320, 390, 768 and 1440px, light/dark themes, theme buttons, every Pocket read arrow, title clearance, all desk tabs, the note editor and Atlas drill. It also exercises the held-note renderer with long IDs and the real publication template with a populated answer panel; these fixtures are intercepted in the test browser and are never published.
