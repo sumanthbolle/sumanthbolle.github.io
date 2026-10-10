@@ -477,10 +477,6 @@
       editionDate: latestSourceDay(),
     });
     el('catchupDesk').innerHTML = Render.catchUpDesk(catchup);
-    if (el('catchupMeta')) {
-      el('catchupMeta').innerHTML = '<strong>' + catchup.must_know.length + '</strong> Must Know · <strong>' +
-        catchup.useful.length + '</strong> Useful · <strong>' + catchup.discarded.length + '</strong> discarded.';
-    }
   }
 
   function renderBrief() {
@@ -522,9 +518,7 @@
     renderPacketDesk();
     el('topicOfDay').innerHTML = '';
     el('dailyEdition').innerHTML = Render.dailyEdition(edition);
-    el('dailyEditionMeta').innerHTML = edition.items.length
-      ? '<strong>' + edition.items.length + '</strong> official updates across <strong>' + edition.groups.length + '</strong> subjects.'
-      : 'No matching articles.';
+    el('dailyEditionMeta').textContent = edition.items.length ? formatEditionDate(edition.editionDate) : '';
     el('subjectJump').innerHTML = edition.groups.map(function (group) {
       return '<a href="?view=brief&amp;subject=' + Render.esc(group.subject.id) + '#daily-' + Render.esc(group.subject.id) +
         '" data-subject-jump="' + Render.esc(group.subject.id) + '">' + Render.esc(group.subject.label) +

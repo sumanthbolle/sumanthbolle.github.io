@@ -36,6 +36,14 @@ Do not add a daily date to an unchanged evergreen article. Do not promise a read
 
 ## Validation
 
+### Article-body repair
+
+The first reading release depended on `AnchorRender.safeHttpUrl`, a new export from an existing, unversioned script. A browser retaining the earlier renderer could build the article library but fail while building an article's source links. The library had already been hidden, leaving an empty reader. This failure was reproduced with the older renderer interface in Chromium.
+
+The reader validates its source URLs locally and builds article HTML before changing visibility. UPSC script and stylesheet URLs now include a coordinated cache version, which should be updated when shipping changes to these assets. Direct links focus and scroll to the article title after loading. Pocket reads and Study desk articles share the reading measure, heading sizes and mobile spacing.
+
+The browser regression checks compare every rendered paragraph to the article data and verify visibility across mobile, tablet and desktop widths, including dark mode and the older renderer interface. They also check the extensionless `/upsc?article=...` route used by the production site. The local static server serves this route through a test interception; the deployed domain remains inaccessible from the environment.
+
 Run `node scripts/test-upsc-reading.js` and the existing UPSC JavaScript checks. The new reading check is included in the publisher's CI workflow. Publisher fixtures run with `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/upsc -p 'test_*.py'`.
 
 Browser checks should cover article links and reloads, back/forward navigation, keyboard focus, search and no-result states, saving and duplicate saves, existing revision notes, retry after an article-fetch failure, light/dark themes, and all tabs on narrow screens. New takeaways reuse the existing local revision store and do not silently mark themselves as verified.

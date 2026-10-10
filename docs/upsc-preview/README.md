@@ -2,7 +2,9 @@
 
 Screenshots from the working review branch, captured in Chromium on 10 October 2026. Click an image to view it at full size. These are static previews; the production site is not deployed from this branch.
 
-The page now begins with five short articles, followed by a collapsed Study desk and the official update feed. It uses warm paper colours, restrained green accents, self-hosted fonts, and a focused article view. The floating assistant was removed from this page. Search, saved takeaways, revision and the source archive remain available.
+The page begins with five short articles, followed by a collapsed Study desk and the official update feed. It uses warm paper colours, restrained green accents, self-hosted fonts, and a focused article view. Search, saved takeaways, revision and the source archive remain available. The masthead slogans and repeated priority totals have been removed.
+
+The article renderer now supports the older shared script interface, preventing cached scripts from leaving an empty reader. Asset URLs are versioned, and direct article links focus the loaded title. Pocket reads and Must Know article views share the same reading width, title sizing and responsive spacing.
 
 ## Desktop reading room
 
@@ -20,6 +22,14 @@ The page now begins with five short articles, followed by a collapsed Study desk
 
 ![Mobile reading room in dark theme](mobile-dark-reading-room.png)
 
+## Mobile article body
+
+![Mobile Pocket read showing its article paragraphs](mobile-pocket-article.png)
+
+## Must Know source brief
+
+![Mobile Must Know article view using the same responsive reading layout](mobile-study-article.png)
+
 The initial articles are evergreen explainers. The official update feed refreshes through the existing scheduled workflow; Pocket reads need editorial publication. See the [review and daily writing guide](../upsc-reading-review.md).
 
-Validation: 72 publisher tests, all 12 UPSC JavaScript check scripts, and browser checks for navigation, search, saved takeaways, mobile layouts and both themes passed. The deployed domain could not be checked from this environment.
+Validation: all 14 UPSC JavaScript check scripts passed. Browser regression checks cover every article's complete paragraph text and visibility, the older shared renderer interface, direct links and reloads, responsive study articles, search, history and saved takeaways. The deployed domain could not be checked from this environment.
