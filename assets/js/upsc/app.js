@@ -106,6 +106,7 @@
   function routeUrl(name, options) {
     var url = new URL(window.location.href);
     var settings = options || {};
+    url.searchParams.delete('article');
     if (name === 'brief') url.searchParams.delete('view');
     else url.searchParams.set('view', name);
     if (state.query) url.searchParams.set('q', state.query);
@@ -127,7 +128,10 @@
       var tab = el('tab-' + view);
       var panel = el('view-' + view);
       var active = view === name;
-      if (tab) tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      if (tab) {
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        tab.setAttribute('tabindex', active ? '0' : '-1');
+      }
       if (panel) panel.hidden = !active;
     });
     if (name === 'source') renderSourceDesk();
@@ -141,6 +145,7 @@
     if (updateHistory && window.history && window.history.pushState) {
       window.history.pushState({ view: name }, '', routeUrl(name));
     }
+    window.dispatchEvent(new Event('upsc:viewchange'));
   }
 
   function requestedSubject() {
@@ -165,6 +170,7 @@
     if (window.history && window.history.pushState) {
       window.history.pushState({ view: 'brief', subject: subjectId }, '', routeUrl('brief', { subject: subjectId }));
     }
+    window.dispatchEvent(new Event('upsc:viewchange'));
     scrollToRequestedSubject();
   }
 
@@ -481,7 +487,7 @@
     el('briefTitle').textContent = state.query
       ? 'Search results for “' + el('q').value.trim() + '”'
       : (state.scope === 'weekly' ? 'Seven-day edition' : 'Today');
-    el('dailyTitle').textContent = state.query ? 'Matching articles' : 'Worth your time today';
+    el('dailyTitle').textContent = state.query ? 'Matching official updates' : 'Latest official updates';
     var list = el('briefEntries');
     if (state.sourceLoading) {
       el('briefLoading').hidden = false;
@@ -490,7 +496,6 @@
     el('briefLoading').hidden = true;
     var sources = blogSources();
     var edition = Content.buildDailyEdition(sources, { limit: state.scope === 'weekly' ? 15 : 12 });
-    var topic = Content.selectTopicOfDay(sources, state.examSummaries);
     var packets = visiblePackets();
     var stack = Packet ? Packet.buildTodayStack(packets, { editionDate: state.scope === 'weekly' ? '' : latestSourceDay() }) : {
       essential_count: 0, read_minutes: 0, recall_minutes: 0, must_know: [], useful: [], background: [], skip: [],
@@ -515,7 +520,7 @@
     if (el('priorityBackground')) el('priorityBackground').innerHTML = Render.stackSection('Background', stack.background);
     if (el('prioritySkip')) el('prioritySkip').innerHTML = Render.stackSection('Skip / archive only', stack.skip);
     renderPacketDesk();
-    el('topicOfDay').innerHTML = Render.topicOfDay(topic);
+    el('topicOfDay').innerHTML = '';
     el('dailyEdition').innerHTML = Render.dailyEdition(edition);
     el('dailyEditionMeta').innerHTML = edition.items.length
       ? '<strong>' + edition.items.length + '</strong> official updates across <strong>' + edition.groups.length + '</strong> subjects.'
@@ -526,12 +531,12 @@
         ' <span>' + group.items.length + '</span></a>';
     }).join('');
     list.innerHTML = state.examExpandedId && state.examDetails[state.examExpandedId]
-      ? '<section class="an-complete-note"><p class="an-label">Complete topper note</p>' +
+      ? '<section class="an-complete-note"><p class="an-label">Study note</p>' +
         Render.examNote(state.examDetails[state.examExpandedId], {}) + '</section>' : '';
     el('clusterBlock').hidden = true;
     el('discardBlock').hidden = true;
     renderBriefMeta();
-    if (edition.editionDate) el('editionStamp').textContent = edition.editionDate;
+    if (edition.editionDate) el('editionStamp').textContent = 'Updates · ' + formatEditionDate(edition.editionDate);
     scrollToRequestedSubject();
   }
 
@@ -1066,7 +1071,12 @@
     if (state.view !== 'brief') setView('brief');
     renderPacketDesk();
     var desk = el('packetDesk');
-    if (desk) desk.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (desk) {
+      el('studyTools').open = true;
+      var heading = desk.querySelector('h2');
+      if (heading) heading.focus({ preventScroll: true });
+      desk.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }
   }
 
   function startSession(mode) {
@@ -1205,6 +1215,17 @@
         event.preventDefault();
         setView(tab.getAttribute('data-view'), true);
       });
+      tab.addEventListener('keydown', function (event) {
+        var index = VIEWS.indexOf(tab.getAttribute('data-view'));
+        if (event.key === 'ArrowRight') index = (index + 1) % VIEWS.length;
+        else if (event.key === 'ArrowLeft') index = (index + VIEWS.length - 1) % VIEWS.length;
+        else if (event.key === 'Home') index = 0;
+        else if (event.key === 'End') index = VIEWS.length - 1;
+        else return;
+        event.preventDefault();
+        setView(VIEWS[index], true);
+        el('tab-' + VIEWS[index]).focus();
+      });
     });
 
     ['sourceQuery', 'sourcePublisher', 'sourceDate', 'sourceJurisdiction', 'sourceType', 'sourcePaper'].forEach(function (id) {
@@ -1269,6 +1290,7 @@
       if (window.history && window.history.replaceState) {
         window.history.replaceState({ view: state.view }, '', routeUrl(state.view));
       }
+      window.dispatchEvent(new Event('upsc:viewchange'));
     });
     search.addEventListener('keydown', function (event) {
       if (event.key === 'Enter') {
@@ -1288,6 +1310,7 @@
         if (window.history && window.history.replaceState) {
           window.history.replaceState({ view: state.view }, '', routeUrl(state.view));
         }
+        window.dispatchEvent(new Event('upsc:viewchange'));
       }
     });
 
@@ -1429,6 +1452,11 @@
     renderNotes();
     renderCounts();
     renderRail();
+    window.addEventListener('upsc:noteschange', function () {
+      renderNotes();
+      renderCounts();
+      renderBrief();
+    });
     setView(state.view);
     loadAtlasAndPyqs();
     loadSourceIndex();

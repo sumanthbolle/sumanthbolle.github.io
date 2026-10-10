@@ -187,7 +187,7 @@ test('mute preference persists without throwing', function () {
 });
 
 test('UPSC study pages load the coach widget after the endpoint is set', function () {
-  const pages = ['upsc.html', 'upsc-patterns.html', 'mains.html', 'upsc-quiz.html', 'revision.html'];
+  const pages = ['upsc-patterns.html', 'mains.html', 'upsc-quiz.html', 'revision.html'];
   pages.forEach(function (name) {
     const html = fs.readFileSync(path.join(__dirname, '..', name), 'utf8');
     assert.match(html, /assets\/css\/upsc-coach\.css/);
@@ -197,6 +197,12 @@ test('UPSC study pages load the coach widget after the endpoint is set', functio
       name + ' must set the Worker URL before coach.js'
     );
   });
+});
+
+test('the article reading page does not mount the coach widget', function () {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'upsc.html'), 'utf8');
+  assert.doesNotMatch(html, /assets\/js\/upsc\/coach\.js/);
+  assert.doesNotMatch(html, /assets\/css\/upsc-coach\.css/);
 });
 
 console.log('UPSC Summaverick coach tests passed');

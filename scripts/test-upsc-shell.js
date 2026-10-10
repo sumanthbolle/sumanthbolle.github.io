@@ -61,8 +61,8 @@ test('provides the flagship desk, official stream, topic archive, and revision t
     'answerPracticeList', 'answerPracticeState',
   ]) assert.match(html, new RegExp('id="' + id + '"'));
   assert.match(html, /class="an-editorial-masthead"/);
-  assert.match(html, /Worth your time today/);
-  assert.match(html, /Search anchors, triggers and PYQ themes/);
+  assert.match(html, /Latest official updates/);
+  assert.match(html, /Search articles, topics and official updates/);
   assert.match(html, /href="upsc-guide\.html"/);
   assert.match(html, />How to use</);
 });
@@ -92,11 +92,12 @@ test('loads the public content contract before render and app', function () {
   const memory = html.indexOf('assets/js/upsc/memory.js');
   const render = html.indexOf('assets/js/upsc/render.js');
   const app = html.indexOf('assets/js/upsc/app.js');
-  const coach = html.indexOf('assets/js/upsc/coach.js');
+  const reading = html.indexOf('assets/js/upsc/reading.js');
   const scroll = html.indexOf('assets/js/upsc/scroll.js');
   assert.ok(content > 0 && content < packet && packet < memory && memory < render && render < app);
-  assert.ok(coach > app);
-  assert.ok(scroll > coach);
+  assert.ok(reading > app);
+  assert.ok(scroll > reading);
+  assert.doesNotMatch(html, /assets\/js\/upsc\/coach\.js/);
   assert.match(html, /assets\/css\/upsc-motion\.css/);
 });
 
