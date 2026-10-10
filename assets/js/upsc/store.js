@@ -494,7 +494,7 @@
           if (note.prelimsFact) lines.push('- **Prelims fact:** ' + note.prelimsFact);
           if (note.sourceUrl) {
             lines.push('- **Source:** ' + note.sourceUrl +
-              ' — ' + (note.verified ? 'primary source' : 'secondary coverage, unverified'));
+              ' — ' + (note.verified ? 'primary source' : 'source cited; note verification pending'));
           }
           var meta = [];
           if (note.score !== null) meta.push('score ' + note.score);

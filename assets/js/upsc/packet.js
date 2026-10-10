@@ -358,7 +358,7 @@
       publishedAt: clean(record.publishedAt, 32),
       atlas: atlas ? { id: atlas.id, label: atlas.anchor, band: atlas.band } : null,
       hasExamNote: false,
-      read_minutes: scored.band === 'must_know' ? 5 : (scored.band === 'useful' ? 4 : 2),
+      read_minutes: Math.max(1, Math.ceil((title + ' ' + summary).split(/\s+/).length / 180)),
     };
   }
 

@@ -420,7 +420,7 @@
           esc(String(value.publishedAt || '').slice(0, 10)) + ' · Priority ' + esc(value.priority) + '</p>' +
         '<button type="button" class="btn btn-sm" data-act="open-exam" data-id="' +
           attr(value.sourceId) + '"' + (loading ? ' disabled' : '') + '>' +
-          (loading ? 'Loading note…' : 'Read topper note') + '</button>' +
+          (loading ? 'Loading note…' : 'Read study note') + '</button>' +
       '</div></article>';
   }
 
@@ -594,6 +594,18 @@
     var mains = (row.mains && row.mains.questions) ? row.mains.questions.length : 0;
     var pyq = (row.pyq_links || []).length;
     var anchor = row.anchors && row.anchors[0] ? row.anchors[0] : null;
+    if (!row.hasExamNote) {
+      var sourceUrl = safeHttpUrl(row.sourceUrl);
+      return '<article class="pk-card" data-packet-id="' + attr(row.id) + '">' +
+        '<p class="pk-card__meta"><span class="pk-subject">Official update</span>' +
+          '<span class="pk-read">Source brief</span></p><h3>' + esc(row.title) + '</h3>' +
+        (changed && changed.toLowerCase() !== String(row.title || '').toLowerCase()
+          ? '<p class="pk-card__changed">' + esc(compactText(changed, 180)) + '</p>' : '') +
+        '<div class="pk-card__actions"><button type="button" class="btn btn-sm" data-act="open-packet" data-id="' +
+          attr(row.id) + '" data-layer="brief">Read source brief</button>' +
+          (sourceUrl ? '<a class="btn btn-sm btn-quiet" href="' + attr(sourceUrl) +
+            '" target="_blank" rel="noopener noreferrer">Open official source ↗</a>' : '') + '</div></article>';
+    }
     return '<article class="pk-card" data-packet-id="' + attr(row.id) + '" data-priority="' + attr(row.priority) + '">' +
       '<p class="pk-card__meta">' + priorityBadge(row.priority) + paperBadges(row.papers) +
         (row.subjects && row.subjects[0] ? '<span class="pk-subject">' + esc(row.subjects[0]) + '</span>' : '') +
@@ -667,10 +679,10 @@
       { id: 'understand', label: 'Understand in 5 min' },
       { id: 'master', label: 'Master the topic' },
     ];
-    return '<div class="pk-layers" role="tablist" aria-label="Reading depth">' +
+    return '<div class="pk-layers" role="group" aria-label="Reading depth">' +
       layers.map(function (layer) {
         var selected = layer.id === current;
-        return '<button type="button" role="tab" aria-selected="' + (selected ? 'true' : 'false') +
+        return '<button type="button" aria-pressed="' + (selected ? 'true' : 'false') +
           '" data-act="packet-layer" data-layer="' + attr(layer.id) + '">' + esc(layer.label) + '</button>';
       }).join('') + '</div>';
   }
@@ -704,7 +716,7 @@
       '<p class="pk-sources__meta">Verified facts: ' + esc(verified) +
         ' · Opinion statements: ' + esc(opinion) +
         ' · Open/contested: ' + esc(open) +
-        (packet && packet.date ? ' · Last checked: ' + esc(packet.date) : '') +
+        (packet && packet.date ? ' · Source date: ' + esc(packet.date) : '') +
         '</p></section>';
   }
 
@@ -760,6 +772,18 @@
 
   function topicPacket(packet, options) {
     var row = packet || {};
+    if (!row.hasExamNote) {
+      var summary = row.trigger && row.trigger.summary;
+      var url = safeHttpUrl(row.sourceUrl);
+      return '<article class="pk-packet" data-packet-id="' + attr(row.id) + '">' +
+        '<header class="pk-packet__head"><p class="an-label">Official source brief</p>' +
+          '<h2 tabindex="-1">' + esc(row.title) + '</h2></header>' +
+        (summary && summary.toLowerCase() !== String(row.title || '').toLowerCase()
+          ? '<div class="pk-block"><p>' + esc(summary) + '</p></div>'
+          : '<p class="pk-empty">The feed includes a headline. Open the official source for the full text.</p>') +
+        (url ? '<p><a class="btn" href="' + attr(url) + '" target="_blank" rel="noopener noreferrer">Read at ' +
+          esc(row.publisherName || 'the official source') + ' ↗</a></p>' : '') + '</article>';
+    }
     var extras = options || {};
     var layer = extras.layer || 'brief';
     var brief = row.layers && row.layers.brief ? row.layers.brief : {};
@@ -800,7 +824,7 @@
           }).join('') +
           '<span class="pk-read">' + esc(row.read_minutes || 5) + ' min</span>' +
           priorityBadge(row.priority) + '</p>' +
-        '<h2>' + esc(row.title) + '</h2>' +
+        '<h2 tabindex="-1">' + esc(row.title) + '</h2>' +
         (anchor ? '<p class="pk-card__anchor">Static anchor: <a href="upsc-patterns.html?anchor=' +
           attr(anchor.id) + '">' + esc(anchor.label) + '</a></p>' : '') +
         '<p class="pk-packet__status">' + esc(status) +
@@ -884,6 +908,7 @@
 
   window.AnchorRender = {
     esc: esc,
+    safeHttpUrl: safeHttpUrl,
     sourceEntry: sourceEntry,
     coverageStatus: coverageStatus,
     topicOfDay: topicOfDay,

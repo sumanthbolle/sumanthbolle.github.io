@@ -230,7 +230,8 @@ test('Today stack keeps at most three Must Know items and explains the session b
   const stack = Packet.buildTodayStack(packets, { editionDate: '2026-08-22' });
   assert.ok(stack.must_know.length <= 3);
   assert.equal(stack.skip.length, 1);
-  assert.ok(stack.read_minutes >= 6);
+  assert.equal(stack.read_minutes, stack.must_know.concat(stack.useful)
+    .reduce(function (sum, packet) { return sum + packet.read_minutes; }, 0));
   assert.ok(stack.essential_count <= 6);
 });
 

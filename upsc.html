@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UPSC Today</title>
-  <meta name="description" content="Official-source UPSC Topic Packets with study priority, Prelims vaults, Mains kits, and revision.">
+  <meta name="description" content="Short UPSC explainers, daily official updates, and simple revision. Read one idea at a time, with examples and sources.">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#f7f9fb">
   <link rel="canonical" href="https://sumanthbolle.com/upsc">
   <meta property="og:title" content="UPSC Today">
-  <meta property="og:description" content="Official-source UPSC Topic Packets for Prelims, Mains, and revision.">
+  <meta property="og:description" content="Short reads on the ideas behind the news. Free UPSC explainers with examples, sources, and revision.">
   <meta property="og:url" content="https://sumanthbolle.com/upsc">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
@@ -22,22 +22,20 @@
     "@type": "CollectionPage",
     "name": "UPSC Today",
     "url": "https://sumanthbolle.com/upsc",
-    "description": "Official-source UPSC Topic Packets: study priority, static anchors, PYQ bridges and spaced revision.",
+    "description": "Short UPSC explainers, daily official updates, and simple revision.",
     "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
   }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="preload" href="assets/fonts/newsreader-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/utility-chrome.css">
   <link rel="stylesheet" href="assets/css/nav-utilities.css">
   <link rel="stylesheet" href="assets/css/utility-page.css">
   <link rel="stylesheet" href="assets/css/upsc.css">
   <link rel="stylesheet" href="assets/css/upsc-motion.css">
-  <link rel="stylesheet" href="assets/css/upsc-coach.css">
+  <link rel="stylesheet" href="assets/css/upsc-reading.css">
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to today’s desk</a>
+  <a class="skip-link" href="#main">Skip to articles</a>
   <nav aria-label="Portfolio navigation">
     <div class="nav-c">
       <a href="index.html" class="nav-logo">Sumanth Bolle</a>
@@ -87,16 +85,14 @@
   </nav>
 
   <header class="an-editorial-masthead">
-    <p class="an-publication-mark">Flagship</p>
+    <p class="an-publication-mark">The daily reading room</p>
     <h1>UPSC Today</h1>
+    <p class="an-edition-kicker">Short reads on the ideas behind the news.</p>
     <div class="an-edition-line">
-      <span id="editionStamp">Daily edition</span>
+      <span>Free to read</span>
+      <span id="editionStamp">Official updates</span>
       <a href="upsc-patterns.html">Patterns</a>
       <a href="mains.html">Practice</a>
-      <a href="upsc-quiz.html">Test recall</a>
-      <a href="revision.html">Revisit today</a>
-      <a href="upsc-study/">Archive</a>
-      <a href="upsc-guide.html">How to use</a>
     </div>
   </header>
 
@@ -111,8 +107,8 @@
       </div>
       <search class="an-search" role="search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
-        <label class="sr-only" for="q">Search anchors, triggers and PYQ themes</label>
-        <input type="search" id="q" placeholder="Search anchors, triggers, PYQs" autocomplete="off" spellcheck="false">
+        <label class="sr-only" for="q">Search articles, topics and official updates</label>
+        <input type="search" id="q" placeholder="Find something to read" autocomplete="off" spellcheck="false">
         <kbd>/</kbd>
       </search>
     </div>
@@ -149,6 +145,18 @@
 
         <!-- Today's reading edition -->
         <section class="an-view" id="view-brief" role="tabpanel" aria-labelledby="tab-brief">
+          <section class="pr-library" id="pocketLibrary" aria-labelledby="pocketLibraryTitle">
+            <header class="pr-section-head">
+              <div><p class="an-label">Pocket reads</p><h2 id="pocketLibraryTitle">One idea. A few minutes.</h2></div>
+              <p>Plain explanations. Everyday examples.</p>
+            </header>
+            <div id="pocketList" aria-live="polite"><p class="pr-message">Loading short reads…</p></div>
+            <noscript><p>JavaScript is needed for the short-read library. You can still browse the <a href="upsc-study/">study archive</a>.</p></noscript>
+          </section>
+          <div id="pocketReader" hidden></div>
+
+          <details class="pr-study-tools" id="studyTools">
+            <summary>Study desk <span>Practice, priority topics &amp; revision</span></summary>
           <header class="an-edition-head">
             <div><p class="an-label">Study desk</p><h2 id="briefTitle">Today</h2></div>
             <p class="an-viewhead__meta" id="briefMeta">Loading…</p>
@@ -179,17 +187,26 @@
 
           <div id="topicOfDay" aria-live="polite"></div>
 
+          <div class="an-entries" id="briefEntries"></div>
+          <section class="an-block" id="clusterBlock" hidden>
+            <h3>Topics that repeated this week</h3>
+            <ul class="an-clusters" id="clusterList"></ul>
+          </section>
+          <section class="an-block" id="discardBlock" hidden>
+            <h3>Other updates</h3>
+            <ul class="an-discards" id="discardList"></ul>
+          </section>
+          </details>
+
           <nav class="an-subject-jump" id="subjectJump" aria-label="Subjects in today’s edition"></nav>
 
           <section class="an-daily an-source-stream" aria-labelledby="dailyTitle">
             <header class="an-daily__head">
-              <div><p class="an-label">Official stream</p><h2 id="dailyTitle">Worth your time today</h2></div>
+              <div><p class="an-label">From the source</p><h2 id="dailyTitle">Latest official updates</h2></div>
               <p class="an-viewhead__meta" id="dailyEditionMeta"></p>
             </header>
             <div id="dailyEdition"></div>
           </section>
-
-          <div class="an-entries" id="briefEntries"></div>
 
           <details class="an-reading-tools">
             <summary>Filter articles</summary>
@@ -210,15 +227,6 @@
             </div>
           </details>
 
-          <section class="an-block" id="clusterBlock" hidden>
-            <h3>Anchors that repeated this week</h3>
-            <ul class="an-clusters" id="clusterList"></ul>
-          </section>
-
-          <section class="an-block" id="discardBlock" hidden>
-            <h3>Discarded</h3>
-            <ul class="an-discards" id="discardList"></ul>
-          </section>
         </section>
 
         <section class="an-view" id="view-catchup" role="tabpanel" aria-labelledby="tab-catchup" hidden>
@@ -387,14 +395,13 @@
 
   <script src="assets/js/shared/nav-theme.js"></script>
   <script src="assets/js/shared/nav-utilities.js"></script>
-  <script>window.SB_UPSC_ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';</script>
   <script src="assets/js/upsc/store.js"></script>
   <script src="assets/js/upsc/content.js"></script>
   <script src="assets/js/upsc/packet.js"></script>
   <script src="assets/js/upsc/memory.js"></script>
   <script src="assets/js/upsc/render.js"></script>
   <script src="assets/js/upsc/app.js"></script>
-  <script src="assets/js/upsc/coach.js"></script>
+  <script src="assets/js/upsc/reading.js"></script>
   <script src="assets/js/upsc/scroll.js"></script>
 </body>
 </html>
