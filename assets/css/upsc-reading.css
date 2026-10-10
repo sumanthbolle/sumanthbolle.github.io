@@ -57,8 +57,6 @@
 
 .an-editorial-masthead { padding: 104px 24px 28px; }
 .an-editorial-masthead h1 { font-size: clamp(50px, 8vw, 84px); }
-.an-publication-mark { font-size: 12px; letter-spacing: 0.14em; }
-.an-edition-kicker { margin: 0 auto 16px; font-size: 19px; color: var(--gray); }
 .an-edition-line { flex-wrap: wrap; align-items: center; gap: 4px 20px; letter-spacing: 0; text-transform: none; }
 .an-edition-line a { display: inline-flex; align-items: center; min-height: 44px; }
 .an-main { padding-top: 40px; }
@@ -77,7 +75,6 @@
 
 .pr-section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
 .pr-section-head h2 { margin-top: 8px; font-size: clamp(28px, 4vw, 36px); font-weight: 500; text-wrap: balance; }
-.pr-section-head > p { font-family: var(--sans); font-size: 13px; color: var(--gray); }
 .pr-list { list-style: none; }
 .pr-story { display: grid; grid-template-columns: 120px 1fr 32px; gap: 28px; padding: 28px 0; border-top: 1px solid var(--rule); }
 .pr-story__index { font-family: var(--sans); font-size: 12px; color: var(--gray); padding-top: 5px; }
@@ -95,10 +92,11 @@
 .pr-message { padding: 28px 0; color: var(--gray); font-family: var(--sans); font-size: 16px; }
 .pr-message button { margin-top: 12px; }
 
-.pr-reader { max-width: var(--reading-measure); margin: 0 auto 48px; }
+.pr-reader, .pk-packet { max-width: var(--reading-measure); margin: 0 auto 48px; min-width: 0; overflow-wrap: anywhere; }
 .pr-reader__back { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 24px; font-family: var(--sans); font-size: 14px; color: var(--blue); text-underline-offset: 4px; }
-.pr-reader h2 { margin: 16px 0; font-size: clamp(36px, 5.5vw, 54px); font-weight: 500; line-height: 1.1; text-wrap: balance; letter-spacing: -0.025em; scroll-margin-top: 160px; }
+.pr-reader h2, .pk-packet h2 { margin: 16px 0; font-size: clamp(36px, 5.5vw, 54px); font-weight: 500; line-height: 1.1; text-wrap: balance; letter-spacing: -0.025em; scroll-margin-top: 160px; }
 #pocketLibraryTitle, #packetDesk { scroll-margin-top: 160px; }
+.pr-reader h2:focus, .pk-packet h2:focus, #pocketLibraryTitle:focus { outline: none; }
 .pr-reader__dek { font-size: 23px; line-height: 1.5; color: var(--gray); margin-bottom: 24px; }
 .pr-reader__date { font-family: var(--sans); font-size: 12px; color: var(--gray); padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
 .pr-reader__body { font-size: 20px; line-height: 1.8; }
@@ -124,7 +122,6 @@
 
 .pr-study-tools { border-block: 1px solid var(--rule); margin: 32px 0; }
 .pr-study-tools > summary { cursor: pointer; padding: 20px 0; font-family: var(--sans); font-size: 16px; font-weight: 600; }
-.pr-study-tools > summary span { margin-left: 12px; color: var(--gray); font-size: 13px; font-weight: 400; }
 .pr-study-tools[open] > summary { margin-bottom: 24px; }
 .an-main[data-reading] .pr-study-tools,
 .an-main[data-reading] .an-source-stream,
@@ -132,11 +129,33 @@
 .an-main[data-reading] .an-reading-tools { display: none; }
 .pr-study-tools .an-edition-head { display: none; }
 .pk-hero h2 { font-size: 32px; }
-.pk-hero__budget { margin-bottom: 16px; }
 .pk-stack h3 { margin-bottom: 16px; }
+.pk-card { min-width: 0; padding: 28px 0; overflow-wrap: anywhere; }
+.pk-card h3 { font-size: clamp(25px, 3vw, 32px); font-weight: 500; line-height: 1.2; text-wrap: balance; }
 .pk-card__actions { margin-top: 16px; }
-.pk-card__meta .pk-badge, .pk-paper, .pk-subject, .pk-read { font-size: 12px; }
+.pk-card__meta { gap: 8px 16px; }
+.pk-card__meta .pk-badge, .pk-paper, .pk-subject, .pk-read { font-size: 12px; letter-spacing: 0; text-transform: none; }
 .pk-card__changed { font-size: 18px; line-height: 1.65; }
+.pk-packet { padding: 0 0 32px; font-size: 20px; line-height: 1.8; }
+.pk-packet__head { padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+.pk-packet__status { margin-top: 16px; font-size: 12px; }
+.pk-packet .pk-block, .pk-packet .pk-bridge, .pk-packet .pk-changed,
+.pk-packet .pk-vault, .pk-packet .pk-kit, .pk-packet .pk-pyq, .pk-packet .pk-sources { margin: 36px 0; }
+.pk-packet .pk-block h3, .pk-packet .pk-bridge h3, .pk-packet .pk-changed h3,
+.pk-packet .pk-vault h3, .pk-packet .pk-kit h3, .pk-packet .pk-pyq h3 {
+  margin-bottom: 14px; font-family: var(--serif); font-size: 26px; font-weight: 600;
+  line-height: 1.25; letter-spacing: 0; text-transform: none; color: var(--text);
+}
+.pk-packet .pk-block p, .pk-packet .pk-block li, .pk-packet .pk-empty,
+.pk-packet .pk-bridge p, .pk-packet .pk-changed dd { font-size: inherit; line-height: inherit; }
+.pk-packet li + li { margin-top: 12px; }
+.pk-packet .pk-sources { padding-top: 24px; border-top: 1px solid var(--rule); }
+.pk-packet .pk-sources h3 { letter-spacing: 0; text-transform: none; }
+.pk-packet .pk-sources a { display: inline-block; min-height: 44px; overflow-wrap: anywhere; }
+.pk-packet .pk-sticky { position: static; margin-top: 24px; background: transparent; }
+.pk-packet .pk-sticky .btn { flex: 1 1 160px; border-radius: 4px; }
+.pk-packet .pk-sticky .btn-primary { background: var(--blue); color: var(--bg); }
+.pk-packet > p > .btn { max-width: 100%; min-height: 44px; padding: 12px 16px; border-radius: 4px; font-family: var(--sans); font-size: 14px; text-decoration: none; }
 .pk-low { margin-bottom: 24px; }
 .pk-low summary { min-height: 44px; cursor: pointer; }
 .pk-empty, .pk-sources__meta { font-size: 16px; }
@@ -171,7 +190,6 @@ html.sb-motion .an-command { animation-duration: 300ms; animation-delay: 0ms; }
 @media (max-width: 680px) {
   .an-editorial-masthead { padding: 84px 20px 20px; }
   .an-editorial-masthead h1 { margin-bottom: 12px; }
-  .an-edition-kicker { font-size: 18px; }
   .an-edition-line { gap: 4px 14px; }
   .an-main { padding: 28px 20px 64px; }
   .an-views { justify-content: space-between; gap: 0; }
@@ -185,11 +203,11 @@ html.sb-motion .an-command { animation-duration: 300ms; animation-delay: 0ms; }
   .pr-story__meta { gap: 8px 12px; }
   .pr-story h3 { font-size: 27px; }
   .pr-story:first-child h3 { font-size: 32px; }
-  .pr-reader h2 { font-size: 38px; scroll-margin-top: 180px; }
+  .pr-reader h2, .pk-packet h2 { font-size: 38px; scroll-margin-top: 180px; }
+  .pr-reader h2 { scroll-margin-top: 216px; }
   #pocketLibraryTitle, #packetDesk { scroll-margin-top: 180px; }
   .pr-reader__dek { font-size: 21px; }
-  .pr-reader__body { font-size: 19px; line-height: 1.75; }
-  .pr-study-tools > summary span { display: block; margin: 6px 0 0 18px; }
+  .pr-reader__body, .pk-packet { font-size: 19px; line-height: 1.75; }
   .pr-takeaway { padding: 20px; }
   .pr-reader__actions .btn { flex: 1; }
 }

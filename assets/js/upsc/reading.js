@@ -3,6 +3,15 @@
   'use strict';
   var Render = window.AnchorRender;
 
+  function sourceUrl(value) {
+    try {
+      var url = new URL(String(value || '').trim());
+      return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : '';
+    } catch (error) {
+      return '';
+    }
+  }
+
   function readMinutes(article) {
     var text = [article.title, article.excerpt, article.takeaway, article.question];
     (article.sections || []).forEach(function (section) {
@@ -47,23 +56,23 @@
 
   function articleHtml(article, next) {
     var esc = Render.esc;
-    return '<article class="pr-reader"><a class="pr-reader__back" href="upsc.html#pocketLibrary" data-pocket-back>← All short reads</a>' +
+    return '<article class="pr-reader"><a class="pr-reader__back" href="upsc.html#pocketLibrary" data-pocket-back>← Pocket reads</a>' +
       '<header><p class="pr-reader__meta"><span>' + esc(article.subject) + '</span><span>' +
         esc(article.paper) + '</span><span>' + readMinutes(article) + ' min read</span></p>' +
       '<h2 id="pocketArticleTitle" tabindex="-1">' + esc(article.title) + '</h2>' +
       '<p class="pr-reader__dek">' + esc(article.excerpt) + '</p>' +
-      '<p class="pr-reader__date">Explainer · Published <time datetime="' + esc(article.publishedOn) + '">' +
+      '<p class="pr-reader__date">Published <time datetime="' + esc(article.publishedOn) + '">' +
         esc(dateLabel(article.publishedOn)) + '</time></p></header>' +
       '<div class="pr-reader__body">' + article.sections.map(function (section) {
         return '<section><h3>' + esc(section.heading) + '</h3>' + section.paragraphs.map(function (paragraph) {
           return '<p>' + esc(paragraph) + '</p>';
         }).join('') + '</section>';
       }).join('') + '</div>' +
-      '<aside class="pr-takeaway"><h3>Keep this in mind</h3><p>' + esc(article.takeaway) + '</p></aside>' +
-      '<section class="pr-question"><h3>A question to sit with</h3><p>' + esc(article.question) + '</p></section>' +
+      '<aside class="pr-takeaway"><h3>Takeaway</h3><p>' + esc(article.takeaway) + '</p></aside>' +
+      '<section class="pr-question"><h3>Recall question</h3><p>' + esc(article.question) + '</p></section>' +
       '<section class="pr-reader__sources"><h3>Sources &amp; further reading</h3><ul>' +
         (article.sources || []).map(function (source) {
-          var url = Render.safeHttpUrl(source.url);
+          var url = sourceUrl(source.url);
           return url ? '<li><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' +
             esc(source.label) + ' ↗</a></li>' : '';
         }).join('') + '</ul></section>' +
@@ -71,7 +80,7 @@
         esc(article.id) + '">Save the takeaway</button>' +
         '<span class="pr-save-status" id="pocketSaveStatus" role="status"></span></div>' +
       (next ? '<a class="pr-reader__next" href="' + articleHref(next) + '" data-pocket-article="' + esc(next.id) +
-        '"><span>Another short read · ' + readMinutes(next) + ' min</span><strong>' + esc(next.title) + ' →</strong></a>' : '') +
+        '"><span>Next article · ' + readMinutes(next) + ' min</span><strong>' + esc(next.title) + ' →</strong></a>' : '') +
       '</article>';
   }
 
@@ -98,19 +107,20 @@
   function render() {
     if (!loaded) return;
     var article = currentArticle();
-    library.hidden = !!article;
-    reader.hidden = !article;
-    main.toggleAttribute('data-reading', !!article);
-    document.title = article ? article.title + ' — UPSC Today' : baseTitle;
     if (article) {
       var index = articles.indexOf(article);
-      reader.innerHTML = articleHtml(article, articles[(index + 1) % articles.length]);
+      var body = articleHtml(article, articles[(index + 1) % articles.length]);
+      reader.innerHTML = body;
     } else {
       var url = new URL(window.location.href);
       var unknown = url.searchParams.has('article') && !url.searchParams.has('view');
       list.innerHTML = (unknown ? '<p class="pr-message">That short read is unavailable. Choose another below.</p>' : '') +
         libraryHtml(filterArticles(articles, search.value));
     }
+    library.hidden = !!article;
+    reader.hidden = !article;
+    main.toggleAttribute('data-reading', !!article);
+    document.title = article ? article.title + ' — UPSC Today' : baseTitle;
   }
 
   function navigate(id) {
@@ -138,6 +148,11 @@
       articles = payload.articles;
       loaded = true;
       render();
+      if (currentArticle()) {
+        var title = document.getElementById('pocketArticleTitle');
+        title.focus({ preventScroll: true });
+        title.scrollIntoView({ block: 'start', behavior: 'auto' });
+      }
     }).catch(function () {
       list.innerHTML = '<div class="pr-message"><p>The short reads could not load. The official updates are still available below.</p>' +
         '<button type="button" class="btn" data-pocket-retry>Try again</button></div>';

@@ -55,6 +55,20 @@ test('article text is escaped and unsupported source URL protocols are excluded'
   assert.match(html, /id="pocketArticleTitle" tabindex="-1"/);
 });
 
+test('article bodies render with the older shared renderer interface', function () {
+  const safeUrl = Render.safeHttpUrl;
+  delete Render.safeHttpUrl;
+  try {
+    for (const article of articles) {
+      const html = Reads.articleHtml(article);
+      assert.ok(html.includes(Render.esc(article.sections[0].paragraphs[0])));
+      assert.ok(html.includes('href="' + article.sources[0].url + '"'));
+    }
+  } finally {
+    Render.safeHttpUrl = safeUrl;
+  }
+});
+
 test('source-only records do not advertise empty explainers or repeat headline summaries', function () {
   const packet = { id: 'source', title: 'A headline', trigger: { summary: 'A headline' },
     sourceUrl: 'https://example.com/record', hasExamNote: false };

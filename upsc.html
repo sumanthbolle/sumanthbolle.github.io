@@ -30,9 +30,9 @@
   <link rel="stylesheet" href="assets/css/utility-chrome.css">
   <link rel="stylesheet" href="assets/css/nav-utilities.css">
   <link rel="stylesheet" href="assets/css/utility-page.css">
-  <link rel="stylesheet" href="assets/css/upsc.css">
-  <link rel="stylesheet" href="assets/css/upsc-motion.css">
-  <link rel="stylesheet" href="assets/css/upsc-reading.css">
+  <link rel="stylesheet" href="assets/css/upsc.css?v=20261010-2">
+  <link rel="stylesheet" href="assets/css/upsc-motion.css?v=20261010-2">
+  <link rel="stylesheet" href="assets/css/upsc-reading.css?v=20261010-2">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to articles</a>
@@ -58,7 +58,6 @@
               <a href="save-yourself.html"><span class="nav-drop__name">Save Yourself</span><span class="nav-drop__desc">Loan cost calculator</span></a>
             </div>
           </li>
-          <li><a data-nav-link="summaverick" href="summaverick.html">Summaverick</a></li>
           <li><a data-nav-link="about" href="index.html#about">About</a></li>
         </ul>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
@@ -79,17 +78,13 @@
       <a class="mobile-menu__sub" href="flights.html">SkyFare</a>
       <a class="mobile-menu__sub" href="metals.html">Metals</a>
       <a class="mobile-menu__sub" href="save-yourself.html">Save Yourself</a>
-      <a href="summaverick.html">Summaverick</a>
       <a href="index.html#about">About</a>
     </div>
   </nav>
 
   <header class="an-editorial-masthead">
-    <p class="an-publication-mark">The daily reading room</p>
     <h1>UPSC Today</h1>
-    <p class="an-edition-kicker">Short reads on the ideas behind the news.</p>
     <div class="an-edition-line">
-      <span>Free to read</span>
       <span id="editionStamp">Official updates</span>
       <a href="upsc-patterns.html">Patterns</a>
       <a href="mains.html">Practice</a>
@@ -147,8 +142,7 @@
         <section class="an-view" id="view-brief" role="tabpanel" aria-labelledby="tab-brief">
           <section class="pr-library" id="pocketLibrary" aria-labelledby="pocketLibraryTitle">
             <header class="pr-section-head">
-              <div><p class="an-label">Pocket reads</p><h2 id="pocketLibraryTitle">One idea. A few minutes.</h2></div>
-              <p>Plain explanations. Everyday examples.</p>
+              <h2 id="pocketLibraryTitle">Pocket reads</h2>
             </header>
             <div id="pocketList" aria-live="polite"><p class="pr-message">Loading short reads…</p></div>
             <noscript><p>JavaScript is needed for the short-read library. You can still browse the <a href="upsc-study/">study archive</a>.</p></noscript>
@@ -156,7 +150,7 @@
           <div id="pocketReader" hidden></div>
 
           <details class="pr-study-tools" id="studyTools">
-            <summary>Study desk <span>Practice, priority topics &amp; revision</span></summary>
+            <summary>Study desk</summary>
           <header class="an-edition-head">
             <div><p class="an-label">Study desk</p><h2 id="briefTitle">Today</h2></div>
             <p class="an-viewhead__meta" id="briefMeta">Loading…</p>
@@ -202,7 +196,7 @@
 
           <section class="an-daily an-source-stream" aria-labelledby="dailyTitle">
             <header class="an-daily__head">
-              <div><p class="an-label">From the source</p><h2 id="dailyTitle">Latest official updates</h2></div>
+              <h2 id="dailyTitle">Latest official updates</h2>
               <p class="an-viewhead__meta" id="dailyEditionMeta"></p>
             </header>
             <div id="dailyEdition"></div>
@@ -231,8 +225,7 @@
 
         <section class="an-view" id="view-catchup" role="tabpanel" aria-labelledby="tab-catchup" hidden>
           <div class="an-viewhead">
-            <div><p class="an-label">Recovery</p><h2>Catch up</h2></div>
-            <p class="an-viewhead__meta" id="catchupMeta"></p>
+            <h2>Catch up</h2>
           </div>
           <div id="catchupDesk"></div>
         </section>
@@ -240,7 +233,7 @@
         <!-- Subject Library -->
         <section class="an-view" id="view-syllabus" role="tabpanel" aria-labelledby="tab-syllabus" hidden>
           <div class="an-viewhead">
-            <div><p class="an-label">Index</p><h2>Topics</h2></div>
+            <h2>Topics</h2>
             <p class="an-viewhead__meta" id="syllabusMeta"></p>
           </div>
           <div class="an-state" id="syllabusState"><h3>Loading subjects…</h3></div>
@@ -260,7 +253,7 @@
         <!-- Memory Drill -->
         <section class="an-view" id="view-memory" role="tabpanel" aria-labelledby="tab-memory" hidden>
           <div class="an-viewhead">
-            <div><p class="an-label">Saved</p><h2>Revision</h2></div>
+            <h2>Revision</h2>
             <p class="an-viewhead__meta" id="notesMeta">Nothing saved.</p>
           </div>
 
@@ -395,13 +388,13 @@
 
   <script src="assets/js/shared/nav-theme.js"></script>
   <script src="assets/js/shared/nav-utilities.js"></script>
-  <script src="assets/js/upsc/store.js"></script>
-  <script src="assets/js/upsc/content.js"></script>
-  <script src="assets/js/upsc/packet.js"></script>
-  <script src="assets/js/upsc/memory.js"></script>
-  <script src="assets/js/upsc/render.js"></script>
-  <script src="assets/js/upsc/app.js"></script>
-  <script src="assets/js/upsc/reading.js"></script>
-  <script src="assets/js/upsc/scroll.js"></script>
+  <script src="assets/js/upsc/store.js?v=20261010-2"></script>
+  <script src="assets/js/upsc/content.js?v=20261010-2"></script>
+  <script src="assets/js/upsc/packet.js?v=20261010-2"></script>
+  <script src="assets/js/upsc/memory.js?v=20261010-2"></script>
+  <script src="assets/js/upsc/render.js?v=20261010-2"></script>
+  <script src="assets/js/upsc/app.js?v=20261010-2"></script>
+  <script src="assets/js/upsc/reading.js?v=20261010-2"></script>
+  <script src="assets/js/upsc/scroll.js?v=20261010-2"></script>
 </body>
 </html>

@@ -365,14 +365,15 @@ test('does not render unsafe Topic Packet source URLs', function () {
   assert.equal(html.includes('javascript:'), false);
 });
 
-test('Today hero states the session budget without prediction copy', function () {
+test('Today hero provides dated study actions without prediction copy', function () {
   const Render = loadRender();
   const html = Render.todayHero({
     editionDate: '2026-08-22', essential_count: 4, read_minutes: 9, recall_minutes: 6,
   }, { dateLabel: '22 Aug 2026' });
   assert.equal(html.includes('UPSC Today — 22 Aug 2026'), true);
-  assert.equal(html.includes('4'), true);
   assert.equal(html.includes('Study priority, not a prediction'), false);
-  assert.equal(html.includes('Start 15-minute session'), true);
+  assert.equal(html.includes('data-act="start-session"'), true);
+  assert.equal(html.includes('data-mode="prelims"'), true);
+  assert.equal(html.includes('data-mode="mains"'), true);
   assert.equal(html.includes('probability'), false);
 });

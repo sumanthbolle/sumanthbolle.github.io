@@ -630,13 +630,9 @@
     var extras = options || {};
     var date = extras.dateLabel || value.editionDate || 'Today';
     return '<section class="pk-hero" aria-labelledby="todayHeroTitle">' +
-      '<p class="an-label">Worth your time today</p>' +
       '<h2 id="todayHeroTitle">UPSC Today — ' + esc(date) + '</h2>' +
-      '<p class="pk-hero__budget"><strong>' + esc(value.essential_count || 0) + '</strong> essential topics · ' +
-        '<strong>' + esc(value.read_minutes || 0) + '</strong> min reading · ' +
-        '<strong>' + esc(value.recall_minutes || 0) + '</strong> min recall</p>' +
       '<div class="pk-hero__actions">' +
-        '<button type="button" class="btn btn-primary" data-act="start-session">Start 15-minute session</button>' +
+        '<button type="button" class="btn btn-primary" data-act="start-session">Start study session</button>' +
         '<button type="button" class="btn" data-act="session-mode" data-mode="prelims">Prelims mode</button>' +
         '<button type="button" class="btn" data-act="session-mode" data-mode="mains">Mains mode</button>' +
         '<a class="btn" href="?view=catchup" data-view="catchup">7-day catch-up</a>' +
@@ -850,11 +846,7 @@
   function catchUpDesk(catchup) {
     var row = catchup || {};
     return '<section class="pk-catchup">' +
-      '<header><p class="an-label">Recovery</p><h2>This week in 25 minutes</h2>' +
-        '<p><strong>' + esc((row.must_know || []).length) + '</strong> Must Know · ' +
-        '<strong>' + esc((row.useful || []).length) + '</strong> Useful · ' +
-        '<strong>' + esc((row.discarded || []).length) + '</strong> discarded</p></header>' +
-      ((row.clusters || []).length ? '<section class="pk-block"><h3>Most repeated anchors</h3><ol>' +
+      ((row.clusters || []).length ? '<section class="pk-block"><h3>Recurring topics</h3><ol>' +
         row.clusters.slice(0, 5).map(function (cluster) {
           return '<li>' + esc(cluster.anchor) + ' · ' + esc(cluster.count) + ' triggers</li>';
         }).join('') + '</ol></section>' : '') +
@@ -880,7 +872,7 @@
         esc(row.weak || 0) + ' weak anchors added to revision.</p>' +
         '<p>Next recall: tomorrow.</p></section>';
     }
-    return '<section class="pk-session" aria-live="polite"><p class="an-label">15-minute session</p>' +
+    return '<section class="pk-session" aria-live="polite"><p class="an-label">Study session</p>' +
       '<h3>' + esc(row.phase || 'Scan the top three') + '</h3></section>';
   }
 
