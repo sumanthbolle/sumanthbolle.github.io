@@ -44,13 +44,15 @@
     var esc = Render.esc;
     if (!articles.length) return '<p class="pr-message">No short reads match. Try a topic such as economy, Parliament or wetlands.</p>';
     return '<ol class="pr-list">' + articles.map(function (article, index) {
-      return '<li class="pr-story"><div class="pr-story__index">' +
+      var titleId = 'pocket-title-' + article.id;
+      return '<li class="pr-story"><a class="pr-story__link" href="' + articleHref(article) +
+        '" data-pocket-article="' + esc(article.id) + '" aria-labelledby="' + esc(titleId) + '">' +
+        '<div class="pr-story__index">' +
         String(index + 1).padStart(2, '0') + '<span>' + esc(article.kind) + '</span></div>' +
-        '<div><div class="pr-story__meta"><span>' + esc(article.subject) + '</span><span>' +
+        '<div class="pr-story__content"><div class="pr-story__meta"><span>' + esc(article.subject) + '</span><span>' +
           esc(article.paper) + '</span><span>' + readMinutes(article) + ' min read</span></div>' +
-        '<h3><a href="' + articleHref(article) + '" data-pocket-article="' + esc(article.id) + '">' +
-          esc(article.title) + '</a></h3><p>' + esc(article.excerpt) + '</p></div>' +
-        '<span class="pr-story__arrow" aria-hidden="true">→</span></li>';
+        '<h3 id="' + esc(titleId) + '">' + esc(article.title) + '</h3><p>' + esc(article.excerpt) + '</p></div>' +
+        '<span class="pr-story__arrow" aria-hidden="true">→</span></a></li>';
     }).join('') + '</ol>';
   }
 

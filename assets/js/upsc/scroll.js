@@ -1,4 +1,25 @@
 (function () {
+  function trackStickyChrome() {
+    var command = document.querySelector('.an-command');
+    var nav = document.querySelector('body > nav');
+    function measure() {
+      var height = command
+        ? command.offsetHeight + (parseFloat(getComputedStyle(command).top) || 0)
+        : (nav ? nav.offsetHeight : 0);
+      document.documentElement.style.setProperty('--upsc-scroll-offset', height + 'px');
+    }
+    measure();
+    if (window.ResizeObserver) {
+      var observer = new ResizeObserver(measure);
+      if (command) observer.observe(command);
+      if (nav) observer.observe(nav);
+    } else {
+      window.addEventListener('resize', measure);
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', trackStickyChrome);
+  else trackStickyChrome();
+
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   if (reduce.matches) return;
 
