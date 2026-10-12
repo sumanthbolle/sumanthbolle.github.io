@@ -379,6 +379,21 @@ class SecondaryTests(unittest.TestCase):
         self.assertEqual(note["sources"][1]["url"], ARTICLE_URL)
         self.assertEqual(note["sources"][1]["publisher"], "The Indian Express")
 
+    def test_official_link_evidence_cites_the_final_url(self):
+        final = "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2322443"
+        base = opener()
+
+        def redirecting(request, timeout=20):
+            response = base(request, timeout)
+            if request.full_url == PIB_URL:
+                response._url = final
+            return response
+
+        build_edition(self.ws.output, "2026-10-13", "am", "2026-10-13T00:20:00Z", redirecting, LLM(),
+                      env=ENV, site_root=self.ws.site, feeds_path=self.ws.feeds)
+        note = self.note_for(json.loads(self.ws.edition_path().read_text(encoding="utf-8")))
+        self.assertEqual(note["sources"][0]["url"], final)
+
     def test_unreachable_official_link_falls_back_to_a_secondary_note(self):
         self.ws.build(blocked=(PIB_URL,))
         edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))

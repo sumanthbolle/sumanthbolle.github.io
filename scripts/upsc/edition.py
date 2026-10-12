@@ -301,8 +301,13 @@ def _registry_hosts(output_root: Path) -> set[str]:
     return hosts
 
 
-def _fetch(record: Mapping[str, Any], opener: Callable[..., Any], failures: dict[str, int]) -> dict[str, Any]:
-    result = fetch_evidence(dict(record), opener, fallback=curl_open if opener is urlopen else None)
+def _fetch(
+    record: Mapping[str, Any], opener: Callable[..., Any], failures: dict[str, int],
+    allowed_hosts: Optional[set[str]] = None,
+) -> dict[str, Any]:
+    result = fetch_evidence(
+        dict(record), opener, fallback=curl_open if opener is urlopen else None, allowed_hosts=allowed_hosts,
+    )
     if not result["ok"]:
         failures[result["reason"]] = failures.get(result["reason"], 0) + 1
     return result
@@ -354,11 +359,11 @@ def _newspaper_evidence(
             if link in tried or len(official) >= 2:
                 continue
             tried.add(link)
-            page = _fetch({"sourceUrl": link}, opener, failures)
+            page = _fetch({"sourceUrl": link}, opener, failures, allowed_hosts=registry_hosts)
             if page["ok"]:
                 official.append({
                     "title": page["title"] or str(item.get("title") or ""),
-                    "publisher": urlsplit(page["url"]).hostname or "", "url": link,
+                    "publisher": urlsplit(page["url"]).hostname or "", "url": page["url"],
                     "date": str(item.get("publishedAt") or "")[:10], "kind": "official", "text": page["text"],
                 })
     return official, discovery, reason

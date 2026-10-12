@@ -7,6 +7,7 @@ returned as reasons, never raised: one blocked ministry page holds one note.
 """
 
 import gzip
+import ipaddress
 from html.parser import HTMLParser
 import io
 import json
@@ -205,15 +206,64 @@ def _decode(body: bytes, content_type: str) -> str:
         return body.decode("utf-8", errors="replace")
 
 
+_SYSTEM_RESOLVER = object()
+
+
+def _system_resolve(host: str) -> list[str]:
+    return [info[4][0] for info in socket.getaddrinfo(host, None)]
+
+
+def _blocked_ip(value: str) -> bool:
+    try:
+        address = ipaddress.ip_address(value.split("%", 1)[0])
+    except ValueError:
+        return False
+    return not address.is_global or address.is_multicast
+
+
+def _blocked_host(host: str, resolver: Optional[Callable[[str], list[str]]]) -> bool:
+    """True for loopback, private, link-local or reserved targets.
+
+    IP literals are always checked. Names are resolved only when a resolver
+    is in play (real network fetches), so tests never touch DNS.
+    """
+    host = (host or "").strip("[]")
+    if _blocked_ip(host):
+        return True
+    try:
+        ipaddress.ip_address(host)
+        return False  # a public literal
+    except ValueError:
+        pass
+    if resolver is None:
+        return False
+    try:
+        addresses = resolver(host)
+    except (OSError, UnicodeError):
+        return False  # let the fetch report the network error
+    return any(_blocked_ip(address) for address in addresses)
+
+
 def fetch_evidence(
     record: dict[str, Any],
     opener: Callable[..., Any],
     fallback: Optional[Callable[..., Any]] = curl_open,
+    allowed_hosts: Optional[set[str]] = None,
+    resolver: Any = _SYSTEM_RESOLVER,
 ) -> dict[str, Any]:
-    """Return {"ok", "text", "url", "reason"} for the record's official page."""
+    """Return {"ok", "text", "url", "reason", "title", "links"} for a page.
+
+    `allowed_hosts` (registry hosts) turns on the official-link rule: the final
+    URL after redirects must still be an official URL. Private, loopback and
+    link-local targets are never fetched (reason "blocked-address").
+    """
     url = str(record.get("sourceUrl") or record.get("canonicalUrl") or "")
     if urlsplit(url).scheme not in ("http", "https") or not urlsplit(url).hostname:
         return _result(False, url, reason="bad-url")
+    if resolver is _SYSTEM_RESOLVER:
+        resolver = _system_resolve if opener is urlopen else None
+    if _blocked_host(urlsplit(url).hostname or "", resolver):
+        return _result(False, url, reason="blocked-address")
     try:
         try:
             body, content_type, final_url = _read(url, opener)
@@ -228,6 +278,10 @@ def fetch_evidence(
         if isinstance(error, HTTPError):
             error.close()
         return _result(False, url, reason=_failure_reason(error))
+    if _blocked_host(urlsplit(final_url).hostname or "", resolver):
+        return _result(False, final_url, reason="blocked-address")
+    if allowed_hosts is not None and not is_official_url(final_url, allowed_hosts):
+        return _result(False, final_url, reason="redirect-off-allowlist")
     mime = content_type.split(";", 1)[0].strip().lower()
     if mime not in HTML_TYPES:
         return _result(False, final_url, reason="unsupported-content")

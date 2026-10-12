@@ -85,6 +85,41 @@ class OfficialLinkTests(unittest.TestCase):
         ])
 
 
+class SafetyTests(unittest.TestCase):
+    def test_official_link_redirected_off_the_allowlist_is_rejected(self):
+        link = {"sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=1"}
+        redirected = lambda request, timeout=20: FakeResponse(page(), url="https://tracker.example.com/landing")
+        result = fetch_evidence(link, redirected, fallback=None, allowed_hosts=set())
+        self.assertEqual((result["ok"], result["reason"]), (False, "redirect-off-allowlist"))
+        same_host = lambda request, timeout=20: FakeResponse(page(), url="https://www.pib.gov.in/PressReleasePage.aspx?PRID=1")
+        ok = fetch_evidence(link, same_host, fallback=None, allowed_hosts=set())
+        self.assertTrue(ok["ok"])
+        self.assertEqual(ok["url"], "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1")
+
+    def test_private_and_link_local_addresses_are_never_fetched(self):
+        calls = []
+
+        def opener(request, timeout=20):
+            calls.append(request.full_url)
+            return FakeResponse(page())
+
+        for url in ("http://169.254.169.254/latest/meta-data/", "http://127.0.0.1/x", "http://[::1]/x", "http://10.0.0.5/x"):
+            result = fetch_evidence({"sourceUrl": url}, opener, fallback=None)
+            self.assertEqual((result["ok"], result["reason"]), (False, "blocked-address"), url)
+        internal = fetch_evidence({"sourceUrl": "https://intranet.gov.in/x"}, opener, fallback=None,
+                                  resolver=lambda host: ["192.168.1.10"])
+        self.assertEqual(internal["reason"], "blocked-address")
+        public = fetch_evidence({"sourceUrl": "https://pib.gov.in/x"}, opener, fallback=None,
+                                resolver=lambda host: ["164.100.117.97"])
+        self.assertTrue(public["ok"])
+        self.assertEqual(calls, ["https://pib.gov.in/x"])
+
+    def test_redirect_into_a_private_address_is_rejected(self):
+        redirected = lambda request, timeout=20: FakeResponse(page(), url="http://127.0.0.1/admin")
+        result = fetch_evidence(RECORD, redirected, fallback=None)
+        self.assertEqual(result["reason"], "blocked-address")
+
+
 class FetchEvidenceTests(unittest.TestCase):
     def test_html_page_returns_text(self):
         result = fetch_evidence(RECORD, lambda request, timeout=20: FakeResponse(page()))
