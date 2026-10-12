@@ -121,6 +121,10 @@ class CandidateTests(unittest.TestCase):
 
     def test_routine_surveys_and_campaigns_are_skipped(self):
         for title in (
+            "Settlement Order in the matter of Singularity Growth Opportunities Fund and bank credit",
+            "General remittance Order dated October 12, 2026 against Muse Traders",
+            "English rendering of PM's address during the launch of development projects in Chennai",
+            "Secretary (Power) holds Bilateral Meeting with the European Commission's Director General",
             "Launching of 51st Round of Quarterly Services and Infrastructure Outlook Survey (SIOS)",
             "Ministry of MSME Concludes Swachhata Hi Seva 2026 Campaign with industry and MSME units",
             "NHRC organises a National Conference on Right to Water on its 33rd Foundation Day",
@@ -209,10 +213,20 @@ class CandidateTests(unittest.TestCase):
             ("Stock markets tumble on oil price spike, FII outflows; Sensex drops 548 points", 30),
             ("Former security guard arrested for murder of five-year-old girl over ransom", 30),
             ("Cuddalore Collector urges farmers to insure Samba paddy crops against rainfall risks", 35),
+            ("LTTS bets on manufacturing AI; eyes 80% revenue from six strategic areas in next 5 years", 30),
+            ("Sri Sathya Sai district wins PMDDKY award for farm credit excellence, agriculture promotion", 30),
         ):
             rows = build([], [news(title, "explained", url="https://x.example/" + title[:5]),
                               news(title, publisher="The Indian Express", url="https://y.example/" + title[:5])])
             self.assertLessEqual(rows[0]["score"], cap, title)
+
+    def test_protest_rights_and_economics_prizes_fit_the_syllabus(self):
+        for title, code in (
+            ("Jantar Mantar denotified as protest site: How it became Delhi's hub for dissent", "GS2.1"),
+            ("Nobel Prize in Economics 2026: How Hall, Woodford reshaped modern economic policy", "GS3.1"),
+        ):
+            rows = build([], [news(title, "explained")])
+            self.assertIn(code, rows[0]["codesHint"], title)
 
     def test_election_and_constitutional_keywords_fit_the_syllabus(self):
         rows = build([], [news("13.60 lakh names dropped from final electoral rolls after SIR in Punjab")])

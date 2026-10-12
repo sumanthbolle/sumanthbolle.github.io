@@ -72,7 +72,7 @@ SYLLABUS_KEYWORDS: dict[str, tuple[str, ...]] = {
     "GS1.6": ("poverty", "urbanis", "urbaniz", "slum", "communal", "migrant"),
     "GS1.8": ("monsoon", "el nino", "ocean", "glacier", "earthquake", "tsunami", "cyclone"),
     "GS1.9": ("critical mineral", "mineral", "mining", "industrial corridor"),
-    "GS2.1": ("constitution", "unconstitutional", "amendment", "fundamental right", "article \\d", "preamble", "right to protest"),
+    "GS2.1": ("constitution", "unconstitutional", "amendment", "fundamental right", "article \\d", "preamble", "protest", "dissent", "free speech"),
     "GS2.2": ("federal", "centre-state", "finance commission", "devolution", "panchayat", "municipal", "governor"),
     "GS2.3": ("supreme court", "high court", "judgment", "verdict", "constitutional bod", "cag\\b", "election commission", "cec\\b", "chief justice", "cji\\b"),
     "GS2.4": ("election", "electoral", "voter", "parliament", "lok sabha", "rajya sabha", "bill\\b", "ordinance", "legislat", "assembly"),
@@ -82,7 +82,7 @@ SYLLABUS_KEYWORDS: dict[str, tuple[str, ...]] = {
     "GS2.8": ("civil service", "bureaucra", "karmayogi", "lateral entry"),
     "GS2.9": ("bilateral", "summit", "bimstec", "saarc", "asean", "brics", "quad\\b", "sco\\b", "g20", "nepal", "bangladesh", "china", "pakistan", "sri lanka", "bhutan", "maldives", "myanmar", "afghanistan", "neighbour", "joint exercise", "strategic partnership", "foreign minister", "external affairs"),
     "GS2.10": ("diaspora", "united states", "european union", "eu\\b", "uk\\b", "russia", "ukraine", "sanction", "tariff", "wto\\b", "united nations", "un\\b", "unhcr", "refugee", "imf\\b", "world bank", "multilateral"),
-    "GS3.1": ("inflation", "monetary", "repo\\b", "liquidity", "gdp\\b", "growth", "employment", "unemployment", "bank", "credit", "money supply", "investment", "rbi\\b", "export", "trade"),
+    "GS3.1": ("inflation", "economics", "economic policy", "monetary", "repo\\b", "liquidity", "gdp\\b", "growth", "employment", "unemployment", "bank", "credit", "money supply", "investment", "rbi\\b", "export", "trade"),
     "GS3.2": ("budget", "fiscal", "deficit", "tax", "gst\\b", "revenue", "expenditure", "borrowing", "government securit", "dated securit"),
     "GS3.3": ("agricultur", "farmer", "crop", "msp\\b", "minimum support price", "krishi", "kisan", "pulses", "irrigation", "fertili", "food", "pds\\b", "fisher", "dairy", "horticultur", "seed"),
     "GS3.4": ("infrastructure", "railway", "rail", "port\\b", "ports\\b", "highway", "logistics", "power plant", "electricity", "coal", "energy", "msme", "manufactur", "industr", "telecom", "shipping", "aviation", "airport"),
@@ -106,7 +106,7 @@ CEREMONIAL = (
     "celebrat", "felicitat", "pays tribute", "greets", "condoles", "yoga day",
     "swachhata pledge", "pays homage", "offers prayers", "subhashitam",
     "birth anniversary", "extends wishes", "curtain raiser", "foundation day",
-    "swachhata", "special campaign", " mela", "golden jubilee",
+    "swachhata", "special campaign", " mela", "golden jubilee", " award", " wins prize",
 )
 ROUTINE = (
     "money market operations", "auction of", "result of", "money supply",
@@ -114,6 +114,9 @@ ROUTINE = (
     "weekly statistical supplement", "state government securities", "cash management bill",
     "lending facility", "auction under laf", "conversion/switch", "outlook survey",
     "launching of", "survey round", "expectations survey", "confidence survey",
+    "settlement order", "remittance order", "exemption order", "adjudication order",
+    "recovery certificate", "order in the matter of", "english rendering",
+    "holds bilateral meeting", "calls on the",
 )
 NOTE_FLOOR = 45
 FACT_FLOOR = 30
@@ -128,7 +131,7 @@ LOCAL_CAP = 29
 # Newspaper-only items: company results and markets, local administration and crime.
 CORPORATE_RE = re.compile(
     r"\b(net profit|yoy|q[1-4] (results|profit|revenue)|sensex|nifty|stock markets?|shares (rise|fall|jump)|ipo|"
-    r"market cap|posts \d+% )", re.I,
+    r"market cap|posts \d+% |bets on|eyes \$?\d|revenue from)", re.I,
 )
 CRIME_RE = re.compile(r"\b(arrested|arrests|murder|life imprisonment|die after|dies after|two held|held for)\b", re.I)
 LOCAL_RE = re.compile(r"\b(collector|mla|special buses|homestays|corporation introduces|ward)\b", re.I)
@@ -197,8 +200,8 @@ RARE_MIN_LENGTH = 6
 def _rare_words(titles: list[set[str]]) -> set[str]:
     """Words distinctive enough that one shared occurrence names the same story.
 
-    With a day's worth of headlines, a long word that appears in at most two
-    titles (or 2% of them) is a topic word ("inflation", "gyanesh"), not filler.
+    With a day's worth of headlines, a long word that appears in exactly two
+    titles is a topic word ("inflation", "gyanesh"), not filler.
     """
     if len(titles) < RARE_MIN_TITLES:
         return set()
@@ -206,8 +209,11 @@ def _rare_words(titles: list[set[str]]) -> set[str]:
     for words in titles:
         for word in words:
             counts[word] = counts.get(word, 0) + 1
-    limit = max(2, len(titles) // 50)
-    return {word for word, count in counts.items() if count <= limit and len(word) >= RARE_MIN_LENGTH}
+    return {word for word, count in counts.items() if count == 2 and len(word) >= RARE_MIN_LENGTH}
+
+
+def _is_topic_word(word: str) -> bool:
+    return any(pattern.match(word) for patterns in _KEYWORD_RES.values() for pattern in patterns)
 
 
 def _time(value: str) -> Optional[datetime]:
@@ -416,15 +422,21 @@ def build_candidates(
     )
     rare = _rare_words([tokens(row.get("title", "")) for row in list(pool) + items])
 
-    def same_story(left: set[str], right: set[str]) -> bool:
-        return similar(left, right) or bool(left & right & rare)
+    def joins(words: set[str], cluster: dict[str, Any]) -> bool:
+        """Records cluster on `similar` only. A headline may also join a cluster
+        on one shared word when that word is rare today and is a syllabus topic
+        word ("inflation", "electoral"), and only against the lead title, so a
+        loose match cannot chain unrelated stories together."""
+        if any(similar(words, other) for other in cluster["tokens"]):
+            return True
+        return any(_is_topic_word(word) for word in words & cluster["tokens"][0] & rare)
 
     clusters: list[dict[str, Any]] = []
     for row in pool:
         words = tokens(row.get("title", ""))
-        target = next((c for c in clusters if c["records"] and any(same_story(words, t) for t in c["tokens"])), None)
+        target = next((c for c in clusters if c["records"] and any(similar(words, t) for t in c["tokens"])), None)
         if target is None:
-            target = {"title": str(row.get("title") or ""), "records": [], "discovery": [], "tokens": []}
+            target = {"title": str(row.get("title") or ""), "records": [], "discovery": [], "tokens": [], "headlineTokens": []}
             clusters.append(target)
         target["records"].append(row)
         target["tokens"].append(words)
@@ -432,15 +444,16 @@ def build_candidates(
         words = tokens(item.get("title", ""))
         scored = [
             (max(len(words & t) for t in c["tokens"]), index)
-            for index, c in enumerate(clusters) if any(same_story(words, t) for t in c["tokens"])
+            for index, c in enumerate(clusters) if joins(words, c)
         ]
         if scored:
             target = clusters[max(scored, key=lambda pair: (pair[0], -pair[1]))[1]]
         else:
-            target = {"title": str(item.get("title") or ""), "records": [], "discovery": [], "tokens": []}
+            target = {"title": str(item.get("title") or ""), "records": [], "discovery": [], "tokens": [], "headlineTokens": []}
             clusters.append(target)
         target["discovery"].append(item)
         target["tokens"].append(words)
+        target["headlineTokens"].append(words)
     pyq_sets = _pyq_token_sets(_load(PYQ_BANK_PATH, pyq_bank))
     anchors = _anchor_rows(_load(PATTERNS_PATH, patterns))
     candidates = []
