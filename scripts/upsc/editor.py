@@ -132,6 +132,8 @@ def apply_stories(
         candidate["band"] = story["upscRelevance"]
         candidate["memberIds"] = list(story["memberIds"])
         candidate["carryOver"] = all(row.get("carryOver") for row in members)
+        if candidate["carryOver"]:  # a story made only of carried topics keeps its clock
+            candidate["firstSeen"] = min(str(row.get("firstSeen") or "") for row in members)
         if story["codes"]:
             candidate["codesHint"] = story["codes"]
         candidate["editor"] = {key: story[key] for key in ("storyId", "title", "why", "prelimsAngle", "mainsAngle")}

@@ -6,6 +6,7 @@ import unittest
 import urllib.error
 from pathlib import Path
 
+from scripts.upsc.candidates import fingerprint
 from scripts.upsc.edition import (
     build_edition,
     edition_id,
@@ -77,8 +78,34 @@ EXPLAINED_RSS = b"""<?xml version="1.0"?><rss version="2.0"><channel><item>
 <pubDate>Mon, 12 Oct 2026 23:00:00 +0530</pubDate></item></channel></rss>"""
 
 
+SIR_FEED = "https://www.thehindu.com/news/national/sir/feeder/default.rss"
+SIR_ITEMS = [
+    ("Kerala Assembly passes resolution seeking removal of CEC Gyanesh Kumar", "https://www.thehindu.com/sir/1.ece", "22:00"),
+    ("13.60 lakh names dropped from final electoral rolls after SIR in Punjab", "https://www.thehindu.com/sir/2.ece", "22:10"),
+    ("INDIA bloc marches through Delhi, takes SIR protest to SC", "https://www.thehindu.com/sir/3.ece", "22:20"),
+    ("Stock markets tumble on oil price spike; Sensex drops 548 points", "https://www.thehindu.com/sir/4.ece", "22:30"),
+]
+SIR_RSS = ("<?xml version=\"1.0\"?><rss version=\"2.0\"><channel>" + "".join(
+    f"<item><title>{title}</title><link>{url}</link><pubDate>Mon, 12 Oct 2026 {time}:00 +0530</pubDate></item>"
+    for title, url, time in SIR_ITEMS
+) + "</channel></rss>").encode("utf-8")
+SIR_IDS = [fingerprint(title) for title, _, _ in SIR_ITEMS]
+
+
+def sir_editor(payload=None):
+    return {"stories": [
+        {"storyId": "sir-cec", "title": "SIR electoral rolls and the move to remove the CEC", "memberIds": SIR_IDS[:3],
+         "upscRelevance": "must", "why": "Election Commission independence and the CEC removal process.",
+         "codes": ["GS2.4", "GS2.3"], "prelimsAngle": "Article 324 removal procedure.", "mainsAngle": "ECI autonomy."},
+        {"storyId": "markets", "title": "Markets fall", "memberIds": [SIR_IDS[3]], "upscRelevance": "skip",
+         "why": "Daily market move.", "codes": ["GS3.1"], "prelimsAngle": "", "mainsAngle": ""},
+    ]}
+
+
 def opener(blocked=()):
     pages = {
+        SIR_FEED: (SIR_RSS, "application/rss+xml"),
+        **{url: ((FIXTURES / "hindu-article.html").read_bytes(), "text/html; charset=utf-8") for _, url, _ in SIR_ITEMS},
         EXPLAINED_FEED: (EXPLAINED_RSS, "application/rss+xml"),
         ARTICLE_URL: ((FIXTURES / "hindu-article.html").read_bytes(), "text/html; charset=utf-8"),
         FEED_URL: ((FIXTURES / "hindu-rss.xml").read_bytes(), "application/rss+xml"),
@@ -97,11 +124,22 @@ def opener(blocked=()):
 
 
 class LLM:
-    def __init__(self, reply=None):
+    """Answers the editor call with `editor` (default: no usable stories, which
+    selects deterministic fallback) and every writer call with `reply`.
+    `calls` counts writer calls only."""
+
+    def __init__(self, reply=None, editor=None):
         self.calls = 0
+        self.editor_calls = []
         self.reply = reply or LLM_NOTE
+        self.editor = editor
 
     def __call__(self, request, timeout=120):
+        body = json.loads(request.data.decode("utf-8"))
+        if "current-affairs editor" in body["messages"][0]["content"]:
+            self.editor_calls.append(json.loads(body["messages"][1]["content"]))
+            content = json.dumps(self.editor(self.editor_calls[-1]) if callable(self.editor) else (self.editor or {}))
+            return FakeResponse(json.dumps({"choices": [{"message": {"content": content}}]}).encode(), "application/json", "")
         self.calls += 1
         content = json.dumps(self.reply)
         return FakeResponse(json.dumps({"choices": [{"message": {"content": content}}]}).encode(), "application/json", "")
@@ -347,6 +385,96 @@ class SecondaryTests(unittest.TestCase):
         page = (self.ws.site / "notes" / note["slug"] / "index.html").read_text(encoding="utf-8")
         self.assertIn("Secondary", page)
         self.assertIn("ue-chip--secondary", page)
+
+
+class EditorTests(unittest.TestCase):
+    def setUp(self):
+        self.ws = Workspace([])
+        self.ws.feeds.write_text(json.dumps({"discovery": [{
+            "id": "hindu-national", "publisher": "The Hindu", "section": "national", "url": SIR_FEED,
+        }]}), encoding="utf-8")
+
+    def tearDown(self):
+        self.ws.close()
+
+    def edition(self, slot="am"):
+        return json.loads(self.ws.edition_path(slot).read_text(encoding="utf-8"))
+
+    def test_editor_merges_a_running_story_into_one_note(self):
+        llm = LLM(editor=sir_editor)
+        report = self.ws.build(transport=llm)
+        edition = self.edition()
+        self.assertEqual((edition["editor"], edition["editorReason"]), ("llm", ""))
+        self.assertEqual(len(llm.editor_calls), 1)
+        self.assertEqual(len(llm.editor_calls[0]["clusters"]), 4)
+        self.assertEqual(len(edition["notes"]), 1)
+        note = next(iter(edition["notes"].values()))
+        self.assertIn(note["fingerprint"], SIR_IDS[:3])
+        self.assertEqual(note["editor"]["why"], "Election Commission independence and the CEC removal process.")
+        discovery_urls = {row["url"] for row in note["sources"] if row["kind"] == "discovery"}
+        self.assertEqual(len(discovery_urls), 1)  # one article per publisher is fetched
+        self.assertEqual(note["sources"][0]["kind"], "official")  # PIB link found in the article
+        self.assertFalse(any("Sensex" in fact["fact"] for fact in edition["quickFacts"]))
+        story = report["editor"]["stories"][0]
+        self.assertEqual((story["storyId"], story["members"]), ("sir-cec", 3))
+
+    def test_invalid_editor_reply_falls_back_to_deterministic_selection(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "editor.json"
+            path.write_text("not json at all", encoding="utf-8")
+            build_edition(self.ws.output, "2026-10-13", "am", "2026-10-13T00:20:00Z", opener(), LLM(),
+                          env=ENV, site_root=self.ws.site, feeds_path=self.ws.feeds, editor_fixture=path)
+        edition = self.edition()
+        self.assertEqual((edition["editor"], edition["editorReason"]), ("fallback", "invalid-editor-json"))
+
+    def test_cap_overflow_and_carry_over_to_the_next_slot(self):
+        def two_musts(payload):
+            return {"stories": [
+                {"storyId": "kerala", "title": "CEC removal resolution", "memberIds": [SIR_IDS[0]],
+                 "upscRelevance": "must", "why": "w", "codes": ["GS2.4"], "prelimsAngle": "", "mainsAngle": ""},
+                {"storyId": "punjab", "title": "Punjab rolls", "memberIds": [SIR_IDS[1]],
+                 "upscRelevance": "must", "why": "w", "codes": ["GS2.4"], "prelimsAngle": "", "mainsAngle": ""},
+            ]}
+
+        self.ws.build(transport=LLM(editor=two_musts), max_notes=1)
+        am = self.edition()
+        self.assertEqual(len(am["notes"]), 1)
+        overflow = [fact for fact in am["quickFacts"] if fact.get("overflow")]
+        self.assertEqual(len(overflow), 1)
+        carried_ids = [row["id"] for row in am["carryOver"]]
+        self.assertEqual(len(carried_ids), 1)
+        self.assertEqual(am["carryOver"][0]["firstSeen"], "2026-10-13T00:20:00Z")
+
+        def promote(payload):
+            carried = [row for row in payload["clusters"] if row["carryOver"]]
+            self.assertEqual([row["id"] for row in carried], carried_ids)
+            return {"stories": [{"storyId": "promoted", "title": "Promoted", "memberIds": carried_ids,
+                                 "upscRelevance": "must", "why": "w", "codes": ["GS2.4"],
+                                 "prelimsAngle": "", "mainsAngle": ""}]}
+
+        llm = LLM(editor=promote)
+        self.ws.build(slot="pm", now="2026-10-13T12:20:00Z", transport=llm)
+        pm = self.edition("pm")
+        self.assertEqual([note["fingerprint"] for note in pm["notes"].values()], carried_ids)
+        self.assertEqual(pm["carryOver"], [])
+
+    def test_carry_over_keeps_its_clock_and_expires_after_a_day(self):
+        self.ws.build(transport=LLM(editor=sir_editor), max_notes=0)
+        self.assertEqual([row["firstSeen"] for row in self.edition()["carryOver"]], ["2026-10-13T00:20:00Z"])
+        # PM: the carried story is offered again but not promoted, so it is carried on
+        # with its original clock.
+        pm_llm = LLM(editor=lambda payload: {"stories": [{
+            "storyId": "again", "title": "t", "memberIds": [row["id"] for row in payload["clusters"]],
+            "upscRelevance": "useful", "why": "w", "codes": ["GS2.4"], "prelimsAngle": "", "mainsAngle": ""}]})
+        self.ws.build(slot="pm", now="2026-10-13T12:20:00Z", transport=pm_llm)
+        self.assertTrue(all(row["carryOver"] for row in pm_llm.editor_calls[0]["clusters"]))
+        pm = self.edition("pm")
+        self.assertEqual({row["firstSeen"] for row in pm["carryOver"]}, {"2026-10-13T00:20:00Z"})
+        # Next AM, 24.5 hours after it was first carried: expired.
+        next_llm = LLM(editor=sir_editor)
+        report = self.ws.build(date="2026-10-14", now="2026-10-14T00:50:00Z", transport=next_llm)
+        self.assertEqual(next_llm.editor_calls, [])
+        self.assertEqual(report["editor"]["carryOverIn"], 0)
 
 
 class PageTests(unittest.TestCase):
