@@ -193,7 +193,7 @@ body.ue-reading { background: var(--ue-bg); }
 .ue-tick { color: var(--ue-green-text); font-weight: 700; }
 
 /* Desk cards (blog .blog-card): white, rounded, accent bar by paper. */
-.ue-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin: 0; padding: 0; list-style: none; }
+.ue-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
 .ue-card { min-width: 0; }
 .ue-card__link {
   display: flex; flex-direction: column; height: 100%; overflow: hidden; border-radius: 18px; background: var(--ue-white);
@@ -270,14 +270,14 @@ body.ue-reading { background: var(--ue-bg); }
 .ue-sync__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; margin-bottom: 8px; }
 
 @media (min-width: 600px) {
-  .ue-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .ue-cards { gap: 20px; }
   .ue-donebar { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; }
   .ue-donebar__state { order: 3; flex-basis: 100%; }
   .ue-nav-btn { text-align: right; max-width: 60%; }
 }
 
 @media (min-width: 960px) {
-  .ue-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .ue-cards { gap: 24px; }
   .ue-desk__head { margin-top: 32px; }
 }
 

@@ -82,10 +82,14 @@
 }
 
 .sv-coach-head h2 {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   font-size: 18px;
   font-weight: 650;
   letter-spacing: -0.02em;
 }
+
+/* Focus is moved here programmatically when the panel opens; no ring for that. */
+.sv-coach-head h2:focus { outline: none; }
 
 .sv-coach-head__tools {
   display: flex;
