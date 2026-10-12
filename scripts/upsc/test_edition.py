@@ -345,6 +345,27 @@ class SelectionBuildTests(unittest.TestCase):
         self.assertFalse(any(f"qf-{rid}" in fact_ids for rid in noted))
         self.assertEqual(report["candidates"]["must"], 1)
 
+    def test_time_budget_stops_new_notes_and_still_writes_the_edition(self):
+        ticks = iter(range(0, 100000, 1000))  # each clock read is 1,000 seconds later
+        report = build_edition(
+            self.ws.output, "2026-10-13", "am", "2026-10-13T00:20:00Z", opener(), LLM(), env=ENV,
+            site_root=self.ws.site, feeds_path=self.ws.feeds, budget_sec=1500, clock=lambda: next(ticks),
+        )
+        edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
+        self.assertTrue(report["budgetExceeded"])
+        self.assertTrue(edition["budgetExceeded"])
+        self.assertEqual(len(edition["notes"]), 1)
+        overflow = [fact for fact in edition["quickFacts"] if fact.get("overflow")]
+        self.assertGreaterEqual(len(overflow), 1)
+        index = json.loads((self.ws.output / "editions/index.json").read_text(encoding="utf-8"))
+        self.assertEqual(index["editions"][0]["id"], "2026-10-13-am")
+
+    def test_budget_comes_from_the_environment(self):
+        from scripts.upsc.edition import edition_budget
+        self.assertEqual(edition_budget({}), 1500)
+        self.assertEqual(edition_budget({"UPSC_EDITION_BUDGET_SEC": "600"}), 600)
+        self.assertEqual(edition_budget({"UPSC_EDITION_BUDGET_SEC": "soon"}), 1500)
+
     def test_blocked_evidence_backfills_with_the_next_candidate(self):
         self.ws.build(max_notes=1, blocked=(PIB_URL,))
         edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))

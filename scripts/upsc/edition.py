@@ -13,6 +13,7 @@ from hashlib import sha1
 from html import escape
 import json
 import os
+import time
 from pathlib import Path
 import sys
 from typing import Any, Callable, Mapping, Optional
@@ -407,6 +408,18 @@ def _gather_evidence(
     return evidence, reason, kind
 
 
+DEFAULT_BUDGET_SEC = 1500
+
+
+def edition_budget(env: Mapping[str, str]) -> float:
+    """Wall-clock budget for note writing (UPSC_EDITION_BUDGET_SEC, default 25 min)."""
+    try:
+        value = float(env.get("UPSC_EDITION_BUDGET_SEC", DEFAULT_BUDGET_SEC))
+    except (TypeError, ValueError):
+        return DEFAULT_BUDGET_SEC
+    return value if value > 0 else DEFAULT_BUDGET_SEC
+
+
 def _carry_rows(
     candidates: list[dict[str, Any]], now: str, known: Optional[Mapping[str, str]] = None,
 ) -> list[dict[str, Any]]:
@@ -600,12 +613,15 @@ def build_edition(
     max_notes: int = 12,
     editor_fixture: Optional[Path] = None,
     editor_input_out: Optional[Path] = None,
+    budget_sec: Optional[float] = None,
+    clock: Callable[[], float] = time.monotonic,
     env: Optional[Mapping[str, str]] = None,
     site_root: Optional[Path] = None,
     feeds_path: Optional[Path] = None,
     base_url: str = BASE_URL,
 ) -> dict[str, Any]:
     output_root = Path(output_root)
+    started = clock()
     site_root = Path(site_root) if site_root else ROOT / "upsc-study"
     env = os.environ if env is None else env
     window = slot_window(date, slot)
@@ -697,8 +713,14 @@ def build_edition(
     fact_first: list[dict[str, Any]] = []
     overflow: list[dict[str, Any]] = []
     attempts_left = max_notes + EXTRA_ATTEMPTS
+    budget = edition_budget(env) if budget_sec is None else budget_sec
+    over_budget = False
     for candidate in queue:
-        if produced >= max_notes or attempts_left <= 0:
+        if not over_budget and clock() - started > budget:
+            # Out of time: no new notes; everything left still reaches readers
+            # as overflow quick facts and the edition is written as usual.
+            over_budget = True
+        if over_budget or produced >= max_notes or attempts_left <= 0:
             overflow.append(candidate)
             continue
         attempts_left -= 1
@@ -769,6 +791,10 @@ def build_edition(
     llm_held = any("llm-unavailable" in row["reasons"] for row in held)
     edition["status"] = "partial" if llm_held or (not notes and held) else "closed"
     edition["closedAt"] = now
+    if over_budget:
+        edition["budgetExceeded"] = True
+    else:
+        edition.pop("budgetExceeded", None)
 
     chosen = list(queue) + useful
     must = [row for row in chosen if row["fingerprint"] in attempted]
@@ -794,7 +820,7 @@ def build_edition(
             ],
         },
         "evidenceFailures": evidence_failures,
-        "newNotes": len(new_notes), "held": held, "status": edition["status"],
+        "newNotes": len(new_notes), "held": held, "status": edition["status"], "budgetExceeded": over_budget,
         "written": [], "edition": edition,
     }
     if dry_run:
@@ -839,6 +865,7 @@ def _summary(report: Mapping[str, Any]) -> dict[str, Any]:
     edition = report["edition"]
     return {
         "editionId": report["editionId"], "dryRun": report["dryRun"], "status": report["status"],
+        "budgetExceeded": report["budgetExceeded"],
         "window": report["window"], "discovery": report["discovery"],
         "candidates": report["candidates"], "notesSelected": report["mustKnow"],
         "quickFactTopics": report["quickFactTopics"], "ranked": report["ranked"],
