@@ -11,9 +11,11 @@ on:
 permissions:
   contents: write
 
+# Own queue: this runs every 5 minutes, and in the shared upsc-data group each
+# new pending run would cancel a queued edition or archive run. Pushes rebase
+# onto main first, so commits do not race.
 concurrency:
-  # Serialize with the archive publisher and revision generators.
-  group: upsc-official-publisher
+  group: upsc-live-publisher
   cancel-in-progress: false
 
 jobs:

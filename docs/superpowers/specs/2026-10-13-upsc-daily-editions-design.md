@@ -25,16 +25,17 @@ The ingestion jobs run and store records, but the note path depends on the Cloud
 
 ### Pipeline (`scripts/upsc/edition.py`)
 
-1. **Discover.** New `discovery` entries in `data/upsc/discovery-feeds.json` (The Hindu national, business, international, editorial; Indian Express explained, editorial). Only headline, link and time are kept. Discovery items are never cited as evidence.
-2. **Bind.** Each discovery topic is matched to current official records (PIB, RBI, SEBI, MEA, UN, WHO, EU Council) by token overlap. Official records without a discovery match also enter as candidates. A discovery topic without an official match becomes `kind: editorial` and credits the newspaper.
-3. **Cluster and rank.** Same-story items merge by a topic fingerprint. Rank uses the flagship study-priority formula; inputs that cannot be computed default conservatively. Must Know → note. Useful → quick fact. Skip → dropped.
+1. **Discover.** New `discovery` entries in `data/upsc/discovery-feeds.json` (The Hindu national, business, international, editorial; Indian Express India, economy, explained, editorial). Only headline, link and time are kept from the feed. A newspaper article is used as evidence only when no official record binds the topic, and then it is always cited as `kind: discovery` (shown with a grey "Secondary" badge). Before falling back to it, the builder fetches official pages the article links to (registry hosts, `*.gov.in`, `*.nic.in`, sci.gov.in, mospi.gov.in, rbi.org.in, prsindia.org); when one is reachable it becomes primary evidence and the note is ordinary `news` citing both.
+2. **Bind.** Each discovery topic is matched to current official records (PIB, RBI, SEBI, MEA, UN, WHO, EU Council) by token overlap. Official records without a discovery match also enter as candidates. A discovery topic without an official match becomes `kind: editorial` (when an editorial section carries it) or `kind: secondary`, is written from the article text, and credits the newspaper; it must still pass the number gate against that text.
+3. **Cluster and rank.** Same-story items merge by a topic fingerprint. Rank uses the flagship study-priority formula; inputs that cannot be computed default conservatively. Newspaper coverage (distinct publishers, analysis sections) is part of the score.
+3a. **Editor pass.** One LLM call per run (`scripts/upsc/editor.py`, prompt `prompts/editor_system.txt`) sees every candidate cluster in the window plus carry-over from the previous 24 hours. It merges clusters about one running story and marks each story `must`, `useful` or `skip` the way a UPSC faculty editor would, with codes and Prelims/Mains angles. Every `must` story becomes a note, ordered by the deterministic score (paper balance only breaks ties within 5 points), hard cap 12 per slot; overflow musts become quick facts flagged `overflow: true`; `useful` stories become quick facts (cap 15). Must and useful topics that do not become notes are carried to the next slot's editor for 24 hours (`carryOver` in the edition). If the editor call fails or its reply is unusable, the edition falls back to deterministic selection (score floor 45 for notes, 30 for quick facts, at most 3 notes per GS paper while others qualify) and records `editor: "fallback"` with the reason.
 4. **Write.** One LLM call per note with the official text as the only evidence.
 5. **Gate** (deterministic):
    - every number and date in the note appears in the evidence text (FAQ numbers must appear in the body);
    - every section has at least one source;
    - required blocks present; syllabus codes are canonical (`SYLLABUS_CODES`);
    - banned-phrase list;
-   - word count within range.
+   - completeness: required blocks present and every section non-empty (no word-count limits).
    A failure allows one rewrite with the failure reasons; a second failure holds the note in `held` with reasons.
 6. **Emit** edition JSON, note JSON, static note pages, sitemap entries.
 7. **Commit** under the shared `upsc-data` concurrency group.
@@ -61,7 +62,7 @@ The ingestion jobs run and store records, but the note path depends on the Cloud
 Note object:
 
 ```
-id, slug, fingerprint, kind (news|editorial|explained), title, deck, oneLine,
+id, slug, fingerprint, kind (news|editorial|explained|secondary), title, deck, oneLine,
 subject, codes[1..3], papers, anchor, readTime, publishedAt, priority, band,
 whyInNews {text, sources[]},
 sections[{heading (question), body[{label?, text}], sources[]}],
@@ -89,7 +90,7 @@ Voice reference: `data/posts.json` and `data/interviews.json`.
 4. Source at the claim: every section carries its own sources.
 5. One misconception where the evidence supports it.
 6. Banned phrases (case-insensitive): "in today's rapidly", "rapidly evolving", "plays a pivotal role", "pivotal", "it is worth noting", "it is important to note", "delve", "landscape", "multifaceted", "in conclusion", "a testament to", "navigating", "robust framework", "holistic", "game-changer", "paradigm shift", "tapestry", "underscores", "in the realm of".
-7. Length: news 450–900 words, editorial 800–1,300, excluding practice.
+7. Length: no word limits. Cover everything an aspirant needs on the topic for Prelims and Mains — mechanism, facts, context, static linkage, debates where sourced — with no padding and no omissions; length follows the topic. The gate checks completeness only: required blocks present and every section non-empty.
 8. No invented balance: Challenges and Way forward appear only when the evidence or a named body raises them.
 9. Codes come from `SYLLABUS_CODES`; PYQs only from `pyq-bank.json`.
 
@@ -117,7 +118,7 @@ The widget renders it with the note components. Non-JSON replies fall back to a 
 
 ## Schedule
 
-`upsc-edition.yml`: `15 0 * * *` (AM), `45 0 * * *` (AM retry), `15 12 * * *` (PM), `45 12 * * *` (PM retry), plus `workflow_dispatch` with `slot` and `dry_run`. Runs are idempotent by edition id; a retry adds only missing topics. A topic already in the AM edition becomes an `updates[]` line in PM, not a new note. If an edition is not closed by 07:00 / 19:00 IST, a GitHub issue opens and Today shows the latest closed edition with a delay notice. `upsc-prelims.yml` reads edition MCQs. All `data/upsc` writers share concurrency group `upsc-data`.
+`upsc-edition.yml`: `15 0 * * *` (AM), `45 0 * * *` (AM retry), `15 12 * * *` (PM), `45 12 * * *` (PM retry), plus `workflow_dispatch` with `slot` and `dry_run`. Runs are idempotent by edition id; a retry adds only missing topics. A topic already in the previous edition (the same day's AM for PM, the previous day's PM for AM) becomes an `updates[]` line on that note, not a new note. Newspaper items from the 24 hours before a window count toward coverage, but only topics with an item inside the window are candidates. If an edition is not closed by 07:00 / 19:00 IST, a GitHub issue opens and Today shows the latest closed edition with a delay notice. `upsc-prelims.yml` reads edition MCQs. All `data/upsc` writers share concurrency group `upsc-data`.
 
 ## Rollout
 

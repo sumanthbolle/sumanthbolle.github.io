@@ -10,7 +10,7 @@ permissions:
   issues: write
 
 concurrency:
-  group: upsc-official-publisher
+  group: upsc-data
   cancel-in-progress: false
 
 jobs:
@@ -133,6 +133,12 @@ jobs:
           python scripts/upsc/publish.py ingest
           --registry data/upsc/source-registry.json
           --output data/upsc
+
+      - name: Archive newspaper discovery items
+        # Busy newspaper feeds keep about two hours of items; editions read
+        # this archive for the parts of their window the live feed has dropped.
+        continue-on-error: true
+        run: python scripts/upsc/discovery.py --archive data/upsc
 
       - name: Enrich source records
         continue-on-error: true

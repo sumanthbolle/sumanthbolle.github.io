@@ -11,6 +11,7 @@ from scripts.upsc.prelims_quiz import (
     TWO_OPTIONS,
     build_question,
     generate_quiz,
+    load_edition_mcqs,
     validate_question,
 )
 
@@ -92,6 +93,40 @@ class PrelimsQuizTests(unittest.TestCase):
         self.assertIn(".an-entry > .an-entry__body:only-child", css)
         self.assertIn("class=\"an-entry__body\"", page)
         self.assertNotIn("an-entry__margin", page)
+
+    def test_edition_mcqs_from_last_seven_days_lead_the_quiz(self):
+        def write_edition(root, day, slot, notes):
+            path = root / f"2026/{day[5:7]}/{day[8:]}-{slot}.json"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps({"id": f"{day}-{slot}", "date": day, "slot": slot, "notes": notes}), encoding="utf-8")
+
+        def note(note_id, answer=1):
+            return {
+                "id": note_id, "title": f"Title {note_id}",
+                "sources": [{"n": 1, "title": "PIB release", "publisher": "PIB", "url": "https://pib.gov.in/x", "kind": "official"}],
+                "practice": {"mcq": {"stem": f"Stem {note_id}?", "options": ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"], "answer": answer, "trap": "Trap text."}},
+            }
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_edition(root, "2026-08-19", "am", {"n-new": note("n-new")})
+            write_edition(root, "2026-08-18", "pm", {"n-mid": note("n-mid", 2), "n-bad": note("n-bad", 7)})
+            write_edition(root, "2026-08-11", "am", {"n-old": note("n-old")})
+            items = load_edition_mcqs(root, NOW)
+            self.assertEqual([item["id"] for item in items], ["ed-n-new", "ed-n-mid"])
+            first = items[0]
+            self.assertEqual(first["stem"], "Stem n-new?")
+            self.assertEqual(first["answer"], 1)
+            self.assertEqual(first["trap"], "Trap text.")
+            self.assertEqual(first["source"], {"title": "PIB release", "publisher": "PIB", "url": "https://pib.gov.in/x", "noteId": "n-new", "editionId": "2026-08-19-am"})
+            # Fields the existing quiz page renders.
+            self.assertEqual(first["question_stem"], "Stem n-new?")
+            self.assertEqual(first["correct_option"], "2 only")
+            self.assertEqual(first["explanation"], "Trap text.")
+            payload = generate_quiz([fixture_anchor()], NOW, items)
+            self.assertEqual(payload["itemCount"], 3)
+            self.assertEqual(payload["items"][0]["id"], "ed-n-new")
+            self.assertEqual(payload["items"][2]["anchor_id"], "fiscal-federalism")
 
     def test_generate_quiz_skips_anchors_without_facts(self):
         payload = generate_quiz([{"id": "empty"}], NOW)

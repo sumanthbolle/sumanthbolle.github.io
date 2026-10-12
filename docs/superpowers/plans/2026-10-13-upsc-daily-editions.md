@@ -16,9 +16,9 @@
 - Browser JS: no build step, no dependencies; UMD wrapper matching `assets/js/upsc/coach.js`; must load in Node for tests.
 - Syllabus codes only from `scripts/upsc/models.py:SYLLABUS_CODES`.
 - PYQs only from `data/upsc/pyq-bank.json`.
-- Discovery (newspaper) items are never evidence; `kind: discovery` sources may only appear on `kind: editorial` notes.
+- Newspaper (discovery) items are evidence only for topics no official record binds, and are always cited as `kind: discovery` (grey "Secondary" badge). `kind: discovery` sources may appear on `kind: editorial` or `kind: secondary` notes, or on `kind: news` notes that also cite an official source found through links in the article. Every note, secondary included, passes the number gate against its own evidence.
 - Banned phrases exactly as listed in the spec "Writing rules" §6.
-- Word counts: news 450–900, editorial 800–1,300, excluding practice.
+- Length: no word limits; notes cover everything an aspirant needs (mechanism, facts, context, static linkage, sourced debates) with no padding and no omissions. The gate checks completeness only (required blocks present, every section non-empty).
 - Edition slots: AM window 18:00 IST previous day → 06:00 IST; PM window 06:00 → 18:00 IST.
 - Crons: `15 0 * * *`, `45 0 * * *`, `15 12 * * *`, `45 12 * * *`.
 - Revision intervals: 1, 3, 7, 21, 60 days.
@@ -72,7 +72,7 @@
 **Interfaces:**
 - Consumes: official records (`publish._all_current_records`), discovery items (Task 1).
 - Produces: `tokens(text) -> set[str]`; `fingerprint(text) -> str` (sha1 of sorted top-8 content tokens); `build_candidates(records, discovery, window) -> list[Candidate]` where `Candidate = {"fingerprint","title","records":[...],"discovery":[...],"kind":"news"|"editorial","score":int,"band":"must"|"useful"|"skip","codesHint":[...]}`.
-- Scoring (0–100): `syllabus_fit` from keyword map → codes (25), `primary_source_weight` (pib/rbi/sebi/mea 1.0, un/who/eu 0.7, none 0) (20), `pyq_proximity` token overlap with `pyq-bank.json` (20), `anchor_recurrence` overlap with `data/upsc-patterns.json` names (15), `conceptual_depth` (records with long summaries or discovery in explained/editorial sections) (10), `recency` (10). Bands: ≥60 must, 40–59 useful, <40 skip. Ceremonial items (keywords: "celebrat", "felicitat", "pays tribute", "greets", "condoles", "yoga day", "swachhata pledge") capped at 30.
+- Scoring (0–100): `syllabus_fit` from keyword map → codes (25), `primary_source_weight` (pib/rbi/sebi/mea 1.0, un/who/eu 0.7, none 0) (10), `pyq_proximity` token overlap with `pyq-bank.json` (20), `anchor_recurrence` overlap with `data/upsc-patterns.json` names (15), `conceptual_depth` (records with long summaries or discovery in explained/editorial sections) (10), `coverage` newspaper salience: distinct publishers (1 → 8, 2 → 16, 3+ → 18), +1 per extra feed (max 2), +6 when an editorial/explained section carries it (cap 20). Caps: ceremonial 30, routine market/survey items 35, international-institution records with no India mention and no newspaper pickup 25 (below the quick-fact floor). Selection is relative per slot (see Task 6).
 
 - [ ] Tests: two PIB records + one Hindu item about the same scheme merge into one candidate; a ceremony record scores skip; editorial-only discovery becomes `kind editorial`; deterministic ordering by score then title.
 - [ ] Implement; tests pass; commit.
@@ -84,7 +84,7 @@
 - Test: `scripts/upsc/test_note_gate.py`
 
 **Interfaces:**
-- Produces: `BANNED_PHRASES: tuple[str, ...]`; `normalise_numbers(text) -> set[str]`; `body_text(note) -> str`; `check_note(note, evidence_text, pyq_ids:set[str]) -> list[str]` (empty list = pass). Reason strings: `missing:<field>`, `bad-code:<code>`, `unsupported-number:<n>`, `faq-number-not-in-body:<n>`, `banned:<phrase>`, `section-without-source:<i>`, `length:<words>`, `pyq-not-in-bank`, `discovery-source-on-news`, `bad-mcq`.
+- Produces: `BANNED_PHRASES: tuple[str, ...]`; `normalise_numbers(text) -> set[str]`; `body_text(note) -> str`; `check_note(note, evidence_text, pyq_ids:set[str]) -> list[str]` (empty list = pass). Reason strings: `missing:<field>`, `bad-code:<code>`, `unsupported-number:<n>`, `faq-number-not-in-body:<n>`, `banned:<phrase>`, `section-without-source:<i>`, `empty-section:<i>`, `heading-not-question:<i>`, `pyq-not-in-bank`, `discovery-source-on-news`, `bad-mcq`.
 - Number normalisation: strip `₹`, `%`, commas (both Indian and Western grouping), keep decimals; years and ranges like `2025-26` become `{"2025","26","2025-26"}`; ignore single digits 0–9 and numbers that appear in the note's question headings only.
 
 - [ ] Tests: passing fixture note; each reason triggered by a minimal mutation; "₹11,440 crore" in note matches "Rs 11440 crore" in evidence; "1,20,000" matches "120000"; FAQ number absent from body flagged.
@@ -114,8 +114,8 @@
 
 **Interfaces:**
 - Consumes: Tasks 1–5, `publish._read_json/_write_json/_all_current_records`.
-- Produces: `slot_window(date_ist: str, slot: str) -> (from_iso, to_iso)`; `edition_id(date, slot)`; `build_edition(output_root, date, slot, now, opener, transport, dry_run=False, max_notes=14) -> dict`; `render_note_page(note, edition_id) -> str`; CLI `python scripts/upsc/edition.py --slot am|pm|auto [--date YYYY-MM-DD] [--dry-run] [--max-notes N]`.
-- Behaviour: loads existing edition file if present and only writes missing fingerprints (idempotent); a fingerprint already in the same date's AM edition becomes an `updates[]` entry on that AM note when building PM; useful-band candidates become `quickFacts` from the official record title (no LLM); writes `data/upsc/editions/YYYY/MM/DD-<slot>.json`, `data/upsc/editions/index.json` (newest 60), and `upsc-study/notes/<slug>/index.html`; `status` = `closed` if ≥1 note and no exception, `partial` if notes held for `llm-unavailable`, `delayed` never written by the builder (computed by the alert step).
+- Produces: `slot_window(date_ist: str, slot: str) -> (from_iso, to_iso)`; `edition_id(date, slot)`; `build_edition(output_root, date, slot, now, opener, transport, dry_run=False, max_notes=12, editor_fixture=None) -> dict`; `render_note_page(note, edition_id) -> str`; CLI `python scripts/upsc/edition.py --slot am|pm|auto [--date YYYY-MM-DD] [--dry-run] [--max-notes N]`.
+- Behaviour: loads existing edition file if present and only writes missing fingerprints (idempotent); a fingerprint already in the same date's AM edition becomes an `updates[]` entry on that AM note when building PM; selection is relative: `note_queue` takes the top `max_notes` (default 8) with score ≥ 45 and at most 3 per GS paper while other papers qualify; evidence failures backfill from the queue and fall to quick facts; the next 12 with score ≥ 30 become `quickFacts` from the official record title or newspaper headline (no LLM); writes `data/upsc/editions/YYYY/MM/DD-<slot>.json`, `data/upsc/editions/index.json` (newest 60), and `upsc-study/notes/<slug>/index.html`; `status` = `closed` if ≥1 note and no exception, `partial` if notes held for `llm-unavailable`, `delayed` never written by the builder (computed by the alert step).
 - Static page: complete semantic HTML with title, description, canonical, `Article` JSON-LD, all sections, practice in `<details>`, links `rel="noopener"`, stylesheet `/assets/css/upsc-edition.css`.
 
 - [ ] Tests: window maths for AM/PM across midnight; idempotent second run with same inputs writes byte-identical file; PM duplicate becomes update; held reasons recorded; dry run writes nothing; static page escapes `<script>` in titles.

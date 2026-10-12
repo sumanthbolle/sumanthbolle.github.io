@@ -20,8 +20,16 @@ fs.writeFileSync(archivePath, JSON.stringify({
   anchors: { 'fiscal-federalism': { noteIds: ['src_1'] } },
 }));
 
+const notesRoot = path.join(directory, 'notes');
+fs.mkdirSync(path.join(notesRoot, '2026-10-13-cabinet-approves-scheme-abc123'), { recursive: true });
+fs.writeFileSync(path.join(notesRoot, '2026-10-13-cabinet-approves-scheme-abc123', 'index.html'), '<!doctype html>');
+fs.mkdirSync(path.join(notesRoot, 'src_1'), { recursive: true });
+fs.writeFileSync(path.join(notesRoot, 'src_1', 'note.html'), '<!doctype html>');
+fs.mkdirSync(path.join(notesRoot, 'empty-dir'), { recursive: true });
+
 const xml = buildSitemap({
   archiveIndexPath: archivePath,
+  notesRoot,
   outputPath,
   posts: [],
   interviews: [],
@@ -37,6 +45,9 @@ assert(xml.includes('https://sumanthbolle.com/revision'));
 assert(xml.includes('https://sumanthbolle.com/mains'));
 assert(xml.includes('https://sumanthbolle.com/upsc-quiz'));
 assert(xml.includes('https://sumanthbolle.com/upsc-guide'));
+assert(xml.includes('<loc>https://sumanthbolle.com/upsc-study/notes/2026-10-13-cabinet-approves-scheme-abc123/</loc>\n    <lastmod>2026-10-13</lastmod>'));
+assert(!xml.includes('upsc-study/notes/src_1/</loc>'));
+assert(!xml.includes('empty-dir'));
 assert(!xml.includes('evil.example'));
 assert(!xml.includes('draft.html'));
 assert.strictEqual(fs.readFileSync(outputPath, 'utf8'), xml);
