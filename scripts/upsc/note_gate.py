@@ -226,9 +226,75 @@ def _discovery(note: dict[str, Any]) -> list[str]:
     return []
 
 
+def _is_rows(value: Any, keys: tuple[str, ...] = ()) -> bool:
+    """A list of dicts whose listed keys, when present, hold strings."""
+    return isinstance(value, list) and all(
+        isinstance(row, dict) and all(isinstance(row.get(key, ""), str) for key in keys) for row in value
+    )
+
+
+def _types(note: dict[str, Any]) -> list[str]:
+    """Shape checks that run first: a wrong type would crash later checks or the renderer."""
+    reasons: list[str] = []
+
+    def bad(field: str) -> None:
+        reasons.append(f"bad-type:{field}")
+
+    if "codes" in note and not (isinstance(note["codes"], list) and all(isinstance(c, str) for c in note["codes"])):
+        bad("codes")
+    for field in ("title", "deck", "oneLine", "subject", "anchor", "misconception", "kind"):
+        if field in note and not isinstance(note[field], str):
+            bad(field)
+    if "whyInNews" in note and not isinstance(note["whyInNews"], dict):
+        bad("whyInNews")
+    elif isinstance(note.get("whyInNews"), dict) and not isinstance(note["whyInNews"].get("text", ""), str):
+        bad("whyInNews")
+    if "back2basics" in note and not (
+        isinstance(note["back2basics"], dict)
+        and all(isinstance(note["back2basics"].get(key, ""), str) for key in ("concept", "text"))
+    ):
+        bad("back2basics")
+    sections = note.get("sections")
+    if "sections" in note and not _is_rows(sections, ("heading",)):
+        bad("sections")
+    elif isinstance(sections, list) and not all(_is_rows(row.get("body"), ("label", "text")) for row in sections):
+        bad("sections.body")
+    if "keyNumbers" in note and not isinstance(note["keyNumbers"], list):
+        bad("keyNumbers")
+    elif not _is_rows(note.get("keyNumbers", []), ("figure", "meaning")):
+        bad("keyNumbers.row")
+    if "wayForward" in note and not _is_rows(note["wayForward"], ("label", "text")):
+        bad("wayForward")
+    if "sources" in note and not _is_rows(note["sources"]):
+        bad("sources")
+    practice = note.get("practice")
+    if "practice" in note and not isinstance(practice, dict):
+        bad("practice")
+    elif isinstance(practice, dict):
+        if "faq" in practice and not _is_rows(practice["faq"], ("q", "a")):
+            bad("practice.faq")
+        if "mcq" in practice and not isinstance(practice["mcq"], dict):
+            bad("practice.mcq")
+        mains = practice.get("mains")
+        if "mains" in practice and not isinstance(mains, dict):
+            bad("practice.mains")
+        elif isinstance(mains, dict) and "structure" in mains:
+            structure = mains["structure"]
+            if not isinstance(structure, dict):
+                bad("practice.mains.structure")
+            elif not (isinstance(structure.get("body", []), list) and all(isinstance(p, str) for p in structure.get("body", []))):
+                bad("practice.mains.structure.body")
+        if "pyq" in practice and practice["pyq"] is not None and not isinstance(practice["pyq"], dict):
+            bad("practice.pyq")
+    return reasons
+
+
 def check_note(note: dict[str, Any], evidence_text: str, pyq_ids: set[str]) -> list[str]:
     if not isinstance(note, dict):
         return ["missing:note"]
+    shape = _types(note)
+    if shape:
+        return shape
     reasons: list[str] = []
     for check in (
         _missing(note), _codes(note), _numbers(note, evidence_text), _banned(note),

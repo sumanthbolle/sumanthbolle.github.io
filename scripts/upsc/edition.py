@@ -635,6 +635,7 @@ def build_edition(
     evidence_failures: dict[str, int] = {}
     held: list[dict[str, Any]] = []
     new_notes: list[tuple[dict[str, Any], dict[str, Any]]] = []
+    pages_html: dict[str, str] = {}
     quick_facts = list(edition.get("quickFacts") or [])
     fact_ids = {row.get("id") for row in quick_facts}
     llm_down = False
@@ -719,8 +720,16 @@ def build_edition(
             llm_down = llm_down or reasons == ["llm-unavailable"]
             held.append({**topic, "reasons": reasons})
             continue
+        note = _complete_note(note, candidate, this_id, date, now)
+        try:
+            # Render now, inside this topic's guard: a page that cannot be built
+            # holds its note instead of failing after the edition JSON is written.
+            pages_html[note["id"]] = render_note_page(note, this_id, base_url)
+        except Exception as error:
+            held.append({**topic, "reasons": ["render-error", str(error)[:200]]})
+            continue
         published.add(candidate["fingerprint"])
-        new_notes.append((_complete_note(note, candidate, this_id, date, now), candidate))
+        new_notes.append((note, candidate))
 
     fact_rows = (
         [(row, False) for row in fact_first]
@@ -794,14 +803,20 @@ def build_edition(
     if am_changed:
         _write_json(am_path, am)
         report["written"].append(am_path.as_posix())
-    pages = [(note, this_id) for note, _ in new_notes]
+    pages = [(note, pages_html[note["id"]]) for note, _ in new_notes]
     if am_changed:
-        pages += [(note, am["id"]) for note in am["notes"].values() if note.get("updates")]
+        for note in am["notes"].values():
+            if not note.get("updates"):
+                continue
+            try:
+                pages.append((note, render_note_page(note, am["id"], base_url)))
+            except Exception as error:  # the update is saved in JSON; the page refreshes next run
+                report.setdefault("pageErrors", []).append({"noteId": note.get("id"), "error": str(error)[:200]})
     if pages:
         _ensure_site(site_root)
-    for note, owner in pages:
+    for note, html in pages:
         page = site_root / "notes" / _slug(note["slug"], "note") / "index.html"
-        _write_text(page, render_note_page(note, owner, base_url))
+        _write_text(page, html)
         report["written"].append(page.as_posix())
     index_path = output_root / "editions" / "index.json"
     index = _build_index(output_root, now)

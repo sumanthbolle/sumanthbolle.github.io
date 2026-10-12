@@ -130,6 +130,10 @@ assert.ok(editionWorkflow.indexOf("python -m unittest discover -s scripts/upsc -
 assert.ok(editionWorkflow.indexOf('publish.py ingest') < editionStep);
 assert.ok(editionStep < editionWorkflow.indexOf('node scripts/generate-sitemap.js'));
 assert.match(editionWorkflow, /--slot "\$SLOT"/);
+{
+  const build = editionWorkflow.slice(editionWorkflow.indexOf('- name: Build the edition'), editionWorkflow.indexOf('- name: Refresh sitemap'));
+  assert.match(build, /set -o pipefail/, 'the edition build pipes into tee and must fail when the builder fails');
+}
 assert.match(editionWorkflow, /git add data\/upsc upsc-study sitemap\.xml/);
 assert.match(editionWorkflow, /for attempt in 1 2 3/);
 assert.match(editionWorkflow, /git pull --rebase origin "\$GITHUB_REF_NAME"/);

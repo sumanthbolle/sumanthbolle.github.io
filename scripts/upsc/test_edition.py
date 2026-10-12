@@ -494,6 +494,34 @@ class QuickFactTests(unittest.TestCase):
 FRONTEND_FIXTURE = ROOT / "scripts/fixtures/upsc-edition-generated"
 
 
+class WriteSafetyTests(unittest.TestCase):
+    def setUp(self):
+        self.ws = Workspace([SCHEME, FACT])
+
+    def tearDown(self):
+        self.ws.close()
+
+    def test_wrong_typed_llm_note_is_held_and_edition_stays_consistent(self):
+        self.ws.build(transport=LLM(dict(LLM_NOTE, keyNumbers=5)))
+        edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
+        held = {row["topic"]: row["reasons"] for row in edition["held"]}
+        self.assertIn("bad-type:keyNumbers", held[SCHEME["title"]])
+        self.assertEqual(edition["notes"], {})
+        self.assertFalse((self.ws.site / "notes").exists())
+
+    def test_render_failure_holds_that_note_only(self):
+        from unittest import mock
+        with mock.patch("scripts.upsc.edition.render_note_page", side_effect=RuntimeError("boom")):
+            report = self.ws.build()
+        edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
+        held = {row["topic"]: row["reasons"] for row in edition["held"]}
+        self.assertEqual(held[SCHEME["title"]][0], "render-error")
+        self.assertEqual(edition["notes"], {})
+        self.assertEqual(edition["prelims"] + edition["mains"] + edition["glimpse"], [])
+        self.assertEqual(report["newNotes"], 0)
+        self.assertFalse((self.ws.site / "notes").exists())
+
+
 class FrontendContractTests(unittest.TestCase):
     """The browser desk must load exactly what build_edition writes."""
 

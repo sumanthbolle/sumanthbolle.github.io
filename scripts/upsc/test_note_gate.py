@@ -185,6 +185,27 @@ class GateTests(unittest.TestCase):
             change(mutated["practice"]["mcq"])
             self.assertReason(mutated, "bad-mcq")
 
+    def test_wrong_types_are_rejected_not_crashed_on(self):
+        cases = {
+            "keyNumbers": lambda n: n.update(keyNumbers=5),
+            "keyNumbers.row": lambda n: n["keyNumbers"].append("₹11,440 crore"),
+            "sections": lambda n: n.update(sections={"heading": "x"}),
+            "sections.body": lambda n: n["sections"][0].update(body="text"),
+            "wayForward": lambda n: n.update(wayForward="none"),
+            "whyInNews": lambda n: n.update(whyInNews="text"),
+            "back2basics": lambda n: n.update(back2basics=["x"]),
+            "codes": lambda n: n.update(codes="GS3.3"),
+            "misconception": lambda n: n.update(misconception=["x"]),
+            "practice.faq": lambda n: n["practice"].update(faq={"q": "a"}),
+            "practice.mains.structure.body": lambda n: n["practice"]["mains"]["structure"].update(body=[{"x": 1}]),
+            "practice.mains.structure": lambda n: n["practice"]["mains"].update(structure="intro"),
+        }
+        for field, change in cases.items():
+            mutated = note()
+            change(mutated)
+            reasons = check_note(mutated, EVIDENCE, PYQ_IDS)
+            self.assertIn(f"bad-type:{field}", reasons, field)
+
     def test_headings_must_be_questions(self):
         mutated = note()
         mutated["sections"][0]["heading"] = "Background"

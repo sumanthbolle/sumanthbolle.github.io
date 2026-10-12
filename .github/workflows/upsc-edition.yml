@@ -77,6 +77,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           UPSC_EDITION_MODEL: ${{ vars.UPSC_EDITION_MODEL }}
         run: |
+          set -o pipefail
           extra=()
           if [ "$DRY_RUN" = "true" ]; then
             extra+=(--dry-run)
