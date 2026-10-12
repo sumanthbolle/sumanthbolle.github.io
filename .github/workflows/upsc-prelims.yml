@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Check out triggering ref
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -44,10 +46,6 @@ jobs:
         run: |
           git config user.name "upsc-publisher[bot]"
           git config user.email "upsc-publisher[bot]@users.noreply.github.com"
-          git add data/upsc/prelims-quiz.json
-          if git diff --cached --quiet; then
-            echo "No Prelims quiz changes"
-          else
-            git commit -m "chore: refresh UPSC Prelims quiz"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
-          fi
+          bash scripts/upsc/push-with-retry.sh -m "chore: refresh UPSC Prelims quiz" \
+            -r "python scripts/upsc/prelims_quiz.py --patterns data/upsc-patterns.json --editions data/upsc/editions --output data/upsc" \
+            -- data/upsc/prelims-quiz.json

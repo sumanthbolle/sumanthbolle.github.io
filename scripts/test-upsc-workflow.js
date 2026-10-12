@@ -41,7 +41,7 @@ assert.match(publishWorkflow, /workflow_dispatch:/);
 assert.match(publishWorkflow, /permissions:\s+contents: write/);
 assert.match(publishWorkflow, /issues:\s+write/);
 assert.doesNotMatch(publishWorkflow, /ref:\s+main/);
-assert.match(publishWorkflow, /git push origin "HEAD:\$\{GITHUB_REF_NAME\}"/);
+assert.match(publishWorkflow, /push-with-retry\.sh -m "chore: publish UPSC official-source update"/);
 assert.match(publishWorkflow, /UPSC_ENRICH_ENDPOINT/);
 assert.match(publishWorkflow, /UPSC_PUBLISH_TOKEN/);
 assert.doesNotMatch(publishWorkflow, /Verify publisher configuration/);
@@ -66,7 +66,7 @@ assert.match(publishWorkflow, /node scripts\/test-upsc-guide\.js/);
 assert.match(publishWorkflow, /node scripts\/test-upsc-scroll\.js/);
 assert.match(publishWorkflow, /node scripts\/test-upsc-coach\.js/);
 assert.match(publishWorkflow, /node scripts\/generate-sitemap\.js/);
-assert.match(publishWorkflow, /git add data\/upsc upsc-study sitemap\.xml/);
+assert.match(publishWorkflow, /-- data\/upsc upsc-study sitemap\.xml/);
 
 assert.match(
   dailyWorkflow,
@@ -107,10 +107,10 @@ for (const [name, workflow] of Object.entries({
 
 // upsc-live polls every 5 minutes. In a shared group each new pending run
 // cancels the previous pending one, which could cancel a queued edition, so it
-// keeps its own queue and relies on pull --rebase before pushing.
+// keeps its own queue and relies on the push helper's rebase before pushing.
 assert.match(liveWorkflow, /concurrency:\s+group: upsc-live-publisher\s+cancel-in-progress: false/);
 assert.doesNotMatch(liveWorkflow, /group: upsc-data/);
-assert.match(liveWorkflow, /git pull --rebase origin "\$GITHUB_REF_NAME"/);
+assert.match(liveWorkflow, /bash scripts\/upsc\/push-with-retry\.sh/);
 
 assert.match(publishWorkflow, /node scripts\/test-upsc-edition-integration\.js/);
 assert.match(editionWorkflow, /node scripts\/test-upsc-edition-integration\.js/);
@@ -134,9 +134,23 @@ assert.match(editionWorkflow, /--slot "\$SLOT"/);
   const build = editionWorkflow.slice(editionWorkflow.indexOf('- name: Build the edition'), editionWorkflow.indexOf('- name: Refresh sitemap'));
   assert.match(build, /set -o pipefail/, 'the edition build pipes into tee and must fail when the builder fails');
 }
-assert.match(editionWorkflow, /git add data\/upsc upsc-study sitemap\.xml/);
-assert.match(editionWorkflow, /for attempt in 1 2 3/);
-assert.match(editionWorkflow, /git pull --rebase origin "\$GITHUB_REF_NAME"/);
+assert.match(editionWorkflow, /-- data\/upsc upsc-study sitemap\.xml/);
+assert.match(editionWorkflow, /push-with-retry\.sh -m "chore: publish UPSC daily edition"\s*\\\s*-r "python scripts\/upsc\/edition\.py --rebuild-index && node scripts\/generate-sitemap\.js"/);
+
+// Every workflow that commits data pushes through the retrying helper, never a bare push.
+const pushHelper = fs.readFileSync(path.join(__dirname, 'upsc', 'push-with-retry.sh'), 'utf8');
+assert.match(pushHelper, /attempts="\$\{PUSH_ATTEMPTS:-5\}"/);
+assert.match(pushHelper, /git rebase --abort/);
+assert.match(pushHelper, /git reset -q --hard "origin\/\$ref"/);
+for (const [name, workflow] of Object.entries({
+  'upsc-publish.yml': publishWorkflow, 'upsc-prelims.yml': prelimsWorkflow, 'upsc-revision.yml': revisionWorkflow,
+  'upsc-live.yml': liveWorkflow, 'upsc-pocket.yml': pocketWorkflow, 'upsc-daily.yml': dailyWorkflow,
+  'upsc-edition.yml': editionWorkflow,
+})) {
+  assert.match(workflow, /bash scripts\/upsc\/push-with-retry\.sh -m /, `${name} must push through the helper`);
+  assert.doesNotMatch(workflow, /git push|git pull --rebase/, `${name} must not push directly`);
+  assert.match(workflow, /fetch-depth: 0/, `${name} needs full history for rebases`);
+}
 assert.match(editionWorkflow, /upsc-edition-late/);
 assert.match(editionWorkflow, /if: always\(\)/);
 assert.match(editionWorkflow, /'45 0 \* \* \*'/);

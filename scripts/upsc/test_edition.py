@@ -577,6 +577,19 @@ class PageTests(unittest.TestCase):
 
 
 class CliTests(unittest.TestCase):
+    def test_cli_rebuilds_the_index_from_edition_files(self):
+        ws = Workspace([SCHEME, FACT])
+        self.addCleanup(ws.close)
+        ws.build()
+        (ws.output / "editions/index.json").write_text("{}", encoding="utf-8")
+        completed = subprocess.run(
+            [sys.executable, "scripts/upsc/edition.py", "--rebuild-index", "--output", str(ws.output),
+             "--now", "2026-10-13T01:00:00Z"], cwd=ROOT, capture_output=True, text=True,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        index = json.loads((ws.output / "editions/index.json").read_text(encoding="utf-8"))
+        self.assertEqual([row["path"] for row in index["editions"]], ["2026/10/13-am.json"])
+
     def test_cli_help_runs_as_script(self):
         completed = subprocess.run(
             [sys.executable, "scripts/upsc/edition.py", "--help"],

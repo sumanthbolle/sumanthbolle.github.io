@@ -857,8 +857,15 @@ def main() -> int:
     parser.add_argument("--site-root", type=Path, default=ROOT / "upsc-study")
     parser.add_argument("--feeds", type=Path, default=ROOT / "data/upsc/discovery-feeds.json")
     parser.add_argument("--now")
+    parser.add_argument("--rebuild-index", action="store_true",
+                        help="only rewrite editions/index.json from the edition files (used after a merge)")
     args = parser.parse_args()
     now = args.now or _iso(datetime.now(timezone.utc))
+    if args.rebuild_index:
+        index = _build_index(args.output, now)
+        _write_json(args.output / "editions" / "index.json", index)
+        print(json.dumps({"editions": len(index["editions"])}))
+        return 0
     slot, today = resolve_slot(args.slot, now)
     report = build_edition(
         args.output, args.date or today, slot, now, urlopen, urlopen,
