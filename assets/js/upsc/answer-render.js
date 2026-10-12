@@ -247,17 +247,21 @@
   /* ── safe Markdown subset (fallback for non-JSON answers) ── */
 
   function inline(raw, map) {
-    var s = esc(raw);
+    // Links become placeholders first, so citation and bold rewriting below
+    // can never touch an href (e.g. https://x/doc[1]) or the link text.
+    var links = [];
+    var s = esc(raw).replace(/\u0000/g, '');
     s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (all, text, url) {
       var safe = safeUrl(url);
-      return safe ? '<a href="' + safe + '" target="_blank" rel="noopener noreferrer">' + text + '</a>' : text;
+      links.push(safe ? '<a href="' + safe + '" target="_blank" rel="noopener noreferrer">' + text + '</a>' : text);
+      return '\u0000' + (links.length - 1) + '\u0000';
     });
     s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     s = s.replace(/\[(\d{1,3})\]/g, function (all, n) {
       var source = map[Number(n)];
       return source ? '<span class="ue-cites">' + sourceChip(source, Number(n)) + '</span>' : all;
     });
-    return s;
+    return s.replace(/\u0000(\d+)\u0000/g, function (all, i) { return links[Number(i)]; });
   }
 
   function splitRow(line) {

@@ -236,4 +236,14 @@ test('read time accepts integer minutes or the older "N min" string', function (
   assert.equal(R.readMinutes(0), 0);
 });
 
+test('citation markers never rewrite link targets', function () {
+  const sources = [{ n: 1, title: 'Release', publisher: 'PIB', url: 'https://pib.gov.in/release', kind: 'official' }];
+  const html = R.renderMarkdown('See [the order](https://x.example/doc[1]) and the release [1].', sources);
+  assert.doesNotMatch(html, /href="[^"]*<span/, 'no chip markup inside an href');
+  assert.match(html, /href="https:\/\/x\.example\/doc\[1\]"/);
+  assert.equal((html.match(/class="ue-chip ue-chip--official"/g) || []).length, 1, 'the bare [1] still becomes a chip');
+  const inText = R.renderMarkdown('[Section [1] text](https://x.example/a)', sources);
+  assert.doesNotMatch(inText, /<a [^>]*>[^<]*<span class="ue-cites"/);
+});
+
 console.log('UPSC answer renderer tests passed');
