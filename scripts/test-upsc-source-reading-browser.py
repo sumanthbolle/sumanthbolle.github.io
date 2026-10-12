@@ -86,8 +86,10 @@ with sync_playwright() as p:
             assert page.locator('#svCoachLog').inner_text() == ''
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         page.locator('[data-pocket-article]').first.click()
-        page.locator('[data-pocket-ask]').click()
+        page.locator('[data-pocket-check]').click()
         page.wait_for_selector('.sv-coach-msg--assistant')
+        assert requests[-1]['chip'] == 'understanding'
+        assert requests[-1]['liveSearch'] is True
         page.locator('[data-prompt="understanding"]').click()
         page.wait_for_function("document.querySelectorAll('.sv-coach-msg--assistant').length === 2")
         page.locator('#svCoachInput').fill('The state allocation is the horizontal decision.')

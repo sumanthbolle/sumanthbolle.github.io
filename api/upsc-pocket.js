@@ -33,11 +33,16 @@ export function validPocketArticle(article, now = Date.now()) {
     && Number.isFinite(Date.parse(article.publishedAt)) && Date.parse(article.publishedAt) <= now + 60000
     && ['title', 'subject', 'paper', 'anchor', 'excerpt', 'takeaway'].every(key => typeof article[key] === 'string' && article[key].trim() && article[key].length <= 1500)
     && /^\d{4}-\d{2}-\d{2}$/.test(article.publishedOn)
+    && (!article.example || (typeof article.example.heading === 'string' && article.example.heading.trim()
+      && typeof article.example.text === 'string' && article.example.text.trim() && article.example.text.length <= 900))
+    && ['question', 'recallAnswer'].every(key => article[key] === undefined || (typeof article[key] === 'string' && article[key].length <= 1000))
     && Array.isArray(article.codes) && article.codes.length > 0 && article.codes.every(code => Object.hasOwn(SYLLABUS_CODES, code))
     && Array.isArray(article.sections) && article.sections.length >= 2 && article.sections.length <= 6
     && article.sections.every(section => typeof section.heading === 'string' && section.heading.trim()
       && Array.isArray(section.paragraphs) && section.paragraphs.length > 0 && section.paragraphs.length <= 8
-      && section.paragraphs.every(text => typeof text === 'string' && text.trim() && text.length <= 2000))
+      && section.paragraphs.every(text => typeof text === 'string' && text.trim() && text.length <= 2000)
+      && (section.sourceRefs === undefined || (Array.isArray(section.sourceRefs)
+        && section.sourceRefs.every(index => Number.isInteger(index) && index >= 0 && index < article.sources?.length))))
     && Array.isArray(article.sources) && article.sources.length > 0 && article.sources.length <= 3
     && article.sources.every(source => primarySourceUrl(source.url) && typeof source.label === 'string' && typeof source.note === 'string'));
 }

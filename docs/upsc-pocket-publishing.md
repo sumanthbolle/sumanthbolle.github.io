@@ -2,6 +2,16 @@
 
 The five evergreen articles in `data/upsc-pocket-reads.json` remain available. New Pocket news is projected separately from current official-source notes that pass the source and explanation checks. The library combines both, with news first.
 
+The reading edition groups that order into three recommended reads, remaining latest updates, and remaining evergreen fundamentals. Each article appears once, and search covers the whole edition. This presentation does not reduce the news publication rate.
+
+### Source-bound article prose
+
+The private writer can include `pocket_read`: a factual headline, a distinct deck, two to four descriptive sections, an optional hypothetical example, and an applied question with its reasoned answer. The Worker normalises these as `pocketRead` before complete-note verification. The verification hash includes all those fields; `pocket_feed.py` projects only the unchanged checked content. It never rewrites a headline or answer after checking. Original release titles and dates remain in the source reference.
+
+Older complete, checked notes keep their literal-source-fact and static-concept fallback. The deck is not repeated as the first body paragraph. Malformed new reading objects are excluded by the publisher, and malformed learning aids are rejected at the Worker feed boundary. Source/explanation gates, freshness and study priority remain in place.
+
+Corrections to questions, answers, illustrations or references trigger the same stale-content notice as body changes. Save and source/understanding actions are held until the checked update loads. A refresh failure does not overwrite an active correction warning.
+
 ## Live publication path
 
 1. `upsc-live.yml` checks the reviewed official endpoints on a five-minute GitHub schedule, on manual dispatch, or on a trusted `upsc-source-update` repository-dispatch event. Source contracts still validate publisher host, MIME type, redirects, complete records and content hashes. Undated items retain their first detection date between polls instead of becoming new news on each fetch.

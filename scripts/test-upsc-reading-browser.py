@@ -47,6 +47,9 @@ with sync_playwright() as playwright:
     assert page.evaluate("document.activeElement.id") == "pocketArticleTitle"
     assert "article=" in page.url
     assert_body(page, articles[0])
+    first_paragraph = page.locator('.pr-reader__body p').first.bounding_box()
+    assert first_paragraph['y'] < 600, first_paragraph
+    assert page.locator('#readerBrowse').get_attribute('open') is None
     page.reload(wait_until="networkidle")
     assert page.locator("#pocketArticleTitle").inner_text() == title
     assert_body(page, articles[0])
@@ -56,7 +59,9 @@ with sync_playwright() as playwright:
     assert page.locator("#pocketSaveStatus").inner_text() == "Already in your revision notes."
     assert page.evaluate("window.AnchorStore.list().length") == 1
 
-    page.locator("#q").focus()
+    page.keyboard.press("/")
+    assert page.locator("#readerBrowse").get_attribute("open") is not None
+    assert page.evaluate("document.activeElement.id") == "q"
     page.locator("#q").press("Escape")
     assert "article=" not in page.url
     assert page.locator("#pocketLibrary").is_visible()
@@ -77,6 +82,7 @@ with sync_playwright() as playwright:
     popup.close()
     page.go_forward(wait_until="networkidle")
     assert page.locator("#pocketArticleTitle").inner_text() == title
+    page.locator("#readerBrowse > summary").click()
     page.locator("#tab-memory").click()
     page.locator("#memoryNotes").click()
     assert title in page.locator("#notesList").inner_text()

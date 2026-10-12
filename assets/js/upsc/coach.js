@@ -989,7 +989,8 @@
     toggle.addEventListener('click', function () { setOpen(!state.open); });
     document.addEventListener('upsc:ask', function (event) {
       setOpen(true);
-      send(event.detail && event.detail.query || PROMPTS.sources.query, { chip: 'sources', format: 'text', liveSearch: true });
+      var chip = event.detail && event.detail.chip === 'understanding' ? 'understanding' : 'sources';
+      send(event.detail && event.detail.query || PROMPTS[chip].query, { chip: chip, format: 'text', liveSearch: true });
     });
     document.addEventListener('upsc:articlechange', function () {
       state.stopped = true;

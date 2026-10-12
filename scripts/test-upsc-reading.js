@@ -43,6 +43,19 @@ test('search matches topics and syllabus codes and handles an empty result', fun
   assert.match(Reads.libraryHtml([]), /No short reads match/);
 });
 
+test('reading shelves keep every article reachable once and search covers the whole edition', function () {
+  const news = articles.slice(0, 4).map((article, index) => ({ ...article, id: 'news-test-' + index, sourceId: 'source-' + index }));
+  const edition = news.concat(articles);
+  const html = Reads.readingEditionHtml(edition, '');
+  for (const article of edition) assert.equal((html.match(new RegExp('data-pocket-article="' + article.id + '"', 'g')) || []).length, 1);
+  assert.match(html, /Recommended reads/);
+  assert.match(html, /Latest updates/);
+  assert.match(html, /Fundamentals/);
+  const search = Reads.readingEditionHtml(edition, 'wetland');
+  assert.match(search, /wetlands-beyond-a-list/);
+  assert.doesNotMatch(search, /Recommended reads|Fundamentals/);
+});
+
 test('article text is escaped and unsupported source URL protocols are excluded', function () {
   const article = Object.assign({}, articles[0], {
     title: '<script>alert(1)</script>',
