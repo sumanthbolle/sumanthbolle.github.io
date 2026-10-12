@@ -4,7 +4,9 @@ from scripts.upsc.candidates import (
     CODE_LABELS,
     FACT_FLOOR,
     NOTE_FLOOR,
+    balance_order,
     build_candidates,
+    candidate_from,
     fingerprint,
     note_queue,
     tokens,
@@ -67,6 +69,37 @@ class SelectionTests(unittest.TestCase):
         rows = [fake(90, "GS3.1", "a"), fake(85, "GS3.2", "b"), fake(80, "GS3.4", "c"),
                 fake(75, "GS3.6", "d"), fake(40, "GS2.9", "e")]
         self.assertEqual([row["title"] for row in note_queue(rows)], ["a", "b", "c", "d"])
+
+
+class BalanceTests(unittest.TestCase):
+    def test_paper_balance_only_breaks_near_ties(self):
+        rows = [fake(90, "GS3.1", "a"), fake(88, "GS3.2", "b"), fake(87, "GS2.4", "c"),
+                fake(70, "GS3.4", "d"), fake(69, "GS2.9", "e")]
+        # b and c are within 5 points: GS2 is under-represented, so c goes first;
+        # the same happens for d and e.
+        self.assertEqual([row["title"] for row in balance_order(rows)], ["a", "c", "b", "e", "d"])
+
+    def test_large_score_gaps_are_never_reordered(self):
+        rows = [fake(90, "GS3.1", "a"), fake(80, "GS3.2", "b"), fake(70, "GS2.4", "c")]
+        self.assertEqual([row["title"] for row in balance_order(rows)], ["a", "b", "c"])
+
+
+class MergeTests(unittest.TestCase):
+    def test_candidate_from_rescores_a_merged_story(self):
+        one = build([], [news("Kerala Assembly passes resolution seeking removal of CEC Gyanesh Kumar",
+                              url="https://a.example/1")])[0]
+        merged = candidate_from(
+            one["title"],
+            [],
+            one["discovery"] + [news("INDIA bloc marches to Supreme Court over SIR electoral rolls",
+                                     publisher="The Indian Express", url="https://b.example/2")],
+            pyq_bank=PYQ, patterns=PATTERNS,
+        )
+        self.assertEqual(merged["fingerprint"], one["fingerprint"])
+        self.assertEqual(len(merged["discovery"]), 2)
+        self.assertEqual(merged["scoreParts"]["coverage"], 16)
+        self.assertGreater(merged["score"], one["score"])
+        self.assertEqual(merged["kind"], "secondary")
 
 
 class TokenTests(unittest.TestCase):

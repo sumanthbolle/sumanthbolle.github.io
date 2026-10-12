@@ -475,18 +475,61 @@ def build_candidates(
     pyq_sets = _pyq_token_sets(_load(PYQ_BANK_PATH, pyq_bank))
     anchors = _anchor_rows(_load(PATTERNS_PATH, patterns))
     candidates = []
+    seen: dict[str, int] = {}
     for cluster in clusters:
         fresh = any(_in(row.get("publishedAt", ""), start, end) for row in cluster["records"] + cluster["discovery"])
         if not fresh:
             continue
-        scored = _score(cluster, start, pyq_sets, anchors)
-        candidates.append({
-            "fingerprint": fingerprint(cluster["title"]),
-            "title": cluster["title"],
-            "records": cluster["records"],
-            "discovery": cluster["discovery"],
-            "kind": _kind(cluster),
-            "band": _band(scored["score"]),
-            **scored,
-        })
+        candidate = _candidate(cluster, pyq_sets, anchors)
+        base = candidate["fingerprint"]
+        seen[base] = seen.get(base, 0) + 1
+        if seen[base] > 1:  # two clusters with the same lead words stay distinct
+            candidate["fingerprint"] = f"{base[:13]}-{seen[base]}"
+        candidates.append(candidate)
     return sorted(candidates, key=lambda row: (-row["score"], row["title"], row["fingerprint"]))
+
+
+def _candidate(cluster: dict[str, Any], pyq_sets: list[set[str]], anchors: list[dict[str, Any]]) -> dict[str, Any]:
+    scored = _score(cluster, datetime.now(), pyq_sets, anchors)
+    return {
+        "fingerprint": fingerprint(cluster["title"]),
+        "title": cluster["title"],
+        "records": cluster["records"],
+        "discovery": cluster["discovery"],
+        "kind": _kind(cluster),
+        "band": _band(scored["score"]),
+        **scored,
+    }
+
+
+def candidate_from(
+    title: str,
+    records: Iterable[dict[str, Any]],
+    discovery: Iterable[dict[str, Any]],
+    pyq_bank: Any = None,
+    patterns: Any = None,
+) -> dict[str, Any]:
+    """Score an explicit set of records and headlines as one story (editor merges,
+    carried-over topics). The lead title fixes the fingerprint."""
+    unique_records = list({row["id"]: row for row in records if isinstance(row, dict) and row.get("id")}.values())
+    unique_items = list({row["url"]: row for row in discovery if isinstance(row, dict) and row.get("url")}.values())
+    cluster = {"title": str(title or ""), "records": unique_records, "discovery": unique_items}
+    return _candidate(
+        cluster, _pyq_token_sets(_load(PYQ_BANK_PATH, pyq_bank)), _anchor_rows(_load(PATTERNS_PATH, patterns)),
+    )
+
+
+def balance_order(candidates: list[dict[str, Any]], tie_window: int = 5) -> list[dict[str, Any]]:
+    """Order by score; among candidates within `tie_window` points of the best
+    remaining one, prefer the GS paper with fewer picks so far."""
+    remaining = sorted(candidates, key=lambda row: (-int(row["score"]), str(row.get("title") or "")))
+    counts: dict[str, int] = {}
+    ordered = []
+    while remaining:
+        top = int(remaining[0]["score"])
+        near = [row for row in remaining if int(row["score"]) >= top - tie_window]
+        pick = min(near, key=lambda row: (counts.get(_family(row), 0), -int(row["score"]), str(row.get("title") or "")))
+        counts[_family(pick)] = counts.get(_family(pick), 0) + 1
+        ordered.append(pick)
+        remaining.remove(pick)
+    return ordered
