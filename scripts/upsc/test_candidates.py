@@ -92,6 +92,15 @@ class CandidateTests(unittest.TestCase):
         )])
         self.assertEqual(rows[0]["band"], "skip")
 
+    def test_routine_surveys_and_campaigns_are_skipped(self):
+        for title in (
+            "Launching of 51st Round of Quarterly Services and Infrastructure Outlook Survey (SIOS)",
+            "Ministry of MSME Concludes Swachhata Hi Seva 2026 Campaign with industry and MSME units",
+            "NHRC organises a National Conference on Right to Water on its 33rd Foundation Day",
+        ):
+            rows = build([record("s", title, "Survey of bank credit, investment, growth and employment. " * 20)])
+            self.assertEqual(rows[0]["band"], "skip", title)
+
     def test_discovery_without_official_match_becomes_editorial(self):
         rows = build([record("c", "Coal stocks at power plants remain stable above 18 MT")],
                      [news("The quiet erosion of federalism in fiscal transfers", "editorial",

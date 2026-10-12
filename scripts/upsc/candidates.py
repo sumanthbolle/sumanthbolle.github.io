@@ -105,13 +105,15 @@ PUBLISHER_WEIGHTS = {
 CEREMONIAL = (
     "celebrat", "felicitat", "pays tribute", "greets", "condoles", "yoga day",
     "swachhata pledge", "pays homage", "offers prayers", "subhashitam",
-    "birth anniversary", "extends wishes", "curtain raiser",
+    "birth anniversary", "extends wishes", "curtain raiser", "foundation day",
+    "swachhata", "special campaign", " mela", "golden jubilee",
 )
 ROUTINE = (
     "money market operations", "auction of", "result of", "money supply",
     "reverse repo (vrrr) auction", "variable rate repo", "treasury bill",
     "weekly statistical supplement", "state government securities", "cash management bill",
-    "lending facility", "auction under laf", "conversion/switch",
+    "lending facility", "auction under laf", "conversion/switch", "outlook survey",
+    "launching of", "survey round", "expectations survey", "confidence survey",
 )
 CEREMONIAL_CAP = 30
 ROUTINE_CAP = 35
@@ -252,7 +254,7 @@ def _score(
         "anchor": anchor_score, "depth": depth, "recency": recency,
     }
     total = sum(parts.values())
-    lead = cluster["title"].lower()
+    lead = " " + cluster["title"].lower()
     cap = min(
         CEREMONIAL_CAP if any(word in lead for word in CEREMONIAL) else 100,
         ROUTINE_CAP if any(word in lead for word in ROUTINE) else 100,
