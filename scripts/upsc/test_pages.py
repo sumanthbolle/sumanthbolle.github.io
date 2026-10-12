@@ -74,6 +74,30 @@ class StaticPageTests(unittest.TestCase):
             self.assertEqual(report["notePages"], 1)
             self.assertTrue((site / ".upsc-generated").is_file())
 
+    def test_archive_rebuild_keeps_edition_note_pages(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "data"
+            root.mkdir()
+            (root / "archive-index.json").write_text("{}", encoding="utf-8")
+            site = Path(directory) / "upsc-study"
+            (site / "notes/2026-10-13-scheme-abc123").mkdir(parents=True)
+            (site / ".upsc-generated").write_text("marker", encoding="utf-8")
+            edition_page = site / "notes/2026-10-13-scheme-abc123/index.html"
+            edition_page.write_text("edition note", encoding="utf-8")
+            (site / "notes/2026-10-13-scheme-abc123/stray.html").write_text("x", encoding="utf-8")
+            (site / "notes/src_old").mkdir()
+            (site / "notes/src_old/old-title.html").write_text("stale archive page", encoding="utf-8")
+            (site / "daily").mkdir()
+            (site / "daily/2026-01-01.html").write_text("stale", encoding="utf-8")
+
+            build_static_pages(root, site, "https://sumanthbolle.com", NOW)
+
+            self.assertEqual(edition_page.read_text(encoding="utf-8"), "edition note")
+            self.assertFalse((site / "notes/2026-10-13-scheme-abc123/stray.html").exists())
+            self.assertFalse((site / "notes/src_old").exists())
+            self.assertFalse((site / "daily/2026-01-01.html").exists())
+            self.assertTrue((site / "index.html").is_file())
+
     def test_refuses_to_replace_unmarked_directory(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "data"

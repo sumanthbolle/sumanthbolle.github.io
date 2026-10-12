@@ -99,6 +99,23 @@ function slugify(text) {
 }
 
 /**
+ * Edition note pages written by scripts/upsc/edition.py: upsc-study/notes/<slug>/index.html
+ */
+function editionNoteSlugs(notesRoot) {
+  let names = [];
+  try {
+    names = fs.readdirSync(notesRoot, { withFileTypes: true });
+  } catch (e) {
+    return [];
+  }
+  return names
+    .filter((entry) => entry.isDirectory() && /^[a-z0-9][a-z0-9-]*$/.test(entry.name))
+    .filter((entry) => fs.existsSync(path.join(notesRoot, entry.name, 'index.html')))
+    .map((entry) => entry.name)
+    .sort();
+}
+
+/**
  * Main function to generate sitemap
  */
 function buildSitemap(options = {}) {
@@ -188,6 +205,11 @@ function buildSitemap(options = {}) {
       if (slug) upscEntries.push({ path: `upsc-study/anchors/${slug}.html`, lastmod: today, changefreq: 'weekly', priority: '0.7' });
     }
   }
+  const notesRoot = options.notesRoot || path.join(process.cwd(), 'upsc-study', 'notes');
+  for (const slug of editionNoteSlugs(notesRoot)) {
+    const dated = /^(\d{4}-\d{2}-\d{2})-/.exec(slug);
+    upscEntries.push({ path: `upsc-study/notes/${slug}/`, lastmod: dated ? dated[1] : today, changefreq: 'weekly', priority: '0.8' });
+  }
   for (const entry of upscEntries) {
     urls.push(generateUrlEntry(`${siteUrl}/${entry.path}`, entry.lastmod, entry.changefreq, entry.priority));
   }
@@ -212,4 +234,4 @@ if (require.main === module) {
   buildSitemap();
 }
 
-module.exports = { buildSitemap, formatDate, generateUrlEntry, slugify };
+module.exports = { buildSitemap, editionNoteSlugs, formatDate, generateUrlEntry, slugify };
