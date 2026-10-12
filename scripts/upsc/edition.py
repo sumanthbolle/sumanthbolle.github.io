@@ -24,7 +24,7 @@ if __package__ in (None, ""):
 
 from scripts.upsc.adapters import curl_open
 from scripts.upsc.candidates import FACT_FLOOR, PYQ_BANK_PATH, build_candidates, note_queue, similar, tokens
-from scripts.upsc.discovery import fetch_discovery, load_feeds
+from scripts.upsc.discovery import archive_items, fetch_discovery, load_archived, load_feeds
 from scripts.upsc.evidence import fetch_evidence, official_links
 from scripts.upsc.publish import _all_current_records, _read_json, _slug, _write_json, _write_text
 from scripts.upsc.writer import write_note
@@ -523,10 +523,13 @@ def build_edition(
     edition["window"] = {"from": window[0], "to": window[1]}
 
     feed_errors: list[dict[str, str]] = []
-    discovery = fetch_discovery(
+    fetched = fetch_discovery(
         load_feeds(feeds_path or ROOT / "data/upsc/discovery-feeds.json"), opener,
         window[0], window[1], feed_errors,
     )
+    archived = load_archived(output_root, window[0], window[1])
+    seen_urls = {row["url"] for row in fetched}
+    discovery = fetched + [row for row in archived if row["url"] not in seen_urls]
     records, _ = _all_current_records(output_root)
     candidates = build_candidates(records.values(), discovery, window)
 
@@ -624,7 +627,10 @@ def build_edition(
     facts = [row for row in candidates if row["band"] == "useful"]
     report: dict[str, Any] = {
         "editionId": this_id, "dryRun": dry_run, "window": edition["window"],
-        "discovery": {"items": len(discovery), "feedErrors": feed_errors},
+        "discovery": {
+            "items": len(discovery), "fetched": len(fetched),
+            "fromArchive": len(discovery) - len(fetched), "feedErrors": feed_errors,
+        },
         "candidates": {band: sum(1 for row in candidates if row["band"] == band) for band in ("must", "useful", "update", "skip")},
         "mustKnow": [_brief(row) for row in must],
         "quickFactTopics": [_brief(row) for row in facts],
@@ -636,6 +642,8 @@ def build_edition(
     if dry_run:
         return report
 
+    for archive_path in archive_items(output_root, fetched):
+        report["written"].append(archive_path.as_posix())
     if not _same(existing, edition):
         _write_json(path, edition)
         report["written"].append(path.as_posix())

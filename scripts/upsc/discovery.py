@@ -5,7 +5,7 @@ Only headline, link and time are kept. Discovery items decide what gets a note;
 the note itself is written from official records (see evidence.py).
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import gzip
 from html import unescape
 import io
@@ -22,7 +22,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from scripts.upsc.adapters import FEED_ACCEPT, MAX_PAYLOAD_BYTES, USER_AGENT, _iso_date, curl_open
-from scripts.upsc.publish import _read_json
+from scripts.upsc.publish import _read_json, _write_json
 
 
 TAG_RE = re.compile(r"<[^>]+>")
@@ -142,16 +142,73 @@ def fetch_discovery(
     return sorted(items, key=lambda row: (row["publishedAt"], row["url"]))
 
 
+ITEM_KEYS = ("title", "url", "publishedAt", "feedId", "publisher", "section")
+
+
+def _partition(output_root: Path, published: str) -> Path:
+    year, month, day = published[:10].split("-")
+    return Path(output_root) / "discovery" / year / month / f"{day}.json"
+
+
+def archive_items(output_root: Path, items: list[dict[str, str]]) -> list[Path]:
+    """Merge items into data/upsc/discovery/YYYY/MM/DD.json (UTC day) by URL.
+
+    Busy newspaper feeds hold about two hours of items, so each run keeps what
+    it saw and later runs read the archive for their window. Returns the
+    partitions that changed.
+    """
+    grouped: dict[Path, list[dict[str, str]]] = {}
+    for item in items:
+        if item.get("url") and item.get("publishedAt"):
+            grouped.setdefault(_partition(output_root, item["publishedAt"]), []).append(item)
+    written = []
+    for path, rows in sorted(grouped.items()):
+        existing = _read_json(path, [])
+        by_url = {row["url"]: row for row in existing if isinstance(row, dict) and row.get("url")} if isinstance(existing, list) else {}
+        before = len(by_url)
+        for row in rows:
+            by_url.setdefault(row["url"], {key: str(row.get(key) or "") for key in ITEM_KEYS})
+        if len(by_url) == before and path.is_file():
+            continue
+        _write_json(path, sorted(by_url.values(), key=lambda row: (row["publishedAt"], row["url"])))
+        written.append(path)
+    return written
+
+
+def load_archived(output_root: Path, since_iso: str, until_iso: str) -> list[dict[str, str]]:
+    since, until = _parse_time(since_iso), _parse_time(until_iso)
+    day, rows = since.astimezone(timezone.utc).date(), []
+    while day <= until.astimezone(timezone.utc).date():
+        payload = _read_json(_partition(output_root, day.isoformat()), [])
+        for row in payload if isinstance(payload, list) else []:
+            if isinstance(row, dict) and row.get("url") and row.get("publishedAt"):
+                try:
+                    if since <= _parse_time(row["publishedAt"]) < until:
+                        rows.append(row)
+                except ValueError:
+                    continue
+        day += timedelta(days=1)
+    return sorted(rows, key=lambda row: (row["publishedAt"], row["url"]))
+
+
 def main() -> int:
     import argparse
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--feeds", type=Path, default=Path("data/upsc/discovery-feeds.json"))
-    parser.add_argument("--since", required=True)
-    parser.add_argument("--until", required=True)
+    parser.add_argument("--since", help="ISO time; default 36 hours ago")
+    parser.add_argument("--until", help="ISO time; default now")
+    parser.add_argument("--archive", type=Path, help="data/upsc root to merge items into")
     args = parser.parse_args()
+    now = datetime.now(timezone.utc).replace(microsecond=0)
+    since = args.since or (now - timedelta(hours=36)).isoformat().replace("+00:00", "Z")
+    until = args.until or (now + timedelta(minutes=1)).isoformat().replace("+00:00", "Z")
     errors: list[dict[str, str]] = []
-    items = fetch_discovery(load_feeds(args.feeds), urlopen, args.since, args.until, errors)
-    print(json.dumps({"items": items, "errors": errors}, indent=2, ensure_ascii=False))
+    items = fetch_discovery(load_feeds(args.feeds), urlopen, since, until, errors)
+    if args.archive:
+        written = archive_items(args.archive, items)
+        print(json.dumps({"items": len(items), "written": [str(path) for path in written], "errors": errors}, indent=2))
+    else:
+        print(json.dumps({"items": items, "errors": errors}, indent=2, ensure_ascii=False))
     return 0
 
 

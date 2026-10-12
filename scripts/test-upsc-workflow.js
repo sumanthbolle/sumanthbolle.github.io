@@ -58,6 +58,8 @@ assert.match(publishWorkflow, /Snapshot previous source health/);
 assert.doesNotMatch(publishWorkflow, /--strict/);
 assert.ok(publishWorkflow.indexOf('Ingest official records') < publishWorkflow.indexOf('Enrich source records'));
 assert.match(publishWorkflow, /publish\.py build-pages/);
+assert.match(publishWorkflow, /python scripts\/upsc\/discovery\.py --archive data\/upsc/);
+assert.ok(publishWorkflow.indexOf('discovery.py --archive') < publishWorkflow.indexOf('Commit generated publication'));
 assert.match(publishWorkflow, /node scripts\/test-upsc-shell\.js/);
 assert.match(publishWorkflow, /node scripts\/test-upsc-packet\.js/);
 assert.match(publishWorkflow, /node scripts\/test-upsc-guide\.js/);

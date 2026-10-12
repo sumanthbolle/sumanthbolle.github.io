@@ -251,9 +251,19 @@ class BuildTests(unittest.TestCase):
         am_again = json.loads(self.ws.edition_path("am").read_text(encoding="utf-8"))
         self.assertEqual(len(next(iter(am_again["notes"].values()))["updates"]), 1)
 
+    def test_archived_discovery_items_count_after_they_leave_the_feed(self):
+        self.ws.build()
+        self.assertTrue((self.ws.output / "discovery/2026/10/12.json").is_file())
+        archived = json.loads((self.ws.output / "discovery/2026/10/12.json").read_text(encoding="utf-8"))
+        self.assertIn("RBI keeps repo rate unchanged at 5.5%", [row["title"] for row in archived])
+        report = self.ws.build(now="2026-10-13T00:50:00Z", blocked=(FEED_URL,))
+        self.assertEqual(report["discovery"]["items"], 2)
+        self.assertEqual(report["discovery"]["fromArchive"], 2)
+
     def test_dry_run_writes_nothing(self):
         report = self.ws.build(dry_run=True, env={})
         self.assertFalse((self.ws.output / "editions").exists())
+        self.assertFalse((self.ws.output / "discovery").exists())
         self.assertFalse(self.ws.site.exists())
         self.assertIn(["llm-unavailable"], [row["reasons"] for row in report["edition"]["held"]])
         self.assertTrue(report["dryRun"])

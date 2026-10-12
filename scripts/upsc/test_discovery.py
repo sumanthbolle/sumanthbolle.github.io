@@ -1,9 +1,10 @@
 import json
+import tempfile
 import unittest
 import urllib.error
 from pathlib import Path
 
-from scripts.upsc.discovery import fetch_discovery, load_feeds, parse_rss
+from scripts.upsc.discovery import archive_items, fetch_discovery, load_archived, load_feeds, parse_rss
 
 
 FIXTURES = Path(__file__).with_name("fixtures")
@@ -105,6 +106,25 @@ class DiscoveryTests(unittest.TestCase):
             "2026-10-12T12:30:00Z", "2026-10-13T00:30:00Z",
         )
         self.assertEqual(len(rows), 2)
+
+
+class ArchiveTests(unittest.TestCase):
+    """Busy feeds keep only ~2 hours of items, so every run archives what it saw."""
+
+    def test_archive_merges_by_url_into_daily_partitions_and_reloads_by_window(self):
+        rows = parse_rss((FIXTURES / "hindu-rss.xml").read_bytes(), FEED)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            written = archive_items(root, rows[:2])
+            self.assertEqual(sorted(path.name for path in written), ["12.json"])
+            archive_items(root, rows)  # second snapshot overlaps the first
+            day = json.loads((root / "discovery/2026/10/12.json").read_text(encoding="utf-8"))
+            self.assertEqual(len(day), 2)
+            self.assertEqual(len({row["url"] for row in day}), 2)
+            self.assertTrue((root / "discovery/2026/10/10.json").is_file())
+            self.assertEqual(archive_items(root, rows), [])  # nothing new, nothing written
+            window = load_archived(root, "2026-10-12T12:30:00Z", "2026-10-13T00:30:00Z")
+            self.assertEqual([row["url"][-12:] for row in window], ["article1.ece", "article2.ece"])
 
 
 if __name__ == "__main__":
