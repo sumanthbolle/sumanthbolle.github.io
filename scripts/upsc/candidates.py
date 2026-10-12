@@ -122,10 +122,10 @@ NOTE_FLOOR = 45
 FACT_FLOOR = 30
 FAMILY_CAP = 3
 # Caps sit below FACT_FLOOR so capped items are never notes or quick facts,
-# except foreign-only records, which may still be quick facts.
+# including foreign-only records.
 CEREMONIAL_CAP = 20
 ROUTINE_CAP = 25
-FOREIGN_CAP = 40
+FOREIGN_CAP = 25
 CORPORATE_CAP = 25
 LOCAL_CAP = 29
 # Newspaper-only items: company results and markets, local administration and crime.

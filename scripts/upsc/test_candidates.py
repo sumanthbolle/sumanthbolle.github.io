@@ -190,7 +190,8 @@ class CandidateTests(unittest.TestCase):
                       "Poverty, growth and employment data for India and the world bank. " * 10,
                       publisher="un-news")
         rows = {row["records"][0]["id"]: row for row in build([far, near])}
-        self.assertLessEqual(rows["eu"]["score"], 40)
+        self.assertLessEqual(rows["eu"]["score"], 25)
+        self.assertLess(rows["eu"]["score"], FACT_FLOOR)
         self.assertNotIn("cap", rows["un"]["scoreParts"])
         bound = build([far], [news("EU lists 77 individuals over Ukraine elections in Russia sanctions push",
                                    "international")])
