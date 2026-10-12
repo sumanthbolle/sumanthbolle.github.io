@@ -53,6 +53,8 @@ import {
   upscChipInstruction,
   upscMetaLine,
 } from './upsc-domain.js';
+import { primarySourceUrl, retrievePrimarySources, sourceResearchInstruction } from './upsc-sources.js';
+import { handlePocketFeed } from './upsc-pocket.js';
 
 import {
   upscScope,
@@ -130,6 +132,11 @@ export default {
 
     if (request.method === 'OPTIONS') {
       return corsResponse(null, origin, 204);
+    }
+
+    if ((request.method === 'GET' && url.pathname === '/upsc/pocket')
+      || (request.method === 'POST' && url.pathname === '/upsc/pocket/publish')) {
+      return handlePocketFeed(request, env, origin);
     }
 
     if (request.method === 'GET' && url.pathname === '/trending') {
@@ -224,6 +231,9 @@ async function handleChat(request, env, origin) {
     const upscMarks = Number(body.marks) === 15 ? 15 : (Number(body.marks) === 10 ? 10 : 0);
     const upscMeta = body.meta && typeof body.meta === 'object' ? body.meta : null;
     const wantsJson = body.format === 'json';
+    const sourceUrls = upscDomain && liveSearch && Array.isArray(body.sourceUrls)
+      ? [...new Set(body.sourceUrls.slice(0, 3).map(primarySourceUrl).filter(Boolean))] : [];
+    const sourceDocuments = sourceUrls.length ? await retrievePrimarySources(sourceUrls) : [];
 
     let systemContent = SYSTEM_PROMPT;
     if (upscDomain) {
@@ -251,6 +261,7 @@ async function handleChat(request, env, origin) {
     }
 
     const messages = [{ role: 'system', content: systemContent }];
+    if (sourceDocuments.length) messages[0].content += '\n\n' + sourceResearchInstruction(sourceDocuments);
 
     if (Array.isArray(context) && context.length > 0) {
       for (const msg of context.slice(-10)) {
@@ -280,6 +291,10 @@ async function handleChat(request, env, origin) {
       web_search_options: { search_context_size: searchContextSize },
       return_related_questions: true
     };
+    if (sourceUrls.length) {
+      sonarPayload.search_domain_filter = [...new Set(sourceUrls.map(url => new URL(url).hostname.replace(/^www\./, '')))];
+      sonarPayload.max_tokens = 1800;
+    }
 
     const data = await callSonar(apiKey, sonarPayload);
     const result = buildResult(data);
@@ -287,6 +302,7 @@ async function handleChat(request, env, origin) {
       result.domain = 'upsc';
       if (upscChip) result.chip = upscChip;
       if (upscMeta) result.meta = upscMeta;
+      if (sourceDocuments.length) result.sourceRetrieval = sourceDocuments.map(({ text, ...record }) => record);
     } else if (result && snDomain) {
       result.domain = 'servicenow';
       result.servicenow = {
@@ -750,6 +766,8 @@ async function handleServiceNowFeed(request, env, ctx, origin) {
 const UPSC_BRIEF_TIMEOUT_MS = 45000;
 const UPSC_TOPIC_TIMEOUT_MS = 40000;
 const UPSC_ENRICH_TIMEOUT_MS = 55000;
+// Leave time for the bounded document fetch inside the publisher's 55s request.
+const UPSC_SOURCE_NOTE_TIMEOUT_MS = 45000;
 
 function hasUpscPublishToken(request, env) {
   var expected = String(env.UPSC_PUBLISH_TOKEN || '');
@@ -792,10 +810,13 @@ async function handleUpscEnrich(request, env, origin) {
   }
 
   try {
+    const documents = await retrievePrimarySources([record.sourceUrl]);
+    const payload = buildUpscEnrichmentPayload(record);
+    payload.messages[0].content += '\n' + sourceResearchInstruction(documents);
     const data = await callSonarWithTimeout(
       env.PERPLEXITY_API_KEY,
-      buildUpscEnrichmentPayload(record),
-      UPSC_ENRICH_TIMEOUT_MS
+      payload,
+      UPSC_SOURCE_NOTE_TIMEOUT_MS
     );
     const note = normalizeUpscExamNote(parseStructured(data), record);
     if (!note) {
@@ -875,10 +896,13 @@ async function handleUpscVerify(request, env, origin) {
     return upscEnrichmentResponse({ success: false, error: 'Verification service is not configured.' }, origin, 503);
   }
   try {
+    const documents = await retrievePrimarySources([source.sourceUrl]);
+    const payload = buildUpscVerifyPayload(source, note);
+    payload.messages[0].content += '\n' + sourceResearchInstruction(documents);
     const data = await callSonarWithTimeout(
       env.PERPLEXITY_API_KEY,
-      buildUpscVerifyPayload(source, note),
-      UPSC_ENRICH_TIMEOUT_MS
+      payload,
+      UPSC_SOURCE_NOTE_TIMEOUT_MS
     );
     const result = normalizeUpscVerification(parseStructured(data));
     if (!result) {
@@ -887,7 +911,7 @@ async function handleUpscVerify(request, env, origin) {
         error: 'Provider response did not satisfy the verification contract.',
       }, origin, 422);
     }
-    return upscEnrichmentResponse({ success: true, data: result }, origin, 200);
+    return upscEnrichmentResponse({ success: true, verificationVersion: 2, data: result }, origin, 200);
   } catch {
     return upscEnrichmentResponse({
       success: false,
@@ -2292,7 +2316,10 @@ function buildResult(data) {
 
   if (!answer && searchResults.length === 0) return null;
 
-  const sources = searchResults.slice(0, 8).map((sr, i) => ({
+  const orderedResults = citations.length ? citations.slice(0, 8).map(url => (
+    searchResults.find(row => row.url === url) || { url }
+  )) : searchResults.slice(0, 8);
+  const sources = orderedResults.map((sr, i) => ({
     index: i + 1,
     title: sr.title || '',
     url: sr.url,
@@ -2300,19 +2327,6 @@ function buildResult(data) {
     source: extractDomain(sr.url),
     date: sr.date || null
   }));
-
-  if (sources.length === 0 && citations.length > 0) {
-    citations.slice(0, 8).forEach((url, i) => {
-      sources.push({
-        index: i + 1,
-        title: '',
-        url,
-        snippet: '',
-        source: extractDomain(url),
-        date: null
-      });
-    });
-  }
 
   return {
     type: 'rich',
@@ -2355,7 +2369,7 @@ function corsResponse(body, origin, status = 200) {
     headers: {
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, If-None-Match',
       'Access-Control-Max-Age': '86400',
     }
   });

@@ -1,0 +1,57 @@
+name: Publish verified Pocket news
+
+on:
+  schedule:
+    # Most frequent GitHub schedule; runs can be delayed by GitHub.
+    - cron: "*/5 * * * *"
+  repository_dispatch:
+    types: [upsc-source-update]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  # Serialize with the archive publisher and revision generators.
+  group: upsc-official-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Ingest, verify and release passing notes immediately
+        env:
+          UPSC_ENRICH_ENDPOINT: ${{ vars.UPSC_ENRICH_ENDPOINT || secrets.UPSC_ENRICH_ENDPOINT || 'https://wandering-haze-b394.sumanthbolle312.workers.dev/upsc/enrich' }}
+          UPSC_PUBLISH_TOKEN: ${{ secrets.UPSC_PUBLISH_TOKEN }}
+        run: python scripts/upsc/live_publish.py --report /tmp/upsc-live-result.json
+      - name: Retain source corrections and the verified fallback
+        if: always()
+        run: |
+          if [ ! -f /tmp/upsc-live-result.json ]; then
+            exit 0
+          fi
+          if ! python -c 'import json; import sys; sys.exit(0 if json.load(open("/tmp/upsc-live-result.json"))["changed"] else 1)'; then
+            exit 0
+          fi
+          python scripts/upsc/publish.py build-indexes --output data/upsc
+          python scripts/upsc/publish.py build-pages --output data/upsc --site-root upsc-study --base-url https://sumanthbolle.com
+          node scripts/generate-sitemap.js
+          git config user.name "upsc-publisher[bot]"
+          git config user.email "upsc-publisher[bot]@users.noreply.github.com"
+          git add data/upsc upsc-study sitemap.xml
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: publish verified Pocket news"
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi

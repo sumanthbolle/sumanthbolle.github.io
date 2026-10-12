@@ -97,7 +97,7 @@ test('loads the public content contract before render and app', function () {
   assert.ok(content > 0 && content < packet && packet < memory && memory < render && render < app);
   assert.ok(reading > app);
   assert.ok(scroll > reading);
-  assert.doesNotMatch(html, /assets\/js\/upsc\/coach\.js/);
+  assert.match(html, /assets\/js\/upsc\/coach\.js/);
   assert.match(html, /assets\/css\/upsc-motion\.css/);
 });
 

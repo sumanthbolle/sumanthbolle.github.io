@@ -44,7 +44,7 @@ class VerificationTests(unittest.TestCase):
         def opener(request, timeout=55):
             calls.append(request.full_url)
             return EnrichmentResponse({
-                "success": True,
+                "success": True, "verificationVersion": 2,
                 "data": {
                     "agrees": False,
                     "confidence": 0.4,
@@ -77,7 +77,7 @@ class VerificationTests(unittest.TestCase):
 
         def opener(request, timeout=55):
             return EnrichmentResponse({
-                "success": True,
+                "success": True, "verificationVersion": 2,
                 "data": {"agrees": True, "confidence": 0.91, "flagged_claims": []},
             })
 
@@ -90,12 +90,12 @@ class VerificationTests(unittest.TestCase):
         self.assertEqual(held, [])
         self.assertEqual(stats["agreed"], 1)
         self.assertTrue(should_publish(parse_verification({
-            "success": True, "data": {"agrees": True, "confidence": 0.91, "flagged_claims": []},
+            "success": True, "verificationVersion": 2, "data": {"agrees": True, "confidence": 0.91, "flagged_claims": []},
         })))
 
     def test_low_confidence_agreement_is_still_held(self):
         result = parse_verification({
-            "success": True,
+            "success": True, "verificationVersion": 2,
             "data": {"agrees": True, "confidence": 0.55, "flagged_claims": ["thin evidence"]},
         })
         self.assertFalse(should_publish(result))

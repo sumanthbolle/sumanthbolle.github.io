@@ -37,7 +37,7 @@ test('reading time responds to article length instead of a fixed priority band',
 });
 
 test('search matches topics and syllabus codes and handles an empty result', function () {
-  assert.equal(Reads.filterArticles(articles, ' WETLAND ').length, 1);
+  assert.ok(Reads.filterArticles(articles, ' WETLAND ').some(article => article.id === 'wetlands-beyond-a-list'));
   assert.ok(Reads.filterArticles(articles, 'GS3').length > 1);
   assert.equal(Reads.filterArticles(articles, 'absent phrase').length, 0);
   assert.match(Reads.libraryHtml([]), /No short reads match/);
@@ -48,6 +48,8 @@ test('article text is escaped and unsupported source URL protocols are excluded'
     title: '<script>alert(1)</script>',
     sources: [{ label: 'Unsafe', url: 'javascript:alert(1)' }],
     sections: [{ heading: '<img src=x>', paragraphs: ['<svg onload=alert(1)>'] }],
+    example: { heading: '<script>bad</script>', text: '<img src=x>' },
+    comparison: { heading: '<script>bad</script>', columns: ['Term', 'Meaning'], rows: [['<img src=x>', '<svg onload=alert(1)>']] },
   });
   const html = Reads.articleHtml(article);
   assert.doesNotMatch(html, /<script>|<svg |<img |javascript:/);

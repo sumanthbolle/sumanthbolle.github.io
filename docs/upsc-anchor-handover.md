@@ -16,6 +16,8 @@ directly. A scheduled publisher validates each reviewed endpoint, stores every
 official record, enriches it behind a private route, rebuilds compact indexes,
 then creates crawlable pages only for evidence-cleared notes.
 
+For dynamic Pocket news, frequent ingestion, private feed storage and current deployment requirements, see [Pocket publishing](upsc-pocket-publishing.md). The archive retains its four-times-daily schedule; news has a separate frequent release path.
+
 ## Publication states
 
 | State | Meaning | Public treatment |

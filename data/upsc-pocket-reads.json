@@ -34,11 +34,49 @@
       "takeaway": "Vertical devolution divides taxes between the Union and states. Horizontal devolution divides the states’ share among states.",
       "question": "Why might equal shares for every state produce unequal public services?",
       "anchor": "Fiscal federalism",
-      "codes": ["GS2.2", "GS3.2"],
+      "codes": [
+        "GS2.2",
+        "GS3.2"
+      ],
       "sources": [
-        {"label": "Constitution of India · Articles 270 and 280", "url": "https://legislative.gov.in/constitution-of-india/"},
-        {"label": "Finance Commission · reports and recommendations", "url": "https://fincomindia.nic.in/"}
-      ]
+        {
+          "label": "Constitution of India · Articles 270 and 280",
+          "url": "https://legislative.gov.in/constitution-of-india/",
+          "note": "Start with Article 280(3)(a), which distinguishes distribution between the Union and states from allocation between states. Article 270 concerns the divisible pool."
+        },
+        {
+          "label": "Finance Commission · reports and recommendations",
+          "url": "https://fincomindia.nic.in/",
+          "note": "Open the report for the award period being discussed. Read the tax-devolution formula and grants separately; a homepage alone does not establish a current percentage."
+        }
+      ],
+      "example": {
+        "heading": "Follow ₹100 through two decisions",
+        "text": "Imagine a divisible pool of ₹100. Suppose ₹40 is assigned to the states collectively. Choosing ₹40 is the vertical decision. If State A then receives ₹6 of that ₹40, that is part of the horizontal allocation. These numbers are invented to explain the mechanism; they are not a commission’s recommendation. A grant is a separate transfer and should not be added to either percentage without checking what the table measures."
+      },
+      "comparison": {
+        "heading": "Share, allocation and grant",
+        "columns": [
+          "Term",
+          "The question it answers"
+        ],
+        "rows": [
+          [
+            "Vertical devolution",
+            "How much of the divisible pool goes to the states together?"
+          ],
+          [
+            "Horizontal devolution",
+            "How is that states’ share divided between individual states?"
+          ],
+          [
+            "Grant",
+            "What additional assistance is recommended, and for what purpose?"
+          ]
+        ]
+      },
+      "recallAnswer": "States have different populations, revenue capacity and service costs. Giving each the same amount does not give each resident the same support. Explain the formula’s purpose before judging the result.",
+      "updatedOn": "2026-10-12"
     },
     {
       "id": "repo-rate-and-your-loan",
@@ -74,11 +112,48 @@
       "takeaway": "A policy-rate change influences borrowing costs; the benchmark and reset terms determine when a particular loan responds.",
       "question": "Which part of the transmission chain would you check before judging whether a rate cut worked?",
       "anchor": "Monetary policy and inflation",
-      "codes": ["GS3.1"],
+      "codes": [
+        "GS3.1"
+      ],
       "sources": [
-        {"label": "Reserve Bank of India · monetary policy", "url": "https://www.rbi.org.in/Scripts/monetarypolicy.aspx"},
-        {"label": "Reserve Bank of India · frequently asked questions", "url": "https://www.rbi.org.in/Scripts/FAQDisplay.aspx"}
-      ]
+        {
+          "label": "Reserve Bank of India · monetary policy",
+          "url": "https://www.rbi.org.in/Scripts/monetarypolicy.aspx",
+          "note": "Read the policy statement for the decision date. A policy-rate change is evidence about the first link, not every borrower’s interest rate."
+        },
+        {
+          "label": "Reserve Bank of India · frequently asked questions",
+          "url": "https://www.rbi.org.in/Scripts/FAQDisplay.aspx",
+          "note": "Use the relevant explanation of lending benchmarks and floating rates, then compare it with the actual loan agreement. A general FAQ index is a starting point."
+        }
+      ],
+      "example": {
+        "heading": "The next reset date matters",
+        "text": "Suppose a floating-rate loan has a benchmark of 6% and a spread of 2%, giving a rate of 8%. If the benchmark falls to 5.75% and the spread stays the same, the rate becomes 7.75% when the contract resets. The figures are illustrative. Even then, the lender may change the tenure rather than the instalment, depending on the agreement. The useful documents are the loan’s benchmark, spread and reset clauses."
+      },
+      "comparison": {
+        "heading": "Read the right rate",
+        "columns": [
+          "Rate",
+          "What to check"
+        ],
+        "rows": [
+          [
+            "Policy repo rate",
+            "The RBI’s policy decision and effective date."
+          ],
+          [
+            "Loan benchmark",
+            "The benchmark named in this particular contract."
+          ],
+          [
+            "Borrower’s rate",
+            "Benchmark plus spread, subject to the contract and reset schedule."
+          ]
+        ]
+      },
+      "recallAnswer": "Check the loan’s benchmark and next reset date first. Then look at the spread and whether the lender adjusts the instalment or tenure. An unchanged instalment alone cannot measure transmission.",
+      "updatedOn": "2026-10-12"
     },
     {
       "id": "wetlands-beyond-a-list",
@@ -114,11 +189,48 @@
       "takeaway": "Know the designation, then explain the ecosystem: water flows, ecological character, livelihoods and pressures.",
       "question": "How could a land-use change outside a wetland affect the wetland itself?",
       "anchor": "Wetland conservation",
-      "codes": ["GS3.5"],
+      "codes": [
+        "GS3.5"
+      ],
       "sources": [
-        {"label": "Convention on Wetlands · convention and wise use", "url": "https://www.ramsar.org/"},
-        {"label": "Ramsar Sites Information Service · individual site records", "url": "https://rsis.ramsar.org/"}
-      ]
+        {
+          "label": "Convention on Wetlands · convention and wise use",
+          "url": "https://www.ramsar.org/",
+          "note": "Find the Convention text: Article 1.1 defines wetlands, while Article 3.1 addresses conservation and wise use. Read wise-use guidance before equating it with a ban on use."
+        },
+        {
+          "label": "Ramsar Sites Information Service · individual site records",
+          "url": "https://rsis.ramsar.org/",
+          "note": "Search an individual site and read its Ramsar Information Sheet, including hydrology, ecological features and reported pressures. Check when the record was updated."
+        }
+      ],
+      "example": {
+        "heading": "A road can change a wetland without filling it",
+        "text": "Imagine a wetland fed by seasonal runoff. A raised road across its catchment could interrupt a channel even if the wetland boundary is untouched. The investigation would follow water inflows and outflows, seasonal timing and the effect on habitat and livelihoods. This is a hypothetical situation, not a claim about a particular Ramsar site. It shows why protecting a boundary and maintaining ecological character are different tasks."
+      },
+      "comparison": {
+        "heading": "Designation and condition",
+        "columns": [
+          "Question",
+          "Where the answer belongs"
+        ],
+        "rows": [
+          [
+            "Is it internationally designated?",
+            "The Ramsar designation and site record."
+          ],
+          [
+            "What kind of wetland is it?",
+            "Its habitat, hydrology and ecological description."
+          ],
+          [
+            "Is it healthy now?",
+            "Dated monitoring evidence, pressures and changes in ecological character."
+          ]
+        ]
+      },
+      "recallAnswer": "A change in the catchment can alter inflow, sediment or pollution reaching the wetland. Follow the water across the boundary: a road that interrupts a channel may affect habitat even without filling the wetland itself.",
+      "updatedOn": "2026-10-12"
     },
     {
       "id": "bill-act-and-commencement",
@@ -154,11 +266,48 @@
       "takeaway": "Passage, assent and commencement are separate checks. Read the commencement provision before saying a rule is in force.",
       "question": "Which document would you look for if an Act lets the government choose its start date?",
       "anchor": "Parliament and legislation",
-      "codes": ["GS2.4"],
+      "codes": [
+        "GS2.4"
+      ],
       "sources": [
-        {"label": "Constitution of India · Articles 107–111", "url": "https://legislative.gov.in/constitution-of-india/"},
-        {"label": "India Code · Acts and subordinate legislation", "url": "https://www.indiacode.nic.in/"}
-      ]
+        {
+          "label": "Constitution of India · Articles 107–111",
+          "url": "https://legislative.gov.in/constitution-of-india/",
+          "note": "Articles 107–111 set out parts of the Union legislative process. Money Bills have a distinct procedure; avoid applying one ordinary-Bill shorthand to every Bill."
+        },
+        {
+          "label": "India Code · Acts and subordinate legislation",
+          "url": "https://www.indiacode.nic.in/",
+          "note": "Open the particular Act. Read its commencement section, then any commencement notifications and relevant rules. An Act’s presence in the database alone does not prove that every provision is in force."
+        }
+      ],
+      "example": {
+        "heading": "One Act, different start dates",
+        "text": "Imagine an Act whose commencement clause allows the government to appoint dates by notification. A notification brings sections 1 to 5 into force, while the remaining sections wait. The Act has received assent, but a rule in section 8 has not started merely because the Act was published. This is an illustration. For a real law, read the exact commencement clause and the notifications naming the relevant section."
+      },
+      "comparison": {
+        "heading": "Three documents, three checks",
+        "columns": [
+          "Stage",
+          "Evidence to read"
+        ],
+        "rows": [
+          [
+            "Passage",
+            "The legislative record showing approval through the applicable procedure."
+          ],
+          [
+            "Assent",
+            "The enacted law and assent/publication record."
+          ],
+          [
+            "Commencement",
+            "The Act’s start-date clause and any notification it requires."
+          ]
+        ]
+      },
+      "recallAnswer": "Look for the commencement notification issued under the Act’s start-date provision. Check its date and the sections it covers; one notification may not commence the whole Act.",
+      "updatedOn": "2026-10-12"
     },
     {
       "id": "gdp-growth-and-prices",
@@ -194,10 +343,43 @@
       "takeaway": "Nominal growth includes price changes. Real growth helps isolate changes in output; neither alone describes everyone’s living standard.",
       "question": "In the bread example, what happens to nominal output and to the quantity produced?",
       "anchor": "National income",
-      "codes": ["GS3.1"],
+      "codes": [
+        "GS3.1"
+      ],
       "sources": [
-        {"label": "Ministry of Statistics and Programme Implementation · national accounts", "url": "https://www.mospi.gov.in/"}
-      ]
+        {
+          "label": "Ministry of Statistics and Programme Implementation · national accounts",
+          "url": "https://www.mospi.gov.in/",
+          "note": "Go to National Accounts and open the dated estimate release being quoted. Check current versus constant prices, the base year, the comparison period and whether the estimate was revised."
+        }
+      ],
+      "example": {
+        "heading": "When both prices and quantity rise",
+        "text": "Imagine 100 identical items at ₹10 each: output is worth ₹1,000. Next year, 110 items sell for ₹11 each, giving ₹1,210. Money value has risen by 21%, while quantity has risen by 10%. Measuring the second year’s 110 items at the starting price gives ₹1,100, which isolates the quantity change in this one-product illustration. Real national accounts cover many goods and services; these figures are invented to explain the distinction, not describe India’s growth."
+      },
+      "comparison": {
+        "heading": "Do not swap these measures",
+        "columns": [
+          "Measure",
+          "What it helps you distinguish"
+        ],
+        "rows": [
+          [
+            "GDP at current prices",
+            "Changes in money value, including price changes."
+          ],
+          [
+            "GDP at constant prices",
+            "Output changes measured using a common price basis."
+          ],
+          [
+            "GDP per person",
+            "Aggregate output relative to population, without describing its distribution."
+          ]
+        ]
+      },
+      "recallAnswer": "Nominal output rises because the bread costs more, while the quantity produced stays the same. Higher money value alone does not establish an increase in the amount of output.",
+      "updatedOn": "2026-10-12"
     }
   ]
 }

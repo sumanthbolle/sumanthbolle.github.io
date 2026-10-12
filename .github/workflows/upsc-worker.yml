@@ -1,0 +1,40 @@
+name: Deploy Summaverick Worker
+
+on:
+  push:
+    branches: [main]
+    paths: ['api/**', 'wrangler.jsonc', 'scripts/deploy-upsc-worker.mjs', '.github/workflows/upsc-worker.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: summaverick-worker-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify Worker contracts
+        run: |
+          node scripts/test-upsc-api.mjs
+          node scripts/test-upsc-sources.mjs
+          node scripts/test-upsc-pocket.mjs
+      - name: Attach Pocket storage and deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
+          UPSC_PUBLISH_TOKEN: ${{ secrets.UPSC_PUBLISH_TOKEN }}
+        run: |
+          if [ -z "$UPSC_PUBLISH_TOKEN" ]; then
+            echo "::error::Set the repository UPSC_PUBLISH_TOKEN secret so the Worker and publisher share private authentication."
+            exit 1
+          fi
+          node scripts/deploy-upsc-worker.mjs
+          printf '%s' "$UPSC_PUBLISH_TOKEN" | npx --yes wrangler@4.149.0 secret put UPSC_PUBLISH_TOKEN --name wandering-haze-b394

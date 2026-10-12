@@ -211,6 +211,7 @@ def normalize_source_record(
         "publisherName": config.name,
         "publishedAt": published,
         "fetchedAt": fetched,
+        "datePolicy": config.date_policy,
         "sourceUrl": canonical,
         "canonicalUrl": canonical,
         "officialSummary": summary,

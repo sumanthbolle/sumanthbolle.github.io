@@ -20,7 +20,7 @@ The page uses warm neutrals, one green accent, a narrow article measure, Newsrea
 
 ## Publishing a daily pocket article
 
-The existing GitHub Actions schedules still refresh official records. They do **not** author or publish new Pocket reads automatically. Add original articles to `data/upsc-pocket-reads.json`, placing the latest first. The file is outside the generated `data/upsc/` publication tree so the official-source publisher will not overwrite it.
+The existing official-source schedules refresh records rather than authoring Pocket reads. The separate daily Pocket workflow now releases one approved queued article around 07:00 Singapore time; it does not generate or approve text. Its initial queue is empty. See [daily Pocket publishing and source research](upsc-pocket-publishing.md) for the approval workflow and activation requirements. The library remains outside the generated `data/upsc/` tree.
 
 Aim for one useful article per day, 250–400 words:
 
@@ -59,3 +59,19 @@ All seven interactive UPSC pages load the shared reading stylesheet and local fo
 The reader's scroll offset follows the measured sticky navigation height instead of fixed desktop/mobile constants. The generated note template shares the 660px reading width and uses safe margins for answer-use panels. Its data and publication eligibility rules are unchanged.
 
 `python3 scripts/test-upsc-responsive-browser.py` checks eight UPSC routes at 320, 390, 768 and 1440px, light/dark themes, theme buttons, every Pocket read arrow, title clearance, all desk tabs, the note editor and Atlas drill. It also exercises the held-note renderer with long IDs and the real publication template with a populated answer panel; these fixtures are intercepted in the test browser and are never published.
+
+### Rich reading and source questions
+
+The original explanations now include clearly illustrative worked situations, two-column comparisons and revealable recall answers. Source annotations identify the legal article, report section or dated release to read; institutional landing pages remain labelled as further reading. Publication dates are retained, with an honest update date for these additions. Larger text is an optional local preference.
+
+Ask Summaverick opens from the article rather than a floating control on the reading-room homepage. Each request captures the current article and its sources; article navigation clears history, cancels outstanding requests and closes the panel. Source-reading and understanding-check prompts use live research. The panel adjusts to the visible viewport, restores focus when closed, and separates directly downloaded documents from the research provider's citation list.
+
+The Worker update downloads bounded allowlisted source text and preserves operators and Unicode in document content. Source data is not an instruction or proof that every claim is correct. PDFs and unavailable pages are reported honestly. Its dry-run bundle and request/retrieval tests passed; deploying this update requires Cloudflare access. Browser widget checks use deterministic responses and are not live-provider validation.
+
+### Dynamic Pocket news
+
+Pocket news now comes from current source-bound notes that pass the updated complete-note verification contract, literal-source facts, syllabus mapping and a substantive reading-content gate. Each passed note reaches the private Worker feed before the next record or archive build. The approved evergreen queue remains separate and does not limit news to one item daily.
+
+The library checks every 30 seconds while visible and refreshes without reloading the page. An open article keeps its content and position until additions are loaded. Corrections or withdrawals trigger a sticky notice immediately, abort the widget work and disable stale save/ask actions. Canonical content hashes prevent false updates caused by JSON key ordering or fallback switching. Source outages preserve the last good snapshot with an honest date.
+
+The new source schedule is every five minutes, with manual and trusted dispatch triggers. GitHub scheduling, a busy publisher, model verification and KV propagation can add latency; this is not a zero-latency source push stream. Deployment automation attaches persistent storage and synchronizes private publisher authentication. Credential values are still absent, so production deployment and live-provider verification remain outstanding. See [Pocket publishing and deployment](upsc-pocket-publishing.md).

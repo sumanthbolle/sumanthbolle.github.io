@@ -10,6 +10,7 @@ from playwright.sync_api import sync_playwright
 base = (sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8000") + "/upsc.html"
 root = Path(__file__).resolve().parent.parent
 articles = json.loads((root / "data/upsc-pocket-reads.json").read_text())["articles"]
+finance = next(article for article in articles if article['id'] == 'finance-commission-explained')
 
 
 def assert_body(page, article):
@@ -32,7 +33,7 @@ with sync_playwright() as playwright:
     total = page.locator(".pr-story").count()
     assert total > 0
     page.locator("#q").fill("wetland")
-    assert page.locator(".pr-story").count() == 1
+    assert page.locator(".pr-story").count() >= 1
     page.locator("#q").press("Escape")
     assert page.locator("#q").input_value() == ""
     assert page.locator(".pr-story").count() == total
@@ -99,7 +100,7 @@ with sync_playwright() as playwright:
         reader.on("pageerror", lambda error: reader_errors.append(str(error)))
         reader.route("**/upsc?article=*", lambda route: route.fulfill(path=str(root / "upsc.html"), content_type="text/html"))
         reader.goto(base.replace("/upsc.html", "/upsc") + "?article=finance-commission-explained#pocketReader", wait_until="networkidle")
-        assert_body(reader, articles[0])
+        assert_body(reader, finance)
         assert reader.evaluate("document.activeElement.id") == "pocketArticleTitle"
         reader.goto(base, wait_until="networkidle")
         # The pre-redesign renderer exposes esc, but not safeHttpUrl.

@@ -199,10 +199,13 @@ test('UPSC study pages load the coach widget after the endpoint is set', functio
   });
 });
 
-test('the article reading page does not mount the coach widget', function () {
+test('the article reading page loads source research without a floating interruption', function () {
   const html = fs.readFileSync(path.join(__dirname, '..', 'upsc.html'), 'utf8');
-  assert.doesNotMatch(html, /assets\/js\/upsc\/coach\.js/);
-  assert.doesNotMatch(html, /assets\/css\/upsc-coach\.css/);
+  assert.match(html, /assets\/js\/upsc\/coach\.js/);
+  assert.match(html, /assets\/css\/upsc-coach\.css/);
+  assert.ok(html.indexOf('SB_UPSC_ENDPOINT') < html.indexOf('assets/js/upsc/coach.js'));
+  assert.equal(coach.PROMPTS.sources.search, true);
+  assert.equal(coach.PROMPTS.understanding.search, true);
 });
 
 console.log('UPSC Summaverick coach tests passed');
