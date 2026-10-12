@@ -437,7 +437,8 @@
       });
       return '<div class="ue-readbar" aria-hidden="true"><span class="ue-readbar__fill"></span></div>' +
         '<div class="ue-reader__bar" role="navigation" aria-label="Note"><a class="ue-back" href="?view=brief" data-ue-back><span aria-hidden="true">←</span> Back to Today</a>' +
-        (meta ? '<span class="ue-reader__meta">' + esc(meta) + '</span>' : '') + '</div>' +
+        (meta ? '<span class="ue-reader__meta">' + esc(meta) + '</span>' : '') +
+        '<button type="button" class="ue-ask" data-ue-ask>Ask Summaverick</button></div>' +
         '<div class="ue-reader__layout"><div class="ue-reader__main">' + Render.renderNote(note) + doneBar(note) + '</div>' +
         (toc.length > 1 ? '<div class="ue-toc" role="navigation" aria-label="On this note"><p class="ue-toc__title">On this note</p>' + toc.join('') + '</div>' : '') +
         '</div>';
@@ -628,6 +629,7 @@
         closeNote(true);
         return;
       }
+      if (target.closest('[data-ue-ask]')) { dispatch('upsc:coachopen'); return; }
       if (target.closest('[data-ue-done]')) { if (state.openId) markDone(state.openId, state.mcq[state.openId]); return; }
       var check = target.closest('[data-ue-check]');
       if (check) { checkMcq(check); return; }

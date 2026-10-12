@@ -301,7 +301,7 @@
 
 .sv-coach-form button[type="submit"] {
   align-self: end;
-  min-height: 40px;
+  min-height: 44px;
   padding: 8px 14px;
   border: 0;
   border-radius: 8px;
@@ -687,3 +687,25 @@ a.ue-chip:hover { border-color: var(--ue-blue); color: var(--ue-blue); }
 }
 .ue-followup:hover { background: var(--ue-blue); border-color: var(--ue-blue); color: #fff; }
 .ue-followup:focus-visible { outline: 2px solid var(--ue-blue); outline-offset: 2px; }
+
+/* ── Panel placement: bottom sheet on phones, 420px side panel on desktop ──
+   `html body` outranks the article-panel rules in upsc-reading.css. */
+.sv-coach-save { margin-top: 10px; }
+.sv-coach-msg .ue-answer { max-width: 100%; }
+
+@media (max-width: 600px) {
+  html body .sv-coach-panel {
+    left: 0; right: 0; bottom: var(--sv-keyboard-gap, 0px); width: auto;
+    max-height: min(90vh, var(--sv-visible-height, 100dvh)); max-height: min(90dvh, var(--sv-visible-height, 100dvh));
+    border-radius: 18px 18px 0 0; border-bottom: 0; box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.18);
+  }
+}
+
+@media (min-width: 960px) {
+  html body .sv-coach-panel {
+    top: var(--upsc-nav-height, 48px); right: 0; bottom: 0; width: 420px; max-height: none;
+    border-radius: 0; border-width: 0 0 0 1px; box-shadow: -12px 0 40px rgba(0, 0, 0, 0.08);
+  }
+  /* The docked panel takes its width from the page, so it never covers the reading column. */
+  body.sv-coach-docked .an-main { padding-right: calc(420px + 24px); }
+}

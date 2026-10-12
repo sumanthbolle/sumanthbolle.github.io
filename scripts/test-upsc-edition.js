@@ -216,6 +216,7 @@ function makeDesk(dom, files, extra) {
     assert.match(reader.innerHTML, /class="ue-oneline"/);
     assert.match(reader.innerHTML, /data-ue-back/);
     assert.match(reader.innerHTML, /data-ue-done/);
+    assert.match(reader.innerHTML, /data-ue-ask/);
     assert.match(reader.innerHTML, /Next note/);
     desk.closeNote(true);
     assert.equal(reader.hidden, true);

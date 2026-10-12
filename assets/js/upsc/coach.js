@@ -68,8 +68,37 @@
       id: 'quiz', kind: 'quiz', label: 'Quick quiz', format: 'json', search: false,
       hint: 'One question at a time — it keeps going',
       query: 'Start a UPSC quick quiz on this topic. Ask exactly ONE question now. Never say we are done. Never wrap up. Keep going until I say stop.'
+    },
+    // Reading actions. Explain/Check work on the highlighted text, else the
+    // section on screen; Test me and Mains answer reuse existing kinds.
+    explain: {
+      id: 'explain', kind: 'explain', label: 'Explain this step', format: 'brief', search: true, focus: true,
+      hint: 'Explain the highlighted text, or the section on screen',
+      query: 'Explain this step in plain language: what it says, why it holds, and how it connects to the static concept. Cite the official source for any figure.'
+    },
+    check: {
+      id: 'check', kind: 'check', label: 'Check this claim', format: 'brief', search: true, focus: true,
+      hint: 'Check the highlighted claim against official sources',
+      query: 'Check this claim against official sources. Say whether it is supported, partly supported or not supported, quote what the source actually says, and correct it if needed.'
+    },
+    test: {
+      id: 'test', kind: 'understanding', label: 'Test me', format: 'text', search: true,
+      hint: 'One applied question on this note, then feedback',
+      query: 'Test me on this note. Ask one applied question now without revealing the answer. When I reply, tell me what I got right or missed and cite the source.'
+    },
+    outline: {
+      id: 'outline', kind: 'answer', label: 'Make it a Mains answer', format: 'text', search: false,
+      hint: 'Turn this note into a Mains answer outline',
+      query: 'Make this into a UPSC Mains answer: frame the likely question, then write the answer with Introduction, Body and Conclusion.'
     }
   };
+
+  var ARTICLE_CHIPS = ['sources', 'explain', 'check', 'test', 'outline'];
+  var PAGE_CHIPS = ['explain', 'check', 'sources', 'understanding', 'prelims', 'mains', 'answer', 'quiz'];
+
+  function chipsFor(articlePage) {
+    return (articlePage ? ARTICLE_CHIPS : PAGE_CHIPS).slice();
+  }
 
   var CONTINUE_QUIZ = 'Ask the next question now. One question only. Brief mark of my last answer first if I answered, then the next item. Do not recap. Do not stop.';
   var CONTINUE_TRUNCATED = 'Continue from the last sentence. Do not restart.';
@@ -158,6 +187,86 @@
       body.sourceUrls = settings.sourceUrls.map(safeHttpUrl).filter(Boolean).slice(0, 3);
     }
     return body;
+  }
+
+  /* ── reading actions: focus text, shared renderer, revision cards ── */
+
+  var FOCUS_SECTIONS = '#editionReader:not([hidden]) .ue-section, #editionReader:not([hidden]) .ue-why, ' +
+    '#pocketReader:not([hidden]) .pr-reader__body section, #pocketReader:not([hidden]) .pr-example';
+
+  // The user's highlighted text, else the reading section in view.
+  function focusText(doc, win) {
+    var root = doc || (typeof document !== 'undefined' ? document : null);
+    var scope = win || (typeof window !== 'undefined' ? window : {});
+    if (!root) return '';
+    var selection = '';
+    try {
+      if (root.getSelection) selection = String(root.getSelection());
+      else if (scope.getSelection) selection = String(scope.getSelection());
+    } catch (error) { selection = ''; }
+    if (clip(selection, 600).length >= 12) return clip(selection, 600);
+    if (!root.querySelectorAll) return '';
+    var sections = Array.prototype.slice.call(root.querySelectorAll(FOCUS_SECTIONS));
+    var limit = (Number(scope.innerHeight) || 800) * 0.6;
+    var below = sections.filter(function (node) {
+      var rect = node.getBoundingClientRect ? node.getBoundingClientRect() : null;
+      return rect && rect.bottom > 80;
+    });
+    // The section on screen, else the next one the reader will reach.
+    var inView = below.filter(function (node) { return node.getBoundingClientRect().top < limit; })[0] || below[0];
+    return inView ? clip(inView.textContent, 600) : '';
+  }
+
+  function focusedAsk(prompt, text) {
+    var passage = clip(text, 450);
+    var short = clip(text, 140);
+    var more = String(text || '').replace(/\s+/g, ' ').trim().length > 140 ? '…' : '';
+    return {
+      visible: passage ? prompt.label + ': “' + short + more + '”' : prompt.label,
+      query: prompt.query + (passage ? '\n\nFocus on this passage: "' + passage + '"' : '')
+    };
+  }
+
+  function answerContract(text) {
+    var data = extractJson(text);
+    return data && typeof data.oneLine === 'string' && Array.isArray(data.sections) ? data : null;
+  }
+
+  function answerRenderer() {
+    var scope = typeof window !== 'undefined' ? window : globalThis;
+    return scope.UpscAnswerRender || null;
+  }
+
+  // JSON contract → shared blocks; anything else → safe Markdown subset.
+  function renderAnswerHtml(answer, result, renderer) {
+    if (!renderer) return formatReply(answer);
+    var data = answerContract(answer);
+    if (data) {
+      if ((!Array.isArray(data.sources) || !data.sources.length) && result && Array.isArray(result.sources)) {
+        data.sources = result.sources;
+      }
+      return renderer.renderBlocks(data);
+    }
+    var body = renderer.renderMarkdown(answer, result && result.sources);
+    return body ? '<div class="ue-answer">' + body + '</div>' : '';
+  }
+
+  function plainAnswer(text) {
+    return String(text == null ? '' : text)
+      .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '$1')
+      .replace(/\s*\[\d{1,3}\]/g, '')
+      .replace(/^\s*#{1,6}\s*/gm, '')
+      .replace(/^\s*([-*•]|\d+[.)])\s+/gm, '')
+      .replace(/\*\*|__|`/g, '')
+      .replace(/\|/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function revisionCard(question, answer, noteId) {
+    var data = answerContract(answer);
+    var back = data ? clip(data.oneLine, 400) : clip(plainAnswer(answer), 300);
+    return { front: clip(question, 300), back: back, noteId: clip(noteId, 120) || 'coach' };
   }
 
   /* ── formatting / escaping ── */
@@ -340,6 +449,13 @@
     var scope = win || (typeof window !== 'undefined' ? window : {});
     var meta = { gs_paper: '', static_topic: '', pattern_tag: '', source: '', date: '' };
     if (!root || !root.querySelector) return applyMetaOverride(meta, scope, root);
+    var note = root.querySelector('#editionReader:not([hidden]) .ue-note');
+    if (note) {
+      meta.static_topic = note.getAttribute('data-anchor');
+      meta.gs_paper = note.getAttribute('data-paper');
+      meta.date = note.getAttribute('data-published');
+      return meta;
+    }
     var reader = root.querySelector('#pocketReader:not([hidden]) .pr-reader');
     if (reader) {
       meta.static_topic = reader.getAttribute('data-pocket-anchor');
@@ -405,6 +521,12 @@
   function pageContextFromDom(doc) {
     var root = doc || (typeof document !== 'undefined' ? document : null);
     if (!root || !root.querySelector) return '';
+    var note = root.querySelector('#editionReader:not([hidden]) .ue-note');
+    if (note) {
+      return clip(Array.prototype.map.call(note.querySelectorAll(
+        '.ue-note__title, .ue-oneline, .ue-why, .ue-section, .ue-keynumbers, .ue-basics'
+      ), function (node) { return node.textContent; }).join('\n'), CONTEXT_MAX);
+    }
     var reader = root.querySelector('#pocketReader:not([hidden]) .pr-reader');
     if (reader) {
       return clip(Array.prototype.map.call(reader.querySelectorAll(
@@ -454,8 +576,10 @@
   function pageSourceUrls(doc) {
     var root = doc || (typeof document !== 'undefined' ? document : null);
     if (!root || !root.querySelectorAll) return [];
+    var edition = root.querySelector('#editionReader:not([hidden]) .ue-note');
     var pocket = root.querySelector('#pocketReader:not([hidden]) .pr-reader');
-    var links = pocket ? pocket.querySelectorAll('.pr-reader__sources a') : root.querySelectorAll('#packetDesk .pk-sources a');
+    var links = edition ? edition.querySelectorAll('.ue-sourcelist a:not(.ue-chip)')
+      : pocket ? pocket.querySelectorAll('.pr-reader__sources a') : root.querySelectorAll('#packetDesk .pk-sources a');
     return Array.from(new Set(Array.prototype.map.call(links, function (link) {
       return safeHttpUrl(link.href);
     }).filter(Boolean))).slice(0, 3);
@@ -615,7 +739,7 @@
     }
 
     var chips = panel.querySelector('#svCoachChips');
-    (articlePage ? ['sources', 'understanding'] : Object.keys(PROMPTS)).forEach(function (key) {
+    chipsFor(articlePage).forEach(function (key) {
       var prompt = PROMPTS[key];
       var chip = document.createElement('button');
       chip.type = 'button';
@@ -640,6 +764,7 @@
       panel.hidden = !open;
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       panel.classList.toggle('is-open', open);
+      document.body.classList.toggle('sv-coach-docked', open);
       armAudio();
       if (open) panel.querySelector(articlePage ? '#svCoachTitle' : '#svCoachInput').focus({ preventScroll: true });
       else if (returnFocus && document.contains(returnFocus)) returnFocus.focus({ preventScroll: true });
@@ -704,7 +829,8 @@
           meta: pageMetaFromDom(document, typeof window !== 'undefined' ? window : {}),
           pageContext: pageContextFromDom(document),
           sourceUrls: pageSourceUrls(document),
-          header: !info.noHeader
+          header: !info.noHeader,
+          visible: clip(text, 300)
         };
       }
       state.stopped = false;
@@ -768,7 +894,7 @@
         renderAssistant(answer, result, turn);
         playSweetTone({ muted: state.muted });
         var move = nextQuizMove(answer, state.quiz);
-        if (move === 'continue-truncated' && state.truncateStreak < MAX_TRUNCATE_CONTINUES && turn.format !== 'json') {
+        if (move === 'continue-truncated' && state.truncateStreak < MAX_TRUNCATE_CONTINUES && turn.format !== 'json' && turn.format !== 'brief') {
           state.truncateStreak += 1;
           send(CONTINUE_TRUNCATED, { silent: true, note: 'Finishing that thought…' });
         } else if (move === 'continue-quiz') {
@@ -811,6 +937,7 @@
       } else if (chip === 'answer') {
         node = appendBubble('assistant', header + modelAnswerHtml(answer, turn.marks));
         attachRubricButton(node, answer, turn);
+        attachSaveButton(node, answer, turn);
       } else if (chip === 'quiz' && data && data.type) {
         node = appendBubble('assistant', header);
         renderQuizItem(node, data, turn);
@@ -824,8 +951,14 @@
           var url = safeHttpUrl(row.url);
           return url ? '<li><a href="' + escAttr(url) + '" target="_blank" rel="noopener noreferrer">[' + escHtml(row.id) + '] ' + escHtml(row.status === 'read' ? 'Text retrieved' : 'Not read directly') + ' · ' + escHtml(new URL(url).hostname) + '</a></li>' : '';
         }).join('') + '</ol></div>' : '';
-        node = appendBubble('assistant', header + formatReply(answer) + sourceState + primary + sourcesHtml(result && result.sources));
-        renderRelated(result && result.relatedQuestions);
+        var contract = answerContract(answer);
+        var renderer = answerRenderer();
+        node = appendBubble('assistant', header + renderAnswerHtml(answer, result, renderer) + sourceState + primary +
+          (contract && renderer ? '' : sourcesHtml(result && result.sources)));
+        attachSaveButton(node, answer, turn);
+        if (!(contract && renderer && Array.isArray(contract.followUps) && contract.followUps.length)) {
+          renderRelated(result && result.relatedQuestions);
+        }
       }
       // Header only on the first reply of a turn.
       if (turn) turn.header = false;
@@ -954,6 +1087,26 @@
       node.appendChild(btn);
     }
 
+    function attachSaveButton(node, answer, turn) {
+      var P = typeof window !== 'undefined' ? window.UpscEditionProgress : null;
+      if (!P || !node) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sv-coach-chip sv-coach-save';
+      btn.textContent = 'Save to revision';
+      btn.addEventListener('click', function () {
+        var noteEl = document.querySelector('#editionReader:not([hidden]) .ue-note');
+        var card = revisionCard((turn && turn.visible) || 'Summaverick answer', answer, noteEl ? noteEl.getAttribute('data-note-id') : '');
+        var store = null;
+        try { store = window.localStorage; } catch (error) { store = null; }
+        var id = P.create(store, P.istDate(new Date())).addCard(card);
+        btn.disabled = true;
+        btn.textContent = id ? 'Saved · back tomorrow' : 'Could not save';
+        if (id) document.dispatchEvent(new Event('upsc:revisionchange'));
+      });
+      node.appendChild(btn);
+    }
+
     function renderRelated(list) {
       var items = relatedQuestions(list);
       if (!items.length) return;
@@ -989,9 +1142,11 @@
     toggle.addEventListener('click', function () { setOpen(!state.open); });
     document.addEventListener('upsc:ask', function (event) {
       setOpen(true);
-      var chip = event.detail && event.detail.chip === 'understanding' ? 'understanding' : 'sources';
-      send(event.detail && event.detail.query || PROMPTS[chip].query, { chip: chip, format: 'text', liveSearch: true });
+      var key = event.detail && PROMPTS[event.detail.chip] ? event.detail.chip : 'sources';
+      if (PROMPTS[key].focus || key === 'outline' || key === 'test') { askPrompt(PROMPTS[key]); return; }
+      send(event.detail && event.detail.query || PROMPTS[key].query, { chip: PROMPTS[key].kind, format: PROMPTS[key].format, liveSearch: PROMPTS[key].search !== false });
     });
+    document.addEventListener('upsc:coachopen', function () { setOpen(true); });
     document.addEventListener('upsc:articlechange', function () {
       state.stopped = true;
       state.generation += 1;
@@ -1033,6 +1188,14 @@
       var prompt = PROMPTS[chip.dataset.prompt];
       if (!prompt) return;
       setOpen(true);
+      askPrompt(prompt);
+    });
+    function askPrompt(prompt) {
+      if (prompt.focus) {
+        var ask = focusedAsk(prompt, focusText(document, window));
+        send(ask.visible, { chip: prompt.kind, format: answerRenderer() ? prompt.format : 'text', liveSearch: prompt.search !== false, appendQuery: '\n\n' + ask.query });
+        return;
+      }
       send(prompt.query, {
         quiz: prompt.id === 'quiz',
         chip: prompt.kind,
@@ -1040,11 +1203,16 @@
         marks: prompt.kind === 'answer' ? (marksFromDom(document) || (state.mode === 'exam' ? 15 : 10)) : 0,
         liveSearch: prompt.search !== false
       });
-    });
+    }
     log.addEventListener('click', function (event) {
+      var follow = event.target.closest('[data-followup]');
+      if (follow) {
+        send(follow.getAttribute('data-followup'), { liveSearch: true, format: answerRenderer() ? 'brief' : 'text' });
+        return;
+      }
       var chip = event.target.closest('[data-related]');
       if (!chip) return;
-      send(chip.textContent, { liveSearch: true });
+      send(chip.textContent, { liveSearch: true, format: answerRenderer() ? 'brief' : 'text' });
     });
     panel.querySelector('#svCoachForm').addEventListener('submit', function (event) {
       event.preventDefault();
@@ -1065,7 +1233,9 @@
       if (state.quiz) {
         send(text, { chip: 'quiz', format: 'json', liveSearch: false, noHeader: true, appendQuery: '\n\n' + CONTINUE_QUIZ });
       } else {
-        send(text, { liveSearch: true, chip: articlePage ? ((state.turn && state.turn.chip) || 'sources') : null, format: 'text' });
+        var followChip = articlePage ? ((state.turn && state.turn.chip) || 'sources') : null;
+        var keepText = followChip === 'understanding' || followChip === 'answer';
+        send(text, { liveSearch: true, chip: followChip, format: answerRenderer() && !keepText ? 'brief' : 'text' });
       }
     });
     document.addEventListener('keydown', function (event) {
@@ -1161,6 +1331,12 @@
     shouldKeepTrying: shouldKeepTrying,
     buildRequest: buildRequest,
     formatReply: formatReply,
+    chipsFor: chipsFor,
+    focusText: focusText,
+    focusedAsk: focusedAsk,
+    answerContract: answerContract,
+    renderAnswerHtml: renderAnswerHtml,
+    revisionCard: revisionCard,
     sourcesHtml: sourcesHtml,
     relatedQuestions: relatedQuestions,
     extractJson: extractJson,

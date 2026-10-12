@@ -328,3 +328,18 @@ body.ue-reading { background: var(--ue-bg); }
   .ue-table th, .ue-table td { display: table-cell; border: 1px solid #999; }
   .ue-table td::before { content: none; }
 }
+
+/* Ask Summaverick from the note. */
+.ue-ask {
+  min-height: 44px; padding: 8px 16px; border: 1px solid var(--ue-line); border-radius: 20px; background: var(--ue-white);
+  color: var(--ue-blue); font: 500 13px/1.3 var(--ue-font); cursor: pointer; transition: all 0.2s;
+}
+.ue-ask:hover { background: var(--ue-blue); border-color: var(--ue-blue); color: #fff; }
+.ue-reader__bar .ue-reader__meta { margin-left: auto; }
+
+/* When the coach is docked beside the note, drop the floating contents. */
+@media (min-width: 960px) {
+  body.sv-coach-docked .ue-reader { max-width: var(--reading-measure, 660px); }
+  body.sv-coach-docked .ue-reader__layout { display: block; }
+  body.sv-coach-docked .ue-toc { display: none; }
+}
