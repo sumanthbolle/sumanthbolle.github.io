@@ -208,4 +208,106 @@ test('the article reading page loads source research without a floating interrup
   assert.equal(coach.PROMPTS.understanding.search, true);
 });
 
+
+const Render = require('../assets/js/upsc/answer-render.js');
+const Progress = require('../assets/js/upsc/edition-progress.js');
+const domain = require('../api/upsc-domain.js');
+
+test('offers the four reading actions, reusing existing prompt kinds where possible', function () {
+  assert.equal(coach.PROMPTS.explain.label, 'Explain this step');
+  assert.equal(coach.PROMPTS.check.label, 'Check this claim');
+  assert.equal(coach.PROMPTS.test.label, 'Test me');
+  assert.equal(coach.PROMPTS.test.kind, 'understanding');
+  assert.equal(coach.PROMPTS.outline.label, 'Make it a Mains answer');
+  assert.equal(coach.PROMPTS.outline.kind, 'answer');
+  assert.deepEqual(coach.chipsFor(true), ['sources', 'explain', 'check', 'test', 'outline']);
+  assert.ok(coach.chipsFor(false).indexOf('prelims') !== -1);
+  assert.ok(coach.chipsFor(false).indexOf('explain') !== -1);
+  assert.equal(coach.PROMPTS.explain.format, 'brief');
+  assert.equal(coach.PROMPTS.check.format, 'brief');
+});
+
+test('explain and check focus on the selection, else the current section', function () {
+  const section = { textContent: 'What did the MPC decide? The repo rate stays at 5.5%.', getBoundingClientRect: () => ({ top: 40, bottom: 400 }) };
+  const docWithSelection = {
+    getSelection: () => 'The Governor has a casting vote in a tie.',
+    querySelectorAll: () => [section],
+  };
+  assert.equal(coach.focusText(docWithSelection, { innerHeight: 800 }), 'The Governor has a casting vote in a tie.');
+  const docNoSelection = { getSelection: () => '', querySelectorAll: () => [section] };
+  assert.match(coach.focusText(docNoSelection, { innerHeight: 800 }), /repo rate stays at 5\.5%/);
+  const ask = coach.focusedAsk(coach.PROMPTS.explain, 'The repo rate stays at 5.5%.');
+  assert.match(ask.visible, /^Explain this step: “The repo rate stays at 5\.5%\.”/);
+  assert.match(ask.query, /Explain/);
+  assert.equal(coach.focusedAsk(coach.PROMPTS.check, '').visible, 'Check this claim');
+});
+
+test('markdown answer with [1] renders a source chip through the shared renderer', function () {
+  const html = coach.renderAnswerHtml('## Why\nThe repo rate is **5.5%** [1].\n- **Stance:** neutral', {
+    sources: [{ index: 1, title: 'RBI resolution', url: 'https://www.rbi.org.in/x' }],
+  }, Render);
+  assert.match(html, /class="ue-answer"/);
+  assert.match(html, /ue-chip--official/);
+  assert.match(html, /<strong>5\.5%<\/strong>/);
+  assert.match(html, /<ul class="ue-points">/);
+});
+
+test('JSON contract answer renders the one-line box and sections', function () {
+  const answer = JSON.stringify({
+    oneLine: 'The MPC sets the repo rate; the Centre sets the target.',
+    sections: [{ heading: 'Who decides what?', points: [{ label: 'Target', text: 'Notified by the Centre.', cite: [1] }] }],
+    sources: [{ n: 1, title: 'RBI Act', publisher: 'RBI', url: 'https://rbi.org.in/', kind: 'official' }],
+    followUps: ['What is the tolerance band?'],
+  });
+  const html = coach.renderAnswerHtml('```json\n' + answer + '\n```', { sources: [] }, Render);
+  assert.match(html, /class="ue-oneline"/);
+  assert.match(html, /<h3 class="ue-q">Who decides what\?<\/h3>/);
+  assert.match(html, /data-followup=/);
+  assert.equal(coach.answerContract('{"oneLine":"x","sections":[]}').oneLine, 'x');
+  assert.equal(coach.answerContract('no json'), null);
+});
+
+test('legacy plain answers still render escaped paragraphs, with or without the renderer', function () {
+  const plain = 'First point about **Article 280**.\n\nSecond <b>point</b>.';
+  const rendered = coach.renderAnswerHtml(plain, {}, Render);
+  assert.equal((rendered.match(/<p>/g) || []).length, 2);
+  assert.match(rendered, /&lt;b&gt;/);
+  const legacy = coach.renderAnswerHtml(plain, {}, null);
+  assert.equal(legacy, coach.formatReply(plain));
+});
+
+test('Save to revision creates a card due tomorrow', function () {
+  const data = {};
+  const storage = { getItem: (k) => (k in data ? data[k] : null), setItem: (k, v) => { data[k] = String(v); } };
+  const progress = Progress.create(storage, '2026-10-13');
+  const card = coach.revisionCard('Explain this step: “repo rate”', '{"oneLine":"Repo is the overnight lending rate.","sections":[]}', 'rbi-policy-oct-2026');
+  assert.equal(card.front, 'Explain this step: “repo rate”');
+  assert.equal(card.back, 'Repo is the overnight lending rate.');
+  const id = progress.addCard(card);
+  assert.ok(id);
+  assert.equal(progress.addCard(card), id, 'saving twice does not duplicate');
+  const due = Progress.create(storage, '2026-10-14').dueCards();
+  assert.equal(due.length, 1);
+  assert.equal(due[0].noteId, 'rbi-policy-oct-2026');
+  const markdownCard = coach.revisionCard('Q', '## Heading\n**Bold** answer text [1] here.', '');
+  assert.match(markdownCard.back, /^Heading Bold answer text here\./);
+  assert.equal(markdownCard.noteId, 'coach');
+  assert.equal(progress.addCard({ front: '', back: 'x' }), null);
+});
+
+test('the Worker pack asks for the brief JSON contract and knows the new actions', function () {
+  const brief = domain.upscFormatInstruction('brief');
+  assert.match(brief, /"oneLine"/);
+  assert.match(brief, /"sections"/);
+  assert.match(brief, /"examAngle"/);
+  assert.match(brief, /"followUps"/);
+  assert.match(brief, /raw JSON/);
+  assert.equal(domain.upscFormatInstruction('text'), '');
+  assert.equal(domain.upscFormatInstruction('json'), '');
+  assert.match(domain.upscChipInstruction('explain'), /EXPLAIN/);
+  assert.match(domain.upscChipInstruction('check'), /CHECK/);
+  const worker = fs.readFileSync(path.join(__dirname, '..', 'api', 'worker.js'), 'utf8');
+  assert.match(worker, /upscFormatInstruction\(body\.format\)/);
+});
+
 console.log('UPSC Summaverick coach tests passed');

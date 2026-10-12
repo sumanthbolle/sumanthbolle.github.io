@@ -52,6 +52,7 @@ import {
   classifyUpscIntent,
   upscChipInstruction,
   upscMetaLine,
+  upscFormatInstruction,
 } from './upsc-domain.js';
 import { primarySourceUrl, retrievePrimarySources, sourceResearchInstruction } from './upsc-sources.js';
 import { handlePocketFeed } from './upsc-pocket.js';
@@ -230,7 +231,7 @@ async function handleChat(request, env, origin) {
     const upscMode = body.mode === 'exam' ? 'exam' : 'study';
     const upscMarks = Number(body.marks) === 15 ? 15 : (Number(body.marks) === 10 ? 10 : 0);
     const upscMeta = body.meta && typeof body.meta === 'object' ? body.meta : null;
-    const wantsJson = body.format === 'json';
+    const wantsJson = body.format === 'json' || body.format === 'brief';
     const sourceUrls = upscDomain && liveSearch && Array.isArray(body.sourceUrls)
       ? [...new Set(body.sourceUrls.slice(0, 3).map(primarySourceUrl).filter(Boolean))] : [];
     const sourceDocuments = sourceUrls.length ? await retrievePrimarySources(sourceUrls) : [];
@@ -240,13 +241,15 @@ async function handleChat(request, env, origin) {
       const upscIntent = classifyUpscIntent(query);
       const metaLine = upscMetaLine(upscMeta);
       const chipLine = upscChipInstruction(upscChip, { mode: upscMode, marks: upscMarks || undefined });
+      const formatLine = upscFormatInstruction(body.format);
       systemContent =
         SYSTEM_PROMPT +
         '\n\n' +
         UPSC_DOMAIN_SYSTEM_ADDON +
         (upscIntent.paper && !upscMeta ? `\n\nLikely paper for this topic: ${upscIntent.paper}.` : '') +
         (metaLine ? `\n\n${metaLine}` : '') +
-        (chipLine ? `\n\n${chipLine}` : '');
+        (chipLine ? `\n\n${chipLine}` : '') +
+        (formatLine ? `\n\n${formatLine}` : '');
     } else if (snDomain) {
       systemContent =
         SYSTEM_PROMPT +
