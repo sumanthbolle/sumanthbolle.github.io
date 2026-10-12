@@ -34,7 +34,7 @@ The ingestion jobs run and store records, but the note path depends on the Cloud
    - every section has at least one source;
    - required blocks present; syllabus codes are canonical (`SYLLABUS_CODES`);
    - banned-phrase list;
-   - word count within range.
+   - completeness: required blocks present and every section non-empty (no word-count limits).
    A failure allows one rewrite with the failure reasons; a second failure holds the note in `held` with reasons.
 6. **Emit** edition JSON, note JSON, static note pages, sitemap entries.
 7. **Commit** under the shared `upsc-data` concurrency group.
@@ -89,7 +89,7 @@ Voice reference: `data/posts.json` and `data/interviews.json`.
 4. Source at the claim: every section carries its own sources.
 5. One misconception where the evidence supports it.
 6. Banned phrases (case-insensitive): "in today's rapidly", "rapidly evolving", "plays a pivotal role", "pivotal", "it is worth noting", "it is important to note", "delve", "landscape", "multifaceted", "in conclusion", "a testament to", "navigating", "robust framework", "holistic", "game-changer", "paradigm shift", "tapestry", "underscores", "in the realm of".
-7. Length: news 450–900 words, editorial 800–1,300, excluding practice.
+7. Length: no word limits. Cover everything an aspirant needs on the topic for Prelims and Mains — mechanism, facts, context, static linkage, debates where sourced — with no padding and no omissions; length follows the topic. The gate checks completeness only: required blocks present and every section non-empty.
 8. No invented balance: Challenges and Way forward appear only when the evidence or a named body raises them.
 9. Codes come from `SYLLABUS_CODES`; PYQs only from `pyq-bank.json`.
 

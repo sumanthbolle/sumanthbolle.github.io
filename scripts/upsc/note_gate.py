@@ -25,7 +25,6 @@ BANNED_PHRASES: tuple[str, ...] = (
     "robust framework", "holistic", "game-changer", "paradigm shift", "tapestry",
     "underscores", "in the realm of",
 )
-WORD_RANGES = {"news": (450, 900), "explained": (450, 900), "editorial": (800, 1300)}
 REQUIRED = ("title", "deck", "oneLine", "subject", "codes", "whyInNews", "sections",
             "keyNumbers", "back2basics", "practice", "sources")
 NUMBER_RE = re.compile(
@@ -177,10 +176,13 @@ def _headings(note: dict[str, Any]) -> list[str]:
     ]
 
 
-def _length(note: dict[str, Any]) -> list[str]:
-    low, high = WORD_RANGES.get(str(note.get("kind") or "news"), WORD_RANGES["news"])
-    words = word_count(note)
-    return [] if low <= words <= high else [f"length:{words}"]
+def _completeness(note: dict[str, Any]) -> list[str]:
+    """No word limits: length follows the topic. Every section must say something."""
+    return [
+        f"empty-section:{index}"
+        for index, section in enumerate(_rows(note.get("sections")))
+        if not any(str(row.get("text") or "").strip() for row in _rows(section.get("body")))
+    ]
 
 
 def _mcq(note: dict[str, Any]) -> list[str]:
@@ -223,7 +225,7 @@ def check_note(note: dict[str, Any], evidence_text: str, pyq_ids: set[str]) -> l
     reasons: list[str] = []
     for check in (
         _missing(note), _codes(note), _numbers(note, evidence_text), _banned(note),
-        _sourcing(note), _headings(note), _length(note), _pyq(note, set(pyq_ids)),
+        _sourcing(note), _headings(note), _completeness(note), _pyq(note, set(pyq_ids)),
         _discovery(note), _mcq(note),
     ):
         reasons.extend(check)

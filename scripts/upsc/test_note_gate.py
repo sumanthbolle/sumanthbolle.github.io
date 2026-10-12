@@ -129,14 +129,23 @@ class GateTests(unittest.TestCase):
         mutated["whyInNews"]["sources"] = []
         self.assertReason(mutated, "section-without-source:whyInNews")
 
-    def test_length(self):
+    def test_no_word_limits_only_completeness(self):
+        short = note()
+        short["sections"] = short["sections"][:1]
+        self.assertEqual(check_note(short, EVIDENCE, PYQ_IDS), [])
+        long = note()
+        long["sections"] = long["sections"] * 6
+        long["kind"] = "editorial"
+        self.assertEqual(check_note(long, EVIDENCE, PYQ_IDS), [])
+        self.assertFalse(any(r.startswith("length:") for r in check_note(long, EVIDENCE, PYQ_IDS)))
+
+    def test_empty_section_fails_completeness(self):
         mutated = note()
-        mutated["sections"] = mutated["sections"][:1]
-        reasons = check_note(mutated, EVIDENCE, PYQ_IDS)
-        self.assertTrue(any(reason.startswith("length:") for reason in reasons), reasons)
+        mutated["sections"][1]["body"] = []
+        self.assertReason(mutated, "empty-section:1")
         mutated = note()
-        mutated["kind"] = "editorial"
-        self.assertTrue(any(r.startswith("length:") for r in check_note(mutated, EVIDENCE, PYQ_IDS)))
+        mutated["sections"][2]["body"] = [{"label": "Only a label", "text": "  "}]
+        self.assertReason(mutated, "empty-section:2")
 
     def test_pyq_must_come_from_bank(self):
         mutated = note()

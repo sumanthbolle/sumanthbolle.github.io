@@ -86,7 +86,7 @@ class PromptTests(unittest.TestCase):
         payload = json.loads(messages[1]["content"])
         self.assertEqual(payload["evidence"][0]["n"], 1)
         self.assertIn("36 existing schemes", payload["evidence"][0]["text"])
-        self.assertEqual(payload["wordRange"], [450, 900])
+        self.assertNotIn("wordRange", payload)
         self.assertEqual(payload["suggestedCodes"], ["GS3.3"])
         self.assertEqual(len(payload["allowedCodes"]), 37)
         self.assertEqual(payload["pyqOptions"][0]["id"], "mains-2018-gs3-msp")
@@ -94,9 +94,12 @@ class PromptTests(unittest.TestCase):
         first = json.loads(build_messages(CANDIDATE, EVIDENCE, PYQ_OPTIONS, [])[1]["content"])
         self.assertNotIn("previousAttemptProblems", first)
 
-    def test_editorial_word_range(self):
-        payload = json.loads(build_messages(dict(CANDIDATE, kind="editorial"), EVIDENCE, [], [])[1]["content"])
-        self.assertEqual(payload["wordRange"], [800, 1300])
+    def test_prompt_sets_no_word_range(self):
+        prompt = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
+        self.assertNotIn("wordRange", prompt)
+        self.assertNotIn("450", prompt)
+        self.assertIn("length follows the topic", prompt)
+        self.assertIn("no padding and no omissions", prompt)
 
 
 class CallTests(unittest.TestCase):

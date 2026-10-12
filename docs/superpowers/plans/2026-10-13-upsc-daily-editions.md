@@ -18,7 +18,7 @@
 - PYQs only from `data/upsc/pyq-bank.json`.
 - Discovery (newspaper) items are never evidence; `kind: discovery` sources may only appear on `kind: editorial` notes.
 - Banned phrases exactly as listed in the spec "Writing rules" §6.
-- Word counts: news 450–900, editorial 800–1,300, excluding practice.
+- Length: no word limits; notes cover everything an aspirant needs (mechanism, facts, context, static linkage, sourced debates) with no padding and no omissions. The gate checks completeness only (required blocks present, every section non-empty).
 - Edition slots: AM window 18:00 IST previous day → 06:00 IST; PM window 06:00 → 18:00 IST.
 - Crons: `15 0 * * *`, `45 0 * * *`, `15 12 * * *`, `45 12 * * *`.
 - Revision intervals: 1, 3, 7, 21, 60 days.
@@ -84,7 +84,7 @@
 - Test: `scripts/upsc/test_note_gate.py`
 
 **Interfaces:**
-- Produces: `BANNED_PHRASES: tuple[str, ...]`; `normalise_numbers(text) -> set[str]`; `body_text(note) -> str`; `check_note(note, evidence_text, pyq_ids:set[str]) -> list[str]` (empty list = pass). Reason strings: `missing:<field>`, `bad-code:<code>`, `unsupported-number:<n>`, `faq-number-not-in-body:<n>`, `banned:<phrase>`, `section-without-source:<i>`, `length:<words>`, `pyq-not-in-bank`, `discovery-source-on-news`, `bad-mcq`.
+- Produces: `BANNED_PHRASES: tuple[str, ...]`; `normalise_numbers(text) -> set[str]`; `body_text(note) -> str`; `check_note(note, evidence_text, pyq_ids:set[str]) -> list[str]` (empty list = pass). Reason strings: `missing:<field>`, `bad-code:<code>`, `unsupported-number:<n>`, `faq-number-not-in-body:<n>`, `banned:<phrase>`, `section-without-source:<i>`, `empty-section:<i>`, `heading-not-question:<i>`, `pyq-not-in-bank`, `discovery-source-on-news`, `bad-mcq`.
 - Number normalisation: strip `₹`, `%`, commas (both Indian and Western grouping), keep decimals; years and ranges like `2025-26` become `{"2025","26","2025-26"}`; ignore single digits 0–9 and numbers that appear in the note's question headings only.
 
 - [ ] Tests: passing fixture note; each reason triggered by a minimal mutation; "₹11,440 crore" in note matches "Rs 11440 crore" in evidence; "1,20,000" matches "120000"; FAQ number absent from body flagged.

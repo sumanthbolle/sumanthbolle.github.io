@@ -20,7 +20,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from scripts.upsc.candidates import CODE_LABELS
-from scripts.upsc.note_gate import WORD_RANGES, check_note, word_count
+from scripts.upsc.note_gate import check_note, word_count
 
 
 SYSTEM_PROMPT_PATH = Path(__file__).with_name("prompts") / "note_system.txt"
@@ -40,7 +40,7 @@ FEEDBACK_HINTS = {
     "banned": "is a banned phrase. Rewrite the sentence plainly.",
     "section-without-source": "has no valid evidence n in its sources. Cite at least one evidence n.",
     "bad-code": "is not an allowed code (or there are more than 3). Choose 1 to 3 codes from allowedCodes.",
-    "length": "is the reading-body word count, which is outside wordRange. Adjust the body length.",
+    "empty-section": "is a section with no bullet text. Fill it from the evidence or remove the section.",
     "missing": "is missing or empty. Add it in the schema shape.",
     "heading-not-question": "is a section heading that is not a question ending with '?'.",
     "pyq-not-in-bank": "Choose practice.pyq only by an id from pyqOptions, or omit it.",
@@ -70,7 +70,6 @@ def build_messages(
     payload: dict[str, Any] = {
         "topic": candidate.get("title", ""),
         "kind": kind,
-        "wordRange": list(WORD_RANGES.get(kind, WORD_RANGES["news"])),
         "allowedCodes": [{"code": code, "label": label} for code, label in CODE_LABELS.items()],
         "suggestedCodes": list(candidate.get("codesHint") or []),
         "anchorHint": candidate.get("anchorHint", ""),
