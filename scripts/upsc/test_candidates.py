@@ -240,6 +240,13 @@ class CandidateTests(unittest.TestCase):
         return [news(f"{words[i % 20]}zz{i} {words[(i * 7) % 20]}yy{i} market story number{i}",
                      url=f"https://www.thehindu.com/f{i}.ece") for i in range(count)]
 
+    def test_court_words_alone_do_not_merge_stories(self):
+        rows = build([], [
+            news("Rahul Gandhi announces march to Supreme Court over SIR", url="https://a.example/1"),
+            news("Supreme Court wants cap on trade margin for essential medicines", url="https://a.example/2"),
+        ])
+        self.assertEqual(len(rows), 2)
+
     def test_rare_shared_word_merges_differently_worded_headlines(self):
         hindu = news("Food, fuel and precious metals drive September retail inflation to 23-month high",
                      "business", url="https://www.thehindu.com/inflation.ece")
@@ -249,6 +256,12 @@ class CandidateTests(unittest.TestCase):
         merged = [row for row in rows if len(row["discovery"]) == 2]
         self.assertEqual(len(merged), 1)
         self.assertEqual(merged[0]["scoreParts"]["coverage"], 16)
+        navy = news("Sonar, torpedoes, guarding coasts: Navy commissions indigenous INS Mangrol",
+                    url="https://indianexpress.com/navy/")
+        election = news("How the Election Commission was set up, and how it got 3 members in 1993", "explained",
+                        url="https://indianexpress.com/eci/")
+        rows = build([], self.filler() + [navy, election])
+        self.assertFalse(any(len(row["discovery"]) == 2 for row in rows))
         # Without enough titles to judge rarity, one shared word is not enough.
         self.assertEqual(len(build([], [hindu, express])), 2)
 

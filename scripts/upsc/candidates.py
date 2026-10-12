@@ -186,7 +186,15 @@ def fingerprint(text: str) -> str:
     return sha1(" ".join(top).encode("utf-8")).hexdigest()[:16]
 
 
+# Too common in Indian headlines to show two titles are one story.
+WEAK_WORDS = frozenset("""
+supreme court centre state states delhi police opposition leader leaders party
+national news live updates says
+""".split())
+
+
 def similar(left: set[str], right: set[str]) -> bool:
+    left, right = left - WEAK_WORDS, right - WEAK_WORDS
     shared = len(left & right)
     if not left or not right:
         return False
@@ -212,8 +220,18 @@ def _rare_words(titles: list[set[str]]) -> set[str]:
     return {word for word, count in counts.items() if count == 2 and len(word) >= RARE_MIN_LENGTH}
 
 
+# Words that on their own name one story when two headlines share them on the
+# same day: data releases and singular events. Institution words such as
+# "commission" or country names are deliberately absent: they join unrelated
+# stories (found in the 12-13 Oct dry runs).
+STORY_WORDS = frozenset("""
+inflation gdp iip wpi cpi unemployment deficit repo monsoon cyclone earthquake landslide
+nobel census budget tariff tariffs ceasefire satellite chandrayaan gaganyaan
+""".split())
+
+
 def _is_topic_word(word: str) -> bool:
-    return any(pattern.match(word) for patterns in _KEYWORD_RES.values() for pattern in patterns)
+    return word in STORY_WORDS
 
 
 def _time(value: str) -> Optional[datetime]:

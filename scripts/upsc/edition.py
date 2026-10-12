@@ -455,6 +455,11 @@ def _brief(row: Mapping[str, Any]) -> dict[str, Any]:
         "codes": row.get("codesHint"), "parts": row.get("scoreParts"),
         "publishers": sorted({str(item.get("publisher") or "") for item in row.get("discovery") or []}),
         "records": len(row.get("records") or []),
+        "headlines": [
+            {"title": str(item.get("title") or ""), "publisher": str(item.get("publisher") or ""),
+             "section": str(item.get("section") or ""), "publishedAt": str(item.get("publishedAt") or "")}
+            for item in row.get("discovery") or []
+        ],
     }
 
 
@@ -690,7 +695,7 @@ def _summary(report: Mapping[str, Any]) -> dict[str, Any]:
         "editionId": report["editionId"], "dryRun": report["dryRun"], "status": report["status"],
         "window": report["window"], "discovery": report["discovery"],
         "candidates": report["candidates"], "notesSelected": report["mustKnow"],
-        "quickFactTopics": report["quickFactTopics"], "ranked": report["ranked"][:40],
+        "quickFactTopics": report["quickFactTopics"], "ranked": report["ranked"],
         "evidenceFailures": report["evidenceFailures"], "heldByReason": held_reasons,
         "held": report["held"], "newNotes": report["newNotes"],
         "counts": _counts(edition), "written": report["written"],
