@@ -132,8 +132,9 @@ function makeDesk(dom, files, extra) {
     });
     assert.equal(await desk.load(), true);
     const html = dom.els.editionDesk.innerHTML;
+    const text = html.replace(/<[^>]+>/g, '');
     assert.equal(dom.els.editionDesk.hidden, false);
-    assert.match(html, /Prelims 0\/2 · Mains 0\/1 · Revise 0/);
+    assert.match(text, /Prelims 0\/2 · Mains 0\/1 · Revise 0/);
     assert.match(html, /role="progressbar"/);
     assert.match(html, /AM ✓ 06:22/);
     assert.match(html, /PM/);
@@ -157,13 +158,14 @@ function makeDesk(dom, files, extra) {
     }, { storage: store });
     await desk.load();
     desk.markDone('rbi-policy-oct-2026', true);
-    assert.match(dom.els.editionDesk.innerHTML, /Prelims 1\/2 · Mains 0\/1/);
+    assert.match(dom.els.editionDesk.innerHTML.replace(/<[^>]+>/g, ''), /Prelims 1\/2 · Mains 0\/1/);
     desk.markDone('pm-e-drive-extension');
     desk.markDone('india-eu-fta-chapters');
     sample.quickFacts.forEach((fact) => desk.tickFact(fact.id, true));
     const html = dom.els.editionDesk.innerHTML;
+    const text = html.replace(/<[^>]+>/g, '');
     assert.match(html, /Today covered/);
-    assert.match(html, /Prelims 2\/2 · Mains 1\/1 · Revise 0/);
+    assert.match(text, /Prelims 2\/2 · Mains 1\/1 · Revise 0/);
     assert.match(html, /data-complete="true"/);
     // Next day those notes produce revision cards on the same storage.
     const next = Edition.createDesk({ doc: fakeDom().doc, win: fakeDom().win, fetch: fetcher({}), storage: store,
@@ -192,6 +194,7 @@ function makeDesk(dom, files, extra) {
     await desk.load();
     await desk.ready();
     const html = dom.els.editionDesk.innerHTML;
+    const text = html.replace(/<[^>]+>/g, '');
     assert.match(html, /Missed in the last 7 days/);
     assert.match(html, /12 Oct · PM/);
     assert.match(html, /Credit lines on UPI/);

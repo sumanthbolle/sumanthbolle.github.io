@@ -159,11 +159,15 @@ test('renderMarkdown supports the safe subset and maps [n] to chips', function (
 test('renderNote renders the full reading note from edition data', function () {
   const note = sample.notes['rbi-policy-oct-2026'];
   const html = R.renderNote(note);
-  assert.match(html, /class="ue-tagline"/);
+  assert.match(html, /class="ue-breadcrumb"/);
+  assert.match(html, /UPSC Today<\/a><span class="ue-crumb-sep" aria-hidden="true"> › <\/span><span>GS3<\/span>/);
+  assert.match(html, /class="ue-meta-row"/);
+  assert.match(html, /13 Oct 2026/);
+  assert.match(html, /Source: RBI/);
   assert.match(html, /GS3\.1/);
   assert.match(html, /class="ue-oneline"/);
   assert.match(html, /Why in news/);
-  assert.match(html, /<h3 class="ue-q">What did the MPC decide, and how\?<\/h3>/);
+  assert.match(html, /<h3 class="ue-q" id="ue-q-1">What did the MPC decide, and how\?<\/h3>/);
   assert.match(html, /<strong>Repo rate unchanged\.<\/strong>/);
   assert.match(html, /ue-chip--official/);
   assert.match(html, /<table class="ue-table">/);
@@ -171,7 +175,9 @@ test('renderNote renders the full reading note from edition data', function () {
   assert.match(html, /id="ue-keynumbers-end"/);
   assert.match(html, /Back to basics/);
   assert.match(html, /Way forward/);
-  assert.match(html, /class="ue-misconception"/);
+  assert.match(html, /class="ue-misconception"><p class="ue-box__label">Common misreading/);
+  assert.match(html, /class="ue-basics"><p class="ue-box__label">Back to basics/);
+  assert.match(html, /class="ue-oneline"><p class="ue-box__label">In one line/);
   assert.match(html, /<details class="ue-practice ue-practice--mcq">/);
   assert.match(html, /<details class="ue-practice ue-practice--mains">/);
   assert.match(html, /<details class="ue-practice ue-practice--pyq">/);

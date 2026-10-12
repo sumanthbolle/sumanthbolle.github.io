@@ -199,11 +199,17 @@
     /* ── desk ── */
 
     function counterHtml(c) {
-      var line = 'Prelims ' + c.prelims[0] + '/' + c.prelims[1] + ' · Mains ' + c.mains[0] + '/' + c.mains[1] + ' · Revise ' + c.revise;
-      return '<div class="ue-counter" id="ueCounter" data-complete="' + (c.complete ? 'true' : 'false') + '">' +
-        '<p class="ue-counter__text">' + (c.complete ? '<strong class="ue-counter__done">Today covered</strong><span aria-hidden="true"> · </span>' : '') + esc(line) + '</p>' +
+      var pill = function (label, done, total, key) {
+        var full = total > 0 && done === total;
+        return '<span class="ue-stat' + (full ? ' is-full' : '') + '" data-stat="' + key + '">' + label + ' ' + done + (total === null ? '' : '/' + total) + '</span>';
+      };
+      var sep = '<span class="ue-sep" aria-hidden="true"> · </span>';
+      return '<div class="ue-counter" id="ueCounter" data-complete="' + (c.complete ? 'true' : 'false') + '"><div class="ue-counter__inner">' +
+        '<p class="ue-counter__text">' + (c.complete ? '<strong class="ue-counter__done">Today covered</strong>' + sep : '') +
+        pill('Prelims', c.prelims[0], c.prelims[1], 'prelims') + sep + pill('Mains', c.mains[0], c.mains[1], 'mains') + sep +
+        '<span class="ue-stat' + (c.revise ? ' is-due' : '') + '" data-stat="revise">Revise ' + c.revise + '</span></p>' +
         '<div class="ue-progress" role="progressbar" aria-label="Today’s coverage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + c.percent + '">' +
-        '<span class="ue-progress__bar" style="width:' + c.percent + '%"></span></div></div>';
+        '<span class="ue-progress__bar" style="width:' + c.percent + '%"></span></div></div></div>';
     }
 
     function slotPills() {
@@ -235,21 +241,29 @@
       return '';
     }
 
-    function tagline(note) {
-      var bits = (Array.isArray(note.codes) ? note.codes : []).slice(0, 2).map(function (c) { return '<span class="ue-code">' + esc(clip(c, 12)) + '</span>'; });
-      if (note.subject) bits.push('<span>' + esc(clip(note.subject, 40)) + '</span>');
-      if (typeof note.readTime === 'number' && note.readTime > 0) bits.push('<span>' + Math.round(note.readTime) + ' min</span>');
-      return bits.length ? '<p class="ue-tagline">' + bits.join('<span class="ue-dot" aria-hidden="true"> · </span>') + '</p>' : '';
+    function paperOf(note) {
+      var papers = Array.isArray(note.papers) ? note.papers : [];
+      var code = Array.isArray(note.codes) && note.codes[0] ? String(note.codes[0]) : '';
+      var p = String(papers[0] || code.split('.')[0] || '').toUpperCase();
+      return /^(GS[1-4]|ESSAY)$/.test(p) ? p : '';
     }
+
 
     function noteCard(id) {
       var note = state.notes[id];
       if (!note) return '';
       var done = progress.isDone(id);
-      return '<li class="ue-card" data-done="' + done + '"><a class="ue-card__link" href="' + esc(noteHref(note.slug || id)) + '" data-ue-open="' + esc(id) + '">' +
-        tagline(note) + '<h4 class="ue-card__title">' + esc(clip(note.title, 200)) + '</h4>' +
-        (note.oneLine ? '<p class="ue-card__line">' + esc(clip(note.oneLine, 280)) + '</p>' : '') + '</a>' +
-        '<span class="ue-card__state">' + (done ? '<span aria-hidden="true">✓ </span>Done' : 'To read') + '</span></li>';
+      var paper = paperOf(note);
+      var cat = [paper, clip(note.subject, 40)].filter(Boolean).join(' · ');
+      var mins = typeof note.readTime === 'number' && note.readTime > 0 ? Math.round(note.readTime) + ' min read' : '';
+      return '<li class="ue-card ue-card--' + (paper ? paper.toLowerCase() : 'gs') + '" data-done="' + done + '">' +
+        '<a class="ue-card__link" href="' + esc(noteHref(note.slug || id)) + '" data-ue-open="' + esc(id) + '">' +
+        '<span class="ue-card__accent" aria-hidden="true"></span><span class="ue-card__body">' +
+        '<span class="ue-card__meta">' + (cat ? '<span class="ue-cat">' + esc(cat) + '</span>' : '') + (mins ? '<span>' + mins + '</span>' : '') + '</span>' +
+        '<span class="ue-card__title">' + esc(clip(note.title, 200)) + '</span>' +
+        (note.oneLine ? '<span class="ue-card__line">' + esc(clip(note.oneLine, 280)) + '</span>' : '') +
+        '<span class="ue-card__foot"><span class="ue-card__state">' + (done ? '<span aria-hidden="true">✓ </span>Done' : 'To read') + '</span>' +
+        '<span class="ue-read">' + (done ? 'Read again' : 'Read') + '</span></span></span></a></li>';
     }
 
     function sectionBlock(id, title, inner, extraClass) {
@@ -404,23 +418,34 @@
       var next = nextNote(note.id);
       return '<div class="ue-donebar">' +
         (done
-          ? '<p class="ue-donebar__state" role="status"><span aria-hidden="true">✓ </span>Done. Revision cards are scheduled.</p>'
-          : '<button type="button" class="ue-btn" data-ue-done>Mark done</button>') +
+          ? '<button type="button" class="ue-complete is-done" disabled><span aria-hidden="true">✓ </span>Done</button>' +
+            '<p class="ue-donebar__state" role="status">Revision cards are scheduled.</p>'
+          : '<button type="button" class="ue-complete" data-ue-done>Mark done</button>') +
         (next
-          ? '<a class="ue-next" href="' + esc(noteHref(next.slug || next.id)) + '" data-ue-open="' + esc(next.id) + '"><span>Next note</span><strong>' + esc(clip(next.title, 160)) + '</strong></a>'
-          : '<a class="ue-next" href="?view=brief" data-ue-back><span>Next</span><strong>Back to today’s desk</strong></a>') +
+          ? '<a class="ue-nav-btn primary ue-next" href="' + esc(noteHref(next.slug || next.id)) + '" data-ue-open="' + esc(next.id) + '"><span class="ue-next__label">Next note</span><span class="ue-next__title">' + esc(clip(next.title, 160)) + '</span></a>'
+          : '<a class="ue-nav-btn ue-next" href="?view=brief" data-ue-back><span class="ue-next__label">Next</span><span class="ue-next__title">Back to today’s desk</span></a>') +
         '</div>';
     }
 
     function readerHtml(note) {
       var edition = state.noteEdition[note.id];
       var meta = edition ? dateLabel(edition.date) + ' · ' + String(edition.slot || '').toUpperCase() + ' edition' : '';
-      return '<nav class="ue-reader__bar" aria-label="Note"><a class="ue-back" href="?view=brief" data-ue-back><span aria-hidden="true">← </span>Today</a>' +
-        (meta ? '<span class="ue-reader__meta">' + esc(meta) + '</span>' : '') + '</nav>' +
-        Render.renderNote(note) + doneBar(note);
+      var toc = (Array.isArray(note.sections) ? note.sections : []).filter(function (sec) {
+        return isObject(sec) && clip(sec.heading);
+      }).map(function (sec, i) {
+        return '<a href="#ue-q-' + (i + 1) + '">' + esc(clip(sec.heading, 90)) + '</a>';
+      });
+      return '<div class="ue-readbar" aria-hidden="true"><span class="ue-readbar__fill"></span></div>' +
+        '<div class="ue-reader__bar" role="navigation" aria-label="Note"><a class="ue-back" href="?view=brief" data-ue-back><span aria-hidden="true">←</span> Back to Today</a>' +
+        (meta ? '<span class="ue-reader__meta">' + esc(meta) + '</span>' : '') + '</div>' +
+        '<div class="ue-reader__layout"><div class="ue-reader__main">' + Render.renderNote(note) + doneBar(note) + '</div>' +
+        (toc.length > 1 ? '<div class="ue-toc" role="navigation" aria-label="On this note"><p class="ue-toc__title">On this note</p>' + toc.join('') + '</div>' : '') +
+        '</div>';
     }
 
     function setReading(on) {
+      var browse = doc && doc.getElementById('readerBrowse');
+      if (browse && on !== state.reading) browse.open = !on;
       if (viewEl) viewEl.toggleAttribute('data-ue-reading', on);
       if (doc && doc.body) doc.body.classList.toggle('ue-reading', on);
       state.reading = on;
@@ -432,11 +457,12 @@
       var note = findNote(slug);
       state.openId = note ? note.id : '';
       readerEl.innerHTML = note ? readerHtml(note)
-        : '<nav class="ue-reader__bar"><a class="ue-back" href="?view=brief" data-ue-back><span aria-hidden="true">← </span>Today</a></nav>' +
+        : '<div class="ue-reader__bar" role="navigation" aria-label="Note"><a class="ue-back" href="?view=brief" data-ue-back><span aria-hidden="true">← </span>Today</a></div>' +
           '<p class="ue-notice">This note is not in the last 7 days of editions. It may have been replaced by a newer edition.</p>';
       setReading(true);
       if (doc && note) doc.title = clip(note.title, 120) + ' — UPSC Today';
       observeEnd();
+      if (opts.observe !== false && readerEl.querySelector) updateReadbar();
       dispatch('upsc:chromechange');
     }
 
@@ -637,6 +663,22 @@
       if (status) status.textContent = message;
     }
 
+    function updateReadbar() {
+      var fill = readerEl.querySelector && readerEl.querySelector('.ue-readbar__fill');
+      if (!fill) return;
+      var rect = readerEl.getBoundingClientRect();
+      var span = Math.max(1, rect.height - (win.innerHeight || 800));
+      var pct = Math.max(0, Math.min(100, (-rect.top / span) * 100));
+      fill.style.width = pct.toFixed(1) + '%';
+      var links = readerEl.querySelectorAll('.ue-toc a');
+      if (!links.length) return;
+      var active = 0;
+      Array.prototype.forEach.call(readerEl.querySelectorAll('.ue-q[id^="ue-q-"]'), function (heading, i) {
+        if (heading.getBoundingClientRect().top < 160) active = i;
+      });
+      Array.prototype.forEach.call(links, function (link, i) { link.classList.toggle('is-active', i === active); });
+    }
+
     var bound = false;
     function bindOnce() {
       if (bound || !win || !deskEl.addEventListener || opts.observe === false) return;
@@ -652,21 +694,21 @@
         }
       });
       win.addEventListener('popstate', route);
+      // Print expands every practice block so the paper copy is complete.
+      win.addEventListener('beforeprint', function () {
+        Array.prototype.forEach.call(readerEl.querySelectorAll('details'), function (node) { node.open = true; });
+      });
       win.addEventListener('upsc:viewchange', route);
       var lastY = win.scrollY || 0;
-      var ticking = false;
+      // Cheap work only, so it runs straight from the scroll event.
       win.addEventListener('scroll', function () {
-        if (ticking) return;
-        ticking = true;
-        (win.requestAnimationFrame || setTimeout)(function () {
-          ticking = false;
-          var y = win.scrollY || 0;
-          var counter = deskEl.querySelector('.ue-counter');
-          if (counter && Math.abs(y - lastY) > 4) {
-            counter.classList.toggle('is-collapsed', y > lastY && y > 160);
-            lastY = y;
-          }
-        });
+        var y = win.scrollY || 0;
+        if (state.reading) updateReadbar();
+        var counter = deskEl.querySelector('.ue-counter');
+        if (counter && Math.abs(y - lastY) > 4) {
+          counter.classList.toggle('is-collapsed', y > lastY && y > 160);
+          lastY = y;
+        }
       }, { passive: true });
     }
 

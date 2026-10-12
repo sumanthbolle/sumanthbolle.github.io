@@ -14,6 +14,7 @@
   'use strict';
 
   var OFFICIAL_HOST = /(^|\.)(gov\.in|nic\.in|rbi\.org\.in|gov|un\.org|who\.int|europa\.eu|imf\.org|worldbank\.org|wto\.org|unep\.org|ipcc\.ch|unfccc\.int|oecd\.org)$/i;
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var KIND_LABEL = { news: 'News', editorial: 'Editorial', explained: 'Explained' };
 
   function esc(value) {
@@ -73,10 +74,11 @@
     var publisher = clip(source.publisher || source.source || hostOf(url) || source.title || 'Source', 40);
     var title = clip(source.title || publisher, 160);
     var cls = 'ue-chip ue-chip--' + (official ? 'official' : 'secondary');
-    var inner = '<span class="ue-chip__n">' + esc(n) + '</span>' +
+    var numbered = !(fallbackN === 0 && source.n == null && source.index == null);
+    var inner = (numbered ? '<span class="ue-chip__n">' + esc(n) + '</span>' : '') +
       '<span class="ue-chip__pub">' + esc(publisher) + '</span>' +
       '<span class="ue-chip__badge">' + badge + '</span>';
-    var label = 'Source ' + n + ': ' + publisher + ', ' + badge + '. ' + title;
+    var label = (numbered ? 'Source ' + n : 'Source') + ': ' + publisher + ', ' + badge + '. ' + title;
     if (!url) return '<span class="' + cls + '" title="' + esc(title) + '">' + inner + '</span>';
     return '<a class="' + cls + '" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer" aria-label="' +
       esc(label) + '" title="' + esc(title) + '">' + inner + '</a>';
@@ -110,9 +112,15 @@
     return '<strong>' + esc(l) + '</strong> ' + textHtml;
   }
 
+  function dateText(iso) {
+    var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!m || Number(m[2]) < 1 || Number(m[2]) > 12) return '';
+    return Number(m[3]) + ' ' + MONTHS[Number(m[2]) - 1] + ' ' + m[1];
+  }
+
   function oneLineBox(text) {
     var t = clip(text, 600);
-    return t ? '<p class="ue-oneline"><strong class="ue-oneline__label">In one line.</strong> ' + esc(t) + '</p>' : '';
+    return t ? '<div class="ue-oneline"><p class="ue-box__label">In one line</p><p>' + esc(t) + '</p></div>' : '';
   }
 
   function cellHtml(cell) {
@@ -159,7 +167,7 @@
       if (myth) html += '<p><strong>Not quite:</strong> ' + esc(myth) + '</p>';
       if (fact) html += '<p><strong>Actually:</strong> ' + esc(fact) + '</p>';
     }
-    return html ? '<aside class="ue-misconception"><p class="ue-label">Common mistake</p>' + html + '</aside>' : '';
+    return html ? '<aside class="ue-misconception"><p class="ue-box__label">Common misreading</p>' + html + '</aside>' : '';
   }
 
   function sourceListItems(sources) {
@@ -414,15 +422,24 @@
     var map = sourceMap(note.sources);
     var out = [];
     var codes = list(note.codes).map(function (c) { return clip(c, 12); }).filter(Boolean).slice(0, 3);
-    var tags = codes.map(function (c) { return '<span class="ue-code">' + esc(c) + '</span>'; });
-    if (clip(note.subject)) tags.push('<span>' + esc(clip(note.subject, 40)) + '</span>');
-    if (KIND_LABEL[note.kind]) tags.push('<span>' + KIND_LABEL[note.kind] + '</span>');
-    if (typeof note.readTime === 'number' && note.readTime > 0 && note.readTime < 120) tags.push('<span>' + Math.round(note.readTime) + ' min read</span>');
     var papers = list(note.papers).map(function (p) { return clip(p, 8); }).filter(Boolean);
+    var paper = papers[0] || (codes[0] ? codes[0].split('.')[0] : '');
+    var crumbs = ['<a href="?view=brief" data-ue-back>UPSC Today</a>'];
+    if (paper) crumbs.push('<span>' + esc(paper) + '</span>');
+    if (clip(note.subject)) crumbs.push('<span>' + esc(clip(note.subject, 40)) + '</span>');
+    var meta = [];
+    var published = dateText(note.publishedAt);
+    if (published) meta.push('<span>' + esc(published) + '</span>');
+    if (typeof note.readTime === 'number' && note.readTime > 0 && note.readTime < 120) meta.push('<span>' + Math.round(note.readTime) + ' min read</span>');
+    if (KIND_LABEL[note.kind]) meta.push('<span>' + KIND_LABEL[note.kind] + '</span>');
+    var firstSource = list(note.sources).filter(isObject)[0];
+    if (firstSource && clip(firstSource.publisher)) meta.push('<span>Source: ' + esc(clip(firstSource.publisher, 40)) + '</span>');
+    if (codes.length) meta.push('<span class="ue-codes">' + codes.map(function (c) { return '<span class="ue-code">' + esc(c) + '</span>'; }).join(' ') + '</span>');
     out.push('<header class="ue-note__head">' +
-      (tags.length ? '<p class="ue-tagline">' + tags.join('<span class="ue-dot" aria-hidden="true"> · </span>') + '</p>' : '') +
+      '<p class="ue-breadcrumb">' + crumbs.join('<span class="ue-crumb-sep" aria-hidden="true"> › </span>') + '</p>' +
       '<h2 class="ue-note__title" id="ueNoteTitle" tabindex="-1">' + esc(clip(note.title, 240)) + '</h2>' +
-      (clip(note.deck) ? '<p class="ue-deck">' + esc(clip(note.deck, 400)) + '</p>' : '') + '</header>');
+      (clip(note.deck) ? '<p class="ue-deck">' + esc(clip(note.deck, 400)) + '</p>' : '') +
+      (meta.length ? '<p class="ue-meta-row">' + meta.join('') + '</p>' : '') + '</header>');
     out.push(oneLineBox(note.oneLine));
 
     var updates = list(note.updates).filter(function (u) { return isObject(u) && clip(u.text); });
@@ -438,12 +455,13 @@
         chipsFor(note.whyInNews.sources, map) + '</p></section>');
     }
 
+    var qn = 0;
     list(note.sections).forEach(function (section) {
       if (!isObject(section)) return;
       var heading = clip(section.heading, 200);
       var body = sectionBody(section.body, chipsFor(section.sources, map));
       if (!heading && !body) return;
-      out.push('<section class="ue-section">' + (heading ? '<h3 class="ue-q">' + esc(heading) + '</h3>' : '') + body + '</section>');
+      out.push('<section class="ue-section">' + (heading ? '<h3 class="ue-q" id="ue-q-' + (++qn) + '">' + esc(heading) + '</h3>' : '') + body + '</section>');
     });
 
     var numbers = list(note.keyNumbers).filter(function (row) { return isObject(row) && clip(row.figure) && clip(row.meaning); });
@@ -458,8 +476,8 @@
 
     var basics = note.back2basics;
     if (isObject(basics) && clip(basics.text)) {
-      out.push('<aside class="ue-basics"><p class="ue-label">Back to basics</p>' +
-        (clip(basics.concept) ? '<h3>' + esc(clip(basics.concept, 120)) + '</h3>' : '') +
+      out.push('<aside class="ue-basics"><p class="ue-box__label">Back to basics</p>' +
+        (clip(basics.concept) ? '<p class="ue-basics__concept"><strong>' + esc(clip(basics.concept, 120)) + '</strong></p>' : '') +
         '<p>' + esc(clip(basics.text, 1200)) + '</p></aside>');
     }
 
