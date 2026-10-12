@@ -39,8 +39,13 @@ def record(rid, title, url, published="2026-10-12T15:15:14Z", summary=SUMMARY):
 
 SCHEME = record("src_scheme", "Cabinet approves expansion of PM Dhan-Dhaanya Krishi Yojana", PIB_URL)
 FACT = record(
-    "src_fact", "INS TRISHUL ARRIVES AT PLYMOUTH, UK FOR EXERCISE KONKAN 2026",
-    "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2321915", summary="INS Trishul arrives.",
+    "src_fact", "Indian Navy commissions indigenous anti-submarine warfare craft INS Mangrol",
+    "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2321915", summary="The Navy commissioned a warship.",
+)
+SECOND = record(
+    "src_second", "Coal stocks at thermal power plants stay above 18 MT as railway rake loading rises",
+    "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2322065",
+    summary="Coal supply to power plants and electricity generation; energy transition and infrastructure. " * 8,
 )
 
 
@@ -66,6 +71,7 @@ def opener(blocked=()):
     pages = {
         FEED_URL: ((FIXTURES / "hindu-rss.xml").read_bytes(), "application/rss+xml"),
         PIB_URL: ((FIXTURES / "pib-release.html").read_bytes(), "text/html; charset=utf-8"),
+        SECOND["sourceUrl"]: ((FIXTURES / "pib-release.html").read_bytes(), "text/html; charset=utf-8"),
     }
 
     def open_url(request, timeout=20):
@@ -103,10 +109,11 @@ class Workspace:
             "id": "hindu-national", "publisher": "The Hindu", "section": "national", "url": FEED_URL,
         }]}), encoding="utf-8")
 
-    def build(self, slot="am", now="2026-10-13T00:20:00Z", transport=None, env=ENV, blocked=(), dry_run=False, date="2026-10-13"):
+    def build(self, slot="am", now="2026-10-13T00:20:00Z", transport=None, env=ENV, blocked=(), dry_run=False,
+              date="2026-10-13", max_notes=8):
         return build_edition(
             self.output, date, slot, now, opener(blocked), transport or LLM(),
-            dry_run=dry_run, env=env, site_root=self.site, feeds_path=self.feeds,
+            dry_run=dry_run, env=env, site_root=self.site, feeds_path=self.feeds, max_notes=max_notes,
         )
 
     def edition_path(self, slot="am"):
@@ -154,15 +161,20 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(note["sources"][0]["url"], PIB_URL)
         self.assertEqual(note["updates"], [])
         self.assertEqual(edition["glimpse"][0], {"noteId": note_id, "line": note["oneLine"], "code": "GS3.3"})
-        self.assertEqual([fact["id"] for fact in edition["quickFacts"]], ["qf-src_fact"])
-        self.assertEqual(edition["quickFacts"][0]["source"]["publisher"], "Press Information Bureau")
+        facts = {fact["id"]: fact for fact in edition["quickFacts"]}
+        self.assertIn("qf-src_fact", facts)
+        self.assertEqual(facts["qf-src_fact"]["source"]["publisher"], "Press Information Bureau")
+        self.assertEqual(facts["qf-src_fact"]["source"]["kind"], "official")
         page = self.ws.site / "notes" / note["slug"] / "index.html"
         self.assertTrue(page.is_file())
         self.assertTrue((self.ws.site / ".upsc-generated").is_file())
         index = json.loads((self.ws.output / "editions/index.json").read_text(encoding="utf-8"))
         self.assertEqual(index["editions"][0]["id"], "2026-10-13-am")
         self.assertEqual(index["editions"][0]["counts"]["notes"], 1)
-        self.assertEqual(report["candidates"]["must"], 1)
+        # The fixture's RBI headline has no official record; its newspaper page
+        # is not served here, so it is held and still listed as a quick fact.
+        self.assertEqual(report["candidates"]["must"], 2)
+        self.assertEqual([row["topic"] for row in edition["held"]], ["RBI keeps repo rate unchanged at 5.5%"])
 
     def test_second_run_is_byte_identical_and_skips_llm(self):
         self.ws.build()
@@ -178,23 +190,26 @@ class BuildTests(unittest.TestCase):
         edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
         self.assertEqual(edition["status"], "partial")
         self.assertEqual(edition["notes"], {})
-        self.assertEqual(edition["held"][0]["reasons"], ["llm-unavailable"])
+        held = {row["topic"]: row["reasons"] for row in edition["held"]}
+        self.assertEqual(held[SCHEME["title"]], ["llm-unavailable"])
         self.assertEqual(llm.calls, 0)
         self.ws.build(now="2026-10-13T00:50:00Z")
         retried = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
-        self.assertEqual((retried["status"], len(retried["notes"]), retried["held"]), ("closed", 1, []))
+        self.assertEqual((retried["status"], len(retried["notes"])), ("closed", 1))
+        self.assertFalse(any("llm-unavailable" in row["reasons"] for row in retried["held"]))
 
     def test_blocked_evidence_is_held_and_run_continues(self):
         self.ws.build(blocked=(PIB_URL,))
         edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
-        self.assertEqual(edition["held"][0]["reasons"], ["evidence-unavailable", "http-403"])
-        self.assertEqual(len(edition["quickFacts"]), 1)
+        held = {row["topic"]: row["reasons"] for row in edition["held"]}
+        self.assertEqual(held[SCHEME["title"]], ["evidence-unavailable", "http-403"])
+        self.assertIn("qf-src_scheme", [fact["id"] for fact in edition["quickFacts"]])
 
     def test_gate_failure_is_held_with_reasons(self):
         self.ws.build(transport=LLM(dict(LLM_NOTE, codes=["GS9.9"])))
         edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
-        self.assertIn("bad-code:GS9.9", edition["held"][0]["reasons"])
-        self.assertEqual(edition["held"][0]["topic"], SCHEME["title"])
+        held = {row["topic"]: row["reasons"] for row in edition["held"]}
+        self.assertIn("bad-code:GS9.9", held[SCHEME["title"]])
 
     def test_pm_duplicate_becomes_update_on_am_note(self):
         self.ws.build()
@@ -228,9 +243,36 @@ class BuildTests(unittest.TestCase):
         report = self.ws.build(dry_run=True, env={})
         self.assertFalse((self.ws.output / "editions").exists())
         self.assertFalse(self.ws.site.exists())
-        self.assertEqual(report["edition"]["held"][0]["reasons"], ["llm-unavailable"])
+        self.assertIn(["llm-unavailable"], [row["reasons"] for row in report["edition"]["held"]])
         self.assertTrue(report["dryRun"])
         self.assertEqual(report["written"], [])
+
+
+class SelectionBuildTests(unittest.TestCase):
+    def setUp(self):
+        self.ws = Workspace([SCHEME, SECOND, FACT])
+
+    def tearDown(self):
+        self.ws.close()
+
+    def test_top_n_become_notes_and_the_rest_quick_facts(self):
+        report = self.ws.build(max_notes=1)
+        edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
+        self.assertEqual(len(edition["notes"]), 1)
+        fact_ids = [fact["id"] for fact in edition["quickFacts"]]
+        self.assertEqual(len(fact_ids), len(set(fact_ids)))
+        self.assertIn("qf-src_fact", fact_ids)
+        noted = next(iter(edition["notes"].values()))["recordIds"]
+        self.assertFalse(any(f"qf-{rid}" in fact_ids for rid in noted))
+        self.assertEqual(report["candidates"]["must"], 1)
+
+    def test_blocked_evidence_backfills_with_the_next_candidate(self):
+        self.ws.build(max_notes=1, blocked=(PIB_URL,))
+        edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
+        self.assertEqual(len(edition["notes"]), 1)
+        self.assertEqual(next(iter(edition["notes"].values()))["recordIds"], ["src_second"])
+        self.assertIn(["evidence-unavailable", "http-403"], [row["reasons"] for row in edition["held"]])
+        self.assertIn("qf-src_scheme", [fact["id"] for fact in edition["quickFacts"]])
 
 
 class PageTests(unittest.TestCase):

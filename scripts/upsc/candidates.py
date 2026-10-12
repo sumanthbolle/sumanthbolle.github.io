@@ -115,11 +115,16 @@ ROUTINE = (
     "lending facility", "auction under laf", "conversion/switch", "outlook survey",
     "launching of", "survey round", "expectations survey", "confidence survey",
 )
-CEREMONIAL_CAP = 30
-ROUTINE_CAP = 35
+NOTE_FLOOR = 45
+FACT_FLOOR = 30
+FAMILY_CAP = 3
+# Caps sit below FACT_FLOOR so capped items are never notes or quick facts,
+# except foreign-only records, which may still be quick facts.
+CEREMONIAL_CAP = 20
+ROUTINE_CAP = 25
 FOREIGN_CAP = 40
-CORPORATE_CAP = 30
-LOCAL_CAP = 35
+CORPORATE_CAP = 25
+LOCAL_CAP = 29
 # Newspaper-only items: company results and markets, local administration and crime.
 CORPORATE_RE = re.compile(
     r"\b(net profit|yoy|q[1-4] (results|profit|revenue)|sensex|nifty|stock markets?|shares (rise|fall|jump)|ipo|"
@@ -330,7 +335,36 @@ def _score(
 
 
 def _band(score: int) -> str:
-    return "must" if score >= 60 else "useful" if score >= 40 else "skip"
+    """Provisional band from the floors; the edition assigns the final one per slot."""
+    return "must" if score >= NOTE_FLOOR else "useful" if score >= FACT_FLOOR else "skip"
+
+
+def _family(candidate: dict[str, Any]) -> str:
+    codes = candidate.get("codesHint") or []
+    return str(codes[0]).split(".", 1)[0] if codes else "none"
+
+
+def note_queue(
+    candidates: list[dict[str, Any]],
+    floor: int = NOTE_FLOOR,
+    family_cap: int = FAMILY_CAP,
+) -> list[dict[str, Any]]:
+    """Note attempt order: best scores above the floor, at most `family_cap` per
+    paper while other papers above the floor wait; the deferred ones follow."""
+    ranked = sorted(
+        (row for row in candidates if int(row.get("score") or 0) >= floor),
+        key=lambda row: (-int(row["score"]), str(row.get("title") or ""), str(row.get("fingerprint") or "")),
+    )
+    counts: dict[str, int] = {}
+    first, deferred = [], []
+    for row in ranked:
+        family = _family(row)
+        if counts.get(family, 0) < family_cap:
+            counts[family] = counts.get(family, 0) + 1
+            first.append(row)
+        else:
+            deferred.append(row)
+    return first + deferred
 
 
 def build_candidates(

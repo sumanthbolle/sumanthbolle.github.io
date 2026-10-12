@@ -2,8 +2,11 @@ import unittest
 
 from scripts.upsc.candidates import (
     CODE_LABELS,
+    FACT_FLOOR,
+    NOTE_FLOOR,
     build_candidates,
     fingerprint,
+    note_queue,
     tokens,
 )
 from scripts.upsc.models import SYLLABUS_CODES
@@ -41,6 +44,29 @@ def news(title, section="national", published="2026-10-12T20:00:00Z", url="https
 
 def build(records, discovery=()):
     return build_candidates(list(records), list(discovery), WINDOW, pyq_bank=PYQ, patterns=PATTERNS)
+
+
+def fake(score, code, title):
+    return {"score": score, "codesHint": [code] if code else [], "title": title, "fingerprint": title}
+
+
+class SelectionTests(unittest.TestCase):
+    def test_floors(self):
+        self.assertEqual((NOTE_FLOOR, FACT_FLOOR), (45, 30))
+
+    def test_queue_takes_top_scores_above_the_floor(self):
+        rows = [fake(80, "GS3.1", "a"), fake(70, "GS2.4", "b"), fake(50, "GS1.5", "c"), fake(44, "GS2.1", "d")]
+        self.assertEqual([row["title"] for row in note_queue(rows)], ["a", "b", "c"])
+
+    def test_paper_balance_defers_a_fourth_note_from_one_paper(self):
+        rows = [fake(90, "GS3.1", "a"), fake(85, "GS3.2", "b"), fake(80, "GS3.4", "c"),
+                fake(75, "GS3.6", "d"), fake(50, "GS2.9", "e")]
+        self.assertEqual([row["title"] for row in note_queue(rows)], ["a", "b", "c", "e", "d"])
+
+    def test_paper_balance_allows_more_when_no_other_paper_qualifies(self):
+        rows = [fake(90, "GS3.1", "a"), fake(85, "GS3.2", "b"), fake(80, "GS3.4", "c"),
+                fake(75, "GS3.6", "d"), fake(40, "GS2.9", "e")]
+        self.assertEqual([row["title"] for row in note_queue(rows)], ["a", "b", "c", "d"])
 
 
 class TokenTests(unittest.TestCase):
@@ -207,7 +233,7 @@ class CandidateTests(unittest.TestCase):
     def test_bands_follow_thresholds(self):
         for row in build([record("c", "Coal stocks at power plants remain stable above 18 MT"),
                           record("e", "Speech by the President at a dinner", publisher="eu-council")]):
-            expected = "must" if row["score"] >= 60 else "useful" if row["score"] >= 40 else "skip"
+            expected = "must" if row["score"] >= NOTE_FLOOR else "useful" if row["score"] >= FACT_FLOOR else "skip"
             self.assertEqual(row["band"], expected)
             self.assertTrue(0 <= row["score"] <= 100)
 

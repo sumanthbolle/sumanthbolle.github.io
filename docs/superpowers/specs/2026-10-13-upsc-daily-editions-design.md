@@ -27,7 +27,7 @@ The ingestion jobs run and store records, but the note path depends on the Cloud
 
 1. **Discover.** New `discovery` entries in `data/upsc/discovery-feeds.json` (The Hindu national, business, international, editorial; Indian Express explained, editorial). Only headline, link and time are kept. Discovery items are never cited as evidence.
 2. **Bind.** Each discovery topic is matched to current official records (PIB, RBI, SEBI, MEA, UN, WHO, EU Council) by token overlap. Official records without a discovery match also enter as candidates. A discovery topic without an official match becomes `kind: editorial` and credits the newspaper.
-3. **Cluster and rank.** Same-story items merge by a topic fingerprint. Rank uses the flagship study-priority formula; inputs that cannot be computed default conservatively. Must Know → note. Useful → quick fact. Skip → dropped.
+3. **Cluster and rank.** Same-story items merge by a topic fingerprint. Rank uses the flagship study-priority formula; inputs that cannot be computed default conservatively. Selection is relative per slot: the top 8 candidates scoring at least 45 become notes (at most 3 from one GS paper while other papers have candidates above the floor); the next 12 scoring at least 30 become quick facts; the rest are dropped. A note whose evidence cannot be fetched gives its slot to the next candidate and is listed as a quick fact. Newspaper coverage (distinct publishers, analysis sections) is part of the score.
 4. **Write.** One LLM call per note with the official text as the only evidence.
 5. **Gate** (deterministic):
    - every number and date in the note appears in the evidence text (FAQ numbers must appear in the body);
