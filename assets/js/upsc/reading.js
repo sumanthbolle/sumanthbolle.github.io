@@ -18,6 +18,12 @@
       text.push(section.heading);
       text = text.concat(section.paragraphs || []);
     });
+    if (article.example) text.push(article.example.heading, article.example.text);
+    if (article.comparison) {
+      text.push(article.comparison.heading);
+      (article.comparison.rows || []).forEach(function (row) { text = text.concat(row); });
+    }
+    text.push(article.recallAnswer || '');
     return Math.max(1, Math.ceil(text.join(' ').trim().split(/\s+/).length / 180));
   }
 
@@ -58,25 +64,34 @@
 
   function articleHtml(article, next) {
     var esc = Render.esc;
-    return '<article class="pr-reader"><a class="pr-reader__back" href="upsc.html#pocketLibrary" data-pocket-back>← Pocket reads</a>' +
+    return '<article class="pr-reader" data-pocket-anchor="' + esc(article.anchor) + '" data-paper="' + esc(article.paper) + '" data-published="' + esc(article.publishedOn) + '"><a class="pr-reader__back" href="upsc.html#pocketLibrary" data-pocket-back>← Pocket reads</a>' +
       '<header><p class="pr-reader__meta"><span>' + esc(article.subject) + '</span><span>' +
         esc(article.paper) + '</span><span>' + readMinutes(article) + ' min read</span></p>' +
       '<h2 id="pocketArticleTitle" tabindex="-1">' + esc(article.title) + '</h2>' +
       '<p class="pr-reader__dek">' + esc(article.excerpt) + '</p>' +
       '<p class="pr-reader__date">Published <time datetime="' + esc(article.publishedOn) + '">' +
-        esc(dateLabel(article.publishedOn)) + '</time></p></header>' +
+        esc(dateLabel(article.publishedOn)) + '</time>' + (article.updatedOn ? ' · Updated ' + esc(dateLabel(article.updatedOn)) : '') + '</p></header>' +
+      '<div class="pr-reader__tools"><button type="button" class="btn" data-pocket-ask>Ask Summaverick</button>' +
+      '<button type="button" class="btn" data-reading-size aria-pressed="false">Larger text</button></div>' +
       '<div class="pr-reader__body">' + article.sections.map(function (section) {
         return '<section><h3>' + esc(section.heading) + '</h3>' + section.paragraphs.map(function (paragraph) {
           return '<p>' + esc(paragraph) + '</p>';
         }).join('') + '</section>';
       }).join('') + '</div>' +
+      (article.example ? '<section class="pr-example"><p class="an-label">Worked example · illustration</p><h3>' + esc(article.example.heading) + '</h3><p>' + esc(article.example.text) + '</p></section>' : '') +
+      (article.comparison ? '<section class="pr-comparison"><h3>' + esc(article.comparison.heading) + '</h3><table><thead><tr>' +
+        article.comparison.columns.map(function (column) { return '<th scope="col">' + esc(column) + '</th>'; }).join('') +
+        '</tr></thead><tbody>' + article.comparison.rows.map(function (row) {
+          return '<tr><th scope="row">' + esc(row[0]) + '</th><td>' + esc(row[1]) + '</td></tr>';
+        }).join('') + '</tbody></table></section>' : '') +
       '<aside class="pr-takeaway"><h3>Takeaway</h3><p>' + esc(article.takeaway) + '</p></aside>' +
-      '<section class="pr-question"><h3>Recall question</h3><p>' + esc(article.question) + '</p></section>' +
+      '<section class="pr-question"><h3>Recall question</h3><p>' + esc(article.question) + '</p>' +
+      (article.recallAnswer ? '<details><summary>Check your answer</summary><p>' + esc(article.recallAnswer) + '</p></details>' : '') + '</section>' +
       '<section class="pr-reader__sources"><h3>Sources &amp; further reading</h3><ul>' +
         (article.sources || []).map(function (source) {
           var url = sourceUrl(source.url);
           return url ? '<li><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' +
-            esc(source.label) + ' ↗</a></li>' : '';
+            esc(source.label) + ' ↗</a>' + (source.note ? '<p>' + esc(source.note) + '</p>' : '') + '</li>' : '';
         }).join('') + '</ul></section>' +
       '<div class="pr-reader__actions"><button type="button" class="btn btn-primary" data-pocket-save="' +
         esc(article.id) + '">Save the takeaway</button>' +
@@ -99,6 +114,18 @@
   var search = document.getElementById('q');
   if (!list || !reader || !library) return;
   var baseTitle = document.title;
+  var activeReadingId = null;
+  var largeText = false;
+  try { largeText = localStorage.getItem('upsc.reading-size') === 'large'; } catch (error) { /* optional preference */ }
+
+  function applyReadingSize() {
+    reader.classList.toggle('pr-large-text', largeText);
+    var button = reader.querySelector('[data-reading-size]');
+    if (button) {
+      button.setAttribute('aria-pressed', largeText ? 'true' : 'false');
+      button.textContent = largeText ? 'Standard text' : 'Larger text';
+    }
+  }
 
   function currentArticle() {
     var url = new URL(window.location.href);
@@ -123,6 +150,12 @@
     reader.hidden = !article;
     main.toggleAttribute('data-reading', !!article);
     document.title = article ? article.title + ' — UPSC Today' : baseTitle;
+    applyReadingSize();
+    var id = article ? article.id : null;
+    if (id !== activeReadingId) {
+      activeReadingId = id;
+      document.dispatchEvent(new CustomEvent('upsc:articlechange', { detail: { id: id } }));
+    }
   }
 
   function navigate(id) {
@@ -170,6 +203,18 @@
       return;
     }
     if (event.target.closest('[data-pocket-retry]')) { loadArticles(); return; }
+    if (event.target.closest('[data-pocket-ask]')) {
+      document.dispatchEvent(new CustomEvent('upsc:ask', { detail: {
+        query: 'Explain this article more thoroughly using its primary sources. Separate the mechanism, a worked example and what the source actually establishes. Cite the documents you use.'
+      } }));
+      return;
+    }
+    if (event.target.closest('[data-reading-size]')) {
+      largeText = !largeText;
+      try { localStorage.setItem('upsc.reading-size', largeText ? 'large' : 'standard'); } catch (error) { /* optional preference */ }
+      applyReadingSize();
+      return;
+    }
     var button = event.target.closest('[data-pocket-save]');
     if (!button) return;
     var article = currentArticle();

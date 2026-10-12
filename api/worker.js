@@ -53,6 +53,7 @@ import {
   upscChipInstruction,
   upscMetaLine,
 } from './upsc-domain.js';
+import { primarySourceUrl, retrievePrimarySources, sourceResearchInstruction } from './upsc-sources.js';
 
 import {
   upscScope,
@@ -224,6 +225,9 @@ async function handleChat(request, env, origin) {
     const upscMarks = Number(body.marks) === 15 ? 15 : (Number(body.marks) === 10 ? 10 : 0);
     const upscMeta = body.meta && typeof body.meta === 'object' ? body.meta : null;
     const wantsJson = body.format === 'json';
+    const sourceUrls = upscDomain && liveSearch && Array.isArray(body.sourceUrls)
+      ? [...new Set(body.sourceUrls.slice(0, 3).map(primarySourceUrl).filter(Boolean))] : [];
+    const sourceDocuments = sourceUrls.length ? await retrievePrimarySources(sourceUrls) : [];
 
     let systemContent = SYSTEM_PROMPT;
     if (upscDomain) {
@@ -251,6 +255,7 @@ async function handleChat(request, env, origin) {
     }
 
     const messages = [{ role: 'system', content: systemContent }];
+    if (sourceDocuments.length) messages[0].content += '\n\n' + sourceResearchInstruction(sourceDocuments);
 
     if (Array.isArray(context) && context.length > 0) {
       for (const msg of context.slice(-10)) {
@@ -280,6 +285,10 @@ async function handleChat(request, env, origin) {
       web_search_options: { search_context_size: searchContextSize },
       return_related_questions: true
     };
+    if (sourceUrls.length) {
+      sonarPayload.search_domain_filter = [...new Set(sourceUrls.map(url => new URL(url).hostname.replace(/^www\./, '')))];
+      sonarPayload.max_tokens = 1800;
+    }
 
     const data = await callSonar(apiKey, sonarPayload);
     const result = buildResult(data);
@@ -287,6 +296,7 @@ async function handleChat(request, env, origin) {
       result.domain = 'upsc';
       if (upscChip) result.chip = upscChip;
       if (upscMeta) result.meta = upscMeta;
+      if (sourceDocuments.length) result.sourceRetrieval = sourceDocuments.map(({ text, ...record }) => record);
     } else if (result && snDomain) {
       result.domain = 'servicenow';
       result.servicenow = {
@@ -2292,7 +2302,10 @@ function buildResult(data) {
 
   if (!answer && searchResults.length === 0) return null;
 
-  const sources = searchResults.slice(0, 8).map((sr, i) => ({
+  const orderedResults = citations.length ? citations.slice(0, 8).map(url => (
+    searchResults.find(row => row.url === url) || { url }
+  )) : searchResults.slice(0, 8);
+  const sources = orderedResults.map((sr, i) => ({
     index: i + 1,
     title: sr.title || '',
     url: sr.url,
@@ -2300,19 +2313,6 @@ function buildResult(data) {
     source: extractDomain(sr.url),
     date: sr.date || null
   }));
-
-  if (sources.length === 0 && citations.length > 0) {
-    citations.slice(0, 8).forEach((url, i) => {
-      sources.push({
-        index: i + 1,
-        title: '',
-        url,
-        snippet: '',
-        source: extractDomain(url),
-        date: null
-      });
-    });
-  }
 
   return {
     type: 'rich',

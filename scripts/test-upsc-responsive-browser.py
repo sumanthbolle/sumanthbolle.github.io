@@ -1,4 +1,5 @@
 """UPSC page layout checks. Requires Playwright and a running static server."""
+import json
 from pathlib import Path
 import shutil
 import sys
@@ -10,6 +11,7 @@ sys.path.insert(0, str(root))
 from scripts.upsc.publish import _page_shell
 
 base = (sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8000").rstrip("/")
+article_count = len(json.loads((root / 'data/upsc-pocket-reads.json').read_text())['articles'])
 routes = ["upsc.html", "upsc-guide.html", "upsc-patterns.html", "revision.html",
           "mains.html", "upsc-quiz.html", "needs-review.html", "upsc-study/"]
 
@@ -72,7 +74,7 @@ with sync_playwright() as playwright:
                 assert not page.locator("#mobileMenu").is_visible(), route
                 assert menu.get_attribute("aria-expanded") == "false", route
             if route == "upsc.html":
-                assert page.locator(".pr-story__link").count() == 5
+                assert page.locator(".pr-story__link").count() == article_count
                 for arrow in page.locator(".pr-story__arrow").all():
                     arrow.click()
                     page.wait_for_function("document.activeElement.id === 'pocketArticleTitle'")
@@ -96,7 +98,7 @@ with sync_playwright() as playwright:
                 assert_layout(page, ("atlas drill", width, theme))
                 page.locator("#drillBody [data-act='reveal']").click()
                 assert_layout(page, ("atlas answer", width, theme))
-            if page.locator(".sv-coach-toggle").count():
+            if page.locator(".sv-coach-toggle").count() and page.locator(".sv-coach-toggle").is_visible():
                 page.locator(".sv-coach-toggle").click()
                 panel = page.locator(".sv-coach-panel").bounding_box()
                 assert panel["x"] >= 0 and panel["x"] + panel["width"] <= width

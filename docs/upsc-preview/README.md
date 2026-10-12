@@ -1,8 +1,8 @@
 # UPSC Today design preview
 
-Screenshots from the working review branch, captured in Chromium on 10 October 2026. Click an image to view it at full size. These are static previews; the production site is not deployed from this branch.
+Screenshots from the working review branch, refreshed in Chromium on 12 October 2026. Click an image to view it at full size. These are static previews; the production site is not deployed from this branch.
 
-The page begins with five short articles, followed by a collapsed Study desk and the official update feed. It uses warm paper colours, restrained green accents, self-hosted fonts, and a focused article view. Search, saved takeaways, revision and the source archive remain available. The masthead slogans and repeated priority totals have been removed.
+The page begins with short articles, followed by a collapsed Study desk and the official update feed. It uses warm paper colours, restrained green accents, self-hosted fonts, and a focused article view. The five initial explainers now include worked illustrations, comparisons, source-reading locators and revealable recall answers. Search, saved takeaways, revision and the source archive remain available. The masthead slogans and repeated priority totals have been removed.
 
 The article renderer now supports the older shared script interface, preventing cached scripts from leaving an empty reader. Asset URLs are versioned, and direct article links focus the loaded title. Pocket reads and Must Know article views share the same reading width, title sizing and responsive spacing.
 
@@ -28,6 +28,18 @@ Topic arrows now open articles: the title, excerpt and arrow are one keyboard-ac
 
 ![Mobile Pocket read showing its article paragraphs](mobile-pocket-article.png)
 
+## Worked example and comparison
+
+![Mobile article with an illustrative tax-sharing example and a comparison table](mobile-article-example.png)
+
+## Ask Summaverick
+
+The article action opens this panel with the current article and its source references. The replies below are explicitly labelled layout fixtures, not live research results. Direct source downloading requires the Worker update to be deployed; no live source answer was verified from this environment.
+
+![Desktop source-reading widget layout preview](desktop-source-widget.png)
+
+![Mobile source-reading widget layout preview in dark mode](mobile-source-widget.png)
+
 ## Must Know source brief
 
 ![Mobile Must Know article view using the same responsive reading layout](mobile-study-article.png)
@@ -48,6 +60,6 @@ Topic arrows now open articles: the title, excerpt and arrow are one keyboard-ac
 
 ![Topic navigation and filters at 320px](small-phone-topics.png)
 
-The initial articles are evergreen explainers. The official update feed refreshes through the existing scheduled workflow; Pocket reads need editorial publication. See the [review and daily writing guide](../upsc-reading-review.md).
+The initial articles are evergreen explainers. The official update feed refreshes through its existing scheduled workflow. A separate daily job releases at most one approved Pocket read around 07:00 Singapore time after merge; its queue is initially empty and it does not author text. See [publishing and source research](../upsc-pocket-publishing.md) and the [reading review](../upsc-reading-review.md).
 
-Validation: all 14 UPSC JavaScript check scripts and 72 publisher tests passed. Browser regression checks cover every article's complete paragraph text and visibility, arrows, keyboard and new-tab navigation, the older shared renderer interface, direct links and reloads, responsive study articles, search, history and saved takeaways. The responsive checks cover eight routes at 320, 390, 768 and 1440px, themes, tabs, forms, Atlas drill, long references and populated generated notes. The deployed domain could not be checked from this environment.
+Validation: 15 UPSC JavaScript check scripts and 78 publisher tests passed. Browser checks cover complete article bodies, arrows, keyboard/new-tab navigation, the older renderer interface, direct links, saving, eight responsive routes, forms and Atlas drill. Source-widget checks cover all article additions, source-URL requests, understanding-check replies, focus restoration, a compact keyboard viewport and cancelled requests on article navigation. The Worker dry-run build passes; deployment and live-provider validation remain pending.

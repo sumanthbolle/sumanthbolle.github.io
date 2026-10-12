@@ -69,6 +69,10 @@ export function upscChipInstruction(chip, opts) {
     : '';
 
   switch (chip) {
+    case 'sources':
+      return 'Task: SOURCE READING. Explain this article using primary evidence. Verify its static claims rather than treating them as settled. Use readable paragraphs, a labelled illustration and a clear distinction between what the document establishes and what is interpretation. Cite actual documents, identify their dates when known, and acknowledge unavailable documents. Do not force an exam-answer template onto the explanation.';
+    case 'understanding':
+      return 'Task: UNDERSTANDING CHECK. Use the primary documents to ask one applied question about the article. Do not reveal its answer until the student responds. On a response, give precise feedback grounded in the source, then offer one follow-up. Do not invent a PYQ or claim a hypothetical situation really occurred.';
     case 'prelims':
       return `Task: PRELIMS ANGLE. Generate 1-2 UPSC Prelims-style questions on the STATIC concept behind this topic (provisions, schemes, committees, constitutional bodies), not headline trivia. Prefer statement-based ("Which of the statements is/are correct?") or match-the-pairs. Each question needs four options and a one-line explanation. Return ONLY a single raw JSON object — no prose, no markdown fences, no citation markers — of exactly this shape: {"questions":[{"stem":"...","options":["...","...","...","..."],"correct":"...","explanation":"..."}],"meta":{"format":"statement-based|match-pairs","topic":"...","difficulty":"Easy|Medium|Hard"}}`;
     case 'mains':

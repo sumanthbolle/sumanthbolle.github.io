@@ -1,0 +1,39 @@
+name: Publish daily Pocket read
+
+on:
+  schedule:
+    # 07:00 Asia/Singapore; GitHub schedules are approximate.
+    - cron: "0 23 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: upsc-pocket-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify publishing rules
+        run: python -m unittest scripts.upsc.test_pocket_publish
+      - name: Publish one approved article
+        run: python scripts/upsc/pocket_publish.py
+      - name: Commit publication
+        run: |
+          git config user.name "upsc-publisher[bot]"
+          git config user.email "upsc-publisher[bot]@users.noreply.github.com"
+          git add data/upsc-pocket-reads.json data/upsc-pocket-queue.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: publish daily Pocket read"
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi

@@ -39,6 +39,16 @@
   // search  — whether the ask needs live Perplexity research. Structured/static
   //           asks opt out for cleaner output; free follow-ups keep it on.
   var PROMPTS = {
+    sources: {
+      id: 'sources', kind: 'sources', label: 'Read the sources', format: 'text', search: true,
+      hint: 'Explain what the primary documents establish',
+      query: 'Read the linked primary sources for this topic. Explain the mechanism in depth, identify a common misunderstanding, and cite the documents actually used. Say when a document cannot be retrieved.'
+    },
+    understanding: {
+      id: 'understanding', kind: 'understanding', label: 'Check my understanding', format: 'text', search: true,
+      hint: 'One source-grounded question, followed by feedback',
+      query: 'Check my understanding of this article against its primary sources. Ask one applied question now without revealing the answer. When I reply, explain what I got right or missed and cite the relevant source.'
+    },
     prelims: {
       id: 'prelims', kind: 'prelims', label: 'Prelims angle', format: 'json', search: false,
       hint: 'How this can be asked or answered in Prelims',
@@ -119,14 +129,14 @@
     var query = clip(settings.query, QUERY_MAX);
     if (query.length < 2) query = 'Continue.';
     var context = [];
-    var snapshot = clip(settings.pageContext || '', 1400);
+    var snapshot = clip(settings.pageContext || '', CONTEXT_MAX);
     if (snapshot) {
-      context.push({ role: 'user', content: 'Study context (treat as the settled static scaffold): ' + snapshot });
+      context.push({ role: 'user', content: 'Study context (article notes to check against primary sources, not independently verified evidence): ' + snapshot });
       context.push({
         role: 'assistant',
         content: settings.quiz
           ? 'Understood. I will quiz you one question at a time on this anchor and keep going until you say stop.'
-          : 'Understood. I will build on this static scaffold and use live search only for the current trigger.'
+          : 'Understood. I will distinguish the article notes from evidence in the sources I actually retrieve.'
       });
     }
     (Array.isArray(settings.history) ? settings.history : []).slice(-HISTORY_KEEP).forEach(function (msg) {
@@ -144,6 +154,9 @@
     if (settings.mode) body.mode = String(settings.mode);
     if (settings.marks) body.marks = Number(settings.marks);
     if (settings.meta && hasMeta(settings.meta)) body.meta = trimMeta(settings.meta);
+    if (settings.sourceUrls && settings.sourceUrls.length) {
+      body.sourceUrls = settings.sourceUrls.map(safeHttpUrl).filter(Boolean).slice(0, 3);
+    }
     return body;
   }
 
@@ -327,6 +340,13 @@
     var scope = win || (typeof window !== 'undefined' ? window : {});
     var meta = { gs_paper: '', static_topic: '', pattern_tag: '', source: '', date: '' };
     if (!root || !root.querySelector) return applyMetaOverride(meta, scope, root);
+    var reader = root.querySelector('#pocketReader:not([hidden]) .pr-reader');
+    if (reader) {
+      meta.static_topic = reader.getAttribute('data-pocket-anchor');
+      meta.gs_paper = reader.getAttribute('data-paper');
+      meta.date = reader.getAttribute('data-published');
+      return meta;
+    }
 
     var openAnchor = root.querySelector('.an-entry__expand[open], details.an-entry__expand[open]');
     if (openAnchor) {
@@ -385,6 +405,12 @@
   function pageContextFromDom(doc) {
     var root = doc || (typeof document !== 'undefined' ? document : null);
     if (!root || !root.querySelector) return '';
+    var reader = root.querySelector('#pocketReader:not([hidden]) .pr-reader');
+    if (reader) {
+      return clip(Array.prototype.map.call(reader.querySelectorAll(
+        '#pocketArticleTitle, .pr-reader__dek, .pr-reader__body, .pr-example, .pr-comparison, .pr-takeaway, .pr-reader__sources'
+      ), function (node) { return node.textContent; }).join('\n'), CONTEXT_MAX);
+    }
     var selection = '';
     try {
       if (root.getSelection) selection = String(root.getSelection());
@@ -423,6 +449,16 @@
 
   function textOf(node) {
     return node && node.textContent ? clip(node.textContent, 280) : '';
+  }
+
+  function pageSourceUrls(doc) {
+    var root = doc || (typeof document !== 'undefined' ? document : null);
+    if (!root || !root.querySelectorAll) return [];
+    var pocket = root.querySelector('#pocketReader:not([hidden]) .pr-reader');
+    var links = pocket ? pocket.querySelectorAll('.pr-reader__sources a') : root.querySelectorAll('#packetDesk .pk-sources a');
+    return Array.from(new Set(Array.prototype.map.call(links, function (link) {
+      return safeHttpUrl(link.href);
+    }).filter(Boolean))).slice(0, 3);
   }
 
   function marksFromDom(doc) {
@@ -528,18 +564,21 @@
     // In exam mode the tone starts muted (spec 5.1) unless the user set a pref.
     if (state.mode === 'exam' && !localStorageHas(MUTE_KEY)) state.muted = true;
 
+    var articlePage = !!document.getElementById('pocketReader');
+    var returnFocus = null;
     var toggle = el(
       '<button type="button" class="sv-coach-toggle" id="svCoachToggle" aria-expanded="false" aria-controls="svCoachPanel" aria-haspopup="dialog">' +
         '<span class="sv-coach-toggle__mark" aria-hidden="true">S</span>' +
         '<span class="sv-coach-toggle__label">Ask Summaverick</span>' +
       '</button>'
     );
+    if (articlePage) toggle.hidden = true;
     var panel = el(
       '<section class="sv-coach-panel" id="svCoachPanel" hidden role="dialog" aria-labelledby="svCoachTitle">' +
         '<header class="sv-coach-head">' +
           '<div>' +
             '<p class="sv-coach-kicker">Summaverick</p>' +
-            '<h2 id="svCoachTitle">Exam coach</h2>' +
+            '<h2 id="svCoachTitle" tabindex="-1">' + (articlePage ? 'Explore this article' : 'Exam coach') + '</h2>' +
           '</div>' +
           '<div class="sv-coach-head__tools">' +
             '<button type="button" class="sv-coach-icon" id="svCoachMode" aria-pressed="false" aria-label="Toggle study or exam mode">Study</button>' +
@@ -547,7 +586,7 @@
             '<button type="button" class="sv-coach-icon" id="svCoachClose" aria-label="Close coach">Close</button>' +
           '</div>' +
         '</header>' +
-        '<p class="sv-coach-intro" id="svCoachIntro">Grounded in the topic on this page. Highlight a line first if you want a tighter ask.</p>' +
+        '<p class="sv-coach-intro" id="svCoachIntro">' + (articlePage ? 'Questions use this article and its linked sources.' : 'Grounded in the topic on this page. Highlight a line first if you want a tighter ask.') + '</p>' +
         '<div class="sv-coach-chips" id="svCoachChips"></div>' +
         '<p class="sv-coach-quizbar" id="svCoachQuizbar" hidden>' +
           '<span id="svCoachQuizStat">Quiz is running — it will keep asking.</span>' +
@@ -556,15 +595,27 @@
         '<div class="sv-coach-log" id="svCoachLog" aria-live="polite"></div>' +
         '<form class="sv-coach-form" id="svCoachForm">' +
           '<label class="sr-only" for="svCoachInput">Message Summaverick</label>' +
-          '<textarea id="svCoachInput" rows="2" maxlength="900" placeholder="Ask a follow-up, or answer the quiz…"></textarea>' +
+          '<textarea id="svCoachInput" rows="2" maxlength="900" placeholder="' + (articlePage ? 'Ask a follow-up or explain your answer…' : 'Ask a follow-up, or answer the quiz…') + '"></textarea>' +
           '<button type="submit" id="svCoachSend">Send</button>' +
         '</form>' +
         '<p class="sv-coach-status" id="svCoachStatus" role="status"></p>' +
       '</section>'
     );
+    if (articlePage) { panel.classList.add('sv-coach-panel--article'); state.muted = true; }
+    if (articlePage && window.visualViewport) {
+      function fitViewport() {
+        var viewport = window.visualViewport;
+        panel.style.setProperty('--sv-visible-height', viewport.height + 'px');
+        panel.style.setProperty('--sv-keyboard-gap', Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop) + 'px');
+        panel.classList.toggle('sv-coach-panel--compact', viewport.height < 420);
+      }
+      fitViewport();
+      window.visualViewport.addEventListener('resize', fitViewport);
+      window.visualViewport.addEventListener('scroll', fitViewport);
+    }
 
     var chips = panel.querySelector('#svCoachChips');
-    Object.keys(PROMPTS).forEach(function (key) {
+    (articlePage ? ['sources', 'understanding'] : Object.keys(PROMPTS)).forEach(function (key) {
       var prompt = PROMPTS[key];
       var chip = document.createElement('button');
       chip.type = 'button';
@@ -584,12 +635,14 @@
     var sendBtn = panel.querySelector('#svCoachSend');
 
     function setOpen(open) {
+      if (open && !state.open) returnFocus = document.activeElement;
       state.open = open;
       panel.hidden = !open;
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       panel.classList.toggle('is-open', open);
       armAudio();
-      if (open) panel.querySelector('#svCoachInput').focus();
+      if (open) panel.querySelector(articlePage ? '#svCoachTitle' : '#svCoachInput').focus({ preventScroll: true });
+      else if (returnFocus && document.contains(returnFocus)) returnFocus.focus({ preventScroll: true });
     }
     function syncMute() {
       var btn = panel.querySelector('#svCoachMute');
@@ -649,6 +702,8 @@
           format: info.format || 'text',
           marks: info.marks || 0,
           meta: pageMetaFromDom(document, typeof window !== 'undefined' ? window : {}),
+          pageContext: pageContextFromDom(document),
+          sourceUrls: pageSourceUrls(document),
           header: !info.noHeader
         };
       }
@@ -680,7 +735,8 @@
       var body = buildRequest({
         query: query,
         history: state.history.slice(0, -1),
-        pageContext: pageContextFromDom(document),
+        pageContext: turn.pageContext,
+        sourceUrls: turn.sourceUrls,
         quiz: state.quiz,
         liveSearch: state.liveSearch !== false,
         chip: turn.chip,
@@ -690,8 +746,11 @@
         meta: turn.meta
       });
 
+      if (state.controller) state.controller.abort();
+      state.controller = new AbortController();
       opener(endpoint, {
         method: 'POST',
+        signal: state.controller.signal,
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(body)
       }).then(function (response) {
@@ -756,7 +815,16 @@
         node = appendBubble('assistant', header);
         renderQuizItem(node, data, turn);
       } else {
-        node = appendBubble('assistant', header + formatReply(answer) + sourcesHtml(result && result.sources));
+        var retrieval = result && Array.isArray(result.sourceRetrieval) ? result.sourceRetrieval : null;
+        var sourceState = turn.sourceUrls && turn.sourceUrls.length
+          ? '<p class="sv-coach-source-state">' + escHtml(retrieval
+            ? (retrieval.some(function (row) { return row && row.status === 'read'; }) ? 'Source text retrieved. Open the documents below for full context.' : 'The linked documents could not be read directly. Check the research sources below.')
+            : 'Direct reading of the linked documents is unconfirmed. Check the research citations.') + '</p>' : '';
+        var primary = retrieval ? '<div class="sv-coach-sources"><p class="sv-coach-sources__title">Linked documents</p><ol>' + retrieval.map(function (row) {
+          var url = safeHttpUrl(row.url);
+          return url ? '<li><a href="' + escAttr(url) + '" target="_blank" rel="noopener noreferrer">[' + escHtml(row.id) + '] ' + escHtml(row.status === 'read' ? 'Text retrieved' : 'Not read directly') + ' · ' + escHtml(new URL(url).hostname) + '</a></li>' : '';
+        }).join('') + '</ol></div>' : '';
+        node = appendBubble('assistant', header + formatReply(answer) + sourceState + primary + sourcesHtml(result && result.sources));
         renderRelated(result && result.relatedQuestions);
       }
       // Header only on the first reply of a turn.
@@ -919,6 +987,26 @@
     /* ── listeners ── */
 
     toggle.addEventListener('click', function () { setOpen(!state.open); });
+    document.addEventListener('upsc:ask', function (event) {
+      setOpen(true);
+      send(event.detail && event.detail.query || PROMPTS.sources.query, { chip: 'sources', format: 'text', liveSearch: true });
+    });
+    document.addEventListener('upsc:articlechange', function () {
+      state.stopped = true;
+      state.generation += 1;
+      if (state.controller) state.controller.abort();
+      if (state.retryTimer) clearTimeout(state.retryTimer);
+      state.retryTimer = null;
+      state.history = [];
+      state.turn = null;
+      state.lastAsk = null;
+      state.loading = false;
+      sendBtn.disabled = false;
+      log.innerHTML = '';
+      setQuiz(false);
+      setStatus('');
+      setOpen(false);
+    });
     panel.querySelector('#svCoachClose').addEventListener('click', function () { setOpen(false); });
     panel.querySelector('#svCoachMode').addEventListener('click', function () {
       state.mode = state.mode === 'exam' ? 'study' : 'exam';
@@ -976,7 +1064,7 @@
       if (state.quiz) {
         send(text, { chip: 'quiz', format: 'json', liveSearch: false, noHeader: true, appendQuery: '\n\n' + CONTINUE_QUIZ });
       } else {
-        send(text, { liveSearch: true });
+        send(text, { liveSearch: true, chip: articlePage ? ((state.turn && state.turn.chip) || 'sources') : null, format: 'text' });
       }
     });
     document.addEventListener('keydown', function (event) {
@@ -1084,6 +1172,7 @@
     pageMetaFromDom: pageMetaFromDom,
     metaHeaderText: metaHeaderText,
     pageContextFromDom: pageContextFromDom,
+    pageSourceUrls: pageSourceUrls,
     marksFromDom: marksFromDom,
     endpointFromWindow: endpointFromWindow,
     playSweetTone: playSweetTone,
