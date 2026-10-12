@@ -50,6 +50,9 @@ jobs:
           node scripts/test-upsc-pocket.mjs
           node scripts/test-upsc-sitemap.js
           node scripts/test-upsc-workflow.js
+          node scripts/test-upsc-edition-progress.js
+          node scripts/test-upsc-answer-render.js
+          node scripts/test-upsc-edition.js
 
       - name: Snapshot previous source health
         run: |
