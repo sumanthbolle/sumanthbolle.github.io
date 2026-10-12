@@ -50,7 +50,8 @@ function fakeDom(href) {
     body,
     getElementById: (id) => els[id] || null,
     querySelector: () => null,
-    addEventListener() {},
+    listeners: {},
+    addEventListener(type, fn) { (this.listeners[type] = this.listeners[type] || []).push(fn); },
     dispatchEvent() {},
     title: 'UPSC Today',
   };
@@ -58,7 +59,8 @@ function fakeDom(href) {
   const win = {
     location: { href: href || 'https://sumanthbolle.com/upsc.html' },
     history: { pushState(state, title, url) { pushed.push(url); win.location.href = new URL(url, win.location.href).href; } },
-    addEventListener() {},
+    listeners: {},
+    addEventListener(type, fn) { (this.listeners[type] = this.listeners[type] || []).push(fn); },
     scrollY: 0,
     scrollTo() {},
     innerHeight: 800,
@@ -171,6 +173,30 @@ function makeDesk(dom, files, extra) {
     const next = Edition.createDesk({ doc: fakeDom().doc, win: fakeDom().win, fetch: fetcher({}), storage: store,
       now: () => new Date('2026-10-14T02:30:00Z'), Render, Progress, observe: false });
     assert.ok(next.progress().dueCards().length >= 3);
+  });
+
+  await test('re-reads progress when another script or tab changes it', async function () {
+    const dom = fakeDom();
+    const store = storage();
+    const desk = makeDesk(dom, {
+      'editions/index.json': indexFor([entry('2026-10-13-am', '2026-10-13', 'am')]),
+      '2026/10/13-am.json': sample,
+    }, { storage: store });
+    await desk.load();
+    const text = () => dom.els.editionDesk.innerHTML.replace(/<[^>]+>/g, '');
+    assert.match(text(), /Prelims 0\/2/);
+    // Another instance on the same storage (Summaverick, another tab) marks a note done.
+    Progress.create(store, '2026-10-13').markDone(sample.notes['rbi-policy-oct-2026'], true);
+    (dom.doc.listeners['upsc:revisionchange'] || []).forEach((fn) => fn({ type: 'upsc:revisionchange' }));
+    assert.match(text(), /Prelims 1\/2/);
+    Progress.create(store, '2026-10-13').markDone(sample.notes['pm-e-drive-extension'], true);
+    (dom.win.listeners.storage || []).forEach((fn) => fn({ type: 'storage', key: 'unrelated' }));
+    assert.match(text(), /Prelims 1\/2/, 'unrelated keys are ignored');
+    (dom.win.listeners.storage || []).forEach((fn) => fn({ type: 'storage', key: Progress.STORAGE_KEY }));
+    assert.match(text(), /Prelims 2\/2/);
+    // The desk's own next save keeps the other instance's work.
+    desk.tickFact(sample.quickFacts[0].id, true);
+    assert.equal(Progress.create(store, '2026-10-13').isDone('pm-e-drive-extension'), true);
   });
 
   await test('falls back to the latest closed edition with a delay notice', async function () {

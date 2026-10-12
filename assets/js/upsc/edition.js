@@ -186,6 +186,7 @@
           render();
           route();
           bindOnce();
+          bindSync();
           state.background = Promise.all(pick.recent.map(loadEdition)).then(function (recent) {
             state.recent = recent.filter(Boolean);
             render();
@@ -682,6 +683,21 @@
     }
 
     var bound = false;
+    // Progress can change outside this desk: Summaverick's Save to revision
+    // (upsc:revisionchange) or another tab (storage). Re-read and redraw.
+    var syncBound = false;
+    function bindSync() {
+      if (syncBound) return;
+      syncBound = true;
+      var refresh = function (event) {
+        if (event && event.type === 'storage' && event.key && event.key !== Progress.STORAGE_KEY) return;
+        if (progress.reload) progress.reload();
+        if (state.loaded) render();
+      };
+      if (doc && doc.addEventListener) doc.addEventListener('upsc:revisionchange', refresh);
+      if (win && win.addEventListener) win.addEventListener('storage', refresh);
+    }
+
     function bindOnce() {
       if (bound || !win || !deskEl.addEventListener || opts.observe === false) return;
       bound = true;

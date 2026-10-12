@@ -198,4 +198,63 @@ test('IST date helper rolls over at 18:30 UTC', function () {
   assert.equal(Progress.addDays('2026-12-31', 1), '2027-01-01');
 });
 
+test('a stale instance does not clobber a card saved by another instance', function () {
+  const store = memoryStorage();
+  const desk = Progress.create(store, TODAY);          // e.g. the Today desk, loaded first
+  const coach = Progress.create(store, TODAY);         // e.g. Summaverick's Save to revision
+  const id = coach.addCard({ front: 'What does Article 324 cover?', back: 'Superintendence of elections.', noteId: 'coach' });
+  desk.tickFact('qf-1', true);                         // desk saves from its stale copy
+  const saved = JSON.parse(store.data['upscEdition.v1']);
+  assert.ok(saved.cards.some((card) => card.id === id), 'card from the other instance survives');
+  assert.equal(saved.facts['qf-1'] !== undefined, true);
+  assert.ok(desk.allCards().some((card) => card.id === id), 'the saving instance now sees it too');
+});
+
+test('merge keeps the newer stage and due for the same card', function () {
+  const store = memoryStorage();
+  const a = Progress.create(store, TODAY);
+  a.markDone(notes['rbi-policy-oct-2026'], true);
+  const cardId = a.allCards()[0].id;
+  const b = Progress.create(store, TODAY);              // b reads the card at stage 0
+  a.gradeCard(cardId, true);                            // a advances it to stage 1
+  b.tickFact('qf-2', true);                             // b saves its stale stage-0 copy
+  const fresh = Progress.create(store, TODAY);
+  const card = fresh.allCards().find((row) => row.id === cardId);
+  assert.equal(card.stage, 1);
+  assert.equal(card.due, Progress.addDays(TODAY, 3));
+});
+
+test('done notes and ticks union across instances; an untick is not undone by a stale save', function () {
+  const store = memoryStorage();
+  const a = Progress.create(store, TODAY);
+  const b = Progress.create(store, TODAY);
+  a.markDone({ id: 'n1', title: 'One', oneLine: 'one' }, null);
+  b.markDone({ id: 'n2', title: 'Two', oneLine: 'two' }, null);
+  a.tickFact('f1', true);
+  b.tickFact('f2', true);
+  const merged = Progress.create(store, TODAY);
+  assert.equal(merged.isDone('n1') && merged.isDone('n2'), true);
+  assert.equal(merged.isFactTicked('f1') && merged.isFactTicked('f2'), true);
+  merged.tickFact('f1', false);                         // untick on a third instance
+  a.markDone({ id: 'n3', title: 'Three', oneLine: 'three' }, null);  // a still believes f1 is ticked
+  const after = Progress.create(store, TODAY);
+  assert.equal(after.isFactTicked('f1'), false, 'the later untick wins');
+  assert.equal(after.isDone('n3'), true);
+});
+
+test('reload picks up changes written by another instance', function () {
+  const store = memoryStorage();
+  const desk = Progress.create(store, TODAY);
+  const other = Progress.create(store, TODAY);
+  other.addCard({ front: 'Q', back: 'A', noteId: 'coach' });
+  assert.equal(desk.allCards().length, 0);
+  desk.reload();
+  assert.equal(desk.allCards().length, 1);
+});
+
+test('legacy boolean ticks still load', function () {
+  const store = memoryStorage({ 'upscEdition.v1': JSON.stringify({ v: 1, done: {}, facts: { old: true }, cards: [] }) });
+  assert.equal(Progress.create(store, TODAY).isFactTicked('old'), true);
+});
+
 console.log('UPSC edition progress tests passed');

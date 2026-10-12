@@ -310,4 +310,9 @@ test('the Worker pack asks for the brief JSON contract and knows the new actions
   assert.match(worker, /upscFormatInstruction\(body\.format\)/);
 });
 
+test('Save to revision tells the Today desk to re-read progress', () => {
+  const coachSource = fs.readFileSync(path.join(__dirname, '..', 'assets', 'js', 'upsc', 'coach.js'), 'utf8');
+  assert.match(coachSource, /\.addCard\(card\)[\s\S]{0,200}dispatchEvent\(new Event\('upsc:revisionchange'\)\)/);
+});
+
 console.log('UPSC Summaverick coach tests passed');

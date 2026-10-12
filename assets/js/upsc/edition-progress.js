@@ -40,7 +40,19 @@
   }
 
   function emptyState() {
-    return { v: 1, done: {}, facts: {}, cards: [] };
+    return { v: 1, done: {}, facts: {}, unticked: {}, cards: [] };
+  }
+
+  // Monotonic change stamp, so merges can tell which copy of a card or tick is newer.
+  var lastStamp = 0;
+  function stamp() {
+    lastStamp = Math.max(Date.now(), lastStamp + 1);
+    return lastStamp;
+  }
+
+  function stampOf(value) {
+    var n = Number(value);
+    return isFinite(n) && n > 0 ? n : 0;
   }
 
   function isPlainObject(value) {
@@ -62,7 +74,14 @@
       });
     }
     if (isPlainObject(raw.facts)) {
-      Object.keys(raw.facts).forEach(function (id) { if (id && raw.facts[id] === true) state.facts[id] = true; });
+      // true (older format) or the stamp of the tick.
+      Object.keys(raw.facts).forEach(function (id) {
+        var value = raw.facts[id];
+        if (id && (value === true || stampOf(value))) state.facts[id] = value === true ? true : stampOf(value);
+      });
+    }
+    if (isPlainObject(raw.unticked)) {
+      Object.keys(raw.unticked).forEach(function (id) { if (id && stampOf(raw.unticked[id])) state.unticked[id] = stampOf(raw.unticked[id]); });
     }
     if (Array.isArray(raw.cards)) {
       var seen = {};
@@ -77,11 +96,57 @@
           front: text(card.front),
           back: text(card.back),
           stage: stage >= 0 && stage < INTERVALS.length ? stage : 0,
-          due: card.due
+          due: card.due,
+          t: stampOf(card.t)
         });
       });
     }
     return state;
+  }
+
+  function newerCard(a, b) {
+    if (a.t !== b.t) return a.t > b.t ? a : b;
+    if (a.due !== b.due) return a.due > b.due ? a : b;
+    return a.stage >= b.stage ? a : b;
+  }
+
+  // Union of two states: every done note and card is kept; for the same card
+  // the newer copy wins; a tick and an untick of the same fact resolve by stamp.
+  function merge(stored, local) {
+    var out = emptyState();
+    [stored, local].forEach(function (src) {
+      Object.keys(src.done).forEach(function (id) {
+        var prev = out.done[id];
+        var next = src.done[id];
+        out.done[id] = !prev ? { at: next.at, mcq: next.mcq } : {
+          at: prev.at && (!next.at || prev.at <= next.at) ? prev.at : next.at,
+          mcq: next.mcq !== null ? next.mcq : prev.mcq
+        };
+      });
+    });
+    var ticks = {};
+    var unticks = {};
+    [stored, local].forEach(function (src) {
+      Object.keys(src.facts).forEach(function (id) {
+        var t = src.facts[id] === true ? 0 : src.facts[id];
+        ticks[id] = Object.prototype.hasOwnProperty.call(ticks, id) ? Math.max(ticks[id], t) : t;
+      });
+      Object.keys(src.unticked).forEach(function (id) { unticks[id] = Math.max(unticks[id] || 0, src.unticked[id]); });
+    });
+    Object.keys(ticks).forEach(function (id) {
+      if (!unticks[id] || ticks[id] > unticks[id]) out.facts[id] = ticks[id] || true;
+    });
+    Object.keys(unticks).forEach(function (id) {
+      if (!Object.prototype.hasOwnProperty.call(out.facts, id)) out.unticked[id] = unticks[id];
+    });
+    var byId = {};
+    var order = [];
+    stored.cards.concat(local.cards).forEach(function (card) {
+      if (!byId[card.id]) { order.push(card.id); byId[card.id] = card; }
+      else byId[card.id] = newerCard(byId[card.id], card);
+    });
+    out.cards = order.map(function (id) { return Object.assign({}, byId[id]); });
+    return out;
   }
 
   function readState(storage) {
@@ -157,10 +222,20 @@
     var today = isISODate(todayISO) ? todayISO : istDate(new Date());
     var state = readState(storage);
 
+    // Another tab or another script (Summaverick's Save to revision) may have
+    // written since this instance read storage: merge before writing.
     function save() {
       if (!storage) return false;
-      try { storage.setItem(STORAGE_KEY, JSON.stringify(state)); return true; }
-      catch (error) { return false; }
+      try {
+        state = merge(readState(storage), state);
+        storage.setItem(STORAGE_KEY, JSON.stringify(state));
+        return true;
+      } catch (error) { return false; }
+    }
+
+    function reload() {
+      if (storage) state = merge(readState(storage), state);
+      return true;
     }
 
     function hasCard(id) {
@@ -177,18 +252,18 @@
       var existing = state.done[note.id];
       state.done[note.id] = { at: existing && existing.at ? existing.at : today, mcq: mcq === null && existing ? existing.mcq : mcq };
       noteCards(note, today).forEach(function (card) {
-        if (!hasCard(card.id)) state.cards.push(card);
+        if (!hasCard(card.id)) { card.t = stamp(); state.cards.push(card); }
       });
       save();
       return true;
     }
 
-    function isFactTicked(id) { return state.facts[id] === true; }
+    function isFactTicked(id) { return Object.prototype.hasOwnProperty.call(state.facts, id); }
 
     function tickFact(id, on) {
       if (typeof id !== 'string' || !id) return false;
-      if (on === false) delete state.facts[id];
-      else state.facts[id] = true;
+      if (on === false) { delete state.facts[id]; state.unticked[id] = stamp(); }
+      else { state.facts[id] = stamp(); delete state.unticked[id]; }
       save();
       return true;
     }
@@ -210,6 +285,7 @@
         card.stage = 0;
         card.due = addDays(today, INTERVALS[0]);
       }
+      card.t = stamp();
       save();
       return true;
     }
@@ -222,7 +298,7 @@
       var noteId = text(input.noteId, 200) || 'coach';
       var id = noteId + ':saved:' + hashText(front + '|' + back);
       if (!hasCard(id)) {
-        state.cards.push({ id: id, noteId: noteId, front: front, back: back, stage: 0, due: addDays(today, INTERVALS[0]) });
+        state.cards.push({ id: id, noteId: noteId, front: front, back: back, stage: 0, due: addDays(today, INTERVALS[0]), t: stamp() });
         save();
       }
       return id;
@@ -300,6 +376,7 @@
       allCards: function () { return state.cards.map(function (c) { return Object.assign({}, c); }); },
       gradeCard: gradeCard,
       addCard: addCard,
+      reload: reload,
       missed: missed,
       exportJSON: exportJSON,
       importJSON: importJSON
@@ -308,6 +385,7 @@
 
   return {
     STORAGE_KEY: STORAGE_KEY,
+    merge: function (a, b) { return merge(sanitise(a) || emptyState(), sanitise(b) || emptyState()); },
     INTERVALS: INTERVALS,
     istDate: istDate,
     addDays: addDays,
