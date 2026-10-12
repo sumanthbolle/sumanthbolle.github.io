@@ -16,7 +16,7 @@ import socket
 import sys
 from typing import Any, Callable, Optional
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlsplit
+from urllib.parse import urljoin, urlsplit
 from urllib.request import Request, urlopen
 
 if __package__ in (None, ""):
@@ -42,6 +42,12 @@ VOID_TAGS = {
     "param", "source", "track", "wbr",
 }
 HTML_TYPES = ("text/html", "application/xhtml+xml")
+MAX_LINKS = 300
+# Official hosts a newspaper article may link to; registry hosts are added at call time.
+OFFICIAL_SUFFIXES = (".gov.in", ".nic.in")
+OFFICIAL_HOSTS = frozenset({
+    "sci.gov.in", "main.sci.gov.in", "mospi.gov.in", "rbi.org.in", "prsindia.org",
+})
 
 
 class _BodyText(HTMLParser):
@@ -50,13 +56,22 @@ class _BodyText(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.parts: list[str] = []
+        self.links: list[str] = []
+        self.title_parts: list[str] = []
+        self.in_title = False
         self.skip_tag = ""
         self.skip_depth = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, Optional[str]]]) -> None:
         tag = tag.lower()
+        if tag == "title":
+            self.in_title = True
         if tag in VOID_TAGS:
             return
+        if tag == "a" and not self.skip_depth:
+            href = dict(attrs).get("href") or ""
+            if href.strip():
+                self.links.append(href.strip())
         if self.skip_depth:
             if tag == self.skip_tag:
                 self.skip_depth += 1
@@ -69,29 +84,76 @@ class _BodyText(HTMLParser):
             self.skip_tag, self.skip_depth = tag, 1
 
     def handle_endtag(self, tag: str) -> None:
+        if tag.lower() == "title":
+            self.in_title = False
         if self.skip_depth and tag.lower() == self.skip_tag:
             self.skip_depth -= 1
             if not self.skip_depth:
                 self.skip_tag = ""
 
     def handle_data(self, data: str) -> None:
+        if self.in_title:
+            self.title_parts.append(data)
         if not self.skip_depth:
             self.parts.append(data)
 
 
-def extract_text(html: str) -> str:
+def _parse(html: str) -> _BodyText:
     parser = _BodyText()
     try:
         parser.feed(str(html or ""))
         parser.close()
     except (AssertionError, ValueError):
         pass
-    text = re.sub(r"\s+", " ", " ".join(parser.parts)).strip()
-    return text[:MAX_EVIDENCE_CHARS].rstrip()
+    return parser
 
 
-def _result(ok: bool, url: str, text: str = "", reason: str = "") -> dict[str, Any]:
-    return {"ok": ok, "text": text, "url": url, "reason": reason}
+def _collapse(parts: list[str]) -> str:
+    return re.sub(r"\s+", " ", " ".join(parts)).strip()
+
+
+def extract_text(html: str) -> str:
+    return _collapse(_parse(html).parts)[:MAX_EVIDENCE_CHARS].rstrip()
+
+
+def _absolute_links(hrefs: list[str], base_url: str) -> list[str]:
+    links: list[str] = []
+    for href in hrefs:
+        url = urljoin(base_url, href).split("#", 1)[0]
+        parts = urlsplit(url)
+        if parts.scheme in ("http", "https") and parts.hostname and url not in links:
+            links.append(url)
+        if len(links) >= MAX_LINKS:
+            break
+    return links
+
+
+def _host_in(host: str, allowed: str) -> bool:
+    allowed = allowed.lower().lstrip(".")
+    allowed = allowed[4:] if allowed.startswith("www.") else allowed
+    return host == allowed or host.endswith("." + allowed)
+
+
+def is_official_url(url: str, registry_hosts: set[str]) -> bool:
+    """A deep link on a government, court, regulator or registry host (not a home page)."""
+    parts = urlsplit(str(url or ""))
+    host = (parts.hostname or "").lower().rstrip(".")
+    if parts.scheme not in ("http", "https") or not host or parts.path.strip("/") == "":
+        return False
+    host = host[4:] if host.startswith("www.") else host
+    if any(host.endswith(suffix) for suffix in OFFICIAL_SUFFIXES):
+        return True
+    return any(_host_in(host, allowed) for allowed in set(OFFICIAL_HOSTS) | set(registry_hosts))
+
+
+def official_links(links: list[str], registry_hosts: set[str], limit: int = 3) -> list[str]:
+    return [url for url in links if is_official_url(url, registry_hosts)][:limit]
+
+
+def _result(
+    ok: bool, url: str, text: str = "", reason: str = "", title: str = "", links: Optional[list[str]] = None,
+) -> dict[str, Any]:
+    return {"ok": ok, "text": text, "url": url, "reason": reason, "title": title, "links": links or []}
 
 
 def _request(url: str) -> Request:
@@ -169,10 +231,13 @@ def fetch_evidence(
     mime = content_type.split(";", 1)[0].strip().lower()
     if mime not in HTML_TYPES:
         return _result(False, final_url, reason="unsupported-content")
-    text = extract_text(_decode(body, content_type))
+    parsed = _parse(_decode(body, content_type))
+    text = _collapse(parsed.parts)[:MAX_EVIDENCE_CHARS].rstrip()
+    title = _collapse(parsed.title_parts)[:300]
+    links = _absolute_links(parsed.links, final_url)
     if len(text) < MIN_EVIDENCE_CHARS:
-        return _result(False, final_url, text=text, reason="thin-evidence")
-    return _result(True, final_url, text=text)
+        return _result(False, final_url, text=text, reason="thin-evidence", title=title, links=links)
+    return _result(True, final_url, text=text, title=title, links=links)
 
 
 def main() -> int:

@@ -132,6 +132,8 @@ class CandidateTests(unittest.TestCase):
         rows = build([record("c", "Coal stocks at power plants remain stable above 18 MT")],
                      [news("The quiet erosion of federalism in fiscal transfers", "editorial",
                            url="https://www.thehindu.com/opinion/editorial/x.ece")])
+        secondary = build([], [news("Supreme Court wants cap on trade margin for essential medicines")])
+        self.assertEqual(secondary[0]["kind"], "secondary")
         editorial = [row for row in rows if row["kind"] == "editorial"]
         self.assertEqual(len(editorial), 1)
         self.assertEqual(editorial[0]["records"], [])

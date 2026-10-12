@@ -25,7 +25,7 @@ if __package__ in (None, ""):
 from scripts.upsc.adapters import curl_open
 from scripts.upsc.candidates import FACT_FLOOR, PYQ_BANK_PATH, build_candidates, note_queue, similar, tokens
 from scripts.upsc.discovery import fetch_discovery, load_feeds
-from scripts.upsc.evidence import fetch_evidence
+from scripts.upsc.evidence import fetch_evidence, official_links
 from scripts.upsc.publish import _all_current_records, _read_json, _slug, _write_json, _write_text
 from scripts.upsc.writer import write_note
 
@@ -95,9 +95,9 @@ def _chips(refs: Any, sources: dict[int, dict[str, Any]]) -> str:
         source = sources.get(ref) if isinstance(ref, int) else None
         if not source:
             continue
-        label = f"[{ref}] {source.get('publisher') or 'Source'}"
-        url = _safe_url(source.get("url"))
         kind = "official" if source.get("kind") == "official" else "secondary"
+        label = f"[{ref}] {source.get('publisher') or 'Source'}" + (" · Secondary" if kind == "secondary" else "")
+        url = _safe_url(source.get("url"))
         chips.append(
             f'<a class="ue-chip ue-chip--{kind}" href="{escape(url, quote=True)}" rel="noopener noreferrer">{_text(label)}</a>'
             if url else f'<span class="ue-chip ue-chip--{kind}">{_text(label)}</span>'
@@ -281,32 +281,102 @@ def _source(record: Mapping[str, Any]) -> dict[str, str]:
     }
 
 
+def _registry_hosts(output_root: Path) -> set[str]:
+    rows = _read_json(output_root / "source-registry.json", [])
+    hosts: set[str] = set()
+    for row in rows if isinstance(rows, list) else []:
+        if isinstance(row, dict) and row.get("enabled", True):
+            hosts.update(str(host) for host in row.get("hosts") or [])
+    return hosts
+
+
+def _fetch(record: Mapping[str, Any], opener: Callable[..., Any], failures: dict[str, int]) -> dict[str, Any]:
+    result = fetch_evidence(dict(record), opener, fallback=curl_open if opener is urlopen else None)
+    if not result["ok"]:
+        failures[result["reason"]] = failures.get(result["reason"], 0) + 1
+    return result
+
+
+def _official_evidence(
+    candidate: Mapping[str, Any], opener: Callable[..., Any], failures: dict[str, int],
+) -> tuple[list[dict[str, Any]], str]:
+    evidence: list[dict[str, Any]] = []
+    reason = ""
+    for row in candidate["records"][:MAX_EVIDENCE_RECORDS]:
+        result = _fetch(row, opener, failures)
+        if not result["ok"]:
+            reason = reason or result["reason"]
+            continue
+        evidence.append({
+            "title": str(row.get("title") or ""), "publisher": _source(row)["publisher"],
+            "url": str(row.get("sourceUrl") or ""), "date": str(row.get("publishedAt") or "")[:10],
+            "kind": "official", "text": result["text"],
+        })
+    return evidence, reason
+
+
+def _newspaper_evidence(
+    candidate: Mapping[str, Any], opener: Callable[..., Any], failures: dict[str, int], registry_hosts: set[str],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], str]:
+    """Fetch up to two newspaper articles (distinct publishers), then any official
+    pages they link to. Returns (official, discovery, first failure reason)."""
+    articles, publishers = [], set()
+    for item in candidate.get("discovery") or []:
+        if item.get("publisher") not in publishers:
+            publishers.add(item.get("publisher"))
+            articles.append(item)
+    official: list[dict[str, Any]] = []
+    discovery: list[dict[str, Any]] = []
+    tried: set[str] = set()
+    reason = ""
+    for item in articles[:2]:
+        result = _fetch({"sourceUrl": item.get("url")}, opener, failures)
+        if not result["ok"]:
+            reason = reason or result["reason"]
+            continue
+        discovery.append({
+            "title": str(item.get("title") or ""), "publisher": str(item.get("publisher") or ""),
+            "url": str(item.get("url") or ""), "date": str(item.get("publishedAt") or "")[:10],
+            "kind": "discovery", "text": result["text"],
+        })
+        for link in official_links(result["links"], registry_hosts):
+            if link in tried or len(official) >= 2:
+                continue
+            tried.add(link)
+            page = _fetch({"sourceUrl": link}, opener, failures)
+            if page["ok"]:
+                official.append({
+                    "title": page["title"] or str(item.get("title") or ""),
+                    "publisher": urlsplit(page["url"]).hostname or "", "url": link,
+                    "date": str(item.get("publishedAt") or "")[:10], "kind": "official", "text": page["text"],
+                })
+    return official, discovery, reason
+
+
 def _gather_evidence(
     candidate: Mapping[str, Any],
     opener: Callable[..., Any],
     failures: dict[str, int],
+    registry_hosts: Optional[set[str]] = None,
 ) -> tuple[list[dict[str, Any]], str, str]:
-    fallback = curl_open if opener is urlopen else None
-    evidence: list[dict[str, Any]] = []
-    reason = ""
+    """Return (numbered evidence, first failure reason, note kind).
+
+    Official records are fetched directly. A newspaper-only topic first looks
+    for official pages linked from the article: if one is reachable the note is
+    ordinary news citing official and newspaper sources; otherwise it is a
+    secondary (or editorial) note citing the newspaper.
+    """
+    kind = str(candidate.get("kind") or "news")
     if candidate.get("records"):
-        items = [(row, "official", _source(row)["publisher"], row.get("sourceUrl"), str(row.get("publishedAt") or "")[:10])
-                 for row in candidate["records"][:MAX_EVIDENCE_RECORDS]]
+        evidence, reason = _official_evidence(candidate, opener, failures)
     else:
-        items = [({"sourceUrl": row.get("url")}, "discovery", row.get("publisher"), row.get("url"), str(row.get("publishedAt") or "")[:10])
-                 for row in candidate.get("discovery", [])[:1]]
-    for index, (record, kind, publisher, url, day) in enumerate(items):
-        result = fetch_evidence(dict(record), opener, fallback=fallback)
-        if not result["ok"]:
-            failures[result["reason"]] = failures.get(result["reason"], 0) + 1
-            reason = reason or result["reason"]
-            continue
-        title = record.get("title") or (candidate.get("discovery") or [{}])[0].get("title", "")
-        evidence.append({
-            "n": len(evidence) + 1, "title": str(title or ""), "publisher": str(publisher or ""),
-            "url": str(url or ""), "date": day, "kind": kind, "text": result["text"],
-        })
-    return evidence, reason, str(candidate.get("kind") or "news")
+        official, discovery, reason = _newspaper_evidence(candidate, opener, failures, registry_hosts or set())
+        evidence = official + discovery
+        if official:
+            kind = "news"
+    for index, row in enumerate(evidence, start=1):
+        row["n"] = index
+    return evidence, reason, kind
 
 
 def _note_id(edition: str, fingerprint: str) -> str:
@@ -464,6 +534,7 @@ def build_edition(
     am = _read_json(am_path, None) if slot == "pm" else None
     am_changed = False
     pyq_bank = _read_json(PYQ_BANK_PATH, {})
+    registry_hosts = _registry_hosts(output_root)
     evidence_failures: dict[str, int] = {}
     held: list[dict[str, Any]] = []
     new_notes: list[tuple[dict[str, Any], dict[str, Any]]] = []
@@ -502,7 +573,7 @@ def build_edition(
         candidate["band"] = "must"
         topic = {"topic": candidate["title"], "fingerprint": candidate["fingerprint"]}
         try:
-            evidence, reason, kind = _gather_evidence(candidate, opener, evidence_failures)
+            evidence, reason, kind = _gather_evidence(candidate, opener, evidence_failures, registry_hosts)
             if not evidence:
                 # Not counted against the slot: the next candidate takes its place,
                 # and the topic still reaches readers as a quick fact.

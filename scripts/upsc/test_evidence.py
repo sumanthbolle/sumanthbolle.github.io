@@ -3,7 +3,7 @@ import unittest
 import urllib.error
 from pathlib import Path
 
-from scripts.upsc.evidence import MAX_EVIDENCE_CHARS, extract_text, fetch_evidence
+from scripts.upsc.evidence import MAX_EVIDENCE_CHARS, extract_text, fetch_evidence, is_official_url, official_links
 
 
 FIXTURES = Path(__file__).with_name("fixtures")
@@ -57,6 +57,32 @@ class ExtractTextTests(unittest.TestCase):
         text = extract_text("<p>" + ("word " * 10000) + "</p>")
         self.assertLessEqual(len(text), MAX_EVIDENCE_CHARS)
         self.assertEqual(MAX_EVIDENCE_CHARS, 16000)
+
+
+class OfficialLinkTests(unittest.TestCase):
+    def test_official_hosts(self):
+        registry = {"news.un.org", "consilium.europa.eu"}
+        for url in ("https://pib.gov.in/PressReleaseIframePage.aspx?PRID=1", "https://www.mospi.gov.in/press/cpi",
+                    "https://main.sci.gov.in/judgment/1", "https://www.rbi.org.in/x.aspx?id=1",
+                    "https://prsindia.org/bills/x", "https://egazette.nic.in/WriteReadData/x.pdf",
+                    "https://news.un.org/en/story/1"):
+            self.assertTrue(is_official_url(url, registry), url)
+        for url in ("https://www.thehindu.com/x", "https://notgov.in.example.com/x", "https://pib.gov.in/",
+                    "https://www.mospi.gov.in", "javascript:alert(1)", "https://evilgov.in/x"):
+            self.assertFalse(is_official_url(url, registry), url)
+
+    def test_article_links_skip_chrome_and_keep_body_official_links(self):
+        url = "https://www.thehindu.com/news/national/x/article1.ece"
+        result = fetch_evidence({"sourceUrl": url}, lambda request, timeout=20: FakeResponse(
+            (FIXTURES / "hindu-article.html").read_bytes(), url=url), fallback=None)
+        self.assertTrue(result["ok"])
+        self.assertEqual(result["title"], "Dhan-Dhaanya scheme expands to 100 more districts - The Hindu")
+        self.assertIn("https://www.thehindu.com/news/national/related-story/article9.ece", result["links"])
+        self.assertNotIn("https://pib.gov.in/allRel.aspx", result["links"])
+        self.assertEqual(official_links(result["links"], set()), [
+            "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2322443",
+            "https://main.sci.gov.in/judgment/2026/123",
+        ])
 
 
 class FetchEvidenceTests(unittest.TestCase):

@@ -67,8 +67,20 @@ class FakeResponse:
         return False
 
 
+ARTICLE_URL = "https://www.thehindu.com/news/national/cabinet-dhan-dhaanya/article1.ece"
+
+
+EXPLAINED_FEED = "https://indianexpress.com/section/explained/feed/"
+EXPLAINED_RSS = b"""<?xml version="1.0"?><rss version="2.0"><channel><item>
+<title>Explained: what the PM Dhan-Dhaanya Krishi Yojana expansion means for farmers, crop productivity and irrigation</title>
+<link>https://www.thehindu.com/news/national/cabinet-dhan-dhaanya/article1.ece</link>
+<pubDate>Mon, 12 Oct 2026 23:00:00 +0530</pubDate></item></channel></rss>"""
+
+
 def opener(blocked=()):
     pages = {
+        EXPLAINED_FEED: (EXPLAINED_RSS, "application/rss+xml"),
+        ARTICLE_URL: ((FIXTURES / "hindu-article.html").read_bytes(), "text/html; charset=utf-8"),
         FEED_URL: ((FIXTURES / "hindu-rss.xml").read_bytes(), "application/rss+xml"),
         PIB_URL: ((FIXTURES / "pib-release.html").read_bytes(), "text/html; charset=utf-8"),
         SECOND["sourceUrl"]: ((FIXTURES / "pib-release.html").read_bytes(), "text/html; charset=utf-8"),
@@ -273,6 +285,42 @@ class SelectionBuildTests(unittest.TestCase):
         self.assertEqual(next(iter(edition["notes"].values()))["recordIds"], ["src_second"])
         self.assertIn(["evidence-unavailable", "http-403"], [row["reasons"] for row in edition["held"]])
         self.assertIn("qf-src_scheme", [fact["id"] for fact in edition["quickFacts"]])
+
+
+class SecondaryTests(unittest.TestCase):
+    """No official record binds the Dhan-Dhaanya headline in these runs."""
+
+    def setUp(self):
+        self.ws = Workspace([])
+        self.ws.feeds.write_text(json.dumps({"discovery": [{
+            "id": "express-explained", "publisher": "The Indian Express", "section": "explained", "url": EXPLAINED_FEED,
+        }]}), encoding="utf-8")
+
+    def tearDown(self):
+        self.ws.close()
+
+    def note_for(self, edition):
+        return next(note for note in edition["notes"].values() if "Dhan-Dhaanya" in note["topicTitle"])
+
+    def test_official_link_inside_the_article_becomes_primary_evidence(self):
+        self.ws.build()
+        edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
+        note = self.note_for(edition)
+        self.assertEqual(note["kind"], "news")
+        self.assertEqual([(row["n"], row["kind"]) for row in note["sources"]], [(1, "official"), (2, "discovery")])
+        self.assertEqual(note["sources"][0]["url"], PIB_URL)
+        self.assertEqual(note["sources"][1]["url"], ARTICLE_URL)
+        self.assertEqual(note["sources"][1]["publisher"], "The Indian Express")
+
+    def test_unreachable_official_link_falls_back_to_a_secondary_note(self):
+        self.ws.build(blocked=(PIB_URL,))
+        edition = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
+        note = self.note_for(edition)
+        self.assertEqual(note["kind"], "secondary")
+        self.assertEqual([row["kind"] for row in note["sources"]], ["discovery"])
+        page = (self.ws.site / "notes" / note["slug"] / "index.html").read_text(encoding="utf-8")
+        self.assertIn("Secondary", page)
+        self.assertIn("ue-chip--secondary", page)
 
 
 class PageTests(unittest.TestCase):

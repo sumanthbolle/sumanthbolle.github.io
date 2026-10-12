@@ -334,6 +334,14 @@ def _score(
     }
 
 
+def _kind(cluster: dict[str, Any]) -> str:
+    if cluster["records"]:
+        return "news"
+    if any(row.get("section") == "editorial" for row in cluster["discovery"]):
+        return "editorial"
+    return "secondary"
+
+
 def _band(score: int) -> str:
     """Provisional band from the floors; the edition assigns the final one per slot."""
     return "must" if score >= NOTE_FLOOR else "useful" if score >= FACT_FLOOR else "skip"
@@ -419,7 +427,7 @@ def build_candidates(
             "title": cluster["title"],
             "records": cluster["records"],
             "discovery": cluster["discovery"],
-            "kind": "news" if cluster["records"] else "editorial",
+            "kind": _kind(cluster),
             "band": _band(scored["score"]),
             **scored,
         })

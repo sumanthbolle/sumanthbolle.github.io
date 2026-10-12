@@ -211,10 +211,17 @@ def _pyq(note: dict[str, Any], pyq_ids: set[str]) -> list[str]:
     return [] if isinstance(pyq, dict) and pyq.get("id") in pyq_ids else ["pyq-not-in-bank"]
 
 
+DISCOVERY_KINDS = ("editorial", "secondary")
+
+
 def _discovery(note: dict[str, Any]) -> list[str]:
-    if str(note.get("kind") or "news") == "editorial":
+    """Newspaper sources: fine on editorial/secondary notes, or beside an official source."""
+    if str(note.get("kind") or "news") in DISCOVERY_KINDS:
         return []
-    if any(row.get("kind") == "discovery" for row in _rows(note.get("sources"))):
+    sources = _rows(note.get("sources"))
+    if any(row.get("kind") == "discovery" for row in sources) and not any(
+        row.get("kind") == "official" for row in sources
+    ):
         return ["discovery-source-on-news"]
     return []
 

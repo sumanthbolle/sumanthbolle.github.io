@@ -25,8 +25,8 @@ The ingestion jobs run and store records, but the note path depends on the Cloud
 
 ### Pipeline (`scripts/upsc/edition.py`)
 
-1. **Discover.** New `discovery` entries in `data/upsc/discovery-feeds.json` (The Hindu national, business, international, editorial; Indian Express explained, editorial). Only headline, link and time are kept. Discovery items are never cited as evidence.
-2. **Bind.** Each discovery topic is matched to current official records (PIB, RBI, SEBI, MEA, UN, WHO, EU Council) by token overlap. Official records without a discovery match also enter as candidates. A discovery topic without an official match becomes `kind: editorial` and credits the newspaper.
+1. **Discover.** New `discovery` entries in `data/upsc/discovery-feeds.json` (The Hindu national, business, international, editorial; Indian Express India, economy, explained, editorial). Only headline, link and time are kept from the feed. A newspaper article is used as evidence only when no official record binds the topic, and then it is always cited as `kind: discovery` (shown with a grey "Secondary" badge). Before falling back to it, the builder fetches official pages the article links to (registry hosts, `*.gov.in`, `*.nic.in`, sci.gov.in, mospi.gov.in, rbi.org.in, prsindia.org); when one is reachable it becomes primary evidence and the note is ordinary `news` citing both.
+2. **Bind.** Each discovery topic is matched to current official records (PIB, RBI, SEBI, MEA, UN, WHO, EU Council) by token overlap. Official records without a discovery match also enter as candidates. A discovery topic without an official match becomes `kind: editorial` (when an editorial section carries it) or `kind: secondary`, is written from the article text, and credits the newspaper; it must still pass the number gate against that text.
 3. **Cluster and rank.** Same-story items merge by a topic fingerprint. Rank uses the flagship study-priority formula; inputs that cannot be computed default conservatively. Selection is relative per slot: the top 8 candidates scoring at least 45 become notes (at most 3 from one GS paper while other papers have candidates above the floor); the next 12 scoring at least 30 become quick facts; the rest are dropped. A note whose evidence cannot be fetched gives its slot to the next candidate and is listed as a quick fact. Newspaper coverage (distinct publishers, analysis sections) is part of the score.
 4. **Write.** One LLM call per note with the official text as the only evidence.
 5. **Gate** (deterministic):
@@ -61,7 +61,7 @@ The ingestion jobs run and store records, but the note path depends on the Cloud
 Note object:
 
 ```
-id, slug, fingerprint, kind (news|editorial|explained), title, deck, oneLine,
+id, slug, fingerprint, kind (news|editorial|explained|secondary), title, deck, oneLine,
 subject, codes[1..3], papers, anchor, readTime, publishedAt, priority, band,
 whyInNews {text, sources[]},
 sections[{heading (question), body[{label?, text}], sources[]}],

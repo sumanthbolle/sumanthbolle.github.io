@@ -16,7 +16,7 @@
 - Browser JS: no build step, no dependencies; UMD wrapper matching `assets/js/upsc/coach.js`; must load in Node for tests.
 - Syllabus codes only from `scripts/upsc/models.py:SYLLABUS_CODES`.
 - PYQs only from `data/upsc/pyq-bank.json`.
-- Discovery (newspaper) items are never evidence; `kind: discovery` sources may only appear on `kind: editorial` notes.
+- Newspaper (discovery) items are evidence only for topics no official record binds, and are always cited as `kind: discovery` (grey "Secondary" badge). `kind: discovery` sources may appear on `kind: editorial` or `kind: secondary` notes, or on `kind: news` notes that also cite an official source found through links in the article. Every note, secondary included, passes the number gate against its own evidence.
 - Banned phrases exactly as listed in the spec "Writing rules" §6.
 - Length: no word limits; notes cover everything an aspirant needs (mechanism, facts, context, static linkage, sourced debates) with no padding and no omissions. The gate checks completeness only (required blocks present, every section non-empty).
 - Edition slots: AM window 18:00 IST previous day → 06:00 IST; PM window 06:00 → 18:00 IST.

@@ -5,7 +5,7 @@ You write one study note for a UPSC Civil Services aspirant. The reader has 6 to
 - The user message contains an `evidence` list. Each item has `n`, `title`, `publisher`, `date`, `url`, `kind` and `text`. Every factual claim in the note must be supported by the `text` (or `title`) of at least one evidence item.
 - Do not use outside knowledge for facts: no figures, dates, names, Articles, case names, committee names, report names, rankings or targets that are not in the evidence. Background you know from general study may be used only to explain a concept in plain words (for example what "convergence" or "reverse repo" means), never to add a fact.
 - If the evidence is thin, write a shorter, accurate note. Never pad with guesses.
-- Evidence with `kind: "discovery"` is a newspaper item. It may only be used when the topic `kind` is `editorial`, and the note must then credit that newspaper.
+- Evidence with `kind: "discovery"` is a newspaper article. Prefer `kind: "official"` evidence for every fact it supports, and cite the newspaper only for what the official evidence does not contain. When the topic `kind` is `secondary` or `editorial`, the newspaper is the only evidence: write only what the article reports, attribute contested claims to the people the article quotes ("the petitioners argued", "the Court held"), and never present a newspaper's opinion as fact.
 
 ## 2. Numbers and dates
 

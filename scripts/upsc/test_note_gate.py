@@ -154,10 +154,24 @@ class GateTests(unittest.TestCase):
         mutated["practice"]["pyq"]["id"] = "invented-2030"
         self.assertReason(mutated, "pyq-not-in-bank")
 
-    def test_discovery_source_on_news(self):
-        mutated = note()
-        mutated["sources"].append({"n": 2, "title": "Hindu", "publisher": "The Hindu", "url": "https://www.thehindu.com/x", "date": "2026-10-12", "kind": "discovery"})
-        self.assertReason(mutated, "discovery-source-on-news")
+    def test_discovery_sources_need_secondary_editorial_or_an_official_source(self):
+        newspaper = {"n": 1, "title": "Hindu", "publisher": "The Hindu", "url": "https://www.thehindu.com/x", "date": "2026-10-12", "kind": "discovery"}
+        mixed = note()
+        mixed["sources"].append(dict(newspaper, n=2))
+        self.assertEqual(check_note(mixed, EVIDENCE, PYQ_IDS), [])
+        only_paper = note()
+        only_paper["sources"] = [newspaper]
+        self.assertReason(only_paper, "discovery-source-on-news")
+        for kind in ("secondary", "editorial"):
+            only_paper["kind"] = kind
+            self.assertEqual(check_note(only_paper, EVIDENCE, PYQ_IDS), [], kind)
+
+    def test_secondary_note_still_passes_the_number_gate(self):
+        secondary = note()
+        secondary["kind"] = "secondary"
+        secondary["sources"][0]["kind"] = "discovery"
+        secondary["deck"] += " About 4,500 villages are covered."
+        self.assertReason(secondary, "unsupported-number:4500")
 
     def test_bad_mcq(self):
         for change in (
