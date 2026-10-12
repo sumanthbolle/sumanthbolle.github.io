@@ -91,7 +91,6 @@ for (const [name, workflow] of Object.entries({
   'upsc-publish.yml': publishWorkflow,
   'upsc-prelims.yml': prelimsWorkflow,
   'upsc-revision.yml': revisionWorkflow,
-  'upsc-live.yml': liveWorkflow,
   'upsc-pocket.yml': pocketWorkflow,
   'upsc-daily.yml': dailyWorkflow,
   'upsc-edition.yml': editionWorkflow,
@@ -103,6 +102,13 @@ for (const [name, workflow] of Object.entries({
   );
   assert.doesNotMatch(workflow, /group: upsc-official-publisher/, name);
 }
+
+// upsc-live polls every 5 minutes. In a shared group each new pending run
+// cancels the previous pending one, which could cancel a queued edition, so it
+// keeps its own queue and relies on pull --rebase before pushing.
+assert.match(liveWorkflow, /concurrency:\s+group: upsc-live-publisher\s+cancel-in-progress: false/);
+assert.doesNotMatch(liveWorkflow, /group: upsc-data/);
+assert.match(liveWorkflow, /git pull --rebase origin "\$GITHUB_REF_NAME"/);
 
 assert.match(editionWorkflow, /cron: "15 0 \* \* \*"/);
 assert.match(editionWorkflow, /cron: "45 0 \* \* \*"/);

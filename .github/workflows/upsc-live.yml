@@ -11,9 +11,11 @@ on:
 permissions:
   contents: write
 
-# Serialize with every workflow that commits to data/upsc.
+# Own queue: this runs every 5 minutes, and in the shared upsc-data group each
+# new pending run would cancel a queued edition or archive run. Pushes rebase
+# onto main first, so commits do not race.
 concurrency:
-  group: upsc-data
+  group: upsc-live-publisher
   cancel-in-progress: false
 
 jobs:
