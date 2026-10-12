@@ -164,6 +164,34 @@ class CandidateTests(unittest.TestCase):
                                    "international")])
         self.assertNotIn("cap", bound[0]["scoreParts"])
 
+    def test_anchor_name_words_match_without_alias(self):
+        rows = build([], [news("Food and fuel drive September retail inflation to 23-month high", "business")],
+                     )
+        self.assertEqual(rows[0]["scoreParts"]["anchor"], 0)  # fixture atlas has no inflation anchor
+        atlas = {"anchors": [{"id": "monetary-policy-and-inflation", "anchor": "Monetary policy and inflation",
+                              "aliases": ["MPC", "repo rate"], "codes": ["GS3.1"], "frequency_est": 76}]}
+        rows = build_candidates([], [news("Food and fuel drive September retail inflation to 23-month high", "business")],
+                                WINDOW, pyq_bank=PYQ, patterns=atlas)
+        self.assertEqual(rows[0]["scoreParts"]["anchor"], 8)
+        self.assertEqual(rows[0]["anchorHint"], "Monetary policy and inflation")
+
+    def test_company_results_and_local_crime_are_capped(self):
+        for title, cap in (
+            ("HCLTech posts 21% YoY jump in Q2 net profit on strong deal wins and revenue growth", 30),
+            ("Stock markets tumble on oil price spike, FII outflows; Sensex drops 548 points", 30),
+            ("Former security guard arrested for murder of five-year-old girl over ransom", 30),
+            ("Cuddalore Collector urges farmers to insure Samba paddy crops against rainfall risks", 35),
+        ):
+            rows = build([], [news(title, "explained", url="https://x.example/" + title[:5]),
+                              news(title, publisher="The Indian Express", url="https://y.example/" + title[:5])])
+            self.assertLessEqual(rows[0]["score"], cap, title)
+
+    def test_election_and_constitutional_keywords_fit_the_syllabus(self):
+        rows = build([], [news("13.60 lakh names dropped from final electoral rolls after SIR in Punjab")])
+        self.assertIn("GS2.4", rows[0]["codesHint"])
+        rows = build([], [news("Karnataka High Court strikes down reservation law, declares it unconstitutional")])
+        self.assertEqual(rows[0]["scoreParts"]["syllabus"], 25)
+
     def test_ordering_is_deterministic_by_score_then_title(self):
         records = [
             record("x", "Zeta committee reviews groundwater irrigation for farmers"),

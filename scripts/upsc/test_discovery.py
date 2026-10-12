@@ -40,7 +40,9 @@ class DiscoveryTests(unittest.TestCase):
         self.assertIn("https://www.thehindu.com/opinion/editorial/feeder/default.rss", urls)
         self.assertIn("https://indianexpress.com/section/explained/feed/", urls)
         self.assertIn("https://indianexpress.com/section/opinion/editorials/feed/", urls)
-        self.assertEqual(len(feeds), 6)
+        self.assertIn("https://indianexpress.com/section/india/feed/", urls)
+        self.assertIn("https://indianexpress.com/section/business/economy/feed/", urls)
+        self.assertEqual(len(feeds), 8)
         for feed in feeds:
             self.assertTrue(feed["id"] and feed["publisher"] and feed["section"])
 

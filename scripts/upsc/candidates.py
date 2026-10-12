@@ -72,12 +72,12 @@ SYLLABUS_KEYWORDS: dict[str, tuple[str, ...]] = {
     "GS1.6": ("poverty", "urbanis", "urbaniz", "slum", "communal", "migrant"),
     "GS1.8": ("monsoon", "el nino", "ocean", "glacier", "earthquake", "tsunami", "cyclone"),
     "GS1.9": ("critical mineral", "mineral", "mining", "industrial corridor"),
-    "GS2.1": ("constitution", "amendment", "fundamental right", "article \\d", "preamble"),
+    "GS2.1": ("constitution", "unconstitutional", "amendment", "fundamental right", "article \\d", "preamble", "right to protest"),
     "GS2.2": ("federal", "centre-state", "finance commission", "devolution", "panchayat", "municipal", "governor"),
-    "GS2.3": ("supreme court", "high court", "judgment", "verdict", "constitutional bod", "cag\\b", "election commission"),
-    "GS2.4": ("parliament", "lok sabha", "rajya sabha", "bill\\b", "ordinance", "legislat", "assembly"),
+    "GS2.3": ("supreme court", "high court", "judgment", "verdict", "constitutional bod", "cag\\b", "election commission", "cec\\b", "chief justice", "cji\\b"),
+    "GS2.4": ("election", "electoral", "voter", "parliament", "lok sabha", "rajya sabha", "bill\\b", "ordinance", "legislat", "assembly"),
     "GS2.5": ("e-governance", "transparency", "accountab", "grievance", "citizen", "digital public", "rti\\b"),
-    "GS2.6": ("scheme", "welfare", "health", "education", "school", "nutrition", "child", "disabilit", "elderly", "pension", "hospital", "ayushman", "skill"),
+    "GS2.6": ("scheme", "welfare", "health", "education", "school", "nutrition", "child", "disabilit", "elderly", "pension", "hospital", "ayushman", "skill", "reservation", "medicine", "drug pric"),
     "GS2.7": ("commission", "regulator", "sebi\\b", "nhrc\\b", "trai\\b", "tribunal", "authority", "self-help"),
     "GS2.8": ("civil service", "bureaucra", "karmayogi", "lateral entry"),
     "GS2.9": ("bilateral", "summit", "bimstec", "saarc", "asean", "brics", "quad\\b", "sco\\b", "g20", "nepal", "bangladesh", "china", "pakistan", "sri lanka", "bhutan", "maldives", "myanmar", "afghanistan", "neighbour", "joint exercise", "strategic partnership", "foreign minister", "external affairs"),
@@ -118,6 +118,22 @@ ROUTINE = (
 CEREMONIAL_CAP = 30
 ROUTINE_CAP = 35
 FOREIGN_CAP = 40
+CORPORATE_CAP = 30
+LOCAL_CAP = 35
+# Newspaper-only items: company results and markets, local administration and crime.
+CORPORATE_RE = re.compile(
+    r"\b(net profit|yoy|q[1-4] (results|profit|revenue)|sensex|nifty|stock markets?|shares (rise|fall|jump)|ipo|"
+    r"market cap|posts \d+% )", re.I,
+)
+CRIME_RE = re.compile(r"\b(arrested|arrests|murder|life imprisonment|die after|dies after|two held|held for)\b", re.I)
+LOCAL_RE = re.compile(r"\b(collector|mla|special buses|homestays|corporation introduces|ward)\b", re.I)
+GENERIC_ANCHOR_WORDS = frozenset("""
+change governance policy reform society social indian struggle movement consolidation phenomena
+hazard distribution location functioning accountability service delivery section vulnerable
+transition institutional grouping international migration commitment method abstract
+philosophical economic human interface foundational value emotional intelligence thinker
+philosopher appointment administrative model community right
+""".split())
 COVERAGE_MAX = 20
 INTERNATIONAL_PUBLISHERS = frozenset({"un-news", "who", "eu-council"})
 INDIA_RE = re.compile(r"\b(india|indian|india's|new delhi|bharat)\b", re.I)
@@ -236,6 +252,18 @@ def _coverage(discovery: list[dict[str, Any]]) -> int:
     return min(COVERAGE_MAX, score)
 
 
+def _newspaper_cap(cluster: dict[str, Any]) -> int:
+    """Caps for topics only newspapers carry; official records are already curated."""
+    if cluster["records"]:
+        return 100
+    title = cluster["title"]
+    if CORPORATE_RE.search(title) or CRIME_RE.search(title):
+        return CORPORATE_CAP
+    if LOCAL_RE.search(title):
+        return LOCAL_CAP
+    return 100
+
+
 def _foreign_only(cluster: dict[str, Any]) -> bool:
     """International-institution records with no India angle and no newspaper pickup."""
     records = cluster["records"]
@@ -265,8 +293,13 @@ def _score(
     anchor_score, anchor_name = 0, ""
     for anchor in anchors:
         names = [str(anchor.get("anchor") or "")] + [str(alias) for alias in anchor.get("aliases") or []]
+        name_words = {word for word in tokens(names[0]) if len(word) >= 6 and word not in GENERIC_ANCHOR_WORDS}
+        value = 0
         if any(_phrase_in(name, text) for name in names):
             value = 15 if int(anchor.get("frequency_est") or 0) >= 60 else 10
+        elif name_words & words:
+            value = 8
+        if value:
             if value > anchor_score:
                 anchor_score, anchor_name = value, str(anchor.get("anchor") or "")
                 codes = codes + [code for code in anchor.get("codes") or [] if code not in codes]
@@ -285,6 +318,7 @@ def _score(
         CEREMONIAL_CAP if any(word in lead for word in CEREMONIAL) else 100,
         ROUTINE_CAP if any(word in lead for word in ROUTINE) else 100,
         FOREIGN_CAP if _foreign_only(cluster) else 100,
+        _newspaper_cap(cluster),
     )
     if total > cap:
         parts["cap"] = cap - total
