@@ -1,0 +1,134 @@
+import unittest
+
+from scripts.upsc.candidates import (
+    CODE_LABELS,
+    build_candidates,
+    fingerprint,
+    tokens,
+)
+from scripts.upsc.models import SYLLABUS_CODES
+
+
+WINDOW = ("2026-10-12T12:30:00Z", "2026-10-13T00:30:00Z")
+PYQ = {"questions": [{
+    "id": "mains-2018-gs3-msp", "year": 2018, "exam": "mains", "paper": "GS3",
+    "tags": ["Agriculture msp and marketing"],
+    "question": "What are the reasons for poor acceptance of cost-effective small processing units? How will the food processing unit be helpful to the poor farmers?",
+}]}
+PATTERNS = {"anchors": [{
+    "id": "agriculture-msp-and-marketing", "anchor": "Agriculture, MSP and marketing",
+    "aliases": ["MSP", "minimum support price", "agricultural marketing"],
+    "codes": ["GS3.3"], "frequency_est": 80,
+}]}
+
+
+def record(rid, title, summary="", publisher="pib", published="2026-10-12T15:15:14Z"):
+    return {
+        "id": rid, "title": title, "officialSummary": summary or title,
+        "publisherId": publisher, "publisherName": publisher.upper(),
+        "publishedAt": published,
+        "sourceUrl": f"https://{publisher}.gov.in/release/{rid}",
+    }
+
+
+def news(title, section="national", published="2026-10-12T20:00:00Z", url="https://www.thehindu.com/a.ece"):
+    return {
+        "title": title, "url": url, "publishedAt": published,
+        "feedId": f"hindu-{section}", "publisher": "The Hindu", "section": section,
+    }
+
+
+def build(records, discovery=()):
+    return build_candidates(list(records), list(discovery), WINDOW, pyq_bank=PYQ, patterns=PATTERNS)
+
+
+class TokenTests(unittest.TestCase):
+    def test_tokens_drop_stopwords_numbers_and_short_words(self):
+        self.assertEqual(
+            tokens("Union Minister launches PM Dhan-Dhaanya Krishi Yojana in 100 districts"),
+            {"dhan", "dhaanya", "krishi", "yojana", "district"},
+        )
+
+    def test_fingerprint_is_order_independent_and_stable(self):
+        first = fingerprint("Krishi Yojana Dhan-Dhaanya districts")
+        self.assertEqual(first, fingerprint("districts: Dhan-Dhaanya Krishi Yojana"))
+        self.assertRegex(first, r"^[0-9a-f]{16}$")
+        self.assertNotEqual(first, fingerprint("Coal stocks at power plants"))
+
+    def test_code_labels_cover_exactly_the_canonical_codes(self):
+        self.assertEqual(set(CODE_LABELS), SYLLABUS_CODES)
+
+
+class CandidateTests(unittest.TestCase):
+    def test_same_scheme_records_and_newspaper_item_merge(self):
+        rows = build([
+            record("a", "Cabinet approves expansion of PM Dhan-Dhaanya Krishi Yojana to 100 districts",
+                   "The scheme covers farmers, crop productivity and irrigation in 100 districts. " * 12),
+            record("b", "Agriculture Minister felicitates PM Dhan-Dhaanya Krishi Yojana districts"),
+            record("c", "Coal stocks at power plants remain stable above 18 MT"),
+        ], [news("Dhan-Dhaanya Krishi Yojana: what the expansion means for farmers", "explained")])
+        merged = [row for row in rows if len(row["records"]) == 2]
+        self.assertEqual(len(merged), 1)
+        candidate = merged[0]
+        self.assertEqual(len(candidate["discovery"]), 1)
+        self.assertEqual(candidate["kind"], "news")
+        self.assertEqual(candidate["band"], "must")
+        self.assertIn("GS3.3", candidate["codesHint"])
+        self.assertLessEqual(len(candidate["codesHint"]), 3)
+        self.assertTrue(all(code in SYLLABUS_CODES for code in candidate["codesHint"]))
+        self.assertEqual(candidate["title"], "Cabinet approves expansion of PM Dhan-Dhaanya Krishi Yojana to 100 districts")
+        self.assertEqual(candidate["fingerprint"], fingerprint(candidate["title"]))
+        self.assertEqual(sum(candidate["scoreParts"].values()), candidate["score"])
+
+    def test_ceremony_record_is_skipped(self):
+        rows = build([record("n", "NHRC celebrates its 33rd Foundation Day in New Delhi with welfare scheme focus on farmers")])
+        self.assertLessEqual(rows[0]["score"], 30)
+        self.assertEqual(rows[0]["band"], "skip")
+
+    def test_routine_market_operations_are_skipped(self):
+        rows = build([record(
+            "r", "Money Market Operations as on October 11, 2026",
+            "Liquidity repo inflation bank credit " * 40, "rbi", "2026-10-12T19:05:00Z",
+        )])
+        self.assertEqual(rows[0]["band"], "skip")
+
+    def test_discovery_without_official_match_becomes_editorial(self):
+        rows = build([record("c", "Coal stocks at power plants remain stable above 18 MT")],
+                     [news("The quiet erosion of federalism in fiscal transfers", "editorial",
+                           url="https://www.thehindu.com/opinion/editorial/x.ece")])
+        editorial = [row for row in rows if row["kind"] == "editorial"]
+        self.assertEqual(len(editorial), 1)
+        self.assertEqual(editorial[0]["records"], [])
+        self.assertEqual(editorial[0]["discovery"][0]["section"], "editorial")
+        self.assertEqual(editorial[0]["scoreParts"]["primary"], 0)
+
+    def test_out_of_window_record_needs_a_discovery_match(self):
+        old = record("old", "India and Singapore sign agreement on green shipping corridor",
+                     published="2026-10-11T18:00:00Z")
+        self.assertEqual(build([old]), [])
+        rows = build([old], [news("India, Singapore sign green shipping corridor agreement")])
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["records"][0]["id"], "old")
+
+    def test_ordering_is_deterministic_by_score_then_title(self):
+        records = [
+            record("x", "Zeta committee reviews groundwater irrigation for farmers"),
+            record("y", "Alpha committee reviews groundwater irrigation for farmers in drylands"),
+            record("z", "Prime Minister greets citizens"),
+        ]
+        first = build(records)
+        second = build(list(reversed(records)))
+        self.assertEqual([row["fingerprint"] for row in first], [row["fingerprint"] for row in second])
+        scores = [(-row["score"], row["title"]) for row in first]
+        self.assertEqual(scores, sorted(scores))
+
+    def test_bands_follow_thresholds(self):
+        for row in build([record("c", "Coal stocks at power plants remain stable above 18 MT"),
+                          record("e", "Speech by the President at a dinner", publisher="eu-council")]):
+            expected = "must" if row["score"] >= 60 else "useful" if row["score"] >= 40 else "skip"
+            self.assertEqual(row["band"], expected)
+            self.assertTrue(0 <= row["score"] <= 100)
+
+
+if __name__ == "__main__":
+    unittest.main()
