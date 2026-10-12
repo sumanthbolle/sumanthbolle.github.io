@@ -14,7 +14,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: upsc-official-publisher
+  group: upsc-data
   cancel-in-progress: false
 
 jobs:
@@ -37,6 +37,7 @@ jobs:
         run: >-
           python scripts/upsc/prelims_quiz.py
           --patterns data/upsc-patterns.json
+          --editions data/upsc/editions
           --output data/upsc
 
       - name: Commit Prelims quiz

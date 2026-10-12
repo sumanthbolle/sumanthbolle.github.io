@@ -11,9 +11,9 @@ on:
 permissions:
   contents: write
 
+# Serialize with every workflow that commits to data/upsc.
 concurrency:
-  # Serialize with the archive publisher and revision generators.
-  group: upsc-official-publisher
+  group: upsc-data
   cancel-in-progress: false
 
 jobs:

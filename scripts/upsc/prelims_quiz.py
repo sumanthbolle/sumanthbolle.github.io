@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import json
 from pathlib import Path
 import re
@@ -215,11 +215,74 @@ def validate_question(item: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+IST = timezone(timedelta(hours=5, minutes=30))
+EDITION_DAYS = 7
+
+
+def _edition_item(note: Mapping[str, Any], edition_id: str) -> dict[str, Any] | None:
+    practice = note.get("practice") if isinstance(note.get("practice"), Mapping) else {}
+    mcq = practice.get("mcq") if isinstance(practice.get("mcq"), Mapping) else {}
+    options = [_clean(row, 200) for row in mcq.get("options") or []]
+    answer = mcq.get("answer")
+    stem = _clean(mcq.get("stem"), 900)
+    trap = _clean(mcq.get("trap"), 600)
+    if (
+        not note.get("id") or not stem or not trap or len(options) != 4 or not all(options)
+        or not isinstance(answer, int) or isinstance(answer, bool) or not 0 <= answer <= 3
+    ):
+        return None
+    sources = [row for row in note.get("sources") or [] if isinstance(row, Mapping)]
+    lead = sources[0] if sources else {}
+    return {
+        "id": f"ed-{note['id']}",
+        "stem": stem,
+        "options": options,
+        "answer": answer,
+        "trap": trap,
+        "source": {
+            "title": _clean(lead.get("title"), 300),
+            "publisher": _clean(lead.get("publisher"), 120),
+            "url": _clean(lead.get("url"), 500),
+            "noteId": str(note["id"]),
+            "editionId": edition_id,
+        },
+        # Fields the existing upsc-quiz.html renderer reads.
+        "anchor_id": str(note["id"])[:80],
+        "statements": [],
+        "question_stem": stem,
+        "correct_option": options[answer],
+        "trap_type": "edition",
+        "explanation": trap,
+    }
+
+
+def load_edition_mcqs(editions_root: Path, now: str, days: int = EDITION_DAYS) -> list[dict[str, Any]]:
+    """MCQs from the last `days` IST days of editions, newest edition first."""
+    today = datetime.fromisoformat(now.replace("Z", "+00:00")).astimezone(IST).date()
+    items: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for offset in range(days):
+        day = today - timedelta(days=offset)
+        for slot in ("pm", "am"):
+            path = Path(editions_root) / f"{day.year:04d}/{day.month:02d}/{day.day:02d}-{slot}.json"
+            edition = _read_json(path, {})
+            notes = edition.get("notes") if isinstance(edition, dict) else None
+            if not isinstance(notes, dict):
+                continue
+            for note in notes.values():
+                item = _edition_item(note, str(edition.get("id") or "")) if isinstance(note, Mapping) else None
+                if item and item["id"] not in seen:
+                    seen.add(item["id"])
+                    items.append(item)
+    return items
+
+
 def generate_quiz(
     anchors: Sequence[Mapping[str, Any]],
     now: str,
+    edition_items: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
-    items: list[dict[str, Any]] = []
+    items: list[dict[str, Any]] = [dict(item) for item in edition_items]
     for index, anchor in enumerate(anchors):
         if not isinstance(anchor, Mapping) or not anchor.get("id"):
             continue
@@ -247,12 +310,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--patterns", type=Path, default=Path("data/upsc-patterns.json"))
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--editions", type=Path, default=Path("data/upsc/editions"))
     parser.add_argument("--now")
     args = parser.parse_args()
     now = args.now or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace(
         "+00:00", "Z"
     )
-    payload = generate_quiz(load_anchors(args.patterns), now)
+    payload = generate_quiz(
+        load_anchors(args.patterns), now, load_edition_mcqs(args.editions, now),
+    )
     _write_json(args.output / "prelims-quiz.json", payload)
     print(json.dumps({
         "generatedAt": payload["generatedAt"],
