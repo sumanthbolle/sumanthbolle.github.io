@@ -107,6 +107,7 @@
     var url = new URL(window.location.href);
     var settings = options || {};
     url.searchParams.delete('article');
+    url.searchParams.delete('note');
     if (name === 'brief') url.searchParams.delete('view');
     else url.searchParams.set('view', name);
     if (state.query) url.searchParams.set('q', state.query);
