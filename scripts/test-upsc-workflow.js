@@ -95,7 +95,6 @@ for (const [name, workflow] of Object.entries({
   'upsc-revision.yml': revisionWorkflow,
   'upsc-pocket.yml': pocketWorkflow,
   'upsc-daily.yml': dailyWorkflow,
-  'upsc-edition.yml': editionWorkflow,
 })) {
   assert.match(
     workflow,
@@ -109,6 +108,11 @@ for (const [name, workflow] of Object.entries({
 // cancels the previous pending one, which could cancel a queued edition, so it
 // keeps its own queue and relies on the push helper's rebase before pushing.
 assert.match(liveWorkflow, /concurrency:\s+group: upsc-live-publisher\s+cancel-in-progress: false/);
+// Editions run at :15/:45 next to the 00:15/12:15 publisher, which can run for
+// 45 minutes. Their own queue keeps them on time; the push helper makes the
+// concurrent commits safe.
+assert.match(editionWorkflow, /concurrency:\s+group: upsc-edition\s+cancel-in-progress: false/);
+assert.doesNotMatch(editionWorkflow, /group: upsc-data/);
 assert.doesNotMatch(liveWorkflow, /group: upsc-data/);
 assert.match(liveWorkflow, /bash scripts\/upsc\/push-with-retry\.sh/);
 

@@ -125,7 +125,7 @@
 
 **Files:**
 - Create: `.github/workflows/upsc-edition.yml`
-- Modify: `.github/workflows/upsc-publish.yml`, `upsc-prelims.yml`, `upsc-revision.yml`, `upsc-live.yml`, `upsc-pocket.yml`, `upsc-daily.yml` (add `concurrency: { group: upsc-data, cancel-in-progress: false }`)
+- Modify: `.github/workflows/upsc-publish.yml`, `upsc-prelims.yml`, `upsc-revision.yml`, `upsc-pocket.yml`, `upsc-daily.yml` (add `concurrency: { group: upsc-data, cancel-in-progress: false }`; `upsc-live.yml` and `upsc-edition.yml` keep their own groups; all push via `scripts/upsc/push-with-retry.sh`)
 - Modify: `scripts/test-upsc-workflow.js`
 
 **Interfaces:**

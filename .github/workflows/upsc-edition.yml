@@ -30,8 +30,11 @@ permissions:
   contents: write
   issues: write
 
+# Own queue: the 00:15/12:15 publisher can run for 45 minutes and would delay
+# the edition past its close time in a shared group. Concurrent commits are
+# safe because both push through scripts/upsc/push-with-retry.sh.
 concurrency:
-  group: upsc-data
+  group: upsc-edition
   cancel-in-progress: false
 
 jobs:
