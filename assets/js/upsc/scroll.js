@@ -2,20 +2,26 @@
   function trackStickyChrome() {
     var command = document.querySelector('.an-command');
     var nav = document.querySelector('body > nav');
+    var feed = document.querySelector('.pr-feed-controls');
     function measure() {
+      document.documentElement.style.setProperty('--upsc-nav-height', (nav ? nav.offsetHeight : 0) + 'px');
       var height = command
         ? command.offsetHeight + (parseFloat(getComputedStyle(command).top) || 0)
         : (nav ? nav.offsetHeight : 0);
       document.documentElement.style.setProperty('--upsc-scroll-offset', height + 'px');
+      var warningHeight = feed && feed.hasAttribute('data-correction') ? feed.offsetHeight : 0;
+      document.documentElement.style.setProperty('--upsc-reader-offset', (height + warningHeight) + 'px');
     }
     measure();
     if (window.ResizeObserver) {
       var observer = new ResizeObserver(measure);
       if (command) observer.observe(command);
       if (nav) observer.observe(nav);
+      if (feed) observer.observe(feed);
     } else {
       window.addEventListener('resize', measure);
     }
+    document.addEventListener('upsc:chromechange', measure);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', trackStickyChrome);
   else trackStickyChrome();

@@ -1313,6 +1313,8 @@
       var tag = (event.target.tagName || '').toLowerCase();
       if (tag === 'input' || tag === 'textarea' || tag === 'select' || event.target.isContentEditable) return;
       event.preventDefault();
+      var browse = el('readerBrowse');
+      if (browse) browse.open = true;
       search.focus();
       search.select();
     });

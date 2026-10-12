@@ -56,7 +56,8 @@ class PocketFeedTests(unittest.TestCase):
         self.assertEqual(len(feed["articles"]), 1)
         article = feed["articles"][0]
         self.assertEqual(article["id"], "news-" + self.source["id"])
-        self.assertEqual(article["sections"][1]["paragraphs"], [self.source["officialSummary"]])
+        self.assertEqual(article["sections"][0]["paragraphs"], [self.source["officialSummary"]])
+        self.assertNotIn(article["excerpt"], [p for section in article["sections"] for p in section["paragraphs"]])
         self.assertEqual(article["sources"][0]["url"], self.source["sourceUrl"])
         for variant in [
             {**note, "verification": {}}, {**note, "editorialStatus": "draft"},
@@ -68,6 +69,38 @@ class PocketFeedTests(unittest.TestCase):
             with self.subTest(variant=variant):
                 self.save(variant)
                 self.assertEqual(build_pocket_feed(self.root, NOW)["articles"], [])
+
+    def test_reading_prose_and_applied_answer_must_be_in_the_checked_note(self):
+        note = note_for(self.source)
+        note["pocketRead"] = {
+            "title": "How fiscal responsibilities connect",
+            "excerpt": "A short explanation of the allocation mechanism.",
+            "sections": [{"heading": "Follow the decision", "paragraphs": ["The source describes a policy update."]},
+                         {"heading": "Connect the responsibilities", "paragraphs": ["Fiscal powers are divided across levels of government."]}],
+            "example": {"heading": "An illustrative transfer", "text": "Imagine two levels of government sharing a common pool."},
+            "question": {"prompt": "Does a larger percentage always mean a larger amount?", "answer": "No. You must also compare the size of the pool."},
+        }
+        checked_note = checked(note, self.source)
+        self.save(checked_note)
+        article = build_pocket_feed(self.root, NOW)["articles"][0]
+        self.assertEqual(article["title"], note["pocketRead"]["title"])
+        self.assertEqual(article["question"], note["pocketRead"]["question"]["prompt"])
+        self.assertEqual(article["recallAnswer"], note["pocketRead"]["question"]["answer"])
+        self.assertEqual(article["example"], note["pocketRead"]["example"])
+        self.assertIn(self.source["title"], article["sources"][0]["note"])
+        for field in ["title", "excerpt", "example", "question", "sections"]:
+            changed = copy.deepcopy(checked_note)
+            changed["pocketRead"][field] = "Edited after the check"
+            self.save(changed)
+            self.assertEqual(build_pocket_feed(self.root, NOW)["articles"], [], field)
+
+    def test_malformed_checked_reading_content_cannot_break_the_public_reader(self):
+        for reading in ["not an object", {"title": "Headline", "sections": []},
+                        {"title": "Headline", "excerpt": "Deck", "sections": [{"heading": "Issue", "paragraphs": [4]}]}]:
+            note = note_for(self.source)
+            note["pocketRead"] = reading
+            self.save(checked(note, self.source))
+            self.assertEqual(build_pocket_feed(self.root, NOW)["articles"], [])
 
     def test_expired_or_future_notes_do_not_enter_live_news(self):
         self.save(checked(note_for(self.source), self.source))

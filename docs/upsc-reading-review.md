@@ -4,6 +4,14 @@ Reviewed 10 October 2026 against the local checkout. The live domain was inacces
 
 ## What needed changing
 
+Update on 12 October: fresh text/HTML samples from CivilsDaily, InsightsIAS and Drishti became accessible. The [benchmark and implementation record](upsc-editorial-benchmark-plan.md) records exact URLs, writing comparisons and remaining visual-review limits.
+
+The five evergreen bodies now develop sustained illustrations and practical misconceptions, with applied answers, section source links and relevant Pattern Atlas links. Stable IDs and original dates remain intact. Most source URLs still lead to institutional indexes with document locators, rather than exact retrieved documents.
+
+Pocket articles now use a native Browse disclosure, compact metadata and shorter decks. Fixed-nav flow space is preserved without the large masthead. Routine feed status stays in the page; correction warnings alone are sticky and included in measured scroll clearance. The `/` shortcut opens Browse and focuses search. Library shelves contain recommendations, remaining latest updates and remaining fundamentals without duplicate articles.
+
+In the local 390 × 844 Finance Commission check, the first body paragraph moved from approximately 681px to 491px after direct-link scrolling, retaining 19px prose. This is a local layout observation. A direct understanding-check action opens the source-aware widget; real provider retrieval still requires deployment validation.
+
 - The first reading flow repeated topics as priority cards, a lead article and subject-grouped official updates.
 - A floating assistant interrupted the publication and made the page feel like a tool.
 - Source-only records offered five-minute explainers and deep dives despite having no published exam notes. Many summaries repeated their headlines.

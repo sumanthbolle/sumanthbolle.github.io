@@ -10,6 +10,8 @@ Topic arrows now open articles: the title, excerpt and arrow are one keyboard-ac
 
 ## Desktop reading room
 
+The reading-room and article images below now show the refined edition: recommendations and fundamentals, compact article metadata, a native Browse disclosure and the rewritten explanations. The full navigation and search expand from Browse; the `/` shortcut opens search. Routine refresh status is quiet, while correction warnings remain prominent. See the [fresh benchmark and implementation record](../upsc-editorial-benchmark-plan.md).
+
 ![Desktop reading room, showing the new masthead and Pocket reads](desktop-reading-room.png)
 
 ## Mobile reading room
@@ -62,7 +64,7 @@ The article action opens this panel with the current article and its source refe
 
 The initial articles are evergreen explainers. The official update feed refreshes through its existing scheduled workflow. A separate daily job releases at most one approved evergreen Pocket read around 07:00 Singapore time after merge; its queue is initially empty and it does not author text. Dynamic Pocket news has a separate frequent source/verification pipeline and a Worker feed, without that daily limit. Activation requires the credentials and deployment documented below. See [publishing and source research](../upsc-pocket-publishing.md) and the [reading review](../upsc-reading-review.md).
 
-Validation: 16 UPSC JavaScript check scripts and 87 publisher tests passed. Browser checks cover complete article bodies, arrows, keyboard/new-tab navigation, the older renderer interface, direct links, saving, eight responsive routes, forms and Atlas drill. Source-widget checks cover all article additions, source-URL requests, understanding-check replies, focus restoration, a compact keyboard viewport and cancelled requests on article navigation. The Worker dry-run build passes; deployment and live-provider validation remain pending.
+Validation: 16 UPSC JavaScript check scripts and 89 publisher tests passed. Browser checks cover complete article bodies, arrows, keyboard/new-tab navigation, the older renderer interface, direct links, saving, eight responsive routes, forms and Atlas drill. Source-widget checks cover all article additions, source-URL requests, understanding-check replies, focus restoration, a compact keyboard viewport and cancelled requests on article navigation. The Worker dry-run build passes; deployment and live-provider validation remain pending.
 
 ## Incoming news and source corrections
 

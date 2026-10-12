@@ -116,17 +116,31 @@ with sync_playwright() as p:
         expect(page.locator('#pocketFeedStatus')).to_have_attribute('role', 'alert')
         expect(page.locator('[data-pocket-save]')).to_be_disabled()
         expect(page.locator('[data-pocket-ask]')).to_be_disabled()
+        expect(page.locator('[data-pocket-check]')).to_be_disabled()
+        expect(page.locator('.pr-feed-controls')).to_have_attribute('data-correction', '')
         expect(page.locator('#svCoachPanel')).to_be_hidden()
         page.locator('#pocketFeedRefresh').click()
         expect(page.locator('.pr-reader__body')).to_contain_text('Corrected fixture policy text')
         expect(page.locator('[data-pocket-save]')).to_be_enabled()
+        expect(page.locator('[data-pocket-check]')).to_be_enabled()
         expect(page.locator('#svCoachLog')).to_have_text('')
+        # An updated practice answer must also stop use of the stale article,
+        # even when the official source version has not changed.
+        practice_update = copy.deepcopy(corrected)
+        practice_update['question'] = 'Which fiscal denominator should you compare?'
+        practice_update['recallAnswer'] = 'Identify the common pool and compare the rupee amount.'
+        state['feed'] = feed(6, [third, second, practice_update])
+        refresh()
+        expect(page.locator('#pocketFeedStatus')).to_contain_text('This note has changed')
+        expect(page.locator('[data-pocket-check]')).to_be_disabled()
+        page.locator('#pocketFeedRefresh').click()
+        expect(page.locator('.pr-question')).to_contain_text(practice_update['question'])
         # KV propagation must not restore an older same-source body.
         state['feed'] = feed(2, [second, first])
         refresh()
         expect(page.locator('#pocketFeedStatus')).not_to_have_text('New updates available')
         expect(page.locator('.pr-reader__body')).to_contain_text('Corrected fixture policy text')
-        state['feed'] = feed(6, [third, second])
+        state['feed'] = feed(7, [third, second])
         refresh()
         expect(page.locator('#pocketFeedStatus')).to_contain_text('no longer in the verified feed')
         expect(page.locator('[data-pocket-save]')).to_be_disabled()

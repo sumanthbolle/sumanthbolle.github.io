@@ -81,6 +81,20 @@ assert.deepEqual(note.mainsPractice[0], {
 
 const payload = buildUpscEnrichmentPayload(SOURCE, '2026-08-18');
 assert.equal(payload.messages[1].content.includes(SOURCE.sourceUrl), true);
+const pocketRead = {
+  title: 'How fiscal responsibilities connect', excerpt: 'Follow the mechanism behind the policy.',
+  sections: [{ heading: 'Start with the decision', paragraphs: ['Cabinet approved the fiscal policy.'] },
+    { heading: 'Connect the responsibilities', paragraphs: ['Fiscal powers are divided across levels of government.'] }],
+  example: { heading: 'An illustrative pool', text: 'Imagine two levels of government sharing a tax pool.' },
+  question: { prompt: 'Does a larger share guarantee a larger amount?', answer: 'No. Compare the size of the pool as well.' },
+};
+const richNote = normalizeUpscExamNote({ ...INPUT, pocket_read: pocketRead }, SOURCE);
+assert.deepEqual(richNote.pocketRead, pocketRead);
+assert.match(buildUpscVerifyPayload(SOURCE, richNote).messages[1].content, /Does a larger share guarantee/);
+for (const malformed of [{ ...pocketRead, sections: [] }, { ...pocketRead, question: { prompt: 'Question' } },
+  { ...pocketRead, example: { text: 'Unheaded illustration' } }]) {
+  assert.equal(normalizeUpscExamNote({ ...INPUT, pocket_read: malformed }, SOURCE).pocketRead, undefined);
+}
 
 assert.equal(normalizeUpscExamNote({ ...INPUT, anchor: '' }, SOURCE), null);
 assert.equal(normalizeUpscExamNote({ ...INPUT, codes: ['GS9.9'] }, SOURCE), null);

@@ -501,7 +501,7 @@ def _page_shell(
 <meta property="og:type" content="article"><meta property="og:title" content="{escape(title, quote=True)}">
 <meta property="og:description" content="{escape(description, quote=True)}">
 <meta property="og:url" content="{escape(canonical, quote=True)}">{structured}
-<link rel="stylesheet" href="/assets/css/upsc-reading.css?v=20261012-2">
+<link rel="stylesheet" href="/assets/css/upsc-reading.css?v=20261012-3">
 <style>
 :root{{--ink:var(--text);--muted:var(--gray);--line:var(--rule);--green:var(--blue);--amber:var(--editorial-wash)}}
 *{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--ink);font:19px/1.75 var(--serif);overflow-wrap:anywhere}}
