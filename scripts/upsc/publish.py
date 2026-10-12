@@ -106,6 +106,12 @@ def publish(
             source_report["recordCount"] = len(normalized)
             for record in normalized:
                 previous = existing.get(record["id"])
+                if previous and config.date_policy == "fetched-at":
+                    # An undated feed item's first detection is stable across polls.
+                    record = normalize_source_record(config, {
+                        **record, "url": record["sourceUrl"], "summary": record["officialSummary"],
+                        "publishedAt": previous["publishedAt"],
+                    }, now)
                 if previous is None:
                     _merge_partition(_partition_path(output_root, record["publishedAt"]), record)
                     existing[record["id"]] = record
@@ -115,6 +121,10 @@ def publish(
                     report["newRecords"] += 1
                     continue
                 if previous.get("contentHash") == record.get("contentHash"):
+                    if previous.get("datePolicy") != record["datePolicy"]:
+                        previous["datePolicy"] = record["datePolicy"]
+                        _merge_partition(existing_paths[record["id"]], previous)
+                        report["updatedRecords"] += 1
                     continue
                 history_path = (
                     output_root / "history" / record["id"]
@@ -410,6 +420,8 @@ def build_indexes(output_root: Path, now: Optional[str] = None) -> dict[str, Any
     _write_json(output_root / "exam-weekly-index.json", {"generatedAt": generated_at, "weeks": weekly})
     _write_json(output_root / "syllabus-index.json", syllabus)
     _write_json(output_root / "archive-index.json", archive)
+    from scripts.upsc.pocket_feed import build_pocket_feed
+    _write_json(output_root / "pocket-feed.json", build_pocket_feed(output_root, generated_at))
     return payload
 
 
@@ -489,7 +501,7 @@ def _page_shell(
 <meta property="og:type" content="article"><meta property="og:title" content="{escape(title, quote=True)}">
 <meta property="og:description" content="{escape(description, quote=True)}">
 <meta property="og:url" content="{escape(canonical, quote=True)}">{structured}
-<link rel="stylesheet" href="/assets/css/upsc-reading.css?v=20261012-1">
+<link rel="stylesheet" href="/assets/css/upsc-reading.css?v=20261012-2">
 <style>
 :root{{--ink:var(--text);--muted:var(--gray);--line:var(--rule);--green:var(--blue);--amber:var(--editorial-wash)}}
 *{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--ink);font:19px/1.75 var(--serif);overflow-wrap:anywhere}}

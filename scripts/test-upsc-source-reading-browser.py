@@ -26,6 +26,9 @@ with sync_playwright() as p:
                 route.fulfill(status=204, headers={'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, Accept'})
                 return
+            if route.request.method != 'POST':
+                route.fulfill(status=503, json={'success': False}, headers={'Access-Control-Allow-Origin': '*'})
+                return
             body = route.request.post_data_json
             requests.append(body)
             urls = body.get('sourceUrls', [])
@@ -105,8 +108,10 @@ with sync_playwright() as p:
             if route.request.method == 'OPTIONS':
                 route.fulfill(status=204, headers={'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, Accept'})
-            else:
+            elif route.request.method == 'POST':
                 held.append(route)
+            else:
+                route.fulfill(status=503, json={'success': False}, headers={'Access-Control-Allow-Origin': '*'})
         page.route(endpoint + '/**', delay)
         page.locator('[data-pocket-ask]').click()
         page.wait_for_timeout(100)

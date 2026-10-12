@@ -54,6 +54,7 @@ import {
   upscMetaLine,
 } from './upsc-domain.js';
 import { primarySourceUrl, retrievePrimarySources, sourceResearchInstruction } from './upsc-sources.js';
+import { handlePocketFeed } from './upsc-pocket.js';
 
 import {
   upscScope,
@@ -131,6 +132,11 @@ export default {
 
     if (request.method === 'OPTIONS') {
       return corsResponse(null, origin, 204);
+    }
+
+    if ((request.method === 'GET' && url.pathname === '/upsc/pocket')
+      || (request.method === 'POST' && url.pathname === '/upsc/pocket/publish')) {
+      return handlePocketFeed(request, env, origin);
     }
 
     if (request.method === 'GET' && url.pathname === '/trending') {
@@ -760,6 +766,8 @@ async function handleServiceNowFeed(request, env, ctx, origin) {
 const UPSC_BRIEF_TIMEOUT_MS = 45000;
 const UPSC_TOPIC_TIMEOUT_MS = 40000;
 const UPSC_ENRICH_TIMEOUT_MS = 55000;
+// Leave time for the bounded document fetch inside the publisher's 55s request.
+const UPSC_SOURCE_NOTE_TIMEOUT_MS = 45000;
 
 function hasUpscPublishToken(request, env) {
   var expected = String(env.UPSC_PUBLISH_TOKEN || '');
@@ -802,10 +810,13 @@ async function handleUpscEnrich(request, env, origin) {
   }
 
   try {
+    const documents = await retrievePrimarySources([record.sourceUrl]);
+    const payload = buildUpscEnrichmentPayload(record);
+    payload.messages[0].content += '\n' + sourceResearchInstruction(documents);
     const data = await callSonarWithTimeout(
       env.PERPLEXITY_API_KEY,
-      buildUpscEnrichmentPayload(record),
-      UPSC_ENRICH_TIMEOUT_MS
+      payload,
+      UPSC_SOURCE_NOTE_TIMEOUT_MS
     );
     const note = normalizeUpscExamNote(parseStructured(data), record);
     if (!note) {
@@ -885,10 +896,13 @@ async function handleUpscVerify(request, env, origin) {
     return upscEnrichmentResponse({ success: false, error: 'Verification service is not configured.' }, origin, 503);
   }
   try {
+    const documents = await retrievePrimarySources([source.sourceUrl]);
+    const payload = buildUpscVerifyPayload(source, note);
+    payload.messages[0].content += '\n' + sourceResearchInstruction(documents);
     const data = await callSonarWithTimeout(
       env.PERPLEXITY_API_KEY,
-      buildUpscVerifyPayload(source, note),
-      UPSC_ENRICH_TIMEOUT_MS
+      payload,
+      UPSC_SOURCE_NOTE_TIMEOUT_MS
     );
     const result = normalizeUpscVerification(parseStructured(data));
     if (!result) {
@@ -897,7 +911,7 @@ async function handleUpscVerify(request, env, origin) {
         error: 'Provider response did not satisfy the verification contract.',
       }, origin, 422);
     }
-    return upscEnrichmentResponse({ success: true, data: result }, origin, 200);
+    return upscEnrichmentResponse({ success: true, verificationVersion: 2, data: result }, origin, 200);
   } catch {
     return upscEnrichmentResponse({
       success: false,
@@ -2355,7 +2369,7 @@ function corsResponse(body, origin, status = 200) {
     headers: {
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, If-None-Match',
       'Access-Control-Max-Age': '86400',
     }
   });

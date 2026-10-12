@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
+from hashlib import sha256
 from pathlib import Path
 import sys
 from typing import Any, Callable, Iterable, Mapping, Optional, Sequence
@@ -21,25 +23,45 @@ REVIEW_LABEL = "upsc-needs-review"
 TITLE_PREFIX = "Needs review:"
 
 
+def note_digest(note):
+    content = {key: value for key, value in note.items() if key != "verification"}
+    return sha256(json.dumps(content, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
 def parse_verification(payload: Mapping[str, Any]) -> dict[str, Any]:
+    if payload.get("verificationVersion") != 2:
+        raise ValueError("The Worker must support complete-note verification version 2")
     data = payload.get("data") if payload.get("success") is True else None
     if not isinstance(data, dict):
         raise ValueError(str(payload.get("error") or "verification rejected")[:240])
     try:
-        confidence = float(data.get("confidence"))
+        value = data.get("confidence")
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError("verification confidence must be a number")
+        confidence = float(value)
     except (TypeError, ValueError) as error:
         raise ValueError("verification confidence must be a number") from error
+    if not math.isfinite(confidence) or not 0 <= confidence <= 1:
+        raise ValueError("verification confidence must be between zero and one")
     flagged = data.get("flagged_claims")
-    claims = [str(row)[:240] for row in flagged] if isinstance(flagged, list) else []
+    if not isinstance(flagged, list) or not all(isinstance(row, str) for row in flagged):
+        raise ValueError("verification must include a list of flagged claims")
+    claims = [row[:240] for row in flagged]
     return {
         "agrees": data.get("agrees") is True,
-        "confidence": max(0.0, min(1.0, confidence)),
+        "confidence": confidence,
         "flagged_claims": [row for row in claims if row],
+        "verificationVersion": 2,
     }
 
 
 def should_publish(result: Mapping[str, Any]) -> bool:
-    return result.get("agrees") is True and float(result.get("confidence") or 0) >= CONFIDENCE_FLOOR
+    try:
+        confidence = float(result.get("confidence"))
+        return (result.get("agrees") is True and math.isfinite(confidence)
+                and CONFIDENCE_FLOOR <= confidence <= 1 and result.get("flagged_claims") == [])
+    except (ValueError, TypeError):
+        return False
 
 
 def verify_note(
@@ -93,25 +115,25 @@ def apply_verification(
     opener: Optional[Callable[..., Any]],
     now: str,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
-    """Split notes into publishable vs held. A missing verifier skips the gate."""
+    """Split notes into publishable vs held; missing or failed checks never publish."""
     published: list[dict[str, Any]] = []
     held: list[dict[str, Any]] = []
     agreed = 0
     disagreed = 0
     skipped = 0
-    if not endpoint or not token or opener is None:
-        return [dict(note) for note in notes], [], {
-            "agreed": 0, "disagreed": 0, "skipped": len(notes), "checked": 0,
-        }
     for note in notes:
+        unavailable = False
         source_id = str(note.get("sourceId") or "")
         source = sources.get(source_id) or {}
         try:
+            if not endpoint or not token or opener is None:
+                raise ValueError("Verification is not configured")
             result = verify_note(source, note, endpoint, token, opener)
         except Exception:
+            unavailable = True
             skipped += 1
-            published.append(dict(note))
-            continue
+            result = {"agrees": False, "confidence": 0,
+                      "flagged_claims": ["Verification was unavailable; retry before publishing"]}
         row = {
             "sourceId": source_id,
             "anchor": note.get("anchor"),
@@ -123,9 +145,14 @@ def apply_verification(
         }
         if should_publish(result):
             agreed += 1
-            published.append(dict(note))
+            published.append({**note, "verification": {
+                **result, "checkedAt": now,
+                "sourceContentHash": source.get("contentHash"),
+                "noteContentHash": note_digest(note),
+            }})
         else:
-            disagreed += 1
+            if not unavailable:
+                disagreed += 1
             held.append(row)
     return published, held, {
         "agreed": agreed,

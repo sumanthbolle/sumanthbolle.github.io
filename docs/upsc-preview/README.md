@@ -60,6 +60,16 @@ The article action opens this panel with the current article and its source refe
 
 ![Topic navigation and filters at 320px](small-phone-topics.png)
 
-The initial articles are evergreen explainers. The official update feed refreshes through its existing scheduled workflow. A separate daily job releases at most one approved Pocket read around 07:00 Singapore time after merge; its queue is initially empty and it does not author text. See [publishing and source research](../upsc-pocket-publishing.md) and the [reading review](../upsc-reading-review.md).
+The initial articles are evergreen explainers. The official update feed refreshes through its existing scheduled workflow. A separate daily job releases at most one approved evergreen Pocket read around 07:00 Singapore time after merge; its queue is initially empty and it does not author text. Dynamic Pocket news has a separate frequent source/verification pipeline and a Worker feed, without that daily limit. Activation requires the credentials and deployment documented below. See [publishing and source research](../upsc-pocket-publishing.md) and the [reading review](../upsc-reading-review.md).
 
-Validation: 15 UPSC JavaScript check scripts and 78 publisher tests passed. Browser checks cover complete article bodies, arrows, keyboard/new-tab navigation, the older renderer interface, direct links, saving, eight responsive routes, forms and Atlas drill. Source-widget checks cover all article additions, source-URL requests, understanding-check replies, focus restoration, a compact keyboard viewport and cancelled requests on article navigation. The Worker dry-run build passes; deployment and live-provider validation remain pending.
+Validation: 16 UPSC JavaScript check scripts and 87 publisher tests passed. Browser checks cover complete article bodies, arrows, keyboard/new-tab navigation, the older renderer interface, direct links, saving, eight responsive routes, forms and Atlas drill. Source-widget checks cover all article additions, source-URL requests, understanding-check replies, focus restoration, a compact keyboard viewport and cancelled requests on article navigation. The Worker dry-run build passes; deployment and live-provider validation remain pending.
+
+## Incoming news and source corrections
+
+These two screenshots use clearly labelled layout fixtures, not real published news or proof of a deployed live feed. The first demonstrates an incoming Pocket news row and its date. The second shows a withdrawn current note: its warning remains visible and stale save/ask actions are disabled until the latest reads are loaded.
+
+![Mobile incoming-news layout fixture](mobile-live-updates.png)
+
+![Mobile source-correction warning layout fixture](mobile-source-correction.png)
+
+The dynamic browser checks pass for automatic library updates, conditional requests, preserved article DOM/context, Back navigation, corrected/withdrawn notes, and retaining a newer snapshot during an outage. Actual deployment remains blocked by missing secure credentials. See [Pocket publishing](../upsc-pocket-publishing.md) for the five-minute source polling schedule, 30-second visible-page checks and their latency limits.

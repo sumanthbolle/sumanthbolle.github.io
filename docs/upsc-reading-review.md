@@ -67,3 +67,11 @@ The original explanations now include clearly illustrative worked situations, tw
 Ask Summaverick opens from the article rather than a floating control on the reading-room homepage. Each request captures the current article and its sources; article navigation clears history, cancels outstanding requests and closes the panel. Source-reading and understanding-check prompts use live research. The panel adjusts to the visible viewport, restores focus when closed, and separates directly downloaded documents from the research provider's citation list.
 
 The Worker update downloads bounded allowlisted source text and preserves operators and Unicode in document content. Source data is not an instruction or proof that every claim is correct. PDFs and unavailable pages are reported honestly. Its dry-run bundle and request/retrieval tests passed; deploying this update requires Cloudflare access. Browser widget checks use deterministic responses and are not live-provider validation.
+
+### Dynamic Pocket news
+
+Pocket news now comes from current source-bound notes that pass the updated complete-note verification contract, literal-source facts, syllabus mapping and a substantive reading-content gate. Each passed note reaches the private Worker feed before the next record or archive build. The approved evergreen queue remains separate and does not limit news to one item daily.
+
+The library checks every 30 seconds while visible and refreshes without reloading the page. An open article keeps its content and position until additions are loaded. Corrections or withdrawals trigger a sticky notice immediately, abort the widget work and disable stale save/ask actions. Canonical content hashes prevent false updates caused by JSON key ordering or fallback switching. Source outages preserve the last good snapshot with an honest date.
+
+The new source schedule is every five minutes, with manual and trusted dispatch triggers. GitHub scheduling, a busy publisher, model verification and KV propagation can add latency; this is not a zero-latency source push stream. Deployment automation attaches persistent storage and synchronizes private publisher authentication. Credential values are still absent, so production deployment and live-provider verification remain outstanding. See [Pocket publishing and deployment](upsc-pocket-publishing.md).
