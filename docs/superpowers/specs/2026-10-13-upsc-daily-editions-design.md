@@ -99,6 +99,8 @@ Sticky counter, Glimpse, Prelims, Mains, Quick facts, Revise today, Live today (
 
 ## Reading layout
 
+Owner decision (13 Oct, after reviewing samples): the edition desk, note reader and Summaverick answers match the blog article pages in `blog.html`, not the Newsreader/warm-paper look. That means the system sans stack, `#f5f5f7` page with white surfaces, `#0066CC` accent, `.article-content` body (16px / 1.8), blog `.tip-box` for the one-line summary, `.warn-box` for misreadings, `.scenario-box` for Back to basics, bordered tables, a 3px reading-progress bar, a floating question TOC at ≥1100px, `.mark-complete-btn` and `.article-nav-btn`, and desk cards like `.blog-card` with a paper-coloured accent bar.
+
 New `assets/css/upsc-edition.css`, mobile-first, `min-width` only, breakpoints `600 / 960 / 1200px`. Components: tag line, one-line box, question headings, source chips (44px target), key-numbers table (stacks below 480px, scrolls inside itself), Back to basics, practice in native `<details>` (closed, never removed), done bar, sticky counter. Print expands all details and prints URLs. Dark mode, reduced motion and focus rings are required.
 
 ## Ask Summaverick
