@@ -128,6 +128,9 @@ def apply_stories(
             pyq_bank=pyq_bank, patterns=patterns,
         )
         candidate["fingerprint"] = lead["fingerprint"]
+        candidate["leadTitle"] = lead["title"]
+        if story["title"]:  # readable topic and slug; the fingerprint stays deterministic
+            candidate["title"] = story["title"]
         candidate["score"] = max(int(candidate["score"]), max(int(row.get("score") or 0) for row in members))
         candidate["band"] = story["upscRelevance"]
         candidate["memberIds"] = list(story["memberIds"])

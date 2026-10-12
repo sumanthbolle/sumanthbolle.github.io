@@ -480,6 +480,17 @@ class EditorTests(unittest.TestCase):
         self.assertEqual(report["editor"]["carryOverIn"], 0)
 
 
+class QuickFactTests(unittest.TestCase):
+    def test_quick_fact_skips_routine_member_titles(self):
+        from scripts.upsc.edition import _quick_fact
+        speech = record("s1", "English rendering of PM's address during the launch of development projects in Chennai", PIB_URL)
+        stations = record("s2", "PM inaugurates 26 stations redeveloped under the Amrit Bharat Station Scheme", PIB_URL)
+        fact = _quick_fact({"records": [speech, stations], "discovery": [], "codesHint": ["GS3.4"]})
+        self.assertEqual((fact["id"], fact["fact"]), ("qf-s2", stations["title"]))
+        only_routine = _quick_fact({"records": [speech], "discovery": [], "codesHint": ["GS3.4"]})
+        self.assertEqual(only_routine["id"], "qf-s1")
+
+
 class PageTests(unittest.TestCase):
     def test_page_escapes_untrusted_text_and_links(self):
         note = dict(NOTE, id="2026-10-13-am-abc", slug="2026-10-13-x-abc123",

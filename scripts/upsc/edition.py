@@ -24,7 +24,7 @@ if __package__ in (None, ""):
 
 from scripts.upsc.adapters import curl_open
 from scripts.upsc.candidates import (
-    FACT_FLOOR, PYQ_BANK_PATH, balance_order, build_candidates, candidate_from, note_queue, similar, tokens,
+    FACT_FLOOR, PYQ_BANK_PATH, balance_order, is_routine_title, build_candidates, candidate_from, note_queue, similar, tokens,
 )
 from scripts.upsc.editor import build_editor_messages, run_editor
 from scripts.upsc.discovery import archive_items, fetch_discovery, load_archived, load_feeds
@@ -506,12 +506,13 @@ def _quick_fact(candidate: Mapping[str, Any]) -> Optional[dict[str, Any]]:
     if not codes:
         return None
     if records:
-        lead = records[0]
+        lead = next((row for row in records if not is_routine_title(row.get("title", ""))), records[0])
         return {
             "id": f"qf-{lead['id']}", "fact": str(lead.get("title") or ""),
             "code": codes[0], "source": {**_source(lead), "kind": "official"},
         }
-    item = (candidate.get("discovery") or [None])[0]
+    items = candidate.get("discovery") or []
+    item = next((row for row in items if not is_routine_title(row.get("title", ""))), items[0] if items else None)
     if not item:
         return None
     return {
@@ -820,6 +821,8 @@ def _summary(report: Mapping[str, Any]) -> dict[str, Any]:
         "window": report["window"], "discovery": report["discovery"],
         "candidates": report["candidates"], "notesSelected": report["mustKnow"],
         "quickFactTopics": report["quickFactTopics"], "ranked": report["ranked"],
+        "editor": report["editor"],
+        "quickFacts": edition.get("quickFacts", []), "carryOver": edition.get("carryOver", []),
         "evidenceFailures": report["evidenceFailures"], "heldByReason": held_reasons,
         "held": report["held"], "newNotes": report["newNotes"],
         "counts": _counts(edition), "written": report["written"],

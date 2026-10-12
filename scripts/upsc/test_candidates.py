@@ -171,6 +171,11 @@ class CandidateTests(unittest.TestCase):
                            url="https://www.thehindu.com/opinion/editorial/x.ece")])
         secondary = build([], [news("Supreme Court wants cap on trade margin for essential medicines")])
         self.assertEqual(secondary[0]["kind"], "secondary")
+        mixed = candidate_from("CEC removal", [], [
+            news("Barricades, detentions do not fortify the ECI", "editorial", url="https://x.example/1"),
+            news("Kerala Assembly passes resolution seeking removal of CEC", url="https://x.example/2"),
+        ], pyq_bank=PYQ, patterns=PATTERNS)
+        self.assertEqual(mixed["kind"], "secondary")
         editorial = [row for row in rows if row["kind"] == "editorial"]
         self.assertEqual(len(editorial), 1)
         self.assertEqual(editorial[0]["records"], [])

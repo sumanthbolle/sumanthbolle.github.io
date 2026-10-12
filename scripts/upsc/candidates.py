@@ -381,9 +381,18 @@ def _score(
 def _kind(cluster: dict[str, Any]) -> str:
     if cluster["records"]:
         return "news"
-    if any(row.get("section") == "editorial" for row in cluster["discovery"]):
+    if cluster["discovery"] and all(row.get("section") == "editorial" for row in cluster["discovery"]):
         return "editorial"
     return "secondary"
+
+
+def is_routine_title(title: str) -> bool:
+    """True for titles the caps treat as ceremonial, routine, corporate, crime or local."""
+    lead = " " + str(title or "").lower()
+    return (
+        any(word in lead for word in CEREMONIAL + ROUTINE)
+        or bool(CORPORATE_RE.search(lead) or CRIME_RE.search(lead) or LOCAL_RE.search(lead))
+    )
 
 
 def _band(score: int) -> str:

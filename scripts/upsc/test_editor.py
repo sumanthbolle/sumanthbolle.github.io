@@ -136,6 +136,8 @@ class ApplyTests(unittest.TestCase):
         best = max((rows[key] for key in ("Kerala Assem", "13.60 lakh n", "INDIA bloc m")),
                    key=lambda row: (row["score"], row["title"]))
         self.assertEqual(sir["fingerprint"], best["fingerprint"])
+        self.assertEqual(sir["title"], "Electoral roll revision (SIR) and the move to remove the CEC")
+        self.assertEqual(sir["leadTitle"], best["title"])
         self.assertGreaterEqual(sir["score"], best["score"])
         self.assertEqual(merged[1]["records"][0]["id"], "1")
 
