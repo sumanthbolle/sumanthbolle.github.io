@@ -190,6 +190,26 @@ def similar(left: set[str], right: set[str]) -> bool:
     return shared >= 3 or (shared >= 2 and shared >= 0.5 * min(len(left), len(right)))
 
 
+RARE_MIN_TITLES = 30
+RARE_MIN_LENGTH = 6
+
+
+def _rare_words(titles: list[set[str]]) -> set[str]:
+    """Words distinctive enough that one shared occurrence names the same story.
+
+    With a day's worth of headlines, a long word that appears in at most two
+    titles (or 2% of them) is a topic word ("inflation", "gyanesh"), not filler.
+    """
+    if len(titles) < RARE_MIN_TITLES:
+        return set()
+    counts: dict[str, int] = {}
+    for words in titles:
+        for word in words:
+            counts[word] = counts.get(word, 0) + 1
+    limit = max(2, len(titles) // 50)
+    return {word for word, count in counts.items() if count <= limit and len(word) >= RARE_MIN_LENGTH}
+
+
 def _time(value: str) -> Optional[datetime]:
     try:
         return datetime.fromisoformat(str(value or "").replace("Z", "+00:00"))
@@ -390,22 +410,29 @@ def build_candidates(
         (row for row in records if isinstance(row, dict) and row.get("id") and _in(row.get("publishedAt", ""), lookback, end)),
         key=lambda row: (row.get("publishedAt", ""), row["id"]),
     )
+    items = sorted(
+        (row for row in discovery if _in(row.get("publishedAt", ""), lookback, end)),
+        key=lambda row: (row.get("publishedAt", ""), row.get("url", "")),
+    )
+    rare = _rare_words([tokens(row.get("title", "")) for row in list(pool) + items])
+
+    def same_story(left: set[str], right: set[str]) -> bool:
+        return similar(left, right) or bool(left & right & rare)
+
     clusters: list[dict[str, Any]] = []
     for row in pool:
         words = tokens(row.get("title", ""))
-        target = next((c for c in clusters if c["records"] and any(similar(words, t) for t in c["tokens"])), None)
+        target = next((c for c in clusters if c["records"] and any(same_story(words, t) for t in c["tokens"])), None)
         if target is None:
             target = {"title": str(row.get("title") or ""), "records": [], "discovery": [], "tokens": []}
             clusters.append(target)
         target["records"].append(row)
         target["tokens"].append(words)
-    for item in sorted(discovery, key=lambda row: (row.get("publishedAt", ""), row.get("url", ""))):
-        if not _in(item.get("publishedAt", ""), start, end):
-            continue
+    for item in items:
         words = tokens(item.get("title", ""))
         scored = [
             (max(len(words & t) for t in c["tokens"]), index)
-            for index, c in enumerate(clusters) if any(similar(words, t) for t in c["tokens"])
+            for index, c in enumerate(clusters) if any(same_story(words, t) for t in c["tokens"])
         ]
         if scored:
             target = clusters[max(scored, key=lambda pair: (pair[0], -pair[1]))[1]]
@@ -418,7 +445,7 @@ def build_candidates(
     anchors = _anchor_rows(_load(PATTERNS_PATH, patterns))
     candidates = []
     for cluster in clusters:
-        fresh = cluster["discovery"] or any(_in(row.get("publishedAt", ""), start, end) for row in cluster["records"])
+        fresh = any(_in(row.get("publishedAt", ""), start, end) for row in cluster["records"] + cluster["discovery"])
         if not fresh:
             continue
         scored = _score(cluster, start, pyq_sets, anchors)

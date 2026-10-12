@@ -115,7 +115,7 @@ The widget renders it with the note components. Non-JSON replies fall back to a 
 
 ## Schedule
 
-`upsc-edition.yml`: `15 0 * * *` (AM), `45 0 * * *` (AM retry), `15 12 * * *` (PM), `45 12 * * *` (PM retry), plus `workflow_dispatch` with `slot` and `dry_run`. Runs are idempotent by edition id; a retry adds only missing topics. A topic already in the AM edition becomes an `updates[]` line in PM, not a new note. If an edition is not closed by 07:00 / 19:00 IST, a GitHub issue opens and Today shows the latest closed edition with a delay notice. `upsc-prelims.yml` reads edition MCQs. All `data/upsc` writers share concurrency group `upsc-data`.
+`upsc-edition.yml`: `15 0 * * *` (AM), `45 0 * * *` (AM retry), `15 12 * * *` (PM), `45 12 * * *` (PM retry), plus `workflow_dispatch` with `slot` and `dry_run`. Runs are idempotent by edition id; a retry adds only missing topics. A topic already in the previous edition (the same day's AM for PM, the previous day's PM for AM) becomes an `updates[]` line on that note, not a new note. Newspaper items from the 24 hours before a window count toward coverage, but only topics with an item inside the window are candidates. If an edition is not closed by 07:00 / 19:00 IST, a GitHub issue opens and Today shows the latest closed edition with a delay notice. `upsc-prelims.yml` reads edition MCQs. All `data/upsc` writers share concurrency group `upsc-data`.
 
 ## Rollout
 

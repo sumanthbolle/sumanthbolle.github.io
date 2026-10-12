@@ -60,6 +60,12 @@ def slot_window(date_ist: str, slot: str) -> tuple[str, str]:
     return _iso(six_am), _iso(six_am + timedelta(hours=12))
 
 
+def _previous_slot(date: str, slot: str) -> tuple[str, str]:
+    if slot == "pm":
+        return date, "am"
+    return (date_type.fromisoformat(date) - timedelta(days=1)).isoformat(), "pm"
+
+
 def edition_id(date: str, slot: str) -> str:
     return f"{date}-{slot}"
 
@@ -523,18 +529,24 @@ def build_edition(
     edition["window"] = {"from": window[0], "to": window[1]}
 
     feed_errors: list[dict[str, str]] = []
+    # 24 hours before the window as well: earlier coverage of a story still
+    # counts, but only topics with an item inside the window become candidates.
+    lookback = _iso(_parse(window[0]) - timedelta(hours=24))
     fetched = fetch_discovery(
         load_feeds(feeds_path or ROOT / "data/upsc/discovery-feeds.json"), opener,
-        window[0], window[1], feed_errors,
+        lookback, window[1], feed_errors,
     )
-    archived = load_archived(output_root, window[0], window[1])
+    archived = load_archived(output_root, lookback, window[1])
     seen_urls = {row["url"] for row in fetched}
     discovery = fetched + [row for row in archived if row["url"] not in seen_urls]
     records, _ = _all_current_records(output_root)
     candidates = build_candidates(records.values(), discovery, window)
 
-    am_path = _edition_path(output_root, date, "am")
-    am = _read_json(am_path, None) if slot == "pm" else None
+    # The previous edition (same-day AM for PM, previous day's PM for AM) owns
+    # topics it already covered: new official records become updates there.
+    am_date, am_slot = _previous_slot(date, slot)
+    am_path = _edition_path(output_root, am_date, am_slot)
+    am = _read_json(am_path, None)
     am_changed = False
     pyq_bank = _read_json(PYQ_BANK_PATH, {})
     registry_hosts = _registry_hosts(output_root)
@@ -629,6 +641,7 @@ def build_edition(
         "editionId": this_id, "dryRun": dry_run, "window": edition["window"],
         "discovery": {
             "items": len(discovery), "fetched": len(fetched),
+            "inWindow": sum(1 for row in discovery if window[0] <= row["publishedAt"] < window[1]),
             "fromArchive": len(discovery) - len(fetched), "feedErrors": feed_errors,
         },
         "candidates": {band: sum(1 for row in candidates if row["band"] == band) for band in ("must", "useful", "update", "skip")},
@@ -676,7 +689,8 @@ def _summary(report: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "editionId": report["editionId"], "dryRun": report["dryRun"], "status": report["status"],
         "window": report["window"], "discovery": report["discovery"],
-        "candidates": report["candidates"], "mustKnow": report["mustKnow"],
+        "candidates": report["candidates"], "notesSelected": report["mustKnow"],
+        "quickFactTopics": report["quickFactTopics"], "ranked": report["ranked"][:40],
         "evidenceFailures": report["evidenceFailures"], "heldByReason": held_reasons,
         "held": report["held"], "newNotes": report["newNotes"],
         "counts": _counts(edition), "written": report["written"],

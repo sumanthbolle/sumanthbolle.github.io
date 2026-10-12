@@ -260,6 +260,22 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(report["discovery"]["items"], 2)
         self.assertEqual(report["discovery"]["fromArchive"], 2)
 
+    def test_am_topic_already_in_previous_pm_becomes_an_update(self):
+        morning = record("src_pm12", "Union Cabinet clears PM Dhan-Dhaanya Krishi Yojana expansion districts",
+                         PIB_URL, published="2026-10-12T06:00:00Z")
+        (self.ws.output / "feed/2026/10/12.json").write_text(json.dumps([morning]), encoding="utf-8")
+        self.ws.build(slot="pm", date="2026-10-12", now="2026-10-12T12:20:00Z")
+        pm = json.loads((self.ws.output / "editions/2026/10/12-pm.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(pm["notes"]), 1)
+        (self.ws.output / "feed/2026/10/12.json").write_text(json.dumps([morning, SCHEME, FACT]), encoding="utf-8")
+        llm = LLM()
+        self.ws.build(now="2026-10-13T00:20:00Z", transport=llm)
+        am = json.loads(self.ws.edition_path().read_text(encoding="utf-8"))
+        self.assertFalse(any("Dhan-Dhaanya" in note["topicTitle"] for note in am["notes"].values()))
+        pm = json.loads((self.ws.output / "editions/2026/10/12-pm.json").read_text(encoding="utf-8"))
+        updates = next(iter(pm["notes"].values()))["updates"]
+        self.assertEqual([row["text"] for row in updates], [SCHEME["title"]])
+
     def test_dry_run_writes_nothing(self):
         report = self.ws.build(dry_run=True, env={})
         self.assertFalse((self.ws.output / "editions").exists())

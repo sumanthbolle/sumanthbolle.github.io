@@ -220,6 +220,35 @@ class CandidateTests(unittest.TestCase):
         rows = build([], [news("Karnataka High Court strikes down reservation law, declares it unconstitutional")])
         self.assertEqual(rows[0]["scoreParts"]["syllabus"], 25)
 
+    def filler(self, count=40):
+        words = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel", "india", "juliet",
+                 "kilo", "lima", "mike", "november", "oscar", "papa", "quebec", "romeo", "sierra", "tango"]
+        return [news(f"{words[i % 20]}zz{i} {words[(i * 7) % 20]}yy{i} market story number{i}",
+                     url=f"https://www.thehindu.com/f{i}.ece") for i in range(count)]
+
+    def test_rare_shared_word_merges_differently_worded_headlines(self):
+        hindu = news("Food, fuel and precious metals drive September retail inflation to 23-month high",
+                     "business", url="https://www.thehindu.com/inflation.ece")
+        express = news("Days after RBI rate hike, data shows inflation jumped in September",
+                       "business", publisher="The Indian Express", url="https://indianexpress.com/inflation/")
+        rows = build([], self.filler() + [hindu, express])
+        merged = [row for row in rows if len(row["discovery"]) == 2]
+        self.assertEqual(len(merged), 1)
+        self.assertEqual(merged[0]["scoreParts"]["coverage"], 16)
+        # Without enough titles to judge rarity, one shared word is not enough.
+        self.assertEqual(len(build([], [hindu, express])), 2)
+
+    def test_discovery_before_the_window_adds_coverage_but_not_freshness(self):
+        earlier = news("Retail inflation jumped to 23-month high in September, data shows", "business",
+                       published="2026-10-12T10:39:00Z", publisher="The Indian Express",
+                       url="https://indianexpress.com/inflation/")
+        inside = news("Food and fuel drive September retail inflation to 23-month high", "business",
+                      url="https://www.thehindu.com/inflation.ece")
+        rows = build([], [earlier, inside])
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["scoreParts"]["coverage"], 16)
+        self.assertEqual(build([], [earlier]), [])
+
     def test_ordering_is_deterministic_by_score_then_title(self):
         records = [
             record("x", "Zeta committee reviews groundwater irrigation for farmers"),
