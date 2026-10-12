@@ -563,7 +563,8 @@ def _build_index(output_root: Path, now: str) -> dict[str, Any]:
         rows.append({
             "id": payload["id"], "date": payload.get("date"), "slot": payload.get("slot"),
             "status": payload.get("status"), "closedAt": payload.get("closedAt"),
-            "path": path.relative_to(output_root).as_posix(),
+            # Relative to the editions directory: edition.js fetches data/upsc/editions/ + path.
+            "path": path.relative_to(output_root / "editions").as_posix(),
             "counts": _counts(payload),
         })
     rows.sort(key=lambda row: row["id"], reverse=True)

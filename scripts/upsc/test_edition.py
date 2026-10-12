@@ -491,6 +491,43 @@ class QuickFactTests(unittest.TestCase):
         self.assertEqual(only_routine["id"], "qf-s1")
 
 
+FRONTEND_FIXTURE = ROOT / "scripts/fixtures/upsc-edition-generated"
+
+
+class FrontendContractTests(unittest.TestCase):
+    """The browser desk must load exactly what build_edition writes."""
+
+    def build_tree(self):
+        ws = Workspace([SCHEME, FACT])
+        self.addCleanup(ws.close)
+        ws.build()
+        return ws.output / "editions"
+
+    def test_index_paths_are_relative_to_the_editions_directory(self):
+        index = json.loads((self.build_tree() / "index.json").read_text(encoding="utf-8"))
+        self.assertEqual(index["editions"][0]["path"], "2026/10/13-am.json")
+
+    def test_node_desk_loads_the_python_edition(self):
+        import os
+        import shutil
+        editions = self.build_tree()
+        if os.environ.get("UPSC_UPDATE_FIXTURES") == "1":
+            shutil.rmtree(FRONTEND_FIXTURE, ignore_errors=True)
+            shutil.copytree(editions, FRONTEND_FIXTURE)
+        committed = sorted(path.relative_to(FRONTEND_FIXTURE).as_posix() for path in FRONTEND_FIXTURE.rglob("*.json"))
+        built = sorted(path.relative_to(editions).as_posix() for path in editions.rglob("*.json"))
+        self.assertEqual(committed, built, "regenerate with UPSC_UPDATE_FIXTURES=1")
+        for name in built:
+            self.assertEqual((FRONTEND_FIXTURE / name).read_text(encoding="utf-8"), (editions / name).read_text(encoding="utf-8"),
+                             f"{name} is stale; regenerate with UPSC_UPDATE_FIXTURES=1")
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("node is not installed")
+        completed = subprocess.run([node, "scripts/test-upsc-edition-integration.js", str(editions)],
+                                   cwd=ROOT, capture_output=True, text=True)
+        self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+
+
 class PageTests(unittest.TestCase):
     def test_page_escapes_untrusted_text_and_links(self):
         note = dict(NOTE, id="2026-10-13-am-abc", slug="2026-10-13-x-abc123",

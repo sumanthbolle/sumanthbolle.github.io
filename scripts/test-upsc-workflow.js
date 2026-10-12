@@ -112,6 +112,9 @@ assert.match(liveWorkflow, /concurrency:\s+group: upsc-live-publisher\s+cancel-i
 assert.doesNotMatch(liveWorkflow, /group: upsc-data/);
 assert.match(liveWorkflow, /git pull --rebase origin "\$GITHUB_REF_NAME"/);
 
+assert.match(publishWorkflow, /node scripts\/test-upsc-edition-integration\.js/);
+assert.match(editionWorkflow, /node scripts\/test-upsc-edition-integration\.js/);
+
 assert.match(editionWorkflow, /cron: "15 0 \* \* \*"/);
 assert.match(editionWorkflow, /cron: "45 0 \* \* \*"/);
 assert.match(editionWorkflow, /cron: "15 12 \* \* \*"/);

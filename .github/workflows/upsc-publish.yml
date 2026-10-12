@@ -53,6 +53,7 @@ jobs:
           node scripts/test-upsc-edition-progress.js
           node scripts/test-upsc-answer-render.js
           node scripts/test-upsc-edition.js
+          node scripts/test-upsc-edition-integration.js
 
       - name: Snapshot previous source health
         run: |
