@@ -94,6 +94,14 @@ class PromptTests(unittest.TestCase):
         first = json.loads(build_messages(CANDIDATE, EVIDENCE, PYQ_OPTIONS, [])[1]["content"])
         self.assertNotIn("previousAttemptProblems", first)
 
+    def test_editor_brief_is_passed_when_present(self):
+        brief = {"storyId": "s", "title": "t", "why": "Why it matters.", "prelimsAngle": "p", "mainsAngle": "m"}
+        payload = json.loads(build_messages(dict(CANDIDATE, editor=brief), EVIDENCE, [], [])[1]["content"])
+        self.assertEqual(payload["editorBrief"], {"why": "Why it matters.", "prelimsAngle": "p", "mainsAngle": "m"})
+        plain = json.loads(build_messages(CANDIDATE, EVIDENCE, [], [])[1]["content"])
+        self.assertNotIn("editorBrief", plain)
+        self.assertIn("editorBrief", SYSTEM_PROMPT_PATH.read_text(encoding="utf-8"))
+
     def test_prompt_sets_no_word_range(self):
         prompt = SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
         self.assertNotIn("wordRange", prompt)

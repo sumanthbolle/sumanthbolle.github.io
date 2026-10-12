@@ -209,6 +209,9 @@ class BuildTests(unittest.TestCase):
         self.assertNotIn(note_id, set(edition["prelims"]) & set(edition["mains"]))
         self.assertEqual(note["recordIds"], ["src_scheme"])
         self.assertEqual(note["sources"][0]["url"], PIB_URL)
+        # The bound Hindu article is evidence too; its PIB link is the record itself.
+        self.assertEqual([(row["kind"], row["url"]) for row in note["sources"]],
+                         [("official", PIB_URL), ("discovery", ARTICLE_URL)])
         self.assertEqual(note["updates"], [])
         self.assertEqual(edition["glimpse"][0], {"noteId": note_id, "line": note["oneLine"], "code": "GS3.3"})
         facts = {fact["id"]: fact for fact in edition["quickFacts"]}

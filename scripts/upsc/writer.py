@@ -82,6 +82,9 @@ def build_messages(
             for row in evidence
         ],
     }
+    brief = candidate.get("editor")
+    if isinstance(brief, Mapping):
+        payload["editorBrief"] = {key: brief.get(key, "") for key in ("why", "prelimsAngle", "mainsAngle")}
     if feedback:
         payload["previousAttemptProblems"] = [_feedback_line(reason) for reason in feedback]
     return [
