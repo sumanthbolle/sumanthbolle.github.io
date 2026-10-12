@@ -558,6 +558,39 @@ class WriteSafetyTests(unittest.TestCase):
         self.assertFalse((self.ws.site / "notes").exists())
 
 
+class CollisionTests(unittest.TestCase):
+    def test_suffixed_fingerprints_get_distinct_ids_and_slugs(self):
+        from scripts.upsc.edition import _note_key
+        base = "e3b0c44298fc1c14"
+        self.assertEqual(_note_key(base), (base[:10], base[:6]))  # existing ids unchanged
+        twin = base[:13] + "-2"
+        self.assertNotEqual(_note_key(twin)[0], _note_key(base)[0])
+        self.assertNotEqual(_note_key(twin)[1], _note_key(base)[1])
+        self.assertNotEqual(_note_key(base[:13] + "-3"), _note_key(twin))
+
+    def test_duplicate_lead_clusters_produce_distinct_notes_and_pages(self):
+        # Titles made only of stopwords share one empty fingerprint but never cluster.
+        first = record("src_dup1", "India and the Union", PIB_URL)
+        second = record("src_dup2", "The Union and India", SECOND["sourceUrl"])
+        ws = Workspace([first, second])
+        self.addCleanup(ws.close)
+        ws.feeds.write_text(json.dumps({"discovery": []}), encoding="utf-8")
+
+        def all_must(payload):
+            return {"stories": [{"storyId": f"s{i}", "title": f"Story {i}", "memberIds": [row["id"]],
+                                 "upscRelevance": "must", "why": "w", "codes": ["GS2.2"],
+                                 "prelimsAngle": "", "mainsAngle": ""} for i, row in enumerate(payload["clusters"])]}
+
+        ws.build(transport=LLM(editor=all_must))
+        edition = json.loads(ws.edition_path().read_text(encoding="utf-8"))
+        self.assertEqual(len(edition["notes"]), 2)
+        notes = list(edition["notes"].values())
+        self.assertNotEqual(notes[0]["fingerprint"], notes[1]["fingerprint"])
+        self.assertEqual(len({note["slug"] for note in notes}), 2)
+        for note in notes:
+            self.assertTrue((ws.site / "notes" / note["slug"] / "index.html").is_file())
+
+
 class FrontendContractTests(unittest.TestCase):
     """The browser desk must load exactly what build_edition writes."""
 

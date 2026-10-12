@@ -13,6 +13,7 @@ from hashlib import sha1
 from html import escape
 import json
 import os
+import re
 import time
 from pathlib import Path
 import sys
@@ -474,8 +475,22 @@ def _overlaps(candidate: Mapping[str, Any], others: list[dict[str, Any]]) -> boo
     )
 
 
+def _note_key(fingerprint: str) -> tuple[str, str]:
+    """(id suffix, slug suffix) for a fingerprint.
+
+    Plain fingerprints keep their historical prefixes, so existing note ids
+    and slugs do not change. Suffixed fingerprints ("…-2", two clusters with
+    the same lead words) hash the full value, so they never collide with the
+    base or each other.
+    """
+    if re.fullmatch(r"[0-9a-f]{16}", fingerprint or ""):
+        return fingerprint[:10], fingerprint[:6]
+    digest = sha1(str(fingerprint).encode("utf-8")).hexdigest()
+    return digest[:10], digest[:6]
+
+
 def _note_id(edition: str, fingerprint: str) -> str:
-    return f"{edition}-{fingerprint[:10]}"
+    return f"{edition}-{_note_key(fingerprint)[0]}"
 
 
 def _complete_note(
@@ -484,7 +499,7 @@ def _complete_note(
     fingerprint = str(candidate["fingerprint"])
     note.update({
         "id": _note_id(edition, fingerprint),
-        "slug": f"{date}-{_slug(candidate['title'], 'note')[:70].rstrip('-')}-{fingerprint[:6]}",
+        "slug": f"{date}-{_slug(candidate['title'], 'note')[:70].rstrip('-')}-{_note_key(fingerprint)[1]}",
         "fingerprint": fingerprint,
         "topicTitle": candidate["title"],
         "recordIds": [row["id"] for row in candidate.get("records") or []],
