@@ -117,6 +117,10 @@ ROUTINE = (
 )
 CEREMONIAL_CAP = 30
 ROUTINE_CAP = 35
+FOREIGN_CAP = 40
+COVERAGE_MAX = 20
+INTERNATIONAL_PUBLISHERS = frozenset({"un-news", "who", "eu-council"})
+INDIA_RE = re.compile(r"\b(india|indian|india's|new delhi|bharat)\b", re.I)
 CONCEPTUAL_SECTIONS = ("explained", "editorial")
 
 STOPWORDS = frozenset("""
@@ -219,6 +223,30 @@ def _syllabus(text: str) -> tuple[int, list[str], int]:
     return (25 if total >= 2 else 15 if total == 1 else 0), ranked, total
 
 
+def _coverage(discovery: list[dict[str, Any]]) -> int:
+    """Newspaper salience: distinct publishers, extra feeds, analysis sections (max 20)."""
+    publishers = {str(row.get("publisher") or "") for row in discovery}
+    feeds = {str(row.get("feedId") or "") for row in discovery}
+    if not discovery:
+        return 0
+    score = 8 if len(publishers) == 1 else 16 if len(publishers) == 2 else 18
+    score += min(2, max(0, len(feeds) - len(publishers)))
+    if any(row.get("section") in CONCEPTUAL_SECTIONS for row in discovery):
+        score += 6
+    return min(COVERAGE_MAX, score)
+
+
+def _foreign_only(cluster: dict[str, Any]) -> bool:
+    """International-institution records with no India angle and no newspaper pickup."""
+    records = cluster["records"]
+    if not records or cluster["discovery"]:
+        return False
+    if any(str(row.get("publisherId") or "") not in INTERNATIONAL_PUBLISHERS for row in records):
+        return False
+    text = " ".join(f"{row.get('title', '')} {row.get('officialSummary', '')}" for row in records)
+    return INDIA_RE.search(text) is None
+
+
 def _score(
     cluster: dict[str, Any],
     window_start: datetime,
@@ -228,7 +256,7 @@ def _score(
     text = _text(cluster)
     words = tokens(text)
     syllabus, codes, _ = _syllabus(text)
-    primary = round(20 * max(
+    primary = round(10 * max(
         (PUBLISHER_WEIGHTS.get(str(row.get("publisherId") or ""), 0.0) for row in cluster["records"]),
         default=0.0,
     ))
@@ -247,17 +275,16 @@ def _score(
         depth = 10
     elif any(len(str(row.get("officialSummary") or "")) >= 600 for row in cluster["records"]):
         depth = 6
-    times = [row.get("publishedAt", "") for row in cluster["records"] + cluster["discovery"]]
-    recency = 10 if any((_time(value) or window_start) > window_start for value in times) else 5
     parts = {
         "syllabus": syllabus, "primary": primary, "pyq": pyq,
-        "anchor": anchor_score, "depth": depth, "recency": recency,
+        "anchor": anchor_score, "depth": depth, "coverage": _coverage(cluster["discovery"]),
     }
     total = sum(parts.values())
     lead = " " + cluster["title"].lower()
     cap = min(
         CEREMONIAL_CAP if any(word in lead for word in CEREMONIAL) else 100,
         ROUTINE_CAP if any(word in lead for word in ROUTINE) else 100,
+        FOREIGN_CAP if _foreign_only(cluster) else 100,
     )
     if total > cap:
         parts["cap"] = cap - total

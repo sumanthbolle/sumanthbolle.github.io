@@ -31,10 +31,11 @@ def record(rid, title, summary="", publisher="pib", published="2026-10-12T15:15:
     }
 
 
-def news(title, section="national", published="2026-10-12T20:00:00Z", url="https://www.thehindu.com/a.ece"):
+def news(title, section="national", published="2026-10-12T20:00:00Z", url="https://www.thehindu.com/a.ece", publisher="The Hindu"):
+    feed = ("hindu" if publisher == "The Hindu" else "express") + "-" + section
     return {
         "title": title, "url": url, "publishedAt": published,
-        "feedId": f"hindu-{section}", "publisher": "The Hindu", "section": section,
+        "feedId": feed, "publisher": publisher, "section": section,
     }
 
 
@@ -118,6 +119,50 @@ class CandidateTests(unittest.TestCase):
         rows = build([old], [news("India, Singapore sign green shipping corridor agreement")])
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["records"][0]["id"], "old")
+
+    def test_weights_sum_to_one_hundred(self):
+        rows = build([record("c", "Coal stocks at power plants remain stable above 18 MT")])
+        self.assertEqual(set(rows[0]["scoreParts"]), {"syllabus", "primary", "pyq", "anchor", "depth", "coverage"})
+        self.assertEqual(rows[0]["scoreParts"]["primary"], 10)
+
+    def test_coverage_counts_publishers_feeds_and_analysis_sections(self):
+        hindu = news("Karnataka High Court strikes down law to increase reservation for SCs and STs",
+                     url="https://www.thehindu.com/k.ece")
+        express = news("Karnataka HC quashes law raising reservation for SCs and STs", publisher="The Indian Express",
+                       url="https://indianexpress.com/k/")
+        single = build([], [hindu])[0]
+        both = build([], [hindu, express])[0]
+        self.assertEqual(single["scoreParts"]["coverage"], 8)
+        self.assertEqual(both["scoreParts"]["coverage"], 16)
+        self.assertEqual(len(both["discovery"]), 2)
+        self.assertGreaterEqual(both["score"], 30)
+        explained = news("Karnataka reservation law: why the High Court struck it down", "explained",
+                         url="https://indianexpress.com/explained/k/", publisher="The Indian Express")
+        rich = build([], [hindu, express, explained])[0]
+        self.assertEqual(rich["scoreParts"]["coverage"], 20)
+
+    def test_two_newspapers_make_a_topic_at_least_useful(self):
+        rows = build([], [
+            news("Retail inflation rises to 23-month high on food and fuel prices", url="https://www.thehindu.com/i.ece"),
+            news("September retail inflation at 23-month high as food prices climb", publisher="The Indian Express",
+                 url="https://indianexpress.com/i/"),
+        ])
+        self.assertEqual(len(rows), 1)
+        self.assertGreaterEqual(rows[0]["score"], 40)
+
+    def test_international_records_without_india_angle_are_capped(self):
+        far = record("eu", "Ukraine: Council lists 77 individuals over illegal elections; sanctions on Russia",
+                     "EU sanctions on Russia over Ukraine, bank and trade restrictions, multilateral. " * 10,
+                     publisher="eu-council")
+        near = record("un", "UN report: India leads poverty reduction as multilateral aid falls",
+                      "Poverty, growth and employment data for India and the world bank. " * 10,
+                      publisher="un-news")
+        rows = {row["records"][0]["id"]: row for row in build([far, near])}
+        self.assertLessEqual(rows["eu"]["score"], 40)
+        self.assertNotIn("cap", rows["un"]["scoreParts"])
+        bound = build([far], [news("EU lists 77 individuals over Ukraine elections in Russia sanctions push",
+                                   "international")])
+        self.assertNotIn("cap", bound[0]["scoreParts"])
 
     def test_ordering_is_deterministic_by_score_then_title(self):
         records = [
