@@ -208,7 +208,7 @@ def _finalise(
                 practice["pyq"].pop("marks")
         elif not chosen:
             practice.pop("pyq")
-    note["readTime"] = f"{max(1, math.ceil(word_count(note) / 200))} min"
+    note["readTime"] = max(1, math.ceil(word_count(note) / 200))  # whole minutes
     return note
 
 

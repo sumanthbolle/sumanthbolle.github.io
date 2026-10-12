@@ -417,6 +417,13 @@
     return blocks.length ? '<section class="ue-practice-set"><h3 class="ue-label-head">Practice</h3>' + blocks.join('') + '</section>' : '';
   }
 
+  // Whole minutes from a number (current editions) or an "N min" string (older ones).
+  function readMinutes(value) {
+    var n = typeof value === 'number' ? value
+      : (typeof value === 'string' && /^\s*\d+(\.\d+)?\s*(min|mins|minutes?)?\s*$/i.test(value) ? parseFloat(value) : NaN);
+    return isFinite(n) && n > 0 && n < 120 ? Math.round(n) : 0;
+  }
+
   function renderNote(note) {
     if (!isObject(note)) return '';
     var map = sourceMap(note.sources);
@@ -430,7 +437,8 @@
     var meta = [];
     var published = dateText(note.publishedAt);
     if (published) meta.push('<span>' + esc(published) + '</span>');
-    if (typeof note.readTime === 'number' && note.readTime > 0 && note.readTime < 120) meta.push('<span>' + Math.round(note.readTime) + ' min read</span>');
+    var minutes = readMinutes(note.readTime);
+    if (minutes) meta.push('<span>' + minutes + ' min read</span>');
     if (KIND_LABEL[note.kind]) meta.push('<span>' + KIND_LABEL[note.kind] + '</span>');
     var firstSource = list(note.sources).filter(isObject)[0];
     if (firstSource && clip(firstSource.publisher)) meta.push('<span>Source: ' + esc(clip(firstSource.publisher, 40)) + '</span>');
@@ -509,6 +517,7 @@
     isAnswerContract: isAnswerContract,
     renderBlocks: renderBlocks,
     renderMarkdown: renderMarkdown,
-    renderNote: renderNote
+    renderNote: renderNote,
+    readMinutes: readMinutes
   };
 });

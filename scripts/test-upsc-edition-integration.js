@@ -81,6 +81,8 @@ function strictFetch(url) {
   assert.ok(text.includes(`Prelims 0/${prelims} · Mains 0/${mains}`), 'counter shows edition counts: ' + text.slice(0, 200));
   const note = edition.notes[(edition.prelims.concat(edition.mains))[0]];
   assert.ok(html.includes(note.oneLine.replace(/&/g, '&amp;').slice(0, 30)), 'glimpse shows the note');
+  assert.equal(typeof note.readTime, 'number', 'Python stores read time as whole minutes');
+  assert.ok(html.includes(note.readTime + ' min read'), 'note card shows the read time');
   (edition.quickFacts || []).forEach((fact) => assert.ok(html.includes(`data-ue-fact="${fact.id}"`), fact.id));
   console.log('UPSC edition integration test passed (' + path.relative(process.cwd(), dir) + ')');
 })().catch((error) => { console.error(error); process.exit(1); });

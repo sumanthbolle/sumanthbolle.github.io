@@ -199,6 +199,19 @@ function makeDesk(dom, files, extra) {
     assert.equal(Progress.create(store, '2026-10-13').isDone('pm-e-drive-extension'), true);
   });
 
+  await test('note cards show read time from a number or an "N min" string', async function () {
+    const withString = JSON.parse(JSON.stringify(sample));
+    withString.notes['rbi-policy-oct-2026'].readTime = '4 min';
+    const dom = fakeDom();
+    const desk = makeDesk(dom, {
+      'editions/index.json': indexFor([entry('2026-10-13-am', '2026-10-13', 'am')]),
+      '2026/10/13-am.json': withString,
+    });
+    await desk.load();
+    assert.match(dom.els.editionDesk.innerHTML, /4 min read/);
+    assert.match(dom.els.editionDesk.innerHTML, /5 min read/);
+  });
+
   await test('falls back to the latest closed edition with a delay notice', async function () {
     const dom = fakeDom();
     const desk = makeDesk(dom, {

@@ -629,7 +629,7 @@ class PageTests(unittest.TestCase):
     def test_page_escapes_untrusted_text_and_links(self):
         note = dict(NOTE, id="2026-10-13-am-abc", slug="2026-10-13-x-abc123",
                     title="</title><script>alert(1)</script>", publishedAt="2026-10-13T00:20:00Z",
-                    updates=[], codes=["GS3.3"], papers=["GS3"], readTime="3 min")
+                    updates=[], codes=["GS3.3"], papers=["GS3"], readTime=3)
         note["sources"] = NOTE["sources"] + [{"n": 2, "title": "bad", "publisher": "x", "url": "javascript:alert(1)", "date": "", "kind": "official"}]
         page = render_note_page(note, "2026-10-13-am")
         self.assertNotIn("<script>alert", page)
@@ -639,6 +639,7 @@ class PageTests(unittest.TestCase):
         self.assertIn('/assets/css/upsc-edition.css', page)
         self.assertIn('"@type":"Article"', page)
         self.assertIn('<details class="ue-practice">', page)
+        self.assertIn("3 min read", page)
         self.assertIn('rel="noopener noreferrer"', page)
         self.assertIn("<h2>What did the Cabinet approve?</h2>", page)
         self.assertIn("<strong>Scale.</strong>", page)

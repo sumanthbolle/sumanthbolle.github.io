@@ -151,7 +151,8 @@ class WriteNoteTests(unittest.TestCase):
         self.assertEqual(note["kind"], "news")
         self.assertEqual(note["sources"], [{key: EVIDENCE[0][key] for key in ("n", "title", "publisher", "url", "date", "kind")}])
         self.assertEqual(note["papers"], ["GS3", "GS2"])
-        self.assertRegex(note["readTime"], r"^\d+ min$")
+        self.assertIsInstance(note["readTime"], int)
+        self.assertGreaterEqual(note["readTime"], 1)
         self.assertEqual(check_note(note, EVIDENCE[0]["text"], {"mains-2018-gs3-msp"}), [])
 
     def test_gate_failure_retries_with_reasons(self):

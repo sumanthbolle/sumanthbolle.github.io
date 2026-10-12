@@ -256,7 +256,8 @@
       var done = progress.isDone(id);
       var paper = paperOf(note);
       var cat = [paper, clip(note.subject, 40)].filter(Boolean).join(' · ');
-      var mins = typeof note.readTime === 'number' && note.readTime > 0 ? Math.round(note.readTime) + ' min read' : '';
+      var minutes = Render.readMinutes ? Render.readMinutes(note.readTime) : 0;
+      var mins = minutes ? minutes + ' min read' : '';
       return '<li class="ue-card ue-card--' + (paper ? paper.toLowerCase() : 'gs') + '" data-done="' + done + '">' +
         '<a class="ue-card__link" href="' + esc(noteHref(note.slug || id)) + '" data-ue-open="' + esc(id) + '">' +
         '<span class="ue-card__accent" aria-hidden="true"></span><span class="ue-card__body">' +

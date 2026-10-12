@@ -227,4 +227,13 @@ test('renderTable handles ragged rows and labels each cell', function () {
   assert.equal(R.renderTable([], []), '');
 });
 
+test('read time accepts integer minutes or the older "N min" string', function () {
+  const base = { id: 'n', title: 'T', oneLine: 'L', codes: ['GS3.1'], sources: [] };
+  assert.match(R.renderNote(Object.assign({}, base, { readTime: 3 })), /3 min read/);
+  assert.match(R.renderNote(Object.assign({}, base, { readTime: '4 min' })), /4 min read/);
+  assert.doesNotMatch(R.renderNote(Object.assign({}, base, { readTime: 'soon' })), /min read/);
+  assert.equal(R.readMinutes(' 7 min '), 7);
+  assert.equal(R.readMinutes(0), 0);
+});
+
 console.log('UPSC answer renderer tests passed');

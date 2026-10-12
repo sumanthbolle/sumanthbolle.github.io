@@ -169,6 +169,13 @@ def _practice(practice: Mapping[str, Any]) -> str:
     )
 
 
+def _read_label(value: Any) -> str:
+    """'3 min read' from integer minutes (or an older '3 min' string)."""
+    match = re.fullmatch(r"\s*(\d+)(?:\.\d+)?\s*(?:min|mins|minutes?)?\s*", str(value)) if value is not None else None
+    minutes = int(match.group(1)) if match else 0
+    return f"{minutes} min read" if 0 < minutes < 120 else ""
+
+
 def render_note_page(note: Mapping[str, Any], edition: str, base_url: str = BASE_URL) -> str:
     sources = {row.get("n"): row for row in note.get("sources") or [] if isinstance(row, dict)}
     slug = _slug(note.get("slug"), "note")
@@ -180,7 +187,7 @@ def render_note_page(note: Mapping[str, Any], edition: str, base_url: str = BASE
     why = note.get("whyInNews") if isinstance(note.get("whyInNews"), dict) else {}
     body = [
         f'<p class="ue-tagline">{_text(note.get("subject"))} · {_text(codes)} · {_text(published[:10])} · '
-        f'{_text(note.get("readTime"))} · {_text(edition)}</p>',
+        f'{_text(_read_label(note.get("readTime")))} · {_text(edition)}</p>',
         f"<h1>{_text(title)}</h1>",
         f'<p class="ue-deck">{_text(note.get("deck"))}</p>',
         f'<p class="ue-oneline">{_text(note.get("oneLine"))}</p>',
