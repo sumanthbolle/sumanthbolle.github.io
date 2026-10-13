@@ -13,51 +13,43 @@ Worker deployed at `https://wandering-haze-b394.sumanthbolle312.workers.dev`.
 - `GET /trending`, `GET /servicenow` — landing/hub widgets.
 - `GET /metals` — precious-metals spot references (when deployed from `api/worker.js`).
 
-## `/flights` source priority
+## `/flights` data source
 
-1. **Amadeus Self-Service** (real inventory) — used when `AMADEUS_CLIENT_ID` +
-   `AMADEUS_CLIENT_SECRET` are set and both origin/destination resolve to IATA
-   codes. Calls Flight Offers Search v2, maps offers into the SkyFare schema,
-   then reuses the existing scoring / booking-timing / redirect logic.
-2. **Perplexity Sonar** (AI-researched) — fallback when Amadeus is not
-   configured, returns no offers, or errors.
+Google Flights results via [SerpApi](https://serpapi.com/google-flights-api).
+Set the key with `wrangler secret put SERPAPI_KEY`. Without it, `/flights`
+returns `{ success: false, error: "Flight search is not set up yet." }`.
 
-Every response carries `data.source` (`"amadeus"` | `"ai"`) so the UI can label
-fare provenance ("Live fares via Amadeus" vs "AI-researched fares").
+Each distinct search (route, dates, travellers, cabin, currency) is cached in
+the Cloudflare Cache API for 3 hours, so repeat searches don't use quota.
+Response: `data.flights[]` (price, airlines, times, duration, stops,
+layovers, segments, CO₂), `data.insights` (Google's price level, typical
+range, price history) and `data.googleUrl`.
 
-Get free Amadeus test credentials at https://developers.amadeus.com (the test
-environment has a free monthly request quota; production is billed).
+The Amadeus Self-Service connector was removed: Amadeus shut that portal
+down on 17 July 2026. The AI-researched fare fallback was removed too; it
+returned placeholder flights with no prices.
 
 ## Deploy
 
 ```bash
 cd workers/flights
 wrangler deploy
-wrangler secret put PERPLEXITY_API_KEY        # chat + AI fallback fares
+wrangler secret put PERPLEXITY_API_KEY        # chat + /flights/inspire
 wrangler secret put ALLOWED_ORIGIN            # e.g. https://sumanthbolle.com
-wrangler secret put AMADEUS_CLIENT_ID         # Amadeus Self-Service key
-wrangler secret put AMADEUS_CLIENT_SECRET     # Amadeus Self-Service secret
-# AMADEUS_ENV defaults to "test"; set to "production" in wrangler.toml [vars] when ready.
+wrangler secret put SERPAPI_KEY               # /flights
 ```
 
-## Verify Amadeus after deploy
+## Verify after deploy
 
 ```bash
 curl -s -X POST https://<your-worker-domain>/flights \
   -H 'Content-Type: application/json' \
-  -d '{"origin":"Singapore (SIN)","destination":"Tokyo (NRT)","departureDate":"2026-09-10","tripType":"one-way","passengers":1,"cabinClass":"economy","currency":"USD","maxStops":"2+","priorityMode":"best_balance"}' \
+  -d '{"origin":"DEL","destination":"BOM","departureDate":"2026-11-14","passengers":1,"cabin":"economy","currency":"INR"}' \
   | head -c 400
-# Look for "source":"amadeus" in the response.
+# Look for "source":"google" in the response.
 ```
 
-> Keep `worker.js` here identical to `api/worker.js`. The `api/` copy is the
-> historical location referenced by existing docs; this folder adds a
-> Wrangler-ready project so the Worker can be versioned and redeployed cleanly.
+> Keep `worker.js` here identical to `api/worker.js`.
 
-## Frontend resilience
-
-Even if this Worker is down, `flights.html` degrades gracefully:
-- automatic retry on transient failures,
-- clear error messaging for 405/429/5xx/timeout,
-- a **Demo mode** fallback that shows illustrative sample flights so users are
-  never left at a dead end (see `buildDemoData` in `flights.html`).
+If `/flights` fails, `flights.html` shows the error and a prefilled Google
+Flights link for the same search.

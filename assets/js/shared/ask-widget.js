@@ -7,6 +7,7 @@
   var ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';
   var STYLE = ' (Answer in plain English in under 150 words. Use short paragraphs or a few bullets. Use the numbers given. Finish every sentence.)';
   var MAX_HISTORY = 6;
+  var MAX_QUERY = 1000; // the worker rejects longer queries
 
   var getContext = function () { return ''; };
   var history = [];
@@ -54,6 +55,14 @@
     flushPara();
     flushList();
     return out.join('');
+  }
+
+  // Trim page context to whole lines so the query stays under the worker limit.
+  function fit(text, max) {
+    if (text.length <= max) return text;
+    var cut = text.slice(0, Math.max(0, max));
+    var nl = cut.lastIndexOf('\n');
+    return nl > 0 ? cut.slice(0, nl) : cut;
   }
 
   function build() {
@@ -131,7 +140,7 @@
     form.classList.add('is-busy');
     fullLink.href = 'summaverick.html?q=' + encodeURIComponent((context + '\n\n' + question).slice(0, 1000));
 
-    var query = (history.length ? '' : context + '\n\n') + question + STYLE;
+    var query = (history.length ? '' : fit(context, MAX_QUERY - question.length - STYLE.length - 2) + '\n\n') + question + STYLE;
     fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

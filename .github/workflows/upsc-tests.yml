@@ -5,10 +5,10 @@ name: UPSC tests
 # on every pull request and push to main instead.
 on:
   pull_request:
-    paths: ['api/**', 'assets/js/upsc/**', 'scripts/**', 'data/upsc-patterns.json', '.github/**', 'upsc*.html']
+    paths: ['api/**', 'assets/**', 'scripts/**', 'data/upsc-patterns.json', '.github/**', 'upsc*.html', 'flights.html', 'metals.html', 'save-yourself.html']
   push:
     branches: [main]
-    paths: ['api/**', 'assets/js/upsc/**', 'scripts/**', 'data/upsc-patterns.json', '.github/**', 'upsc*.html']
+    paths: ['api/**', 'assets/**', 'scripts/**', 'data/upsc-patterns.json', '.github/**', 'upsc*.html', 'flights.html', 'metals.html', 'save-yourself.html']
   workflow_dispatch:
 
 permissions:
@@ -37,3 +37,8 @@ jobs:
             echo "::endgroup::"
           done
           exit $failed
+      - name: Tool page tests (SkyFare, Metals, Save Yourself)
+        run: |
+          node scripts/test-utility-pages.js
+          node scripts/test-save-yourself.js
+          node scripts/test-skyfare-worker.mjs

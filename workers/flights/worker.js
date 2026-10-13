@@ -4,10 +4,16 @@
  *
  * Routes:
  *   POST /              — chat completion (existing); body: { query, context }
- *   POST /flights       — SkyFare flight discovery + "best time to book" advisory;
- *                         body: { origin, destination, departureDate, ... }
+ *   POST /flights       — SkyFare search (Google Flights via SerpApi);
+ *                         body: { origin, destination, departureDate, returnDate?, passengers, cabin, currency }
  *   POST /flights/inspire — Summaverick destination ideas for SkyFare;
  *                         body: { query, origin?, currency? }
+ *   GET  /upsc/brief    — Anchor study tool: daily / weekly UPSC current-affairs
+ *                         brief, filtered, scored and verification-gated
+ *   POST /upsc/topic    — Anchor topic lookup; body: { topic, paper? }
+ *   POST /upsc/enrich   — private source-bound publisher enrichment
+ *   POST /upsc/mains    — private Mains drill generation (same publish token)
+ *   POST /upsc/verify   — private second-pass verification (different model)
  *   GET  /trending      — landing-page widgets (news / market / tech),
  *                         country-aware via cf.country (or ?country=XX override),
  *                         cached per country in Cloudflare Cache API
@@ -16,17 +22,52 @@
  *   OPTIONS *           — CORS preflight
  *
  * Environment variables:
- *   PERPLEXITY_API_KEY   — from perplexity.ai/settings/api (chat + AI fallback fares)
+ *   PERPLEXITY_API_KEY   — from perplexity.ai/settings/api (chat + /flights/inspire)
  *   ALLOWED_ORIGIN       — e.g. https://sumanthbolle.com (or * for dev)
- *   AMADEUS_CLIENT_ID    — Amadeus Self-Service key (primary /flights inventory)
- *   AMADEUS_CLIENT_SECRET— Amadeus Self-Service secret
- *   AMADEUS_ENV          — 'test' (default) or 'production'
- *   AMADEUS_BASE_URL     — optional override of the Amadeus host
+ *   SERPAPI_KEY          — serpapi.com key; /flights returns Google Flights results
+ *   SERVICENOW_DOMAIN_ENABLED — optional; default true. When true, ServiceNow
+ *                         questions get domain-pack system guidance (see
+ *                         research-agent/ for the full Node domain pack).
+ *   SERVICENOW_RELEASE_FAMILY — optional; default australia
+ *   UPSC_PUBLISH_TOKEN  — bearer secret required by POST /upsc/enrich
  *
  * /flights source priority: Amadeus real inventory (when keys set & IATA codes
  * resolvable) → Perplexity Sonar fallback. Each response includes data.source
  * ('amadeus' | 'ai') so the UI can label fare provenance.
  */
+
+import {
+  SERVICENOW_DOMAIN_SYSTEM_ADDON,
+  isServiceNowDomainQuery,
+  classifyServiceNowIntent,
+  serviceNowSearchHint,
+} from './servicenow-domain.js';
+
+import {
+  UPSC_DOMAIN_SYSTEM_ADDON,
+  isUpscDomainQuery,
+  classifyUpscIntent,
+  upscChipInstruction,
+  upscMetaLine,
+  upscFormatInstruction,
+} from './upsc-domain.js';
+import { primarySourceUrl, retrievePrimarySources, sourceResearchInstruction } from './upsc-sources.js';
+import { handlePocketFeed } from './upsc-pocket.js';
+
+import {
+  upscScope,
+  upscScopeConfig,
+  buildUpscBriefPayload,
+  buildUpscEnrichmentPayload,
+  buildUpscMainsPayload,
+  buildUpscTopicPayload,
+  buildUpscVerifyPayload,
+  normalizeUpscBrief,
+  normalizeUpscExamNote,
+  normalizeUpscMainsDrill,
+  normalizeUpscTopic,
+  normalizeUpscVerification,
+} from './upsc.js';
 
 const SYSTEM_PROMPT = `You are Summaverick, a general-purpose AI research assistant. You answer questions on any topic — world news, science, technology, business, culture, code, careers, personal decisions, and everyday curiosity — by synthesizing real sources into clear, grounded answers.
 
@@ -91,6 +132,11 @@ export default {
       return corsResponse(null, origin, 204);
     }
 
+    if ((request.method === 'GET' && url.pathname === '/upsc/pocket')
+      || (request.method === 'POST' && url.pathname === '/upsc/pocket/publish')) {
+      return handlePocketFeed(request, env, origin);
+    }
+
     if (request.method === 'GET' && url.pathname === '/trending') {
       return handleTrending(request, env, ctx, origin);
     }
@@ -103,8 +149,28 @@ export default {
       return handleMetals(request, ctx, origin);
     }
 
+    if (request.method === 'GET' && url.pathname === '/upsc/brief') {
+      return handleUpscBrief(request, env, ctx, origin);
+    }
+
+    if (request.method === 'POST' && url.pathname === '/upsc/enrich') {
+      return handleUpscEnrich(request, env, origin);
+    }
+
+    if (request.method === 'POST' && url.pathname === '/upsc/mains') {
+      return handleUpscMains(request, env, origin);
+    }
+
+    if (request.method === 'POST' && url.pathname === '/upsc/verify') {
+      return handleUpscVerify(request, env, origin);
+    }
+
     if (request.method !== 'POST') {
       return new Response('Method not allowed', { status: 405 });
+    }
+
+    if (url.pathname === '/upsc/topic') {
+      return handleUpscTopic(request, env, origin);
     }
 
     if (url.pathname === '/flights') {
@@ -140,7 +206,62 @@ async function handleChat(request, env, origin) {
       return jsonResponse({ success: false, error: 'API key not configured' }, origin);
     }
 
-    const messages = [{ role: 'system', content: SYSTEM_PROMPT }];
+    // Explicit domain hint from the caller (the UPSC study-page widget sends
+    // { domain: 'upsc' }); fall back to text detection otherwise.
+    const requestedDomain = typeof body.domain === 'string' ? body.domain.toLowerCase() : '';
+    const upscDomain = requestedDomain === 'upsc' || isUpscDomainQuery(query);
+
+    // The widget marks structure-only asks (a model-answer skeleton) so we can
+    // skip expensive live search for them. Defaults to full search.
+    const liveSearch = body.liveSearch !== false;
+
+    const domainEnabled = env.SERVICENOW_DOMAIN_ENABLED !== 'false';
+    // UPSC takes precedence: an aspirant's page never wants the ServiceNow pack.
+    const snDomain = !upscDomain && domainEnabled && isServiceNowDomainQuery(query);
+    const snIntent = snDomain ? classifyServiceNowIntent(query) : null;
+    const releaseFamily =
+      (env.SERVICENOW_RELEASE_FAMILY || snIntent?.releaseFamily || 'australia').toLowerCase();
+
+    // Structured chip the widget is driving (prelims/mains/answer/quiz/rubric/
+    // evaluate), plus the study/exam mode and marks that shape word limits.
+    const upscChip = typeof body.chip === 'string' ? body.chip.toLowerCase() : '';
+    const upscMode = body.mode === 'exam' ? 'exam' : 'study';
+    const upscMarks = Number(body.marks) === 15 ? 15 : (Number(body.marks) === 10 ? 10 : 0);
+    const upscMeta = body.meta && typeof body.meta === 'object' ? body.meta : null;
+    const wantsJson = body.format === 'json' || body.format === 'brief';
+    const sourceUrls = upscDomain && liveSearch && Array.isArray(body.sourceUrls)
+      ? [...new Set(body.sourceUrls.slice(0, 3).map(primarySourceUrl).filter(Boolean))] : [];
+    const sourceDocuments = sourceUrls.length ? await retrievePrimarySources(sourceUrls) : [];
+
+    let systemContent = SYSTEM_PROMPT;
+    if (upscDomain) {
+      const upscIntent = classifyUpscIntent(query);
+      const metaLine = upscMetaLine(upscMeta);
+      const chipLine = upscChipInstruction(upscChip, { mode: upscMode, marks: upscMarks || undefined });
+      const formatLine = upscFormatInstruction(body.format);
+      systemContent =
+        SYSTEM_PROMPT +
+        '\n\n' +
+        UPSC_DOMAIN_SYSTEM_ADDON +
+        (upscIntent.paper && !upscMeta ? `\n\nLikely paper for this topic: ${upscIntent.paper}.` : '') +
+        (metaLine ? `\n\n${metaLine}` : '') +
+        (chipLine ? `\n\n${chipLine}` : '') +
+        (formatLine ? `\n\n${formatLine}` : '');
+    } else if (snDomain) {
+      systemContent =
+        SYSTEM_PROMPT +
+        '\n\n' +
+        SERVICENOW_DOMAIN_SYSTEM_ADDON +
+        '\n\n' +
+        serviceNowSearchHint(releaseFamily) +
+        `\nClassified ServiceNow intent: ${snIntent.intent}; modules: ${snIntent.modules.join(', ')}.` +
+        (snIntent.requiresLiveInstance
+          ? '\nLive instance metadata queries are disabled by default in this Worker; do not invent instance-specific fields.'
+          : '');
+    }
+
+    const messages = [{ role: 'system', content: systemContent }];
+    if (sourceDocuments.length) messages[0].content += '\n\n' + sourceResearchInstruction(sourceDocuments);
 
     if (Array.isArray(context) && context.length > 0) {
       for (const msg of context.slice(-10)) {
@@ -155,17 +276,42 @@ async function handleChat(request, env, origin) {
 
     messages.push({ role: 'user', content: query });
 
+    // UPSC answers want exam determinism; JSON chips want maximum determinism.
+    // A model-answer skeleton needs no live search, so shrink its search
+    // context to keep it fast and clean.
+    const temperature = upscDomain ? (wantsJson ? 0.1 : 0.15) : (snDomain ? 0.1 : 0.2);
+    const maxTokens = upscDomain ? 1200 : (snDomain ? 1600 : 1024);
+    const searchContextSize = liveSearch ? 'high' : 'low';
+
     const sonarPayload = {
       model: 'sonar',
       messages,
-      temperature: 0.2,
-      max_tokens: 1024,
-      web_search_options: { search_context_size: 'high' },
+      temperature,
+      max_tokens: maxTokens,
+      web_search_options: { search_context_size: searchContextSize },
       return_related_questions: true
     };
+    if (sourceUrls.length) {
+      sonarPayload.search_domain_filter = [...new Set(sourceUrls.map(url => new URL(url).hostname.replace(/^www\./, '')))];
+      sonarPayload.max_tokens = 1800;
+    }
 
     const data = await callSonar(apiKey, sonarPayload);
     const result = buildResult(data);
+    if (result && upscDomain) {
+      result.domain = 'upsc';
+      if (upscChip) result.chip = upscChip;
+      if (upscMeta) result.meta = upscMeta;
+      if (sourceDocuments.length) result.sourceRetrieval = sourceDocuments.map(({ text, ...record }) => record);
+    } else if (result && snDomain) {
+      result.domain = 'servicenow';
+      result.servicenow = {
+        intent: snIntent.intent,
+        modules: snIntent.modules,
+        releaseFamily,
+        liveInstanceEnabled: false,
+      };
+    }
     return jsonResponse({ success: true, result }, origin);
 
   } catch (e) {
@@ -608,6 +754,287 @@ async function handleServiceNowFeed(request, env, ctx, origin) {
   return jsonResponseRaw(responseBody, origin, { 'X-Summaverick-Cache': 'MISS' });
 }
 
+/* ───────────────── Anchor — UPSC study tool ─────────────────
+ * GET  /upsc/brief?scope=daily|weekly
+ * POST /upsc/topic   body: { topic, paper? }
+ * POST /upsc/enrich  body: one normalized official source record
+ *
+ * Same Perplexity Sonar key as the rest of the Worker. The prompts, the
+ * examinability filter, the probability scoring and the verification gate all
+ * live in api/upsc.js; this section only does IO, caching and CORS.
+ */
+const UPSC_BRIEF_TIMEOUT_MS = 45000;
+const UPSC_TOPIC_TIMEOUT_MS = 40000;
+const UPSC_ENRICH_TIMEOUT_MS = 55000;
+// Leave time for the bounded document fetch inside the publisher's 55s request.
+const UPSC_SOURCE_NOTE_TIMEOUT_MS = 45000;
+
+function hasUpscPublishToken(request, env) {
+  var expected = String(env.UPSC_PUBLISH_TOKEN || '');
+  var supplied = String(request.headers.get('Authorization') || '');
+  return Boolean(expected && supplied === 'Bearer ' + expected);
+}
+
+function upscEnrichmentResponse(data, origin, status) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': origin,
+      'Cache-Control': 'no-store',
+    },
+  });
+}
+
+async function handleUpscEnrich(request, env, origin) {
+  if (!hasUpscPublishToken(request, env)) {
+    return upscEnrichmentResponse({ success: false, error: 'Unauthorized' }, origin, 401);
+  }
+
+  let record;
+  try {
+    record = await request.json();
+  } catch {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid request body.' }, origin, 422);
+  }
+  const validRecord = record && typeof record === 'object'
+    && /^src_[a-f0-9]{16,64}$/i.test(String(record.id || ''))
+    && /^https?:\/\//.test(String(record.sourceUrl || ''))
+    && String(record.contentHash || '').length >= 16
+    && record.sourceVerified === true;
+  if (!validRecord) {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid source record.' }, origin, 422);
+  }
+  if (!env.PERPLEXITY_API_KEY) {
+    return upscEnrichmentResponse({ success: false, error: 'Enrichment service is not configured.' }, origin, 503);
+  }
+
+  try {
+    const documents = await retrievePrimarySources([record.sourceUrl]);
+    const payload = buildUpscEnrichmentPayload(record);
+    payload.messages[0].content += '\n' + sourceResearchInstruction(documents);
+    const data = await callSonarWithTimeout(
+      env.PERPLEXITY_API_KEY,
+      payload,
+      UPSC_SOURCE_NOTE_TIMEOUT_MS
+    );
+    const note = normalizeUpscExamNote(parseStructured(data), record);
+    if (!note) {
+      return upscEnrichmentResponse({
+        success: false,
+        error: 'Provider response did not satisfy the source-bound exam-note contract.',
+      }, origin, 422);
+    }
+    return upscEnrichmentResponse({ success: true, data: note }, origin, 200);
+  } catch (error) {
+    console.error('UPSC enrich failed:', error && error.message || error);
+    return upscEnrichmentResponse({
+      success: false,
+      error: 'Enrichment service could not process this record.',
+    }, origin, 503);
+  }
+}
+
+async function handleUpscMains(request, env, origin) {
+  if (!hasUpscPublishToken(request, env)) {
+    return upscEnrichmentResponse({ success: false, error: 'Unauthorized' }, origin, 401);
+  }
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid request body.' }, origin, 422);
+  }
+  const anchor = body && body.anchor && typeof body.anchor === 'object' ? body.anchor : null;
+  const directive = String(body && body.directive_word || '');
+  const paper = String(body && body.gs_paper || 'GS2');
+  if (!anchor || !anchor.id || !directive) {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid mains request.' }, origin, 422);
+  }
+  if (!env.PERPLEXITY_API_KEY) {
+    return upscEnrichmentResponse({ success: false, error: 'Mains service is not configured.' }, origin, 503);
+  }
+  try {
+    const data = await callSonarWithTimeout(
+      env.PERPLEXITY_API_KEY,
+      buildUpscMainsPayload(anchor, directive, paper),
+      UPSC_ENRICH_TIMEOUT_MS
+    );
+    const drill = normalizeUpscMainsDrill(parseStructured(data), {
+      directive_word: directive,
+    });
+    if (!drill) {
+      return upscEnrichmentResponse({
+        success: false,
+        error: 'Provider response did not satisfy the mains-drill contract.',
+      }, origin, 422);
+    }
+    return upscEnrichmentResponse({ success: true, data: drill }, origin, 200);
+  } catch {
+    return upscEnrichmentResponse({
+      success: false,
+      error: 'Mains service could not process this anchor.',
+    }, origin, 503);
+  }
+}
+
+async function handleUpscVerify(request, env, origin) {
+  if (!hasUpscPublishToken(request, env)) {
+    return upscEnrichmentResponse({ success: false, error: 'Unauthorized' }, origin, 401);
+  }
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid request body.' }, origin, 422);
+  }
+  const note = body && body.note && typeof body.note === 'object' ? body.note : null;
+  const source = body && body.source && typeof body.source === 'object' ? body.source : {};
+  if (!note || !note.anchor) {
+    return upscEnrichmentResponse({ success: false, error: 'Invalid verification request.' }, origin, 422);
+  }
+  if (!env.PERPLEXITY_API_KEY) {
+    return upscEnrichmentResponse({ success: false, error: 'Verification service is not configured.' }, origin, 503);
+  }
+  try {
+    const documents = await retrievePrimarySources([source.sourceUrl]);
+    const payload = buildUpscVerifyPayload(source, note);
+    payload.messages[0].content += '\n' + sourceResearchInstruction(documents);
+    const data = await callSonarWithTimeout(
+      env.PERPLEXITY_API_KEY,
+      payload,
+      UPSC_SOURCE_NOTE_TIMEOUT_MS
+    );
+    const result = normalizeUpscVerification(parseStructured(data));
+    if (!result) {
+      return upscEnrichmentResponse({
+        success: false,
+        error: 'Provider response did not satisfy the verification contract.',
+      }, origin, 422);
+    }
+    return upscEnrichmentResponse({ success: true, verificationVersion: 2, data: result }, origin, 200);
+  } catch (error) {
+    console.error('UPSC verify failed:', error && error.message || error);
+    return upscEnrichmentResponse({
+      success: false,
+      error: 'Verification service could not process this note.',
+    }, origin, 503);
+  }
+}
+
+async function handleUpscBrief(request, env, ctx, origin) {
+  const url = new URL(request.url);
+  const scope = upscScope(url.searchParams.get('scope'));
+  const cfg = upscScopeConfig(scope);
+  const today = new Date().toISOString().slice(0, 10);
+
+  const cache = caches.default;
+  const cacheKey = new Request(
+    `https://cache.summaverick.internal/upsc/brief/${scope}/${today}`,
+    { method: 'GET' }
+  );
+
+  const cached = await cache.match(cacheKey);
+  if (cached) {
+    const body = await cached.text();
+    return jsonResponseRaw(body, origin, { 'X-Summaverick-Cache': 'HIT' });
+  }
+
+  const apiKey = env.PERPLEXITY_API_KEY;
+  if (!apiKey) {
+    return jsonResponse({ success: false, error: 'Briefing service is not configured.' }, origin);
+  }
+
+  try {
+    const data = await callSonarWithTimeout(
+      apiKey,
+      buildUpscBriefPayload(scope, today),
+      UPSC_BRIEF_TIMEOUT_MS
+    );
+    const brief = normalizeUpscBrief(parseStructured(data), scope, {});
+
+    if (brief.items.length === 0) {
+      return jsonResponse({
+        success: false,
+        error: 'Nothing cleared the examinability filter on this run. Try again in a few minutes.',
+      }, origin, { 'Cache-Control': 'no-store' });
+    }
+
+    const payload = { success: true, data: brief };
+    const responseBody = JSON.stringify(payload);
+    const ttl = brief.items.length >= cfg.minItems ? cfg.ttl : cfg.partialTtl;
+
+    if (ctx && typeof ctx.waitUntil === 'function') {
+      const toCache = new Response(responseBody, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': `public, max-age=${ttl}`,
+        },
+      });
+      ctx.waitUntil(cache.put(cacheKey, toCache));
+    }
+
+    return jsonResponseRaw(responseBody, origin, { 'X-Summaverick-Cache': 'MISS' });
+  } catch (e) {
+    const message = e && e.message ? e.message : '';
+    let error = 'The briefing service could not be reached. Your saved notes and revision queue still work.';
+    if (message.indexOf('abort') >= 0) {
+      error = 'The brief took too long to build. Try again — retrieval runs can be slow at peak times.';
+    } else if (message.indexOf('Sonar') >= 0) {
+      error = 'The retrieval service returned an error. This is usually temporary.';
+    }
+    return jsonResponse({ success: false, error }, origin, { 'Cache-Control': 'no-store' });
+  }
+}
+
+const UPSC_PAPERS = ['any', 'GS1', 'GS2', 'GS3', 'GS4', 'ESSAY'];
+
+async function handleUpscTopic(request, env, origin) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ success: false, error: 'Invalid request body.' }, origin);
+  }
+
+  const topic = sanitize(String(body.topic || '')).slice(0, 160);
+  const paperRaw = sanitize(String(body.paper || 'any')).toUpperCase().replace(/\s+/g, '');
+  const paper = UPSC_PAPERS.indexOf(paperRaw) >= 0 ? paperRaw : 'any';
+
+  if (topic.length < 3) {
+    return jsonResponse({ success: false, error: 'Give me a topic or an anchor to look up.' }, origin);
+  }
+
+  const apiKey = env.PERPLEXITY_API_KEY;
+  if (!apiKey) {
+    return jsonResponse({ success: false, error: 'Lookup service is not configured.' }, origin);
+  }
+
+  try {
+    const data = await callSonarWithTimeout(
+      apiKey,
+      buildUpscTopicPayload(topic, paper),
+      UPSC_TOPIC_TIMEOUT_MS
+    );
+    const note = normalizeUpscTopic(parseStructured(data), topic);
+
+    if (!note) {
+      return jsonResponse({
+        success: false,
+        error: 'Could not build an exam-ready note for that. Try naming the concept rather than the headline.',
+      }, origin, { 'Cache-Control': 'no-store' });
+    }
+
+    return jsonResponse({ success: true, data: note }, origin, { 'Cache-Control': 'no-store' });
+  } catch (e) {
+    const message = e && e.message ? e.message : '';
+    const error = message.indexOf('abort') >= 0
+      ? 'The lookup timed out. Try a narrower topic.'
+      : 'The lookup service could not be reached. Try again in a moment.';
+    return jsonResponse({ success: false, error }, origin, { 'Cache-Control': 'no-store' });
+  }
+}
+
 /* ───────────────── Precious-metal market report ───────────────── */
 
 async function fetchMarketJson(url) {
@@ -761,830 +1188,167 @@ async function handleMetals(request, ctx, origin) {
   });
 }
 
-/* ───────────── Flight Search ───────────── */
+/* ───────────── Flight Search (SkyFare) ─────────────
+ * Google Flights results via SerpApi (https://serpapi.com/google-flights-api).
+ * Needs the SERPAPI_KEY secret. Responses are cached for 3 hours per search
+ * to keep within the SerpApi quota. */
 
-const FLIGHT_SYSTEM_PROMPT = 'You are a real-time flight search and travel pricing assistant. Your task is to find current publicly available flight options for the provided route, dates, passenger count, cabin class, budget, and preferences.\n\nYou must:\n- Search current web results for flight prices.\n- Prefer airline official websites and reputable travel providers (Google Flights, Kayak, Skyscanner, Expedia, etc.).\n- Return only structured JSON. No markdown, no code fences, no explanation text outside JSON.\n- Do not invent flights, prices, booking links, or airlines.\n- If exact prices are not available, mark the confidence as "low" and explain why in the notes field.\n- Include source URLs wherever possible.\n- Include a freshness note indicating when the data was retrieved.\n- Compare flights based on price, duration, stops, layovers, budget fit, baggage, and carbon emissions.\n- Do not claim that a booking is confirmed.\n- Every flight MUST include a usable booking_url that opens a real search or book page (Google Flights, Kayak, Skyscanner, Expedia, or the airline). Prefer deep links prefilled with the route and dates. If only a source article is available, put it in source_url and still provide a Google Flights or Kayak search URL in booking_url. SkyFare redirects users to complete booking on those sites.\n- Each flight must have a unique "id" field (e.g., "flight_1", "flight_2").\n- The "badges" array can include values like "Cheapest", "Fastest", "Best Overall", "Best Timing", "Under Budget", "Nonstop", "Low CO2", "Great Deal".\n- The "score" field should be your best estimate from 0-100 based on overall value (price, duration, stops, timing, airline quality).\n\nFor every flight also estimate, where known:\n- "co2_kg": estimated carbon emissions per passenger for the whole itinerary, in kilograms (number). Use typical aircraft/route emissions if a precise figure is unavailable; otherwise omit.\n- "fare_brand": the fare family / branded fare (e.g. "Basic Economy", "Main Cabin", "Economy Flex", "Business Saver").\n- "carry_on_included": true/false — whether a full-size cabin bag is included.\n- "checked_bags_included": number of checked bags included in the quoted fare (0 if none).\n- "refundable": true/false if known.\n- "self_transfer": true if the itinerary mixes separate tickets / virtual-interline / non-protected connections (Kiwi-style self-transfer) where the traveller must re-check bags and missed connections are not protected.\nBe honest: prefer omitting a field over guessing a specific figure. Basic Economy / "light" fares usually do not include a carry-on or checked bag — reflect that.';
+const FLIGHT_TIMEOUT_MS = 30000;
+const FLIGHT_CACHE_SECONDS = 3 * 60 * 60;
+const SERP_CABIN = { economy: 1, premium: 2, business: 3, first: 4 };
+const SERP_GL = { INR: 'in', GBP: 'uk', EUR: 'de', AED: 'ae', SGD: 'sg', AUD: 'au', CAD: 'ca', JPY: 'jp' };
 
-const FLIGHT_TIMEOUT_MS = 55000;
+function serpTime(s) { return typeof s === 'string' ? s.slice(11, 16) : ''; }
+function serpDate(s) { return typeof s === 'string' ? s.slice(0, 10) : ''; }
 
-/* ── "Best time to book" engine ──────────────────────────────────────────
- * A deterministic advance-purchase model that runs even when the AI omits
- * timing guidance. Sweet-spot windows are derived from widely-cited fare
- * studies (Google Flights / Hopper / CheapAir): the cheapest fares cluster
- * a few weeks out for short/domestic trips and a few months out for
- * long-haul international ones. The AI's live price read (low/typical/high
- * + rising/falling) is layered on top of this skeleton in mergeBookingAdvice.
- */
-const BOOKING_WINDOWS = {
-  domestic:      { tooEarly: 120, sweetStart: 21, sweetEnd: 60, late: 14, lastMin: 3 },
-  international: { tooEarly: 300, sweetStart: 60, sweetEnd: 150, late: 30, lastMin: 7 },
-};
-
-/* Northern-hemisphere peak travel months by rough demand. Used only as a
- * fallback hint; the AI provides the route-specific seasonality note. */
-const PEAK_MONTHS = [6, 7, 8, 12];      // Jun, Jul, Aug, Dec
-const SHOULDER_MONTHS = [4, 5, 9, 10];  // Apr, May, Sep, Oct
-
-/* IATA code → country, mirroring the airport DB used by the SkyFare UI.
- * Lets the timing engine tell domestic from international trips so it can
- * pick the right advance-purchase window. */
-var AIRPORT_COUNTRY = {
-  JFK:'USA',LAX:'USA',ORD:'USA',ATL:'USA',DFW:'USA',SFO:'USA',MIA:'USA',SEA:'USA',BOS:'USA',EWR:'USA',
-  IAD:'USA',DEN:'USA',LAS:'USA',MCO:'USA',HNL:'USA',PHX:'USA',IAH:'USA',MSP:'USA',DTW:'USA',PHL:'USA',
-  LHR:'UK',LGW:'UK',STN:'UK',MAN:'UK',EDI:'UK',CDG:'France',ORY:'France',NCE:'France',
-  FRA:'Germany',MUC:'Germany',BER:'Germany',AMS:'Netherlands',MAD:'Spain',BCN:'Spain',
-  FCO:'Italy',MXP:'Italy',VCE:'Italy',ZRH:'Switzerland',GVA:'Switzerland',VIE:'Austria',
-  CPH:'Denmark',OSL:'Norway',ARN:'Sweden',HEL:'Finland',IST:'Turkey',SAW:'Turkey',ATH:'Greece',
-  LIS:'Portugal',DUB:'Ireland',BRU:'Belgium',WAW:'Poland',PRG:'Czech Republic',BUD:'Hungary',
-  DXB:'UAE',AUH:'UAE',DOH:'Qatar',RUH:'Saudi Arabia',JED:'Saudi Arabia',BAH:'Bahrain',MCT:'Oman',
-  AMM:'Jordan',TLV:'Israel',CAI:'Egypt',NRT:'Japan',HND:'Japan',KIX:'Japan',ICN:'South Korea',
-  GMP:'South Korea',PEK:'China',PKX:'China',PVG:'China',CAN:'China',HKG:'Hong Kong',TPE:'Taiwan',
-  SIN:'Singapore',KUL:'Malaysia',BKK:'Thailand',DMK:'Thailand',CGK:'Indonesia',DPS:'Indonesia',
-  MNL:'Philippines',SGN:'Vietnam',HAN:'Vietnam',DEL:'India',BOM:'India',BLR:'India',MAA:'India',
-  HYD:'India',CCU:'India',CMB:'Sri Lanka',DAC:'Bangladesh',KTM:'Nepal',SYD:'Australia',MEL:'Australia',
-  BNE:'Australia',PER:'Australia',AKL:'New Zealand',YYZ:'Canada',YVR:'Canada',YUL:'Canada',
-  MEX:'Mexico',CUN:'Mexico',GRU:'Brazil',GIG:'Brazil',EZE:'Argentina',SCL:'Chile',BOG:'Colombia',
-  LIM:'Peru',JNB:'South Africa',CPT:'South Africa',NBO:'Kenya',ADD:'Ethiopia',CMN:'Morocco',
-  LOS:'Nigeria',ACC:'Ghana',MRU:'Mauritius',
-};
-
-var CITY_COUNTRY = {
-  'new york':'USA','los angeles':'USA','chicago':'USA','atlanta':'USA','dallas':'USA','san francisco':'USA',
-  'miami':'USA','seattle':'USA','boston':'USA','newark':'USA','washington':'USA','denver':'USA',
-  'las vegas':'USA','orlando':'USA','honolulu':'USA','phoenix':'USA','houston':'USA',
-  london:'UK','manchester':'UK','edinburgh':'UK','paris':'France','nice':'France','frankfurt':'Germany',
-  munich:'Germany','berlin':'Germany','amsterdam':'Netherlands','madrid':'Spain','barcelona':'Spain',
-  rome:'Italy','milan':'Italy','venice':'Italy','zurich':'Switzerland','geneva':'Switzerland',
-  vienna:'Austria','copenhagen':'Denmark','oslo':'Norway','stockholm':'Sweden','helsinki':'Finland',
-  istanbul:'Turkey',athens:'Greece',lisbon:'Portugal',dublin:'Ireland',brussels:'Belgium',
-  warsaw:'Poland',prague:'Czech Republic',budapest:'Hungary',dubai:'UAE','abu dhabi':'UAE',doha:'Qatar',
-  riyadh:'Saudi Arabia',jeddah:'Saudi Arabia',muscat:'Oman',amman:'Jordan','tel aviv':'Israel',cairo:'Egypt',
-  tokyo:'Japan',osaka:'Japan',seoul:'South Korea',beijing:'China',shanghai:'China',guangzhou:'China',
-  'hong kong':'Hong Kong',taipei:'Taiwan',singapore:'Singapore','kuala lumpur':'Malaysia',bangkok:'Thailand',
-  jakarta:'Indonesia',bali:'Indonesia',manila:'Philippines','ho chi minh city':'Vietnam',hanoi:'Vietnam',
-  'new delhi':'India',delhi:'India',mumbai:'India',bangalore:'India',chennai:'India',hyderabad:'India',
-  kolkata:'India',colombo:'Sri Lanka',dhaka:'Bangladesh',kathmandu:'Nepal',sydney:'Australia',
-  melbourne:'Australia',brisbane:'Australia',perth:'Australia',auckland:'New Zealand',toronto:'Canada',
-  vancouver:'Canada',montreal:'Canada','mexico city':'Mexico',cancun:'Mexico','sao paulo':'Brazil',
-  'rio de janeiro':'Brazil','buenos aires':'Argentina',santiago:'Chile',bogota:'Colombia',lima:'Peru',
-  johannesburg:'South Africa','cape town':'South Africa',nairobi:'Kenya','addis ababa':'Ethiopia',
-  casablanca:'Morocco',lagos:'Nigeria',accra:'Ghana',mauritius:'Mauritius',
-};
-
-/* Resolve a free-text place ("Tokyo (NRT)", "SIN", "singapore") to a country. */
-function countryForPlace(place) {
-  if (!place) return null;
-  var s = String(place).trim();
-  var paren = s.match(/\(([A-Za-z]{3})\)/);
-  if (paren && AIRPORT_COUNTRY[paren[1].toUpperCase()]) return AIRPORT_COUNTRY[paren[1].toUpperCase()];
-  var bare = s.match(/\b([A-Za-z]{3})\b/);
-  if (bare && AIRPORT_COUNTRY[bare[1].toUpperCase()]) return AIRPORT_COUNTRY[bare[1].toUpperCase()];
-  var lower = s.toLowerCase();
-  for (var city in CITY_COUNTRY) {
-    if (lower.indexOf(city) >= 0) return CITY_COUNTRY[city];
-  }
-  return null;
-}
-
-function daysBetween(fromISO, toISO) {
-  var a = Date.parse(fromISO + 'T00:00:00Z');
-  var b = Date.parse(toISO + 'T00:00:00Z');
-  if (isNaN(a) || isNaN(b)) return null;
-  return Math.round((b - a) / 86400000);
-}
-
-/* Infer whether the trip crosses an international border, using the airport
- * DB country tags when we can resolve the codes; defaults to international
- * (the more conservative, longer window) when unknown. */
-function inferScope(origin, destination) {
-  var oc = countryForPlace(origin);
-  var dc = countryForPlace(destination);
-  if (oc && dc) return oc === dc ? 'domestic' : 'international';
-  return 'international';
-}
-
-function computeBookingTiming(p, todayISO) {
-  var today = todayISO || new Date().toISOString().split('T')[0];
-  var daysOut = p.departureDate ? daysBetween(today, p.departureDate) : null;
-  var scope = inferScope(p.origin, p.destination);
-  var w = BOOKING_WINDOWS[scope];
-
-  var recommendation, urgency, headline, window;
-
-  if (daysOut === null) {
-    recommendation = 'monitor';
-    urgency = 'info';
-    headline = 'Add a departure date for booking-timing advice';
-    window = '';
-  } else if (daysOut < 0) {
-    recommendation = 'book_now';
-    urgency = 'high';
-    headline = 'This date is in the past — pick an upcoming date';
-    window = '';
-  } else if (daysOut <= w.lastMin) {
-    recommendation = 'book_now';
-    urgency = 'high';
-    headline = 'Book now — last-minute fares rarely fall';
-    window = 'Book today';
-  } else if (daysOut <= w.late) {
-    recommendation = 'book_soon';
-    urgency = 'elevated';
-    headline = 'Book soon — prices usually climb in the final weeks';
-    window = 'Within the next few days';
-  } else if (daysOut < w.sweetStart) {
-    recommendation = 'book_soon';
-    urgency = 'elevated';
-    headline = 'Good to book — you are approaching the cheapest window';
-    window = 'Within 1–2 weeks';
-  } else if (daysOut <= w.sweetEnd) {
-    recommendation = 'book_now';
-    urgency = 'good';
-    headline = "You're in the sweet spot — a strong time to book";
-    window = 'Now through the next couple of weeks';
-  } else if (daysOut <= w.tooEarly) {
-    recommendation = 'monitor';
-    urgency = 'info';
-    headline = 'Plenty of time — track the price and book in the sweet spot';
-    window = 'Aim for ' + w.sweetStart + '–' + w.sweetEnd + ' days before departure';
-  } else {
-    recommendation = 'wait';
-    urgency = 'info';
-    headline = 'Very early — fares are often not optimized yet';
-    window = 'Revisit around ' + w.sweetEnd + ' days before departure';
-  }
-
-  var month = p.departureDate ? (parseInt(p.departureDate.slice(5, 7), 10) || 0) : 0;
-  var season = PEAK_MONTHS.indexOf(month) >= 0 ? 'peak'
-    : SHOULDER_MONTHS.indexOf(month) >= 0 ? 'shoulder'
-    : month ? 'off-peak' : 'unknown';
-
+function serpItinerary(item, index, isBest) {
+  var legs = Array.isArray(item.flights) ? item.flights : [];
+  if (!legs.length || !(Number(item.price) > 0)) return null;
+  var first = legs[0];
+  var last = legs[legs.length - 1];
+  var depDay = serpDate(first.departure_airport && first.departure_airport.time);
+  var arrDay = serpDate(last.arrival_airport && last.arrival_airport.time);
+  var dayOffset = depDay && arrDay
+    ? Math.round((Date.parse(arrDay) - Date.parse(depDay)) / 86400000)
+    : 0;
+  var airlines = [];
+  legs.forEach(function (l) { if (l.airline && airlines.indexOf(l.airline) === -1) airlines.push(l.airline); });
+  var co2 = item.carbon_emissions || {};
   return {
-    days_until_departure: daysOut,
-    route_scope: scope,
-    season: season,
-    recommendation: recommendation,   // book_now | book_soon | wait | monitor
-    urgency: urgency,                  // good | elevated | high | info
-    headline: headline,
-    best_booking_window: window,
-    sweet_spot_days: { start: w.sweetStart, end: w.sweetEnd },
+    id: (isBest ? 'b' : 'o') + index,
+    best: isBest,
+    price: Number(item.price),
+    airlines: airlines,
+    logo: item.airline_logo || first.airline_logo || '',
+    depart: { time: serpTime(first.departure_airport.time), date: depDay, airport: first.departure_airport.id, name: first.departure_airport.name },
+    arrive: { time: serpTime(last.arrival_airport.time), date: arrDay, airport: last.arrival_airport.id, name: last.arrival_airport.name },
+    dayOffset: dayOffset,
+    duration: Number(item.total_duration) || 0,
+    stops: legs.length - 1,
+    layovers: (item.layovers || []).map(function (l) {
+      return { airport: l.id, name: l.name, duration: Number(l.duration) || 0, overnight: !!l.overnight };
+    }),
+    segments: legs.map(function (l) {
+      return {
+        airline: l.airline || '',
+        flightNumber: l.flight_number || '',
+        airplane: l.airplane || '',
+        legroom: l.legroom || '',
+        duration: Number(l.duration) || 0,
+        from: l.departure_airport.id,
+        to: l.arrival_airport.id,
+        depTime: serpTime(l.departure_airport.time),
+        arrTime: serpTime(l.arrival_airport.time),
+        overnight: !!l.overnight,
+        oftenDelayed: !!l.often_delayed_by_over_30_min,
+      };
+    }),
+    co2: co2.this_flight ? {
+      kg: Math.round(co2.this_flight / 1000),
+      typicalKg: co2.typical_for_this_route ? Math.round(co2.typical_for_this_route / 1000) : null,
+      diffPercent: typeof co2.difference_percent === 'number' ? co2.difference_percent : null,
+    } : null,
   };
 }
 
-/* Merge the deterministic timing skeleton with the AI's live price read.
- * The AI is authoritative on price level / trend / seasonality (it can see
- * current fares); our engine is authoritative on advance-purchase position. */
-function mergeBookingAdvice(timing, aiAdvice) {
-  var a = aiAdvice && typeof aiAdvice === 'object' ? aiAdvice : {};
-  var priceLevel = ['low', 'typical', 'high'].indexOf(a.price_assessment) >= 0 ? a.price_assessment : 'unknown';
-  var trend = ['rising', 'stable', 'falling'].indexOf(a.expected_trend) >= 0 ? a.expected_trend : 'unknown';
-  var confidence = ['high', 'medium', 'low'].indexOf(a.confidence) >= 0 ? a.confidence : 'low';
+function googleFlightsUrl(p) {
+  var q = 'Flights from ' + p.origin + ' to ' + p.destination + ' on ' + p.departureDate +
+    (p.returnDate ? ' returning ' + p.returnDate : ' one way') +
+    (p.passengers > 1 ? ' for ' + p.passengers + ' adults' : '') +
+    (p.cabin !== 'economy' ? ' ' + p.cabin + ' class' : '');
+  return 'https://www.google.com/travel/flights?hl=en&curr=' + encodeURIComponent(p.currency) + '&q=' + encodeURIComponent(q);
+}
 
-  var rec = timing.recommendation;
-  var urgency = timing.urgency;
-  var hasDate = typeof timing.days_until_departure === 'number' && timing.days_until_departure >= 0;
-
-  // Let a strong live price signal override the calendar-only verdict
-  // (only when we have a valid future departure date to reason about).
-  if (hasDate && priceLevel === 'low' && (rec === 'monitor' || rec === 'wait')) {
-    rec = 'book_now'; urgency = 'good';
-  } else if (hasDate && priceLevel === 'high' && trend === 'falling' && rec === 'book_now' && timing.urgency !== 'high') {
-    rec = 'wait'; urgency = 'info';
-  } else if (hasDate && trend === 'rising' && rec === 'monitor') {
-    rec = 'book_soon'; urgency = 'elevated';
+async function handleFlightSearch(request, env, origin) {
+  var body;
+  try { body = await request.json(); } catch (e) {
+    return jsonResponse({ success: false, error: 'Invalid request.' }, origin);
   }
-
-  var summaryBits = [];
-  if (typeof timing.days_until_departure === 'number' && timing.days_until_departure >= 0) {
-    summaryBits.push(timing.days_until_departure + ' days out (' + timing.route_scope + ' route)');
-  }
-  if (priceLevel !== 'unknown') summaryBits.push('current fares look ' + priceLevel);
-  if (trend !== 'unknown') summaryBits.push('prices trending ' + trend);
-
-  var summary = a.summary && typeof a.summary === 'string'
-    ? a.summary.slice(0, 300)
-    : (timing.headline + (summaryBits.length ? '. ' + capitalize(summaryBits.join(', ')) + '.' : '.'));
-
-  return {
-    recommendation: rec,                       // book_now | book_soon | wait | monitor
-    urgency: urgency,                          // good | elevated | high | info
-    headline: REC_HEADLINE[rec] || timing.headline,
-    summary: summary,
-    price_assessment: priceLevel,              // low | typical | high | unknown
-    expected_trend: trend,                     // rising | stable | falling | unknown
-    confidence: confidence,
-    days_until_departure: timing.days_until_departure,
-    route_scope: timing.route_scope,
-    season: timing.season,
-    best_booking_window: (a.best_booking_window && typeof a.best_booking_window === 'string')
-      ? a.best_booking_window.slice(0, 120) : timing.best_booking_window,
-    seasonality_note: (a.seasonality_note && typeof a.seasonality_note === 'string')
-      ? a.seasonality_note.slice(0, 240) : '',
-    cheaper_alternative_dates: (a.cheaper_alternative_dates && typeof a.cheaper_alternative_dates === 'string')
-      ? a.cheaper_alternative_dates.slice(0, 240) : '',
-    sweet_spot_days: timing.sweet_spot_days,
+  var iata = /^[A-Z]{3}$/;
+  var ymd = /^\d{4}-\d{2}-\d{2}$/;
+  var p = {
+    origin: String(body.origin || '').trim().toUpperCase(),
+    destination: String(body.destination || '').trim().toUpperCase(),
+    departureDate: String(body.departureDate || ''),
+    returnDate: String(body.returnDate || ''),
+    passengers: Math.min(Math.max(parseInt(body.passengers, 10) || 1, 1), 9),
+    cabin: SERP_CABIN[body.cabin] ? body.cabin : 'economy',
+    currency: /^[A-Z]{3}$/.test(String(body.currency || '')) ? body.currency : 'USD',
   };
-}
-
-var REC_HEADLINE = {
-  book_now:  'Book now',
-  book_soon: 'Book soon',
-  wait:      'Consider waiting',
-  monitor:  'Track the price',
-};
-
-function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-
-function buildFlightPrompt(p) {
-  var preferred = p.preferredAirlines && p.preferredAirlines.length > 0 ? p.preferredAirlines.join(', ') : 'No preference';
-  var avoid = p.avoidAirlines && p.avoidAirlines.length > 0 ? p.avoidAirlines.join(', ') : 'None';
-  var budget = p.maxBudget ? p.maxBudget + ' ' + p.currency : 'No limit';
-  return 'Find current flight options using the following search criteria:\n\n'
-    + 'Origin: ' + p.origin + '\nDestination: ' + p.destination + '\n'
-    + 'Departure date: ' + p.departureDate + '\nReturn date: ' + (p.returnDate || 'N/A (one-way)') + '\n'
-    + 'Trip type: ' + p.tripType + '\nPassengers: ' + p.passengers + '\n'
-    + 'Cabin class: ' + p.cabinClass + '\nFlexible date range: +/- ' + (p.flexibleDays || 0) + ' days\n'
-    + 'Maximum budget: ' + budget + '\nPreferred airlines: ' + preferred + '\n'
-    + 'Avoid airlines: ' + avoid + '\nMaximum stops: ' + p.maxStops + '\n'
-    + 'Priority mode: ' + p.priorityMode + '\n\n'
-    + 'In addition to listing flights, give booking-timing guidance for THIS route and date. '
-    + 'Assess whether current fares are low/typical/high versus the usual price for this route and season, '
-    + 'whether prices are likely rising/stable/falling between now and departure, the best window to book, '
-    + 'a short seasonality note, and (if helpful) nearby cheaper dates. Base this on real fare-trend and '
-    + 'seasonality information from your web search; if unsure, say so and use a lower confidence.\n\n'
-    + 'Return the result in this exact JSON structure (no markdown, no code fences, just raw JSON):\n\n'
-    + '{"search_summary":{"origin":"","destination":"","departure_date":"","return_date":"","trip_type":"","passengers":0,"cabin_class":"","currency":"","budget":0,"freshness_note":"","result_confidence":"high | medium | low"},"booking_advice":{"price_assessment":"low | typical | high","expected_trend":"rising | stable | falling","confidence":"high | medium | low","best_booking_window":"","seasonality_note":"","cheaper_alternative_dates":"","summary":""},"recommendation":{"best_overall_flight_id":"","cheapest_flight_id":"","fastest_flight_id":"","best_under_budget_flight_id":"","explanation":""},"flights":[{"id":"","airline":"","flight_numbers":[],"provider":"","price":0,"currency":"","is_under_budget":true,"departure_airport":"","arrival_airport":"","departure_time":"","arrival_time":"","total_duration_minutes":0,"stops":0,"layovers":[{"airport":"","duration_minutes":0}],"co2_kg":0,"fare_brand":"","carry_on_included":true,"checked_bags_included":0,"refundable":false,"self_transfer":false,"booking_url":"","source_url":"","source_name":"","confidence":"high | medium | low","notes":"","score":0,"badges":[]}],"warnings":[]}';
-}
-
-function extractFlightJson(text) {
-  var fence = text.match(/```(?:json)?\s*\n?([\s\S]*?)```/);
-  if (fence) return fence[1].trim();
-  var start = text.indexOf('{');
-  var end = text.lastIndexOf('}');
-  if (start !== -1 && end > start) return text.substring(start, end + 1);
-  return text.trim();
-}
-
-/* Coerce a possibly-string numeric value; fall back to `fallback` if not finite. */
-function flightNum(v, fallback) {
-  if (typeof v === 'number') return Number.isFinite(v) ? v : fallback;
-  if (typeof v === 'string') {
-    var n = parseFloat(v.replace(/[^0-9.\-]/g, ''));
-    return Number.isFinite(n) ? n : fallback;
+  if (!iata.test(p.origin) || !iata.test(p.destination)) {
+    return jsonResponse({ success: false, error: 'Pick both airports from the list.' }, origin);
   }
-  return fallback;
-}
-
-/* Like flightNum but returns null (not a default) when there is no usable value. */
-function flightNumOrNull(v) {
-  if (typeof v === 'number') return Number.isFinite(v) ? v : null;
-  if (typeof v === 'string') {
-    var n = parseFloat(v.replace(/[^0-9.\-]/g, ''));
-    return Number.isFinite(n) ? n : null;
+  if (!ymd.test(p.departureDate) || (p.returnDate && !ymd.test(p.returnDate))) {
+    return jsonResponse({ success: false, error: 'Pick valid dates.' }, origin);
   }
-  return null;
-}
+  if (!env.SERPAPI_KEY) {
+    return jsonResponse({ success: false, error: 'Flight search is not set up yet.' }, origin);
+  }
 
-/* Enforce the user's max-stops preference in case the model ignores it. */
-function enforceMaxStops(flights, maxStops) {
-  if (maxStops === 'nonstop') return flights.filter(function(f) { return f.stops === 0; });
-  if (maxStops === '1') return flights.filter(function(f) { return f.stops <= 1; });
-  return flights;
-}
-
-
-function extractIataCode(str) {
-  var s = String(str || '').trim();
-  var m = s.match(/\(([A-Za-z]{3})\)/);
-  if (m) return m[1].toUpperCase();
-  if (/^[A-Za-z]{3}$/.test(s)) return s.toUpperCase();
-  return '';
-}
-
-function buildGoogleFlightsUrl(params, flight) {
-  var origin = extractIataCode(flight && flight.departure_airport) || extractIataCode(params.origin);
-  var dest = extractIataCode(flight && flight.arrival_airport) || extractIataCode(params.destination);
-  var dep = String((flight && flight.departure_date) || params.departureDate || '').slice(0, 10);
-  var ret = params.tripType === 'round-trip' ? String(params.returnDate || '').slice(0, 10) : '';
-  if (!origin || !dest || !dep) return '';
-  var q = 'Flights from ' + origin + ' to ' + dest + ' on ' + dep;
-  if (ret) q += ' through ' + ret;
-  var pax = parseInt(params.passengers, 10) || 1;
-  if (pax > 1) q += ' for ' + pax + ' adults';
-  return 'https://www.google.com/travel/flights?hl=en&curr=' + encodeURIComponent(params.currency || 'USD') + '&q=' + encodeURIComponent(q);
-}
-
-function buildKayakUrl(params, flight) {
-  var origin = extractIataCode(flight && flight.departure_airport) || extractIataCode(params.origin);
-  var dest = extractIataCode(flight && flight.arrival_airport) || extractIataCode(params.destination);
-  var dep = String((flight && flight.departure_date) || params.departureDate || '').slice(0, 10);
-  var ret = params.tripType === 'round-trip' ? String(params.returnDate || '').slice(0, 10) : '';
-  var pax = Math.max(1, parseInt(params.passengers, 10) || 1);
-  if (!origin || !dest || !dep) return '';
-  var url = 'https://www.kayak.com/flights/' + origin + '-' + dest + '/' + dep;
-  if (ret) url += '/' + ret;
-  return url + '?sort=bestflight_a&adults=' + pax;
-}
-
-/** Ensure every flight has a bookable redirect URL for SkyFare's Book CTAs. */
-function enrichBookingUrls(response, params) {
-  if (!response || !Array.isArray(response.flights)) return response;
-  response.flights = response.flights.map(function(f) {
-    var booking = safeUrl(f.booking_url) || '';
-    var source = safeUrl(f.source_url) || '';
-    if (!booking) {
-      booking = buildGoogleFlightsUrl(params, f) || buildKayakUrl(params, f) || source;
-    }
-    if (!f.provider && booking) {
-      try {
-        var host = new URL(booking).hostname.replace(/^www\./, '');
-        if (/google\./i.test(host)) f.provider = 'Google Flights';
-        else if (/kayak\./i.test(host)) f.provider = 'Kayak';
-        else if (/skyscanner\./i.test(host)) f.provider = 'Skyscanner';
-        else f.provider = host;
-      } catch (e) {}
-    }
-    f.booking_url = booking;
-    f.source_url = source;
-    f.book_links = {
-      primary: booking,
-      google: buildGoogleFlightsUrl(params, f),
-      kayak: buildKayakUrl(params, f)
-    };
-    return f;
+  var qs = new URLSearchParams({
+    engine: 'google_flights',
+    departure_id: p.origin,
+    arrival_id: p.destination,
+    outbound_date: p.departureDate,
+    type: p.returnDate ? '1' : '2',
+    adults: String(p.passengers),
+    travel_class: String(SERP_CABIN[p.cabin]),
+    currency: p.currency,
+    hl: 'en',
+    gl: SERP_GL[p.currency] || 'us',
   });
-  return response;
-}
+  if (p.returnDate) qs.set('return_date', p.returnDate);
 
-function normalizeFlightResponse(raw, params) {
-  if (!raw.search_summary) {
-    raw.search_summary = {
-      origin: params.origin, destination: params.destination,
-      departure_date: params.departureDate, return_date: params.returnDate || '',
-      trip_type: params.tripType, passengers: params.passengers,
-      cabin_class: params.cabinClass, currency: params.currency,
-      budget: params.maxBudget || 0, freshness_note: 'Data freshness unknown',
-      result_confidence: 'low'
-    };
-  }
-  if (!raw.recommendation) {
-    raw.recommendation = { best_overall_flight_id: '', cheapest_flight_id: '', fastest_flight_id: '', best_under_budget_flight_id: '', explanation: '' };
-  }
-  if (!Array.isArray(raw.flights)) raw.flights = [];
-  if (!Array.isArray(raw.warnings)) raw.warnings = [];
-  raw.flights = raw.flights.map(function(f, i) {
-    // Models frequently return numbers as strings ("450"); coerce safely so
-    // scoring, deal quality, budget checks and filters don't silently break.
-    var price = flightNum(f.price, 0);
-    var checkedBags = flightNumOrNull(f.checked_bags_included);
-    var co2 = flightNumOrNull(f.co2_kg);
-    return {
-      id: f.id || 'flight_' + (i + 1),
-      airline: f.airline || 'Unknown Airline',
-      flight_numbers: Array.isArray(f.flight_numbers) ? f.flight_numbers : [],
-      provider: f.provider || '',
-      price: price,
-      currency: f.currency || params.currency,
-      is_under_budget: typeof f.is_under_budget === 'boolean' ? f.is_under_budget : (params.maxBudget ? price <= params.maxBudget : true),
-      departure_airport: f.departure_airport || params.origin,
-      arrival_airport: f.arrival_airport || params.destination,
-      departure_time: f.departure_time || '',
-      arrival_time: f.arrival_time || '',
-      total_duration_minutes: flightNum(f.total_duration_minutes, 0),
-      stops: flightNum(f.stops, 0),
-      layovers: Array.isArray(f.layovers) ? f.layovers.map(function(l) {
-        return { airport: (l && l.airport) || '', duration_minutes: flightNum(l && l.duration_minutes, 0) };
-      }) : [],
-      co2_kg: co2 !== null && co2 > 0 ? Math.round(co2) : null,
-      fare_brand: typeof f.fare_brand === 'string' ? f.fare_brand.slice(0, 60) : '',
-      carry_on_included: typeof f.carry_on_included === 'boolean' ? f.carry_on_included : null,
-      checked_bags_included: checkedBags !== null ? Math.max(0, Math.round(checkedBags)) : null,
-      refundable: typeof f.refundable === 'boolean' ? f.refundable : null,
-      self_transfer: f.self_transfer === true,
-      emissions_level: 'unknown',
-      deal_quality: 'unknown',
-      day_offset: 0,
-      overnight: false,
-      booking_url: safeUrl(f.booking_url) || '',
-      source_url: safeUrl(f.source_url) || '',
-      source_name: f.source_name || '',
-      confidence: ['high', 'medium', 'low'].indexOf(f.confidence) >= 0 ? f.confidence : 'low',
-      notes: f.notes || '',
-      score: flightNum(f.score, 0),
-      badges: Array.isArray(f.badges) ? f.badges : [],
-    };
-  });
-  return raw;
-}
+  var cache = caches.default;
+  var cacheKey = new Request('https://skyfare.cache/flights?' + qs.toString());
+  var hit = await cache.match(cacheKey);
+  if (hit) return jsonResponseRaw(await hit.text(), origin, { 'X-SkyFare-Cache': 'hit' });
 
-function flightNorm100(val, min, max) {
-  if (max === min) return 100;
-  return Math.round(((max - val) / (max - min)) * 100);
-}
-
-function flightMedian(arr) {
-  if (!arr.length) return 0;
-  var s = arr.slice().sort(function(a, b) { return a - b; });
-  var mid = Math.floor(s.length / 2);
-  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
-}
-
-/* "HH:MM" (24h) or "8:00 AM" -> minutes since midnight, or null. */
-function flightTimeToMinutes(t) {
-  if (!t || typeof t !== 'string') return null;
-  var ampm = t.match(/(\d{1,2}):(\d{2})\s*([AaPp][Mm])/);
-  if (ampm) {
-    var h = parseInt(ampm[1], 10) % 12;
-    if (/[Pp]/.test(ampm[3])) h += 12;
-    return h * 60 + parseInt(ampm[2], 10);
-  }
-  var m = t.match(/(\d{1,2}):(\d{2})/);
-  if (!m) return null;
-  return (parseInt(m[1], 10) % 24) * 60 + parseInt(m[2], 10);
-}
-
-/* Derive arrival day offset (+1, +2…) and red-eye flag from local clock
- * times and the total duration, the way Google Flights shows "11:05 +1". */
-function flightDayShape(f) {
-  var dep = flightTimeToMinutes(f.departure_time);
-  var arr = flightTimeToMinutes(f.arrival_time);
-  var dur = f.total_duration_minutes;
-  var offset = 0;
-  if (dep !== null && dur > 0) {
-    offset = Math.floor((dep + dur) / 1440);
-  } else if (dep !== null && arr !== null && arr < dep) {
-    offset = 1;
-  }
-  // Red-eye: departs late evening / overnight and lands the next day, or a
-  // long-haul that flies through the night.
-  var overnight = offset >= 1 && dep !== null && (dep >= 18 * 60 || dep <= 5 * 60);
-  return { day_offset: offset, overnight: overnight };
-}
-
-/* SkyFare Value Score (Phase 1 handover): Price 40%, Duration 25%,
- * Stops/layovers 15%, Departure/arrival timing 10%, Airline quality 10%.
- * Emissions remain informational badges, not part of the core score. */
-function flightTimingScore(f) {
-  var dep = flightTimeToMinutes(f.departure_time);
-  var arr = flightTimeToMinutes(f.arrival_time);
-  var score = 70;
-  if (dep !== null) {
-    // Prefer mid-morning / afternoon departures; penalise red-eyes and very late.
-    if (dep >= 8 * 60 && dep < 11 * 60) score = 100;
-    else if (dep >= 11 * 60 && dep < 18 * 60) score = 90;
-    else if (dep >= 6 * 60 && dep < 8 * 60) score = 75;
-    else if (dep >= 18 * 60 && dep < 21 * 60) score = 65;
-    else if (dep >= 21 * 60 || dep < 5 * 60) score = 30;
-    else score = 50;
-  }
-  if (arr !== null) {
-    if (arr >= 22 * 60 || arr < 6 * 60) score = Math.min(score, 45);
-    else if (arr >= 20 * 60) score = Math.min(score, 65);
-  }
-  if (f.overnight) score = Math.min(score, 35);
-  if ((f.day_offset || 0) >= 2) score = Math.min(score, 40);
-  return score;
-}
-
-function flightLayoverQuality(f) {
-  var score = 100;
-  if (!f.stops) return score;
-  score -= Math.min(60, f.stops * 25);
-  var layovers = Array.isArray(f.layovers) ? f.layovers : [];
-  layovers.forEach(function(l) {
-    var mins = typeof l.duration_minutes === 'number' ? l.duration_minutes : 0;
-    if (mins > 0 && mins < 50) score -= 25;      // tight connection risk
-    else if (mins >= 240) score -= 20;           // long layover fatigue
-    else if (mins >= 180) score -= 10;
-  });
-  if (f.self_transfer) score -= 30;
-  return Math.max(0, Math.min(100, score));
-}
-
-function flightAirlineQuality(f) {
-  var name = String(f.airline || '').toLowerCase();
-  var brand = String(f.fare_brand || '').toLowerCase();
-  // Heuristic tiers until we have a real reliability feed (Phase 3).
-  var premium = /singapore|qatar|emirates|ana |all nippon|japan airlines|cathay|swiss|lufthansa|british airways|qantas|air new zealand|delta|united|american|air france|klm|finnair|turkish|eva air|korean air|virgin/;
-  var solid = /indigo|vistara|air india|scoot|jetstar|peach|airasia|vietjet|thai airways|malaysia airlines|garuda|philippine|etihad|oman air|saudia|iberia|tap |alitalia|ita airways|aeromexico|copa|latam|avianca|alaska|westjet|porter|ryanair|easyjet|wizz/;
-  var ulcc = /spirit|frontier|allegiant|cape air|nok air|lion air|cebu pacific|spicejet|go first|zipair/;
-  var score = 55;
-  if (premium.test(name)) score = 88;
-  else if (solid.test(name)) score = 72;
-  else if (ulcc.test(name)) score = 42;
-  if (/basic|light|saver|blue basic|basic economy/.test(brand)) score = Math.max(25, score - 18);
-  if (f.refundable === true) score = Math.min(100, score + 5);
-  if (f.carry_on_included === false) score = Math.max(20, score - 8);
-  if (f.confidence === 'high') score = Math.min(100, score + 4);
-  else if (f.confidence === 'low') score = Math.max(20, score - 8);
-  return score;
-}
-
-function scoreFlights(response, priorityMode, maxBudget) {
-  var flights = response.flights;
-  if (flights.length === 0) return response;
-  var prices = flights.map(function(f) { return f.price; }).filter(function(p) { return p > 0; });
-  var durs = flights.map(function(f) { return f.total_duration_minutes; }).filter(function(d) { return d > 0; });
-  var stopsArr = flights.map(function(f) { return f.stops; });
-  var co2s = flights.map(function(f) { return f.co2_kg; }).filter(function(c) { return typeof c === 'number' && c > 0; });
-  // Guard against empty arrays: Math.min/max of [] yield Infinity/-Infinity,
-  // which propagate NaN into every score. Fall back to neutral bounds.
-  var minP = prices.length ? Math.min.apply(null, prices) : 0, maxP = prices.length ? Math.max.apply(null, prices) : 0;
-  var minD = durs.length ? Math.min.apply(null, durs) : 0, maxD = durs.length ? Math.max.apply(null, durs) : 0;
-  var minS = stopsArr.length ? Math.min.apply(null, stopsArr) : 0, maxS = stopsArr.length ? Math.max.apply(null, stopsArr) : 0;
-  var minC = co2s.length ? Math.min.apply(null, co2s) : 0;
-  var maxC = co2s.length ? Math.max.apply(null, co2s) : 0;
-  var medP = flightMedian(prices);
-  var medC = flightMedian(co2s);
-  var hasEmissions = co2s.length >= 2 && maxC > minC;
-
-  // Handover Value Score weights (tunable).
-  var W = { price: 0.40, dur: 0.25, stops: 0.15, timing: 0.10, airline: 0.10 };
-
-  flights.forEach(function(f) {
-    var shape = flightDayShape(f);
-    f.day_offset = shape.day_offset;
-    f.overnight = shape.overnight;
-
-    var ps = f.price > 0 ? flightNorm100(f.price, minP, maxP) : 50;
-    var ds = f.total_duration_minutes > 0 ? flightNorm100(f.total_duration_minutes, minD, maxD) : 50;
-    // Blend stop count with layover quality (handover: "stops + layover quality").
-    var stopCountScore = flightNorm100(f.stops, minS, maxS);
-    var layoverScore = flightLayoverQuality(f);
-    var ss = Math.round(stopCountScore * 0.55 + layoverScore * 0.45);
-    var ts = flightTimingScore(f);
-    var as = flightAirlineQuality(f);
-
-    // Soft budget nudge: keep under-budget options visible without rewriting the formula.
-    if (maxBudget && maxBudget > 0 && f.price > 0) {
-      if (f.price > maxBudget) ps = Math.max(0, ps - 15);
-      else ps = Math.min(100, ps + 5);
-    }
-
-    f.score = Math.round(ps * W.price + ds * W.dur + ss * W.stops + ts * W.timing + as * W.airline);
-    f.timing_score = ts;
-    f.value_breakdown = { price: ps, duration: ds, stops: ss, timing: ts, airline: as };
-    f.is_under_budget = maxBudget ? f.price <= maxBudget : true;
-
-    // Emissions level relative to the result set's median.
-    if (typeof f.co2_kg === 'number' && f.co2_kg > 0 && medC > 0) {
-      f.emissions_level = f.co2_kg <= medC * 0.88 ? 'low' : (f.co2_kg >= medC * 1.12 ? 'high' : 'typical');
-    } else {
-      f.emissions_level = 'unknown';
-    }
-
-    // Deal quality vs the median fare (Kayak/Hopper-style read).
-    if (f.price > 0 && medP > 0) {
-      f.deal_quality = f.price <= medP * 0.82 ? 'great'
-        : f.price <= medP * 0.96 ? 'good'
-        : f.price <= medP * 1.18 ? 'typical' : 'high';
-    } else {
-      f.deal_quality = 'unknown';
-    }
-
-    f.badges = [];
-  });
-  // Only consider flights with a usable value; the previous reduce could
-  // "walk off" to the last flight when no flight had a valid price/duration.
-  var pricedFlights = flights.filter(function(f) { return f.price > 0; });
-  var timedFlights = flights.filter(function(f) { return f.total_duration_minutes > 0; });
-  var cheapest = (pricedFlights.length ? pricedFlights : flights).reduce(function(a, b) { return a.price <= b.price ? a : b; });
-  var fastest = (timedFlights.length ? timedFlights : flights).reduce(function(a, b) { return a.total_duration_minutes <= b.total_duration_minutes ? a : b; });
-  var best = flights.reduce(function(a, b) { return a.score >= b.score ? a : b; });
-  var bestTiming = flights.reduce(function(a, b) {
-    return (a.timing_score || 0) >= (b.timing_score || 0) ? a : b;
-  });
-  var greenest = co2s.length ? flights.reduce(function(a, b) {
-    var av = typeof a.co2_kg === 'number' && a.co2_kg > 0 ? a.co2_kg : Infinity;
-    var bv = typeof b.co2_kg === 'number' && b.co2_kg > 0 ? b.co2_kg : Infinity;
-    return av <= bv ? a : b;
-  }) : null;
-  var underBudget = flights.filter(function(f) { return f.is_under_budget; });
-  var bestUB = underBudget.length > 0 ? underBudget.reduce(function(a, b) { return a.score >= b.score ? a : b; }) : null;
-  function addFlightBadge(id, badge) {
-    var f = flights.find(function(fl) { return fl.id === id; });
-    if (f && f.badges.indexOf(badge) < 0) f.badges.push(badge);
-  }
-  addFlightBadge(cheapest.id, 'Cheapest');
-  addFlightBadge(fastest.id, 'Fastest');
-  addFlightBadge(best.id, 'Best Overall');
-  addFlightBadge(bestTiming.id, 'Best Timing');
-  if (bestUB) addFlightBadge(bestUB.id, 'Under Budget');
-  flights.filter(function(f) { return f.stops === 0; }).forEach(function(f) { addFlightBadge(f.id, 'Nonstop'); });
-  // "Great Deal" for fares meaningfully below the median (only meaningful with a few quotes).
-  if (flights.length >= 3) {
-    flights.filter(function(f) { return f.deal_quality === 'great'; }).forEach(function(f) { addFlightBadge(f.id, 'Great Deal'); });
-  }
-  if (hasEmissions && greenest) addFlightBadge(greenest.id, 'Low CO2');
-  var sorted;
-  switch (priorityMode) {
-    case 'cheapest': sorted = flights.slice().sort(function(a, b) { return a.price - b.price; }); break;
-    case 'fastest': sorted = flights.slice().sort(function(a, b) { return a.total_duration_minutes - b.total_duration_minutes; }); break;
-    case 'best_under_budget':
-      sorted = underBudget.slice().sort(function(a, b) { return b.score - a.score; })
-        .concat(flights.filter(function(f) { return !f.is_under_budget; }).sort(function(a, b) { return b.score - a.score; }));
-      break;
-    default: sorted = flights.slice().sort(function(a, b) { return b.score - a.score; });
-  }
-  // Price-insights summary (Google-Flights-style low / median / high range).
-  response.price_insights = {
-    currency: flights[0] ? flights[0].currency : '',
-    low: prices.length ? Math.round(minP) : 0,
-    median: prices.length ? Math.round(medP) : 0,
-    high: prices.length ? Math.round(maxP) : 0,
-    cheapest_deal_quality: cheapest.deal_quality || 'unknown',
-    co2_low: co2s.length ? Math.round(minC) : 0,
-    co2_median: co2s.length ? Math.round(medC) : 0,
-    co2_high: co2s.length ? Math.round(maxC) : 0,
-    greenest_flight_id: greenest ? greenest.id : '',
-  };
-  var rec = response.recommendation;
-  rec.cheapest_flight_id = cheapest.id;
-  rec.fastest_flight_id = fastest.id;
-  rec.best_overall_flight_id = best.id;
-  rec.best_timing_flight_id = bestTiming.id;
-  rec.best_under_budget_flight_id = bestUB ? bestUB.id : '';
-  if (!rec.explanation) {
-    var parts = [best.airline + ' at ' + best.currency + ' ' + best.price + ' ranks Best Overall (Value Score ' + best.score + ').'];
-    if (cheapest.id !== best.id) parts.push(cheapest.airline + ' is cheapest at ' + cheapest.currency + ' ' + cheapest.price + '.');
-    if (fastest.id !== best.id) parts.push(fastest.airline + ' is fastest at ' + fastest.total_duration_minutes + ' min.');
-    if (bestTiming.id !== best.id) parts.push(bestTiming.airline + ' has the best departure/arrival timing.');
-    rec.explanation = parts.join(' ');
-  }
-  response.flights = sorted;
-  response.recommendation = rec;
-  return response;
-}
-
-/* ───────────── Amadeus Self-Service connector (real inventory) ─────────────
- * Primary flight source when AMADEUS_CLIENT_ID / AMADEUS_CLIENT_SECRET are set.
- * Falls back to the Perplexity Sonar path on any error so search never breaks.
- * Docs: https://developers.amadeus.com (Flight Offers Search v2). */
-
-var _amadeusToken = { value: null, exp: 0 };
-
-function amadeusHost(env) {
-  if (env.AMADEUS_BASE_URL) return env.AMADEUS_BASE_URL.replace(/\/$/, '');
-  return env.AMADEUS_ENV === 'production' ? 'https://api.amadeus.com' : 'https://test.api.amadeus.com';
-}
-
-function mapAmadeusCabin(cabinClass) {
-  switch (String(cabinClass || '').toLowerCase()) {
-    case 'premium_economy': return 'PREMIUM_ECONOMY';
-    case 'business': return 'BUSINESS';
-    case 'first': return 'FIRST';
-    default: return 'ECONOMY';
-  }
-}
-
-function isoDurationToMinutes(str) {
-  if (!str || typeof str !== 'string') return 0;
-  var m = str.match(/P(?:(\d+)D)?T(?:(\d+)H)?(?:(\d+)M)?/);
-  if (!m) return 0;
-  return (parseInt(m[1] || 0, 10) * 1440) + (parseInt(m[2] || 0, 10) * 60) + parseInt(m[3] || 0, 10);
-}
-
-function atTime(at) { return typeof at === 'string' && at.length >= 16 ? at.slice(11, 16) : ''; }
-function atDate(at) { return typeof at === 'string' && at.length >= 10 ? at.slice(0, 10) : ''; }
-function minutesBetweenAt(a, b) {
-  var ta = Date.parse(a), tb = Date.parse(b);
-  if (isNaN(ta) || isNaN(tb)) return 0;
-  return Math.max(0, Math.round((tb - ta) / 60000));
-}
-
-async function getAmadeusToken(env) {
-  var now = Date.now();
-  if (_amadeusToken.value && _amadeusToken.exp > now + 30000) return _amadeusToken.value;
-  var body = 'grant_type=client_credentials'
-    + '&client_id=' + encodeURIComponent(env.AMADEUS_CLIENT_ID)
-    + '&client_secret=' + encodeURIComponent(env.AMADEUS_CLIENT_SECRET);
-  var res = await fetch(amadeusHost(env) + '/v1/security/oauth2/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body
-  });
-  if (!res.ok) throw new Error('Amadeus auth ' + res.status);
-  var j = await res.json();
-  if (!j || !j.access_token) throw new Error('Amadeus auth: no token');
-  _amadeusToken = { value: j.access_token, exp: now + ((j.expires_in || 1500) * 1000) };
-  return _amadeusToken.value;
-}
-
-async function amadeusFetch(url, token, timeoutMs) {
-  var controller = new AbortController();
-  var t = setTimeout(function () { controller.abort(); }, timeoutMs || 20000);
+  qs.set('api_key', env.SERPAPI_KEY);
+  var ctrl = new AbortController();
+  var timer = setTimeout(function () { ctrl.abort(); }, FLIGHT_TIMEOUT_MS);
+  var raw;
   try {
-    return await fetch(url, { headers: { 'Authorization': 'Bearer ' + token }, signal: controller.signal });
-  } finally { clearTimeout(t); }
-}
-
-/* Map an Amadeus Flight Offers Search response to the SkyFare `raw` shape that
- * normalizeFlightResponse() / scoreFlights() already understand. */
-function amadeusOffersToRaw(json, p, depIata, arrIata) {
-  var carriers = (json && json.dictionaries && json.dictionaries.carriers) || {};
-  var offers = (json && Array.isArray(json.data)) ? json.data : [];
-  var flights = offers.map(function (offer, i) {
-    var itin = (offer.itineraries && offer.itineraries[0]) || { segments: [] };
-    var segs = itin.segments || [];
-    if (!segs.length) return null;
-    var first = segs[0], last = segs[segs.length - 1];
-
-    var layovers = [];
-    for (var s = 0; s < segs.length - 1; s++) {
-      layovers.push({
-        airport: segs[s].arrival && segs[s].arrival.iataCode || '',
-        duration_minutes: minutesBetweenAt(segs[s].arrival && segs[s].arrival.at, segs[s + 1].departure && segs[s + 1].departure.at)
-      });
+    var res = await fetch('https://serpapi.com/search.json?' + qs.toString(), { signal: ctrl.signal });
+    raw = await res.json();
+    if (!res.ok || raw.error) {
+      var noResults = raw && typeof raw.error === 'string' && /hasn't returned any results/i.test(raw.error);
+      return jsonResponse({ success: false, error: noResults ? 'No flights found for these dates.' : 'Flight search failed. Try again.' }, origin);
     }
-
-    // Per-traveller price (SkyFare price is per person; card multiplies for totals).
-    var tp = (offer.travelerPricings && offer.travelerPricings[0]) || null;
-    var perPerson = tp && tp.price && tp.price.total ? parseFloat(tp.price.total)
-      : (offer.price && offer.price.grandTotal ? parseFloat(offer.price.grandTotal) / Math.max(1, (offer.travelerPricings || []).length || 1) : 0);
-
-    var fd = tp && tp.fareDetailsBySegment && tp.fareDetailsBySegment[0] ? tp.fareDetailsBySegment[0] : {};
-    var checkedBags = fd.includedCheckedBags && typeof fd.includedCheckedBags.quantity === 'number' ? fd.includedCheckedBags.quantity : null;
-    var carryOn = fd.includedCabinBags && typeof fd.includedCabinBags.quantity === 'number' ? fd.includedCabinBags.quantity > 0 : null;
-
-    var co2 = 0;
-    (tp && tp.fareDetailsBySegment || []).forEach(function (seg) {
-      if (seg.co2Emissions && seg.co2Emissions[0] && typeof seg.co2Emissions[0].weight === 'number') co2 += seg.co2Emissions[0].weight;
-    });
-
-    var carrierCode = (offer.validatingAirlineCodes && offer.validatingAirlineCodes[0]) || first.carrierCode || '';
-    var airline = carriers[carrierCode] ? titleCaseAirline(carriers[carrierCode]) : (carrierCode || 'Airline');
-
-    return {
-      id: offer.id ? ('amadeus_' + offer.id) : ('amadeus_' + (i + 1)),
-      airline: airline,
-      flight_numbers: segs.map(function (sg) { return (sg.carrierCode || '') + (sg.number || ''); }).filter(Boolean),
-      provider: 'Amadeus',
-      price: Math.round(perPerson),
-      currency: (offer.price && offer.price.currency) || p.currency,
-      is_under_budget: p.maxBudget ? perPerson <= p.maxBudget : true,
-      departure_airport: (first.departure && first.departure.iataCode) || depIata,
-      arrival_airport: (last.arrival && last.arrival.iataCode) || arrIata,
-      departure_date: atDate(first.departure && first.departure.at) || p.departureDate,
-      departure_time: atTime(first.departure && first.departure.at),
-      arrival_time: atTime(last.arrival && last.arrival.at),
-      total_duration_minutes: isoDurationToMinutes(itin.duration),
-      stops: Math.max(0, segs.length - 1),
-      layovers: layovers,
-      co2_kg: co2 > 0 ? Math.round(co2) : 0,
-      fare_brand: fd.brandedFare || fd.fareBasis || (fd.cabin ? titleCaseAirline(fd.cabin) : ''),
-      carry_on_included: carryOn,
-      checked_bags_included: checkedBags,
-      refundable: null,
-      self_transfer: false,
-      booking_url: '',
-      source_url: '',
-      source_name: 'Amadeus',
-      confidence: 'high',
-      notes: '',
-      score: 0,
-      badges: []
-    };
-  }).filter(Boolean);
-
-  return {
-    search_summary: {
-      origin: depIata, destination: arrIata,
-      departure_date: p.departureDate, return_date: p.tripType === 'round-trip' ? p.returnDate : '',
-      trip_type: p.tripType, passengers: p.passengers, cabin_class: p.cabinClass,
-      currency: p.currency, budget: p.maxBudget || 0,
-      freshness_note: 'Live fares from Amadeus, retrieved ' + new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC.',
-      result_confidence: 'high'
-    },
-    recommendation: { best_overall_flight_id: '', cheapest_flight_id: '', fastest_flight_id: '', best_under_budget_flight_id: '', explanation: '' },
-    flights: flights,
-    warnings: []
-  };
-}
-
-function titleCaseAirline(name) {
-  return String(name || '').toLowerCase().replace(/\b([a-z])/g, function (m0, c) { return c.toUpperCase(); });
-}
-
-async function searchAmadeus(env, p, depIata, arrIata) {
-  var token = await getAmadeusToken(env);
-  var qs = new URLSearchParams();
-  qs.set('originLocationCode', depIata);
-  qs.set('destinationLocationCode', arrIata);
-  qs.set('departureDate', p.departureDate);
-  if (p.tripType === 'round-trip' && p.returnDate) qs.set('returnDate', p.returnDate);
-  qs.set('adults', String(Math.max(1, p.passengers)));
-  qs.set('travelClass', mapAmadeusCabin(p.cabinClass));
-  qs.set('currencyCode', p.currency);
-  qs.set('max', '20');
-  if (p.maxStops === 'nonstop') qs.set('nonStop', 'true');
-  if (p.maxBudget) qs.set('maxPrice', String(Math.floor(p.maxBudget)));
-  var res = await amadeusFetch(amadeusHost(env) + '/v2/shopping/flight-offers?' + qs.toString(), token, 20000);
-  if (!res.ok) {
-    var body = '';
-    try { body = await res.text(); } catch (e) {}
-    throw new Error('Amadeus search ' + res.status + ' ' + body.slice(0, 160));
+  } catch (e) {
+    return jsonResponse({ success: false, error: e && e.name === 'AbortError' ? 'Search timed out. Try again.' : 'Flight search failed. Try again.' }, origin);
+  } finally {
+    clearTimeout(timer);
   }
-  var json = await res.json();
-  return amadeusOffersToRaw(json, p, depIata, arrIata);
+
+  var flights = []
+    .concat((raw.best_flights || []).map(function (f, i) { return serpItinerary(f, i, true); }))
+    .concat((raw.other_flights || []).map(function (f, i) { return serpItinerary(f, i, false); }))
+    .filter(Boolean);
+  if (!flights.length) {
+    return jsonResponse({ success: false, error: 'No flights found for these dates.' }, origin);
+  }
+
+  var pi = raw.price_insights || {};
+  var data = {
+    source: 'google',
+    currency: p.currency,
+    roundTrip: !!p.returnDate,
+    googleUrl: (raw.search_metadata && raw.search_metadata.google_flights_url) || googleFlightsUrl(p),
+    insights: pi.lowest_price ? {
+      lowest: pi.lowest_price,
+      level: pi.price_level || null,
+      typical: Array.isArray(pi.typical_price_range) ? pi.typical_price_range : null,
+      history: Array.isArray(pi.price_history) ? pi.price_history : [],
+    } : null,
+    fetchedAt: new Date().toISOString(),
+    flights: flights,
+  };
+  var text = JSON.stringify({ success: true, data: data });
+  await cache.put(cacheKey, new Response(text, {
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'max-age=' + FLIGHT_CACHE_SECONDS },
+  }));
+  return jsonResponseRaw(text, origin);
 }
 
 const INSPIRE_SYSTEM_PROMPT = 'You are Summaverick planning flights for SkyFare. Given a natural-language trip request, suggest 3 concrete destinations the traveller can search right away. Return ONLY JSON — no markdown, no code fences, no prose outside JSON. Prefer real IATA codes. Suggest realistic departure/return ISO dates (YYYY-MM-DD) within the stated month/season or the next 90 days if unspecified. Rough fares should be typical economy round-trip totals including taxes when possible. Never invent fake airport codes.';
@@ -1602,7 +1366,44 @@ function extractInspireJson(text) {
   try { return JSON.parse(cleaned.slice(start, end + 1)); } catch (e) { return null; }
 }
 
-function normalizeInspireSuggestion(raw, fallbackCurrency) {
+var INSPIRE_MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+
+/* The model is told to use YYYY-MM-DD, but sonar occasionally still writes
+   day-first (e.g. treats "12 Sep" as month=12 day=09). Both orderings can be
+   syntactically valid dates (when day <= 12), so a shape-only regex isn't
+   enough — cross-check against any month mentioned in the suggestion text
+   and reorder if that resolves the ambiguity. */
+function inspireMonthHint(text) {
+  if (!text) return 0;
+  var t = String(text).toLowerCase();
+  for (var i = 0; i < INSPIRE_MONTH_NAMES.length; i++) {
+    if (t.indexOf(INSPIRE_MONTH_NAMES[i]) !== -1) return i + 1;
+  }
+  return 0;
+}
+function inspirePad2(n) { return (n < 10 ? '0' : '') + n; }
+function inspireIsValidYmd(y, m, d) {
+  if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+  var dt = new Date(Date.UTC(y, m - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
+}
+function inspireFixDateOrder(iso, monthHint) {
+  var m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return '';
+  var y = parseInt(m[1], 10), a = parseInt(m[2], 10), b = parseInt(m[3], 10);
+  var asIs = inspireIsValidYmd(y, a, b);
+  var swapped = a !== b && inspireIsValidYmd(y, b, a);
+  if (asIs && swapped) {
+    // Ambiguous (both day <= 12): trust the month the suggestion text agrees with.
+    if (monthHint && b === monthHint && a !== monthHint) return y + '-' + inspirePad2(b) + '-' + inspirePad2(a);
+    return iso;
+  }
+  if (asIs) return iso;
+  if (swapped) return y + '-' + inspirePad2(b) + '-' + inspirePad2(a);
+  return '';
+}
+
+function normalizeInspireSuggestion(raw, fallbackCurrency, queryHint) {
   if (!raw || typeof raw !== 'object') return null;
   var destCity = sanitize(String(raw.destination || raw.city || '')).slice(0, 80);
   var destCode = sanitize(String(raw.destination_airport || raw.iata || raw.airport || '')).toUpperCase().slice(0, 3);
@@ -1621,6 +1422,15 @@ function normalizeInspireSuggestion(raw, fallbackCurrency) {
   var ret = sanitize(String(raw.suggested_return || raw.return_date || '')).slice(0, 10);
   if (dep && !/^\d{4}-\d{2}-\d{2}$/.test(dep)) dep = '';
   if (ret && !/^\d{4}-\d{2}-\d{2}$/.test(ret)) ret = '';
+  var monthHint = inspireMonthHint(weeks.join(' ') + ' ' + (raw.why || '') + ' ' + (queryHint || ''));
+  if (dep) dep = inspireFixDateOrder(dep, monthHint);
+  if (ret) ret = inspireFixDateOrder(ret, monthHint);
+  if (dep && ret && ret < dep) {
+    // Return landed before departure — most likely dep/ret still disagree on
+    // day/month order between themselves. Try re-deriving ret from dep's month.
+    var reordered = inspireFixDateOrder(ret, parseInt(dep.slice(5, 7), 10));
+    ret = (reordered && reordered >= dep) ? reordered : '';
+  }
   var destLabel = destCity
     ? (destCode ? destCity + ' (' + destCode + ')' : destCity)
     : destCode;
@@ -1692,7 +1502,7 @@ async function handleFlightInspire(request, env, origin) {
       throw new Error('Could not parse destination suggestions.');
     }
     var suggestions = parsed.suggestions
-      .map(function(s) { return normalizeInspireSuggestion(s, currency); })
+      .map(function(s) { return normalizeInspireSuggestion(s, currency, query); })
       .filter(Boolean)
       .slice(0, 3);
     if (!suggestions.length) throw new Error('No usable destination suggestions returned.');
@@ -1710,91 +1520,6 @@ async function handleFlightInspire(request, env, origin) {
       success: false,
       error: e.message || 'Could not suggest destinations. Try a clearer trip description.',
     }, origin);
-  }
-}
-
-async function handleFlightSearch(request, env, origin) {
-  try {
-    var body;
-    try { body = await request.json(); } catch (e) {
-      return jsonResponse({ success: false, error: 'Invalid request body.' }, origin);
-    }
-    var p = {
-      origin: sanitize(String(body.origin || '')),
-      destination: sanitize(String(body.destination || '')),
-      departureDate: sanitize(String(body.departureDate || '')),
-      returnDate: sanitize(String(body.returnDate || '')),
-      tripType: sanitize(String(body.tripType || 'one-way')),
-      passengers: parseInt(body.passengers) || 1,
-      cabinClass: sanitize(String(body.cabinClass || 'economy')),
-      flexibleDays: Math.min(Math.max(parseInt(body.flexibleDays) || 0, 0), 7),
-      maxBudget: body.maxBudget ? parseInt(body.maxBudget) : null,
-      currency: sanitize(String(body.currency || 'USD')),
-      preferredAirlines: Array.isArray(body.preferredAirlines) ? body.preferredAirlines.map(function(a) { return sanitize(String(a)); }).filter(Boolean) : [],
-      avoidAirlines: Array.isArray(body.avoidAirlines) ? body.avoidAirlines.map(function(a) { return sanitize(String(a)); }).filter(Boolean) : [],
-      maxStops: sanitize(String(body.maxStops || '2+')),
-      priorityMode: sanitize(String(body.priorityMode || 'best_balance')),
-    };
-    if (!p.origin) return jsonResponse({ success: false, error: 'Origin is required.' }, origin);
-    if (!p.destination) return jsonResponse({ success: false, error: 'Destination is required.' }, origin);
-    if (!p.departureDate) return jsonResponse({ success: false, error: 'Departure date is required.' }, origin);
-
-    /* ── Primary source: Amadeus real inventory (when configured) ── */
-    var depIata = extractIataCode(p.origin);
-    var arrIata = extractIataCode(p.destination);
-    if (env.AMADEUS_CLIENT_ID && env.AMADEUS_CLIENT_SECRET && depIata && arrIata) {
-      try {
-        var amRaw = await searchAmadeus(env, p, depIata, arrIata);
-        if (amRaw && amRaw.flights && amRaw.flights.length) {
-          var an = normalizeFlightResponse(amRaw, p);
-          an.flights = enforceMaxStops(an.flights, p.maxStops);
-          enrichBookingUrls(an, p);
-          var aScored = scoreFlights(an, p.priorityMode, p.maxBudget);
-          aScored.booking_advice = mergeBookingAdvice(computeBookingTiming(p), null);
-          aScored.source = 'amadeus';
-          return jsonResponse({ success: true, data: aScored }, origin);
-        }
-        // No offers from Amadeus → fall through to Sonar (broader, if configured).
-      } catch (amErr) {
-        try { console.log('Amadeus failed; falling back to Sonar:', amErr && amErr.message); } catch (e) {}
-      }
-    }
-
-    var apiKey = env.PERPLEXITY_API_KEY;
-    if (!apiKey) return jsonResponse({ success: false, error: 'Flight search service is not configured.' }, origin);
-    var payload = {
-      model: 'sonar-pro',
-      messages: [
-        { role: 'system', content: FLIGHT_SYSTEM_PROMPT },
-        { role: 'user', content: buildFlightPrompt(p) },
-      ],
-      temperature: 0.1,
-      max_tokens: 4096,
-      web_search_options: { search_context_size: 'high' },
-    };
-    var data = await callSonarWithTimeout(apiKey, payload, FLIGHT_TIMEOUT_MS);
-    var content = data && data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : null;
-    if (!content || typeof content !== 'string') throw new Error('Empty response from search engine.');
-    var jsonStr = extractFlightJson(content);
-    var parsed;
-    try { parsed = JSON.parse(jsonStr); } catch (e) { throw new Error('Failed to parse flight data.'); }
-    var normalized = normalizeFlightResponse(parsed, p);
-    normalized.flights = enforceMaxStops(normalized.flights, p.maxStops);
-    enrichBookingUrls(normalized, p);
-    var scored = scoreFlights(normalized, p.priorityMode, p.maxBudget);
-    var timing = computeBookingTiming(p);
-    scored.booking_advice = mergeBookingAdvice(timing, parsed.booking_advice);
-    scored.source = 'ai';
-    return jsonResponse({ success: true, data: scored }, origin);
-  } catch (e) {
-    var msg = 'Unable to search for flights right now. Please try again later.';
-    if (e && e.message) {
-      if (e.message.indexOf('abort') >= 0) msg = 'The search timed out. AI flight searches can take up to a minute — please try again.';
-      else if (e.message.indexOf('parse') >= 0) msg = 'The AI returned an unexpected response format. Please try a different route or try again.';
-      else if (e.message.indexOf('Sonar') >= 0) msg = 'The AI search service returned an error. This may be a temporary issue — please try again in a moment.';
-      else if (e.message.indexOf('Empty') >= 0) msg = 'The AI search returned no content. Please try a more specific route (e.g. use airport codes like SIN, NRT).';
-    }
-    return jsonResponse({ success: false, error: msg }, origin);
   }
 }
 
@@ -1845,7 +1570,10 @@ function buildResult(data) {
 
   if (!answer && searchResults.length === 0) return null;
 
-  const sources = searchResults.slice(0, 8).map((sr, i) => ({
+  const orderedResults = citations.length ? citations.slice(0, 8).map(url => (
+    searchResults.find(row => row.url === url) || { url }
+  )) : searchResults.slice(0, 8);
+  const sources = orderedResults.map((sr, i) => ({
     index: i + 1,
     title: sr.title || '',
     url: sr.url,
@@ -1853,19 +1581,6 @@ function buildResult(data) {
     source: extractDomain(sr.url),
     date: sr.date || null
   }));
-
-  if (sources.length === 0 && citations.length > 0) {
-    citations.slice(0, 8).forEach((url, i) => {
-      sources.push({
-        index: i + 1,
-        title: '',
-        url,
-        snippet: '',
-        source: extractDomain(url),
-        date: null
-      });
-    });
-  }
 
   return {
     type: 'rich',
@@ -1908,7 +1623,7 @@ function corsResponse(body, origin, status = 200) {
     headers: {
       'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, If-None-Match',
       'Access-Control-Max-Age': '86400',
     }
   });
