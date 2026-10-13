@@ -28,13 +28,9 @@ sandbox.window = sandbox;
 sandbox.SYCurrency = cur.SYCurrency;
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'assets/js/save-yourself/currency.js'), 'utf8'), sandbox);
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'assets/js/save-yourself/loan-math.js'), 'utf8'), sandbox);
-vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'assets/js/save-yourself/advice-rules.js'), 'utf8'), sandbox);
-vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'assets/js/save-yourself/decision.js'), 'utf8'), sandbox);
 
 var C = sandbox.SYCurrency;
 var L = sandbox.SYLoanMath;
-var A = sandbox.SYAdvice;
-var D = sandbox.SYDecision;
 
 var failed = 0;
 function assert(cond, msg) {
@@ -187,26 +183,6 @@ assert(comp.comparisons && comp.comparisons.length >= 1, 'comparisons present');
 assert(comp.comparisons.some(function (c) { return c.id === 'better_rate' && c.interestSaved > 0; }), 'better rate saves interest');
 assert(comp.comparisons.some(function (c) { return c.id === 'shorter_tenure' && c.interestSaved > 0; }), 'shorter tenure saves interest');
 
-// --- Advice engine (new shape) ---
-var advice = A.buildAdvice({
-  reasonId: 'lifestyle',
-  emergencyFund: 'no',
-  lenderId: 'payday',
-  loan: dti // high DTI loan
-});
-assert(advice.severity === 'critical', 'lifestyle + high DTI + payday → critical');
-assert(advice.triggeredRules.some(function (x) { return x.id === 'dti_high'; }), 'dti_high rule fires from computed ratio');
-assert(advice.topActions.length === 3, 'exactly three top actions');
-assert(advice.steps.length >= 3, 'full action list present');
-// No broken copy fragments
-var joined = advice.steps.map(function (s) { return s.title + ' ' + s.detail; }).join(' ');
-assert(joined.indexOf('of work-value of work-equivalent') === -1, 'no broken hours copy');
-
-var emergency = A.buildAdvice({ reasonId: 'medical', loan: r });
-assert(/Emergenc/i.test(emergency.headline), 'medical → emergency headline');
-assert(emergency.honestQuestion.indexOf('live with that') === -1, 'medical question is not "can I live with that"');
-assert(/smallest amount/i.test(emergency.honestQuestion), 'medical question is reason-specific');
-
 // --- Life cost: money expressed as working time ---
 var life = L.calculate({
   principal: 100000, annualRatePercent: 18, months: 24, interestType: 'reducing', currency: 'INR',
@@ -264,68 +240,6 @@ assert(caution.affordability.level === 'caution', 'expensive rate alone → caut
 var unknown = L.calculate({ principal: 100000, annualRatePercent: 9, months: 24, interestType: 'reducing', currency: 'INR' });
 assert(unknown.affordability.level === 'unknown', 'no income and no fund answer → no verdict');
 
-// --- Reason risk metadata ---
-assert(A.REASONS.every(function (x) { return x.risk && x.guidance; }), 'every reason has a risk level and guidance');
-var lifestyleAdvice = A.buildAdvice({ reasonId: 'lifestyle', loan: safe });
-assert(lifestyleAdvice.severity === 'critical', 'extreme-risk reason forces highest caution');
-assert(/RISK/i.test(lifestyleAdvice.riskLabel), 'risk label exposed to the UI');
-var educationAdvice = A.buildAdvice({ reasonId: 'education', loan: safe });
-assert(educationAdvice.severity === 'moderate', 'low-risk reason with clean numbers stays moderate');
-assert(A.LENDERS.some(function (l) { return l.id === 'credit_union'; }), 'credit union is an option');
-assert(A.LENDERS.some(function (l) { return l.id === 'employer'; }), 'employer lending is an option');
-var employerAdvice = A.buildAdvice({ reasonId: 'medical', lenderId: 'employer', loan: safe });
-assert(employerAdvice.steps.some(function (s) { return /if you leave/i.test(s.title); }), 'employer loan warns about leaving the job');
-
-// --- Final filter (primary + optional + red flags) ---
-assert(Array.isArray(D.PRIMARY_CHECKS) && D.PRIMARY_CHECKS.length === 4, 'four primary checks');
-assert(Array.isArray(D.OPTIONAL_CHECKS) && D.OPTIONAL_CHECKS.length >= 4, 'optional deeper checks present');
-assert(Array.isArray(D.FILTER_QUESTIONS) && D.FILTER_QUESTIONS.length === D.PRIMARY_CHECKS.length + D.OPTIONAL_CHECKS.length,
-  'FILTER_QUESTIONS alias covers primary + optional');
-assert(D.RED_FLAGS.every(function (f) { return f && typeof f.id === 'string' && typeof f.label === 'string'; }),
-  'RED_FLAGS are {id,label} objects');
-
-var allNo = D.evaluateFilter({
-  tier1Total: 6, tier1Checked: 1, reasonBucket: 'lifestyle',
-  stressRatio: 0.9, aprPercent: 40, payoffMonths: 36, hasResult: true, feesEntered: true,
-  marginLabel: 'negative'
-}, {});
-assert(allNo.no >= 3, 'a bad loan trips at least three no answers');
-assert(allNo.level === 'danger' && allNo.state === 'stop', 'failed checks → danger/stop');
-assert(/do not borrow|unresolved|pause before signing/i.test(allNo.verdict),
-  'stop verdict tells the borrower to wait');
-
-var allYes = D.evaluateFilter({
-  tier1Total: 6, tier1Checked: 5, reasonBucket: 'emergency',
-  stressRatio: 0.2, aprPercent: 11, payoffMonths: 12, commitmentSigned: true,
-  hasResult: true, feesEntered: true, marginLabel: 'comfortable', comparedAlternative: true
-}, { strategy: 'yes' });
-assert(allYes.no === 0 && allYes.unanswered === 0, 'a clean loan answers every question yes');
-assert(allYes.level === 'safe' && allYes.state === 'ready', 'clean loan → ready');
-assert(/complete|compare|written disclosure/i.test(allYes.verdict), 'ready verdict points at written disclosure');
-
-var overridden = D.evaluateFilter({
-  tier1Total: 6, tier1Checked: 5, reasonBucket: 'emergency',
-  stressRatio: 0.2, aprPercent: 11, payoffMonths: 12, commitmentSigned: true,
-  hasResult: true, feesEntered: true, marginLabel: 'comfortable', comparedAlternative: true
-}, { rate: 'no' });
-assert(overridden.rows.filter(function (r) { return r.id === 'rate'; })[0].source === 'manual',
-  'a manual answer overrides the derived one');
-assert(overridden.no === 1, 'override is counted');
-
-var flagged = D.evaluateFilter(
-  { hasResult: true, feesEntered: true, marginLabel: 'comfortable', comparedAlternative: true },
-  {},
-  { pressure: true }
-);
-assert(flagged.state === 'stop' && flagged.level === 'danger', 'selected red flag → stop');
-assert(/red flag/i.test(flagged.verdict), 'stop verdict names red flags');
-assert(flagged.redFlags.length === 1 && flagged.redFlags[0].id === 'pressure', 'red flag objects returned');
-
-var empty = D.evaluateFilter({}, {});
-assert(empty.unanswered === D.FILTER_QUESTIONS.length, 'nothing is assumed without inputs');
-assert(empty.state === 'pause', 'no inputs → pause until primary checks resolve');
-assert(/unresolved|complete the checks/i.test(empty.verdict), 'pause verdict asks for unresolved checks');
-assert(D.ESCAPE_TIERS[0].items.length >= 5 && D.RED_FLAGS.length >= 5, 'escape routes and red flags present');
 // ============================================================================
 // Financial X-Ray redesign cases
 // ============================================================================

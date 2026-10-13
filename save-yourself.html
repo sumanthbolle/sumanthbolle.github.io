@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Save Yourself — Loan cost calculator | Sumanth Bolle</title>
-  <meta name="description" content="Work out what a loan costs before you sign: monthly payment, total repaid, fees, estimated annual cost, an amortization schedule and checks to run first.">
+  <meta name="description" content="See what a loan really costs: monthly payment, total repaid and extra cost. Then ask Summaverick whether you can afford it.">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#f5f5f7">
   <link rel="canonical" href="https://sumanthbolle.com/save-yourself">
   <meta property="og:title" content="Save Yourself — Loan cost calculator">
-  <meta property="og:description" content="Monthly payment, total repaid, fees and estimated annual cost for any loan, calculated in your browser.">
+  <meta property="og:description" content="Monthly payment, total repaid and extra cost for any loan — then ask Summaverick if it makes sense.">
   <meta property="og:url" content="https://sumanthbolle.com/save-yourself">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://sumanthbolle.com/assets/images/save-yourself-og.png">
@@ -27,16 +27,13 @@
     "url": "https://sumanthbolle.com/save-yourself",
     "applicationCategory": "FinanceApplication",
     "operatingSystem": "Web",
-    "description": "Loan calculator showing cash received, monthly payment, total repaid, interest and fees, and estimated annual cost. Runs entirely in the browser.",
+    "description": "Loan calculator showing monthly payment, total repaid and extra cost, with a handoff to Summaverick for affordability questions.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "creator": { "@type": "Person", "name": "Sumanth Bolle", "url": "https://sumanthbolle.com/" }
   }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/utility-page.css">
-  <link rel="stylesheet" href="assets/css/save-yourself.css?v=20260818.3">
+  <link rel="stylesheet" href="assets/css/save-yourself.css?v=20261013">
   <link rel="stylesheet" href="assets/css/nav-utilities.css">
 </head>
 <body>
@@ -91,478 +88,133 @@
 
   <header class="util-head">
     <p class="util-head__kicker">Save Yourself</p>
-    <h1>Loan cost checker</h1>
-    <p class="util-head__lede">Enter the amount, rate, term and fees. Results update as you type.</p>
-    <p class="util-head__meta">
-      Saved on this device.
-      <button type="button" class="sy-clear" id="clearData">Clear saved data</button>
-    </p>
-    <span class="sy-example-badge" id="exampleBadge" hidden>Example numbers</span>
+    <h1>What will this loan really cost?</h1>
   </header>
 
   <main id="main" class="sy-main">
-
-    <div class="sy-workspace" id="workspace">
-      <div class="sy-controls" id="loanControls">
-        <div class="field-grid">
-          <div class="field full">
-            <label id="currencyLabel" for="currencyInput">Currency</label>
-            <div class="combo" data-combo>
-              <input type="text" id="currencyInput" role="combobox" aria-expanded="false" aria-controls="currencyListbox" aria-autocomplete="list" aria-labelledby="currencyLabel" aria-describedby="currencyHint" autocomplete="off" placeholder="Search ISO code or name">
-              <button type="button" class="combo-toggle" id="currencyToggle" aria-label="Show currency list" tabindex="-1">
-                <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-              </button>
-              <ul id="currencyListbox" role="listbox" aria-labelledby="currencyLabel" class="combo-list" hidden></ul>
-            </div>
-            <div class="hint sr-only" id="currencyHint">All ISO 4217 currencies via your browser’s Intl data.</div>
+    <div class="sy-grid">
+      <form class="sy-card sy-form" id="loanForm" novalidate>
+        <div class="field">
+          <label for="amount">Loan amount</label>
+          <div class="input-wrap">
+            <span class="input-affix" data-currency-prefix>₹</span>
+            <input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="500000" aria-describedby="err-amount">
           </div>
+          <p class="field-error" id="err-amount" hidden></p>
+        </div>
 
-          <div class="field dominant">
-            <label for="amount">How much are you borrowing?</label>
-            <div class="input-wrap">
-              <span class="input-prefix" data-currency-prefix>INR ₹</span>
-              <input id="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 100000" aria-describedby="err-amount">
-            </div>
-            <p class="field-error" id="err-amount" hidden></p>
-          </div>
-
+        <div class="sy-row">
           <div class="field">
             <label for="rate">Interest rate</label>
             <div class="input-wrap">
-              <input id="rate" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 12" aria-describedby="err-rate">
-              <span class="input-suffix">% p.a.</span>
+              <input id="rate" type="text" inputmode="decimal" autocomplete="off" placeholder="12" aria-describedby="err-rate">
+              <span class="input-affix">%/yr</span>
             </div>
             <p class="field-error" id="err-rate" hidden></p>
           </div>
-
           <div class="field">
-            <label for="tenure">Tenure</label>
+            <label for="tenure">Term</label>
             <div class="input-wrap">
-              <input id="tenure" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 3" aria-describedby="err-tenure">
-              <select id="tenureUnit" aria-label="Tenure unit" style="max-width:110px;border-left:1px solid var(--input-line);border-radius:0">
-                <option value="years">years</option>
-                <option value="months">months</option>
+              <input id="tenure" type="text" inputmode="decimal" autocomplete="off" placeholder="3" aria-describedby="err-tenure">
+              <select id="tenureUnit" aria-label="Term unit">
+                <option value="years">yrs</option>
+                <option value="months">mos</option>
               </select>
             </div>
             <p class="field-error" id="err-tenure" hidden></p>
           </div>
+        </div>
 
-          <div class="field full">
-            <span class="lbl" id="interestTypeLabel">Interest type</span>
-            <div class="segmented" role="radiogroup" aria-labelledby="interestTypeLabel">
-              <label><input type="radio" name="interestType" value="reducing" checked><span>Reducing</span></label>
-              <label><input type="radio" name="interestType" value="flat"><span>Flat rate</span></label>
-            </div>
-            <p class="flat-note" id="flatNote" hidden>Flat rate quotes interest on the full principal for the whole term — the effective cost is usually higher than the headline rate.</p>
-          </div>
-
-          <div class="field">
-            <label for="processingFee">Processing fee</label>
-            <div class="input-wrap">
-              <input id="processingFee" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="processingHint">
-              <select id="processingUnit" aria-label="Processing fee unit" style="max-width:96px;border-left:1px solid var(--input-line);border-radius:0">
-                <option value="amount">amount</option>
-                <option value="percent">%</option>
-              </select>
-            </div>
-            <div class="hint sr-only" id="processingHint">One-time fee. Choose below whether it is deducted, paid separately or financed.</div>
-          </div>
-
-          <div class="field">
-            <label for="otherFees">Other charges</label>
-            <div class="input-wrap">
-              <span class="input-prefix" data-currency-prefix>INR ₹</span>
-              <input id="otherFees" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
-            </div>
-          </div>
-
-          <div class="field full">
-            <span class="lbl" id="feeTreatmentLabel">Fee treatment</span>
-            <div class="segmented stack" role="radiogroup" aria-labelledby="feeTreatmentLabel" id="feeTreatment">
-              <label><input type="radio" name="feeTreatment" value="deducted" checked><span>Deducted from payout</span></label>
-              <label><input type="radio" name="feeTreatment" value="separate"><span>Paid separately</span></label>
-              <label><input type="radio" name="feeTreatment" value="added"><span>Added to the loan</span></label>
-            </div>
+        <div class="field">
+          <label for="fee">Processing fee <span class="opt">(optional)</span></label>
+          <div class="input-wrap">
+            <span class="input-affix" data-currency-prefix>₹</span>
+            <input id="fee" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
           </div>
         </div>
 
-        <details class="sy-drawer" id="advancedDrawer">
-          <summary><span class="chev" aria-hidden="true">+</span> More inputs</summary>
-          <div class="sy-drawer__body">
-            <div class="sy-drawer__group">
-              <h3>Affordability</h3>
-              <div class="field-grid">
-                <div class="field">
-                  <label for="income">Gross monthly income</label>
-                  <div class="input-wrap">
-                    <span class="input-prefix" data-currency-prefix>INR ₹</span>
-                    <input id="income" type="text" inputmode="decimal" autocomplete="off" placeholder="Optional">
-                  </div>
-                </div>
-                <div class="field">
-                  <label for="existingDebt">Existing monthly debt</label>
-                  <div class="input-wrap">
-                    <span class="input-prefix" data-currency-prefix>INR ₹</span>
-                    <input id="existingDebt" type="text" inputmode="decimal" autocomplete="off" placeholder="Optional">
-                  </div>
-                </div>
-                <div class="field full">
-                  <label for="emergencyFund">3+ months emergency fund?</label>
-                  <select id="emergencyFund">
-                    <option value="unknown">Not sure</option>
-                    <option value="yes">Yes</option>
-                    <option value="partial">Partial</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+        <div class="field">
+          <span class="lbl" id="rateTypeLabel">Rate type</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="rateTypeLabel">
+            <label><input type="radio" name="interestType" value="reducing" checked><span>Reducing</span></label>
+            <label><input type="radio" name="interestType" value="flat"><span>Flat</span></label>
+          </div>
+          <p class="hint">Not sure? Most bank loans are reducing. "Flat" quotes look cheaper than they are.</p>
+        </div>
 
-            <div class="sy-drawer__group">
-              <h3>Repayment strategy</h3>
-              <div class="field-grid">
-                <div class="field">
-                  <label for="extraPayment">Extra payment each month</label>
-                  <div class="input-wrap">
-                    <span class="input-prefix" data-currency-prefix>INR ₹</span>
-                    <input id="extraPayment" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="err-extra">
-                  </div>
-                  <p class="field-error" id="err-extra" hidden></p>
-                </div>
-                <div class="field">
-                  <label for="prepayPenalty">Prepayment penalty</label>
-                  <div class="input-wrap">
-                    <input id="prepayPenalty" type="text" inputmode="decimal" value="0" autocomplete="off">
-                    <span class="input-suffix">%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div class="field">
+          <label for="currency">Currency</label>
+          <select id="currency"></select>
+        </div>
+      </form>
 
-            <div class="sy-drawer__group">
-              <h3>Opportunity comparison</h3>
-              <div class="field-grid">
-                <div class="field full">
-                  <label for="oppRate">If saved / invested instead</label>
-                  <div class="input-wrap">
-                    <input id="oppRate" type="text" inputmode="decimal" value="8" autocomplete="off">
-                    <span class="input-suffix">% p.a.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div>
+        <section class="sy-card" aria-live="polite">
+          <p class="sy-answer__lead" id="answer"><span class="sy-empty">Enter amount, rate and term.</span></p>
 
-            <div class="sy-drawer__group">
-              <h3>Borrowing context</h3>
-              <div class="field-grid">
-                <div class="field full">
-                  <span class="lbl" id="reasonHint">Why are you borrowing?</span>
-                  <div class="choice-grid" id="reasonList" role="radiogroup" aria-labelledby="reasonHint"></div>
-                </div>
-                <div class="field full">
-                  <label for="lender">Lender type</label>
-                  <select id="lender"></select>
-                </div>
-                <div class="field full">
-                  <label for="problemSentence">Notes</label>
-                  <textarea id="problemSentence" maxlength="280" placeholder="Optional"></textarea>
-                </div>
-                <div class="field full">
-                  <label for="shortfallType">One-time or recurring?</label>
-                  <select id="shortfallType">
-                    <option value="unknown">Not sure</option>
-                    <option value="one_time">One-time event</option>
-                    <option value="recurring">Recurring shortfall</option>
-                  </select>
-                </div>
-              </div>
-              <div class="sy-advice" id="advicePanel" hidden>
-                <p class="sy-advice__headline" id="adviceHeadline"></p>
-                <ol class="sy-advice__list" id="topActions"></ol>
-                <details class="sy-details" id="moreActionsWrap" hidden>
-                  <summary>More recommendations</summary>
-                  <ul class="sy-advice__list" id="moreActions"></ul>
-                </details>
-              </div>
+          <div class="sy-bar" aria-hidden="true">
+            <div class="sy-bar__seg sy-bar__seg--principal" id="barPrincipal" style="flex-grow:1"></div>
+            <div class="sy-bar__seg sy-bar__seg--cost" id="barCost" style="flex-grow:0"></div>
+          </div>
+          <div class="sy-legend">
+            <span data-key="principal">Borrowed</span>
+            <span data-key="cost">Interest + fees</span>
+          </div>
+
+          <div class="sy-nums">
+            <div class="sy-num">
+              <div class="sy-num__label">Monthly payment</div>
+              <div class="sy-num__value" id="numEmi">—</div>
+            </div>
+            <div class="sy-num">
+              <div class="sy-num__label">Total you repay</div>
+              <div class="sy-num__value" id="numTotal">—</div>
+            </div>
+            <div class="sy-num sy-num--cost">
+              <div class="sy-num__label">Extra cost</div>
+              <div class="sy-num__value" id="numCost">—</div>
             </div>
           </div>
-        </details>
-      </div>
 
-      <div class="sy-reality" id="realityCanvas">
-        <div class="sy-reality__headline">
-          <p class="sy-section__eyebrow">Loan summary</p>
-          <h2>At a glance</h2>
-        </div>
+          <p class="sy-verdict" id="verdict" hidden></p>
 
-        <div class="sy-primary-metrics">
-          <div class="sy-primary-metric" id="metricEmi">
-            <div class="sy-metric__label">Monthly payment</div>
-            <div class="sy-metric__value" id="metricEmiValue">—</div>
-          </div>
-          <div class="sy-primary-metric">
-            <div class="sy-metric__label">Total repaid</div>
-            <div class="sy-metric__value" id="realityReturn">—</div>
-          </div>
-          <div class="sy-primary-metric sy-primary-metric--cost">
-            <div class="sy-metric__label">Interest + fees</div>
-            <div class="sy-metric__value" id="realityRent">—</div>
-          </div>
-        </div>
+          <details class="sy-schedule">
+            <summary>Year-by-year breakdown</summary>
+            <div class="sy-table-wrap">
+              <table class="sy-table">
+                <thead><tr><th>Year</th><th>Paid</th><th>Interest</th><th>Still owed</th></tr></thead>
+                <tbody id="scheduleBody"></tbody>
+              </table>
+            </div>
+          </details>
+        </section>
 
-        <div class="sy-reality-bar" id="realityBar" role="img" aria-label="Principal, interest and fees">
-          <div class="sy-reality-bar__seg sy-reality-bar__seg--principal" id="barPrincipal" style="flex:1"></div>
-          <div class="sy-reality-bar__seg sy-reality-bar__seg--interest" id="barInterest" style="flex:0"></div>
-          <div class="sy-reality-bar__seg sy-reality-bar__seg--fees" id="barFees" style="flex:0"></div>
-        </div>
-        <div class="sy-reality-bar__legend">
-          <span data-key="principal">Principal <strong id="legendPrincipal">—</strong></span>
-          <span data-key="interest">Interest <strong id="legendCost">—</strong></span>
-          <span data-key="fees" id="feesLegend" hidden>Fees <strong id="legendFees">—</strong></span>
-        </div>
-
-        <div class="sy-metrics sy-metrics--secondary">
-          <div class="sy-metric" id="metricCash">
-            <div class="sy-metric__label">Cash received</div>
-            <div class="sy-metric__value" id="metricCashValue">—</div>
+        <section class="sy-card sy-ask" id="ask" data-ready="false" aria-labelledby="askTitle">
+          <h2 id="askTitle">Ask Summaverick about this loan</h2>
+          <p class="hint">Your numbers are sent along with the question.</p>
+          <div class="sy-ask__chips">
+            <button type="button" class="sy-ask__chip" data-q="Can I afford this loan? Ask me for my monthly income and existing EMIs, then tell me whether the payment is safe.">Can I afford it?</button>
+            <button type="button" class="sy-ask__chip" data-q="Is this a fair rate for this kind of loan right now? What should I negotiate or compare?">Is this a good deal?</button>
+            <button type="button" class="sy-ask__chip" data-q="Should I prepay this loan early or invest the extra money instead? Show the trade-off with numbers.">Prepay or invest?</button>
+            <button type="button" class="sy-ask__chip" data-q="What hidden charges or clauses should I check in the loan agreement before signing?">What to check before signing?</button>
           </div>
-          <div class="sy-metric">
-            <div class="sy-metric__label">Amount borrowed</div>
-            <div class="sy-metric__value" id="realityBorrow">—</div>
-          </div>
-          <div class="sy-metric" id="metricAnnual">
-            <div class="sy-metric__label">Estimated annual cost</div>
-            <div class="sy-metric__value" id="metricAnnualValue">—</div>
-          </div>
-          <div class="sy-metric" id="metricPerHundred">
-            <div class="sy-metric__label">Repaid per 100</div>
-            <div class="sy-metric__value" id="metricPerHundredValue">—</div>
-            <div class="sy-metric__sub" id="metricPerHundredSub"></div>
-          </div>
-        </div>
-
-        <details class="sy-receipt" aria-labelledby="receiptTitle">
-          <summary class="sy-receipt__title" id="receiptTitle">Full cost breakdown</summary>
-          <dl id="receiptBody"></dl>
-        </details>
-
-        <p class="sy-live" id="liveSummary" aria-live="polite"></p>
-        <div id="warnings"></div>
+          <form class="sy-ask__form" id="askForm">
+            <input id="askInput" type="text" maxlength="300" placeholder="Or ask your own question" aria-label="Your question">
+            <button class="btn" type="submit">Ask</button>
+          </form>
+        </section>
       </div>
     </div>
-
-    <details class="sy-section sy-detail-section" id="moneyFlow" aria-labelledby="moneyFlowTitle">
-      <summary><h2 id="moneyFlowTitle">Money flow</h2></summary>
-      <p class="sy-section__intro">Cash received, fees and repayment.</p>
-      <div id="moneyFlowMount"></div>
-    </details>
-
-    <details class="sy-section sy-detail-section" id="repaymentTimeline" aria-labelledby="timelineTitle">
-      <summary><h2 id="timelineTitle">Repayment timeline</h2></summary>
-      <p class="sy-section__intro">Principal and interest across the term.</p>
-      <div id="timelineMount"></div>
-    </details>
-
-    <section class="sy-section" id="decisionSignals" aria-labelledby="signalsTitle">
-      <p class="sy-section__eyebrow">Signals</p>
-      <h2 id="signalsTitle">Cost and cash-flow pressure</h2>
-      <p class="sy-section__intro">Annual cost and payment-to-income ratio.</p>
-      <div class="sy-signals">
-        <div class="sy-signal" id="costSignal">
-          <h3>Cost signal</h3>
-          <div class="sy-cost-scale" id="costSignalTrack" aria-hidden="true">
-            <div class="sy-cost-scale__marker" id="costSignalMarker" style="left:0%"></div>
-          </div>
-          <div class="sy-cost-scale__bands" aria-hidden="true">
-            <span>Lower</span><span>Elevated</span><span>Expensive</span><span>Severe</span>
-          </div>
-          <div class="sy-cost-scale__ticks">
-            <span>0%</span><span>8%</span><span>15%</span><span>25%</span><span>36%+</span>
-          </div>
-          <p class="sy-cost-scale__label" id="costSignalLabel" data-band="">—</p>
-          <p class="sy-cost-scale__guidance" id="costSignalGuidance"></p>
-          <p class="hint" id="costSignalValue" style="margin-top:8px"></p>
-        </div>
-        <div>
-          <div class="sy-pressure" id="cashFlowPressure" hidden>
-            <h3>Cash-flow pressure</h3>
-            <dl class="sy-pressure__grid" id="cashFlowBody"></dl>
-            <p class="sy-pressure__margin" id="cashFlowMargin" data-label=""></p>
-          </div>
-          <p class="sy-invite sy-pressure-invite" id="cashFlowInvite">
-            <a href="#advancedDrawer" id="openAdvancedLink">Add income</a> to see how this payment sits after existing obligations.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="sy-section" id="scenarios" aria-labelledby="scenariosTitle">
-      <p class="sy-section__eyebrow">Alternatives</p>
-      <h2 id="scenariosTitle">What changes the total</h2>
-      <p class="sy-section__intro">Compare a lower rate, saving first or paying extra.</p>
-      <div class="sy-scenarios">
-        <div class="sy-scenario" id="scenarioBetter">
-          <h3>Better offer</h3>
-          <p class="sy-scenario__outcome sy-scenario__outcome--save" id="scenarioBetterOutcome">—</p>
-          <p class="sy-scenario__detail" id="scenarioBetterDetail"></p>
-          <ul class="sy-scenario__list" id="scenarioBetterList"></ul>
-        </div>
-        <div class="sy-scenario" id="scenarioSave">
-          <h3>Save first</h3>
-          <p class="sy-scenario__outcome" id="scenarioSaveOutcome">—</p>
-          <p class="sy-scenario__detail" id="scenarioSaveDetail"></p>
-          <ul class="sy-scenario__list" id="scenarioSaveList"></ul>
-        </div>
-        <div class="sy-scenario" id="scenarioExtra" hidden>
-          <h3>Pay extra</h3>
-          <p class="sy-scenario__outcome sy-scenario__outcome--save" id="scenarioExtraOutcome">—</p>
-          <p class="sy-scenario__detail" id="scenarioExtraDetail"></p>
-        </div>
-      </div>
-    </section>
-
-    <section class="sy-section" id="beforeSign" aria-labelledby="beforeSignTitle">
-      <p class="sy-section__eyebrow">Before you sign</p>
-      <h2 id="beforeSignTitle">Checks</h2>
-      <p class="sy-section__intro">Confirm the essentials and mark any red flags.</p>
-
-      <ul class="sy-checks" id="primaryChecks"></ul>
-
-      <details class="sy-details" id="optionalChecksWrap">
-        <summary>Optional deeper checks</summary>
-        <ul class="sy-checks" id="optionalChecks"></ul>
-      </details>
-
-      <h3 class="sy-section__eyebrow" style="margin-top:28px">Red flags</h3>
-      <p class="hint" style="margin-bottom:8px">Any selected flag sets the result to stop.</p>
-      <ul class="sy-flags" id="redFlagList"></ul>
-
-      <p class="sy-verdict" id="filterVerdict" role="status" aria-live="polite" data-state="pause">Complete the checks before you decide.</p>
-
-      <details class="sy-details" id="escapeWrap">
-        <summary>Alternatives and lender costs</summary>
-        <div id="escapeTiers"></div>
-        <h4 class="sy-section__eyebrow">Lender cost reference</h4>
-        <p class="hint">Indicative ranges only — confirm the written offer.</p>
-        <div class="ladder-wrap">
-          <table class="ladder-table">
-            <thead>
-              <tr><th scope="col">Lender</th><th scope="col">Typical APR</th><th scope="col">Use only if</th></tr>
-            </thead>
-            <tbody id="ladderBody"></tbody>
-          </table>
-        </div>
-      </details>
-
-      <details class="sy-details" id="commitWrap">
-        <summary>Optional repayment commitment</summary>
-        <div class="field-grid" style="margin-top:12px">
-          <div class="field">
-            <label for="commitDate">Payoff by</label>
-            <input id="commitDate" type="date">
-          </div>
-          <div class="field">
-            <label for="commitExtra">Extra I will free up monthly</label>
-            <div class="input-wrap">
-              <span class="input-prefix" data-currency-prefix>INR ₹</span>
-              <input id="commitExtra" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
-            </div>
-          </div>
-          <div class="field">
-            <label for="commitBuffer">I will not borrow again until I have saved</label>
-            <div class="input-wrap">
-              <span class="input-prefix" data-currency-prefix>INR ₹</span>
-              <input id="commitBuffer" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
-            </div>
-          </div>
-          <div class="field">
-            <label for="commitPerson">One person who will ask</label>
-            <input id="commitPerson" type="text" autocomplete="name" placeholder="Name">
-          </div>
-        </div>
-      </details>
-    </section>
-
-    <details class="sy-section sy-detail-section" id="detailedResults" aria-labelledby="detailedTitle">
-      <summary><h2 id="detailedTitle">Schedule &amp; export</h2></summary>
-      <p class="sy-section__intro">Monthly amortization, assumptions and a downloadable summary.</p>
-
-      <details class="sy-details" id="amortWrap">
-        <summary>Amortization schedule</summary>
-        <div class="sy-amort-scroll">
-          <table class="sy-amort-table">
-            <thead>
-              <tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>
-            </thead>
-            <tbody id="amortBody"></tbody>
-          </table>
-        </div>
-      </details>
-
-      <details class="sy-details" id="assumptionsWrap">
-        <summary>Assumptions and methodology</summary>
-        <div class="sy-assumptions" id="assumptionsBody">
-          <p id="resFormula">Enter loan details to see the formula note.</p>
-          <ul>
-            <li>Reducing-balance EMI uses the standard annuity formula on the financed principal.</li>
-            <li>Flat rate charges interest on the original amount for the full term.</li>
-            <li>Estimated annual cost is a cash-flow IRR annualised from net proceeds and scheduled payments.</li>
-            <li>Fee treatment changes net proceeds and/or financed principal; it does not invent lender rounding.</li>
-            <li>Opportunity figures are illustrations at the rate you set — not a forecast.</li>
-          </ul>
-        </div>
-      </details>
-
-      <div style="margin-top:28px">
-        <div class="sy-include">
-          <label><input type="checkbox" id="includeDecision" checked> Include decision checks</label>
-          <label><input type="checkbox" id="includeCommit" checked> Include commitment</label>
-          <label><input type="checkbox" id="includeAmort"> Include amortization (first 12 months)</label>
-        </div>
-        <div class="sy-actions">
-          <button class="btn btn-primary" id="copySummary" type="button" disabled>Copy summary</button>
-          <button class="btn" id="downloadSummary" type="button" disabled>Download summary</button>
-        </div>
-        <p class="action-status" id="actionStatus" hidden></p>
-      </div>
-
-      <p class="disclaimer">Estimates only—not financial advice. Confirm fees, rates and repayment terms with the lender.</p>
-    </details>
-
   </main>
 
-  <div class="sy-sticky" id="stickyResults" aria-hidden="true">
-    <div class="sy-sticky__inner">
-      <div class="sy-sticky__vals">
-        <div>
-          <div class="sy-sticky__meta">EMI</div>
-          <strong id="stickyEmi">—</strong>
-        </div>
-        <div data-rent>
-          <div class="sy-sticky__meta">Interest + fees</div>
-          <strong id="stickyInterest">—</strong>
-        </div>
-      </div>
-      <button type="button" class="sy-sticky__view" id="stickyView">View</button>
-    </div>
-  </div>
-
   <footer>
-    <div class="footer-inner">
-      <div class="sy-footer-links" aria-label="Other utilities"><a href="flights.html">SkyFare</a><a href="metals.html">Metals</a><a href="upsc.html">Anchor</a></div>
-      <div class="attribution">Estimates only—confirm terms with the lender. © 2026 Sumanth Bolle.</div>
-    </div>
+    <div class="footer-inner">Estimates only — confirm the final terms with your lender. © 2026 Sumanth Bolle.</div>
   </footer>
 
   <script src="assets/js/shared/nav-theme.js"></script>
   <script src="assets/js/shared/nav-utilities.js"></script>
   <script src="assets/js/save-yourself/currency.js"></script>
   <script src="assets/js/save-yourself/loan-math.js"></script>
-  <script src="assets/js/save-yourself/advice-rules.js"></script>
-  <script src="assets/js/save-yourself/decision.js"></script>
-  <script src="assets/js/save-yourself/storage.js"></script>
-  <script src="assets/js/save-yourself/money-flow.js?v=20260818"></script>
-  <script src="assets/js/save-yourself/repayment-timeline.js"></script>
-  <script src="assets/js/save-yourself/app.js?v=20260818"></script>
+  <script src="assets/js/save-yourself/app.js?v=20261013"></script>
 </body>
 </html>
