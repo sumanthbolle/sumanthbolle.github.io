@@ -1,0 +1,416 @@
+{
+ "success": true,
+ "data": {
+  "source": "google",
+  "currency": "INR",
+  "roundTrip": true,
+  "googleUrl": "https://www.google.com/travel/flights?hl=en&gl=in&curr=INR&tfs=fixture",
+  "insights": {
+   "lowest": 8120,
+   "level": "low",
+   "typical": [
+    9500,
+    13000
+   ],
+   "history": [
+    [
+     1755302400,
+     12100
+    ],
+    [
+     1755388800,
+     11800
+    ],
+    [
+     1755475200,
+     11950
+    ],
+    [
+     1755561600,
+     11400
+    ],
+    [
+     1755648000,
+     11200
+    ],
+    [
+     1755734400,
+     10900
+    ],
+    [
+     1755820800,
+     11100
+    ],
+    [
+     1755907200,
+     10600
+    ],
+    [
+     1755993600,
+     10400
+    ],
+    [
+     1756080000,
+     10200
+    ],
+    [
+     1756166400,
+     9900
+    ],
+    [
+     1756252800,
+     9800
+    ],
+    [
+     1756339200,
+     9650
+    ],
+    [
+     1756425600,
+     9400
+    ],
+    [
+     1756512000,
+     9300
+    ],
+    [
+     1756598400,
+     9100
+    ],
+    [
+     1756684800,
+     8900
+    ],
+    [
+     1756771200,
+     8800
+    ],
+    [
+     1756857600,
+     8600
+    ],
+    [
+     1756944000,
+     8400
+    ],
+    [
+     1757030400,
+     8120
+    ]
+   ]
+  },
+  "fetchedAt": "2026-10-13T16:04:18.438Z",
+  "flights": [
+   {
+    "id": "b0",
+    "best": true,
+    "price": 9840,
+    "airlines": [
+     "IndiGo"
+    ],
+    "logo": "https://www.gstatic.com/flights/airline_logos/70px/6E.png",
+    "depart": {
+     "time": "07:00",
+     "date": "2026-11-14",
+     "airport": "DEL",
+     "name": "Indira Gandhi International Airport"
+    },
+    "arrive": {
+     "time": "09:15",
+     "date": "2026-11-14",
+     "airport": "BOM",
+     "name": "Chhatrapati Shivaji Maharaj International Airport"
+    },
+    "dayOffset": 0,
+    "duration": 135,
+    "stops": 0,
+    "layovers": [],
+    "segments": [
+     {
+      "airline": "IndiGo",
+      "flightNumber": "6E 2183",
+      "airplane": "Airbus A320neo",
+      "legroom": "29 in",
+      "duration": 135,
+      "from": "DEL",
+      "to": "BOM",
+      "depTime": "07:00",
+      "arrTime": "09:15",
+      "overnight": false,
+      "oftenDelayed": false
+     }
+    ],
+    "co2": {
+     "kg": 103,
+     "typicalKg": 110,
+     "diffPercent": -6
+    }
+   },
+   {
+    "id": "b1",
+    "best": true,
+    "price": 11260,
+    "airlines": [
+     "Air India"
+    ],
+    "logo": "https://www.gstatic.com/flights/airline_logos/70px/AI.png",
+    "depart": {
+     "time": "09:30",
+     "date": "2026-11-14",
+     "airport": "DEL",
+     "name": "Indira Gandhi International Airport"
+    },
+    "arrive": {
+     "time": "11:40",
+     "date": "2026-11-14",
+     "airport": "BOM",
+     "name": "Chhatrapati Shivaji Maharaj International Airport"
+    },
+    "dayOffset": 0,
+    "duration": 130,
+    "stops": 0,
+    "layovers": [],
+    "segments": [
+     {
+      "airline": "Air India",
+      "flightNumber": "AI 887",
+      "airplane": "Airbus A321",
+      "legroom": "31 in",
+      "duration": 130,
+      "from": "DEL",
+      "to": "BOM",
+      "depTime": "09:30",
+      "arrTime": "11:40",
+      "overnight": false,
+      "oftenDelayed": false
+     }
+    ],
+    "co2": {
+     "kg": 108,
+     "typicalKg": 110,
+     "diffPercent": -2
+    }
+   },
+   {
+    "id": "o0",
+    "best": false,
+    "price": 8120,
+    "airlines": [
+     "IndiGo"
+    ],
+    "logo": "https://www.gstatic.com/flights/airline_logos/70px/6E.png",
+    "depart": {
+     "time": "21:45",
+     "date": "2026-11-14",
+     "airport": "DEL",
+     "name": "Indira Gandhi International Airport"
+    },
+    "arrive": {
+     "time": "07:35",
+     "date": "2026-11-15",
+     "airport": "BOM",
+     "name": "Chhatrapati Shivaji Maharaj International Airport"
+    },
+    "dayOffset": 1,
+    "duration": 590,
+    "stops": 1,
+    "layovers": [
+     {
+      "airport": "HYD",
+      "name": "Rajiv Gandhi International Airport",
+      "duration": 375,
+      "overnight": true
+     }
+    ],
+    "segments": [
+     {
+      "airline": "IndiGo",
+      "flightNumber": "6E 5214",
+      "airplane": "Airbus A320neo",
+      "legroom": "29 in",
+      "duration": 130,
+      "from": "DEL",
+      "to": "HYD",
+      "depTime": "21:45",
+      "arrTime": "23:55",
+      "overnight": false,
+      "oftenDelayed": true
+     },
+     {
+      "airline": "IndiGo",
+      "flightNumber": "6E 6011",
+      "airplane": "Airbus A320neo",
+      "legroom": "29 in",
+      "duration": 85,
+      "from": "HYD",
+      "to": "BOM",
+      "depTime": "06:10",
+      "arrTime": "07:35",
+      "overnight": false,
+      "oftenDelayed": false
+     }
+    ],
+    "co2": {
+     "kg": 152,
+     "typicalKg": 110,
+     "diffPercent": 38
+    }
+   },
+   {
+    "id": "o1",
+    "best": false,
+    "price": 9310,
+    "airlines": [
+     "Akasa Air"
+    ],
+    "logo": "https://www.gstatic.com/flights/airline_logos/70px/QP.png",
+    "depart": {
+     "time": "06:05",
+     "date": "2026-11-14",
+     "airport": "DEL",
+     "name": "Indira Gandhi International Airport"
+    },
+    "arrive": {
+     "time": "08:20",
+     "date": "2026-11-14",
+     "airport": "BOM",
+     "name": "Chhatrapati Shivaji Maharaj International Airport"
+    },
+    "dayOffset": 0,
+    "duration": 135,
+    "stops": 0,
+    "layovers": [],
+    "segments": [
+     {
+      "airline": "Akasa Air",
+      "flightNumber": "QP 1128",
+      "airplane": "Boeing 737MAX 8",
+      "legroom": "30 in",
+      "duration": 135,
+      "from": "DEL",
+      "to": "BOM",
+      "depTime": "06:05",
+      "arrTime": "08:20",
+      "overnight": false,
+      "oftenDelayed": false
+     }
+    ],
+    "co2": {
+     "kg": 99,
+     "typicalKg": 110,
+     "diffPercent": -10
+    }
+   },
+   {
+    "id": "o2",
+    "best": false,
+    "price": 8890,
+    "airlines": [
+     "Air India"
+    ],
+    "logo": "https://www.gstatic.com/flights/airline_logos/70px/AI.png",
+    "depart": {
+     "time": "13:20",
+     "date": "2026-11-14",
+     "airport": "DEL",
+     "name": "Indira Gandhi International Airport"
+    },
+    "arrive": {
+     "time": "18:50",
+     "date": "2026-11-14",
+     "airport": "BOM",
+     "name": "Chhatrapati Shivaji Maharaj International Airport"
+    },
+    "dayOffset": 0,
+    "duration": 330,
+    "stops": 1,
+    "layovers": [
+     {
+      "airport": "BLR",
+      "name": "Kempegowda International Airport",
+      "duration": 55,
+      "overnight": false
+     }
+    ],
+    "segments": [
+     {
+      "airline": "Air India",
+      "flightNumber": "AI 503",
+      "airplane": "Airbus A320neo",
+      "legroom": "29 in",
+      "duration": 170,
+      "from": "DEL",
+      "to": "BLR",
+      "depTime": "13:20",
+      "arrTime": "16:10",
+      "overnight": false,
+      "oftenDelayed": false
+     },
+     {
+      "airline": "Air India",
+      "flightNumber": "AI 615",
+      "airplane": "Airbus A320neo",
+      "legroom": "29 in",
+      "duration": 105,
+      "from": "BLR",
+      "to": "BOM",
+      "depTime": "17:05",
+      "arrTime": "18:50",
+      "overnight": false,
+      "oftenDelayed": false
+     }
+    ],
+    "co2": {
+     "kg": 161,
+     "typicalKg": 110,
+     "diffPercent": 46
+    }
+   },
+   {
+    "id": "o3",
+    "best": false,
+    "price": 9020,
+    "airlines": [
+     "SpiceJet"
+    ],
+    "logo": "https://www.gstatic.com/flights/airline_logos/70px/SG.png",
+    "depart": {
+     "time": "18:00",
+     "date": "2026-11-14",
+     "airport": "DEL",
+     "name": "Indira Gandhi International Airport"
+    },
+    "arrive": {
+     "time": "20:10",
+     "date": "2026-11-14",
+     "airport": "BOM",
+     "name": "Chhatrapati Shivaji Maharaj International Airport"
+    },
+    "dayOffset": 0,
+    "duration": 130,
+    "stops": 0,
+    "layovers": [],
+    "segments": [
+     {
+      "airline": "SpiceJet",
+      "flightNumber": "SG 8169",
+      "airplane": "Boeing 737",
+      "legroom": "29 in",
+      "duration": 130,
+      "from": "DEL",
+      "to": "BOM",
+      "depTime": "18:00",
+      "arrTime": "20:10",
+      "overnight": false,
+      "oftenDelayed": true
+     }
+    ],
+    "co2": {
+     "kg": 105,
+     "typicalKg": 110,
+     "diffPercent": -4
+    }
+   }
+  ]
+ }
+}

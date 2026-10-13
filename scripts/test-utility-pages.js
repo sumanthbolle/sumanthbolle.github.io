@@ -10,6 +10,8 @@ var path = require('path');
 
 var root = path.join(__dirname, '..');
 var metals = fs.readFileSync(path.join(root, 'metals.html'), 'utf8');
+var flights = fs.readFileSync(path.join(root, 'flights.html'), 'utf8');
+var flightsApp = fs.readFileSync(path.join(root, 'assets/js/skyfare/app.js'), 'utf8');
 var save = fs.readFileSync(path.join(root, 'save-yourself.html'), 'utf8');
 var saveApp = fs.readFileSync(path.join(root, 'assets/js/save-yourself/app.js'), 'utf8');
 var metalsApp = fs.readFileSync(path.join(root, 'assets/js/metals.js'), 'utf8');
@@ -74,17 +76,23 @@ test('Save Yourself answers in plain words: inputs, one answer, three numbers', 
 });
 
 test('Tool pages load the shared theme script and nav menu', function () {
-  [metals, save].forEach(function (doc) {
+  [metals, save, flights].forEach(function (doc) {
     assert.match(doc, /<script src="assets\/js\/shared\/theme\.js[^"]*"><\/script>\s*<link/);
     assert.equal(/<html[^>]+data-theme=/.test(doc), false);
   });
-  [saveApp, metalsApp].forEach(function (js) {
+  [saveApp, metalsApp, flightsApp].forEach(function (js) {
     assert.match(js, /SBShared\.initNavMenu\(\)/);
   });
 });
 
+test('SkyFare keeps search simple and puts results before Summaverick', function () {
+  indexInOrder(flights, ['id="searchForm"', 'id="from"', 'id="to"', 'id="depart"', 'id="results"', 'id="insight"', 'id="flightList"', 'id="ask"']);
+  assert.equal(/priorityMode|maxBudget|Advanced Options|help-panel\.js|Value Score/.test(flights + flightsApp), false);
+  assert.match(flightsApp, /SBAsk\.init\(/);
+});
+
 test('Both utility shells keep unique HTML ids', function () {
-  [metals, save].forEach(function (documentText) {
+  [metals, save, flights].forEach(function (documentText) {
     var ids = Array.from(documentText.matchAll(/\bid="([^"]+)"/g)).map(function (match) { return match[1]; });
     assert.equal(new Set(ids).size, ids.length);
   });

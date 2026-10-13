@@ -26,6 +26,7 @@ jobs:
           node scripts/test-upsc-api.mjs
           node scripts/test-upsc-sources.mjs
           node scripts/test-upsc-pocket.mjs
+          node scripts/test-skyfare-worker.mjs
       # Publishing runs the Worker code on the runner (see
       # .github/actions/upsc-local-worker), so this deploy only serves the live
       # site API. Without Cloudflare credentials it is skipped, not failed.

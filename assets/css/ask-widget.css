@@ -100,7 +100,7 @@
   max-width: 85%;
   padding: 9px 14px;
   border-radius: 18px;
-  background: var(--blue, #0066cc);
+  background: var(--btn, var(--blue, #0066cc));
   color: #fff;
 }
 
@@ -202,7 +202,7 @@
   place-items: center;
   border: 0;
   border-radius: 50%;
-  background: var(--blue, #0066cc);
+  background: var(--btn, var(--blue, #0066cc));
   color: #fff;
   cursor: pointer;
 }

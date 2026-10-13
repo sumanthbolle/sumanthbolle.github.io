@@ -22,16 +22,15 @@
 
 ---
 
-## 2. Current State (as of July 2026)
+## 2. Current State (October 2026)
 
-- Landing page only (not a functional search engine yet)
-- Tagline: “Search flights. Compare. Book.”
-- Main value prop currently: Ranked by price, speed, and value → then book on Google Flights / Kayak / Skyscanner / Airline
-- AI feature (Summaverick): Suggests destinations + best weeks + rough fares
-- Popular routes listed (static)
-- No real search functionality, filters, accounts, or price tracking yet
-
-**Status:** Early concept / marketing page → needs to become a real product.
+- `flights.html` is a working search: From/To, dates, travellers, cabin, currency.
+- Results come from Google Flights via SerpApi (`POST /flights` in `api/worker.js`, `SERPAPI_KEY` secret, 3-hour cache per search).
+- Results page: Google's price check (low/typical/high, usual range, price history), Best value / Cheapest / Fastest tabs, a stops filter, and one trade-off line per flight ("₹900 more than cheapest · fastest", overnight layover, often delayed, CO₂).
+- Ask Summaverick opens in place with the visible flights as context ("Which should I book?", "Book now or wait?").
+- "Not sure where to go?" uses `POST /flights/inspire` and one-click searches a suggestion.
+- Booking hands off to Google Flights.
+- Amadeus Self-Service was shut down on 17 July 2026; that connector and the AI-researched fare fallback were removed.
 
 ---
 
