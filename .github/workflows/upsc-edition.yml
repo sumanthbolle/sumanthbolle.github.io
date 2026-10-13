@@ -1,0 +1,165 @@
+name: Publish UPSC daily edition
+
+# Two editions close every day. AM covers 18:00 IST (previous day) to 06:00 IST
+# and runs at 00:15 UTC (05:45 IST); PM covers 06:00 to 18:00 IST and runs at
+# 12:15 UTC (17:45 IST). The :45 runs are retries: a run is idempotent by
+# edition id and only adds topics that are still missing. Notes are written
+# with OPENAI_API_KEY (GEMINI_API_KEY as fallback) and need no Cloudflare
+# secret. A missing key holds notes as llm-unavailable and the edition is
+# marked partial; the run still succeeds.
+
+on:
+  schedule:
+    - cron: "15 0 * * *"
+    - cron: "45 0 * * *"
+    - cron: "15 12 * * *"
+    - cron: "45 12 * * *"
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: "Edition slot"
+        type: choice
+        options: [auto, am, pm]
+        default: auto
+      dry_run:
+        description: "Build and report without writing or committing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+# Own queue: the 00:15/12:15 publisher can run for 45 minutes and would delay
+# the edition past its close time in a shared group. Concurrent commits are
+# safe because both push through scripts/upsc/push-with-retry.sh.
+concurrency:
+  group: upsc-edition
+  cancel-in-progress: false
+
+jobs:
+  edition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SLOT: ${{ github.event.inputs.slot || 'auto' }}
+      DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+    steps:
+      - name: Check out triggering ref
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run publisher tests
+        run: |
+          python -m unittest discover -s scripts/upsc -p 'test_*.py'
+          node scripts/test-upsc-sitemap.js
+          node scripts/test-upsc-workflow.js
+          node scripts/test-upsc-edition-integration.js
+
+      - name: Refresh official records
+        continue-on-error: true
+        run: >-
+          python scripts/upsc/publish.py ingest
+          --registry data/upsc/source-registry.json
+          --output data/upsc
+
+      - name: Build the edition
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          UPSC_EDITION_MODEL: ${{ vars.UPSC_EDITION_MODEL }}
+        run: |
+          set -o pipefail
+          extra=()
+          if [ "$DRY_RUN" = "true" ]; then
+            extra+=(--dry-run)
+          fi
+          if [ -z "$OPENAI_API_KEY" ] && [ -z "$GEMINI_API_KEY" ]; then
+            echo "::warning::No OPENAI_API_KEY or GEMINI_API_KEY secret; notes will be held as llm-unavailable."
+          fi
+          python scripts/upsc/edition.py --slot "$SLOT" "${extra[@]}" | tee /tmp/upsc-edition-report.json
+
+      - name: Refresh sitemap
+        if: env.DRY_RUN != 'true'
+        run: node scripts/generate-sitemap.js
+
+      - name: Commit the edition
+        if: env.DRY_RUN != 'true'
+        run: |
+          git config user.name "upsc-publisher[bot]"
+          git config user.email "upsc-publisher[bot]@users.noreply.github.com"
+          bash scripts/upsc/push-with-retry.sh -m "chore: publish UPSC daily edition" \
+            -r "python scripts/upsc/edition.py --rebuild-index && node scripts/generate-sitemap.js" \
+            -- data/upsc upsc-study sitemap.xml
+
+      - name: Open or close the late-edition issue
+        if: always() && env.DRY_RUN != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const label = 'upsc-edition-late';
+            const ist = new Date(Date.now() + 330 * 60 * 1000);
+            const requested = process.env.SLOT;
+            const slot = requested === 'am' || requested === 'pm'
+              ? requested
+              : (ist.getUTCHours() < 12 ? 'am' : 'pm');
+            const date = ist.toISOString().slice(0, 10);
+            const id = `${date}-${slot}`;
+            const file = `data/upsc/editions/${date.slice(0, 4)}/${date.slice(5, 7)}/${date.slice(8, 10)}-${slot}.json`;
+            let status = 'missing';
+            try {
+              status = JSON.parse(fs.readFileSync(file, 'utf8')).status || 'missing';
+            } catch (error) {
+              status = 'missing';
+            }
+            const isRetry = ['45 0 * * *', '45 12 * * *'].includes(context.payload.schedule || '');
+            const title = `UPSC edition late: ${id}`;
+            const open = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', labels: label, per_page: 100,
+            });
+            const existing = open.find((issue) => issue.title === title && !issue.pull_request);
+            if (status === 'closed') {
+              if (existing) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: existing.number,
+                  body: `Edition ${id} closed in run ${context.runId}.`,
+                });
+                await github.rest.issues.update({ owner, repo, issue_number: existing.number, state: 'closed' });
+              }
+              return;
+            }
+            if (!isRetry) return;
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: label });
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.issues.createLabel({
+                owner, repo, name: label, color: 'D93F0B',
+                description: 'A UPSC edition was not closed by its retry run',
+              });
+            }
+            const body = [
+              `Edition \`${id}\` is **${status}** after the retry run ${context.runId}.`,
+              '',
+              `Today shows the latest closed edition with a delay notice until this slot closes.`,
+              `Check held reasons in \`${file}\` (\`held[].reasons\`): \`llm-unavailable\` means the OPENAI_API_KEY / GEMINI_API_KEY secrets are missing or failing; \`evidence-unavailable\` means an official page was blocked or not HTML.`,
+            ].join('\n');
+            if (existing) {
+              await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
+            } else {
+              await github.rest.issues.create({ owner, repo, title, body, labels: [label] });
+            }

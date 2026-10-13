@@ -1,0 +1,262 @@
+{
+  "id": "2026-10-13-am",
+  "slot": "am",
+  "date": "2026-10-13",
+  "window": { "from": "2026-10-12T12:30:00Z", "to": "2026-10-13T00:30:00Z" },
+  "closedAt": "2026-10-13T00:52:00Z",
+  "status": "closed",
+  "glimpse": [
+    { "noteId": "rbi-policy-oct-2026", "line": "RBI holds the repo rate at 5.5% and keeps a neutral stance.", "code": "GS3.1" },
+    { "noteId": "pm-e-drive-extension", "line": "PM E-DRIVE now runs to March 2028 with an outlay of ₹10,900 crore.", "code": "GS3.4" },
+    { "noteId": "india-eu-fta-chapters", "line": "India and the EU close 14 of 23 chapters of the trade agreement.", "code": "GS2.4" }
+  ],
+  "prelims": ["rbi-policy-oct-2026", "pm-e-drive-extension"],
+  "mains": ["india-eu-fta-chapters"],
+  "quickFacts": [
+    { "id": "qf-gst-council-56", "fact": "The 56th GST Council meeting cleared a two-slab structure of 5% and 18%.", "code": "GS3.1", "source": { "title": "Recommendations of the 56th GST Council meeting", "url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2163555", "publisher": "PIB" } },
+    { "id": "qf-who-tb-report", "fact": "WHO's Global TB Report 2025 counts India among the eight countries with two-thirds of cases.", "code": "GS2.6", "source": { "title": "Global tuberculosis report 2025", "url": "https://www.who.int/teams/global-programme-on-tuberculosis-and-lung-health/tb-reports", "publisher": "WHO" } },
+    { "id": "qf-sebi-sme-ipo", "fact": "SEBI raised the minimum application size for SME IPOs to two lots.", "code": "GS3.1", "source": { "title": "SEBI board meeting outcomes", "url": "https://www.sebi.gov.in/media-and-notifications/press-releases.html", "publisher": "SEBI" } }
+  ],
+  "held": [
+    { "topic": "Draft Digital Personal Data Protection Rules amendment", "reasons": ["evidence-unavailable"] }
+  ],
+  "notes": {
+    "rbi-policy-oct-2026": {
+      "id": "rbi-policy-oct-2026",
+      "slug": "rbi-policy-oct-2026",
+      "fingerprint": "6c1f0e2d",
+      "kind": "news",
+      "title": "RBI holds the repo rate at 5.5%: what a neutral stance means",
+      "deck": "The Monetary Policy Committee kept rates unchanged and explained why it is waiting for the GST cut to pass through to prices.",
+      "oneLine": "The MPC kept the repo rate at 5.5% because inflation is already below target and it wants to see how tax cuts and tariffs feed into prices before moving again.",
+      "subject": "Economy",
+      "codes": ["GS3.1"],
+      "papers": ["GS3"],
+      "anchor": "Monetary policy framework",
+      "readTime": 6,
+      "publishedAt": "2026-10-13T00:40:00Z",
+      "priority": 78,
+      "band": "must",
+      "whyInNews": { "text": "On 1 October the Reserve Bank's Monetary Policy Committee voted unanimously to keep the policy repo rate at 5.5% and retained a neutral stance.", "sources": [1] },
+      "sections": [
+        {
+          "heading": "What did the MPC decide, and how?",
+          "body": [
+            { "label": "Repo rate unchanged.", "text": "The repo rate stays at 5.5%, so the standing deposit facility rate stays at 5.25% and the marginal standing facility rate at 5.75%." },
+            { "label": "Neutral stance.", "text": "Neutral means the committee can move either way at the next meeting; it is not signalling a cut or a hike in advance." },
+            { "label": "Six members, one vote each.", "text": "Three members come from the RBI and three are external experts appointed by the Centre; the Governor has a casting vote in a tie." }
+          ],
+          "sources": [1]
+        },
+        {
+          "heading": "Why hold when inflation is low?",
+          "body": [
+            { "label": "Projection revised down.", "text": "The RBI lowered its CPI inflation projection for 2025-26 to 2.6% after food prices eased and GST rates were rationalised." },
+            { "label": "Transmission is still under way.", "text": "Earlier cuts of 100 basis points are still reaching loan rates, so a further cut now would stack on effects that have not fully arrived." }
+          ],
+          "sources": [1, 2]
+        },
+        {
+          "heading": "How does this connect to the inflation-targeting law?",
+          "body": [
+            { "label": "Statutory target.", "text": "Section 45ZA of the RBI Act lets the Centre set the inflation target every five years; it is 4% CPI inflation with a band of 2% to 6%." },
+            { "label": "Accountability.", "text": "If inflation stays outside the band for three consecutive quarters, the RBI must write to the Centre explaining why and what it will do." }
+          ],
+          "sources": [3]
+        }
+      ],
+      "keyNumbers": [
+        { "figure": "5.5%", "meaning": "Policy repo rate after the October 2026 meeting", "source": 1 },
+        { "figure": "2.6%", "meaning": "RBI's CPI inflation projection for 2025-26", "source": 1 },
+        { "figure": "4% (2%–6%)", "meaning": "Inflation target and tolerance band notified under Section 45ZA", "source": 3 },
+        { "figure": "100 bps", "meaning": "Cumulative repo rate cut before this pause", "source": 2 }
+      ],
+      "back2basics": { "concept": "Repo rate", "text": "The repo rate is the rate at which the RBI lends overnight to banks against government securities. Raising it makes money costlier across the system; lowering it does the opposite. It is the policy rate the MPC votes on.", "patternId": "monetary-policy" },
+      "wayForward": [
+        { "label": "Watch transmission.", "text": "The RBI said it will track how much of the earlier cuts reach new loans before deciding the next step.", "source": 1 }
+      ],
+      "misconception": "The MPC does not set the inflation target. The Centre notifies it under the RBI Act; the MPC only decides the policy rate to meet it.",
+      "practice": {
+        "mcq": {
+          "stem": "With reference to the Monetary Policy Committee (MPC) of the RBI, consider the following statements: 1. The inflation target is fixed by the MPC every five years. 2. The Governor has a casting vote in case of a tie. Which of the statements given above is/are correct?",
+          "options": ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"],
+          "answer": 1,
+          "trap": "Statement 1 swaps the actor: the Central Government sets the target under Section 45ZA, in consultation with the RBI. The MPC only sets the repo rate."
+        },
+        "mains": {
+          "question": "Flexible inflation targeting has given India's monetary policy credibility, but not full control over inflation. Examine.",
+          "directive": "Examine",
+          "marks": 15,
+          "demand": "Show what the framework achieved, then where supply-side prices and fiscal choices limit what the repo rate can do.",
+          "structure": {
+            "intro": "Define flexible inflation targeting and the 4% (2%–6%) target under the amended RBI Act.",
+            "body": ["Credibility gains: anchored expectations, MPC voting, published minutes.", "Limits: food and fuel shocks, tax changes, slow transmission.", "Recent evidence: projection cut to 2.6% after GST rationalisation."],
+            "conclusion": "Monetary policy works best alongside supply-side and fiscal measures."
+          }
+        },
+        "pyq": { "year": 2017, "paper": "Prelims", "marks": 2, "question": "With reference to the Monetary Policy Committee (MPC), which of the following statements is/are correct?", "why": "Same institution and the same actor-swap trap on who decides what." },
+        "faq": [
+          { "q": "Is a neutral stance the same as a pause?", "a": "No. A pause is a single decision to hold; neutral says the next move could be in either direction." },
+          { "q": "Who appoints the external MPC members?", "a": "The Central Government, on the recommendation of a search-cum-selection committee." },
+          { "q": "What happens if inflation breaches the band?", "a": "After three consecutive quarters outside 2%–6%, the RBI must report to the Centre with reasons and remedial steps." }
+        ]
+      },
+      "sources": [
+        { "n": 1, "title": "Monetary Policy Statement, 2026-27: Resolution of the Monetary Policy Committee", "publisher": "RBI", "url": "https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx", "date": "2026-10-01", "kind": "official" },
+        { "n": 2, "title": "Governor's Statement, October 2026", "publisher": "RBI", "url": "https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx?prid=1", "date": "2026-10-01", "kind": "official" },
+        { "n": 3, "title": "Inflation target notified under Section 45ZA of the RBI Act, 1934", "publisher": "Gazette of India", "url": "https://egazette.gov.in/", "date": "2021-03-31", "kind": "official" }
+      ],
+      "updates": []
+    },
+    "pm-e-drive-extension": {
+      "id": "pm-e-drive-extension",
+      "slug": "pm-e-drive-extension",
+      "fingerprint": "a93b11c4",
+      "kind": "news",
+      "title": "PM E-DRIVE extended to 2028: who gets the subsidy now",
+      "deck": "The Cabinet extended the electric-mobility scheme by two years and moved more of the money to buses, trucks and charging.",
+      "oneLine": "PM E-DRIVE now runs until March 2028 with ₹10,900 crore, and the money shifts from two-wheeler subsidies towards e-buses, e-trucks and public charging.",
+      "subject": "Economy",
+      "codes": ["GS3.4", "GS3.1"],
+      "papers": ["GS3"],
+      "anchor": "Clean transport and industrial policy",
+      "readTime": 5,
+      "publishedAt": "2026-10-13T00:44:00Z",
+      "priority": 66,
+      "band": "must",
+      "whyInNews": { "text": "The Union Cabinet approved extending the PM Electric Drive Revolution in Innovative Vehicle Enhancement (PM E-DRIVE) scheme until 31 March 2028.", "sources": [1] },
+      "sections": [
+        {
+          "heading": "What does the scheme pay for?",
+          "body": [
+            { "label": "Demand incentives.", "text": "Buyers of electric two-wheelers, three-wheelers, ambulances and trucks get an upfront discount that the manufacturer claims back." },
+            { "label": "E-buses.", "text": "About 14,028 e-buses for nine large cities are supported through state transport undertakings." },
+            { "label": "Charging.", "text": "Public charging stations get capital support, with the largest share for fast chargers on highways." }
+          ],
+          "sources": [1]
+        },
+        {
+          "heading": "Why shift money away from two-wheelers?",
+          "body": [
+            { "label": "Market maturity.", "text": "The ministry says electric two-wheelers now sell without deep subsidy, so support tapers in the second year." },
+            { "label": "Freight emissions.", "text": "Trucks are a small share of vehicles but a large share of transport emissions, so the extension adds e-truck incentives." }
+          ],
+          "sources": [1, 2]
+        }
+      ],
+      "keyNumbers": [
+        { "figure": "₹10,900 crore", "meaning": "Total outlay of PM E-DRIVE", "source": 1 },
+        { "figure": "14,028", "meaning": "E-buses supported for state transport undertakings", "source": 1 },
+        { "figure": "31 March 2028", "meaning": "New end date of the scheme", "source": 1 }
+      ],
+      "back2basics": { "concept": "Demand-side subsidy", "text": "A demand-side subsidy lowers the price the buyer pays, rather than paying the producer to make more. It builds a market quickly but has to taper once prices fall, or it becomes a permanent transfer." },
+      "wayForward": [],
+      "misconception": "PM E-DRIVE is not the same as the PLI scheme for automobiles. PLI pays producers for incremental sales; PM E-DRIVE discounts the price for buyers.",
+      "practice": {
+        "mcq": {
+          "stem": "PM E-DRIVE, recently in the news, is implemented by which ministry?",
+          "options": ["Ministry of Road Transport and Highways", "Ministry of Heavy Industries", "Ministry of New and Renewable Energy", "Ministry of Power"],
+          "answer": 1,
+          "trap": "Road Transport sounds right because the scheme is about vehicles, but the scheme sits with the Ministry of Heavy Industries, which also ran FAME."
+        },
+        "mains": {
+          "question": "Discuss how demand incentives and charging infrastructure together determine the pace of electric mobility in India.",
+          "directive": "Discuss",
+          "marks": 10,
+          "demand": "Explain both levers and why one without the other stalls adoption.",
+          "structure": {
+            "intro": "State the PM E-DRIVE extension and its outlay.",
+            "body": ["Demand incentives and the taper logic.", "Charging as a precondition for buses and trucks."],
+            "conclusion": "Sequencing: incentives first, infrastructure ahead of demand for heavy vehicles."
+          }
+        },
+        "faq": [
+          { "q": "Did FAME end?", "a": "Yes. PM E-DRIVE replaced FAME-II as the main electric-mobility scheme." },
+          { "q": "Who runs the e-bus component?", "a": "State transport undertakings in nine large cities, with support from the Centre." },
+          { "q": "Is there a cap on how long the incentive lasts?", "a": "Yes. The scheme now ends on 31 March 2028." }
+        ]
+      },
+      "sources": [
+        { "n": 1, "title": "Cabinet approves extension of PM E-DRIVE scheme", "publisher": "PIB", "url": "https://pib.gov.in/PressReleasePage.aspx?PRID=2170001", "date": "2026-10-12", "kind": "official" },
+        { "n": 2, "title": "PM E-DRIVE scheme guidelines", "publisher": "Ministry of Heavy Industries", "url": "https://heavyindustries.gov.in/pm-e-drive", "date": "2026-10-12", "kind": "official" }
+      ],
+      "updates": []
+    },
+    "india-eu-fta-chapters": {
+      "id": "india-eu-fta-chapters",
+      "slug": "india-eu-fta-chapters",
+      "fingerprint": "f04d77aa",
+      "kind": "editorial",
+      "title": "India–EU trade agreement: what the closed chapters change",
+      "deck": "Negotiators say most chapters are done. The hard ones left are the reason the deal has taken almost two decades.",
+      "oneLine": "India and the EU have closed most chapters of their trade agreement, but tariffs on cars and wine, the carbon border tax and data rules are still open, and they decide whether the deal helps Indian exporters.",
+      "subject": "International Relations",
+      "codes": ["GS2.4", "GS3.1"],
+      "papers": ["GS2", "GS3"],
+      "anchor": "India and regional and global groupings",
+      "readTime": 8,
+      "publishedAt": "2026-10-13T00:48:00Z",
+      "priority": 71,
+      "band": "must",
+      "whyInNews": { "text": "After the latest negotiating round in Brussels, both sides said 14 of 23 chapters are closed, and The Hindu's editorial argued the remaining chapters carry most of the economic weight.", "sources": [1, 3] },
+      "sections": [
+        {
+          "heading": "What has been agreed so far?",
+          "body": [
+            { "label": "Closed chapters.", "text": "Chapters on customs procedures, competition, dispute settlement and small firms are closed, according to the joint statement." },
+            { "label": "Separate tracks.", "text": "An investment protection agreement and a geographical indications agreement are being negotiated alongside the main text." }
+          ],
+          "sources": [1]
+        },
+        {
+          "heading": "Why are the open chapters the hard ones?",
+          "body": [
+            { "label": "Market access for goods.", "text": "The EU wants lower Indian tariffs on cars, wine and spirits; India wants better access for textiles, leather and pharmaceuticals." },
+            { "label": "Carbon Border Adjustment Mechanism.", "text": "CBAM charges importers for the carbon in steel, aluminium and cement. India argues it works like a tariff on its exports." },
+            { "label": "Data adequacy.", "text": "Indian IT firms want the EU to recognise India's data protection law so personal data can flow without extra contracts." }
+          ],
+          "sources": [2, 3]
+        }
+      ],
+      "keyNumbers": [
+        { "figure": "14 of 23", "meaning": "Chapters closed after the latest round", "source": 1 },
+        { "figure": "2007", "meaning": "Year negotiations first began", "source": 2 }
+      ],
+      "back2basics": { "concept": "Free trade agreement", "text": "An FTA cuts tariffs on most trade between members but lets each keep its own tariffs for everyone else. That is what separates it from a customs union, where members share a common external tariff." },
+      "wayForward": [
+        { "label": "Sequencing.", "text": "The editorial suggests closing goods market access first and leaving CBAM to a separate dialogue rather than holding the whole deal hostage.", "source": 3 }
+      ],
+      "misconception": "An FTA does not remove all tariffs. Sensitive lines are usually kept out or phased over many years.",
+      "practice": {
+        "mcq": {
+          "stem": "The Carbon Border Adjustment Mechanism, sometimes seen in the news, applies initially to which of the following imports into the EU?",
+          "options": ["Textiles and leather", "Steel, aluminium and cement", "Pharmaceuticals", "Software services"],
+          "answer": 1,
+          "trap": "Textiles and leather are India's market-access asks in the FTA, not CBAM sectors. CBAM covers carbon-intensive goods such as steel, aluminium and cement."
+        },
+        "mains": {
+          "question": "The India–EU FTA is less about tariffs than about rules. Critically examine.",
+          "directive": "Critically examine",
+          "marks": 15,
+          "demand": "Weigh tariff gains against regulatory issues: CBAM, data adequacy, standards.",
+          "structure": {
+            "intro": "State where negotiations stand and why the deal matters for both sides.",
+            "body": ["Tariff gains in labour-intensive goods.", "Rules: CBAM, data adequacy, sustainability chapters.", "Counter-view: tariffs on cars and wine still block closure."],
+            "conclusion": "A deal that settles rules early protects exporters more than one that only cuts tariffs."
+          }
+        },
+        "faq": [
+          { "q": "When did India–EU talks begin?", "a": "In 2007. They stalled in 2013 and restarted in 2022." },
+          { "q": "Is the investment agreement part of the FTA?", "a": "No. It is negotiated on a separate track alongside the FTA." },
+          { "q": "Does CBAM apply only to India?", "a": "No. It applies to all imports of the covered goods into the EU." }
+        ]
+      },
+      "sources": [
+        { "n": 1, "title": "Joint statement on the India–EU trade negotiations", "publisher": "Ministry of Commerce and Industry", "url": "https://commerce.gov.in/press-releases/", "date": "2026-10-11", "kind": "official" },
+        { "n": 2, "title": "EU–India trade relations", "publisher": "European Commission", "url": "https://policy.trade.ec.europa.eu/eu-trade-relationships-country-and-region/countries-and-regions/india_en", "date": "2026-10-10", "kind": "official" },
+        { "n": 3, "title": "Editorial: The hard part of the India–EU deal", "publisher": "The Hindu", "url": "https://www.thehindu.com/opinion/editorial/", "date": "2026-10-12", "kind": "discovery" }
+      ],
+      "updates": []
+    }
+  }
+}

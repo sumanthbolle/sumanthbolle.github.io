@@ -269,6 +269,7 @@
     var url = new URL(window.location.href);
     url.searchParams.delete('view');
     url.searchParams.delete('subject');
+    url.searchParams.delete('note');
     if (id) url.searchParams.set('article', id);
     else url.searchParams.delete('article');
     url.hash = id ? 'pocketReader' : 'pocketLibrary';

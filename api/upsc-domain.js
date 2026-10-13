@@ -71,6 +71,10 @@ export function upscChipInstruction(chip, opts) {
   switch (chip) {
     case 'sources':
       return 'Task: SOURCE READING. Explain this article using primary evidence. Verify its static claims rather than treating them as settled. Use readable paragraphs, a labelled illustration and a clear distinction between what the document establishes and what is interpretation. Cite actual documents, identify their dates when known, and acknowledge unavailable documents. Do not force an exam-answer template onto the explanation.';
+    case 'explain':
+      return 'Task: EXPLAIN THIS STEP. Explain the focus passage for a student meeting it for the first time: what it says, the mechanism behind it, and how it links to the static syllabus concept. Ground every figure in an official source and cite it. Do not pad with background the passage does not need.';
+    case 'check':
+      return 'Task: CHECK THIS CLAIM. Test the focus passage against official sources. State plainly whether it is supported, partly supported or not supported, quote or closely paraphrase what the source says, and give the corrected claim when it is wrong. Never invent a source; say so when you could not verify it.';
     case 'understanding':
       return 'Task: UNDERSTANDING CHECK. Use the primary documents to ask one applied question about the article. Do not reveal its answer until the student responds. On a response, give precise feedback grounded in the source, then offer one follow-up. Do not invent a PYQ or claim a hypothetical situation really occurred.';
     case 'prelims':
@@ -88,6 +92,24 @@ export function upscChipInstruction(chip, opts) {
     default:
       return '';
   }
+}
+
+/**
+ * Answer contract the study-page widget renders with the note components
+ * (one-line box, question headings, bold-label bullets, source chips).
+ * Requested when the widget sends { format: 'brief' }; other formats are
+ * unchanged. The widget falls back to safe Markdown if the reply is not JSON.
+ * @param {string} format
+ * @returns {string}
+ */
+export function upscFormatInstruction(format) {
+  if (format !== 'brief') return '';
+  return 'Output format: return ONLY a single raw JSON object, no prose before or after and no markdown fences, of exactly this shape: ' +
+    '{"oneLine":"one plain sentence that answers the question","sections":[{"heading":"a question the section answers","points":[{"label":"short bold label","text":"one or two sentences","cite":[1]}]}],' +
+    '"table":{"headers":["...","..."],"rows":[["...","..."]]},"misconception":"one common misreading and the correction","examAngle":{"prelims":"...","mains":"..."},' +
+    '"sources":[{"n":1,"title":"...","publisher":"...","date":"YYYY-MM-DD","url":"https://...","kind":"official|secondary"}],"followUps":["...","..."]}. ' +
+    'Rules: two to four sections; two to four points each; every factual point cites the numbered sources it relies on; kind is "official" only for government, regulator, court, parliament or UN-system documents; ' +
+    'omit "table" and "misconception" when the evidence does not support them; no filler, no "As an AI", no emojis.';
 }
 
 const DOMAIN_MARKERS = [

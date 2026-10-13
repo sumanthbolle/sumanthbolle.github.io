@@ -10,7 +10,7 @@ permissions:
   issues: write
 
 concurrency:
-  group: upsc-official-publisher
+  group: upsc-data
   cancel-in-progress: false
 
 jobs:
@@ -50,6 +50,10 @@ jobs:
           node scripts/test-upsc-pocket.mjs
           node scripts/test-upsc-sitemap.js
           node scripts/test-upsc-workflow.js
+          node scripts/test-upsc-edition-progress.js
+          node scripts/test-upsc-answer-render.js
+          node scripts/test-upsc-edition.js
+          node scripts/test-upsc-edition-integration.js
 
       - name: Snapshot previous source health
         run: |
@@ -133,6 +137,12 @@ jobs:
           python scripts/upsc/publish.py ingest
           --registry data/upsc/source-registry.json
           --output data/upsc
+
+      - name: Archive newspaper discovery items
+        # Busy newspaper feeds keep about two hours of items; editions read
+        # this archive for the parts of their window the live feed has dropped.
+        continue-on-error: true
+        run: python scripts/upsc/discovery.py --archive data/upsc
 
       - name: Enrich source records
         continue-on-error: true
@@ -220,10 +230,6 @@ jobs:
         run: |
           git config user.name "upsc-publisher[bot]"
           git config user.email "upsc-publisher[bot]@users.noreply.github.com"
-          git add data/upsc upsc-study sitemap.xml
-          if git diff --cached --quiet; then
-            echo "No UPSC publication changes"
-          else
-            git commit -m "chore: publish UPSC official-source update"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
-          fi
+          bash scripts/upsc/push-with-retry.sh -m "chore: publish UPSC official-source update" \
+            -r "python scripts/upsc/publish.py build-indexes --output data/upsc && python scripts/upsc/publish.py build-pages --output data/upsc --site-root upsc-study --base-url https://sumanthbolle.com && python scripts/upsc/edition.py --rebuild-index && node scripts/generate-sitemap.js" \
+            -- data/upsc upsc-study sitemap.xml

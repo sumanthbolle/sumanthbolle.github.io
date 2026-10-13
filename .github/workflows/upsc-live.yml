@@ -11,9 +11,11 @@ on:
 permissions:
   contents: write
 
+# Own queue: this runs every 5 minutes, and in the shared upsc-data group each
+# new pending run would cancel a queued edition or archive run. Pushes rebase
+# onto main first, so commits do not race.
 concurrency:
-  # Serialize with the archive publisher and revision generators.
-  group: upsc-official-publisher
+  group: upsc-live-publisher
   cancel-in-progress: false
 
 jobs:
@@ -49,9 +51,6 @@ jobs:
           node scripts/generate-sitemap.js
           git config user.name "upsc-publisher[bot]"
           git config user.email "upsc-publisher[bot]@users.noreply.github.com"
-          git add data/upsc upsc-study sitemap.xml
-          if ! git diff --cached --quiet; then
-            git commit -m "chore: publish verified Pocket news"
-            git pull --rebase origin "$GITHUB_REF_NAME"
-            git push origin "HEAD:$GITHUB_REF_NAME"
-          fi
+          bash scripts/upsc/push-with-retry.sh -m "chore: publish verified Pocket news" \
+            -r "python scripts/upsc/publish.py build-indexes --output data/upsc && python scripts/upsc/publish.py build-pages --output data/upsc --site-root upsc-study --base-url https://sumanthbolle.com && python scripts/upsc/edition.py --rebuild-index && node scripts/generate-sitemap.js" \
+            -- data/upsc upsc-study sitemap.xml

@@ -32,8 +32,9 @@
   <link rel="stylesheet" href="assets/css/utility-page.css">
   <link rel="stylesheet" href="assets/css/upsc.css?v=20261012-3">
   <link rel="stylesheet" href="assets/css/upsc-motion.css?v=20261012-3">
-  <link rel="stylesheet" href="assets/css/upsc-coach.css?v=20261012-3">
+  <link rel="stylesheet" href="assets/css/upsc-coach.css?v=20261013-2">
   <link rel="stylesheet" href="assets/css/upsc-reading.css?v=20261012-3">
+  <link rel="stylesheet" href="assets/css/upsc-edition.css?v=20261013-1">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to articles</a>
@@ -144,6 +145,8 @@
 
         <!-- Today's reading edition -->
         <section class="an-view" id="view-brief" role="tabpanel" aria-labelledby="tab-brief">
+          <section class="ue-desk" id="editionDesk" hidden aria-labelledby="editionTitle"></section>
+          <article class="ue-reader" id="editionReader" hidden></article>
           <div class="pr-feed-controls">
             <p id="pocketFeedStatus" role="status">Checking latest reads…</p>
             <button type="button" class="btn" id="pocketFeedRefresh">Check for updates</button>
@@ -401,10 +404,13 @@
   <script src="assets/js/upsc/packet.js?v=20261012-3"></script>
   <script src="assets/js/upsc/memory.js?v=20261012-3"></script>
   <script src="assets/js/upsc/render.js?v=20261012-3"></script>
-  <script src="assets/js/upsc/app.js?v=20261012-3"></script>
-  <script src="assets/js/upsc/reading.js?v=20261012-3"></script>
+  <script src="assets/js/upsc/app.js?v=20261013-1"></script>
+  <script src="assets/js/upsc/reading.js?v=20261013-1"></script>
+  <script src="assets/js/upsc/answer-render.js?v=20261013-1"></script>
+  <script src="assets/js/upsc/edition-progress.js?v=20261013-1"></script>
+  <script src="assets/js/upsc/edition.js?v=20261013-1"></script>
   <script>window.SB_UPSC_ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';</script>
-  <script src="assets/js/upsc/coach.js?v=20261012-3"></script>
+  <script src="assets/js/upsc/coach.js?v=20261013-2"></script>
   <script src="assets/js/upsc/scroll.js?v=20261012-3"></script>
 </body>
 </html>

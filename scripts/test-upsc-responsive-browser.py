@@ -1,10 +1,16 @@
 """UPSC page layout checks. Requires Playwright and a running static server."""
+import copy
+from datetime import datetime, timedelta, timezone
 import json
 from pathlib import Path
 import shutil
 import sys
 
-from playwright.sync_api import sync_playwright
+try:
+    from playwright.sync_api import sync_playwright
+except ImportError:  # Local runs without Playwright skip cleanly; CI installs it.
+    print("SKIP: Playwright is not installed")
+    sys.exit(0)
 
 root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(root))
@@ -14,6 +20,44 @@ base = (sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8000").rstrip("/
 article_count = len(json.loads((root / 'data/upsc-pocket-reads.json').read_text())['articles'])
 routes = ["upsc.html", "upsc-guide.html", "upsc-patterns.html", "revision.html",
           "mains.html", "upsc-quiz.html", "needs-review.html", "upsc-study/"]
+
+
+# Edition fixture re-dated to today in IST so the desk shows it as today's AM edition.
+today_ist = (datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)).date().isoformat()
+edition = json.loads((root / 'scripts/fixtures/upsc-edition-sample.json').read_text())
+edition = copy.deepcopy(edition)
+edition.update(id=today_ist + '-am', date=today_ist, closedAt=today_ist + 'T00:52:00Z')
+edition_path = today_ist[:4] + '/' + today_ist[5:7] + '/' + today_ist[8:] + '-am.json'
+edition_index = {"editions": [{"id": edition["id"], "date": today_ist, "slot": "am", "path": edition_path,
+                               "closedAt": edition["closedAt"], "status": "closed",
+                               "counts": {"prelims": 2, "mains": 1, "quickFacts": 3, "held": 1}}]}
+
+
+def route_editions(page):
+    page.route("**/data/upsc/editions/index.json", lambda route: route.fulfill(json=edition_index))
+    page.route("**/data/upsc/editions/" + edition_path, lambda route: route.fulfill(json=edition))
+
+
+def assert_edition(page, width, theme):
+    page.goto(base + "/upsc.html", wait_until="networkidle")
+    page.wait_for_selector("#editionDesk:not([hidden])")
+    assert "Prelims 0/2" in page.locator(".ue-counter__text").inner_text()
+    assert_layout(page, ("edition desk", width, theme))
+    page.locator(".ue-card__link").first.click()
+    page.wait_for_selector("#editionReader:not([hidden])")
+    box = page.locator(".ue-reader .ue-oneline").bounding_box()
+    viewport = page.viewport_size
+    assert box["y"] + box["height"] <= viewport["height"], ("one-line below the fold", width, box)
+    assert_layout(page, ("edition note", width, theme))
+    assert page.locator(".ue-reader details[open]").count() == 0
+    summary = page.locator(".ue-practice--mcq > summary")
+    summary.focus()
+    page.keyboard.press("Enter")
+    assert page.locator(".ue-practice--mcq").evaluate("el => el.open"), "details toggle via keyboard"
+    page.locator(".ue-reader details").evaluate_all("els => els.forEach(el => el.open = true)")
+    assert_layout(page, ("edition note expanded", width, theme))
+    page.locator("[data-ue-back]").first.click()
+    page.wait_for_selector("#editionDesk:not([hidden])")
 
 
 def assert_layout(page, label):
@@ -45,6 +89,7 @@ with sync_playwright() as playwright:
                                       reduced_motion="reduce", color_scheme=theme)
         context.add_init_script("localStorage.setItem('theme', '" + theme + "')")
         page = context.new_page()
+        context.add_init_script("localStorage.removeItem('upscEdition.v1')")
         errors = []
         page.on("pageerror", lambda error: errors.append(str(error)))
         # The production queue is empty. Exercise its real renderer with a long ID.
@@ -105,6 +150,10 @@ with sync_playwright() as playwright:
                 assert panel["y"] >= 0 and panel["y"] + panel["height"] <= 900
             assert not errors, (route, errors)
             print("PASS:", width, theme, route, flush=True)
+        route_editions(page)
+        assert_edition(page, width, theme)
+        assert not errors, ("edition", errors)
+        print("PASS:", width, theme, "edition desk and note", flush=True)
         # Use the actual publication template; do not publish fixture content.
         note = _page_shell("Responsive fixture", "Layout regression fixture", "https://example.com",
             '<h1>A readable study note</h1><section class="answer-use"><h2>Use in an answer</h2>'
