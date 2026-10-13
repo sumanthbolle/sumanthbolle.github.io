@@ -1,0 +1,49 @@
+name: Start local UPSC Worker
+description: >-
+  Serve api/worker.js on loopback with the repository PERPLEXITY_API_KEY and
+  export UPSC_ENRICH_ENDPOINT and UPSC_PUBLISH_TOKEN for later steps. Publishing
+  then needs no Cloudflare credentials and no token shared with the deployed Worker.
+inputs:
+  perplexity-api-key:
+    description: Perplexity API key (pass secrets.PERPLEXITY_API_KEY)
+    required: true
+  port:
+    description: Loopback port
+    default: "8787"
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        PERPLEXITY_API_KEY: ${{ inputs.perplexity-api-key }}
+        PORT: ${{ inputs.port }}
+      run: |
+        if [ -z "$PERPLEXITY_API_KEY" ]; then
+          echo "::error::Set the repository secret PERPLEXITY_API_KEY; the UPSC publisher uses it for note generation."
+          exit 1
+        fi
+        # One-token Sonar call: a revoked or rotated key fails here with the fix,
+        # instead of as per-note HTTP 503 warnings.
+        key_status=$(curl -s -o /dev/null -w '%{http_code}' -m 30 https://api.perplexity.ai/v1/sonar \
+          -H "Authorization: Bearer $PERPLEXITY_API_KEY" -H 'Content-Type: application/json' \
+          -d '{"model":"sonar","messages":[{"role":"user","content":"ok"}],"max_tokens":1}' || true)
+        if [ "$key_status" = "401" ] || [ "$key_status" = "403" ]; then
+          echo "::error::Perplexity rejected PERPLEXITY_API_KEY (HTTP $key_status). Update it: gh secret set PERPLEXITY_API_KEY -R ${GITHUB_REPOSITORY}"
+          exit 1
+        fi
+        token=$(openssl rand -hex 32)
+        echo "::add-mask::$token"
+        UPSC_PUBLISH_TOKEN="$token" nohup node scripts/upsc/local-worker.mjs "$PORT" > /tmp/upsc-local-worker.log 2>&1 &
+        endpoint="http://127.0.0.1:$PORT/upsc/enrich"
+        for attempt in $(seq 1 30); do
+          status=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$endpoint" -d '{}' || true)
+          [ "$status" = "401" ] && break
+          sleep 1
+        done
+        if [ "$status" != "401" ]; then
+          cat /tmp/upsc-local-worker.log
+          echo "::error::Local UPSC Worker did not start."
+          exit 1
+        fi
+        echo "UPSC_ENRICH_ENDPOINT=$endpoint" >> "$GITHUB_ENV"
+        echo "UPSC_PUBLISH_TOKEN=$token" >> "$GITHUB_ENV"

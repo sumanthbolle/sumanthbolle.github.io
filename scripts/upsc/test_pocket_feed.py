@@ -173,6 +173,16 @@ class PocketFeedTests(unittest.TestCase):
         self.assertTrue(all(payload["id"] not in prior_ids for url, payload in calls[before:] if url.endswith("/enrich")))
         self.assertEqual(result["failures"], {})
 
+    def test_static_only_run_writes_the_snapshot_without_a_live_push(self):
+        calls = []
+        result = release_updates(FIXTURE_REGISTRY, self.root, "https://worker.example/upsc/enrich",
+            "token", fixture_opener(), self.worker(calls), NOW, max_records=3, live_feed=False)
+        self.assertGreaterEqual(result["released"], 2)
+        self.assertFalse(any(url.endswith("/publish") for url, _ in calls))
+        self.assertEqual(result["failures"], {})
+        feed = json.loads((self.root / "pocket-feed.json").read_text())
+        self.assertEqual(len(feed["articles"]), result["released"])
+
     def test_failed_verification_never_reaches_public_snapshot_and_retries_back_off(self):
         calls = []
         first = release_updates(FIXTURE_REGISTRY, self.root, "https://worker.example/upsc/enrich",

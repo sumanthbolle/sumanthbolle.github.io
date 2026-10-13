@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import urllib.error
 import urllib.request
 
 if __package__ in (None, ""):
@@ -16,7 +17,40 @@ from scripts.upsc.publish import _all_current_records, _read_json, _write_json, 
 from scripts.upsc.verify import apply_verification, note_digest, record_verification_stats, should_publish, write_review_queue
 
 
-def release_updates(registry, output, endpoint, token, source_opener, worker_opener, now, max_records=3):
+SECRET_FIX = ("Set the repository secret UPSC_PUBLISH_TOKEN, then run the 'Deploy Summaverick Worker' "
+    "workflow so the Worker receives the same value")
+
+
+def check_worker_auth(endpoint, token, opener, timeout=20):
+    """Fail fast when the publisher and Worker do not share UPSC_PUBLISH_TOKEN.
+
+    An empty body is rejected by validation (422) after the bearer check, so
+    this costs no model call.
+    """
+    if not endpoint or not token:
+        raise ValueError("UPSC_ENRICH_ENDPOINT and UPSC_PUBLISH_TOKEN are required. " + SECRET_FIX)
+    request = urllib.request.Request(endpoint, data=b"{}", method="POST", headers={
+        "Authorization": "Bearer " + token, "Content-Type": "application/json",
+        "User-Agent": "Anchor-UPSC-Publisher/1.0"})
+    try:
+        with opener(request, timeout=timeout):
+            return
+    except urllib.error.HTTPError as error:
+        status = error.code
+        error.close()
+    if status in (401, 403):
+        raise ValueError("The Worker rejected UPSC_PUBLISH_TOKEN (HTTP %d); the secrets are out of sync. %s"
+            % (status, SECRET_FIX))
+
+
+def exit_status(result):
+    """Only a failed live feed fails the run; one note's provider error retries after backoff."""
+    failures = result.get("failures") or {}
+    warnings = ["%s: %s" % (key, value) for key, value in failures.items() if key != "live-feed"]
+    return (2 if "live-feed" in failures else 0), warnings
+
+
+def release_updates(registry, output, endpoint, token, source_opener, worker_opener, now, max_records=3, live_feed=True):
     if not endpoint or not token:
         raise ValueError("UPSC_ENRICH_ENDPOINT and UPSC_PUBLISH_TOKEN are required")
     clock = instant(now)
@@ -41,6 +75,9 @@ def release_updates(registry, output, endpoint, token, source_opener, worker_ope
         if feed["revision"] != old.get("revision"):
             changed = True
             _write_json(output / "pocket-feed.json", feed)
+        if not live_feed:
+            # Static-only: readers fall back to the committed snapshot.
+            return
         try:
             result = post_worker(sibling_endpoint(endpoint, "/upsc/pocket/publish"), token, feed, worker_opener)
             if result.get("success") is not True:
@@ -107,19 +144,28 @@ def main():
     parser.add_argument("--output", type=Path, default=Path("data/upsc"))
     parser.add_argument("--max-records", type=int, default=3)
     parser.add_argument("--report", type=Path)
+    parser.add_argument("--no-live-feed", action="store_true",
+        help="write only the static pocket-feed.json; skip the push to the deployed Worker's KV feed")
     args = parser.parse_args()
     now = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     try:
+        check_worker_auth(os.environ.get("UPSC_ENRICH_ENDPOINT", ""), os.environ.get("UPSC_PUBLISH_TOKEN", ""),
+            urllib.request.urlopen)
         result = release_updates(args.registry, args.output, os.environ.get("UPSC_ENRICH_ENDPOINT", ""),
             os.environ.get("UPSC_PUBLISH_TOKEN", ""), urllib.request.urlopen, urllib.request.urlopen,
-            now, max(1, min(10, args.max_records)))
+            now, max(1, min(10, args.max_records)), live_feed=not args.no_live_feed)
     except Exception as error:
-        print(str(error), file=sys.stderr)
+        print("::error::" + str(error), file=sys.stderr)
         return 2
     if args.report:
         _write_json(args.report, result)
     print(json.dumps(result, ensure_ascii=False, indent=2))
-    return 2 if result["failures"] else 0
+    code, warnings = exit_status(result)
+    for warning in warnings:
+        print("::warning::Will retry after backoff: " + warning)
+    if code:
+        print("::error::" + result["failures"]["live-feed"], file=sys.stderr)
+    return code
 
 
 if __name__ == "__main__":
