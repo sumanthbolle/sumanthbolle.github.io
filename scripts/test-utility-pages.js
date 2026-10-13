@@ -1,5 +1,5 @@
 /**
- * Static-shell regression tests for the two decision-heavy utility pages.
+ * Static-shell regression tests for the Metals and Save Yourself pages.
  * Run: node scripts/test-utility-pages.js
  */
 'use strict';
@@ -12,6 +12,7 @@ var root = path.join(__dirname, '..');
 var metals = fs.readFileSync(path.join(root, 'metals.html'), 'utf8');
 var save = fs.readFileSync(path.join(root, 'save-yourself.html'), 'utf8');
 var saveApp = fs.readFileSync(path.join(root, 'assets/js/save-yourself/app.js'), 'utf8');
+var metalsApp = fs.readFileSync(path.join(root, 'assets/js/metals.js'), 'utf8');
 
 function test(name, fn) {
   try {
@@ -33,26 +34,27 @@ function indexInOrder(documentText, markers) {
   });
 }
 
-test('Metals opens with prices and quote checking before optional market tools', function () {
+test('Metals shows prices, then the price checker and Ask Summaverick', function () {
   indexInOrder(metals, [
-    'id="marketReport"',
-    'class="price-grid"',
-    'id="quoteTools"',
-    'id="holdingsPanel"',
-    'id="historyPanel"',
-    'id="alertsPanel"',
-    'id="sourcesPanel"',
+    'data-metal="gold"',
+    'data-metal="silver"',
+    'id="calc"',
+    'id="ask"',
   ]);
-
-  assert.match(metals, /<details[^>]+id="holdingsPanel"/);
-  assert.match(metals, /<details[^>]+id="historyPanel"/);
-  assert.match(metals, /<details[^>]+id="alertsPanel"/);
-  assert.match(metals, /<details[^>]+id="sourcesPanel"/);
+  assert.equal(/holdingsPanel|alertsPanel|sourcesPanel|Share snapshot|help-panel\.js/.test(metals), false);
 });
 
-test('Metals has no floating guide or generated explanation route', function () {
-  assert.equal(/help-panel\.js|SBHelpGuide\.init|id="askFactors"|id="askUnderstand"/.test(metals), false);
-  assert.equal(/How to use the Metals tracker|Ask Summaverick/.test(metals), false);
+test('Metals India price adds 15% customs duty and 3% GST', function () {
+  assert.match(metalsApp, /INDIA_DUTY = 0\.15/);
+  assert.match(metalsApp, /INDIA_GST = 0\.03/);
+});
+
+test('Ask Summaverick opens in place on both tool pages', function () {
+  [metals, save].forEach(function (doc) {
+    assert.match(doc, /assets\/js\/shared\/ask-widget\.js/);
+    assert.match(doc, /data-ask-form/);
+  });
+  assert.equal(/summaverick\.html\?q=/.test(saveApp + metalsApp), false);
 });
 
 test('Save Yourself answers in plain words: inputs, one answer, three numbers', function () {
@@ -69,12 +71,6 @@ test('Save Yourself answers in plain words: inputs, one answer, three numbers', 
   assert.match(save, />Total you repay</);
   assert.match(save, />Extra cost</);
   assert.equal(/You borrow|You return|rent on the money|Money rent|Reality receipt|Red flags|Cash-flow pressure/.test(save + saveApp), false);
-});
-
-test('Save Yourself hands the loan to Summaverick through the ?q= deep link', function () {
-  assert.match(save, /Ask Summaverick about this loan/);
-  assert.match(saveApp, /summaverick\.html\?q=' \+ encodeURIComponent/);
-  assert.equal(/help-panel\.js|SBHelpGuide\.init|Financial X-Ray guide/.test(save), false);
 });
 
 test('Both utility shells keep unique HTML ids', function () {
