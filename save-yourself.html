@@ -33,7 +33,8 @@
   }
   </script>
   <link rel="stylesheet" href="assets/css/utility-page.css">
-  <link rel="stylesheet" href="assets/css/save-yourself.css?v=20261013">
+  <link rel="stylesheet" href="assets/css/tools.css?v=20261014">
+  <link rel="stylesheet" href="assets/css/ask-widget.css?v=20261014">
   <link rel="stylesheet" href="assets/css/nav-utilities.css">
 </head>
 <body>
@@ -139,7 +140,6 @@
             <label><input type="radio" name="interestType" value="reducing" checked><span>Reducing</span></label>
             <label><input type="radio" name="interestType" value="flat"><span>Flat</span></label>
           </div>
-          <p class="hint">Not sure? Most bank loans are reducing. "Flat" quotes look cheaper than they are.</p>
         </div>
 
         <div class="field">
@@ -190,16 +190,15 @@
         </section>
 
         <section class="sy-card sy-ask" id="ask" data-ready="false" aria-labelledby="askTitle">
-          <h2 id="askTitle">Ask Summaverick about this loan</h2>
-          <p class="hint">Your numbers are sent along with the question.</p>
+          <h2 id="askTitle">Ask Summaverick</h2>
           <div class="sy-ask__chips">
-            <button type="button" class="sy-ask__chip" data-q="Can I afford this loan? Ask me for my monthly income and existing EMIs, then tell me whether the payment is safe.">Can I afford it?</button>
-            <button type="button" class="sy-ask__chip" data-q="Is this a fair rate for this kind of loan right now? What should I negotiate or compare?">Is this a good deal?</button>
-            <button type="button" class="sy-ask__chip" data-q="Should I prepay this loan early or invest the extra money instead? Show the trade-off with numbers.">Prepay or invest?</button>
-            <button type="button" class="sy-ask__chip" data-q="What hidden charges or clauses should I check in the loan agreement before signing?">What to check before signing?</button>
+            <button type="button" class="sy-ask__chip" data-ask="Can I afford this loan? Ask for my monthly income and existing EMIs first.">Can I afford it?</button>
+            <button type="button" class="sy-ask__chip" data-ask="Is this a fair rate for this kind of loan right now?">Is the rate fair?</button>
+            <button type="button" class="sy-ask__chip" data-ask="Should I prepay this loan or invest the extra money?">Prepay or invest?</button>
+            <button type="button" class="sy-ask__chip" data-ask="What charges and clauses should I check before signing?">What to check?</button>
           </div>
-          <form class="sy-ask__form" id="askForm">
-            <input id="askInput" type="text" maxlength="300" placeholder="Or ask your own question" aria-label="Your question">
+          <form class="sy-ask__form" data-ask-form>
+            <input type="text" maxlength="300" placeholder="Ask about this loan" aria-label="Your question">
             <button class="btn" type="submit">Ask</button>
           </form>
         </section>
@@ -208,13 +207,14 @@
   </main>
 
   <footer>
-    <div class="footer-inner">Estimates only — confirm the final terms with your lender. © 2026 Sumanth Bolle.</div>
+    <div class="footer-inner">Estimates only. Confirm terms with your lender. © 2026 Sumanth Bolle.</div>
   </footer>
 
   <script src="assets/js/shared/nav-theme.js"></script>
   <script src="assets/js/shared/nav-utilities.js"></script>
   <script src="assets/js/save-yourself/currency.js"></script>
   <script src="assets/js/save-yourself/loan-math.js"></script>
-  <script src="assets/js/save-yourself/app.js?v=20261013"></script>
+  <script src="assets/js/shared/ask-widget.js?v=20261014"></script>
+  <script src="assets/js/save-yourself/app.js?v=20261014"></script>
 </body>
 </html>

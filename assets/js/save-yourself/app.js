@@ -1,5 +1,5 @@
 /* Save Yourself — loan cost checker.
-   Reads four inputs, shows one plain answer, and hands the numbers to Summaverick. */
+   Reads the inputs, shows one plain answer, and passes the numbers to the Ask Summaverick panel. */
 (function () {
   'use strict';
 
@@ -24,23 +24,14 @@
     numCost: $('numCost'),
     verdict: $('verdict'),
     scheduleBody: $('scheduleBody'),
-    ask: $('ask'),
-    askForm: $('askForm'),
-    askInput: $('askInput')
-  };
-
-  var VERDICT = {
-    lower: 'Reasonable for a loan. Still compare one or two other offers.',
-    elevated: 'On the high side. A lower rate or smaller fee would save real money.',
-    expensive: 'Expensive. Try another lender, a smaller amount or a shorter term.',
-    severe: 'Very expensive. Pause and look for alternatives before signing.'
+    ask: $('ask')
   };
 
   var current = null;
 
   function money(value) {
     try {
-      return new Intl.NumberFormat(locale, {
+      return new Intl.NumberFormat(els.currency.value === 'INR' ? 'en-IN' : locale, {
         style: 'currency',
         currency: els.currency.value,
         maximumFractionDigits: 0
@@ -128,11 +119,8 @@
 
     var signal = r.costSignal;
     if (signal && r.estimatedNominalAnnualCost != null) {
-      var rateNote = r.interestType === 'flat' || r.upfrontFees > 0
-        ? 'Real yearly cost ~' + r.estimatedNominalAnnualCost.toFixed(1) + '% (includes ' +
-          (r.interestType === 'flat' ? 'flat-rate effect' : 'fees') + '). '
-        : '';
-      els.verdict.innerHTML = '<strong>' + signal.label + '.</strong> ' + rateNote + VERDICT[signal.band];
+      els.verdict.innerHTML = '<strong>' + signal.label + '</strong> · real yearly cost ' +
+        r.estimatedNominalAnnualCost.toFixed(1) + '%';
       els.verdict.dataset.band = signal.band;
       els.verdict.hidden = false;
     } else {
@@ -180,20 +168,15 @@
 
   function loanContext() {
     var r = current;
-    var lines = [
-      'My loan: ' + money(r.principal) + ' at ' + r.annualRatePercent + '% per year (' +
+    if (!r) return '';
+    var parts = [
+      'My loan: ' + money(r.principal) + ' at ' + r.annualRatePercent + '% a year (' +
         (r.interestType === 'flat' ? 'flat' : 'reducing') + ' rate) for ' + r.months + ' months.',
       'Monthly payment ' + money(r.emi) + ', total repaid ' + money(r.totalPaid) +
-        ', interest plus fees ' + money(r.costOfBorrowing) + '.'
+        ', interest and fees ' + money(r.costOfBorrowing) + '.'
     ];
-    if (r.upfrontFees > 0) lines.push('Processing fee ' + money(r.upfrontFees) + '.');
-    return lines.join(' ');
-  }
-
-  function ask(question) {
-    if (!current || !question) return;
-    var q = loanContext() + '\n\n' + question;
-    window.location.href = 'summaverick.html?q=' + encodeURIComponent(q.slice(0, 1000));
+    if (r.upfrontFees > 0) parts.push('Processing fee ' + money(r.upfrontFees) + '.');
+    return parts.join(' ');
   }
 
   function save() {
@@ -238,13 +221,7 @@
   });
   $('loanForm').addEventListener('submit', function (e) { e.preventDefault(); });
 
-  els.ask.querySelectorAll('[data-q]').forEach(function (btn) {
-    btn.addEventListener('click', function () { ask(btn.getAttribute('data-q')); });
-  });
-  els.askForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    ask(els.askInput.value.trim());
-  });
+  window.SBAsk.init({ getContext: loanContext });
 
   update();
 })();
