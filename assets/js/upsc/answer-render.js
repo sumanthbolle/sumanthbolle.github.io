@@ -232,9 +232,9 @@
     var retrieval = list(answer.retrieval).map(function (row) {
       var url = isObject(row) ? safeUrl(row.url) : '';
       if (!url) return '';
-      return esc(row.status === 'read' ? 'Text retrieved' : 'Not read directly') + ' · ' + esc(hostOf(url));
+      return esc(row.status === 'read' ? 'Read' : 'Linked') + ' · ' + esc(hostOf(url));
     }).filter(Boolean);
-    if (retrieval.length) out.push('<p class="ue-retrieval">Linked documents: ' + retrieval.join('; ') + '</p>');
+    if (retrieval.length) out.push('<p class="ue-retrieval">Documents: ' + retrieval.join('; ') + '</p>');
     var follow = list(answer.followUps).map(function (q) { return clip(q, 160); }).filter(function (q) { return q.length > 3; }).slice(0, 4);
     if (follow.length) {
       out.push('<div class="ue-followups"><p class="ue-label">Follow-ups</p>' + follow.map(function (q) {

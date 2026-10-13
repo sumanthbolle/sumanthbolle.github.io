@@ -66,7 +66,7 @@
         esc(article.kind || 'Explainer') + '</div>' +
         '<div class="pr-story__content"><div class="pr-story__meta"><span>' + esc(article.subject) + '</span><span>' +
           esc(article.paper) + '</span><span>' + readMinutes(article) + ' min read</span>' +
-          (article.sourceId ? '<span>' + (article.publicationDateKind === 'detected' ? 'Detected ' : '') + esc(dateLabel(article.publishedOn)) + '</span>' : '') + '</div>' +
+          (article.sourceId ? '<span>' + esc(dateLabel(article.publishedOn)) + '</span>' : '') + '</div>' +
         '<' + tag + ' id="' + esc(titleId) + '">' + esc(article.title) + '</' + tag + '><p>' + esc(article.excerpt) + '</p></div>' +
         '<span class="pr-story__arrow" aria-hidden="true">→</span></a></li>';
     }).join('') + '</ol>';
@@ -100,7 +100,7 @@
     return '<article class="pr-reader" data-pocket-anchor="' + esc(article.anchor) + '" data-paper="' + esc(article.paper) + '" data-published="' + esc(article.publishedOn) + '"><a class="pr-reader__back" href="upsc.html#pocketLibrary" data-pocket-back>← Pocket reads</a>' +
       '<header><p class="pr-reader__meta"><span>' + esc(article.subject) + '</span><span>' +
         esc(article.paper) + '</span><span>' + readMinutes(article) + ' min read</span><span>' +
-        (article.publicationDateKind === 'detected' ? 'Detected ' : '') + '<time datetime="' + esc(article.publishedOn) + '">' +
+        '<time datetime="' + esc(article.publishedOn) + '">' +
         esc(dateLabel(article.publishedOn)) + '</time></span>' +
         (article.updatedOn ? '<span>Updated ' + esc(dateLabel(article.updatedOn)) + '</span>' : '') + '</p>' +
       '<h2 id="pocketArticleTitle" tabindex="-1">' + esc(article.title) + '</h2>' +
@@ -113,7 +113,7 @@
           return '<p>' + esc(paragraph) + '</p>';
         }).join('') + sectionSources(section, article) + '</section>';
       }).join('') + '</div>' +
-      (article.example ? '<section class="pr-example"><p class="an-label">Worked example · illustration</p><h3>' + esc(article.example.heading) + '</h3><p>' + esc(article.example.text) + '</p></section>' : '') +
+      (article.example ? '<section class="pr-example"><p class="an-label">Worked example</p><h3>' + esc(article.example.heading) + '</h3><p>' + esc(article.example.text) + '</p></section>' : '') +
       (article.comparison ? '<section class="pr-comparison"><h3>' + esc(article.comparison.heading) + '</h3><table><thead><tr>' +
         article.comparison.columns.map(function (column) { return '<th scope="col">' + esc(column) + '</th>'; }).join('') +
         '</tr></thead><tbody>' + article.comparison.rows.map(function (row) {
@@ -130,8 +130,8 @@
         }).join('') + '</ul></section>' +
       '<div class="pr-reader__actions"><button type="button" class="btn btn-primary" data-pocket-save="' +
         esc(article.id) + '">Save the takeaway</button>' +
-        '<button type="button" class="btn" data-pocket-check>Test my understanding</button>' +
-        (article.patternId ? '<a class="btn" href="upsc-patterns.html?anchor=' + encodeURIComponent(article.patternId) + '">Explore this concept</a>' : '') +
+        '<button type="button" class="btn" data-pocket-check>Quiz me</button>' +
+        (article.patternId ? '<a class="btn" href="upsc-patterns.html?anchor=' + encodeURIComponent(article.patternId) + '">See the concept</a>' : '') +
         '<span class="pr-save-status" id="pocketSaveStatus" role="status"></span></div>' +
       (next ? '<a class="pr-reader__next" href="' + articleHref(next) + '" data-pocket-article="' + esc(next.id) +
         '"><span>Next article · ' + readMinutes(next) + ' min</span><strong>' + esc(next.title) + ' →</strong></a>' : '') +
@@ -317,7 +317,7 @@
         if (feedStatus) feedStatus.parentElement.setAttribute('data-correction', '');
         if (feedStatus) {
           feedStatus.setAttribute('role', 'alert');
-          feedStatus.textContent = updated ? 'This note has changed. Load the checked update before using it.' : 'This note is no longer in the verified feed. Load the latest reads or open its source below.';
+          feedStatus.textContent = updated ? 'This note has been updated. Load the latest version.' : 'This note has been withdrawn. Load the latest reads or open its source below.';
         }
         Array.prototype.forEach.call(reader.querySelectorAll('[data-pocket-save], [data-pocket-ask], [data-pocket-check]'), function (button) { button.disabled = true; });
         if (!heldArticle) document.dispatchEvent(new CustomEvent('upsc:articlechange', { detail: { id: open.id, withdrawn: true } }));

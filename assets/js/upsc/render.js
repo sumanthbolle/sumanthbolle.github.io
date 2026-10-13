@@ -40,7 +40,7 @@
 
   function verifyHtml(verified, label) {
     return '<span class="an-verify" data-verified="' + (verified ? 'true' : 'false') + '">' +
-      esc(label || (verified ? 'Primary source' : 'Unverified')) + '</span>';
+      esc(label || (verified ? 'Primary source' : 'Source pending')) + '</span>';
   }
 
   function line(label, value) {
@@ -62,11 +62,11 @@
 
   function editorialLabel(state) {
     return {
-      'source-only': 'Source only',
+      'source-only': 'Official release',
       draft: 'Needs review',
       'source-backed': 'Exam note ready',
       reviewed: 'Reviewed note',
-    }[state] || 'Source only';
+    }[state] || 'Official release';
   }
 
   function sourceEntry(record) {
@@ -83,7 +83,7 @@
         '<h3>' + esc(record.title) + '</h3>' +
         (record.officialSummary ? '<p class="an-source__summary">' + esc(record.officialSummary) + '</p>' : '') +
         '<p class="an-entry__tags">' +
-          verifyHtml(record.sourceVerified, record.sourceVerified ? 'Reviewed official host' : 'Unverified host') +
+          verifyHtml(record.sourceVerified, record.sourceVerified ? 'Official source' : 'Other source') +
           '<span>' + esc(editorialLabel(record.editorialState)) + '</span>' +
           (record.priority ? '<span class="an-num">Priority ' + esc(record.priority) + '</span>' : '') +
           codesHtml(record.codes) +
@@ -97,14 +97,16 @@
     var sources = coverage && coverage.sources && typeof coverage.sources === 'object'
       ? coverage.sources : {};
     var ids = Object.keys(sources);
-    if (!ids.length) return '<p>Coverage report unavailable. The last valid source archive remains readable.</p>';
-    var healthy = ids.filter(function (id) { return sources[id].status === 'ok'; }).length;
+    if (!ids.length) return '<p>Official sources could not refresh. Earlier records are still listed.</p>';
     var failures = ids.filter(function (id) { return sources[id].status !== 'ok'; });
-    return '<p><strong>' + esc(healthy) + ' of ' + esc(ids.length) + '</strong> official adapters healthy' +
-      (coverage.generatedAt ? ' · checked ' + esc(String(coverage.generatedAt).slice(0, 16).replace('T', ' ')) + ' UTC' : '') +
-      '.</p>' +
-      (failures.length ? '<p class="an-coverage__warn">Unavailable now: ' + failures.map(esc).join(', ') +
-        '. Their last valid archive is preserved.</p>' : '');
+    var names = { pib: 'PIB', rbi: 'RBI', sebi: 'SEBI', mea: 'MEA', 'un-news': 'UN News', who: 'WHO', 'eu-council': 'EU Council' };
+    var at = Date.parse(coverage.generatedAt || '');
+    var when = Number.isFinite(at)
+      ? ' at ' + new Date(at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' }) + ' IST'
+      : '';
+    return '<p>Official sources updated' + esc(when) + '.</p>' +
+      (failures.length ? '<p class="an-coverage__warn">' + failures.map(function (id) { return esc(names[id] || id.toUpperCase()); }).join(', ') +
+        ' did not update this round; its earlier releases are still listed.</p>' : '');
   }
 
   function compactText(value, max) {
@@ -244,7 +246,7 @@
           anchorHtml(note.anchor) +
           codesHtml(note.codes) +
           '<span class="an-note__due" data-due="' + (dueNow ? 'now' : 'later') + '">' + esc(dueText) + '</span>' +
-          verifyHtml(note.verified, note.verified ? 'Primary source' : 'Unverified') +
+          verifyHtml(note.verified, note.verified ? 'Primary source' : 'Source pending') +
         '</p>' +
         useHtml(note.use) +
         (expandable
@@ -451,7 +453,7 @@
               (evidence ? '<a href="' + attr(evidence) + '" target="_blank" rel="noopener noreferrer">Evidence · ' +
                 esc(fact.evidenceLocator) + '</a>' : '') + '</p></li>';
           }).join('') + '</ul></section>'
-      : '<section class="an-note-section an-note-section--facts"><h4>Official facts</h4><p>No hard fact cleared the evidence gate.</p></section>';
+      : '<section class="an-note-section an-note-section--facts"><h4>Official facts</h4><p>No official figures for this note yet.</p></section>';
     var argumentsBlock = '<section class="an-note-section an-note-section--analysis"><h4>Arguments</h4>' +
       '<span class="an-label">Analysis</span><div class="an-two">' +
       '<div><strong>For</strong><ul class="an-list">' + (value.argumentsFor || []).map(function (row) {

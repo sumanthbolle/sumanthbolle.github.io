@@ -106,7 +106,7 @@ test('export distinguishes note verification from the classification of its sour
   Store.add({ title: articles[0].title, anchor: articles[0].anchor,
     sourceUrl: articles[0].sources[0].url, use: articles[0].takeaway, verified: false });
   const markdown = Store.toMarkdown();
-  assert.match(markdown, /note verification pending/);
+  assert.match(markdown, /check before quoting/);
   assert.doesNotMatch(markdown, /secondary coverage/);
   assert.ok(markdown.includes(articles[0].takeaway));
 });

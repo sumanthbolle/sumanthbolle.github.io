@@ -88,7 +88,7 @@ test('renderBlocks renders the coach JSON contract with components', function ()
   assert.match(html, /class="ue-misconception"/);
   assert.match(html, /class="ue-exam"/);
   assert.match(html, /data-followup="What is the divisible pool\?"/);
-  assert.match(html, /Text retrieved/);
+  assert.match(html, /Read · /);
 });
 
 test('renderBlocks escapes every field and omits empty optional blocks', function () {

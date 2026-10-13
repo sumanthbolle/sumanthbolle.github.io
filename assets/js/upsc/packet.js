@@ -452,7 +452,7 @@
     base.prelims.traps = (note.prelimsTraps || []).slice(0, 4);
     base.prelims.do_not_memorize = note.canMemorize
       ? []
-      : ['Hard facts on this note are still held for verification.'];
+      : ['Official figures for this note are not in yet.'];
     var practice = (note.mainsPractice || [])[0];
     base.mains.skeleton = practice && practice.skeleton ? practice.skeleton.slice(0, 6) : base.mains.skeleton;
     base.mains.opening_line = note.staticDefinition;
