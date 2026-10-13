@@ -55,26 +55,25 @@ test('Metals has no floating guide or generated explanation route', function () 
   assert.equal(/How to use the Metals tracker|Ask Summaverick/.test(metals), false);
 });
 
-test('Save Yourself presents literal loan results instead of a dramatic narrative', function () {
-  assert.match(save, /<h1>Loan cost checker<\/h1>/);
+test('Save Yourself answers in plain words: inputs, one answer, three numbers', function () {
+  assert.match(save, /<h1>What will this loan really cost\?<\/h1>/);
   indexInOrder(save, [
-    'id="loanControls"',
-    'id="metricEmiValue"',
-    'id="realityReturn"',
-    'id="realityRent"',
-    'id="metricAnnualValue"',
+    'id="loanForm"',
+    'id="answer"',
+    'id="numEmi"',
+    'id="numTotal"',
+    'id="numCost"',
+    'id="ask"',
   ]);
-
   assert.match(save, />Monthly payment</);
-  assert.match(save, />Total repaid</);
-  assert.match(save, />Interest \+ fees</);
-  assert.equal(/You borrow|You return|rent on the money|Money rent|Reality receipt/.test(save + saveApp), false);
+  assert.match(save, />Total you repay</);
+  assert.match(save, />Extra cost</);
+  assert.equal(/You borrow|You return|rent on the money|Money rent|Reality receipt|Red flags|Cash-flow pressure/.test(save + saveApp), false);
 });
 
-test('Save Yourself keeps deeper analysis available without putting it in the first reading path', function () {
-  assert.match(save, /<details[^>]+id="moneyFlow"/);
-  assert.match(save, /<details[^>]+id="repaymentTimeline"/);
-  assert.match(save, /<details[^>]+id="detailedResults"/);
+test('Save Yourself hands the loan to Summaverick through the ?q= deep link', function () {
+  assert.match(save, /Ask Summaverick about this loan/);
+  assert.match(saveApp, /summaverick\.html\?q=' \+ encodeURIComponent/);
   assert.equal(/help-panel\.js|SBHelpGuide\.init|Financial X-Ray guide/.test(save), false);
 });
 
