@@ -26,15 +26,43 @@ jobs:
           node scripts/test-upsc-api.mjs
           node scripts/test-upsc-sources.mjs
           node scripts/test-upsc-pocket.mjs
+      # Publishing runs the Worker code on the runner (see
+      # .github/actions/upsc-local-worker), so this deploy only serves the live
+      # site API. Without Cloudflare credentials it is skipped, not failed.
+      - name: Check Cloudflare credentials
+        id: cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::warning::Worker deploy skipped: set CLOUDFLARE_API_TOKEN (secret) and CLOUDFLARE_ACCOUNT_ID (variable) to deploy."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Attach Pocket storage and deploy
+        if: steps.cloudflare.outputs.ready == 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
           UPSC_PUBLISH_TOKEN: ${{ secrets.UPSC_PUBLISH_TOKEN }}
         run: |
-          if [ -z "$UPSC_PUBLISH_TOKEN" ]; then
-            echo "::error::Set the repository UPSC_PUBLISH_TOKEN secret so the Worker and publisher share private authentication."
-            exit 1
-          fi
           node scripts/deploy-upsc-worker.mjs
-          printf '%s' "$UPSC_PUBLISH_TOKEN" | npx --yes wrangler@4.149.0 secret put UPSC_PUBLISH_TOKEN --name wandering-haze-b394
+          # Optional: only the live KV feed push uses this token.
+          if [ -n "$UPSC_PUBLISH_TOKEN" ]; then
+            printf '%s' "$UPSC_PUBLISH_TOKEN" | npx --yes wrangler@4.149.0 secret put UPSC_PUBLISH_TOKEN --name wandering-haze-b394
+          fi
+      - name: Smoke test the deployed Worker
+        if: steps.cloudflare.outputs.ready == 'true'
+        run: |
+          base=https://wandering-haze-b394.sumanthbolle312.workers.dev
+          for attempt in 1 2 3 4 5 6; do
+            if ! curl -fsS "$base/upsc/pocket" | grep -q "not configured"; then
+              echo "Pocket storage is attached."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Deployed Worker reports Pocket storage is not configured."
+          exit 1

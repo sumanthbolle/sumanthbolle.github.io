@@ -32,11 +32,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      # Notes are generated on the runner with PERPLEXITY_API_KEY; readers get
+      # the committed data/upsc/pocket-feed.json snapshot.
+      - uses: ./.github/actions/upsc-local-worker
+        with:
+          perplexity-api-key: ${{ secrets.PERPLEXITY_API_KEY }}
       - name: Ingest, verify and release passing notes immediately
-        env:
-          UPSC_ENRICH_ENDPOINT: ${{ vars.UPSC_ENRICH_ENDPOINT || secrets.UPSC_ENRICH_ENDPOINT || 'https://wandering-haze-b394.sumanthbolle312.workers.dev/upsc/enrich' }}
-          UPSC_PUBLISH_TOKEN: ${{ secrets.UPSC_PUBLISH_TOKEN }}
-        run: python scripts/upsc/live_publish.py --report /tmp/upsc-live-result.json
+        run: python scripts/upsc/live_publish.py --no-live-feed --report /tmp/upsc-live-result.json
       - name: Retain source corrections and the verified fallback
         if: always()
         run: |
