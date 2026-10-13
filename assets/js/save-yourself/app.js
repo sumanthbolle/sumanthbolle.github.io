@@ -221,6 +221,7 @@
   });
   $('loanForm').addEventListener('submit', function (e) { e.preventDefault(); });
 
+  if (window.SBShared) window.SBShared.initNavMenu();
   window.SBAsk.init({ getContext: loanContext });
 
   update();
