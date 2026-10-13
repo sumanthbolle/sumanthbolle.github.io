@@ -2,8 +2,10 @@ name: Publish UPSC daily edition
 
 # Two editions close every day. AM covers 18:00 IST (previous day) to 06:00 IST
 # and runs at 00:15 UTC (05:45 IST); PM covers 06:00 to 18:00 IST and runs at
-# 12:15 UTC (17:45 IST). The :45 runs are retries: a run is idempotent by
-# edition id and only adds topics that are still missing. Notes are written
+# 12:15 UTC (17:45 IST). The :45 runs are retries, and 03:15/15:15 UTC are
+# catch-ups because GitHub delays or drops scheduled runs. A run is idempotent
+# by edition id and only adds topics that are still missing; `auto` picks the
+# latest edition that has closed, so a late run still builds its own edition. Notes are written
 # with OPENAI_API_KEY (GEMINI_API_KEY as fallback) and need no Cloudflare
 # secret. A missing key holds notes as llm-unavailable and the edition is
 # marked partial; the run still succeeds.
@@ -14,6 +16,8 @@ on:
     - cron: "45 0 * * *"
     - cron: "15 12 * * *"
     - cron: "45 12 * * *"
+    - cron: "15 3 * * *"
+    - cron: "15 15 * * *"
   workflow_dispatch:
     inputs:
       slot:
@@ -46,17 +50,17 @@ jobs:
       DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
     steps:
       - name: Check out triggering ref
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "22"
 
@@ -105,7 +109,7 @@ jobs:
 
       - name: Open or close the late-edition issue
         if: always() && env.DRY_RUN != 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');

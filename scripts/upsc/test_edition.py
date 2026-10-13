@@ -185,8 +185,16 @@ class SlotTests(unittest.TestCase):
         self.assertEqual(edition_id("2026-10-13", "pm"), "2026-10-13-pm")
         self.assertEqual(resolve_slot("auto", "2026-10-13T00:15:00Z"), ("am", "2026-10-13"))
         self.assertEqual(resolve_slot("auto", "2026-10-13T12:15:00Z"), ("pm", "2026-10-13"))
-        self.assertEqual(resolve_slot("auto", "2026-10-12T19:00:00Z"), ("am", "2026-10-13"))
+        self.assertEqual(resolve_slot("auto", "2026-10-13T00:45:00Z"), ("am", "2026-10-13"))
         self.assertEqual(resolve_slot("pm", "2026-10-13T00:15:00Z"), ("pm", "2026-10-13"))
+
+    def test_late_scheduled_runs_still_build_the_edition_they_were_scheduled_for(self):
+        # GitHub starts scheduled runs hours late. A late run must close the
+        # edition it was scheduled for, not skip it for the next one.
+        self.assertEqual(resolve_slot("auto", "2026-10-13T07:30:00Z"), ("am", "2026-10-13"))  # 13:00 IST
+        self.assertEqual(resolve_slot("auto", "2026-10-13T11:29:00Z"), ("am", "2026-10-13"))  # 16:59 IST
+        self.assertEqual(resolve_slot("auto", "2026-10-12T19:00:00Z"), ("pm", "2026-10-12"))  # 00:30 IST
+        self.assertEqual(resolve_slot("auto", "2026-10-12T23:00:00Z"), ("pm", "2026-10-12"))  # 04:30 IST
 
 
 class BuildTests(unittest.TestCase):
