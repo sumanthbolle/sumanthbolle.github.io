@@ -343,3 +343,146 @@ body.ue-reading { background: var(--ue-bg); }
   body.sv-coach-docked .ue-reader__layout { display: block; }
   body.sv-coach-docked .ue-toc { display: none; }
 }
+
+/* ── Pocket reads and packets in blog article style ──
+   upsc-reading.css still carries the older Newsreader / warm-paper look for the
+   other UPSC pages. On pages that load this file the palette, type and the
+   Pocket list, reader and packet switch to the blog article look. */
+:root, :root[data-theme="dark"] {
+  --bg: var(--ue-bg);
+  --paper: var(--ue-white);
+  --white: var(--ue-white);
+  --text: var(--ue-text);
+  --gray: var(--ue-gray-strong);
+  --blue: var(--ue-blue);
+  --editorial-accent: var(--ue-blue);
+  --editorial-wash: rgba(var(--ue-blue-rgb), 0.06);
+  --rule: var(--ue-line);
+  --input-bg: var(--ue-white);
+  --panel-muted: var(--ue-bg);
+  --sans: var(--ue-font);
+  --serif: var(--ue-font);
+}
+body { background: var(--ue-bg); }
+
+/* Library: blog cards. */
+.pr-section-head h2 { font: 600 clamp(26px, 4vw, 32px)/1.25 var(--ue-font); letter-spacing: -0.01em; color: var(--ue-text); }
+.pr-shelf__title { font: 700 11px/1.5 var(--ue-font); letter-spacing: 0.8px; text-transform: uppercase; color: var(--ue-gray-strong); }
+.pr-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; margin: 0; padding: 0; }
+.pr-story, .pr-story + .pr-story, .pr-shelf:first-child .pr-story:first-child { min-width: 0; margin: 0; border: 0; border-radius: 18px; background: var(--ue-white); box-shadow: var(--ue-shadow); overflow: hidden; }
+.pr-story::before { content: ""; display: block; height: 4px; background: linear-gradient(90deg, #007aff, #5ac8fa); }
+.pr-story[data-paper^="GS1"]::before { background: linear-gradient(90deg, #ff6723, #ff9500); }
+.pr-story[data-paper^="GS3"]::before { background: linear-gradient(90deg, #4a8f24, #81d742); }
+.pr-story[data-paper^="GS4"]::before { background: linear-gradient(90deg, #5856d6, #af52de); }
+.pr-story__link, .pr-shelf:first-child .pr-story:first-child .pr-story__link {
+  display: flex; flex-direction: column; gap: 0; height: calc(100% - 4px); padding: 22px; font-family: var(--ue-font); color: var(--ue-text);
+}
+.pr-story__index { order: 0; padding: 0 0 6px; font: 700 11px/1.5 var(--ue-font); letter-spacing: 0.8px; text-transform: uppercase; color: var(--ue-blue); }
+.pr-story__content { order: 1; flex: 1; }
+.pr-story__meta { gap: 4px 14px; font: 13px/1.5 var(--ue-font); color: var(--ue-gray-strong); }
+.pr-story__meta span:first-child { color: var(--ue-gray-strong); font-weight: 500; }
+.pr-story :is(h3, h4), .pr-shelf:first-child .pr-story:first-child :is(h3, h4) { margin: 8px 0 10px; font: 600 18px/1.35 var(--ue-font); letter-spacing: 0; }
+.pr-story p { max-width: none; display: -webkit-box; overflow: hidden; font-size: 15px; line-height: 1.65; color: var(--ue-gray-strong); -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.pr-story__arrow { order: 2; align-self: flex-start; justify-content: flex-start; width: auto; min-height: 0; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--ue-line-soft); font: 500 14px/1.4 var(--ue-font); color: var(--ue-blue); width: 100%; }
+.pr-story__arrow::before { content: "Read note\00a0"; }
+.pr-story__link:hover :is(h3, h4) { color: var(--ue-blue); text-decoration: none; }
+.pr-story__link:visited :is(h3, h4) { color: var(--ue-text); }
+.pr-story__link:focus-visible { outline: 2px solid var(--ue-blue); outline-offset: -2px; border-radius: 18px; }
+.pr-message { font-family: var(--ue-font); font-size: 15px; color: var(--ue-gray-strong); }
+
+/* Reader: blog .article-view on a white sheet. */
+.pr-reader, .pk-packet {
+  box-sizing: border-box; width: 100%; max-width: 760px; padding: 24px 18px 32px; border-radius: 18px; background: var(--ue-white); box-shadow: var(--ue-shadow);
+  font-family: var(--ue-font); color: var(--ue-body);
+}
+.pr-reader__back { gap: 6px; font: 500 14px/1.4 var(--ue-font); color: var(--ue-blue); text-decoration: none; transition: gap 0.2s; }
+.pr-reader__back:hover { gap: 10px; }
+.pr-reader__meta { gap: 6px 20px; font: 14px/1.5 var(--ue-font); color: var(--ue-gray-strong); }
+.pr-reader__meta span:first-child { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--ue-blue); }
+.pr-reader h2, .pk-packet h2 { margin: 12px 0; font: 600 clamp(28px, 5vw, 40px)/1.25 var(--ue-font); letter-spacing: -0.01em; color: var(--ue-text); }
+.pr-reader__dek { padding-bottom: 20px; border-bottom: 1px solid var(--ue-line); font-size: 17px; line-height: 1.6; color: var(--ue-gray-strong); }
+.pr-reader__body, .pk-packet { font-size: 16px; line-height: 1.8; color: var(--ue-body); }
+.pr-reader__body p { margin: 0 0 18px; }
+.pr-reader__body p + p { margin-top: 0; }
+.pr-reader__body section { margin-top: 32px; }
+.pr-reader__body h3, .pr-example h3, .pr-comparison h3,
+.pk-packet .pk-block h3, .pk-packet .pk-bridge h3, .pk-packet .pk-changed h3,
+.pk-packet .pk-vault h3, .pk-packet .pk-kit h3, .pk-packet .pk-pyq h3 {
+  margin: 0 0 14px; font: 600 22px/1.3 var(--ue-font); color: var(--ue-text);
+}
+.pr-reader strong, .pk-packet strong { font-weight: 600; color: var(--ue-text); }
+.pr-reader__tools .btn, .pr-reader__actions .btn, .pk-packet .pk-sticky .btn, .pk-packet > p > .btn {
+  min-height: 44px; padding: 10px 18px; border: 1px solid var(--ue-line); border-radius: 12px; background: var(--ue-white);
+  color: var(--ue-text); font: 600 14px/1.3 var(--ue-font);
+}
+.pr-reader__tools .btn:hover, .pr-reader__actions .btn:hover { border-color: var(--ue-blue); color: var(--ue-blue); }
+.pr-reader__actions .btn-primary, .pk-packet .pk-sticky .btn-primary { border-color: var(--ue-blue); background: var(--ue-blue); color: #fff; }
+.pr-reader__actions .btn-primary:hover { background: var(--ue-blue-hover); color: #fff; }
+
+/* Worked example = blog scenario box; takeaway = tip box. */
+.pr-example {
+  padding: 18px 22px; border: 1px solid rgba(var(--ue-green-rgb), 0.2); border-left: 0; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(var(--ue-green-rgb), 0.08), rgba(var(--ue-green-rgb), 0.03));
+}
+.pr-example .an-label { font: 600 13px/1.4 var(--ue-font); color: var(--ue-green-text); }
+.pr-example > p:not(.an-label) { font-size: 15px; line-height: 1.7; color: var(--ue-box-text); }
+.pr-takeaway {
+  padding: 16px 20px; border: 1px solid rgba(var(--ue-blue-rgb), 0.15); border-radius: 12px;
+  background: linear-gradient(135deg, rgba(var(--ue-blue-rgb), 0.08), rgba(var(--ue-blue-rgb), 0.03));
+}
+.pr-takeaway h3 { color: var(--ue-blue); font: 600 13px/1.4 var(--ue-font); }
+.pr-takeaway p, .pr-question p { font-size: 15px; line-height: 1.65; color: var(--ue-box-text); }
+.pr-question h3, .pr-reader__sources h3 { font: 600 16px/1.4 var(--ue-font); color: var(--ue-text); }
+.pr-question summary { font: 500 14px/1.4 var(--ue-font); color: var(--ue-blue); }
+
+/* Tables as in blog articles: bordered, header on page grey, scroll inside. */
+.pr-comparison { overflow-x: auto; }
+.pr-comparison table { min-width: 480px; table-layout: auto; font-size: 15px; }
+.pr-comparison th, .pr-comparison td { padding: 12px 16px; border: 1px solid var(--ue-line); }
+.pr-comparison th:first-child { padding-left: 16px; }
+.pr-comparison thead th { background: var(--ue-bg); font: 600 13px/1.4 var(--ue-font); color: var(--ue-text); }
+
+/* Sources: blog link style. */
+.pr-section-source, .pr-reader__sources a { font-family: var(--ue-font); }
+.pr-section-source a, .pr-reader__sources a { color: var(--ue-blue); text-decoration: none; }
+.pr-section-source a:hover, .pr-reader__sources a:hover { text-decoration: underline; }
+.pr-reader__sources a:visited { color: var(--ue-blue); }
+.pr-reader__sources li > p { font-size: 14px; color: var(--ue-gray-strong); }
+.pr-reader__next { padding: 20px 0 0; font-family: var(--ue-font); }
+.pr-reader__next strong { font: 600 18px/1.35 var(--ue-font); color: var(--ue-text); }
+.pr-large-text .pr-reader__body, .pr-large-text .pr-example > p:not(.an-label), .pr-large-text .pr-question p { font-size: 18px; }
+.pr-large-text .pr-comparison table { font-size: 17px; }
+.pr-feed-controls .btn { border-radius: 12px; font: 500 13px/1.4 var(--ue-font); }
+
+@media (min-width: 600px) {
+  .pr-reader, .pk-packet { padding: 40px 48px 48px; }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .pr-story { transition: transform 0.3s, box-shadow 0.3s; }
+  .pr-story:hover { transform: translateY(-6px); box-shadow: var(--ue-shadow-hover); }
+}
+@media print {
+  .pr-reader, .pk-packet { padding: 0; box-shadow: none; }
+}
+
+/* Latest official updates: one white sheet per subject, blog list type. */
+.an-daily-group {
+  grid-template-columns: minmax(0, 1fr); gap: 4px; margin-top: 16px; padding: 22px 22px 6px;
+  border: 0; border-radius: 18px; background: var(--ue-white); box-shadow: var(--ue-shadow);
+}
+.an-daily-group > header { padding: 0 0 12px; border: 0; border-bottom: 1px solid var(--ue-line-soft); }
+.an-daily-group > header .an-label { font: 700 11px/1.5 var(--ue-font); letter-spacing: 0.8px; color: var(--ue-blue); }
+.an-daily-group > header h3 { margin: 2px 0 0; font: 600 20px/1.3 var(--ue-font); letter-spacing: 0; overflow-wrap: normal; }
+.an-daily-item { grid-template-columns: minmax(0, 1fr); gap: 6px; margin: 0; padding: 16px 0; border-bottom: 1px solid var(--ue-line-soft); }
+.an-daily-item:last-child { border-bottom: 0; }
+.an-daily-item__meta { font: 600 11px/1.5 var(--ue-font); letter-spacing: 0.4px; color: var(--ue-gray-strong); }
+.an-daily-item h4 { font: 600 17px/1.4 var(--ue-font); letter-spacing: 0; }
+.an-daily-item h4 a { color: var(--ue-text); text-decoration: none; }
+.an-daily-item h4 a:hover { color: var(--ue-blue); }
+.an-daily-item h4 a:visited { color: var(--ue-gray-strong); }
+.an-daily-item__summary { display: -webkit-box; overflow: hidden; font: 15px/1.65 var(--ue-font); color: var(--ue-gray-strong); -webkit-line-clamp: 4; -webkit-box-orient: vertical; }
+.an-daily__head h2 { font: 600 clamp(26px, 4vw, 32px)/1.25 var(--ue-font); letter-spacing: -0.01em; }
+@media (min-width: 960px) {
+  .an-daily-item { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 6px 32px; }
+  .an-daily-item__summary { grid-column: 2; grid-row: 2; }
+}
