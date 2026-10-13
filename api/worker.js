@@ -829,7 +829,8 @@ async function handleUpscEnrich(request, env, origin) {
       }, origin, 422);
     }
     return upscEnrichmentResponse({ success: true, data: note }, origin, 200);
-  } catch {
+  } catch (error) {
+    console.error('UPSC enrich failed:', error && error.message || error);
     return upscEnrichmentResponse({
       success: false,
       error: 'Enrichment service could not process this record.',
@@ -915,7 +916,8 @@ async function handleUpscVerify(request, env, origin) {
       }, origin, 422);
     }
     return upscEnrichmentResponse({ success: true, verificationVersion: 2, data: result }, origin, 200);
-  } catch {
+  } catch (error) {
+    console.error('UPSC verify failed:', error && error.message || error);
     return upscEnrichmentResponse({
       success: false,
       error: 'Verification service could not process this note.',
