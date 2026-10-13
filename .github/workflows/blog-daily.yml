@@ -1,0 +1,94 @@
+name: Blog daily discoveries
+
+# One sourced article per blog category (ServiceNow, AI, Architecture, Career)
+# every day, researched with Perplexity over the past week. 02:30 UTC is
+# 08:00 IST.
+#
+# The generator exits 2 when no article clears its validation gate (too thin,
+# invented links, a single source site, a repeat, filler prose). That is a skip,
+# not a failure: publishing nothing beats publishing a weak post.
+
+on:
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+    inputs:
+      category:
+        description: 'Category to refresh'
+        required: false
+        default: all
+        type: choice
+        options: [all, servicenow, ai, architecture, career]
+      dry_run:
+        description: 'Generate and show the posts without committing'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: blog-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Test the generator
+        run: node scripts/test-blog-discoveries.js
+
+      - name: Research and write today's posts
+        id: refresh
+        env:
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+          CATEGORY: ${{ github.event.inputs.category }}
+        run: |
+          set +e
+          if [ -n "$CATEGORY" ] && [ "$CATEGORY" != "all" ]; then
+            node scripts/fetch-blog-discoveries.js --category "$CATEGORY"
+          else
+            node scripts/fetch-blog-discoveries.js
+          fi
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo "refreshed=true" >> "$GITHUB_OUTPUT"
+          elif [ "$code" -eq 2 ]; then
+            echo "refreshed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No article cleared the validation gate today. Nothing was written."
+          else
+            exit "$code"
+          fi
+
+      - name: Show the new posts
+        if: steps.refresh.outputs.refreshed == 'true'
+        run: |
+          node -e "
+            const posts = require('./data/posts.json');
+            const fresh = posts.filter(p => p.daily && p.dateISO.slice(0, 10) === new Date().toISOString().slice(0, 10));
+            for (const p of fresh) {
+              console.log('## ' + p.category + ' · ' + p.title);
+              console.log(p.excerpt);
+              p.sources.forEach(s => console.log('  - ' + s.url));
+            }
+          " | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit the new posts
+        if: steps.refresh.outputs.refreshed == 'true' && github.event.inputs.dry_run != 'true'
+        run: |
+          node scripts/generate-sitemap.js
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          bash scripts/upsc/push-with-retry.sh -m "Blog: daily discoveries $(date -u +%Y-%m-%d)" \
+            -r "node scripts/generate-sitemap.js" \
+            -- data/posts.json posts.json sitemap.xml

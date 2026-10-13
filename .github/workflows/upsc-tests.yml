@@ -5,10 +5,10 @@ name: UPSC tests
 # on every pull request and push to main instead.
 on:
   pull_request:
-    paths: ['api/**', 'assets/**', 'scripts/**', 'data/upsc-patterns.json', '.github/**', 'upsc*.html', 'flights.html', 'metals.html', 'save-yourself.html']
+    paths: ['api/**', 'assets/**', 'scripts/**', 'data/upsc-patterns.json', '.github/**', 'upsc*.html', 'flights.html', 'metals.html', 'save-yourself.html', 'blog.html']
   push:
     branches: [main]
-    paths: ['api/**', 'assets/**', 'scripts/**', 'data/upsc-patterns.json', '.github/**', 'upsc*.html', 'flights.html', 'metals.html', 'save-yourself.html']
+    paths: ['api/**', 'assets/**', 'scripts/**', 'data/upsc-patterns.json', '.github/**', 'upsc*.html', 'flights.html', 'metals.html', 'save-yourself.html', 'blog.html']
   workflow_dispatch:
 
 permissions:
@@ -42,3 +42,5 @@ jobs:
           node scripts/test-utility-pages.js
           node scripts/test-save-yourself.js
           node scripts/test-skyfare-worker.mjs
+      - name: Blog daily discoveries generator
+        run: node scripts/test-blog-discoveries.js
