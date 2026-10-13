@@ -22,6 +22,15 @@ runs:
           echo "::error::Set the repository secret PERPLEXITY_API_KEY; the UPSC publisher uses it for note generation."
           exit 1
         fi
+        # One-token Sonar call: a revoked or rotated key fails here with the fix,
+        # instead of as per-note HTTP 503 warnings.
+        key_status=$(curl -s -o /dev/null -w '%{http_code}' -m 30 https://api.perplexity.ai/v1/sonar \
+          -H "Authorization: Bearer $PERPLEXITY_API_KEY" -H 'Content-Type: application/json' \
+          -d '{"model":"sonar","messages":[{"role":"user","content":"ok"}],"max_tokens":1}' || true)
+        if [ "$key_status" = "401" ] || [ "$key_status" = "403" ]; then
+          echo "::error::Perplexity rejected PERPLEXITY_API_KEY (HTTP $key_status). Update it: gh secret set PERPLEXITY_API_KEY -R ${GITHUB_REPOSITORY}"
+          exit 1
+        fi
         token=$(openssl rand -hex 32)
         echo "::add-mask::$token"
         UPSC_PUBLISH_TOKEN="$token" nohup node scripts/upsc/local-worker.mjs "$PORT" > /tmp/upsc-local-worker.log 2>&1 &
