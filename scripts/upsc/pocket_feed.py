@@ -101,7 +101,7 @@ def pocket_article(note, source):
         "question": reading["question"]["prompt"] if reading else (cloze["prompt"] if cloze else ""),
         "recallAnswer": reading["question"]["answer"] if reading else (cloze["answer"] if cloze else ""),
         "sources": [{"label": source.get("publisherName") or "Official source", "url": source["sourceUrl"],
-                     "note": source["title"] + ". " + ("Detected " if source.get("datePolicy") == "fetched-at" else "Published ") + source["publishedAt"][:10] + "."}],
+                     "note": source["title"] + ". " + ("Listed " if source.get("datePolicy") == "fetched-at" else "Published ") + source["publishedAt"][:10] + "."}],
     }
     if reading.get("example"):
         article["example"] = reading["example"]

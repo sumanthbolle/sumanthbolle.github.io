@@ -41,12 +41,12 @@
   var PROMPTS = {
     sources: {
       id: 'sources', kind: 'sources', label: 'Read the sources', format: 'text', search: true,
-      hint: 'Explain what the primary documents establish',
+      hint: 'What the official documents say',
       query: 'Read the linked primary sources for this topic. Explain the mechanism in depth, identify a common misunderstanding, and cite the documents actually used. Say when a document cannot be retrieved.'
     },
     understanding: {
       id: 'understanding', kind: 'understanding', label: 'Check my understanding', format: 'text', search: true,
-      hint: 'One source-grounded question, followed by feedback',
+      hint: 'One question, then feedback',
       query: 'Check my understanding of this article against its primary sources. Ask one applied question now without revealing the answer. When I reply, explain what I got right or missed and cite the relevant source.'
     },
     prelims: {
@@ -60,7 +60,7 @@
       query: 'What is the Mains point of view on this topic? GS paper, directive, demand, and dimensions only — no full answer.'
     },
     answer: {
-      id: 'answer', kind: 'answer', label: 'Model answer', format: 'text', search: false,
+      id: 'answer', kind: 'answer', label: 'Sample answer', format: 'text', search: false,
       hint: 'How your answer should look',
       query: 'How should my answer look? Write the UPSC model answer for this topic.'
     },
@@ -949,7 +949,7 @@
             : 'Direct reading of the linked documents is unconfirmed. Check the research citations.') + '</p>' : '';
         var primary = retrieval ? '<div class="sv-coach-sources"><p class="sv-coach-sources__title">Linked documents</p><ol>' + retrieval.map(function (row) {
           var url = safeHttpUrl(row.url);
-          return url ? '<li><a href="' + escAttr(url) + '" target="_blank" rel="noopener noreferrer">[' + escHtml(row.id) + '] ' + escHtml(row.status === 'read' ? 'Text retrieved' : 'Not read directly') + ' · ' + escHtml(new URL(url).hostname) + '</a></li>' : '';
+          return url ? '<li><a href="' + escAttr(url) + '" target="_blank" rel="noopener noreferrer">[' + escHtml(row.id) + '] ' + escHtml(row.status === 'read' ? 'Read' : 'Linked') + ' · ' + escHtml(new URL(url).hostname) + '</a></li>' : '';
         }).join('') + '</ol></div>' : '';
         var contract = answerContract(answer);
         var renderer = answerRenderer();

@@ -385,7 +385,7 @@
     if (!anchor) return;
 
     if (!ENDPOINT) {
-      state.live[anchorId] = { error: 'The retrieval endpoint is not configured for this page.' };
+      state.live[anchorId] = { error: 'Live sources are not available on this page.' };
       render();
       return;
     }

@@ -476,8 +476,8 @@
       var lines = [];
       lines.push('# Anchor notes — exported ' + today());
       lines.push('');
-      lines.push('**Held:** ' + stats.total + ' · **Due for retrieval:** ' + stats.due +
-        ' · **Unverified:** ' + stats.unverified + ' (' + stats.unverifiedPct + '%)');
+      lines.push('**Saved:** ' + stats.total + ' · **Due for revision:** ' + stats.due +
+        ' · **Source pending:** ' + stats.unverified + ' (' + stats.unverifiedPct + '%)');
       lines.push('');
       Object.keys(byAnchor).sort().forEach(function (anchor) {
         var group = byAnchor[anchor];
@@ -494,11 +494,11 @@
           if (note.prelimsFact) lines.push('- **Prelims fact:** ' + note.prelimsFact);
           if (note.sourceUrl) {
             lines.push('- **Source:** ' + note.sourceUrl +
-              ' — ' + (note.verified ? 'primary source' : 'source cited; note verification pending'));
+              ' — ' + (note.verified ? 'primary source' : 'source cited; check before quoting'));
           }
           var meta = [];
           if (note.score !== null) meta.push('score ' + note.score);
-          meta.push('next retrieval ' + note.dueOn);
+          meta.push('next revision ' + note.dueOn);
           meta.push('saved ' + note.createdAt);
           lines.push('- **Status:** ' + meta.join(' · '));
           lines.push('');

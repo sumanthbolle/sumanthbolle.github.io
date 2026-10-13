@@ -240,7 +240,7 @@
       list.innerHTML = shown.map(Render.sourceEntry).join('');
     }
     el('sourceMeta').innerHTML = '<strong>' + shown.length + '</strong> of ' + state.sources.length +
-      ' official records' + (state.sourceGeneratedAt ? ' · index ' + Render.esc(state.sourceGeneratedAt.slice(0, 10)) : '') + '.';
+      ' official records.';
   }
 
   function loadSourceIndex() {

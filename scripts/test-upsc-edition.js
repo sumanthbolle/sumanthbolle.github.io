@@ -311,7 +311,7 @@ function makeDesk(dom, files, extra) {
     assert.ok(brief > 0 && brief < deskAt && deskAt < readerAt && readerAt < feedAt);
     assert.match(html, /<section class="ue-desk" id="editionDesk" hidden aria-labelledby="editionTitle"><\/section>/);
     assert.match(html, /<article class="ue-reader" id="editionReader" hidden><\/article>/);
-    const render = html.indexOf('assets/js/upsc/answer-render.js?v=20261013-1');
+    const render = html.indexOf('assets/js/upsc/answer-render.js?v=20261013-3');
     const progress = html.indexOf('assets/js/upsc/edition-progress.js?v=20261013-1');
     const edition = html.indexOf('assets/js/upsc/edition.js?v=20261013-1');
     const coach = html.indexOf('assets/js/upsc/coach.js');
