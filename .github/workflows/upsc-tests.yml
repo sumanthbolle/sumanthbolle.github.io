@@ -1,0 +1,39 @@
+name: UPSC tests
+
+# Scheduled UPSC workflows run these suites before publishing, so a change
+# that breaks one would otherwise surface only on the next schedule. Run them
+# on every pull request and push to main instead.
+on:
+  pull_request:
+    paths: ['api/**', 'assets/js/upsc/**', 'scripts/**', 'data/upsc-patterns.json', '.github/**', 'upsc*.html']
+  push:
+    branches: [main]
+    paths: ['api/**', 'assets/js/upsc/**', 'scripts/**', 'data/upsc-patterns.json', '.github/**', 'upsc*.html']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Python publisher tests
+        run: python -m unittest discover -s scripts/upsc -p 'test_*.py'
+      - name: Node UPSC tests (every scripts/test-upsc-*)
+        run: |
+          failed=0
+          for test in scripts/test-upsc-*.js scripts/test-upsc-*.mjs; do
+            echo "::group::$test"
+            node "$test" || { echo "::error file=$test::$test failed"; failed=1; }
+            echo "::endgroup::"
+          done
+          exit $failed

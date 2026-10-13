@@ -42,10 +42,17 @@ assert.match(publishWorkflow, /permissions:\s+contents: write/);
 assert.match(publishWorkflow, /issues:\s+write/);
 assert.doesNotMatch(publishWorkflow, /ref:\s+main/);
 assert.match(publishWorkflow, /push-with-retry\.sh -m "chore: publish UPSC official-source update"/);
-assert.match(publishWorkflow, /UPSC_ENRICH_ENDPOINT/);
-assert.match(publishWorkflow, /UPSC_PUBLISH_TOKEN/);
+// Notes are generated on the runner with PERPLEXITY_API_KEY; no Cloudflare
+// Worker token. Enrichment stays optional: a bad key must not block the archive.
+for (const workflow of [publishWorkflow, liveWorkflow]) {
+  assert.match(workflow, /uses: \.\/\.github\/actions\/upsc-local-worker/);
+  assert.match(workflow, /perplexity-api-key: \$\{\{ secrets\.PERPLEXITY_API_KEY \}\}/);
+  assert.doesNotMatch(workflow, /secrets\.UPSC_PUBLISH_TOKEN/);
+  assert.match(workflow, /live_publish\.py --no-live-feed/);
+}
 assert.doesNotMatch(publishWorkflow, /Verify publisher configuration/);
-assert.match(publishWorkflow, /Optional enrichment is not configured/);
+assert.match(publishWorkflow, /name: Start local UPSC Worker\s+id: local-worker\s+continue-on-error: true/);
+assert.match(publishWorkflow, /if: steps\.local-worker\.outcome == 'success'/);
 assert.match(publishWorkflow, /scripts\/upsc\/mains_generator\.py/);
 assert.match(publishWorkflow, /scripts\/upsc\/verify\.py/);
 assert.match(publishWorkflow, /upsc-needs-review/);
