@@ -60,7 +60,7 @@ assert.match(publishWorkflow, /set -o pipefail[\s\S]*check-sources[\s\S]*tee dat
 assert.match(publishWorkflow, /--min-healthy 5/);
 assert.match(publishWorkflow, /scripts\/upsc\/alerting\.py/);
 assert.match(publishWorkflow, /upsc-source-health/);
-assert.match(publishWorkflow, /actions\/github-script@v7/);
+assert.match(publishWorkflow, /actions\/github-script@v8/);
 assert.match(publishWorkflow, /Snapshot previous source health/);
 assert.doesNotMatch(publishWorkflow, /--strict/);
 assert.ok(publishWorkflow.indexOf('Ingest official records') < publishWorkflow.indexOf('Enrich source records'));
@@ -130,6 +130,9 @@ assert.match(editionWorkflow, /cron: "15 0 \* \* \*"/);
 assert.match(editionWorkflow, /cron: "45 0 \* \* \*"/);
 assert.match(editionWorkflow, /cron: "15 12 \* \* \*"/);
 assert.match(editionWorkflow, /cron: "45 12 \* \* \*"/);
+// Catch-ups for scheduled runs GitHub delays or drops.
+assert.match(editionWorkflow, /cron: "15 3 \* \* \*"/);
+assert.match(editionWorkflow, /cron: "15 15 \* \* \*"/);
 assert.match(editionWorkflow, /workflow_dispatch:[\s\S]*slot:[\s\S]*dry_run:/);
 assert.match(editionWorkflow, /permissions:\s+contents: write\s+issues: write/);
 assert.match(editionWorkflow, /OPENAI_API_KEY:\s+\$\{\{ secrets\.OPENAI_API_KEY \}\}/);

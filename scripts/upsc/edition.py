@@ -77,12 +77,26 @@ def edition_id(date: str, slot: str) -> str:
     return f"{date}-{slot}"
 
 
+# Scheduled runs start up to 45 minutes before an edition closes.
+CLOSE_LEAD = timedelta(minutes=45)
+
+
 def resolve_slot(slot: str, now: str) -> tuple[str, str]:
-    """Return (slot, IST date). `auto` is AM before noon IST, otherwise PM."""
+    """Return (slot, IST date).
+
+    `auto` is the latest edition whose close (06:00 or 18:00 IST) is at most
+    CLOSE_LEAD away. GitHub can start a scheduled run hours late; this keeps a
+    late run on the edition it was scheduled for instead of skipping it.
+    """
     local = _parse(now).astimezone(IST)
-    if slot == "auto":
-        slot = "am" if local.hour < 12 else "pm"
-    return slot, local.date().isoformat()
+    if slot != "auto":
+        return slot, local.date().isoformat()
+    shifted = local + CLOSE_LEAD
+    if shifted.hour >= 18:
+        return "pm", shifted.date().isoformat()
+    if shifted.hour >= 6:
+        return "am", shifted.date().isoformat()
+    return "pm", (shifted.date() - timedelta(days=1)).isoformat()
 
 
 def _edition_path(output_root: Path, date: str, slot: str) -> Path:
