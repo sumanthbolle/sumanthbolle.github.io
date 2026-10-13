@@ -2030,7 +2030,7 @@
 
       const ENDPOINT = window.SB_AI_SEARCH_ENDPOINT;
       const MAX_CONTEXT_MESSAGES = 10;
-      const THEME_KEY = 'summaverick-theme';
+      const THEME_KEY = 'theme';
       const CHATS_KEY = 'summaverick-chats';
       const MAX_CHATS = 60;
 
@@ -2309,7 +2309,8 @@
       }
 
       function applyInitialTheme() {
-        const saved = localStorage.getItem(THEME_KEY);
+        // One theme across the site; fall back to the older Summaverick-only key.
+        const saved = localStorage.getItem(THEME_KEY) || localStorage.getItem('summaverick-theme');
         if (saved === 'light' || saved === 'dark') {
           setTheme(saved, false);
           return;

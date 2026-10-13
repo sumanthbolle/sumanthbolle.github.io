@@ -73,6 +73,16 @@ test('Save Yourself answers in plain words: inputs, one answer, three numbers', 
   assert.equal(/You borrow|You return|rent on the money|Money rent|Reality receipt|Red flags|Cash-flow pressure/.test(save + saveApp), false);
 });
 
+test('Tool pages load the shared theme script and nav menu', function () {
+  [metals, save].forEach(function (doc) {
+    assert.match(doc, /<script src="assets\/js\/shared\/theme\.js[^"]*"><\/script>\s*<link/);
+    assert.equal(/<html[^>]+data-theme=/.test(doc), false);
+  });
+  [saveApp, metalsApp].forEach(function (js) {
+    assert.match(js, /SBShared\.initNavMenu\(\)/);
+  });
+});
+
 test('Both utility shells keep unique HTML ids', function () {
   [metals, save].forEach(function (documentText) {
     var ids = Array.from(documentText.matchAll(/\bid="([^"]+)"/g)).map(function (match) { return match[1]; });

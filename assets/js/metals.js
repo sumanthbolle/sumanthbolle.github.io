@@ -337,6 +337,7 @@
 
   setInterval(function () { if (!document.hidden) load(); }, REFRESH_MS);
 
+  if (window.SBShared) window.SBShared.initNavMenu();
   window.SBAsk.init({ getContext: context });
   load();
 })();
