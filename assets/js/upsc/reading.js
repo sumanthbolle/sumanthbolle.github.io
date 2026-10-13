@@ -60,7 +60,7 @@
     if (!articles.length) return '<p class="pr-message">No short reads match. Try a topic such as economy, Parliament or wetlands.</p>';
     return '<ol class="pr-list">' + articles.map(function (article, index) {
       var titleId = 'pocket-title-' + article.id;
-      return '<li class="pr-story"><a class="pr-story__link" href="' + articleHref(article) +
+      return '<li class="pr-story" data-paper="' + esc(article.paper) + '"><a class="pr-story__link" href="' + articleHref(article) +
         '" data-pocket-article="' + esc(article.id) + '" aria-labelledby="' + esc(titleId) + '">' +
         '<div class="pr-story__index">' +
         esc(article.kind || 'Explainer') + '</div>' +

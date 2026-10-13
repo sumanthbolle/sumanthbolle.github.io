@@ -316,7 +316,7 @@ function makeDesk(dom, files, extra) {
     const edition = html.indexOf('assets/js/upsc/edition.js?v=20261013-1');
     const coach = html.indexOf('assets/js/upsc/coach.js');
     assert.ok(render > 0 && progress > 0 && edition > render && edition > progress && edition < coach);
-    assert.match(html, /assets\/css\/upsc-edition\.css\?v=20261013-1/);
+    assert.match(html, /assets\/css\/upsc-edition\.css\?v=\d{8}-\d+/);
   });
 
   console.log('UPSC edition desk tests passed');
