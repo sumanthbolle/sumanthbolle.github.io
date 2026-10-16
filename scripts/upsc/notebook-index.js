@@ -134,7 +134,9 @@ function buildIndex(postsDir) {
   for (const post of posts) counts[post.category] = (counts[post.category] || 0) + 1;
   return {
     index: {
-      generated: new Date().toISOString(),
+      // Derived from the newest post rather than the clock, so a rebuild with
+      // no new posts produces an identical file and no commit.
+      generated: posts.length ? posts[0].date + (posts[0].time ? 'T' + posts[0].time : '') : null,
       categories: CATEGORIES.map((c) => Object.assign({}, c, { count: counts[c.id] || 0 })),
       posts,
     },
