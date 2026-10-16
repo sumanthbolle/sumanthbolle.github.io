@@ -245,7 +245,22 @@ test('notebook-crypto round-trips in node (the tasks) with the same format the p
 
 test('readiness metrics are zero with no log, severe with a thin one, and capped as designed', function () {
   const M = require('./../assets/js/upsc/notebook-metrics.js');
-  const schedule = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'upsc', 'notebook', 'schedule.json'), 'utf8'));
+  // The real schedule is encrypted in the repo, so the test uses a fixture with the same shape.
+  const schedule = {
+    studyStart: '2026-10-05', exam: '2027-05-23', totalHoursPlanned: 660,
+    phases: [{ id: 'BUILD', from: '2026-10-05', to: '2026-12-20' }, { id: 'CONVERGE', from: '2026-12-21', to: '2027-03-14' }, { id: 'COMPRESS', from: '2027-03-15', to: '2027-05-08' }, { id: 'LOCK', from: '2027-05-09', to: '2027-05-22' }],
+    hoursByWeekday: { 0: 5, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 5 },
+    targets: { gsMock: 110, gsCutoffBand: [88, 100], pyqAccuracyMin: 0.65, pyqAccuracyTarget: 0.72, csatQualify: 66, csatTarget: 90, csatDiagnosticMin: 60 },
+    units: [
+      { id: 'polity-ch1-2', date: '2026-10-12', subject: 'Polity', label: 'ch 1-2', minutes: 60 },
+      { id: 'polity-ch3-4', date: '2026-10-13', subject: 'Polity', label: 'ch 3-4', minutes: 60 },
+      { id: 'polity-ch5-6', date: '2026-10-14', subject: 'Polity', label: 'ch 5-6', minutes: 60 },
+      { id: 'polity-ch7a', date: '2026-10-15', subject: 'Polity', label: 'ch 7a', minutes: 60 },
+      { id: 'polity-ch7b-8', date: '2026-10-16', subject: 'Polity', label: 'ch 7b-8', minutes: 60 },
+      { id: 'spectrum-ch1-3', date: '2026-10-17', subject: 'Modern History', label: 'Spectrum 1-3', minutes: 180 },
+      { id: 'csat-diagnostic', date: '2026-10-17', subject: 'CSAT', label: 'diagnostic', minutes: 120 },
+    ],
+  };
   const empty = M.compute({ logs: [], schedule, today: '2026-10-16' });
   assert.equal(empty.readiness.score, 0);
   assert.equal(empty.readiness.grade, 'F');
