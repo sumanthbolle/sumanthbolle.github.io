@@ -34,10 +34,10 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
-      - name: Check the posts and rebuild the index
+      - name: Rebuild the index and run the notebook tests
         run: |
+          node scripts/upsc/notebook-index.js --check
           node scripts/test-upsc-notebook.js
-          node scripts/upsc/notebook-index.js
       - name: Commit the index
         run: |
           git config user.name "upsc-publisher[bot]"
