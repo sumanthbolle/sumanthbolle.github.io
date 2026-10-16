@@ -36,7 +36,7 @@ The reading-room and article images below now show the refined edition: recommen
 
 ## Ask Summaverick
 
-The article action opens this panel with the current article and its source references. The replies below are explicitly labelled layout fixtures, not live research results. Direct source downloading requires the Worker update to be deployed; no live source answer was verified from this environment.
+The article action opens this panel with the current article and its source references. The replies below are explicitly labelled layout fixtures, not live research results. A real RBI source-reading request now passes following the native Cloudflare build. The screenshots remain fixtures rather than that live response.
 
 ![Desktop source-reading widget layout preview](desktop-source-widget.png)
 
@@ -64,9 +64,11 @@ The article action opens this panel with the current article and its source refe
 
 The initial articles are evergreen explainers. The official update feed refreshes through its existing scheduled workflow. A separate daily job releases at most one approved evergreen Pocket read around 07:00 Singapore time after merge; its queue is initially empty and it does not author text. Dynamic Pocket news has a separate frequent source/verification pipeline and a Worker feed, without that daily limit. Activation requires the credentials and deployment documented below. See [publishing and source research](../upsc-pocket-publishing.md) and the [reading review](../upsc-reading-review.md).
 
-Validation: 16 UPSC JavaScript check scripts and 89 publisher tests passed. Browser checks cover complete article bodies, arrows, keyboard/new-tab navigation, the older renderer interface, direct links, saving, eight responsive routes, forms and Atlas drill. Source-widget checks cover all article additions, source-URL requests, understanding-check replies, focus restoration, a compact keyboard viewport and cancelled requests on article navigation. The Worker dry-run build passes; deployment and live-provider validation remain pending.
+Validation: 16 UPSC JavaScript check scripts and 89 publisher tests passed. Browser checks cover complete article bodies, arrows, keyboard/new-tab navigation, the older renderer interface, direct links, saving, eight responsive routes, forms and Atlas drill. Source-widget checks cover all article additions, source-URL requests, understanding-check replies, focus restoration, a compact keyboard viewport and cancelled requests on article navigation. The Worker dry-run build passes; a real RBI source request now passes, while end-to-end news publication remains pending.
 
 ## Incoming news and source corrections
+
+Live source reading has now passed a real RBI request following the automatic Cloudflare build. The widget screenshots above remain labelled layout fixtures. The separate news endpoint reported a missing Pocket storage binding; see the [current deployment status](../upsc-pocket-publishing.md) for the provisioning follow-up and remaining private-publisher requirement.
 
 These two screenshots use clearly labelled layout fixtures, not real published news or proof of a deployed live feed. The first demonstrates an incoming Pocket news row and its date. The second shows a withdrawn current note: its warning remains visible and stale save/ask actions are disabled until the latest reads are loaded.
 
@@ -74,4 +76,4 @@ These two screenshots use clearly labelled layout fixtures, not real published n
 
 ![Mobile source-correction warning layout fixture](mobile-source-correction.png)
 
-The dynamic browser checks pass for automatic library updates, conditional requests, preserved article DOM/context, Back navigation, corrected/withdrawn notes, and retaining a newer snapshot during an outage. Actual deployment remains blocked by missing secure credentials. See [Pocket publishing](../upsc-pocket-publishing.md) for the five-minute source polling schedule, 30-second visible-page checks and their latency limits.
+The dynamic browser checks pass for automatic library updates, conditional requests, preserved article DOM/context, Back navigation, corrected/withdrawn notes, and retaining a newer snapshot during an outage. End-to-end news publication remains pending; the current storage/publisher status is described above. See [Pocket publishing](../upsc-pocket-publishing.md) for the five-minute source polling schedule, 30-second visible-page checks and their latency limits.

@@ -217,7 +217,9 @@ Completed on the review branch:
 - Pocket news prose included in complete-note verification and its content hash, with original release titles retained in references. Practice and illustrations cannot be edited after checking without invalidating publication eligibility.
 - A direct understanding-check action opens Summaverick with article/source context and waits for a learner response. Stale practice changes trigger the same correction hold as stale article facts.
 
-No news articles were invented to fill the ten-article pilot. The five developed news examples still require actual verified sources and a working deployment. Cloudflare credential bindings and live-provider validation remain pending; a dry-run bundle is not deployment evidence.
+No news articles were invented to fill the ten-article pilot. The five developed news examples still require actual verified sources and a working publication path. After PR #184 merged and Cloudflare's native builds succeeded, a real source request downloaded the RBI MPC resolution and answered its meeting dates/rate decision consistently with the document. That exact dated release is now linked from the repo-rate explainer, with a separate factual example and clearly hypothetical loan figures. This establishes one live retrieval check, not blanket answer accuracy.
+
+The public feed still reported `Pocket feed storage is not configured`. A narrow follow-up declares the KV binding for Wrangler's supported automatic provisioning and makes manual deployments preserve the actual active namespace. A real verified news item must pass through the private publisher before the feed can be described as live. See [deployment status](upsc-pocket-publishing.md).
 
 ## Fresh benchmark references and remaining visual review
 
