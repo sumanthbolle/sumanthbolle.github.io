@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-16T16:47:26Z",
-  "itemCount": 13,
+  "generatedAt": "2026-10-16T19:43:49Z",
+  "itemCount": 16,
   "items": [
     {
       "anchor": "Targeted public support for equitable access to doctoral education",
@@ -164,6 +164,231 @@
         "whyInNews": "On 16 October 2026, the Press Information Bureau highlighted the NFSC Fellowship in a release titled “NFSC Fellowship Empowers Ajay Kumar to Pursue His PhD.” The source presents the fellowship as financial assistance that helped a scholar continue doctoral studies. Its policy relevance lies in the mechanism: reducing e"
       },
       "sourceId": "src_55ff81d33574f9b8e56fe9901bd190bc6420c1e783c26cdb69732258b09a3ade",
+      "verification": {
+        "agrees": false,
+        "confidence": 0,
+        "flagged_claims": [
+          "Verification was unavailable; retry before publishing"
+        ]
+      }
+    },
+    {
+      "anchor": "GS3.1 Indian economy: resource mobilisation, growth, development, employment; sovereign-backed gold-",
+      "checkedAt": "2026-10-16T19:43:49Z",
+      "codes": [
+        "GS3.1",
+        "GS3.2",
+        "GS2.7"
+      ],
+      "issue": {
+        "body": "Primary enrichment for `src_603dc17137881361888149d379808cfcec0c3ba4fdf49ed659c721a1d2c7bbd3` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0\n- **checked at:** 2026-10-16T19:43:49Z\n\nFlagged claims:\n- Verification was unavailable; retry before publishing\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_603dc17137881361888149d379808cfcec0c3ba4fdf49ed659c721a1d2c7bbd3",
+        "title": "Needs review: src_603dc17137881361888149d379808cfcec0c3ba4fdf49ed659c721a1d2c7bbd3 verification disagreed"
+      },
+      "note": {
+        "anchor": "GS3.1 Indian economy: resource mobilisation, growth, development, employment; sovereign-backed gold-",
+        "argumentsAgainst": [
+          "Premature redemption provides flexibility, but the redemption amount is linked to gold prices and can be lower than an investor’s purchase value if gold prices decline.",
+          "A rule-based price formula does not eliminate market-price risk or the opportunity cost of exiting before the scheduled maturity."
+        ],
+        "argumentsFor": [
+          "Permitting exit after the fifth year balances investor liquidity with the SGB’s longer-term investment design.",
+          "Using a transparent average of recent IBJA-published gold closing prices provides an objective basis for redemption."
+        ],
+        "background": [
+          "The RBI release concerns SGB 2020-21 Series VII, issued on October 20, 2020. Under the cited Government of India notification, premature redemption may be permitted after the fifth year from issue, on an interest-payment date.",
+          "The broader SGB framework provides an eight-year tenor, with premature redemption from the fifth year on interest-payment dates; the bonds carry a fixed interest component under the scheme framework. The source record itself does not state ",
+          "The redemption mechanism separates the fixed scheme terms from the variable gold-linked principal: the principal redemption price is calculated from recent gold prices published by IBJA. [2][3]"
+        ],
+        "codes": [
+          "GS3.1",
+          "GS3.2",
+          "GS2.7"
+        ],
+        "editorialStatus": "draft",
+        "id": "note_603dc17137881361888149d379808cfcec0c3ba4fdf49ed659c721a1d2c7bbd3",
+        "indiaImplications": [
+          "For investors, the notified window converts a long-tenor holding into a rule-based exit opportunity without treating any market price as the redemption benchmark.",
+          "For financial-sector governance, reliance on an external published benchmark and a stated averaging method improves predictability and reduces discretionary valuation.",
+          "For public finance and asset mobilisation, SGBs illustrate how a sovereign-backed instrument can offer gold-linked exposure through a formal financial channel; broader effects on imports, household savings or fiscal cost require evidence be"
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Explain the SGB exit design: eight-year tenor, fifth-year premature-redemption eligibility on interest-payment dates, and benchmark-based pricing.",
+              "Analyse the policy balance between investor liquidity, transparent valuation and exposure to gold-price volatility.",
+              "Suggest safeguards: clear communication of cut-off dates, benchmark methodology, settlement procedures and investor-risk disclosure."
+            ],
+            "conclusionPrompt": "Conclude by linking rule-based exit and transparent valuation to trust in financial mobilisation, while recognising that gold-linked returns remain market-sensitive.",
+            "counterPosition": "SGBs need not be treated as risk-free merely because they are sovereign-backed: the redemption principal is linked to gold prices and premature exit is available only within specified conditions.",
+            "diagramSuggestion": "Timeline: 20 Oct 2020 issue → after fifth year → interest-payment-date exit → 19 Oct 2026 redemption; beside it, three-business-day IBJA average → ₹14,614 per unit.",
+            "directive": "assess",
+            "introChoices": [
+              "The RBI’s SGB redemption notice highlights how a sovereign-backed instrument combines a defined maturity structure with market-linked valuation.",
+              "Financial inclusion in savings instruments requires not only access but also predictable exit rules and transparent pricing."
+            ],
+            "marks": 10,
+            "skeleton": [
+              "The RBI’s SGB redemption notice highlights how a sovereign-backed instrument combines a defined maturity structure with market-linked valuation.",
+              "Financial inclusion in savings instruments requires not only access but also predictable exit rules and transparent pricing.",
+              "Explain the SGB exit design: eight-year tenor, fifth-year premature-redemption eligibility on interest-payment dates, and benchmark-based pricing.",
+              "Analyse the policy balance between investor liquidity, transparent valuation and exposure to gold-price volatility.",
+              "Suggest safeguards: clear communication of cut-off dates, benchmark methodology, settlement procedures and investor-risk disclosure.",
+              "SGBs need not be treated as risk-free merely because they are sovereign-backed: the redemption principal is linked to gold prices and premature exit is available only within specified conditions.",
+              "Conclude by linking rule-based exit and transparent valuation to trust in financial mobilisation, while recognising that gold-linked returns remain market-sensitive."
+            ],
+            "stem": "Assess how the premature-redemption and benchmark-pricing framework of Sovereign Gold Bonds balances investor flexibility with valuation risk.",
+            "timeMinutes": 7,
+            "wordBudget": 150
+          },
+          {
+            "bodyDimensions": [
+              "Distinguish eligibility timing from price determination.",
+              "Use the 2026 tranche as an illustration of how a holiday changes the due date while the pricing window remains tied to the redemption date.",
+              "Discuss limitations of relying on recent gold prices as the principal benchmark."
+            ],
+            "conclusionPrompt": "End with a balanced judgement: procedural clarity improves confidence, but investor suitability still depends on liquidity needs and gold-price expectations.",
+            "counterPosition": "A short averaging window may improve responsiveness to current prices but can also transmit short-term volatility into redemption proceeds.",
+            "diagramSuggestion": "Flowchart: eligibility check → interest-payment date → previous three business-day gold closes → simple average → redemption amount.",
+            "directive": "analyse",
+            "introChoices": [
+              "The issue is not merely early exit; it is the interaction between contractual eligibility and benchmark-based price discovery.",
+              "A transparent formula can reduce discretion without removing economic risk."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "The issue is not merely early exit; it is the interaction between contractual eligibility and benchmark-based price discovery.",
+              "A transparent formula can reduce discretion without removing economic risk.",
+              "Distinguish eligibility timing from price determination.",
+              "Use the 2026 tranche as an illustration of how a holiday changes the due date while the pricing window remains tied to the redemption date.",
+              "Discuss limitations of relying on recent gold prices as the principal benchmark.",
+              "A short averaging window may improve responsiveness to current prices but can also transmit short-term volatility into redemption proceeds.",
+              "End with a balanced judgement: procedural clarity improves confidence, but investor suitability still depends on liquidity needs and gold-price expectations."
+            ],
+            "stem": "Analyse the significance and limitations of using the previous three business days’ IBJA gold prices to determine premature SGB redemption.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63822",
+            "text": "Premature redemption of Gold Bond may be permitted after fifth year from the date of issue of such Gold Bond on the date on which interest is payable.",
+            "verification": "source-backed"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63822",
+            "text": "The due date of premature redemption of the above tranche shall be on October 19, 2026 (October 20, 2026, being a holiday).",
+            "verification": "source-backed"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63822",
+            "text": "The redemption price for premature redemption due on October 19, 2026 (October 20, 2026, being a holiday), shall be ₹14,614/- per unit of SGB.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63822",
+            "text": "The redemption price for premature redemption due on October 19, 2026 (October 20, 2026, being a holiday), shall be ₹14,614/- per unit of SGB based on the simple average of closing price of gold for the three business days i.e., October 14, October 15, and October 16, 2026.",
+            "verification": "needs-review"
+          }
+        ],
+        "papers": [
+          "GS3",
+          "GS2"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Hypothetical illustration",
+            "text": "If an SGB tranche reaches its fifth year and its eligible interest-payment date is shifted because of a holiday, the redemption date may fall on the preceding working day. Its price would then be determined using the stated average of the relevant previous business-day gold prices, rather than an investor-selected market quote."
+          },
+          "excerpt": "The RBI fixed ₹14,614 per SGB unit for the 19 October 2026 premature redemption of SGB 2020-21 Series VII using a three-business-day IBJA gold-price average.",
+          "question": {
+            "answer": "The framework balances liquidity and predictability by allowing exit only after the fifth year on an interest-payment date, while using a published three-business-day gold-price average to determine the principal. It does not remove gold-price risk.",
+            "prompt": "How does the SGB framework balance investor flexibility with valuation risk?"
+          },
+          "sections": [
+            {
+              "heading": "Eligibility and timing",
+              "paragraphs": [
+                "The Reserve Bank of India stated that SGB 2020-21 Series VII, issued on 20 October 2020, became eligible for premature redemption after the fifth year on an interest-payment date. Because 20 October 2026 was a holiday, the due date was 19 October 2026.",
+                "The mechanism is conditional rather than an anytime withdrawal facility. This distinction matters for liquidity planning: an investor must use the permitted interest-payment-date window."
+              ]
+            },
+            {
+              "heading": "Benchmark-based price",
+              "paragraphs": [
+                "The RBI stated that the redemption price is based on the simple average of closing prices for 999-purity gold over the previous three business days, as published by IBJA. For this tranche, the stated price was ₹14,614 per unit, based on 14, 15 and 16 October 2026.",
+                "The formula makes valuation reproducible, but it remains gold-price-linked. Sovereign backing supports the instrument’s framework; it does not make the market-linked redemption value independent of gold-price movements."
+              ]
+            },
+            {
+              "heading": "Exam takeaway",
+              "paragraphs": [
+                "In an answer, separate three ideas: eligibility after the fifth year, timing on an interest-payment date, and price discovery through the stated IBJA-based average. Avoid treating premature redemption as an unrestricted exit or the quoted amount as a universal SGB value."
+              ]
+            }
+          ],
+          "title": "RBI sets premature-redemption price for SGB 2020-21 Series VII"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The official summary states that premature redemption may be permitted after the fifth year from issue on the date on which interest is payable.",
+            "statement": "Premature SGB redemption is permitted after the fifth year from issue on an interest-payment date."
+          },
+          {
+            "correct": false,
+            "explanation": "The due date stated for this tranche is October 19, 2026 because October 20, 2026 was a holiday.",
+            "statement": "The premature-redemption due date for SGB 2020-21 Series VII was October 20, 2026."
+          },
+          {
+            "correct": true,
+            "explanation": "The RBI stated that the price is based on the simple average of closing prices of 999-purity gold for the previous three business days, published by IBJA.",
+            "statement": "The stated SGB redemption price uses an IBJA-published three-business-day average for 999-purity gold."
+          },
+          {
+            "correct": false,
+            "explanation": "The official summary gives ₹14,614 per unit for this specified tranche and redemption date; it is not a universal price for all SGBs.",
+            "statement": "₹14,614 is the fixed redemption price for every Sovereign Gold Bond."
+          }
+        ],
+        "priority": 71,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 86,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 15
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-10-16T18:30:00Z",
+        "publisherId": "rbi",
+        "publisherName": "Reserve Bank of India",
+        "recallCard": "SGB 2020-21 Series VII: issued 20 October 2020; premature redemption after the fifth year occurs on an interest-payment date. Since 20 October 2026 was a holiday, the due date was 19 October. RBI stated ₹14,614 per unit, based on the simple average of 999-purity gold closing prices for 14–16 October, published by IBJA.",
+        "reusableAnchors": [],
+        "sourceContentHash": "8e409101c5de379945bd0e5d5b849853c7cc22eb675dbf2a7c9f98a965f0e72f",
+        "sourceId": "src_603dc17137881361888149d379808cfcec0c3ba4fdf49ed659c721a1d2c7bbd3",
+        "sourceTitle": "Premature redemption under Sovereign Gold Bond (SGB) Scheme - Redemption Price for premature redemption of SGB 2020-21 Series VII due on October 19, 2026 (October 20, 2026, being a holiday)",
+        "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63822",
+        "staticDefinition": "Sovereign Gold Bonds are sovereign-backed, gold-linked securities whose premature-redemption framework permits exit after the fifth year from issue on an interest-payment date, with redemption pricing determined through the scheme’s specified gold-price benchmark. [2][3]",
+        "use": "Use SGBs to illustrate rule-based financial mobilisation, benchmark-based valuation, investor-liquidity design and the limits of equating sovereign backing with absence of market risk.",
+        "wayForward": [
+          "Publish a simple investor-facing calendar showing issue date, fifth-year eligibility and the relevant interest-payment-date window.",
+          "Continue disclosing the benchmark purity, price source, averaging period and business-day computation in each redemption notice.",
+          "Clearly distinguish the tranche-specific redemption amount from the general SGB framework and communicate that gold-price-linked value can vary.",
+          "Provide timely settlement and accessible grievance redressal through designated receiving channels; the source record does not establish the operational details for this particular redemption."
+        ],
+        "whyInNews": "On October 16, 2026, the Reserve Bank of India announced the premature-redemption price for SGB 2020-21 Series VII, due on October 19 because October 20 was a holiday. It stated ₹14,614 per unit, calculated from the simple average of IBJA-published closing prices for 999-purity gold on October 14, 15 and 16, 2026. [P1]"
+      },
+      "sourceId": "src_603dc17137881361888149d379808cfcec0c3ba4fdf49ed659c721a1d2c7bbd3",
       "verification": {
         "agrees": false,
         "confidence": 0,
@@ -1857,6 +2082,214 @@
       }
     },
     {
+      "anchor": "GS3.1 Indian economy: resource mobilisation, growth, development, employment; GS3.2 Government budge",
+      "checkedAt": "2026-10-16T19:43:49Z",
+      "codes": [
+        "GS3.1",
+        "GS3.2",
+        "GS2.7"
+      ],
+      "issue": {
+        "body": "Primary enrichment for `src_ee8b3f8a1545e4018802d36799f2ec65ee58c8cc8c9ed24fdf549d6f5c2c765b` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0\n- **checked at:** 2026-10-16T19:43:49Z\n\nFlagged claims:\n- Verification was unavailable; retry before publishing\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_ee8b3f8a1545e4018802d36799f2ec65ee58c8cc8c9ed24fdf549d6f5c2c765b",
+        "title": "Needs review: src_ee8b3f8a1545e4018802d36799f2ec65ee58c8cc8c9ed24fdf549d6f5c2c765b verification disagreed"
+      },
+      "note": {
+        "anchor": "GS3.1 Indian economy: resource mobilisation, growth, development, employment; GS3.2 Government budge",
+        "argumentsAgainst": [
+          "Repeated short-term borrowing through Treasury Bills can increase rollover and refinancing pressure if used persistently.",
+          "Multiple-price auctions may result in different successful bidders paying different prices, potentially complicating investor understanding.",
+          "A 5% retail allocation cap limits the direct scale of individual participation in the notified issue."
+        ],
+        "argumentsFor": [
+          "Treasury Bill auctions provide the Government of India a market-based mechanism for raising short-term funds.",
+          "Non-competitive participation can widen access for eligible institutions and individual retail investors without requiring them to quote a price.",
+          "Electronic bidding through E-Kuber and the Retail Direct channel can improve operational access and transparency."
+        ],
+        "background": [
+          "Treasury Bills are short-term Government of India securities used for public borrowing. The Government Securities Act, 2006 includes a treasury bill within the meaning of a promissory note.[2]",
+          "In a competitive auction, participants submit price or yield bids; in a non-competitive route, eligible participants seek allotment without determining the auction price. RBI material describes retail participation in Treasury Bill auctions",
+          "In a multiple-price auction, successful competitive bidders pay the prices they bid, rather than one common auction price. The RBI has stated that auction format may be uniform-price or multiple-price depending on the issue and conditions.["
+        ],
+        "codes": [
+          "GS3.1",
+          "GS3.2",
+          "GS2.7"
+        ],
+        "editorialStatus": "draft",
+        "id": "note_ee8b3f8a1545e4018802d36799f2ec65ee58c8cc8c9ed24fdf549d6f5c2c765b",
+        "indiaImplications": [
+          "The auction supports short-term government cash-flow management and contributes to domestic debt-market development.",
+          "Retail access through non-competitive bidding can diversify participation in government securities, but the allocation ceiling means it cannot substitute for institutional demand.",
+          "The notified maturity mix—91, 182 and 364 days—allows borrowing across different short-term tenors, while repeated reliance would require attention to rollover risk and fiscal sustainability.",
+          "The mechanism illustrates coordination between the Union Government as issuer and RBI as auction and operational authority."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Purpose of Treasury Bills in short-term public borrowing",
+              "Competitive versus non-competitive bidding",
+              "Multiple-price auction and price discovery",
+              "Retail participation, access and allocation limits"
+            ],
+            "conclusionPrompt": "Conclude by linking efficient auction design with transparent borrowing, wider participation and prudent debt management.",
+            "counterPosition": "Short-term market borrowing is useful for cash management, but excessive dependence can shift fiscal pressures forward through repeated refinancing.",
+            "diagramSuggestion": "Flow: Government borrowing requirement → RBI auction notice → competitive/non-competitive bids → allotment → settlement → repayment at maturity.",
+            "directive": "assess",
+            "introChoices": [
+              "A Treasury Bill auction combines short-term sovereign borrowing with market-based price discovery.",
+              "The RBI’s announced auction shows how public debt management uses differentiated maturities and separate bidding channels."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "A Treasury Bill auction combines short-term sovereign borrowing with market-based price discovery.",
+              "The RBI’s announced auction shows how public debt management uses differentiated maturities and separate bidding channels.",
+              "Purpose of Treasury Bills in short-term public borrowing",
+              "Competitive versus non-competitive bidding",
+              "Multiple-price auction and price discovery",
+              "Retail participation, access and allocation limits",
+              "Short-term market borrowing is useful for cash management, but excessive dependence can shift fiscal pressures forward through repeated refinancing.",
+              "Conclude by linking efficient auction design with transparent borrowing, wider participation and prudent debt management."
+            ],
+            "stem": "Assess how the RBI’s Treasury Bill auction framework balances government cash management, market price discovery and retail participation.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63821",
+            "text": "The notified amounts are ₹8,000 crore for the 91-day Treasury Bill, ₹8,000 crore for the 182-day Treasury Bill and ₹7,000 crore for the 364-day Treasury Bill, totalling ₹23,000 crore.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63821",
+            "text": "The auction is scheduled for October 21, 2026, with settlement on October 22, 2026.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63821",
+            "text": "For retail investors, the allocation will be restricted to a maximum of 5 percent of the notified amount.",
+            "verification": "source-backed"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63821",
+            "text": "The auction will be Price based using multiple price method.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63821",
+            "text": "Bids for the auction should be submitted in electronic format on the Reserve Bank of India’s Core Banking Solution (E-Kuber system).",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63821",
+            "text": "State Governments, Union Territories with legislature, eligible Provident Funds in India, designated Foreign Central Banks and any person or institution specified by the Bank in this regard can participate on non-competitive basis, the allocation for which will be outside the notified amount.",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS3",
+          "GS2"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Hypothetical illustration",
+            "text": "If a retail investor uses the non-competitive route, the investor specifies the desired amount rather than selecting a competitive price; allotment remains subject to the applicable retail allocation limit and auction rules."
+          },
+          "excerpt": "The RBI’s announced auction raises ₹23,000 crore through 91-, 182- and 364-day Treasury Bills, using multiple-price bidding and a capped non-competitive retail route.",
+          "question": {
+            "answer": "The framework separates functions: competitive bids support market-based price discovery, while non-competitive bidding lowers the entry barrier for eligible participants. The multiple-price method preserves bidder-specific pricing, and the 5% retail cap limits retail exposure. Together, these features support flexible short-term borrowing without making retail demand the primary funding source.",
+            "prompt": "Why does the auction combine competitive bidding with a capped non-competitive route for individuals?"
+          },
+          "sections": [
+            {
+              "heading": "What the RBI announced",
+              "paragraphs": [
+                "The Reserve Bank of India announced the auction of Government of India Treasury Bills on October 21, 2026, with settlement on October 22, 2026. The notified amounts are ₹8,000 crore each for 91-day and 182-day bills and ₹7,000 crore for 364-day bills, totalling ₹23,000 crore.",
+                "The auction is price-based and uses the multiple-price method. Competitive bids are scheduled from 10:30 a.m. to 11:30 a.m., while non-competitive bids are scheduled from 10:30 a.m. to 11:00 a.m.; results are to be announced on the auction day."
+              ]
+            },
+            {
+              "heading": "Access and the practical limit",
+              "paragraphs": [
+                "Eligible institutions listed by RBI may participate on a non-competitive basis, with that allocation outside the notified amount. Individuals may also participate as retail investors, but their allocation is restricted to a maximum of 5% of the notified amount. Individuals may place such bids through the Retail Direct portal.",
+                "The arrangement lowers the need for individuals to determine an auction price, but it does not mean unlimited or guaranteed allotment. The announcement also specifies electronic submission through RBI’s E-Kuber system and payment by successful bidders on October 22, 2026."
+              ]
+            }
+          ],
+          "title": "RBI announces ₹23,000-crore Treasury Bill auction"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The announcement specifies ₹8,000 crore each for 91-day and 182-day bills and ₹7,000 crore for 364-day bills.",
+            "statement": "The notified amount is ₹23,000 crore."
+          },
+          {
+            "correct": false,
+            "explanation": "The notified amount for the 364-day Treasury Bill is ₹7,000 crore.",
+            "statement": "The notified amount for the 364-day Treasury Bill is ₹8,000 crore."
+          },
+          {
+            "correct": true,
+            "explanation": "The auction uses a price-based multiple-price method.",
+            "statement": "The RBI announcement specifies a multiple-price auction."
+          },
+          {
+            "correct": false,
+            "explanation": "The auction is scheduled for October 21, 2026, and settlement is scheduled for October 22, 2026.",
+            "statement": "The auction and settlement occur on the same day."
+          }
+        ],
+        "priority": 71,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 86,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 15
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-10-16T17:25:00Z",
+        "publisherId": "rbi",
+        "publisherName": "Reserve Bank of India",
+        "recallCard": "RBI’s October 2026 notice schedules a ₹23,000-crore Government of India Treasury Bill auction: ₹8,000 crore each for 91- and 182-day bills and ₹7,000 crore for 364-day bills. It uses a price-based multiple-price method; individuals may bid non-competitively through Retail Direct, subject to a 5% cap.",
+        "reusableAnchors": [],
+        "sourceContentHash": "4da57bc93b2cc3f6cf8b3d82bd9c488cdd5819b8868b4ac4bacb36461d5eec28",
+        "sourceId": "src_ee8b3f8a1545e4018802d36799f2ec65ee58c8cc8c9ed24fdf549d6f5c2c765b",
+        "sourceTitle": "Auction of 91-Day, 182-Day and 364-Day Treasury Bills",
+        "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63821",
+        "staticDefinition": "A Treasury Bill is a short-term Government of India security used to raise funds through an auction. In the notified arrangement, competitive participants quote prices, while non-competitive participants seek allotment without selecting a price; the auction uses a multiple-price method.",
+        "use": "Use this example to show how sovereign short-term borrowing can combine market price discovery, institutional participation and limited retail access through digital auction infrastructure.",
+        "wayForward": [
+          "Maintain a predictable auction calendar and clearly communicate maturity-wise borrowing requirements.",
+          "Strengthen investor education on the distinction between competitive and non-competitive bidding and on the implications of multiple-price auctions.",
+          "Monitor the maturity profile and refinancing exposure so short-term borrowing remains a cash-management instrument rather than a persistent substitute for fiscal consolidation.",
+          "Use digital channels with strong authentication, grievance redress and operational resilience."
+        ],
+        "whyInNews": "The Reserve Bank of India announced on October 16, 2026 that it will auction Government of India Treasury Bills on October 21, 2026, with settlement on October 22, 2026. The notified total is ₹23,000 crore across 91-day, 182-day and 364-day bills, using a price-based multiple-price method. Individuals may participate n"
+      },
+      "sourceId": "src_ee8b3f8a1545e4018802d36799f2ec65ee58c8cc8c9ed24fdf549d6f5c2c765b",
+      "verification": {
+        "agrees": false,
+        "confidence": 0,
+        "flagged_claims": [
+          "Verification was unavailable; retry before publishing"
+        ]
+      }
+    },
+    {
       "anchor": "Responsible e-waste management and cyber hygiene in government workplaces",
       "checkedAt": "2026-10-16T08:56:02Z",
       "codes": [
@@ -2412,6 +2845,176 @@
         "whyInNews": "On 16 October 2026, the Ministry of Youth Affairs and Sports issued operational guidelines for the revised Scheme of Assistance to National Sports Federations. The guidelines update assistance for athlete preparation and add components linked to long-term sporting priorities, including the 2036 Olympic bid and Commonwe"
       },
       "sourceId": "src_f779949a666511c0d1053b84ee140a85e14a922c0631ef0065510b8256ec102b",
+      "verification": {
+        "agrees": false,
+        "confidence": 0,
+        "flagged_claims": [
+          "Verification was unavailable; retry before publishing"
+        ]
+      }
+    },
+    {
+      "anchor": "EU Council employment and social policy agenda",
+      "checkedAt": "2026-10-16T19:43:49Z",
+      "codes": [
+        "GS2.9",
+        "GS2.10",
+        "GS3.1"
+      ],
+      "issue": {
+        "body": "Primary enrichment for `src_f861bc992ebcc8002cdf08071b41e600a94e526bdc3607df6823896c190adf7b` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0\n- **checked at:** 2026-10-16T19:43:49Z\n\nFlagged claims:\n- Verification was unavailable; retry before publishing\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_f861bc992ebcc8002cdf08071b41e600a94e526bdc3607df6823896c190adf7b",
+        "title": "Needs review: src_f861bc992ebcc8002cdf08071b41e600a94e526bdc3607df6823896c190adf7b verification disagreed"
+      },
+      "note": {
+        "anchor": "EU Council employment and social policy agenda",
+        "argumentsAgainst": [
+          "The supplied official summary gives only the agenda’s broad character, approximate timing, public sessions and press opportunities; it does not establish substantive policy decisions or outcomes.",
+          "A media advisory is procedural and forward-looking, so it cannot by itself support conclusions about adopted measures or their effects."
+        ],
+        "argumentsFor": [
+          "The advisory can help track how the Council of the European Union structures public deliberation and press access around employment and social-policy matters.",
+          "The agenda’s employment and social-policy focus creates a possible comparative lens for examining social-sector governance, subject to further primary-source verification."
+        ],
+        "background": [
+          "The Council of the European Union issued a media advisory concerning the Employment and Social Policy Council scheduled for 19 October 2026.",
+          "The supplied official summary states only that the advisory covers main agenda items, approximate timing, public sessions and press opportunities."
+        ],
+        "codes": [
+          "GS2.9",
+          "GS2.10",
+          "GS3.1"
+        ],
+        "editorialStatus": "draft",
+        "id": "note_f861bc992ebcc8002cdf08071b41e600a94e526bdc3607df6823896c190adf7b",
+        "indiaImplications": [
+          "The source does not establish any India-specific decision, commitment or policy consequence.",
+          "For comparative analysis, India may examine institutional transparency and social-policy coordination, but any comparison requires verification from the Council’s substantive agenda or conclusions and relevant Indian sources."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Differentiate a media advisory from a binding decision or adopted policy.",
+              "Explain how public sessions and press opportunities may support transparency and accountability.",
+              "Assess limits of drawing policy conclusions from procedural information alone.",
+              "Relate the issue cautiously to comparative social-policy governance and India’s employment concerns."
+            ],
+            "conclusionPrompt": "Conclude with a balanced statement on the value and limits of procedural transparency in multilateral governance.",
+            "counterPosition": "Public communication can improve access and accountability, but visibility does not necessarily establish substantive policy effectiveness.",
+            "diagramSuggestion": "Flow: media advisory → public sessions and press access → information visibility → informed scrutiny; add a separate box showing the missing step: substantive decision or outcome.",
+            "directive": "explain",
+            "introChoices": [
+              "A media advisory is an instrument of institutional communication, not evidence of a completed policy decision.",
+              "The Council of the European Union’s advisory illustrates how procedural transparency can accompany a scheduled employment and social-policy meeting."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "A media advisory is an instrument of institutional communication, not evidence of a completed policy decision.",
+              "The Council of the European Union’s advisory illustrates how procedural transparency can accompany a scheduled employment and social-policy meeting.",
+              "Differentiate a media advisory from a binding decision or adopted policy.",
+              "Explain how public sessions and press opportunities may support transparency and accountability.",
+              "Assess limits of drawing policy conclusions from procedural information alone.",
+              "Relate the issue cautiously to comparative social-policy governance and India’s employment concerns.",
+              "Public communication can improve access and accountability, but visibility does not necessarily establish substantive policy effectiveness.",
+              "Conclude with a balanced statement on the value and limits of procedural transparency in multilateral governance."
+            ],
+            "stem": "The Council of the European Union’s media advisory for an employment and social-policy meeting highlights agenda information, approximate timing, public sessions and press opportunities. Explain how such communication can contribute to accountable governance, while identifying the limits of treating it as evidence of p",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.consilium.europa.eu/en/press/press-releases/2026/10/16/media-advisory-employment-social-policy-health-and-consumer-affairs-employment-and-social-policy-council-of-19-october-2026/",
+            "text": "The official summary states: “Main agenda items, approximate timing, public sessions and press opportunities.”",
+            "verification": "needs-review"
+          }
+        ],
+        "papers": [
+          "GS2",
+          "GS3"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Illustration",
+            "text": "Suppose a regional council publishes the timing of a public session and details of press access before an employment-policy meeting. This could help observers follow proceedings, but it would not prove that any employment measure had been adopted or implemented."
+          },
+          "excerpt": "The Council of the European Union’s advisory concerns an employment and social-policy meeting and covers agenda items, approximate timing, public sessions and press opportunities.",
+          "question": {
+            "answer": "It can improve procedural transparency by informing observers about what is scheduled and when public or press access may occur. However, it does not establish that a policy was adopted, implemented or effective; those claims require substantive official records.",
+            "prompt": "How should an analyst use a procedural media advisory when assessing accountability and policy outcomes?"
+          },
+          "sections": [
+            {
+              "heading": "What the advisory communicates",
+              "paragraphs": [
+                "The Council of the European Union’s 16 October 2026 advisory concerns the Employment and Social Policy Council scheduled for 19 October 2026. The supplied summary identifies its contents as main agenda items, approximate timing, public sessions and press opportunities."
+              ]
+            },
+            {
+              "heading": "Why the distinction matters",
+              "paragraphs": [
+                "Such information can make institutional proceedings easier to follow and may enable public or media scrutiny. The limitation is evidentiary: scheduling and access information do not demonstrate that a measure was adopted, funded, implemented or successful."
+              ]
+            }
+          ],
+          "title": "EU Council advisory outlines employment and social-policy meeting arrangements"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The supplied official summary expressly identifies main agenda items, approximate timing, public sessions and press opportunities as the advisory’s contents.",
+            "statement": "The advisory covers main agenda items, approximate timing, public sessions and press opportunities."
+          },
+          {
+            "correct": false,
+            "explanation": "The source does not state that the advisory records adopted legislation, binding commitments or policy outcomes.",
+            "statement": "The advisory confirms that the Council adopted a new employment-policy measure."
+          },
+          {
+            "correct": false,
+            "explanation": "The source identifies the Council of the European Union but does not establish that this advisory concerns an India–EU agreement or bilateral negotiation.",
+            "statement": "The advisory establishes a new India–EU employment agreement."
+          },
+          {
+            "correct": false,
+            "explanation": "The source gives the scheduled Council date and advisory publication date in the record, but it does not establish that the meeting’s substantive outcomes were already known.",
+            "statement": "Because the advisory was published on 16 October 2026, the substantive results of the 19 October 2026 meeting are established by this record."
+          }
+        ],
+        "priority": 71,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 86,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 15
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-10-16T18:10:00Z",
+        "publisherId": "eu-council",
+        "publisherName": "Council of the European Union",
+        "recallCard": "The Council of the European Union’s 16 October 2026 media advisory concerns the Employment and Social Policy Council scheduled for 19 October. It covers agenda items, approximate timing, public sessions and press opportunities. Treat it as procedural information, not proof of adopted or effective policy.",
+        "reusableAnchors": [],
+        "sourceContentHash": "99745c0ebf8ccfa3a0f51765507a393b1bc7c5654b345d0c87622a2697250eb0",
+        "sourceId": "src_f861bc992ebcc8002cdf08071b41e600a94e526bdc3607df6823896c190adf7b",
+        "sourceTitle": "Media advisory - Employment, Social Policy, Health and Consumer Affairs (Employment and social policy) Council of 19 October 2026",
+        "sourceUrl": "https://www.consilium.europa.eu/en/press/press-releases/2026/10/16/media-advisory-employment-social-policy-health-and-consumer-affairs-employment-and-social-policy-council-of-19-october-2026/",
+        "staticDefinition": "A media advisory is an institutional communication that informs intended audiences about the subject, timing and access arrangements of an upcoming event; in this record, the Council of the European Union’s advisory concerns an employment and social-policy Council meeting and identifies agenda items, approximate timing",
+        "use": "Use the distinction between procedural communication and substantive policy evidence in answers on transparency, accountability, multilateral governance and employment-policy coordination.",
+        "wayForward": [
+          "Verify the Council’s substantive agenda, meeting documents, conclusions or decisions before claiming any policy outcome.",
+          "Distinguish scheduled discussion, public access and press opportunity from adoption, implementation and effectiveness.",
+          "For India-focused analysis, consult relevant India–EU documents and Indian employment-policy sources before drawing bilateral or domestic implications."
+        ],
+        "whyInNews": "The Council of the European Union issued a media advisory on 16 October 2026 for its Employment and Social Policy Council scheduled for 19 October 2026. The supplied summary says it covers main agenda items, approximate timing, public sessions and press opportunities."
+      },
+      "sourceId": "src_f861bc992ebcc8002cdf08071b41e600a94e526bdc3607df6823896c190adf7b",
       "verification": {
         "agrees": false,
         "confidence": 0,
