@@ -1,0 +1,43 @@
+/* Notebook view: list of coordinator entries plus a Markdown reader.
+   Reuses the Pocket reads list/reader classes; only notebook-specific bits live here. */
+
+#view-notebook .an-viewhead { align-items: flex-end; }
+.nb-intro { max-width: 62ch; margin: 0 0 20px; color: var(--gray); font: 16px/1.6 var(--sans); }
+.nb-intro a { color: var(--blue); text-underline-offset: 3px; }
+
+#notebookFilter { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+#notebookFilter .an-chip { text-decoration: none; }
+.nb-chip__count { margin-left: 4px; opacity: 0.7; font-variant-numeric: tabular-nums; }
+
+.nb-month + .nb-month { margin-top: 40px; }
+.nb-month .pr-shelf__title { padding-bottom: 8px; border-bottom: 1px solid var(--rule-strong); }
+#notebookList .pr-story :is(h3, h4), #notebookList .pr-shelf:first-child .pr-story:first-child :is(h3, h4) { font-size: clamp(19px, 2.2vw, 23px); line-height: 1.3; }
+#notebookList .pr-story p { font-size: 15px; }
+#notebookList .pr-story__index { line-height: 1.5; }
+
+#notebookReader.pr-reader { margin-top: 8px; }
+.nb-body { font-size: 18px; line-height: 1.75; }
+.nb-body > * + * { margin-top: 16px; }
+.nb-body h3 { margin: 32px 0 8px; font-size: 24px; font-weight: 600; line-height: 1.3; }
+.nb-body h4 { margin: 24px 0 6px; font-size: 19px; font-weight: 600; }
+.nb-body ul, .nb-body ol { padding-left: 1.4em; margin: 14px 0 20px; }
+.nb-body li + li { margin-top: 6px; }
+.nb-body blockquote { padding: 4px 0 4px 18px; border-left: 3px solid var(--blue); color: var(--gray); }
+.nb-body code { font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 0.9em; padding: 1px 5px; border-radius: 4px; background: var(--panel-muted); }
+.nb-body pre { padding: 14px 16px; overflow-x: auto; border-radius: 6px; background: var(--panel-muted); font-size: 14px; line-height: 1.5; }
+.nb-body pre code { padding: 0; background: transparent; }
+.nb-body hr { border: 0; border-top: 1px solid var(--rule-strong); margin: 28px 0; }
+.nb-body a { color: var(--blue); text-underline-offset: 3px; overflow-wrap: anywhere; }
+.nb-table { overflow-x: auto; }
+.nb-table table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; }
+.nb-table th, .nb-table td { padding: 10px 8px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--rule); }
+.nb-table thead th { font-family: var(--sans); font-size: 12px; color: var(--gray); font-weight: 600; }
+.nb-table th:first-child, .nb-table td:first-child { padding-left: 0; }
+
+.nb-postnav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--rule); }
+.nb-postnav .btn { font: 14px/1.4 var(--sans); border-radius: 4px; max-width: 100%; text-align: left; white-space: normal; }
+
+@media (max-width: 640px) {
+  .nb-body { font-size: 17px; }
+  .nb-postnav { flex-direction: column; }
+}

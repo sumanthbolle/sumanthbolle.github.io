@@ -41,6 +41,10 @@ of the EU. New records are source-only until the private Worker enrichment route
 binds them to a static anchor, syllabus codes and source-supported exam notes.
 Only `source-backed` and `reviewed` notes become static study pages.
 
+The Notebook tab (`upsc.html?view=notebook`) publishes the Prelims 2027 study
+coordinator's daily briefs, check-ins, weekly reviews and deadline alarms from
+`data/upsc/notebook/posts/`. See [`docs/upsc-notebook.md`](docs/upsc-notebook.md).
+
 Run the complete publisher locally:
 
 ```bash

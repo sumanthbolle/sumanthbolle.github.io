@@ -22,6 +22,7 @@ const STATIC_PAGES = [
   { url: '/upsc-quiz', priority: '0.8', changefreq: 'weekly' },
   { url: '/upsc-patterns', priority: '0.9', changefreq: 'weekly' },
   { url: '/upsc-guide', priority: '0.7', changefreq: 'monthly' },
+  { url: '/upsc-notebook', priority: '0.6', changefreq: 'daily' },
   { url: '/blog', priority: '0.9', changefreq: 'daily' },
   { url: '/interviews', priority: '0.9', changefreq: 'daily' },
   { url: '/tutorials.html', priority: '0.9', changefreq: 'weekly' },

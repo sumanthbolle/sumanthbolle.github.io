@@ -101,13 +101,15 @@
 
   /* ─────────────────────────────── views ─────────────────────────────── */
 
-  var VIEWS = ['brief', 'catchup', 'syllabus', 'memory', 'source'];
+  var VIEWS = ['brief', 'catchup', 'syllabus', 'memory', 'notebook', 'source'];
 
   function routeUrl(name, options) {
     var url = new URL(window.location.href);
     var settings = options || {};
     url.searchParams.delete('article');
     url.searchParams.delete('note');
+    url.searchParams.delete('post');
+    url.searchParams.delete('cat');
     if (name === 'brief') url.searchParams.delete('view');
     else url.searchParams.set('view', name);
     if (state.query) url.searchParams.set('q', state.query);

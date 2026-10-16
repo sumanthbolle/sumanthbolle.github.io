@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UPSC Today</title>
-  <meta name="description" content="Short UPSC explainers, daily official updates, and simple revision. Read one idea at a time, with examples and sources.">
+  <meta name="description" content="Short UPSC explainers, daily official updates, simple revision, and a day-by-day Prelims 2027 preparation notebook.">
   <meta name="author" content="Sumanth Bolle">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#f7f9fb">
@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="assets/css/upsc-coach.css?v=20261013-2">
   <link rel="stylesheet" href="assets/css/upsc-reading.css?v=20261012-3">
   <link rel="stylesheet" href="assets/css/upsc-edition.css?v=20261013-2">
+  <link rel="stylesheet" href="assets/css/upsc-notebook.css?v=20261016-1">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to articles</a>
@@ -90,6 +91,7 @@
       <span id="editionStamp">Official updates</span>
       <a href="upsc-patterns.html">Patterns</a>
       <a href="mains.html">Practice</a>
+      <a href="?view=notebook">Notebook</a>
     </div>
   </header>
 
@@ -102,6 +104,7 @@
         <a href="?view=catchup" role="tab" id="tab-catchup" aria-selected="false" aria-controls="view-catchup" data-view="catchup">Catch up</a>
         <a href="?view=syllabus" role="tab" id="tab-syllabus" aria-selected="false" aria-controls="view-syllabus" data-view="syllabus">Topics</a>
         <a href="?view=memory" role="tab" id="tab-memory" aria-selected="false" aria-controls="view-memory" data-view="memory">Revision<span class="an-count" id="countDue">0</span><span class="sr-only"> due, </span><span class="an-count" id="countNotes">0</span></a>
+        <a href="?view=notebook" role="tab" id="tab-notebook" aria-selected="false" aria-controls="view-notebook" data-view="notebook">Notebook</a>
         <a href="?view=source" role="tab" id="tab-source" aria-selected="false" aria-controls="view-source" data-view="source">Sources</a>
       </div>
       <search class="an-search" role="search">
@@ -385,6 +388,19 @@
           </div>
         </section>
 
+        <!-- Prelims 2027 notebook: the coordinator's briefs, check-ins, reviews and alarms -->
+        <section class="an-view" id="view-notebook" role="tabpanel" aria-labelledby="tab-notebook" hidden>
+          <div class="an-viewhead">
+            <div><p class="an-label">Prelims 2027</p><h2>Notebook</h2></div>
+            <p class="an-viewhead__meta" id="notebookMeta"></p>
+          </div>
+          <p class="nb-intro" id="notebookIntro">A day-by-day record of one Prelims 2027 preparation, kept by the study coordinator: a brief each morning, a check-in each evening, a review every Sunday, running current-affairs notes, deadline alarms, and every version of the plan. Exam day is Sunday 23 May 2027. <a href="upsc-notebook.html">About this notebook</a>.</p>
+          <div class="an-chips" id="notebookFilter" role="group" aria-label="Filter notebook entries"></div>
+          <div id="notebookList"><p class="pr-message">Loading the notebook…</p></div>
+          <article class="pr-reader" id="notebookReader" hidden aria-live="polite"></article>
+          <noscript><p class="pr-message">JavaScript is needed to read the notebook here. The entries are plain Markdown files in <a href="https://github.com/sumanthbolle/sumanthbolle.github.io/tree/main/data/upsc/notebook/posts" rel="noopener noreferrer">the repository</a>.</p></noscript>
+        </section>
+
       </div>
 
     </div>
@@ -393,7 +409,7 @@
   <footer>
     <div class="footer-inner">
       <div>© 2026 Sumanth Bolle</div>
-      <div class="an-footer-links"><a href="upsc-guide.html">How to use</a><a href="upsc-study/">Archive</a><a href="revision.html">Revisit today</a><a href="mains.html">Mains drills</a><a href="upsc-quiz.html">Prelims quiz</a><a href="upsc-patterns.html">Pattern Atlas</a><a href="https://upsc.gov.in" rel="noopener noreferrer" target="_blank">UPSC</a></div>
+      <div class="an-footer-links"><a href="upsc-guide.html">How to use</a><a href="upsc-study/">Archive</a><a href="?view=notebook">Notebook</a><a href="revision.html">Revisit today</a><a href="mains.html">Mains drills</a><a href="upsc-quiz.html">Prelims quiz</a><a href="upsc-patterns.html">Pattern Atlas</a><a href="https://upsc.gov.in" rel="noopener noreferrer" target="_blank">UPSC</a></div>
     </div>
   </footer>
 
@@ -404,11 +420,12 @@
   <script src="assets/js/upsc/packet.js?v=20261013-3"></script>
   <script src="assets/js/upsc/memory.js?v=20261012-3"></script>
   <script src="assets/js/upsc/render.js?v=20261013-3"></script>
-  <script src="assets/js/upsc/app.js?v=20261013-3"></script>
+  <script src="assets/js/upsc/app.js?v=20261016-1"></script>
   <script src="assets/js/upsc/reading.js?v=20261013-3"></script>
   <script src="assets/js/upsc/answer-render.js?v=20261013-3"></script>
   <script src="assets/js/upsc/edition-progress.js?v=20261013-1"></script>
   <script src="assets/js/upsc/edition.js?v=20261013-1"></script>
+  <script src="assets/js/upsc/notebook.js?v=20261016-1"></script>
   <script>window.SB_UPSC_ENDPOINT = 'https://wandering-haze-b394.sumanthbolle312.workers.dev';</script>
   <script src="assets/js/upsc/coach.js?v=20261013-3"></script>
   <script src="assets/js/upsc/scroll.js?v=20261012-3"></script>

@@ -1,0 +1,47 @@
+name: Build UPSC notebook index
+
+# The Prelims 2027 coordinator (scheduled Claude tasks) adds one Markdown file
+# per entry under data/upsc/notebook/posts/ through the GitHub contents API.
+# This workflow turns that folder into data/upsc/notebook/index.json, which
+# upsc.html?view=notebook reads. The cron is a safety net in case a push from
+# the coordinator does not fire the push trigger.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/upsc/notebook/posts/**'
+      - 'scripts/upsc/notebook-index.js'
+  schedule:
+    - cron: "40 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: upsc-data
+  cancel-in-progress: false
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - name: Check the posts and rebuild the index
+        run: |
+          node scripts/test-upsc-notebook.js
+          node scripts/upsc/notebook-index.js
+      - name: Commit the index
+        run: |
+          git config user.name "upsc-publisher[bot]"
+          git config user.email "upsc-publisher[bot]@users.noreply.github.com"
+          bash scripts/upsc/push-with-retry.sh -m "chore: rebuild UPSC notebook index" \
+            -r "node scripts/upsc/notebook-index.js" \
+            -- data/upsc/notebook/index.json

@@ -25,5 +25,6 @@ See [`docs/website-enhancement-review.md`](docs/website-enhancement-review.md) f
 
 - **UPSC Today (flagship)** — [`docs/upsc-today-flagship.md`](docs/upsc-today-flagship.md) (Topic Packet, study priority, Today / catch-up desk).
 - **SkyFare** — [`docs/skyfare-product-handover.md`](docs/skyfare-product-handover.md) (vision, Value Score, Summaverick integration, Phase 1–3 roadmap).
+- **Prelims 2027 notebook** — [`docs/upsc-notebook.md`](docs/upsc-notebook.md) (post format, categories, how the scheduled coordinator tasks publish, index build).
 - **Anchor (UPSC publication)** — [`docs/upsc-anchor-handover.md`](docs/upsc-anchor-handover.md) (examinability filter, provisional scoring, verification gate, retrieval schedule, known limits).
 - **ServiceNow research domain pack** — [`research-agent/README.md`](research-agent/README.md) (Fluent SDK + ServiceNowDocs + optional read-only instance layer for Summaverick).
