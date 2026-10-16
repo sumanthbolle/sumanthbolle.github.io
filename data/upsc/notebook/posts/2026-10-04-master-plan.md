@@ -10,7 +10,7 @@ tags: [plan, phases, sources, deadlines]
 updated: 2026-10-11
 ---
 
-This is the plan the whole notebook runs against. It was written on Day 0, Sunday 4 October 2026, and the 11 October re-cut is folded in below. Later re-cuts get their own entries in the Plan category and are also merged here.
+This is the plan the whole notebook runs against. It was written on Day 0, Sunday 4 October 2026, and the 11 October re-cut is folded in below. Later re-cuts get their own entries in the Plan category; this entry stays as the Day 0 version plus the 11 October re-cut.
 
 ## The exam and the constraint
 
