@@ -7,10 +7,12 @@ summary: 229 days to go. Yesterday was not logged, so chapters 1 and 2 come firs
 week: 1
 phase: BUILD
 days_to_go: 229
-tags: [polity, preamble, current-affairs]
+tags: [week-1, polity, preamble, current-affairs, backfilled]
 ---
 
 229 days to Prelims. Phase: Build. No hard deadline falls in the next 21 days; the eligibility check is already done.
+
+*This brief was written back on 16 October from the daily log line recorded that morning. The message sent at the time was not kept.*
 
 ## Revision first
 
