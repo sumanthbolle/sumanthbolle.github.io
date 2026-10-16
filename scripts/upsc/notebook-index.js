@@ -18,8 +18,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const ROOT = path.join(__dirname, '..', '..');
-const POSTS_DIR = path.join(ROOT, 'data', 'upsc', 'notebook', 'posts');
-const INDEX_PATH = path.join(ROOT, 'data', 'upsc', 'notebook', 'index.json');
+const NOTEBOOK_DIR = path.join(ROOT, 'data', 'upsc', 'notebook');
+const POSTS_DIR = path.join(NOTEBOOK_DIR, 'posts');
+const LOG_DIR = path.join(NOTEBOOK_DIR, 'log');
+const KEYS_DIR = path.join(NOTEBOOK_DIR, 'keys');
+const INDEX_PATH = path.join(NOTEBOOK_DIR, 'index.json');
 
 // Order here is the order of the category chips on the page.
 const CATEGORIES = [
@@ -34,6 +37,22 @@ const CATEGORIES = [
 const CATEGORY_IDS = new Set(CATEGORIES.map((c) => c.id));
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const FILE_RE = /^(\d{4}-\d{2}-\d{2})-([a-z0-9][a-z0-9-]*)\.md$/;
+const ENC_FILE_RE = /^(\d{4}-\d{2}-\d{2})-([a-z0-9][a-z0-9-]*)\.md\.enc$/;
+const LOG_FILE_RE = /^(\d{4}-\d{2}-\d{2})\.json(\.enc)?$/;
+
+// An encrypted entry reveals only its date and category, both taken from the
+// file name. The slug must start with a category id, or be one of the alarm
+// slugs the deadline tasks use.
+const SLUG_CATEGORY = {
+  'master-plan': 'plan', 'resource-audit': 'plan', 'notebook-opens': 'plan', 'plan-recut': 'plan',
+  'notification-day': 'deadline-alert', 'apply-now': 'deadline-alert',
+  'final-application-alarm': 'deadline-alert', 'admit-card-travel': 'deadline-alert',
+};
+function categoryFromSlug(slug) {
+  for (const id of CATEGORY_IDS) if (slug === id || slug.startsWith(id + '-')) return id;
+  for (const key of Object.keys(SLUG_CATEGORY)) if (slug === key || slug.startsWith(key + '-')) return SLUG_CATEGORY[key];
+  return null;
+}
 
 function parseScalar(raw) {
   const value = raw.trim();
@@ -113,15 +132,66 @@ function validatePost(fileName, text) {
   };
 }
 
-function buildIndex(postsDir) {
-  const files = fs.existsSync(postsDir) ? fs.readdirSync(postsDir).filter((f) => f.endsWith('.md')).sort() : [];
+function validateEncryptedPost(fileName, text) {
+  const errors = [];
+  const m = fileName.match(ENC_FILE_RE);
+  if (!m) return { errors: ['file name must be YYYY-MM-DD-<category-or-slug>.md.enc'], post: null };
+  const category = categoryFromSlug(m[2]);
+  if (!category) errors.push('encrypted file name must start with a category id or a known alarm slug');
+  let env = null;
+  try { env = JSON.parse(text); } catch (e) { errors.push('not a JSON envelope'); }
+  if (env && !(env.v === 1 && env.alg === 'RSA-OAEP-256+A256GCM' && env.ek && env.iv && env.ct)) errors.push('not a notebook envelope (v1 RSA-OAEP-256+A256GCM)');
+  if (errors.length) return { errors, post: null };
+  return {
+    errors,
+    post: {
+      id: fileName.replace(/\.md\.enc$/, ''),
+      path: 'data/upsc/notebook/posts/' + fileName,
+      encrypted: true,
+      kid: env.kid || null,
+      title: null, time: null, summary: null, week: null, phase: null, daysToGo: null, tags: [], updated: null, words: null,
+      date: m[1],
+      category,
+    },
+  };
+}
+
+function buildIndex(postsDir, options) {
+  const opts = options || {};
+  const logDir = opts.logDir === undefined ? LOG_DIR : opts.logDir;
+  const keysDir = opts.keysDir === undefined ? KEYS_DIR : opts.keysDir;
+  const files = fs.existsSync(postsDir) ? fs.readdirSync(postsDir).filter((f) => f.endsWith('.md') || f.endsWith('.md.enc')).sort() : [];
   const posts = [];
   const problems = [];
   for (const file of files) {
     const text = fs.readFileSync(path.join(postsDir, file), 'utf8');
-    const { errors, post } = validatePost(file, text);
+    const { errors, post } = file.endsWith('.enc') ? validateEncryptedPost(file, text) : validatePost(file, text);
     if (errors.length) problems.push({ file, errors });
     else posts.push(post);
+  }
+  // A plaintext and an encrypted copy of the same entry: the encrypted one wins.
+  const encryptedIds = new Set(posts.filter((p) => p.encrypted).map((p) => p.id));
+  for (let i = posts.length - 1; i >= 0; i -= 1) if (!posts[i].encrypted && encryptedIds.has(posts[i].id)) posts.splice(i, 1);
+
+  const logs = [];
+  if (logDir && fs.existsSync(logDir)) {
+    for (const file of fs.readdirSync(logDir).sort()) {
+      const m = file.match(LOG_FILE_RE);
+      if (!m) { problems.push({ file: 'log/' + file, errors: ['log file name must be YYYY-MM-DD.json or .json.enc'] }); continue; }
+      logs.push({ date: m[1], path: 'data/upsc/notebook/log/' + file, encrypted: !!m[2] });
+    }
+    logs.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  }
+
+  let lock = null;
+  if (keysDir && fs.existsSync(path.join(keysDir, 'public.jwk'))) {
+    const pub = JSON.parse(fs.readFileSync(path.join(keysDir, 'public.jwk'), 'utf8'));
+    lock = {
+      kid: pub.kid || null,
+      publicKeyPath: 'data/upsc/notebook/keys/public.jwk',
+      privateKeyPath: fs.existsSync(path.join(keysDir, 'private.enc')) ? 'data/upsc/notebook/keys/private.enc' : null,
+    };
+    if (fs.existsSync(path.join(keysDir, 'private.jwk'))) problems.push({ file: 'keys/private.jwk', errors: ['a plain private key must never be committed'] });
   }
   posts.sort((a, b) => {
     if (a.date !== b.date) return a.date < b.date ? 1 : -1;
@@ -138,6 +208,8 @@ function buildIndex(postsDir) {
       // no new posts produces an identical file and no commit.
       generated: posts.length ? posts[0].date + (posts[0].time ? 'T' + posts[0].time : '') : null,
       categories: CATEGORIES.map((c) => Object.assign({}, c, { count: counts[c.id] || 0 })),
+      lock,
+      logs,
       posts,
     },
     problems,
@@ -158,4 +230,4 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = { CATEGORIES, parseFrontmatter, validatePost, buildIndex, wordCount };
+module.exports = { CATEGORIES, parseFrontmatter, validatePost, validateEncryptedPost, categoryFromSlug, buildIndex, wordCount };

@@ -15,8 +15,14 @@ const ROOT = path.join(__dirname, '..');
 const indexer = require('./upsc/notebook-index.js');
 
 function test(name, body) {
-  try { body(); console.log('ok - ' + name); }
+  let result;
+  try { result = body(); }
   catch (error) { console.error('not ok - ' + name); throw error; }
+  if (result && typeof result.then === 'function') {
+    return result.then(() => console.log('ok - ' + name), (error) => { console.error('not ok - ' + name); process.exitCode = 1; throw error; });
+  }
+  console.log('ok - ' + name);
+  return undefined;
 }
 
 const GOOD_POST = [
@@ -180,4 +186,93 @@ test('upsc.html carries the Notebook tab, panel and script in the right places',
   assert.match(app, /searchParams\.delete\('post'\)/);
   assert.ok(fs.existsSync(path.join(ROOT, 'upsc-notebook.html')));
   assert.ok(fs.existsSync(path.join(ROOT, '.github', 'workflows', 'upsc-notebook.yml')));
+});
+
+test('encrypted entries index by date and category only, and bad names are rejected', function () {
+  const env = JSON.stringify({ v: 1, kid: 'abc', alg: 'RSA-OAEP-256+A256GCM', ek: 'x', iv: 'y', ct: 'z' });
+  const good = indexer.validateEncryptedPost('2026-10-17-morning-brief.md.enc', env);
+  assert.deepEqual(good.errors, []);
+  assert.equal(good.post.category, 'morning-brief');
+  assert.equal(good.post.encrypted, true);
+  assert.equal(good.post.title, null);
+  assert.equal(indexer.validateEncryptedPost('2026-10-17-plan-recut.md.enc', env).post.category, 'plan');
+  assert.equal(indexer.validateEncryptedPost('2027-01-13-notification-day.md.enc', env).post.category, 'deadline-alert');
+  assert.equal(indexer.validateEncryptedPost('2026-10-01-current-affairs.md.enc', env).post.category, 'current-affairs');
+  assert.ok(indexer.validateEncryptedPost('2026-10-17-diary.md.enc', env).errors.length);
+  assert.ok(indexer.validateEncryptedPost('2026-10-17-morning-brief.md.enc', '{"v":2}').errors.length);
+
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-enc-'));
+  fs.writeFileSync(path.join(dir, '2026-10-17-morning-brief.md.enc'), env);
+  fs.writeFileSync(path.join(dir, '2026-10-17-morning-brief.md'), GOOD_POST.replace('date: 2026-10-15', 'date: 2026-10-17').replace('nightly-checkin', 'morning-brief'));
+  const logDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-log-'));
+  fs.writeFileSync(path.join(logDir, '2026-10-17.json.enc'), env);
+  const keysDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-keys-'));
+  fs.writeFileSync(path.join(keysDir, 'public.jwk'), JSON.stringify({ kty: 'RSA', n: 'n', e: 'AQAB', kid: 'abc' }));
+  fs.writeFileSync(path.join(keysDir, 'private.enc'), '{"v":1}');
+  const { index } = indexer.buildIndex(dir, { logDir, keysDir });
+  assert.equal(index.posts.length, 1, 'the encrypted copy wins over a plaintext twin');
+  assert.equal(index.posts[0].encrypted, true);
+  assert.deepEqual(index.logs, [{ date: '2026-10-17', path: 'data/upsc/notebook/log/2026-10-17.json.enc', encrypted: true }]);
+  assert.deepEqual(index.lock, { kid: 'abc', publicKeyPath: 'data/upsc/notebook/keys/public.jwk', privateKeyPath: 'data/upsc/notebook/keys/private.enc' });
+});
+
+test('a committed plain private key fails the index check', function () {
+  const keysDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nb-keys-'));
+  fs.writeFileSync(path.join(keysDir, 'public.jwk'), JSON.stringify({ kty: 'RSA', n: 'n', e: 'AQAB', kid: 'abc' }));
+  fs.writeFileSync(path.join(keysDir, 'private.jwk'), '{}');
+  const { problems } = indexer.buildIndex(fs.mkdtempSync(path.join(os.tmpdir(), 'nb-')), { logDir: null, keysDir });
+  assert.ok(problems.some((p) => p.file === 'keys/private.jwk'));
+  assert.ok(!fs.existsSync(path.join(ROOT, 'data', 'upsc', 'notebook', 'keys', 'private.jwk')), 'never commit the plain private key');
+});
+
+test('notebook-crypto round-trips in node (the tasks) with the same format the page reads', async function () {
+  const nbc = require('./../assets/js/upsc/notebook-crypto.js');
+  const pair = await nbc.generateKeyPair();
+  const env = await nbc.encrypt(pair.publicJwk, 'the quick brown fox 🦊');
+  assert.equal(env.alg, 'RSA-OAEP-256+A256GCM');
+  assert.equal(env.kid, pair.kid);
+  assert.ok(nbc.isEnvelope(JSON.stringify(env)));
+  assert.equal(await nbc.decrypt(pair.privateJwk, JSON.stringify(env)), 'the quick brown fox 🦊');
+  const wrapped = await nbc.wrapPrivate(pair.privateJwk, 'a passphrase long enough');
+  const back = await nbc.unwrapPrivate(JSON.stringify(wrapped), 'a passphrase long enough');
+  assert.equal(back.d, pair.privateJwk.d);
+  await assert.rejects(nbc.unwrapPrivate(JSON.stringify(wrapped), 'not it'), /wrong passphrase/);
+  const other = await nbc.generateKeyPair();
+  await assert.rejects(nbc.decrypt(other.privateJwk, env), /wrong key/);
+});
+
+test('readiness metrics are zero with no log, severe with a thin one, and capped as designed', function () {
+  const M = require('./../assets/js/upsc/notebook-metrics.js');
+  const schedule = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'upsc', 'notebook', 'schedule.json'), 'utf8'));
+  const empty = M.compute({ logs: [], schedule, today: '2026-10-16' });
+  assert.equal(empty.readiness.score, 0);
+  assert.equal(empty.readiness.grade, 'F');
+  assert.equal(empty.hours.plannedToDate, 30);
+  assert.equal(empty.consistency.trailingZeroDays, 12);
+  assert.ok(empty.readiness.caps.some((c) => c.cap === 0));
+
+  const logs = [];
+  for (let i = 12; i <= 16; i += 1) logs.push({ date: '2026-10-' + i, hours: 2, units: [['polity-ch1-2', 'polity-ch3-4', 'polity-ch5-6', 'polity-ch7a', 'polity-ch7b-8'][i - 12]], pyq: { attempted: 10, correct: 7 } });
+  logs.push({ date: '2026-10-11', hours: 4, csat: { attempted: 80, correct: 40, timed: true } });
+  const week = M.compute({ logs, schedule, today: '2026-10-16' });
+  assert.equal(week.hours.logged, 14);
+  assert.equal(week.coverage.unitsDone, 5);
+  assert.equal(week.coverage.unitsOverdue, 0);
+  assert.equal(week.pyq.rolling50, 0.7);
+  assert.equal(week.csat.latest, 67, 'csat score scales to an 80-question paper with the one-third penalty');
+  assert.ok(week.readiness.score <= 50, 'projected total hours below 500 caps the score at 50');
+  assert.equal(week.readiness.grade, 'D');
+
+  const strong = [];
+  for (let d = 5; d <= 16; d += 1) strong.push({ date: '2026-10-' + String(d).padStart(2, '0'), hours: d === 10 || d === 11 ? 5 : 2, units: [], pyq: { attempted: 10, correct: 8 } });
+  schedule.units.filter((u) => u.date <= '2026-10-16').forEach((u, i) => { strong[i % strong.length].units.push(u.id); });
+  strong[6].csat = { attempted: 80, correct: 60, timed: true };
+  const good = M.compute({ logs: strong, schedule, today: '2026-10-16' });
+  assert.equal(good.hours.ratio, 1);
+  assert.equal(good.consistency.zeroDays, 0);
+  assert.ok(good.readiness.caps.every((c) => c.cap >= 60), 'only the early projection cap can apply to a full first fortnight');
+
+  const later = M.compute({ logs: [{ date: '2026-10-16', hours: 2 }], schedule, today: '2026-10-19' });
+  assert.equal(later.consistency.trailingZeroDays, 3);
+  assert.ok(later.readiness.caps.some((c) => c.cap === 25));
 });
