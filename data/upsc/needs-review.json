@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-17T17:58:20Z",
-  "itemCount": 16,
+  "generatedAt": "2026-10-17T20:12:43Z",
+  "itemCount": 17,
   "items": [
     {
       "anchor": "Targeted public support for equitable access to doctoral education",
@@ -397,6 +397,190 @@
         "flagged_claims": [
           "Verification was unavailable; retry before publishing"
         ]
+      }
+    },
+    {
+      "anchor": "GS3.7 Disaster and disaster management",
+      "checkedAt": "2026-10-17T20:12:43Z",
+      "codes": [
+        "GS3.7",
+        "GS2.6",
+        "GS4.5"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_70932ffb413230778e37e39d06014e9793177c4f400df2dbe66f30901161026e` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.99\n- **checked at:** 2026-10-17T20:12:43Z\n\nFlagged claims:\n- The prelims trap states that the source does not mention West Bengal Government assistance, contradicting the PIB release, which expressly says it was providing all possible help.\n- The proposed static topic assigns GS2.6 and GS4.5 as codes without an established direct syllabus anchor; GS3.7 is the specific and sufficient syllabus match.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_70932ffb413230778e37e39d06014e9793177c4f400df2dbe66f30901161026e",
+        "title": "Needs review: src_70932ffb413230778e37e39d06014e9793177c4f400df2dbe66f30901161026e verification disagreed"
+      },
+      "note": {
+        "anchor": "GS3.7 Disaster and disaster management",
+        "argumentsAgainst": [
+          "Ex-gratia assistance addresses immediate financial distress but does not by itself establish accountability, prevent recurrence, or compensate for all losses.",
+          "The source record does not provide details on the stampede’s causes, crowd size, casualties, venue, administrative failures, or investigation."
+        ],
+        "argumentsFor": [
+          "Immediate ex-gratia support can provide prompt relief to bereaved families and injured persons.",
+          "The Prime Minister’s public expression of grief and acknowledgement of local assistance can reinforce an official response focused on affected families."
+        ],
+        "background": [
+          "A stampede is a crowd-disaster situation in which unsafe density, sudden movement, panic, obstruction, or inadequate crowd management can cause injuries and deaths.",
+          "Effective disaster management requires prevention, preparedness, coordinated response, medical care, relief, and post-incident accountability; the supplied record evidences only condolence and ex-gratia assistance, not the wider response sy"
+        ],
+        "codes": [
+          "GS3.7",
+          "GS2.6",
+          "GS4.5"
+        ],
+        "editorialStatus": "source-backed",
+        "id": "note_70932ffb413230778e37e39d06014e9793177c4f400df2dbe66f30901161026e",
+        "indiaImplications": [
+          "The incident raises a governance question about safe management of dense public gatherings, including risk assessment, regulated entry and exit, emergency access, communication, and coordination between organisers and administration.",
+          "Financial relief can support affected households in the immediate aftermath, while longer-term public policy must examine preventable risks and institutional responsibility.",
+          "The source does not establish which authority, organiser, or safety arrangement was responsible; those matters require verified official investigation before drawing conclusions."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Immediate relief and humane state response",
+              "Preventive crowd-management systems and institutional accountability",
+              "Centre–state and administration–organiser coordination",
+              "Rights, dignity, and protection of vulnerable families"
+            ],
+            "conclusionPrompt": "Conclude by linking compassionate relief with prevention, preparedness, and accountable public administration.",
+            "counterPosition": "Ex-gratia is necessary for immediate support but is insufficient as a complete disaster-management response.",
+            "diagramSuggestion": "Flow: risk assessment → crowd regulation → emergency response → medical care → relief → inquiry and corrective action.",
+            "directive": "discuss",
+            "introChoices": [
+              "A stampede tests both the state’s capacity to provide humane relief and its ability to prevent foreseeable crowd risks.",
+              "The Kolkata incident places disaster management, public safety, and administrative accountability in the same governance frame."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "A stampede tests both the state’s capacity to provide humane relief and its ability to prevent foreseeable crowd risks.",
+              "The Kolkata incident places disaster management, public safety, and administrative accountability in the same governance frame.",
+              "Immediate relief and humane state response",
+              "Preventive crowd-management systems and institutional accountability",
+              "Centre–state and administration–organiser coordination",
+              "Rights, dignity, and protection of vulnerable families",
+              "Ex-gratia is necessary for immediate support but is insufficient as a complete disaster-management response.",
+              "Conclude by linking compassionate relief with prevention, preparedness, and accountable public administration."
+            ],
+            "stem": "Discuss how governments should combine immediate relief with preventive and accountable crowd-disaster management after a stampede.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2324835",
+            "text": "Prime Minister expresses grief over loss of lives in stampede in Kolkata",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS3",
+          "GS2",
+          "GS4"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Hypothetical illustration",
+            "text": "If a large public gathering faces blocked exits and sudden crowd movement, an administration that had assessed risks, regulated entry, maintained clear escape routes, and coordinated emergency medical access would be better placed to reduce harm. This is an illustration, not a description of the Kolkata incident."
+          },
+          "excerpt": "On 17 October 2026, the Prime Minister expressed grief over deaths in a Kolkata stampede and announced PMNRF ex-gratia assistance for the next of kin and injured.",
+          "question": {
+            "answer": "Immediate ex-gratia can reduce financial stress for affected families, but a complete response also requires verified facts, medical support, preventive crowd-safety measures, and accountable inquiry. The supplied record confirms condolence and relief, not the incident’s cause or administrative responsibility.",
+            "prompt": "How should a government respond to a stampede when immediate relief is necessary but the causes and responsibility remain unverified?"
+          },
+          "sections": [
+            {
+              "heading": "Relief as the immediate state response",
+              "paragraphs": [
+                "The Prime Minister’s Office record dated 17 October 2026 reports that the Prime Minister expressed grief over loss of lives in a Kolkata stampede. It also records announced ex-gratia assistance from the PMNRF: Rs. 2 lakh to the next of kin of each person who died and Rs. 50,000 to each injured person.",
+                "Such assistance is a relief measure, not proof of the incident’s cause or an alternative to investigation. The supplied record does not state the number of deaths or injuries, the venue, or the circumstances of the stampede."
+              ]
+            },
+            {
+              "heading": "From compassion to prevention",
+              "paragraphs": [
+                "A durable governance response should connect relief with crowd-risk assessment, safe entry and exit, emergency access, clear communication, medical preparedness, and post-incident review. These are analytical implications of the disaster-management issue, not additional facts about this event.",
+                "A common misconception is that ex-gratia alone constitutes disaster management. It can address immediate hardship, while prevention and accountability require separate administrative action supported by verified findings."
+              ]
+            }
+          ],
+          "title": "Kolkata stampede: immediate relief and the prevention-accountability gap"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The officialSummary states that the Prime Minister expressed grief over loss of lives in a stampede in Kolkata.",
+            "statement": "The source records the Prime Minister’s expression of grief over loss of lives in a Kolkata stampede."
+          },
+          {
+            "correct": false,
+            "explanation": "The officialSummary does not mention a cause, casualty count, venue, or investigation findings.",
+            "statement": "The source establishes that inadequate exits caused the Kolkata stampede."
+          },
+          {
+            "correct": false,
+            "explanation": "The officialSummary does not state that the assistance was provided by the West Bengal Government or establish any final responsibility.",
+            "statement": "The source establishes that the West Bengal Government was responsible for the stampede."
+          }
+        ],
+        "priority": 69,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 76,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 25
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-10-17T20:12:43Z",
+        "publisherId": "pib",
+        "publisherName": "Press Information Bureau",
+        "recallCard": "Kolkata stampede: the official summary records the Prime Minister’s grief over loss of lives. Use the issue to distinguish immediate relief from verified causation, prevention, and accountability; do not infer details absent from the record.",
+        "reusableAnchors": [],
+        "sourceContentHash": "702d8079b36360c30919f3ee902da81bb9cc2b33190320ada2263b49982fb3d8",
+        "sourceId": "src_70932ffb413230778e37e39d06014e9793177c4f400df2dbe66f30901161026e",
+        "sourceTitle": "Prime Minister expresses grief over loss of lives in stampede in Kolkata",
+        "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2324835",
+        "staticDefinition": "Disaster management is the organised process of preventing or reducing disaster risk, preparing institutions and communities, responding to emergencies, providing relief and recovery, and learning through review. For a stampede, the mechanism includes crowd-risk assessment, controlled movement, unobstructed exits, emer",
+        "use": "Use this issue to frame answers on disaster management, public administration, welfare relief, civil-service values, and the distinction between compassionate state action and evidence-based accountability.",
+        "wayForward": [
+          "Provide timely and accessible relief to bereaved families and injured persons.",
+          "Undertake a fact-based inquiry before attributing causation or responsibility.",
+          "Institutionalise crowd-risk assessments, capacity controls, unobstructed exits, emergency communication, and medical preparedness for large gatherings.",
+          "Publish corrective actions and assign responsibility where verified failures are established."
+        ],
+        "whyInNews": "On 17 October 2026, the Prime Minister expressed grief over loss of lives in a stampede in Kolkata. The supplied official summary gives the title-level development but no further verified details on casualties, causes, relief amounts, or investigation."
+      },
+      "sourceId": "src_70932ffb413230778e37e39d06014e9793177c4f400df2dbe66f30901161026e",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The source explicitly records Rs. 2 lakh for each deceased person's next of kin and Rs. 50,000 for each injured person; the note's pocketRead omits the injured-person amount.",
+          "The claim that the West Bengal Government was providing assistance is supported by the PIB text, but the note's prelims explanation incorrectly says the source does not mention it.",
+          "The GS3.7 anchor is appropriate because disaster management is explicitly included in the GS-III syllabus; GS2.6 and GS4.5 are defensible secondary applications, not explicit syllabus matches.",
+          "The static definition and crowd-safety mechanisms are sound analytical background, but should remain clearly distinguished from verified facts about this incident.",
+          "The background statement that stampedes can involve unsafe density, sudden movement, panic, obstruction, or inadequate management is general analysis rather than an event-specific finding.",
+          "The proposed flow and India implications are useful framing, but responsibility should remain expressly conditional pending an official inquiry.",
+          "The pocketRead headline and deck accurately frame the relief-prevention gap, although the headline's wording is an editorial interpretation rather than an official title.",
+          "The hypothetical example is properly labelled and does not assert that blocked exits or prior risk-assessment failures occurred in Kolkata."
+        ],
+        "agrees": false,
+        "confidence": 0.99,
+        "flagged_claims": [
+          "The prelims trap states that the source does not mention West Bengal Government assistance, contradicting the PIB release, which expressly says it was providing all possible help.",
+          "The proposed static topic assigns GS2.6 and GS4.5 as codes without an established direct syllabus anchor; GS3.7 is the specific and sufficient syllabus match."
+        ],
+        "verificationVersion": 2
       }
     },
     {
