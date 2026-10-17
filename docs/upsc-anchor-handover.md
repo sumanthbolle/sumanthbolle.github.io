@@ -130,6 +130,21 @@ does not contain the complete publication and is never synced to a server.
 3. If the enrichment service fails, keep publishing Source Desk records. Repair
    the Worker or secrets; unchanged records will be retried because no current
    note exists.
+   - A note whose second-pass check could not be completed is held with
+     `status: "unavailable"` and the reason in `error` in
+     `data/upsc/needs-review.json`; the publisher retries it on its next run.
+     These share one `Verification unavailable:` issue. A per-note
+     `Needs review:` issue is opened only for `status: "disagreed"`, where the
+     verifier actually answered.
+   - If every note is held as unavailable, read the "Local Worker log" step of
+     the run: a `UPSC verify contract failed` line shows the finish reason and
+     the start of the provider reply. `finish_reason: "length"` means the
+     reply was cut off; raise `VERIFY_MAX_TOKENS` in `api/upsc.js`.
+   - `mea` returns HTTP 403 to GitHub-hosted runners (both urllib and the
+     curl fallback, after the referer warm-up); the same request from a
+     residential or Singapore address gets 200, so this is an address-range
+     block by the host, not a header problem. Fixing it needs a different
+     egress (a relay through the deployed Worker, or a self-hosted runner).
 4. If a source corrects an item, keep the generated history file. Never edit a
    content hash manually.
 5. If generated pages are wrong, fix the data or generator, rerun indexes and

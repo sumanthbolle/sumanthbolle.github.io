@@ -569,14 +569,39 @@ function countryToSonarLocation(country, ctxSize) {
 }
 
 function parseStructured(sonarData) {
+  const content = sonarData?.choices?.[0]?.message?.content;
+  if (!content) return null;
+  if (typeof content === 'object') return content;
   try {
-    const content = sonarData?.choices?.[0]?.message?.content;
-    if (!content) return null;
-    if (typeof content === 'object') return content;
     return JSON.parse(content);
   } catch {
-    return null;
+    // Structured mode usually returns bare JSON, but a reasoning preamble or a
+    // ```json fence around the object has shown up; take the outermost object.
+    const stripped = String(content).replace(/<think>[\s\S]*?<\/think>/g, '');
+    const start = stripped.indexOf('{');
+    const end = stripped.lastIndexOf('}');
+    if (start < 0 || end <= start) return null;
+    try {
+      return JSON.parse(stripped.slice(start, end + 1));
+    } catch {
+      return null;
+    }
   }
+}
+
+/* One log line when a provider reply fails a contract: finish reason, usage
+ * and the start of the content. The CI runs print the local Worker log, so
+ * this is how a 422 "did not satisfy the contract" is diagnosed. */
+function logContractFailure(route, sonarData) {
+  const choice = sonarData?.choices?.[0];
+  const content = choice?.message?.content;
+  const text = typeof content === 'string' ? content : JSON.stringify(content || null);
+  console.error(`UPSC ${route} contract failed:`, JSON.stringify({
+    finish_reason: choice?.finish_reason || null,
+    usage: sonarData?.usage || null,
+    content_length: text ? text.length : 0,
+    content_head: text ? text.slice(0, 300) : null,
+  }));
 }
 
 async function callSonarWithTimeout(apiKey, payload, timeoutMs) {
@@ -820,6 +845,7 @@ async function handleUpscEnrich(request, env, origin) {
     );
     const note = normalizeUpscExamNote(parseStructured(data), record);
     if (!note) {
+      logContractFailure('enrich', data);
       return upscEnrichmentResponse({
         success: false,
         error: 'Provider response did not satisfy the source-bound exam-note contract.',
@@ -907,6 +933,7 @@ async function handleUpscVerify(request, env, origin) {
     );
     const result = normalizeUpscVerification(parseStructured(data));
     if (!result) {
+      logContractFailure('verify', data);
       return upscEnrichmentResponse({
         success: false,
         error: 'Provider response did not satisfy the verification contract.',

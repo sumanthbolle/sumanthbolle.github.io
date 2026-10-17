@@ -21,6 +21,44 @@ from scripts.upsc.publish import _read_json, _write_json
 CONFIDENCE_FLOOR = 0.7
 REVIEW_LABEL = "upsc-needs-review"
 TITLE_PREFIX = "Needs review:"
+UNAVAILABLE_TITLE_PREFIX = "Verification unavailable:"
+UNAVAILABLE_CLAIM = "Verification was unavailable; retry before publishing"
+STATUS_DISAGREED = "disagreed"
+STATUS_UNAVAILABLE = "unavailable"
+
+
+def _error_text(error: Exception) -> str:
+    """Short reason for the queue row; the HTTP body of a Worker error is the useful part."""
+    try:
+        import urllib.error
+        if isinstance(error, urllib.error.HTTPError):
+            body = ""
+            try:
+                body = error.read(600).decode("utf-8", "replace")
+            except Exception:
+                body = ""
+            try:
+                parsed = json.loads(body) if body else {}
+                body = str(parsed.get("error") or body) if isinstance(parsed, dict) else body
+            except ValueError:
+                pass
+            return f"HTTP {error.code}: {body}".strip()[:240]
+        if isinstance(error, urllib.error.URLError):
+            return f"network error: {error.reason}"[:240]
+    except ImportError:
+        pass
+    return (str(error) or error.__class__.__name__)[:240]
+
+
+def held_status(row: Mapping[str, Any]) -> str:
+    """Rows written before the status field existed carry the sentinel claim instead."""
+    status = str(row.get("status") or "")
+    if status in (STATUS_DISAGREED, STATUS_UNAVAILABLE):
+        return status
+    verification = row.get("verification") if isinstance(row.get("verification"), Mapping) else {}
+    if list(verification.get("flagged_claims") or []) == [UNAVAILABLE_CLAIM]:
+        return STATUS_UNAVAILABLE
+    return STATUS_DISAGREED
 
 
 def note_digest(note):
@@ -123,22 +161,28 @@ def apply_verification(
     skipped = 0
     for note in notes:
         unavailable = False
+        error_text = ""
         source_id = str(note.get("sourceId") or "")
         source = sources.get(source_id) or {}
         try:
             if not endpoint or not token or opener is None:
                 raise ValueError("Verification is not configured")
             result = verify_note(source, note, endpoint, token, opener)
-        except Exception:
+        except Exception as error:
             unavailable = True
             skipped += 1
-            result = {"agrees": False, "confidence": 0,
-                      "flagged_claims": ["Verification was unavailable; retry before publishing"]}
+            error_text = _error_text(error)
+            close = getattr(error, "close", None)
+            if callable(close):
+                close()
+            result = {"agrees": False, "confidence": 0, "flagged_claims": [UNAVAILABLE_CLAIM]}
         row = {
             "sourceId": source_id,
             "anchor": note.get("anchor"),
             "codes": note.get("codes", []),
             "checkedAt": now,
+            "status": STATUS_UNAVAILABLE if unavailable else STATUS_DISAGREED,
+            "error": error_text,
             "verification": result,
             "note": dict(note),
             "issue": review_issue_payload(source_id, result, now),
@@ -173,7 +217,7 @@ def write_review_queue(
     if not isinstance(rows, list):
         rows = []
     by_id = {
-        str(row.get("sourceId")): row for row in rows
+        str(row.get("sourceId")): {**row, "status": held_status(row)} for row in rows
         if isinstance(row, dict) and row.get("sourceId")
     }
     for source_id in published_ids or []:
@@ -181,7 +225,7 @@ def write_review_queue(
     latest = now
     for item in held:
         if isinstance(item, dict) and item.get("sourceId"):
-            by_id[str(item["sourceId"])] = dict(item)
+            by_id[str(item["sourceId"])] = {**item, "status": held_status(item)}
             latest = str(item.get("checkedAt") or latest)
     payload = {
         "generatedAt": latest or (existing.get("generatedAt") if isinstance(existing, dict) else ""),
@@ -223,40 +267,109 @@ def record_verification_stats(
     return payload
 
 
+def unavailable_issue_payload(rows: Sequence[Mapping[str, Any]], now: str) -> dict[str, Any]:
+    """One issue for every note the verifier could not check, instead of one per note."""
+    ordered = sorted(rows, key=lambda row: str(row.get("sourceId") or ""))
+    reasons: dict[str, int] = {}
+    for row in ordered:
+        reason = str(row.get("error") or "no error recorded")
+        reasons[reason] = reasons.get(reason, 0) + 1
+    reason_lines = "\n".join(
+        f"- {count} × {reason}" for reason, count in sorted(reasons.items(), key=lambda kv: -kv[1])
+    )
+    note_lines = "\n".join(
+        f"- `{row.get('sourceId')}` — {str(row.get('anchor') or '').strip() or '(no anchor)'} "
+        f"(last attempt {row.get('checkedAt') or 'unknown'})"
+        for row in ordered
+    )
+    return {
+        "title": f"{UNAVAILABLE_TITLE_PREFIX} {len(ordered)} enriched notes waiting for a second-pass check",
+        "labels": [REVIEW_LABEL],
+        "body": (
+            "The second-pass verifier did not return a usable result for these notes, so they are "
+            "held rather than published. This is a pipeline failure, not a factual disagreement; "
+            "the publisher retries each note automatically on its next run.\n\n"
+            f"- **notes held:** {len(ordered)}\n"
+            f"- **last updated:** {now}\n\n"
+            f"Failure reasons:\n{reason_lines}\n\n"
+            f"Notes:\n{note_lines}\n\n"
+            "The local Worker log in the run that held them shows the provider response. "
+            "This issue closes itself once every note has either passed or been re-filed as a "
+            "real disagreement (`data/upsc/needs-review.json`, `status`)."
+        ),
+    }
+
+
 def reconcile_review_issues(
     held: Sequence[Mapping[str, Any]],
     open_issues: Iterable[Mapping[str, Any]],
+    now: str = "",
 ) -> dict[str, Any]:
+    """Per-note issues only for real disagreements; unavailable checks share one issue."""
     open_by_source: dict[str, int] = {}
+    open_unavailable: Optional[int] = None
     for issue in open_issues:
         if not isinstance(issue, Mapping) or issue.get("pull_request"):
             continue
         title = str(issue.get("title") or "")
+        try:
+            number = int(issue.get("number"))
+        except (TypeError, ValueError):
+            continue
+        if title.startswith(UNAVAILABLE_TITLE_PREFIX):
+            if open_unavailable is None:
+                open_unavailable = number
+            continue
         if not title.startswith(TITLE_PREFIX):
             continue
         source_id = title[len(TITLE_PREFIX):].split(" verification disagreed", 1)[0].strip()
-        try:
-            open_by_source[source_id] = int(issue.get("number"))
-        except (TypeError, ValueError):
-            continue
+        open_by_source[source_id] = number
     create = []
+    update = []
     close = []
-    held_ids = {str(item.get("sourceId") or "") for item in held}
+    disagreed = {}
+    unavailable = []
     for item in held:
         source_id = str(item.get("sourceId") or "")
-        if not source_id or source_id in open_by_source:
+        if not source_id:
+            continue
+        if held_status(item) == STATUS_UNAVAILABLE:
+            unavailable.append(item)
+        else:
+            disagreed[source_id] = item
+    for source_id, item in disagreed.items():
+        if source_id in open_by_source:
             continue
         create.append(item.get("issue") or review_issue_payload(
             source_id, item.get("verification") or {}, str(item.get("checkedAt") or "")
         ))
+    unavailable_ids = {str(item.get("sourceId")) for item in unavailable}
     for source_id, number in open_by_source.items():
-        if source_id not in held_ids:
-            close.append({
-                "number": number,
-                "sourceId": source_id,
-                "comment": f"Source `{source_id}` passed verification. Closing the review hold.",
-            })
-    return {"create": create, "close": close, "update": []}
+        if source_id in disagreed:
+            continue
+        if source_id in unavailable_ids:
+            comment = (
+                f"Source `{source_id}` was never checked: the verifier was unavailable, so this "
+                "was not a disagreement. It is tracked in the shared "
+                f"\"{UNAVAILABLE_TITLE_PREFIX}\" issue and retried automatically."
+            )
+        else:
+            comment = f"Source `{source_id}` passed verification. Closing the review hold."
+        close.append({"number": number, "sourceId": source_id, "comment": comment})
+    stamp = now or max((str(item.get("checkedAt") or "") for item in unavailable), default="")
+    if unavailable:
+        payload = unavailable_issue_payload(unavailable, stamp)
+        if open_unavailable is None:
+            create.append(payload)
+        else:
+            update.append({**payload, "number": open_unavailable})
+    elif open_unavailable is not None:
+        close.append({
+            "number": open_unavailable,
+            "sourceId": "",
+            "comment": "Every held note has now been verified. Closing.",
+        })
+    return {"create": create, "close": close, "update": update}
 
 
 def main() -> int:
@@ -272,7 +385,8 @@ def main() -> int:
     issues = _read_json(args.open_issues, []) if args.open_issues else []
     if not isinstance(issues, list):
         issues = []
-    json.dump(reconcile_review_issues(items, issues), sys.stdout, indent=2, sort_keys=True)
+    now = str(queue.get("generatedAt") or "") if isinstance(queue, dict) else ""
+    json.dump(reconcile_review_issues(items, issues, now), sys.stdout, indent=2, sort_keys=True)
     sys.stdout.write("\n")
     return 0
 

@@ -156,6 +156,10 @@ jobs:
         continue-on-error: true
         run: python scripts/upsc/live_publish.py --no-live-feed --report /tmp/upsc-live-result.json
 
+      - name: Local Worker log
+        if: always()
+        run: cat /tmp/upsc-local-worker.log 2>/dev/null || true
+
       - name: Open or close verification-hold issues
         if: always() && hashFiles('data/upsc/needs-review.json') != ''
         uses: actions/github-script@v8
@@ -192,6 +196,11 @@ jobs:
             for (const item of plan.create || []) {
               await github.rest.issues.create({
                 owner, repo, title: item.title, body: item.body, labels: item.labels,
+              });
+            }
+            for (const item of plan.update || []) {
+              await github.rest.issues.update({
+                owner, repo, issue_number: item.number, title: item.title, body: item.body,
               });
             }
             for (const item of plan.close || []) {
