@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-17T03:03:48Z",
-  "itemCount": 20,
+  "generatedAt": "2026-10-17T04:19:44Z",
+  "itemCount": 21,
   "items": [
     {
       "anchor": "Targeted public support for equitable access to doctoral education",
@@ -806,6 +806,187 @@
         "flagged_claims": [
           "Verification was unavailable; retry before publishing"
         ]
+      }
+    },
+    {
+      "anchor": "GS1.1 Indian art, culture, architecture, literature — ancient to modern",
+      "checkedAt": "2026-10-17T04:19:44Z",
+      "codes": [
+        "GS1.1",
+        "GS1.6",
+        "ESSAY.A"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_7f6dd45af6afbbbd2313a4a6dd944d2cc5e08c8d8fe6c21a315aa55ffe7d1733` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.98\n- **checked at:** 2026-10-17T04:19:44Z\n\nFlagged claims:\n- \"Proposed static topic / anchor: GS1.1 Indian art, culture, architecture, literature — ancient to modern\" is too broad and misaligned: the extract records a religious observance, not art, architecture, literature, or a historical-cultural a\n- \"Use as a current-affairs illustration in GS1, GS2 and Essay answers on culture, secularism, pluralism, constitutional morality and public communication\" overstates the UPSC connection; GS2 and constitutional analysis are possible lenses, b\n- \"Maa Kalaratri is identified ... as one of the Navadurga forms and is associated with the seventh day\" is not supported by P1; the search result supports the seventh-day association, but the claimed official-cultural provenance is not estab\n- \"The episode invites reflection on cultural expression, pluralism and constitutional secularism\" is an analytical implication, not a fact established by the PIB release; it should be labelled as an optional interpretive use.\n- \"Recognition of a widely observed cultural tradition can express cultural continuity and connect public communication with citizens’ lived traditions\" is a general sociological assertion unsupported by the supplied source.\n- \"The message frames the observance through universal wishes ... rather than an administrative directive\" is partly inferential; P1 records wishes for energy, confidence and prosperity but does not establish the contrast with administrative \n- \"Public observance of cultural traditions often raises a constitutional question\" and the proposed constitutional balance are reasonable analytical framing, but are not facts evidenced by P1 and should not be presented as source-derived cla\n- \"Full note, all five revisions\" and the priority score components are editorial judgments with no stated verification basis; the source supports only the reported prayer and its date.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_7f6dd45af6afbbbd2313a4a6dd944d2cc5e08c8d8fe6c21a315aa55ffe7d1733",
+        "title": "Needs review: src_7f6dd45af6afbbbd2313a4a6dd944d2cc5e08c8d8fe6c21a315aa55ffe7d1733 verification disagreed"
+      },
+      "note": {
+        "anchor": "GS1.1 Indian art, culture, architecture, literature — ancient to modern",
+        "argumentsAgainst": [
+          "State communication about a religious observance can raise concerns about perceived majoritarian symbolism in a plural constitutional democracy.",
+          "Public religious messaging should not substitute for secular, equal treatment and delivery of constitutional responsibilities."
+        ],
+        "argumentsFor": [
+          "Recognition of a widely observed cultural tradition can express cultural continuity and connect public communication with citizens’ lived traditions.",
+          "The message frames the observance through universal wishes for renewed energy, confidence and prosperity rather than an administrative directive."
+        ],
+        "background": [
+          "Navratri is associated with worship of multiple manifestations of Goddess Durga; Maa Kalaratri is identified in official cultural material as one of the Navadurga forms and is associated with the seventh day of the festival.[1][2]",
+          "The source record supports only that the Prime Minister offered prayers to Maa Kalaratri during Navratri on 17 October 2026; it does not establish broader historical, theological or regional details."
+        ],
+        "codes": [
+          "GS1.1",
+          "GS1.6",
+          "ESSAY.A"
+        ],
+        "editorialStatus": "source-backed",
+        "id": "note_7f6dd45af6afbbbd2313a4a6dd944d2cc5e08c8d8fe6c21a315aa55ffe7d1733",
+        "indiaImplications": [
+          "The episode can be used to discuss the relationship between cultural expression, public symbolism and constitutional secularism.",
+          "It illustrates how public institutions and political leaders communicate with citizens through culturally familiar occasions, while requiring sensitivity toward India’s religious diversity.",
+          "The constitutional test is not the absence of cultural references but equal citizenship, non-discrimination and protection of freedom of conscience."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Cultural heritage and public communication",
+              "Constitutional secularism and equal citizenship",
+              "Pluralism, inclusion and institutional restraint"
+            ],
+            "conclusionPrompt": "Conclude by reconciling cultural recognition with constitutional morality and equal respect for all faiths.",
+            "counterPosition": "A critic may argue that state-linked religious messaging risks blurring the boundary between cultural acknowledgement and preferential identification with one faith.",
+            "diagramSuggestion": "Three-part balance diagram: cultural expression → constitutional safeguards → inclusive public communication.",
+            "directive": "discuss",
+            "introChoices": [
+              "Public observance of cultural traditions often raises a constitutional question: how can cultural recognition coexist with secular governance?",
+              "The Prime Minister’s reported prayer to Maa Kalaratri during Navratri provides a context to examine culture, symbolism and constitutional pluralism."
+            ],
+            "marks": 10,
+            "skeleton": [
+              "Public observance of cultural traditions often raises a constitutional question: how can cultural recognition coexist with secular governance?",
+              "The Prime Minister’s reported prayer to Maa Kalaratri during Navratri provides a context to examine culture, symbolism and constitutional pluralism.",
+              "Cultural heritage and public communication",
+              "Constitutional secularism and equal citizenship",
+              "Pluralism, inclusion and institutional restraint",
+              "A critic may argue that state-linked religious messaging risks blurring the boundary between cultural acknowledgement and preferential identification with one faith.",
+              "Conclude by reconciling cultural recognition with constitutional morality and equal respect for all faiths."
+            ],
+            "stem": "Discuss how public recognition of religious-cultural traditions can be reconciled with constitutional secularism in India.",
+            "timeMinutes": 7,
+            "wordBudget": 150
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2324616",
+            "text": "Prime Minister offers prayers to Maa Kalaratri during Navratri",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS1",
+          "ESSAY"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Illustration",
+            "text": "Illustration: If a public authority acknowledges a festival, inclusive communication would pair cultural recognition with equal respect for citizens of every faith and avoid presenting one tradition as a condition of citizenship."
+          },
+          "excerpt": "On 17 October 2026, the Prime Minister offered prayers to Maa Kalaratri during Navratri. The episode invites reflection on cultural expression, pluralism and constitutional secularism.",
+          "question": {
+            "answer": "Cultural recognition is compatible with secularism when it does not confer unequal citizenship, coerce belief or privilege one faith in public administration. Inclusive language, institutional neutrality and equal protection help convert symbolic acknowledgement into pluralist public communication.",
+            "prompt": "How can a public religious-cultural acknowledgement remain consistent with constitutional secularism?"
+          },
+          "sections": [
+            {
+              "heading": "The evidenced event",
+              "paragraphs": [
+                "The Press Information Bureau record states that the Prime Minister offered prayers to Maa Kalaratri during Navratri on 17 October 2026. The source establishes the action and occasion, but not additional claims about policy, institutional participation or wider consequences."
+              ]
+            },
+            {
+              "heading": "Why the issue matters",
+              "paragraphs": [
+                "Public communication can acknowledge cultural traditions and strengthen a sense of continuity. The mechanism is symbolic: recognition may make citizens feel that familiar practices are visible in national life. Its limitation is that symbolism can be read as preference if equal respect and constitutional safeguards are absent."
+              ]
+            },
+            {
+              "heading": "The constitutional balance",
+              "paragraphs": [
+                "The relevant UPSC lens is the balance between cultural expression and secular, non-discriminatory governance. A public figure’s personal or political observance should not be treated as proof that the state may impose religious belief or distribute public benefits by faith."
+              ]
+            }
+          ],
+          "title": "Prime Minister offers prayers to Maa Kalaratri during Navratri"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The official source title states that the Prime Minister offered prayers to Maa Kalaratri during Navratri.",
+            "statement": "The source records prayers offered by the Prime Minister to Maa Kalaratri during Navratri."
+          },
+          {
+            "correct": false,
+            "explanation": "The supplied official summary does not state that the event occurred on the seventh day, although external cultural material may describe Maa Kalaratri in that way.",
+            "statement": "The supplied source summary explicitly says that the prayers occurred on Navratri’s seventh day."
+          },
+          {
+            "correct": false,
+            "explanation": "The record does not establish that the Prime Minister announced a government scheme, policy or administrative measure.",
+            "statement": "The source records a new government scheme associated with Maa Kalaratri."
+          }
+        ],
+        "priority": 64,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 45,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 50
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-10-17T04:19:38Z",
+        "publisherId": "pib",
+        "publisherName": "Press Information Bureau",
+        "recallCard": "On 17 October 2026, the Prime Minister offered prayers to Maa Kalaratri during Navratri. For UPSC, use the episode to examine cultural expression, pluralism and the constitutional requirement of equal citizenship without treating symbolism as policy.",
+        "reusableAnchors": [],
+        "sourceContentHash": "8a43527dd7171b609961f4b3f4afb03470231cfdedc809563d259691e4884197",
+        "sourceId": "src_7f6dd45af6afbbbd2313a4a6dd944d2cc5e08c8d8fe6c21a315aa55ffe7d1733",
+        "sourceTitle": "Prime Minister offers prayers to Maa Kalaratri during Navratri",
+        "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2324616",
+        "staticDefinition": "Constitutional secularism in India can be analysed as state neutrality toward faiths combined with equal respect, freedom of conscience and non-discrimination; this note uses the concept analytically, not as a claim made in the source record.",
+        "use": "Use as a current-affairs illustration in GS1, GS2 and Essay answers on culture, secularism, pluralism, constitutional morality and public communication.",
+        "wayForward": [
+          "Maintain equal citizenship and non-discrimination in public administration.",
+          "Use inclusive language when public authorities acknowledge cultural occasions.",
+          "Distinguish personal or political observance from coercive state action or faith-based allocation of benefits.",
+          "Evaluate symbolic communication through constitutional morality and the rights of all communities."
+        ],
+        "whyInNews": "On 17 October 2026, the Press Information Bureau reported that the Prime Minister offered prayers to Maa Kalaratri during Navratri. The action brings a cultural-religious observance into current affairs and permits analysis of cultural expression alongside India’s plural and secular constitutional framework."
+      },
+      "sourceId": "src_7f6dd45af6afbbbd2313a4a6dd944d2cc5e08c8d8fe6c21a315aa55ffe7d1733",
+      "status": "disagreed",
+      "verification": {
+        "agrees": false,
+        "confidence": 0.98,
+        "flagged_claims": [
+          "\"Proposed static topic / anchor: GS1.1 Indian art, culture, architecture, literature — ancient to modern\" is too broad and misaligned: the extract records a religious observance, not art, architecture, literature, or a historical-cultural a",
+          "\"Use as a current-affairs illustration in GS1, GS2 and Essay answers on culture, secularism, pluralism, constitutional morality and public communication\" overstates the UPSC connection; GS2 and constitutional analysis are possible lenses, b",
+          "\"Maa Kalaratri is identified ... as one of the Navadurga forms and is associated with the seventh day\" is not supported by P1; the search result supports the seventh-day association, but the claimed official-cultural provenance is not estab",
+          "\"The episode invites reflection on cultural expression, pluralism and constitutional secularism\" is an analytical implication, not a fact established by the PIB release; it should be labelled as an optional interpretive use.",
+          "\"Recognition of a widely observed cultural tradition can express cultural continuity and connect public communication with citizens’ lived traditions\" is a general sociological assertion unsupported by the supplied source.",
+          "\"The message frames the observance through universal wishes ... rather than an administrative directive\" is partly inferential; P1 records wishes for energy, confidence and prosperity but does not establish the contrast with administrative ",
+          "\"Public observance of cultural traditions often raises a constitutional question\" and the proposed constitutional balance are reasonable analytical framing, but are not facts evidenced by P1 and should not be presented as source-derived cla",
+          "\"Full note, all five revisions\" and the priority score components are editorial judgments with no stated verification basis; the source supports only the reported prayer and its date."
+        ],
+        "verificationVersion": 2
       }
     },
     {
@@ -1673,8 +1854,8 @@
       }
     },
     {
-      "anchor": "The statutory text enacted by Parliament governs over statements made during legislative debate; pro",
-      "checkedAt": "2026-10-17T03:03:48Z",
+      "anchor": "GS2.3 Separation of powers, dispute redressal, constitutional bodies; GS2.4 Parliament and state leg",
+      "checkedAt": "2026-10-17T04:19:44Z",
       "codes": [
         "GS2.3",
         "GS2.4",
@@ -1682,7 +1863,7 @@
       ],
       "error": "",
       "issue": {
-        "body": "Primary enrichment for `src_e54f301e5114976df91aa653e9e4b9fdabc8c39f40e0c20aa4bd529a0d7d40a7` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.98\n- **checked at:** 2026-10-17T03:03:48Z\n\nFlagged claims:\n- \"The Ministry of Finance issued the clarification on 17 October 2026\" — P1 supplies that date, but the downloaded extract is future-dated and does not independently establish publication or issuance beyond its own record.\n- \"An amendment seeking to restrict dilution was moved during the Union Budget, 2003\" — P1 states this, but the actual parliamentary debate or amendment text was not independently verified.\n- \"The Delhi High Court’s 17 December 2018 ruling\" — the cited judgment date is supported for the single-judge order, but the related appellate material reports 21 December 2018; the note should distinguish the orders.\n- \"The enacted IDBI (Repeal) Act, 2003 therefore did not contain that restriction\" — the India Code extract confirms the Act’s title and provisions, but does not by itself establish that every proposed dilution restriction was absent.\n- \"The Government’s stated policy trajectory of transforming and strategically disinvesting IDBI Bank\" — P1 records Budget references, but the underlying Budget speeches were not independently verified here.\n- \"The legal framework of strategic disinvestment\" — the supplied material establishes legal permissibility of dilution, not a complete strategic-disinvestment framework.\n- \"Strategic disinvestment can enable restructuring, competitiveness and a clearer ownership framework\" — this is an uncited policy implication, not established by the supplied primary material.\n- \"Safeguards for depositors, employees and financial stability\" — these are reasonable analytical recommendations, but the note does not identify a specific applicable safeguard framework or evidence linking it to this clarification.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "body": "Primary enrichment for `src_e54f301e5114976df91aa653e9e4b9fdabc8c39f40e0c20aa4bd529a0d7d40a7` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.98\n- **checked at:** 2026-10-17T04:19:44Z\n\nFlagged claims:\n- \"Proposed static topic / anchor: GS2.3 ... GS2.4 ...\" is too broad and partly misclassified; the strongest anchors are GS2—Parliament, statutory interpretation, judicial review and public policy, with GS3 disinvestment as a secondary link.\n- \"The Industrial Development Bank of India was transformed through the Industrial Development Bank (Transfer of Undertaking and Repeal) Act, 2003\" is imprecise: the Act provided for transfer and vesting of the undertaking and repeal of the 1\n- \"The 2003 amendment restricting dilution ... correct: true\" is internally contradictory: the claim says the amendment became part of enacted legislation, while the explanation correctly says it was rejected and absent.\n- \"The Government’s shareholding power was not restricted by the rejected amendment\" overstates the evidence; the judgment establishes no statutory prohibition on reducing or divesting the stake, not an unrestricted general power.\n- \"The practical consequence is that the Government’s shareholding power was not restricted by the rejected amendment\" should distinguish the rejected proposal from the separate statutory finding that no prohibition existed.[4][5]\n- \"The official clarification links the policy trajectory to the IDBI (Repeal) Act, 2003, the Delhi High Court judgment and Union Budget statements\" is supported by P1, but the underlying budget quotations and dates were not independently ver\n- \"judicial review of executive disinvestment\" is a valid UPSC connection, but the note should state that the court reviewed and dismissed the challenge; it should not imply judicial approval of the economic merits of disinvestment.[4][5][7]\n- \"The practical consequence is that the Government’s shareholding power was not restricted by the rejected amendment\" is not a demonstrated causal consequence; the operative legal basis was the enacted Act and the Court’s interpretation, not\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
         "labels": [
           "upsc-needs-review"
         ],
@@ -1690,21 +1871,20 @@
         "title": "Needs review: src_e54f301e5114976df91aa653e9e4b9fdabc8c39f40e0c20aa4bd529a0d7d40a7 verification disagreed"
       },
       "note": {
-        "anchor": "The statutory text enacted by Parliament governs over statements made during legislative debate; pro",
+        "anchor": "GS2.3 Separation of powers, dispute redressal, constitutional bodies; GS2.4 Parliament and state leg",
         "argumentsAgainst": [
-          "Strategic disinvestment can raise concerns about public ownership, accountability and the future institutional role of a formerly government-controlled bank.",
-          "Parliamentary statements may create legitimate expectations, even though they cannot override enacted statutory language."
+          "Employees may contend that parliamentary assurances created a legitimate expectation regarding continued government control and public-sector status; the source record reports that this argument was rejected by the Delhi High Court.",
+          "Strategic disinvestment can raise concerns about institutional continuity, employee interests and public accountability; these are analytical concerns, not findings established by the official summary."
         ],
         "argumentsFor": [
-          "The judgment-based position supports legal certainty by giving primacy to enacted legislation over earlier debate statements.",
-          "Strategic disinvestment can enable restructuring, competitiveness and a clearer ownership framework, subject to regulatory oversight.",
-          "The clarification addresses a legal misconception that parliamentary assurances independently prohibit reduction of Government shareholding."
+          "The enacted statute, rather than statements made during legislative debate, governs the legal position.",
+          "Strategic disinvestment may enable institutional transformation and reduce direct government ownership while retaining an organised banking enterprise; this is an analytical implication, not an official finding in the source summary.",
+          "The official clarification links the policy trajectory to the IDBI (Repeal) Act, 2003, the Delhi High Court judgment and Union Budget statements."
         ],
         "background": [
-          "The IDBI (Repeal) Act, 2003 followed legislative discussions concerning the Government’s shareholding in IDBI.",
-          "An amendment seeking to restrict dilution of the Government’s stake was moved during the 2003 discussions but was rejected and did not become part of the enacted law.",
-          "The Delhi High Court, in All India IDBI Officers’ Association v. Union of India & Others, decided on 17 December 2018, dismissed the challenge concerning dilution of Government shareholding.",
-          "The clarification links the legal position with successive Union Budget statements on transformation and strategic disinvestment of IDBI Bank."
+          "The Industrial Development Bank of India was transformed through the Industrial Development Bank (Transfer of Undertaking and Repeal) Act, 2003, according to the primary legislative record located during verification.[7]",
+          "The source document states that an amendment seeking to restrict dilution of the Government’s stake was discussed during the Union Budget, 2003 and parliamentary debate on the IDBI (Repeal) Act, 2003, but was ultimately rejected and did not",
+          "The source document states that the Delhi High Court decided All India IDBI Officers’ Association v. Union of India & Others on 17 December 2018 and dismissed the writ petition."
         ],
         "codes": [
           "GS2.3",
@@ -1714,38 +1894,38 @@
         "editorialStatus": "draft",
         "id": "note_e54f301e5114976df91aa653e9e4b9fdabc8c39f40e0c20aa4bd529a0d7d40a7",
         "indiaImplications": [
-          "The episode illustrates the constitutional and administrative importance of distinguishing parliamentary debate from enacted statutory text.",
-          "It highlights the need to align public-sector disinvestment with transparent policy communication, statutory compliance and regulatory safeguards.",
-          "A change in ownership should be assessed alongside depositor protection, financial stability, employee interests and public accountability; these are analytical considerations, not facts established by the supplied official summary."
+          "The issue illustrates the constitutional and administrative importance of distinguishing legislative debate from enacted statutory text.",
+          "It highlights how strategic disinvestment can intersect with employee expectations, public-sector classification and judicial review.",
+          "For public-sector reform, policy clarity and transparent communication can reduce disputes over whether political statements created enforceable legal constraints."
         ],
         "mainsPractice": [
           {
             "bodyDimensions": [
-              "Meaning and role of promissory estoppel in public law",
-              "Parliamentary debates versus enacted legislation",
-              "Strategic disinvestment, public accountability and financial-sector regulation",
-              "Safeguards for depositors, employees and systemic stability"
+              "Interpretation of enacted law versus parliamentary debate",
+              "Promissory estoppel and legitimate expectation in public law",
+              "Strategic disinvestment, accountability and stakeholder concerns",
+              "Role of judicial review in resolving institutional disputes"
             ],
-            "conclusionPrompt": "Conclude by balancing legal certainty with accountable and socially responsible disinvestment.",
-            "counterPosition": "Recognise that legitimate expectations and public-interest concerns may justify stronger consultation and safeguards, even when they cannot override clear statutory text.",
-            "diagramSuggestion": "Flow: legislative debate → rejected amendment → enacted statute → judicial interpretation → policy implementation",
+            "conclusionPrompt": "Conclude by balancing democratic legislative finality with transparent, accountable public-sector reform.",
+            "counterPosition": "Acknowledge that parliamentary statements can shape public expectations and democratic accountability, even where they do not override enacted statutory text.",
+            "diagramSuggestion": "Debate statement → rejected amendment → enacted statute → judicial interpretation → disinvestment policy",
             "directive": "discuss",
             "introChoices": [
-              "The IDBI clarification raises a foundational public-law question: can statements made during legislative debate restrict action permitted by enacted legislation?",
-              "Strategic disinvestment tests both the supremacy of statutory text and the accountability of economic governance."
+              "The IDBI clarification foregrounds a basic rule of public law: legislative intent must ordinarily be assessed through enacted text, not isolated debate statements.",
+              "The controversy connects statutory interpretation with the economic-policy question of strategic disinvestment."
             ],
             "marks": 15,
             "skeleton": [
-              "The IDBI clarification raises a foundational public-law question: can statements made during legislative debate restrict action permitted by enacted legislation?",
-              "Strategic disinvestment tests both the supremacy of statutory text and the accountability of economic governance.",
-              "Meaning and role of promissory estoppel in public law",
-              "Parliamentary debates versus enacted legislation",
-              "Strategic disinvestment, public accountability and financial-sector regulation",
-              "Safeguards for depositors, employees and systemic stability",
-              "Recognise that legitimate expectations and public-interest concerns may justify stronger consultation and safeguards, even when they cannot override clear statutory text.",
-              "Conclude by balancing legal certainty with accountable and socially responsible disinvestment."
+              "The IDBI clarification foregrounds a basic rule of public law: legislative intent must ordinarily be assessed through enacted text, not isolated debate statements.",
+              "The controversy connects statutory interpretation with the economic-policy question of strategic disinvestment.",
+              "Interpretation of enacted law versus parliamentary debate",
+              "Promissory estoppel and legitimate expectation in public law",
+              "Strategic disinvestment, accountability and stakeholder concerns",
+              "Role of judicial review in resolving institutional disputes",
+              "Acknowledge that parliamentary statements can shape public expectations and democratic accountability, even where they do not override enacted statutory text.",
+              "Conclude by balancing democratic legislative finality with transparent, accountable public-sector reform."
             ],
-            "stem": "Discuss how the IDBI shareholding clarification illustrates the relationship between parliamentary debate, enacted law, promissory estoppel and strategic disinvestment.",
+            "stem": "Discuss how the IDBI shareholding clarification illustrates the relationship between parliamentary debates, enacted legislation, judicial review and strategic disinvestment.",
             "timeMinutes": 11,
             "wordBudget": 250
           }
@@ -1772,13 +1952,13 @@
           {
             "evidenceLocator": "officialSummary",
             "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2324612",
-            "text": "Union Budget 2016–17 stated that the process of transformation of IDBI Bank had already started and that the Government would take it forward and also consider the option of reducing its stake to below 50%.",
+            "text": "Union Budget 2016–17 stated that the Government would take forward the transformation of IDBI Bank and consider the option of reducing its stake to below 50%.",
             "verification": "needs-review"
           },
           {
             "evidenceLocator": "officialSummary",
             "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2324612",
-            "text": "Union Budget 2021–22 stated that IDBI Bank was among the transactions intended to be completed in 2021–22 under strategic disinvestment.",
+            "text": "Union Budget 2021–22 stated that IDBI Bank was among the transactions proposed to be completed as part of strategic disinvestment in 2021–22.",
             "verification": "needs-review"
           }
         ],
@@ -1788,82 +1968,82 @@
         ],
         "pocketRead": {
           "example": {
-            "heading": "Illustration: applying the distinction",
-            "text": "If a rejected amendment would have prohibited dilution but the enacted statute contains no such prohibition, a court would ordinarily interpret the enacted text rather than treat debate statements as an independent statutory restriction. The illustration is hypothetical."
+            "heading": "Hypothetical illustration: debate statement versus statute",
+            "text": "Suppose a minister states during debate that government control over a public enterprise will be retained, but the enacted law contains no such restriction. If a later disinvestment is challenged solely on that statement, the IDBI reasoning indicates that the court would examine the enacted law rather than treat the debate statement as overriding it."
           },
-          "excerpt": "The Finance Ministry’s clarification links the rejected 2003 amendment, the 2018 Delhi High Court ruling and later Budget statements to explain why parliamentary debate cannot bar IDBI stake dilution.",
+          "excerpt": "The Finance Ministry says the rejected 2003 amendment and the 2018 Delhi High Court ruling do not bar dilution of the Government’s IDBI stake.",
           "question": {
-            "answer": "The enacted statute prevails because legislative debate statements cannot substitute for or override the law finally passed. Promissory estoppel therefore cannot create a prohibition absent from that legislation.",
-            "prompt": "Why could parliamentary statements not, by themselves, prevent dilution of the Government’s IDBI stake?"
+            "answer": "The enacted statute controls because the source states that the proposed restriction was rejected and absent from the enacted law; the Court therefore held that parliamentary statements could not override the statute or invoke promissory estoppel.",
+            "prompt": "Why did the Court refuse to treat parliamentary statements as a legal bar on dilution?"
           },
           "sections": [
             {
-              "heading": "Clarification and legal mechanism",
+              "heading": "What the clarification records",
               "paragraphs": [
-                "The Ministry of Finance issued the clarification on 17 October 2026, stating that the amendment proposed in 2003 to restrict dilution was rejected. The enacted IDBI (Repeal) Act, 2003 therefore did not contain that restriction.",
-                "The Delhi High Court’s 17 December 2018 decision treated the enacted statute as controlling. Its reasoning means that statements made during a legislative debate cannot replace statutory language or create a prohibition that Parliament did not enact."
+                "The Ministry of Finance issued the clarification on 17 October 2026, stating that a proposed 2003 amendment to restrict dilution of the Government’s IDBI stake was rejected and was not included in the enacted legislation.",
+                "It also records the Delhi High Court’s 17 December 2018 ruling that parliamentary statements could not substitute for or override the enacted statute and that promissory estoppel could not prevent dilution."
               ]
             },
             {
-              "heading": "Practical consequence and limit",
+              "heading": "Why the distinction matters",
               "paragraphs": [
-                "The clarification supports the Government’s stated policy trajectory of transforming and strategically disinvesting IDBI Bank, reflected in the cited Union Budget speeches. The practical consequence is that reduction or divestment of Government shareholding is not barred merely by the earlier debate.",
-                "This legal conclusion does not itself settle every policy question surrounding disinvestment, such as regulatory oversight, depositor protection or employee concerns. Those issues require separate evaluation under the applicable framework."
+                "A legislative debate can reveal competing policy positions, but the legal constraint must be found in the text finally enacted. The practical consequence is that the Government’s shareholding power was not restricted by the rejected amendment.",
+                "The clarification also situates the dispute within successive Union Budget statements referring to transformation and strategic disinvestment of IDBI Bank."
               ]
             }
           ],
-          "title": "Why parliamentary debate did not bar dilution of Government’s IDBI stake"
+          "title": "IDBI clarification distinguishes parliamentary debate from enacted law"
         },
         "prelimsTraps": [
           {
             "correct": true,
-            "explanation": "The supplied official record states that the amendment was moved but ultimately rejected and did not form part of the enacted legislation.",
-            "statement": "The 2003 amendment restricting dilution of the Government’s IDBI stake became part of the enacted IDBI (Repeal) Act."
-          },
-          {
-            "correct": true,
-            "explanation": "The official clarification states that the 17 December 2018 judgment held that promissory estoppel could not be invoked to restrict dilution based on parliamentary statements.",
-            "statement": "The Delhi High Court held that parliamentary debate statements could not, through promissory estoppel, prevent the Government from reducing or divesting its IDBI stake."
+            "explanation": "The official summary states that the amendment was moved, ultimately rejected and absent from the enacted legislation.",
+            "statement": "The 2003 amendment restricting dilution of the Government’s IDBI stake became part of the enacted legislation."
           },
           {
             "correct": false,
-            "explanation": "The official record states that the Court found no prohibition in the enacted legislation against reducing the Government’s stake.",
-            "statement": "The enacted IDBI (Repeal) Act, 2003 expressly prohibited the Government from reducing its stake in IDBI Ltd."
+            "explanation": "The official summary states that the Delhi High Court held promissory estoppel could not be invoked to prevent dilution.",
+            "statement": "The Delhi High Court accepted promissory estoppel as a bar on reducing the Government’s IDBI stake."
           },
           {
             "correct": true,
-            "explanation": "The official record identifies transformation and strategic disinvestment as the Government’s policy trajectory and cites the 2016–17 and 2021–22 Budget speeches.",
-            "statement": "The clarification connects the legal position with successive Union Budget statements concerning transformation and strategic disinvestment of IDBI Bank."
+            "explanation": "The official summary expressly states that the enacted legislation contained no prohibition against reducing or divesting the Government’s stake.",
+            "statement": "The Court held that the enacted legislation contained no prohibition against reducing the Government’s stake in IDBI."
+          },
+          {
+            "correct": false,
+            "explanation": "The official summary refers to Union Budget statements in 2016–17 and 2021–22, not a claim that disinvestment was completed in those years.",
+            "statement": "The official summary establishes that IDBI strategic disinvestment was completed in 2021–22."
           }
         ],
         "priority": 71,
         "priorityBand": "strong",
         "priorityParts": {
-          "anchorFrequency": 84,
+          "anchorFrequency": 80,
           "debateStrength": 75,
           "officialWeight": 95,
-          "recencyGap": 20
+          "recencyGap": 25
         },
         "priorityProvisional": true,
         "priorityTreatment": "Full note, all five revisions.",
         "publishedAt": "2026-10-17T03:03:41Z",
         "publisherId": "pib",
         "publisherName": "Press Information Bureau",
-        "recallCard": "IDBI clarification: the 2003 dilution-restricting amendment was rejected and absent from enacted law. The Delhi High Court’s 17 December 2018 ruling held that parliamentary statements cannot override legislation; promissory estoppel therefore cannot bar Government stake dilution.",
+        "recallCard": "IDBI clarification: the proposed 2003 restriction on dilution was rejected and absent from the enacted law. The Delhi High Court’s 17 December 2018 ruling held that parliamentary statements could not override the statute and promissory estoppel could not block dilution. Union Budget statements later reiterated transformation and strategic disinvestment.",
         "reusableAnchors": [],
         "sourceContentHash": "ab5d19dc54ba579aa48385f92975edbc5a02c1e601c02fec666170b36c817983",
         "sourceId": "src_e54f301e5114976df91aa653e9e4b9fdabc8c39f40e0c20aa4bd529a0d7d40a7",
         "sourceTitle": "Clarification on Legislative Developments concerning Government’s shareholding in IDBI",
         "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2324612",
-        "staticDefinition": "Promissory estoppel is a public-law doctrine that may restrain a party from acting contrary to a representation relied upon by another; in this issue, the official clarification records that it could not be invoked to restrict Government shareholding dilution on the basis of parliamentary debate statements.",
-        "use": "Use as an example of statutory supremacy, judicial interpretation and the legal framework of strategic disinvestment in answers on Parliament, judiciary, economic governance and public-sector reform.",
+        "staticDefinition": "Promissory estoppel is a public-law doctrine that may prevent a party from departing from a representation when reliance and resulting prejudice are established; the official summary records that the Delhi High Court found it inapplicable here because parliamentary statements could not override the enacted statute.",
+        "use": "Use this case to explain statutory supremacy in interpretation, limits of promissory estoppel against enacted law, judicial review of executive disinvestment and the need to reconcile reform with stakeholder accountability.",
         "wayForward": [
-          "Anchor disinvestment decisions in clear statutory authority and publicly stated policy.",
-          "Separate legal permissibility from policy desirability through transparent impact assessment.",
-          "Maintain effective regulatory supervision and safeguards for depositors, employees and financial stability.",
-          "Communicate clearly when proposals discussed in Parliament are rejected or omitted from the final legislation."
+          "Anchor disinvestment decisions in clear statutory authority and formally recorded policy.",
+          "Communicate the legal effect of enacted legislation accurately to employees and other stakeholders.",
+          "Use transparent consultation and grievance mechanisms to address concerns arising from ownership or status changes.",
+          "Maintain parliamentary and judicial accountability while pursuing economically justified public-sector reform."
         ],
-        "whyInNews": "On 17 October 2026, the Ministry of Finance clarified the legal history behind the Government’s shareholding in IDBI. It stated that a 2003 amendment proposed to restrict dilution was rejected and absent from the enacted law, and highlighted the Delhi High Court’s 17 December 2018 ruling that parliamentary statements c"
+        "whyInNews": "On 17 October 2026, the Ministry of Finance clarified the legislative history concerning the Government’s IDBI shareholding. It stated that a proposed 2003 amendment restricting dilution was rejected and absent from the enacted legislation, and highlighted the Delhi High Court’s 17 December 2018 ruling that parliamenta"
       },
       "sourceId": "src_e54f301e5114976df91aa653e9e4b9fdabc8c39f40e0c20aa4bd529a0d7d40a7",
       "status": "disagreed",
@@ -1871,14 +2051,14 @@
         "agrees": false,
         "confidence": 0.98,
         "flagged_claims": [
-          "\"The Ministry of Finance issued the clarification on 17 October 2026\" — P1 supplies that date, but the downloaded extract is future-dated and does not independently establish publication or issuance beyond its own record.",
-          "\"An amendment seeking to restrict dilution was moved during the Union Budget, 2003\" — P1 states this, but the actual parliamentary debate or amendment text was not independently verified.",
-          "\"The Delhi High Court’s 17 December 2018 ruling\" — the cited judgment date is supported for the single-judge order, but the related appellate material reports 21 December 2018; the note should distinguish the orders.",
-          "\"The enacted IDBI (Repeal) Act, 2003 therefore did not contain that restriction\" — the India Code extract confirms the Act’s title and provisions, but does not by itself establish that every proposed dilution restriction was absent.",
-          "\"The Government’s stated policy trajectory of transforming and strategically disinvesting IDBI Bank\" — P1 records Budget references, but the underlying Budget speeches were not independently verified here.",
-          "\"The legal framework of strategic disinvestment\" — the supplied material establishes legal permissibility of dilution, not a complete strategic-disinvestment framework.",
-          "\"Strategic disinvestment can enable restructuring, competitiveness and a clearer ownership framework\" — this is an uncited policy implication, not established by the supplied primary material.",
-          "\"Safeguards for depositors, employees and financial stability\" — these are reasonable analytical recommendations, but the note does not identify a specific applicable safeguard framework or evidence linking it to this clarification."
+          "\"Proposed static topic / anchor: GS2.3 ... GS2.4 ...\" is too broad and partly misclassified; the strongest anchors are GS2—Parliament, statutory interpretation, judicial review and public policy, with GS3 disinvestment as a secondary link.",
+          "\"The Industrial Development Bank of India was transformed through the Industrial Development Bank (Transfer of Undertaking and Repeal) Act, 2003\" is imprecise: the Act provided for transfer and vesting of the undertaking and repeal of the 1",
+          "\"The 2003 amendment restricting dilution ... correct: true\" is internally contradictory: the claim says the amendment became part of enacted legislation, while the explanation correctly says it was rejected and absent.",
+          "\"The Government’s shareholding power was not restricted by the rejected amendment\" overstates the evidence; the judgment establishes no statutory prohibition on reducing or divesting the stake, not an unrestricted general power.",
+          "\"The practical consequence is that the Government’s shareholding power was not restricted by the rejected amendment\" should distinguish the rejected proposal from the separate statutory finding that no prohibition existed.[4][5]",
+          "\"The official clarification links the policy trajectory to the IDBI (Repeal) Act, 2003, the Delhi High Court judgment and Union Budget statements\" is supported by P1, but the underlying budget quotations and dates were not independently ver",
+          "\"judicial review of executive disinvestment\" is a valid UPSC connection, but the note should state that the court reviewed and dismissed the challenge; it should not imply judicial approval of the economic merits of disinvestment.[4][5][7]",
+          "\"The practical consequence is that the Government’s shareholding power was not restricted by the rejected amendment\" is not a demonstrated causal consequence; the operative legal basis was the enacted Act and the Court’s interpretation, not"
         ],
         "verificationVersion": 2
       }
@@ -2063,15 +2243,15 @@
       }
     },
     {
-      "anchor": "The Council of the European Union is the EU institution associated with the supplied weekly schedule",
-      "checkedAt": "2026-10-17T03:03:48Z",
+      "anchor": "European Council presidency and agenda-setting in the European Union",
+      "checkedAt": "2026-10-17T04:19:44Z",
       "codes": [
         "GS2.9",
         "GS2.10"
       ],
       "error": "",
       "issue": {
-        "body": "Primary enrichment for `src_e7bf625ee27066a82bcf208e77c09b871ca32c243397e9c329f20019c321b8ec` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.99\n- **checked at:** 2026-10-17T03:03:48Z\n\nFlagged claims:\n- \"The Council of the European Union is the EU institution associated with the supplied weekly schedule\" is incorrect: António Costa is President of the European Council, a separate institution from the Council of the European Union.[1][5][8]\n- \"The Council of the European Union published a record titled...\" is institutionally misattributed: the available official material identifies Costa as President of the European Council, not the Council of the European Union.[1][2][8][9]\n- \"A forward agenda can help coordinate follow-up among EU institutions and external partners\" is a plausible analytical inference, not established by the unavailable source record.\n- \"EU leadership agendas may matter for India when they address trade, technology, security, connectivity, climate, or multilateral cooperation\" is generic analysis and is not supported by the supplied schedule extract.\n- The proposed GS2.9 and GS2.10 tagging is not adequately established: the unavailable schedule contains no verified substantive event, policy issue, or India-related connection.\n- The claim that this record is relevant as a current institutional-agenda document is only partly supported: the supplied source is unavailable, so the stated schedule period and publication date cannot be independently verified from the doc\n- The note's static definition of a weekly schedule as forward-looking and non-probative of outcomes is reasonable general reasoning, but it is not verified against the unavailable underlying schedule.\n- The proposed use line overstates UPSC relevance because the record supplies no verified meetings, policy areas, outcomes, or India–EU content; at most it supports a generic distinction between agenda and outcome evidence.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "body": "Primary enrichment for `src_e7bf625ee27066a82bcf208e77c09b871ca32c243397e9c329f20019c321b8ec` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.98\n- **checked at:** 2026-10-17T04:19:44Z\n\nFlagged claims:\n- \"Weekly schedule of President António Costa, 19–25 October 2026\" is not independently verified: the supplied primary page is unavailable, and search results did not establish that page’s publication or coverage dates.\n- \"The Council of the European Union published a weekly schedule\" is unsupported because the supplied extract is unavailable and its summary is unverified document data.\n- \"European Council presidency and agenda-setting in the European Union\" is only partly suitable: the treaty supports the President’s role in driving forward and preparing European Council work, while agenda-setting is principally attributed \n- \"A public institutional calendar is a transparency instrument\" is a reasonable analytical proposition, but the note provides no verified evidence that this specific publication improved transparency.\n- \"A weekly schedule may help coordinate high-level EU representation\" is speculative and unsupported by the unavailable schedule or an authoritative statement of such a function.\n- \"No individual appointment, venue, agenda item, or result appears in the supplied summary\" is not independently verifiable because the cited primary page is unavailable; absence from an unavailable page cannot be established.\n- \"The Council of the European Union’s record is a weekly schedule ... for 19–25 October 2026\" repeats an unverified date and document-identification claim.\n- \"If a future schedule listed a meeting with an Indian official ...\" is correctly labelled as an illustration, but it assumes a schedule would justify identifying a planned point of contact; that inference depends on the schedule’s authentic\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
         "labels": [
           "upsc-needs-review"
         ],
@@ -2079,18 +2259,18 @@
         "title": "Needs review: src_e7bf625ee27066a82bcf208e77c09b871ca32c243397e9c329f20019c321b8ec verification disagreed"
       },
       "note": {
-        "anchor": "The Council of the European Union is the EU institution associated with the supplied weekly schedule",
+        "anchor": "European Council presidency and agenda-setting in the European Union",
         "argumentsAgainst": [
-          "A weekly schedule is an agenda document, not evidence that every listed engagement occurred or that substantive decisions were reached.",
-          "The supplied official summary does not identify meetings, locations, policy subjects, outcomes, or India-specific commitments."
+          "A weekly schedule is an administrative forward look, not evidence of decisions, negotiated outcomes, or policy implementation.",
+          "The supplied official summary does not disclose the meetings, locations, subjects, or India-specific outcomes for 19–25 October 2026."
         ],
         "argumentsFor": [
-          "Publishing a schedule can improve institutional transparency by signalling the President’s planned public and diplomatic engagements.",
-          "A forward agenda can help coordinate follow-up among EU institutions and external partners, subject to later official records."
+          "Publishing a schedule can improve transparency about the President of the European Council’s planned institutional engagements.",
+          "A schedule may help coordinate high-level EU representation, but the supplied record does not establish the specific engagements."
         ],
         "background": [
-          "The official summary only establishes that the document is a weekly schedule for President António Costa covering 19–25 October 2026.",
-          "The accessible source extract does not establish the constitutional powers, appointment details, or institutional composition of the European Council; those static claims are therefore omitted."
+          "The Council of the European Union identifies the record as the weekly schedule of President António Costa for 19–25 October 2026.",
+          "The available official summary does not describe the constitutional powers of the European Council President or the contents of the planned programme."
         ],
         "codes": [
           "GS2.9",
@@ -2099,35 +2279,35 @@
         "editorialStatus": "source-backed",
         "id": "note_e7bf625ee27066a82bcf208e77c09b871ca32c243397e9c329f20019c321b8ec",
         "indiaImplications": [
-          "No India-specific implication can be established from the supplied official summary.",
-          "Analytically, EU leadership agendas may matter for India when they address trade, technology, security, connectivity, climate, or multilateral cooperation, but no such subject is identified here."
+          "The record alone does not establish any bilateral, trade, security, climate, migration, or connectivity implication for India.",
+          "For examination purposes, any India-related inference would require the actual schedule or a separate authoritative document identifying relevant engagements."
         ],
         "mainsPractice": [
           {
             "bodyDimensions": [
-              "Distinguish agenda transparency from policy outcomes.",
-              "Assess the limits of using a schedule as evidence of diplomatic priorities.",
-              "Explain how subsequent communiqués or meeting records would be needed for a firm India assessment."
+              "Distinguish transparency through publication of an institutional schedule from evidence of policy decisions.",
+              "Explain why agenda-setting and representation in regional organisations can matter for external relations.",
+              "Limit conclusions to the information actually disclosed in the official record."
             ],
-            "conclusionPrompt": "Conclude by balancing the transparency value of executive scheduling with the evidentiary limits of a forward-looking agenda.",
-            "counterPosition": "A schedule may still have signalling value because the choice and sequencing of engagements can indicate intended institutional attention, even without proving outcomes.",
-            "diagramSuggestion": "Flow: published schedule → planned engagement → meeting record/communiqué → verifiable policy outcome → India implications.",
-            "directive": "assess",
+            "conclusionPrompt": "Conclude by linking institutional transparency with evidence-based analysis in international relations.",
+            "counterPosition": "A published schedule may signal diplomatic priorities, but it cannot by itself prove an agreed position or outcome.",
+            "diagramSuggestion": "Institutional schedule → planned engagements → possible agenda-setting → verified outcomes; mark the final two links as requiring evidence.",
+            "directive": "discuss",
             "introChoices": [
-              "A public schedule is an instrument of transparency, but it is not equivalent to a policy decision.",
-              "The evidentiary value of an official agenda depends on separating planned activity from documented outcomes."
+              "A public institutional calendar is a transparency instrument, but its analytical value depends on the distinction between planned activity and recorded outcome.",
+              "The European Union’s external engagement should be assessed through both institutional roles and verified decisions, not through a schedule alone."
             ],
             "marks": 10,
             "skeleton": [
-              "A public schedule is an instrument of transparency, but it is not equivalent to a policy decision.",
-              "The evidentiary value of an official agenda depends on separating planned activity from documented outcomes.",
-              "Distinguish agenda transparency from policy outcomes.",
-              "Assess the limits of using a schedule as evidence of diplomatic priorities.",
-              "Explain how subsequent communiqués or meeting records would be needed for a firm India assessment.",
-              "A schedule may still have signalling value because the choice and sequencing of engagements can indicate intended institutional attention, even without proving outcomes.",
-              "Conclude by balancing the transparency value of executive scheduling with the evidentiary limits of a forward-looking agenda."
+              "A public institutional calendar is a transparency instrument, but its analytical value depends on the distinction between planned activity and recorded outcome.",
+              "The European Union’s external engagement should be assessed through both institutional roles and verified decisions, not through a schedule alone.",
+              "Distinguish transparency through publication of an institutional schedule from evidence of policy decisions.",
+              "Explain why agenda-setting and representation in regional organisations can matter for external relations.",
+              "Limit conclusions to the information actually disclosed in the official record.",
+              "A published schedule may signal diplomatic priorities, but it cannot by itself prove an agreed position or outcome.",
+              "Conclude by linking institutional transparency with evidence-based analysis in international relations."
             ],
-            "stem": "Assess the significance and limitations of publishing a weekly schedule for the President of a regional organisation, with reference to transparency and foreign-policy analysis.",
+            "stem": "A high-level institutional schedule is often treated as a foreign-policy signal. Discuss the analytical value and limitations of using such schedules to assess regional diplomatic priorities.",
             "timeMinutes": 7,
             "wordBudget": 150
           }
@@ -2143,21 +2323,47 @@
         "papers": [
           "GS2"
         ],
+        "pocketRead": {
+          "example": {
+            "heading": "Illustration",
+            "text": "If a future schedule listed a meeting with an Indian official, it could justify identifying a planned point of contact. It would not, without a communiqué or other evidence, justify claiming that a trade, security, or climate agreement had been reached."
+          },
+          "excerpt": "The Council of the European Union published a weekly schedule for President António Costa covering 19–25 October 2026; the supplied record does not disclose its engagements or outcomes.",
+          "question": {
+            "answer": "It supports only the limited claim that a weekly programme was published for 19–25 October 2026. It does not establish the programme’s contents, policy priorities, decisions, or India-related consequences.",
+            "prompt": "What can a UPSC answer responsibly infer from this record, and what must it avoid claiming?"
+          },
+          "sections": [
+            {
+              "heading": "What the record establishes",
+              "paragraphs": [
+                "The Council of the European Union’s official summary identifies a weekly schedule of President António Costa covering 19–25 October 2026. No individual appointment, venue, agenda item, or result appears in the supplied summary."
+              ]
+            },
+            {
+              "heading": "How to use it in analysis",
+              "paragraphs": [
+                "The record can support a narrow discussion of institutional transparency and the difference between planned engagements and verified outcomes. It cannot support claims about EU policy priorities or India–EU developments without the underlying schedule or a separate official document."
+              ]
+            }
+          ],
+          "title": "EU Council President’s weekly schedule: what the record establishes"
+        },
         "prelimsTraps": [
           {
             "correct": true,
             "explanation": "The official summary states that the schedule covers 19–25 October 2026.",
-            "statement": "The supplied record identifies the schedule period as 19–25 October 2026."
+            "statement": "The record identifies the schedule period as 19–25 October 2026."
           },
           {
             "correct": false,
-            "explanation": "The source says only that this is a weekly schedule; it does not establish that the document records completed meetings.",
-            "statement": "The record proves that all engagements listed in the schedule were completed."
+            "explanation": "The supplied official summary does not state that the schedule contains a meeting with India or any India-related agenda.",
+            "statement": "The record establishes an India-related engagement by President António Costa."
           },
           {
             "correct": false,
-            "explanation": "The official summary does not identify any India-related meeting, agreement, or policy outcome.",
-            "statement": "The supplied record establishes an India-specific commitment by the European Union."
+            "explanation": "A schedule identifies planned activity; the supplied record does not establish decisions or outcomes.",
+            "statement": "The record proves that the European Union adopted policy decisions during the scheduled week."
           }
         ],
         "priority": 64,
@@ -2173,35 +2379,35 @@
         "publishedAt": "2026-10-16T20:30:00Z",
         "publisherId": "eu-council",
         "publisherName": "Council of the European Union",
-        "recallCard": "Council of the European Union record: President António Costa’s weekly schedule covers 19–25 October 2026. Treat it as a forward-looking transparency document, not proof of completed engagements, decisions, or India-specific outcomes.",
+        "recallCard": "The Council of the European Union’s record is a weekly schedule of President António Costa for 19–25 October 2026. It supports only the existence and period of the schedule; its engagements, decisions, priorities, and India implications remain unestablished.",
         "reusableAnchors": [],
         "sourceContentHash": "96a8b11b58d60adef8c2a5dcaf64ba48aefcb73e404be6bca33615ca06850701",
         "sourceId": "src_e7bf625ee27066a82bcf208e77c09b871ca32c243397e9c329f20019c321b8ec",
         "sourceTitle": "Weekly schedule of President António Costa",
         "sourceUrl": "https://www.consilium.europa.eu/en/press/press-releases/2026/10/16/weekly-schedule-of-president-antonio-costa/",
-        "staticDefinition": "A weekly schedule is a forward-looking institutional agenda that identifies planned engagements; by itself, it does not establish that those engagements occurred or produced decisions.",
-        "use": "Use the distinction between agenda-setting and outcome evidence in answers on EU institutional transparency, diplomatic signalling, and India–EU engagement. Do not attribute specific meetings, policy areas, or results to this record.",
+        "staticDefinition": "A weekly institutional schedule is a publicly released forward-looking record of planned official engagements. In this source-bound note, its existence and period are established, but the institution’s powers and the schedule’s contents are not.",
+        "use": "Use the distinction between planned engagements and verified outcomes to frame answers on diplomatic transparency, regional organisations, and evidence-based foreign-policy analysis.",
         "wayForward": [
-          "Read the underlying schedule when available rather than relying on the title alone.",
-          "Verify completed engagements through official meeting records, statements, or communiqués.",
-          "Separate institutional analysis from claims about specific policy outcomes or India-related consequences."
+          "Consult the complete official schedule before identifying meetings, venues, subjects, or policy signals.",
+          "Use official communiqués or outcome documents to establish decisions and commitments.",
+          "Avoid inferring India-specific consequences unless an authoritative source records an India-related engagement or outcome."
         ],
-        "whyInNews": "The Council of the European Union published a record titled “Weekly schedule of President António Costa” on 16 October 2026. Its official summary states that the schedule covers 19–25 October 2026, making it relevant as a current institutional-agenda document. The supplied extract does not disclose the engagements them"
+        "whyInNews": "The Council of the European Union published a weekly schedule of President António Costa covering 19–25 October 2026. The supplied official summary establishes the schedule’s existence and period, but not its individual engagements or outcomes."
       },
       "sourceId": "src_e7bf625ee27066a82bcf208e77c09b871ca32c243397e9c329f20019c321b8ec",
       "status": "disagreed",
       "verification": {
         "agrees": false,
-        "confidence": 0.99,
+        "confidence": 0.98,
         "flagged_claims": [
-          "\"The Council of the European Union is the EU institution associated with the supplied weekly schedule\" is incorrect: António Costa is President of the European Council, a separate institution from the Council of the European Union.[1][5][8]",
-          "\"The Council of the European Union published a record titled...\" is institutionally misattributed: the available official material identifies Costa as President of the European Council, not the Council of the European Union.[1][2][8][9]",
-          "\"A forward agenda can help coordinate follow-up among EU institutions and external partners\" is a plausible analytical inference, not established by the unavailable source record.",
-          "\"EU leadership agendas may matter for India when they address trade, technology, security, connectivity, climate, or multilateral cooperation\" is generic analysis and is not supported by the supplied schedule extract.",
-          "The proposed GS2.9 and GS2.10 tagging is not adequately established: the unavailable schedule contains no verified substantive event, policy issue, or India-related connection.",
-          "The claim that this record is relevant as a current institutional-agenda document is only partly supported: the supplied source is unavailable, so the stated schedule period and publication date cannot be independently verified from the doc",
-          "The note's static definition of a weekly schedule as forward-looking and non-probative of outcomes is reasonable general reasoning, but it is not verified against the unavailable underlying schedule.",
-          "The proposed use line overstates UPSC relevance because the record supplies no verified meetings, policy areas, outcomes, or India–EU content; at most it supports a generic distinction between agenda and outcome evidence."
+          "\"Weekly schedule of President António Costa, 19–25 October 2026\" is not independently verified: the supplied primary page is unavailable, and search results did not establish that page’s publication or coverage dates.",
+          "\"The Council of the European Union published a weekly schedule\" is unsupported because the supplied extract is unavailable and its summary is unverified document data.",
+          "\"European Council presidency and agenda-setting in the European Union\" is only partly suitable: the treaty supports the President’s role in driving forward and preparing European Council work, while agenda-setting is principally attributed ",
+          "\"A public institutional calendar is a transparency instrument\" is a reasonable analytical proposition, but the note provides no verified evidence that this specific publication improved transparency.",
+          "\"A weekly schedule may help coordinate high-level EU representation\" is speculative and unsupported by the unavailable schedule or an authoritative statement of such a function.",
+          "\"No individual appointment, venue, agenda item, or result appears in the supplied summary\" is not independently verifiable because the cited primary page is unavailable; absence from an unavailable page cannot be established.",
+          "\"The Council of the European Union’s record is a weekly schedule ... for 19–25 October 2026\" repeats an unverified date and document-identification claim.",
+          "\"If a future schedule listed a meeting with an Indian official ...\" is correctly labelled as an illustration, but it assumes a schedule would justify identifying a planned point of contact; that inference depends on the schedule’s authentic"
         ],
         "verificationVersion": 2
       }
