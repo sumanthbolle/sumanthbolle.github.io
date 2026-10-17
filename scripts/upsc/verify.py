@@ -21,7 +21,8 @@ from scripts.upsc.publish import _read_json, _write_json
 CONFIDENCE_FLOOR = 0.7
 REVIEW_LABEL = "upsc-needs-review"
 TITLE_PREFIX = "Needs review:"
-UNAVAILABLE_TITLE_PREFIX = "Verification unavailable:"
+UNAVAILABLE_TITLE_PREFIX = "Verification unavailable:"  # legacy title, still recognised
+HOLDS_TITLE_PREFIX = "Verification holds:"
 UNAVAILABLE_CLAIM = "Verification was unavailable; retry before publishing"
 STATUS_DISAGREED = "disagreed"
 STATUS_UNAVAILABLE = "unavailable"
@@ -85,10 +86,13 @@ def parse_verification(payload: Mapping[str, Any]) -> dict[str, Any]:
     if not isinstance(flagged, list) or not all(isinstance(row, str) for row in flagged):
         raise ValueError("verification must include a list of flagged claims")
     claims = [row[:240] for row in flagged]
+    advisory = data.get("advisory_notes")
+    advisory = [row[:240] for row in advisory if isinstance(row, str) and row] if isinstance(advisory, list) else []
     return {
         "agrees": data.get("agrees") is True,
         "confidence": confidence,
         "flagged_claims": [row for row in claims if row],
+        "advisory_notes": advisory,
         "verificationVersion": 2,
     }
 
@@ -267,35 +271,51 @@ def record_verification_stats(
     return payload
 
 
-def unavailable_issue_payload(rows: Sequence[Mapping[str, Any]], now: str) -> dict[str, Any]:
-    """One issue for every note the verifier could not check, instead of one per note."""
+def holds_issue_payload(rows: Sequence[Mapping[str, Any]], now: str) -> dict[str, Any]:
+    """One issue for every held note (rejected or unchecked), updated in place each run."""
     ordered = sorted(rows, key=lambda row: str(row.get("sourceId") or ""))
-    reasons: dict[str, int] = {}
-    for row in ordered:
-        reason = str(row.get("error") or "no error recorded")
-        reasons[reason] = reasons.get(reason, 0) + 1
-    reason_lines = "\n".join(
-        f"- {count} × {reason}" for reason, count in sorted(reasons.items(), key=lambda kv: -kv[1])
-    )
-    note_lines = "\n".join(
-        f"- `{row.get('sourceId')}` — {str(row.get('anchor') or '').strip() or '(no anchor)'} "
-        f"(last attempt {row.get('checkedAt') or 'unknown'})"
-        for row in ordered
-    )
+    rejected = [row for row in ordered if held_status(row) == STATUS_DISAGREED]
+    unchecked = [row for row in ordered if held_status(row) == STATUS_UNAVAILABLE]
+
+    def line(row: Mapping[str, Any]) -> str:
+        anchor = str(row.get("anchor") or "").strip() or "(no anchor)"
+        if len(anchor) > 110:
+            anchor = anchor[:107].rstrip() + "..."
+        return f"- `{str(row.get('sourceId'))[:20]}…` {anchor} (checked {row.get('checkedAt') or 'unknown'})"
+
+    def first_claim(row: Mapping[str, Any]) -> str:
+        claims = (row.get("verification") or {}).get("flagged_claims") or []
+        return f"\n  - {str(claims[0])[:200]}" if claims else ""
+
+    sections = []
+    if rejected:
+        sections.append(
+            f"### Rejected by the verifier ({len(rejected)})\n"
+            "A specific fact or the syllabus tag was judged wrong. The note stays out of "
+            "the Pocket feed until the source changes and a regenerated note passes.\n\n"
+            + "\n".join(line(row) + first_claim(row) for row in rejected)
+        )
+    if unchecked:
+        reasons: dict[str, int] = {}
+        for row in unchecked:
+            reason = str(row.get("error") or "no error recorded")
+            reasons[reason] = reasons.get(reason, 0) + 1
+        sections.append(
+            f"### Not yet checked ({len(unchecked)})\n"
+            "The verifier did not return a usable result; retried automatically.\n\n"
+            + "\n".join(f"- {count} × {reason}" for reason, count in sorted(reasons.items(), key=lambda kv: -kv[1]))
+            + "\n\n" + "\n".join(line(row) for row in unchecked)
+        )
     return {
-        "title": f"{UNAVAILABLE_TITLE_PREFIX} {len(ordered)} enriched notes waiting for a second-pass check",
+        "title": (f"{HOLDS_TITLE_PREFIX} {len(ordered)} notes held "
+                  f"({len(rejected)} rejected, {len(unchecked)} not yet checked)"),
         "labels": [REVIEW_LABEL],
         "body": (
-            "The second-pass verifier did not return a usable result for these notes, so they are "
-            "held rather than published. This is a pipeline failure, not a factual disagreement; "
-            "the publisher retries each note automatically on its next run.\n\n"
-            f"- **notes held:** {len(ordered)}\n"
-            f"- **last updated:** {now}\n\n"
-            f"Failure reasons:\n{reason_lines}\n\n"
-            f"Notes:\n{note_lines}\n\n"
-            "The local Worker log in the run that held them shows the provider response. "
-            "This issue closes itself once every note has either passed or been re-filed as a "
-            "real disagreement (`data/upsc/needs-review.json`, `status`)."
+            "Enriched notes held out of the publish path by the second-pass check. "
+            "Nothing here needs action unless a rejection looks wrong; the full verdicts are in "
+            "`data/upsc/needs-review.json`. This issue is edited in place each run and closes "
+            "itself when the queue is empty.\n\n"
+            f"Last updated: {now or 'unknown'}\n\n" + "\n\n".join(sections)
         ),
     }
 
@@ -305,9 +325,9 @@ def reconcile_review_issues(
     open_issues: Iterable[Mapping[str, Any]],
     now: str = "",
 ) -> dict[str, Any]:
-    """Per-note issues only for real disagreements; unavailable checks share one issue."""
-    open_by_source: dict[str, int] = {}
-    open_unavailable: Optional[int] = None
+    """All holds share one issue; legacy per-note and "unavailable" issues are closed."""
+    per_note: dict[str, int] = {}
+    shared: list[int] = []
     for issue in open_issues:
         if not isinstance(issue, Mapping) or issue.get("pull_request"):
             continue
@@ -316,59 +336,39 @@ def reconcile_review_issues(
             number = int(issue.get("number"))
         except (TypeError, ValueError):
             continue
-        if title.startswith(UNAVAILABLE_TITLE_PREFIX):
-            if open_unavailable is None:
-                open_unavailable = number
-            continue
-        if not title.startswith(TITLE_PREFIX):
-            continue
-        source_id = title[len(TITLE_PREFIX):].split(" verification disagreed", 1)[0].strip()
-        open_by_source[source_id] = number
-    create = []
-    update = []
-    close = []
-    disagreed = {}
-    unavailable = []
-    for item in held:
-        source_id = str(item.get("sourceId") or "")
-        if not source_id:
-            continue
-        if held_status(item) == STATUS_UNAVAILABLE:
-            unavailable.append(item)
-        else:
-            disagreed[source_id] = item
-    for source_id, item in disagreed.items():
-        if source_id in open_by_source:
-            continue
-        create.append(item.get("issue") or review_issue_payload(
-            source_id, item.get("verification") or {}, str(item.get("checkedAt") or "")
-        ))
-    unavailable_ids = {str(item.get("sourceId")) for item in unavailable}
-    for source_id, number in open_by_source.items():
-        if source_id in disagreed:
-            continue
-        if source_id in unavailable_ids:
-            comment = (
-                f"Source `{source_id}` was never checked: the verifier was unavailable, so this "
-                "was not a disagreement. It is tracked in the shared "
-                f"\"{UNAVAILABLE_TITLE_PREFIX}\" issue and retried automatically."
-            )
-        else:
-            comment = f"Source `{source_id}` passed verification. Closing the review hold."
+        if title.startswith(HOLDS_TITLE_PREFIX) or title.startswith(UNAVAILABLE_TITLE_PREFIX):
+            shared.append(number)
+        elif title.startswith(TITLE_PREFIX):
+            source_id = title[len(TITLE_PREFIX):].split(" verification disagreed", 1)[0].strip()
+            per_note[source_id] = number
+    rows = [item for item in held if str(item.get("sourceId") or "")]
+    held_ids = {str(item.get("sourceId")) for item in rows}
+    create: list[dict[str, Any]] = []
+    update: list[dict[str, Any]] = []
+    close: list[dict[str, Any]] = []
+    for source_id, number in sorted(per_note.items()):
+        comment = (
+            f"Still held; now tracked in the shared \"{HOLDS_TITLE_PREFIX}\" issue instead of one issue per note."
+            if source_id in held_ids else
+            f"Source `{source_id}` passed verification. Closing the review hold."
+        )
         close.append({"number": number, "sourceId": source_id, "comment": comment})
-    stamp = now or max((str(item.get("checkedAt") or "") for item in unavailable), default="")
-    if unavailable:
-        payload = unavailable_issue_payload(unavailable, stamp)
-        if open_unavailable is None:
+    # Prefer the newest shared issue; close any extras.
+    shared.sort(reverse=True)
+    keep = shared[0] if shared else None
+    for number in shared[1:]:
+        close.append({"number": number, "sourceId": "",
+                      "comment": f"Superseded by #{keep}."})
+    stamp = now or max((str(item.get("checkedAt") or "") for item in rows), default="")
+    if rows:
+        payload = holds_issue_payload(rows, stamp)
+        if keep is None:
             create.append(payload)
         else:
-            update.append({**payload, "number": open_unavailable})
-    elif open_unavailable is not None:
-        close.append({
-            "number": open_unavailable,
-            "sourceId": "",
-            "comment": "Every held note has now been verified. Closing.",
-        })
+            update.append({**payload, "number": keep})
+    elif keep is not None:
+        close.append({"number": keep, "sourceId": "",
+                      "comment": "Every held note has now been verified or withdrawn. Closing."})
     return {"create": create, "close": close, "update": update}
 
 

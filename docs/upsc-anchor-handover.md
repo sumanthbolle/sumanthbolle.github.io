@@ -133,9 +133,13 @@ does not contain the complete publication and is never synced to a server.
    - A note whose second-pass check could not be completed is held with
      `status: "unavailable"` and the reason in `error` in
      `data/upsc/needs-review.json`; the publisher retries it on its next run.
-     These share one `Verification unavailable:` issue. A per-note
-     `Needs review:` issue is opened only for `status: "disagreed"`, where the
-     verifier actually answered.
+     Every held note, rejected (`status: "disagreed"`) or not yet checked,
+     is listed in one `Verification holds:` issue that is edited in place and
+     closes when the queue is empty. No per-note issues are opened.
+   - The verifier blocks only on factual errors (a wrong date, number, name,
+     institution, law or ruling; a fabricated fact; wrong anchor or codes; no
+     UPSC connection). Analysis and framing concerns go in
+     `verification.advisory_notes` and do not hold the note.
    - If every note is held as unavailable, read the "Local Worker log" step of
      the run: a `UPSC verify contract failed` line shows the finish reason and
      the start of the provider reply. `finish_reason: "length"` means the
