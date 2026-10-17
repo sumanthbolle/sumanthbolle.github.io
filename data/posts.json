@@ -1,5 +1,38 @@
 [
   {
+    "id": 98,
+    "title": "H2O-Lightning-4B reaches 29 ms median decision latency",
+    "excerpt": "H2O-Lightning-4B ranked first among 104 open-weight systems on JevBench as of October 7, 2026. It combines 29 ms median latency with an estimated cost of $0.021 per 1,000 decisions, making it a practical candidate for routing, moderation, and other fixed-choice checks.",
+    "readTime": "3 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-h2o-lightning-4b-reaches-29-ms-median-decision-latency-1792220977534",
+    "date": "Oct 17, 2026",
+    "dateISO": "2026-10-17T07:09:37Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "H2O-Lightning-4B Ranks First on JevBench",
+        "url": "https://h2o.ai/company/press-media/2026/h2o-lightning-4b-ranks-first-on-jevbench"
+      },
+      {
+        "title": "tech-brief: October 15, 2026 AI news",
+        "url": "https://github.com/BaptisteBlouin/tech-brief/blob/main/news/en/2026-10-15.md"
+      },
+      {
+        "title": "tech-brief: October 14, 2026 AI news",
+        "url": "https://github.com/BaptisteBlouin/tech-brief/blob/main/news/en/2026-10-14.md"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>H2O.ai reported on October 12, 2026 that H2O-Lightning-4B ranked first on JevBench v1.6.1 among 104 open-weight systems. The benchmark gives equal weight to intelligence, calibration, speed, and cost.</p>\n<p>The model scored 72.5 out of 100. The closed Jev reference scored 71.5. H2O-Lightning-4B reached 90 for calibration, 92.6 for speed, 60 for intelligence, and 60 for cost.</p>\n<p>The result matters for applications that need a decision rather than a paragraph. Examples include selecting a tool, rejecting an unsafe request, routing a ticket, or deciding whether retrieved evidence is sufficient.</p>\n<h2>How it works</h2>\n<p>H2O-Lightning-4B is an open-weight decision model. Its intended output is a structured choice or score, not a long generated response. That lets an application use the model as a control layer before invoking a larger language model.</p>\n<p>The measured median latency is 29 milliseconds per decision. H2O.ai estimates a cost of $0.021 per 1,000 decisions. The company also reports roughly one-third the latency and two-thirds the cost of the Jev reference system.</p>\n<p>A useful pattern is to place the model before expensive work. Pass it a bounded set of actions and require one valid label. The selected label can then control retrieval, tool use, escalation, or generation. Keep the action set small and explicit so the output maps directly to code.</p>\n<pre><code class=\"language-python\">decision = lightning_4b.classify({\n    &quot;question&quot;: user_question,\n    &quot;options&quot;: [&quot;answer&quot;, &quot;retrieve_more&quot;, &quot;refuse&quot;]\n})\n\nif decision.label == &quot;retrieve_more&quot;:\n    run_search()\nelif decision.label == &quot;refuse&quot;:\n    deny_request()\nelse:\n    generate_answer()</code></pre>\n<h2>Where it breaks</h2>\n<p>JevBench is not a general software-engineering benchmark. Its composite score mixes four dimensions, and H2O-Lightning-4B\u2019s intelligence score was 60. That makes it a poor default for open-ended coding, long explanations, or tasks that need broad world knowledge.</p>\n<p>Calibration was stronger than intelligence: the model scored 90 for calibration. This supports using confidence thresholds, but it does not remove the need for a fallback. A production system should log the input, selected label, confidence, downstream outcome, and human correction rate.</p>\n<p>The 29 ms figure is a median, not a tail-latency guarantee. Measure p95 and p99 on the target deployment. Also test adversarial wording, unfamiliar labels, missing context, and cases where none of the available actions is correct.</p>\n<ul>\n<li>Do not treat the benchmark as proof of general reasoning ability.</li>\n<li>The intelligence score was 60, below the model\u2019s speed and calibration scores.</li>\n<li>The reported latency and cost depend on hardware, batching, quantization, serving software, and request shape.</li>\n</ul>\n<h2>How to use it</h2>\n<p>Use H2O-Lightning-4B for high-volume gates, not as the final answer generator. A retrieval system can ask it whether the current documents support an answer. An agent can ask it whether a tool call is needed. A moderation service can use it as a first pass before a slower policy review.</p>\n<p>Build the evaluation set from real production traces. Include positive cases, ambiguous cases, and cases with no valid action. Compare the model\u2019s decision against the eventual outcome, not only against an annotation. The key question is whether the gate reduces expensive or unsafe work without increasing false refusals.</p>\n<p>The release is most useful when the decision boundary is explicit. If the application cannot describe its valid actions and failure fallback, a 4B decision model will not fix that design problem.</p>\n<ul>\n<li>Start with a narrow classifier such as <code>answer</code>, <code>retrieve_more</code>, and <code>refuse</code>.</li>\n<li>Compare it with a rule-based baseline and your existing model on a labeled trace sample.</li>\n<li>Reject low-confidence decisions and send them to a larger model or a human reviewer.</li>\n<li>Measure p50, p95, p99 latency, cost per decision, calibration, and downstream task success.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Test H2O-Lightning-4B as a low-latency gate before retrieval, tools, or large-model generation.</li>\n<li>Use confidence thresholds and a fallback because the benchmark intelligence score was 60.</li>\n<li>Measure tail latency and real cost on your serving stack; 29 ms is a reported median.</li>\n<li>Evaluate decisions against production outcomes, including ambiguous and no-valid-action cases.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://h2o.ai/company/press-media/2026/h2o-lightning-4b-ranks-first-on-jevbench\" target=\"_blank\" rel=\"noopener\">H2O-Lightning-4B Ranks First on JevBench</a> \u2014 h2o.ai</li>\n<li><a href=\"https://github.com/BaptisteBlouin/tech-brief/blob/main/news/en/2026-10-15.md\" target=\"_blank\" rel=\"noopener\">tech-brief: October 15, 2026 AI news</a> \u2014 github.com</li>\n<li><a href=\"https://github.com/BaptisteBlouin/tech-brief/blob/main/news/en/2026-10-14.md\" target=\"_blank\" rel=\"noopener\">tech-brief: October 14, 2026 AI news</a> \u2014 github.com</li>\n</ul>"
+  },
+  {
     "id": 97,
     "title": "Building ServiceNow Apps with the Now SDK and Fluent (TypeScript, Source-Control-First)",
     "excerpt": "ServiceNow now ships a code-first way to build apps: define tables, business rules, script includes and ACLs as TypeScript using Fluent, then build and install from your own machine. A practical tour grounded in the official sdk-examples repo.",
