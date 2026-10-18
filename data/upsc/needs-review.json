@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-18T04:25:30Z",
-  "itemCount": 16,
+  "generatedAt": "2026-10-18T08:55:59Z",
+  "itemCount": 17,
   "items": [
     {
       "anchor": "Targeted public support for equitable access to doctoral education",
@@ -171,6 +171,197 @@
         "flagged_claims": [
           "Verification was unavailable; retry before publishing"
         ]
+      }
+    },
+    {
+      "anchor": "GS3.8 Internal security: extremism, external state and non-state actors; GS3.9 Security: communicati",
+      "checkedAt": "2026-10-18T08:55:59Z",
+      "codes": [
+        "GS3.8",
+        "GS3.9",
+        "GS2.9"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_5a4268916db7ca44d936e14c06673a77826202da841ce4904d596cdd63165c62` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.96\n- **checked at:** 2026-10-18T08:55:59Z\n\nFlagged claims:\n- “Proposed codes: GS3.8, GS3.9, GS2.9” contains a wrong or unsupported syllabus tagging choice: GS2.9 is not a clear fit for this internal-security narcotics case.\n- “The official summary reports” is inaccurate: the supplied PIB text contains the detailed release, not merely an official summary.\n- “Four persons were arrested under the NDPS Act” is supported, but the note’s source-backed evidence locator incorrectly identifies the evidence as “officialSummary.”\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_5a4268916db7ca44d936e14c06673a77826202da841ce4904d596cdd63165c62",
+        "title": "Needs review: src_5a4268916db7ca44d936e14c06673a77826202da841ce4904d596cdd63165c62 verification disagreed"
+      },
+      "note": {
+        "anchor": "GS3.8 Internal security: extremism, external state and non-state actors; GS3.9 Security: communicati",
+        "argumentsAgainst": [
+          "A seizure and arrests disrupt one network but do not by themselves establish that the wider maritime trafficking problem has been eliminated.",
+          "The source summary does not provide evidence on conviction outcomes, the drug’s origin, or the effectiveness of wider coastal surveillance."
+        ],
+        "argumentsFor": [
+          "Intelligence-led enforcement can prevent narcotics from reaching an intended maritime transfer route.",
+          "Network-focused action can target organisers and logistics rather than only intercepting individual couriers.",
+          "Coastal interdiction has implications for transnational organised crime and India–Sri Lanka security cooperation."
+        ],
+        "background": [
+          "Synthetic-drug trafficking can use coastal storage, transport and mid-sea transfer to exploit maritime spaces and complicate detection.",
+          "The Directorate of Revenue Intelligence is a central enforcement institution whose action in this case was reported under the Narcotic Drugs and Psychotropic Substances Act, 1985.",
+          "Crystal methamphetamine is a synthetic narcotic substance; the supplied record does not provide a fuller pharmacological definition or explain its source."
+        ],
+        "codes": [
+          "GS3.8",
+          "GS3.9",
+          "GS2.9"
+        ],
+        "editorialStatus": "source-backed",
+        "id": "note_5a4268916db7ca44d936e14c06673a77826202da841ce4904d596cdd63165c62",
+        "indiaImplications": [
+          "India’s coastline may be used as a logistics corridor for transnational narcotics trafficking, requiring coordination among intelligence, customs, police and coastal-security agencies.",
+          "The suspected Sri Lanka route gives the issue a neighbourhood-security dimension and may require timely information-sharing and coordinated maritime enforcement.",
+          "Drug trafficking can generate illicit finance and organised-crime linkages; however, the supplied record does not establish such wider linkages in this case."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Intelligence-led detection and interdiction",
+              "Coastal surveillance and maritime law-enforcement coordination",
+              "India–Sri Lanka cooperation against transnational organised crime",
+              "Due process, investigation quality and prosecution outcomes"
+            ],
+            "conclusionPrompt": "Conclude with a balanced strategy combining intelligence, coastal coordination, financial investigation, regional cooperation and prevention.",
+            "counterPosition": "Enforcement action is necessary but insufficient if trafficking networks adapt, demand persists and prosecution or rehabilitation gaps remain.",
+            "diagramSuggestion": "Intelligence input → coastal storage → transport/logistics → mid-sea transfer → cross-border trafficking; place agency coordination across each stage.",
+            "directive": "discuss",
+            "introChoices": [
+              "Use the case as an illustration of how maritime routes can connect local logistics to transnational narcotics trafficking.",
+              "Frame the issue as an internal-security challenge at the intersection of organised crime, coastal security and neighbourhood cooperation."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "Use the case as an illustration of how maritime routes can connect local logistics to transnational narcotics trafficking.",
+              "Frame the issue as an internal-security challenge at the intersection of organised crime, coastal security and neighbourhood cooperation.",
+              "Intelligence-led detection and interdiction",
+              "Coastal surveillance and maritime law-enforcement coordination",
+              "India–Sri Lanka cooperation against transnational organised crime",
+              "Due process, investigation quality and prosecution outcomes",
+              "Enforcement action is necessary but insufficient if trafficking networks adapt, demand persists and prosecution or rehabilitation gaps remain.",
+              "Conclude with a balanced strategy combining intelligence, coastal coordination, financial investigation, regional cooperation and prevention."
+            ],
+            "stem": "Discuss how intelligence-led coastal enforcement can address transnational narcotics trafficking while avoiding an overreliance on seizures alone.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2324872",
+            "text": "DRI seizes massive 137 kg consignment of crystal meth; busts coastal drug trafficking network; 4 arrested in Tamil Nadu",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS3",
+          "GS2"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Illustration",
+            "text": "If intelligence identifies a narcotics consignment being stored near a coast for onward maritime transfer, an integrated response would link surveillance, search, seizure, investigation of organisers and cross-border information-sharing. This is a hypothetical illustration, not an account of an additional event."
+          },
+          "excerpt": "On 16–17 October 2026, DRI officers seized 137 kg of suspected crystal meth in Nagapattinam and arrested four under the NDPS Act, according to the release.",
+          "question": {
+            "answer": "The case illustrates that coastal drug trafficking requires more than intercepting a shipment: intelligence must lead to action against storage, transport and organising functions, while maritime and neighbourhood cooperation can reduce route displacement. The source does not establish whether the network’s wider finances or overseas partners were identified.",
+            "prompt": "How does this case illustrate the limits and value of intelligence-led coastal enforcement?"
+          },
+          "sections": [
+            {
+              "heading": "An intelligence-led coastal interception",
+              "paragraphs": [
+                "On 16–17 October 2026, the Directorate of Revenue Intelligence reported seizing 137 kg of crystal meth from a coastal village in Nagapattinam district. The release said the consignment was suspected to be intended for Sri Lanka through a mid-sea transfer.",
+                "The practical mechanism was targeted surveillance followed by recovery of the consignment and action against persons linked to organising, transport, storage and logistics. The source reported four arrests under the NDPS Act, 1985."
+              ]
+            },
+            {
+              "heading": "Security significance and evidentiary limits",
+              "paragraphs": [
+                "The case connects local coastal logistics with a suspected cross-border narcotics route, making it relevant to internal security and India–Sri Lanka cooperation. Disrupting the shipment can prevent its immediate movement into illicit circulation.",
+                "A seizure should not be mistaken for proof that the entire trafficking ecosystem has been dismantled. The supplied record does not establish the drug’s origin, the identity of overseas actors, prosecution results or long-term deterrence."
+              ]
+            }
+          ],
+          "title": "DRI reports coastal crystal-meth seizure and arrests in Tamil Nadu"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The official summary explicitly states that the title concerns DRI, 137 kg of crystal meth, a coastal drug-trafficking network and four arrests in Tamil Nadu.",
+            "statement": "The official summary reports a 137 kg crystal-meth seizure and four arrests in Tamil Nadu."
+          },
+          {
+            "correct": false,
+            "explanation": "The supplied official summary does not state the drug’s country of origin.",
+            "statement": "The official summary establishes that the seized crystal meth originated in Myanmar."
+          },
+          {
+            "correct": false,
+            "explanation": "The supplied official summary does not state that the four accused were convicted.",
+            "statement": "The official summary says four persons were convicted under the NDPS Act."
+          },
+          {
+            "correct": false,
+            "explanation": "The official summary identifies the suspected route as involving Sri Lanka but does not establish successful export or arrival there.",
+            "statement": "The official summary proves that the consignment reached Sri Lanka."
+          }
+        ],
+        "priority": 64,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 45,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 50
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-10-18T07:57:49Z",
+        "publisherId": "pib",
+        "publisherName": "Press Information Bureau",
+        "recallCard": "DRI’s official summary reports a 137 kg crystal-meth seizure, a busted coastal trafficking network and four arrests in Tamil Nadu. Use it to discuss intelligence-led interdiction, coastal security and India–Sri Lanka cooperation, while noting that origin, overseas partners and prosecution outcomes remain unestablished.",
+        "reusableAnchors": [],
+        "sourceContentHash": "906a09c585ac0b2aadb76a2772b3bad445e215abf09d5842de9226ee6034563c",
+        "sourceId": "src_5a4268916db7ca44d936e14c06673a77826202da841ce4904d596cdd63165c62",
+        "sourceTitle": "DRI seizes massive 137 kg consignment of crystal meth; busts coastal drug trafficking network; 4 arrested in Tamil Nadu",
+        "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2324872",
+        "staticDefinition": "Coastal drug trafficking is the movement of prohibited narcotics through coastal locations and maritime routes, often involving storage, transport and onward transfer. In this case, the official title identifies a DRI seizure and a busted coastal network, but the supplied official summary does not provide a wider legal",
+        "use": "Use as an internal-security illustration of how transnational narcotics networks can exploit coastal logistics and how intelligence-led action may disrupt multiple network functions.",
+        "wayForward": [
+          "Strengthen intelligence fusion among customs, DRI, coastal police and maritime-security agencies, with clear procedures for rapid joint action.",
+          "Combine physical coastal surveillance with investigation of storage, transport, organisers and suspected illicit proceeds.",
+          "Deepen timely operational cooperation with Sri Lanka against maritime narcotics trafficking while preserving due process.",
+          "Assess enforcement through prosecution quality and network disruption, not seizure volume alone."
+        ],
+        "whyInNews": "The Press Information Bureau’s official summary reports that the Directorate of Revenue Intelligence seized 137 kg of crystal meth and busted a coastal drug-trafficking network, with four arrests in Tamil Nadu. The issue is relevant to internal security because the title links narcotics enforcement with a suspected coa"
+      },
+      "sourceId": "src_5a4268916db7ca44d936e14c06673a77826202da841ce4904d596cdd63165c62",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The source text supports 16–17 October 2026 as the operation dates and 18 October 2026 as the release date; the note should distinguish these from publication metadata.",
+          "“Crystal meth” is described in the release as suspected methamphetamine, so definitive wording should be qualified where referring to the seized substance.",
+          "The note’s claims about drug trafficking generating illicit finance, route displacement, demand and rehabilitation are analytical extensions, not findings established by this case.",
+          "“Dismantled” may overstate the evidence; the release says the operation exposed the network, while long-term disruption is not demonstrated.",
+          "The syllabus relevance is strongest under GS3 internal security, organised crime, border/coastal security and transnational crime; GS2.9 is not clearly justified by the supplied mapping.",
+          "GS3.9 is truncated in the proposed anchor, so its exact syllabus fit cannot be assessed from the supplied text.",
+          "India–Sri Lanka cooperation is a reasonable analytical implication, but the release does not report actual bilateral coordination or information-sharing.",
+          "The pocketRead headline and deck are broadly supported, but “reports” or “suspected” is preferable to presenting the substance identification as finally established."
+        ],
+        "agrees": false,
+        "confidence": 0.96,
+        "flagged_claims": [
+          "“Proposed codes: GS3.8, GS3.9, GS2.9” contains a wrong or unsupported syllabus tagging choice: GS2.9 is not a clear fit for this internal-security narcotics case.",
+          "“The official summary reports” is inaccurate: the supplied PIB text contains the detailed release, not merely an official summary.",
+          "“Four persons were arrested under the NDPS Act” is supported, but the note’s source-backed evidence locator incorrectly identifies the evidence as “officialSummary.”"
+        ],
+        "verificationVersion": 2
       }
     },
     {
