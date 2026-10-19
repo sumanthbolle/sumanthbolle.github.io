@@ -1,5 +1,75 @@
 [
   {
+    "id": 102,
+    "title": "Gemini 4 Argon adds a shared 1,048,576-token context window",
+    "excerpt": "Google released Gemini 4 Argon for developers on October 13, 2026. Its main engineering change is a shared 1,048,576-token context window for input, internal reasoning, and output, with a reported 77.9% score on DeepSWE v1.1.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-gemini-4-argon-adds-a-shared-1-048-576-token-context-window-1792396982157",
+    "date": "Oct 19, 2026",
+    "dateISO": "2026-10-19T08:03:02Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Gemini 4 Argon: Built to solve your hardest problems",
+        "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-argon/"
+      },
+      {
+        "title": "Gemini 4 Argon is now available for developers",
+        "url": "https://blog.google/innovation-and-ai/technology/developers-tools/build-with-gemini-4-argon/"
+      },
+      {
+        "title": "Developing Gemini 4 Argon responsibly and safely",
+        "url": "https://blog.google/innovation-and-ai/technology/safety-security/gemini-4-model-safety-security/"
+      },
+      {
+        "title": "Gemini 4 Argon Opens to Developers With 1M-Token Context and Leading Coding Benchmarks",
+        "url": "https://www.aiintelreport.com/frontier-models/gemini-4-argon-developer-api"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Google made Gemini 4 Argon available through the paid Gemini API on October 13, 2026. Google positions it for long-horizon software engineering tasks such as code migration, large-codebase refactoring, and optimization.</p>\n<p>Google reports a 77.9% score on DeepSWE v1.1, a benchmark for real-world, long-horizon software engineering tasks. It also reports 87% on the Embodied Reasoning benchmark and a number-one position on the Vals Index. These are vendor-reported results, not independent replications.</p>\n<h2>How the context window changes agent design</h2>\n<p>The advertised context window is 1,048,576 tokens. It is shared across the input prompt, the model's internal thinking tokens, and the visible output. A request that sends a large repository therefore does not get one million input tokens plus another million tokens for reasoning and output.</p>\n<p>The practical pattern is to make one call carry the repository snapshot, task definition, constraints, and relevant test output. The model can return a long review or patch in the same request, subject to the API's output limit and the context consumed by reasoning. This can reduce retrieval and summarization steps for repositories that fit in the window.</p>\n<pre><code class=\"language-python\">from google import genai\n\nclient = genai.Client()\n\nresponse = client.models.generate_content(\n    model=&quot;gemini-4-argon&quot;,\n    contents=[\n        &quot;Review this repository. Find the three highest-risk concurrency bugs, &quot;\n        &quot;explain each one, and propose minimal patches with tests.&quot;,\n        repository_snapshot,\n    ],\n)\n\nprint(response.text)</code></pre>\n<h2>The catch</h2>\n<p>The context limit does not guarantee reliable use of every token. Large prompts can contain stale files, duplicate definitions, generated code, and irrelevant history. A single long call also creates a large failure domain: one mistaken assumption can affect the entire proposed patch.</p>\n<p>Pricing is scheduled to increase after November 30, 2026. The introductory price is $2 per million input tokens and $10 per million output tokens, with cached input tokens discounted by 95%. After that date, Google lists $4 per million input tokens and $20 per million output tokens.</p>\n<ul>\n<li>Use a repository snapshot only when its token count leaves room for reasoning and output.</li>\n<li>Treat the reported 77.9% DeepSWE result as a model-selection signal, not proof that an agent will solve production tasks.</li>\n<li>Measure end-to-end cost, latency, patch acceptance, and test-pass rate on your own repositories.</li>\n</ul>\n<h2>A safe first integration</h2>\n<p>For a coding agent, send a fixed repository snapshot instead of granting unrestricted write access. Ask for diagnosis first. Then run a separate patch-generation step using only the selected files and test results.</p>\n<p>Keep an audit record of the exact snapshot, prompt, model version, token counts, generated diff, and test output. Compare this workflow with a retrieval-based baseline. The useful result is not the headline context size; it is whether fewer retrieval and planning calls reduce total cost without reducing correctness.</p>\n<ul>\n<li>Start with a read-only review on one bounded repository or service.</li>\n<li>Include build commands, test commands, ownership rules, and excluded directories in the prompt.</li>\n<li>Require file-and-line references, a patch or diff, and tests for every proposed change.</li>\n<li>Run the generated patch in a sandbox and reject it unless existing tests and new regression tests pass.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Test Gemini 4 Argon on a complete, bounded repository before replacing retrieval or summarization stages.</li>\n<li>Budget for the scheduled price increase after November 30, 2026.</li>\n<li>Require sandboxed execution, diffs, tests, and recorded token usage for every coding-agent run.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-argon/\" target=\"_blank\" rel=\"noopener\">Gemini 4 Argon: Built to solve your hardest problems</a> \u2014 blog.google</li>\n<li><a href=\"https://blog.google/innovation-and-ai/technology/developers-tools/build-with-gemini-4-argon/\" target=\"_blank\" rel=\"noopener\">Gemini 4 Argon is now available for developers</a> \u2014 blog.google</li>\n<li><a href=\"https://blog.google/innovation-and-ai/technology/safety-security/gemini-4-model-safety-security/\" target=\"_blank\" rel=\"noopener\">Developing Gemini 4 Argon responsibly and safely</a> \u2014 blog.google</li>\n<li><a href=\"https://www.aiintelreport.com/frontier-models/gemini-4-argon-developer-api\" target=\"_blank\" rel=\"noopener\">Gemini 4 Argon Opens to Developers With 1M-Token Context and Leading Coding Benchmarks</a> \u2014 aiintelreport.com</li>\n</ul>"
+  },
+  {
+    "id": 103,
+    "title": "MariaDB reproduced a buffer-pool regression with a public workload",
+    "excerpt": "MariaDB used its Test Automation Framework to reproduce a performance regression across MariaDB 11.8, 12.3, and 13.1. The test used 10 million rows, 40 threads, and a 90 GB buffer pool, then confirmed that patched commits restored throughput. The lesson is to publish runnable performance cases instead of relying on opaque benchmark reports.",
+    "readTime": "2 min read",
+    "category": "architecture",
+    "learningPath": "architecture",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Engineering managers"
+    ],
+    "uniqueId": "daily-architecture-mariadb-reproduced-a-buffer-pool-regression-with-a-public-wo-1792396999927",
+    "date": "Oct 19, 2026",
+    "dateISO": "2026-10-19T08:03:19Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "MariaDB Foundation Newsletter \u2013 15 October 2026",
+        "url": "https://mariadb.org/mariadb-foundation-newsletter-15-october-2026/"
+      },
+      {
+        "title": "October 2026 newsletter",
+        "url": "https://clickhouse.com/blog/202610-newsletter"
+      },
+      {
+        "title": "October 2026 \u2013 Azure Databricks",
+        "url": "https://learn.microsoft.com/en-us/azure/databricks/release-notes/product/2026/october"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>The MariaDB Foundation reported a regression tracked as MDEV-37992 on October 15, 2026. The regression appeared only under specific LRU and buffer-pool conditions, and required a memory-resident workload to expose.</p>\n<p>Jonathan Miller reproduced it with MariaDB\u2019s Test Automation Framework, or TAF, on MariaDB 11.8, 12.3, and 13.1. The workload contained 10 million rows, used 40 threads, and ran with a 90 GB buffer pool. The patched commits from MDEV-33966 restored throughput on every tested branch.</p>\n<h2>Why the test design mattered</h2>\n<p>The failure was not visible in a small or disk-bound test. Its trigger depended on the relationship between the LRU behavior, buffer-pool size, concurrency, and a workload that fit in memory. That made a generic benchmark insufficient: the test had to preserve the conditions that exposed the regression.</p>\n<p>TAF turns those conditions into a reusable test definition. MariaDB publishes the properties file and driver script in its repository, so another engineer can install the database, run the same workload, and compare branches. The framework also supports automated installs, structured workloads, and concurrency sweeps.</p>\n<h2>The broader database lesson</h2>\n<p>MariaDB described this work as part of a Performance MDEV Test Case Library. The first case, MDEV-32750, captured an Adaptive Hash Index behavior change discovered during a MariaDB 10.4 to 10.11 migration.</p>\n<p>This changes performance debugging from a one-off investigation into a regression test. A migration can expose a behavior change, but the useful artifact is the smallest repeatable workload that demonstrates it. Store that workload with the issue and run it against every supported branch before release.</p>\n<h2>What other teams can copy</h2>\n<p>A useful performance case should define the data size, concurrency, memory configuration, database version, and success metric. It should also state whether the workload is memory-resident or disk-bound. Those details determine whether another team can reproduce the result.</p>\n<p>The MariaDB example also shows why testing multiple branches matters. The same regression was reproduced on three versions, and the fix was checked on all three. That gives maintainers evidence about both the scope of the bug and the scope of the repair.</p>\n<ul>\n<li>Record the exact row count, thread count, cache or buffer-pool size, and storage assumptions.</li>\n<li>Keep the workload driver and configuration beside the issue, not only in an engineer\u2019s local environment.</li>\n<li>Run the case against both the suspected regression and the patched commit.</li>\n<li>Treat migration findings as permanent performance tests when they can be reproduced.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Publish runnable performance cases with their configuration and driver.</li>\n<li>Include memory size, concurrency, row count, and workload type in every benchmark.</li>\n<li>Run regression tests across all supported database branches.</li>\n<li>Convert reproducible migration findings into permanent tests.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://mariadb.org/mariadb-foundation-newsletter-15-october-2026/\" target=\"_blank\" rel=\"noopener\">MariaDB Foundation Newsletter \u2013 15 October 2026</a> \u2014 mariadb.org</li>\n<li><a href=\"https://clickhouse.com/blog/202610-newsletter\" target=\"_blank\" rel=\"noopener\">October 2026 newsletter</a> \u2014 clickhouse.com</li>\n<li><a href=\"https://learn.microsoft.com/en-us/azure/databricks/release-notes/product/2026/october\" target=\"_blank\" rel=\"noopener\">October 2026 \u2013 Azure Databricks</a> \u2014 learn.microsoft.com</li>\n</ul>"
+  },
+  {
     "id": 99,
     "title": "DeepSeek V4.1-Flash-1017 raises Terminal-Bench score by 11.1 points",
     "excerpt": "DeepSeek released the V4.1-Flash-1017 checkpoint on October 17, 2026. Its reported Terminal-Bench 4.0 score rose from 31.2% to 42.3% at the same price, making checkpoint replacement a practical lever for coding agents without changing their API integration.",
