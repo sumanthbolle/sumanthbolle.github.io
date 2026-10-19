@@ -1,7 +1,233 @@
 {
-  "generatedAt": "2026-10-19T17:23:37Z",
-  "itemCount": 17,
+  "generatedAt": "2026-10-19T21:36:59Z",
+  "itemCount": 18,
   "items": [
+    {
+      "anchor": "Government securities; public debt management; multiple-price auction",
+      "checkedAt": "2026-10-19T21:36:59Z",
+      "codes": [
+        "GS3.1",
+        "GS3.2",
+        "GS2.7"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_2901801cb8e1b20e7a60cfbf10d8b90b3c12c8cec08b9c8ed387dbb7618658e7` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.99\n- **checked at:** 2026-10-19T21:36:59Z\n\nFlagged claims:\n- The prelims trap \"The announced auction will use a uniform-price method\" is marked correct, but the notice explicitly states that it will use the multiple-price method.\n- The pocketRead claims When-Issued eligibility is available \"before settlement\"; the notice states the period is October 21–23, ending on the auction date, not settlement date.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_2901801cb8e1b20e7a60cfbf10d8b90b3c12c8cec08b9c8ed387dbb7618658e7",
+        "title": "Needs review: src_2901801cb8e1b20e7a60cfbf10d8b90b3c12c8cec08b9c8ed387dbb7618658e7 verification disagreed"
+      },
+      "note": {
+        "anchor": "Government securities; public debt management; multiple-price auction",
+        "argumentsAgainst": [
+          "A multiple-price auction may result in different successful bidders paying different prices, complicating interpretation of the auction cut-off.",
+          "Long-maturity securities can expose investors and the public-debt portfolio to greater interest-rate and refinancing risks; this is an analytical concern, not stated as a feature of this specific release."
+        ],
+        "argumentsFor": [
+          "The auction mechanism mobilises funds for the Union Government through market-based bidding.",
+          "Non-competitive bidding broadens access for eligible individuals and institutions without requiring them to quote a price or yield.",
+          "Primary-dealer underwriting and electronic bidding through e-Kuber support orderly issuance and settlement.",
+          "When-Issued trading can facilitate price discovery before the securities are formally issued."
+        ],
+        "background": [
+          "The Reserve Bank of India conducts auctions of Government of India dated securities as part of the government-securities issuance process. In a multiple-price auction, successful competitive bidders receive allotment at their respective quo",
+          "Non-competitive bidding enables eligible investors to participate without specifying a price; allotment is linked to the weighted average outcome of successful competitive bids. RBI material identifies a ceiling of up to 5% of the notified ",
+          "When-Issued trading concerns a security authorised for issuance but not yet issued; transactions are conditional on the actual issue.[4]"
+        ],
+        "codes": [
+          "GS3.1",
+          "GS3.2",
+          "GS2.7"
+        ],
+        "editorialStatus": "draft",
+        "id": "note_2901801cb8e1b20e7a60cfbf10d8b90b3c12c8cec08b9c8ed387dbb7618658e7",
+        "indiaImplications": [
+          "The notified borrowing operation illustrates how the Union Government raises resources through dated securities while RBI provides the auction and settlement infrastructure.",
+          "Retail and other eligible investors receive an access route through non-competitive bidding, potentially widening participation in government-securities markets.",
+          "The option to retain additional subscription gives the government flexibility in accepting demand, while the final borrowing cost remains linked to auction bids and market conditions.",
+          "Primary Dealers' ACU participation can support underwriting of the issue; the broader policy challenge is balancing financing needs with sustainable debt costs and market liquidity."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Explain dated government securities and the distinction between re-issue and a new issue.",
+              "Describe the multiple-price auction, competitive bids, non-competitive bids and weighted-average allotment.",
+              "Discuss the roles of RBI, e-Kuber, Primary Dealers and When-Issued trading.",
+              "Assess benefits for public borrowing, market access and price discovery."
+            ],
+            "conclusionPrompt": "Conclude by linking transparent, technology-enabled auctions with prudent fiscal management and wider investor participation.",
+            "counterPosition": "Greater market participation and flexible borrowing are useful only if auction design and debt strategy contain the cost and maturity risks associated with public borrowing.",
+            "diagramSuggestion": "Flow: Government borrowing requirement → RBI auction notification → competitive/non-competitive bids → allotment → settlement; place Primary Dealers and When-Issued trading beside ",
+            "directive": "examine",
+            "introChoices": [
+              "The RBI’s dated-securities auction notice shows public borrowing as a market-mediated process rather than a simple government fund-raising announcement.",
+              "Government securities connect fiscal financing, monetary-market infrastructure and investor participation through a structured auction mechanism."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "The RBI’s dated-securities auction notice shows public borrowing as a market-mediated process rather than a simple government fund-raising announcement.",
+              "Government securities connect fiscal financing, monetary-market infrastructure and investor participation through a structured auction mechanism.",
+              "Explain dated government securities and the distinction between re-issue and a new issue.",
+              "Describe the multiple-price auction, competitive bids, non-competitive bids and weighted-average allotment.",
+              "Discuss the roles of RBI, e-Kuber, Primary Dealers and When-Issued trading.",
+              "Assess benefits for public borrowing, market access and price discovery.",
+              "Greater market participation and flexible borrowing are useful only if auction design and debt strategy contain the cost and maturity risks associated with public borrowing.",
+              "Conclude by linking transparent, technology-enabled auctions with prudent fiscal management and wider investor participation."
+            ],
+            "stem": "Examine how the RBI’s multiple-price auction framework for Government of India dated securities combines fiscal resource mobilisation with market participation. Discuss the roles of non-competitive bidding, Primary Dealers and When-Issued trading.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63832",
+            "text": "Government of India (GoI) has announced the sale (re-issue) of two dated securities for a notified amount of ₹33,000 crore.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63832",
+            "text": "The two securities are 6.53% GS 2031, with a notified amount of ₹19,000 crore, and 7.71% GS 2066, with a notified amount of ₹14,000 crore.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63832",
+            "text": "The auction will be conducted using multiple price method.",
+            "verification": "source-backed"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63832",
+            "text": "Both competitive and non-competitive bids for the auction should be submitted in electronic format on the Reserve Bank of India Core Banking Solution (e-Kuber system) on October 23, 2026 (Friday).",
+            "verification": "source-backed"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63832",
+            "text": "GoI will have the option to retain additional subscription up to ₹2,000 crore against each security mentioned above.",
+            "verification": "source-backed"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63832",
+            "text": "The securities will be eligible for “When Issued” trading for a period commencing from October 21, 2026 – October 23, 2026.",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS3",
+          "GS2"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Hypothetical illustration: how the auction formats differ",
+            "text": "Suppose two competitive bidders quote different prices for the same security and both bids are accepted. Under a multiple-price auction, each successful bidder pays the price quoted in that bidder’s accepted bid. Under a uniform-price auction, both would pay the common cut-off price. This is only an illustration of the mechanism, not an event from the release."
+          },
+          "excerpt": "RBI will re-issue two dated Government securities through a multiple-price auction, with e-Kuber bidding, non-competitive participation, Primary Dealer underwriting and When-Issued eligibility.",
+          "question": {
+            "answer": "A multiple-price auction accepts successful competitive bids at their respective quoted prices or yields, while non-competitive allotment is linked to the weighted-average outcome of successful competitive bids. This supports market-based borrowing and wider access, but borrowing costs remain sensitive to market demand and interest rates.",
+            "prompt": "How does the announced auction combine market-based government borrowing with wider participation, and what limitation should an answer note?"
+          },
+          "sections": [
+            {
+              "heading": "What RBI announced",
+              "paragraphs": [
+                "On October 19, 2026, RBI reported the Government of India’s proposed re-issue of two dated securities for a notified total of ₹33,000 crore. The auction is scheduled for October 23, with settlement on October 26, and bids must be submitted electronically through e-Kuber."
+              ]
+            },
+            {
+              "heading": "How participation works",
+              "paragraphs": [
+                "The auction uses the multiple-price method. Eligible individuals and institutions can use the non-competitive segment, while Primary Dealers can submit bids for the Additional Competitive Underwriting portion. The securities are also eligible for When-Issued trading before settlement."
+              ]
+            },
+            {
+              "heading": "What the mechanism means",
+              "paragraphs": [
+                "Multiple-price bidding lets accepted competitive bidders receive securities at their respective quoted price or yield. Non-competitive allotment uses the weighted-average rate or price emerging from competitive bids. A common misconception is that When-Issued trading means the security has already been issued; it is instead trading before issuance and is conditional on the issue.[4][6]"
+              ]
+            }
+          ],
+          "title": "RBI announces re-issue of two Government of India dated securities"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The official summary states that the auction will use the multiple price method.",
+            "statement": "The announced auction will use a uniform-price method."
+          },
+          {
+            "correct": false,
+            "explanation": "The official summary states that GoI may retain additional subscription up to ₹2,000 crore against each security.",
+            "statement": "The additional subscription option is limited to ₹2,000 crore in total for both securities."
+          },
+          {
+            "correct": true,
+            "explanation": "The official summary specifies October 23, 2026 for electronic submission of both competitive and non-competitive bids.",
+            "statement": "Both competitive and non-competitive bids are to be submitted through e-Kuber on October 23, 2026."
+          },
+          {
+            "correct": true,
+            "explanation": "The official summary states that When-Issued trading is available from October 21 to October 23, 2026.",
+            "statement": "The securities are eligible for When-Issued trading before the auction date."
+          }
+        ],
+        "priority": 64,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 45,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 50
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-10-19T17:55:00Z",
+        "publisherId": "rbi",
+        "publisherName": "Reserve Bank of India",
+        "recallCard": "On October 19, 2026, RBI announced a ₹33,000-crore re-issue of two GoI dated securities. The October 23 auction uses multiple pricing through e-Kuber; non-competitive bids, Primary Dealer underwriting and When-Issued trading support participation and issuance.",
+        "reusableAnchors": [],
+        "sourceContentHash": "3367abd26e8dc5f46c20ea64bcb238691a96f907c4cb5e3399544b5c8387c59a",
+        "sourceId": "src_2901801cb8e1b20e7a60cfbf10d8b90b3c12c8cec08b9c8ed387dbb7618658e7",
+        "sourceTitle": "Auction of Government of India Dated Securities",
+        "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63832",
+        "staticDefinition": "A dated Government security is a debt instrument of the government with a specified maturity or repayment date. In the announced operation, RBI conducts the auction on behalf of the Government of India, and a re-issue means offering an already-existing security line again rather than creating a wholly new maturity. A m",
+        "use": "Use this case to connect government borrowing, fiscal resource mobilisation, RBI’s public-debt-market infrastructure, auction design, financial inclusion through non-competitive bidding, and price discovery. Distinguish the release’s verified operational details from analytical discussion of debt sustainability and borrowing-cost risks.",
+        "wayForward": [
+          "Maintain transparent auction calendars, bidding rules and settlement procedures to strengthen market confidence.",
+          "Use non-competitive channels and retail platforms to widen participation while preserving clear investor safeguards.",
+          "Strengthen Primary Dealer obligations and market-making capacity so auctions receive adequate demand and secondary-market liquidity.",
+          "Integrate auction choices with a medium-term debt strategy covering maturity profile, interest-rate exposure, rollover risk and fiscal sustainability."
+        ],
+        "whyInNews": "On October 19, 2026, the Reserve Bank of India announced the Government of India’s re-issue of two dated securities for a notified ₹33,000 crore. The RBI will conduct the October 23 auction through the e-Kuber system using the multiple-price method, with settlement scheduled for October 26. The notice also provides for"
+      },
+      "sourceId": "src_2901801cb8e1b20e7a60cfbf10d8b90b3c12c8cec08b9c8ed387dbb7618658e7",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The proposed codes GS3.1, GS3.2 and GS2.7 cannot be validated without the governing syllabus taxonomy; the themes are broadly relevant to GS3 and possibly GS2.",
+          "The statement that the auction mobilises funds is sound analysis, but the release itself announces an operation rather than reporting completed fund mobilisation.",
+          "The claim that the option gives the government flexibility in accepting demand is analytical and should be presented as an implication, not as a stated purpose.",
+          "The claim that Primary Dealer ACU participation supports underwriting is reasonable, but the supplied extract does not explain its market impact.",
+          "The phrase \"financial inclusion\" may overstate the relevance of a restricted non-competitive facility; use \"broader investor participation\" instead.",
+          "The claim that non-competitive bidding requires no quoted price or yield is supported by RBI guidance[9].",
+          "The pocketRead says \"before settlement\" for When-Issued trading; the notice specifies October 21–23, ending on auction day, while settlement is October 26.",
+          "The prelims explanation correctly distinguishes multiple-price and uniform-price auctions, but the first statement is marked \"correct\" despite asserting the opposite of the notice and should be marked false."
+        ],
+        "agrees": false,
+        "confidence": 0.99,
+        "flagged_claims": [
+          "The prelims trap \"The announced auction will use a uniform-price method\" is marked correct, but the notice explicitly states that it will use the multiple-price method.",
+          "The pocketRead claims When-Issued eligibility is available \"before settlement\"; the notice states the period is October 21–23, ending on the auction date, not settlement date."
+        ],
+        "verificationVersion": 2
+      }
+    },
     {
       "anchor": "Targeted public support for equitable access to doctoral education",
       "checkedAt": "2026-10-16T08:56:02Z",
