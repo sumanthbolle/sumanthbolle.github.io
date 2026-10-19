@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-19T13:04:07Z",
-  "itemCount": 16,
+  "generatedAt": "2026-10-19T17:23:37Z",
+  "itemCount": 17,
   "items": [
     {
       "anchor": "Targeted public support for equitable access to doctoral education",
@@ -1683,6 +1683,180 @@
         "flagged_claims": [
           "Verification was unavailable; retry before publishing"
         ]
+      }
+    },
+    {
+      "anchor": "GS2.8 Role of civil services in a democracy",
+      "checkedAt": "2026-10-19T17:23:37Z",
+      "codes": [
+        "GS2.8",
+        "GS2.3"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_ea7e90fca012664b1e7eec71124415145a1cdfc6876a0d2a07cc7534f16814d5` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.93\n- **checked at:** 2026-10-19T17:23:37Z\n\nFlagged claims:\n- The proposed code “GS2.3” is a wrong or unsupported syllabus tag for the note as framed; the material does not establish a constitutional-polity issue requiring that code.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_ea7e90fca012664b1e7eec71124415145a1cdfc6876a0d2a07cc7534f16814d5",
+        "title": "Needs review: src_ea7e90fca012664b1e7eec71124415145a1cdfc6876a0d2a07cc7534f16814d5 verification disagreed"
+      },
+      "note": {
+        "anchor": "GS2.8 Role of civil services in a democracy",
+        "argumentsAgainst": [
+          "The written result only establishes eligibility for the next selection stage; it does not establish final selection, appointment, or training commencement.",
+          "The source summary does not provide information on examination pattern, eligibility rules, vacancies, cut-offs, or the constitutional and statutory framework of UPSC."
+        ],
+        "argumentsFor": [
+          "A centralised, merit-based examination followed by Services Selection Board interviews can support professional recruitment to the armed forces.",
+          "Publishing roll-number-wise results promotes procedural transparency, while provisional candidature permits later verification of eligibility documents."
+        ],
+        "background": [
+          "The Press Information Bureau record concerns the Union Public Service Commission’s declaration of the written result of the Combined Defence Services Examination (II), 2026.",
+          "The source record supplies only the title in officialSummary; detailed examination dates, qualifying numbers, courses, document requirements, and candidate instructions are present in the downloaded official extract but are not reproduced i"
+        ],
+        "codes": [
+          "GS2.8",
+          "GS2.3"
+        ],
+        "editorialStatus": "source-backed",
+        "id": "note_ea7e90fca012664b1e7eec71124415145a1cdfc6876a0d2a07cc7534f16814d5",
+        "indiaImplications": [
+          "The result illustrates the role of a central constitutional recruitment institution in selecting personnel for national defence services.",
+          "The provisional nature of candidature highlights the need to reconcile examination-based merit with documentary and eligibility verification.",
+          "The source does not provide evidence for wider effects on defence manpower, regional representation, gender balance, or recruitment outcomes."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Explain the institutional role of UPSC in recruitment to public services.",
+              "Distinguish written examination qualification from final selection and appointment.",
+              "Discuss how transparency and verification can jointly protect fairness in defence recruitment.",
+              "Mention limitations of drawing broad policy conclusions from a result announcement alone."
+            ],
+            "conclusionPrompt": "Conclude by linking credible recruitment to professional, accountable and merit-based public service.",
+            "counterPosition": "A result declaration alone cannot demonstrate the quality, inclusiveness or final effectiveness of the recruitment system.",
+            "diagramSuggestion": "Process flow: written examination → result declaration → subsequent selection stages → final appointment.",
+            "directive": "examine",
+            "introChoices": [
+              "A public examination result is not merely an administrative announcement; it marks a defined stage in institutional recruitment.",
+              "The CDS written-result declaration can be used to examine how merit-based recruitment and verification operate together."
+            ],
+            "marks": 10,
+            "skeleton": [
+              "A public examination result is not merely an administrative announcement; it marks a defined stage in institutional recruitment.",
+              "The CDS written-result declaration can be used to examine how merit-based recruitment and verification operate together.",
+              "Explain the institutional role of UPSC in recruitment to public services.",
+              "Distinguish written examination qualification from final selection and appointment.",
+              "Discuss how transparency and verification can jointly protect fairness in defence recruitment.",
+              "Mention limitations of drawing broad policy conclusions from a result announcement alone.",
+              "A result declaration alone cannot demonstrate the quality, inclusiveness or final effectiveness of the recruitment system.",
+              "Conclude by linking credible recruitment to professional, accountable and merit-based public service."
+            ],
+            "stem": "Examine how a written-result declaration for a defence-services examination reflects both merit-based recruitment and the limits of provisional qualification.",
+            "timeMinutes": 7,
+            "wordBudget": 150
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2325288",
+            "text": "COMBINED DEFENCE SERVICES EXAMINATION (II), 2026 DECLARATION OF WRITTEN RESULT THEREOF",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS2"
+        ],
+        "pocketRead": {
+          "excerpt": "The official summary identifies a UPSC declaration concerning the written result of the Combined Defence Services Examination (II), 2026; it does not establish final selection or appointment.",
+          "question": {
+            "answer": "It should be treated as a recruitment-stage announcement: it identifies the written-result stage, while avoiding claims about final selection, vacancies, or appointment because the summary does not support them.",
+            "prompt": "How should an examiner interpret a brief official announcement of a defence-services written result?"
+          },
+          "sections": [
+            {
+              "heading": "What the announcement establishes",
+              "paragraphs": [
+                "The Press Information Bureau’s official summary records that the Union Public Service Commission declared the written result of the Combined Defence Services Examination (II), 2026.",
+                "The announcement identifies the examination and the result stage, but the summary does not supply the number qualified, examination date, interview details, course details, or final-selection outcome."
+              ]
+            },
+            {
+              "heading": "Why the distinction matters",
+              "paragraphs": [
+                "Written-result qualification is a procedural milestone, not proof of appointment. A careful UPSC answer should separate verified facts from institutional analysis and avoid importing details from unrelated or unverified material.",
+                "This distinction also prevents a common misconception: that a result announcement by itself establishes completed recruitment."
+              ]
+            }
+          ],
+          "title": "UPSC declares written result of CDS Examination (II), 2026"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The official summary expressly identifies the subject as the declaration of the written result of CDS Examination (II), 2026.",
+            "statement": "The record concerns a declaration of the written result of the Combined Defence Services Examination (II), 2026."
+          },
+          {
+            "correct": false,
+            "explanation": "The official summary does not state that the announcement constitutes final selection or appointment.",
+            "statement": "The record proves that all candidates covered by the announcement were finally appointed to defence services."
+          },
+          {
+            "correct": false,
+            "explanation": "The source summary does not provide the examination date, number of qualified candidates, courses, or interview arrangements.",
+            "statement": "The official summary establishes the number of candidates qualifying for the next stage and the dates of all associated training courses."
+          }
+        ],
+        "priority": 64,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 45,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 50
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-10-19T17:23:37Z",
+        "publisherId": "pib",
+        "publisherName": "Press Information Bureau",
+        "recallCard": "The PIB summary records UPSC’s declaration of the written result of the Combined Defence Services Examination (II), 2026. Treat it as a recruitment-stage announcement, not evidence of final selection or appointment.",
+        "reusableAnchors": [],
+        "sourceContentHash": "3811d6b21f3cd7de33649293d227459cc0d657c40bd71aa768715aee998f2214",
+        "sourceId": "src_ea7e90fca012664b1e7eec71124415145a1cdfc6876a0d2a07cc7534f16814d5",
+        "sourceTitle": "COMBINED DEFENCE SERVICES EXAMINATION (II), 2026 DECLARATION OF WRITTEN RESULT THEREOF",
+        "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2325288",
+        "staticDefinition": "The Union Public Service Commission is the institution named in the source as declaring the written result of the Combined Defence Services Examination (II), 2026. The source does not provide its constitutional provisions, composition, powers, or detailed recruitment procedure.",
+        "use": "Use the issue to discuss merit-based recruitment, institutional transparency, provisional qualification, and the distinction between an examination result and final appointment.",
+        "wayForward": [
+          "Present written-result announcements with a clear explanation of the next procedural stage and the provisional status of candidature.",
+          "Maintain accessible, timely publication of result information while protecting candidate data and preserving documentary verification.",
+          "In answers, separate official facts from analysis and avoid inferring final selection, vacancies, or institutional performance from a short result notice."
+        ],
+        "whyInNews": "On 19 October 2026, the Press Information Bureau record concerns the Union Public Service Commission’s declaration of the written result of the Combined Defence Services Examination (II), 2026. The source summary confirms the result declaration but does not establish the number qualified, the examination date, or the s"
+      },
+      "sourceId": "src_ea7e90fca012664b1e7eec71124415145a1cdfc6876a0d2a07cc7534f16814d5",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The proposed GS2.8 anchor is substantively relevant because the official GS2 syllabus includes “Role of civil services in a democracy,” but CDS recruitment is not itself a civil-services recruitment example.[4][9]",
+          "GS2.3 is not substantiated by the supplied material and appears unnecessary unless the note explicitly develops a constitutional or statutory dimension.",
+          "The source supports a written-result announcement, provisional candidature, subsequent SSB interviews and document verification; broader claims about merit-based recruitment and institutional transparency are analytical inferences.",
+          "“Merit-based recruitment” should be framed as an intended feature illustrated by competitive selection, not as proof that the process is substantively fair or meritocratic.",
+          "The pocketRead headline and deck are consistent with the supplied official extract, but the headline’s “UPSC declares” wording should not imply final selection.",
+          "The proposed use line is suitable, though “institutional transparency” would be stronger if tied specifically to publication of roll-number-wise results and procedural instructions.",
+          "The explanation correctly distinguishes written qualification from final appointment; the official extract also states that candidature is provisional and that SSB interviews follow.",
+          "The supplied official extract gives 19 October 2026 as the PIB entry date and 13 September 2026 as the examination date; the note should retain these only if dates are included in its final presentation."
+        ],
+        "agrees": false,
+        "confidence": 0.93,
+        "flagged_claims": [
+          "The proposed code “GS2.3” is a wrong or unsupported syllabus tag for the note as framed; the material does not establish a constitutional-polity issue requiring that code."
+        ],
+        "verificationVersion": 2
       }
     },
     {
