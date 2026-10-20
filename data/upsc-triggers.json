@@ -1,8 +1,55 @@
 {
-  "generated": "2026-08-17T00:00:00.000Z",
+  "generated": "2026-10-20T06:18:17.611Z",
   "provisional": true,
-  "note": "The current trigger layer for anchors in data/upsc-patterns.json, refreshed one anchor per day by scripts/fetch-upsc-triggers.js. Every item carries the source it came from; items not from a primary document must be confirmed against one before they enter permanent notes. This file starts empty on purpose — the Pattern Atlas reads it when present and offers live retrieval per anchor when it is not.",
+  "note": "The current trigger layer for anchors in data/upsc-patterns.json, refreshed one anchor per day. Every item carries the source it came from; items not from a primary document must be confirmed against one before they enter permanent notes.",
   "patternsVersion": "1.0.0",
-  "anchorsHeld": 0,
-  "anchors": {}
+  "anchorsHeld": 1,
+  "anchors": {
+    "multilateral-groupings-and-reform": {
+      "refreshedAt": "2026-10-20T06:18:17.611Z",
+      "anchor": "Multilateral groupings and institutional reform",
+      "codes": [
+        "GS2.9",
+        "GS2.10"
+      ],
+      "papers": [
+        "GS2"
+      ],
+      "confidence": "medium",
+      "primarySources": 3,
+      "omitted": "BRICS, G20, WTO and international financial institution developments were omitted because no sufficiently supported primary-source result was available in the retrieved material.",
+      "items": [
+        {
+          "title": "G4 calls for text-based Security Council negotiations",
+          "date": "2026-09-22",
+          "why": "The G4 is shifting from reiterating claims to coalition-building for a consolidated reform model and text-based negotiations, testing whether plurilateral pressure can overcome procedural stasis.",
+          "use": "The G4 said the reform process had produced no concrete outcome after 18 years and called for expansion in both permanent and non-permanent categories.",
+          "verb": "critically examine",
+          "url": "https://www.mea.gov.in/bilateral-documents?dtl/41822/G4_Joint_Ministerial_Statement",
+          "source": "Ministry of External Affairs, Government of India",
+          "primary": true
+        },
+        {
+          "title": "India calls for reformed multilateralism",
+          "date": "2026-09-26",
+          "why": "India has framed institutional reform as management of a multipolar transition, linking representation with consultation and transparency rather than only demands for seats.",
+          "use": "India stated that the post-1945 order is giving way to new realities and that broad consultations and transparent decision-making are necessary in a multipolar world.",
+          "verb": "discuss",
+          "url": "https://www.mea.gov.in/Speeches-Statements?dtl/41829",
+          "source": "Ministry of External Affairs, Government of India",
+          "primary": true
+        },
+        {
+          "title": "General Assembly President backs Security Council reform",
+          "date": "2026-09-26",
+          "why": "Reform is being connected to institutional credibility and regional representation, while the UN80 initiative exposes the distinction between operational streamlining and foundational power reform.",
+          "use": "The Assembly President supported General Assembly-led negotiations for a more representative, transparent Council and identified Africa’s underrepresentation as a priority.",
+          "verb": "examine",
+          "url": "https://www.un.org/pga/81/documents/speeches/general-debate-opening-22-september-2026/",
+          "source": "United Nations General Assembly President",
+          "primary": true
+        }
+      ]
+    }
+  }
 }
