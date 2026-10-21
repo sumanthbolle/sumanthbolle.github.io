@@ -1,5 +1,67 @@
 [
   {
+    "id": 104,
+    "title": "ServiceNow documents a controlled fix path for failed SAM GoTo jobs",
+    "excerpt": "ServiceNow\u2019s October 19, 2026 troubleshooting guide documents a practical recovery path for failed Software Asset Management GoTo integrations. It combines profile-level validation, Flow Designer execution records, datastream logs, and temporary debug settings; Zurich instances receive the fix in Week 43.",
+    "readTime": "2 min read",
+    "category": "servicenow",
+    "learningPath": "servicenow",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Admins",
+      "Architects"
+    ],
+    "uniqueId": "daily-servicenow-servicenow-documents-a-controlled-fix-path-for-failed-sam-go-1792569413173",
+    "date": "Oct 21, 2026",
+    "dateISO": "2026-10-21T07:56:53Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Troubleshooting ServiceNow Software Asset Management GoTo integration: Complete Troubleshooting GUIDE subscriptions, activity or reclaim not working",
+        "url": "https://support.servicenow.com/kb?id=kb_article_view&sysparm_article=KB3227183"
+      },
+      {
+        "title": "ServiceNow AI Agent Advisor: A Quick Reference Guide to Setup and Use",
+        "url": "https://www.servicenow.com/community/developer-articles/servicenow-ai-agent-advisor-a-quick-reference-guide-to-setup-and/ta-p/3609966"
+      },
+      {
+        "title": "AI Gateway Implementation Guide - ServiceNow Community",
+        "url": "https://www.servicenow.com/community/si-control-tower-articles/ai-gateway-implementation-guide/ta-p/3587444"
+      }
+    ],
+    "content": "<h2>What changed</h2>\n<p>A ServiceNow support article published on October 19, 2026 documents troubleshooting for SAM GoTo direct integrations. The guide covers failures in subscriptions, activity, reclaim, and scheduled jobs.</p>\n<p>The article states that no Week 43 hot fix is planned for Australia Patch 5a Week 42 or Australia Patch 6 Week 42 because those versions already contain the fixes. Zurich instances are scheduled to receive the fixes in Week 43.</p>\n<h2>Where the failure is visible</h2>\n<p>The form can show only a generic validation error. The useful detail is normally in the scheduled-job log, the Flow Designer execution, or the system log.</p>\n<p>The guide recommends matching records by the same UTC execution window. This prevents a failed retry or an unrelated run from being mistaken for the original failure.</p>\n<ul>\n<li>Record the job, profile, start time, and end time in UTC.</li>\n<li>Open the profile\u2019s Scheduled Job Results and inspect <code>sam_saas_job_log</code>.</li>\n<li>Open Flow Designer &gt; Operations &gt; Executions and locate the matching subflow run.</li>\n<li>Check System Logs &gt; All for <code>Datastream error:</code> entries in the same time window.</li>\n</ul>\n<h2>Temporary diagnostic settings</h2>\n<p>For deeper tracing, temporarily set <code>com.snc.process_flow.reporting.level</code> to <code>All</code>. If outbound HTTP details are required, also enable <code>glide.outbound_http_log.override</code> and set its level to <code>all</code>.</p>\n<p>Rerun the integration once, inspect the logs, and then restore the properties. Leaving outbound logging enabled increases log volume and can expose integration details to administrators who can read system logs.</p>\n<pre><code class=\"language-properties\">com.snc.process_flow.reporting.level = All\nglide.outbound_http_log.override = true\nglide.outbound_http_log.override.level = all</code></pre>\n<h2>A controlled recovery path</h2>\n<p>The guide separates diagnosis from repair. The Troubleshoot action runs validation with debug-level logging and proposes resolutions, but it does not change the connection or integration configuration.</p>\n<p>The documented causes include application or spoke versions, OAuth clients and scopes, expired tokens, the wrong GoTo organization, product exclusions, and user-resolution mappings. After a successful validation, the profile must still be published or the job rerun.</p>\n<ul>\n<li>Open Workspaces &gt; Software Asset Workspace &gt; License operations &gt; User subscription &gt; Direct integration profiles.</li>\n<li>Open the GoTo profile and select Validate Connection for a new or changed connection.</li>\n<li>Use Troubleshoot from the error banner, then read Error Summary and Suggested Resolutions.</li>\n<li>Fix the connection, OAuth scope, role, token, organization, coverage, or user-mapping issue identified by the logs.</li>\n<li>Validate again. Publish a new profile or rerun the existing scheduled job and confirm the result.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Match the failed job, Flow Designer execution, and logs using UTC timestamps.</li>\n<li>Enable detailed Flow Designer and outbound HTTP logging only for one diagnostic rerun.</li>\n<li>Use Validate Connection and Troubleshoot before changing OAuth, token, scope, or mapping configuration.</li>\n<li>Check the instance family and patch week before planning a hot-fix deployment.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://support.servicenow.com/kb?id=kb_article_view&amp;sysparm_article=KB3227183\" target=\"_blank\" rel=\"noopener\">Troubleshooting ServiceNow Software Asset Management GoTo integration: Complete Troubleshooting GUIDE subscriptions, activity or reclaim not working</a> \u2014 support.servicenow.com</li>\n<li><a href=\"https://www.servicenow.com/community/developer-articles/servicenow-ai-agent-advisor-a-quick-reference-guide-to-setup-and/ta-p/3609966\" target=\"_blank\" rel=\"noopener\">ServiceNow AI Agent Advisor: A Quick Reference Guide to Setup and Use</a> \u2014 servicenow.com</li>\n<li><a href=\"https://www.servicenow.com/community/si-control-tower-articles/ai-gateway-implementation-guide/ta-p/3587444\" target=\"_blank\" rel=\"noopener\">AI Gateway Implementation Guide - ServiceNow Community</a> \u2014 servicenow.com</li>\n</ul>"
+  },
+  {
+    "id": 105,
+    "title": "OpenHands 1.28 adds interactive secret requests for coding agents",
+    "excerpt": "OpenHands 1.28 adds a controlled way for a coding agent to request secrets during a chat session. The change matters for repositories that need credentials for tests, package registries, or deployment checks, but it also creates a new approval boundary that must be audited.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-openhands-1-28-adds-interactive-secret-requests-for-coding-a-1792569428346",
+    "date": "Oct 21, 2026",
+    "dateISO": "2026-10-21T07:57:08Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "New AI & agent releases \u2014 ToolSift.ai",
+        "url": "https://toolsift.ai/new/"
+      },
+      {
+        "title": "GitHub Copilot Models: 3 Cut by Nov. 16 [2026] \u2014 TrendinTech",
+        "url": "https://trendintech.com/github-copilot-drops-3-ai-models-november-2026/"
+      }
+    ],
+    "content": "<h2>What changed</h2>\n<p>OpenHands 1.28 lets the agent ask for secrets in the chat instead of requiring credentials to be placed in the environment before the task starts. The release was listed among notable AI and agent releases for the week ending October 20, 2026.</p>\n<p>The feature targets workflows where an agent reaches a step that needs a token, password, or other protected value. The user can provide the value through the chat interaction, rather than exposing it in the repository or a static shell environment.</p>\n<h2>How the pattern works</h2>\n<p>The agent runs without the secret by default. When a command or tool call needs protected access, it pauses and asks the user for the missing credential. The user decides whether to provide it, then the agent resumes the task.</p>\n<p>This separates ordinary coding work from privileged operations. An agent can inspect files, edit code, and run local tests without receiving deployment or registry credentials at startup. The release note does not specify the exact storage, masking, or lifetime rules, so those controls need verification before production use.</p>\n<h2>Where it breaks</h2>\n<p>Interactive approval can block unattended jobs. A CI runner cannot answer a chat request unless the surrounding system supplies an approval mechanism. This makes the feature useful for supervised development, but incomplete as a replacement for CI secret injection.</p>\n<p>The agent still decides when to request and use the credential. A prompt injection in repository content could try to make it request a secret for an unrelated command. Approval should therefore include the exact tool, command, host, and scope, not just a generic \u201callow secrets\u201d decision.</p>\n<ul>\n<li>Do not place long-lived credentials in repository files or task prompts.</li>\n<li>Use short-lived, least-privilege tokens for package, cloud, and deployment access.</li>\n<li>Log the approval event, destination, and command without logging the secret itself.</li>\n<li>Test whether the secret is masked in terminal output, tool results, traces, and agent transcripts.</li>\n</ul>\n<h2>How to use it safely</h2>\n<p>Start with a supervised repository task that needs a read-only package-registry token. Deny requests for unrelated hosts or destructive commands. Confirm that the token is unavailable to later tasks unless explicitly approved again.</p>\n<p>Before using the feature in deployment automation, inspect the OpenHands 1.28 implementation and deployment configuration for secret lifetime, transcript redaction, subprocess inheritance, and retry behavior. The release listing confirms the capability, but it does not provide those implementation details.</p>\n<pre><code class=\"language-python\"># Pseudocode for an approval gate\nresult = agent.run(task, secrets={})\n\nif result.needs_secret:\n    approval = review(\n        name=result.secret_name,\n        command=result.command,\n        destination=result.destination,\n    )\n    if approval.allowed:\n        result = agent.resume(secret=approval.short_lived_value)</code></pre>\n<h2>Takeaways</h2>\n<ul>\n<li>Try OpenHands 1.28 first with a read-only, short-lived credential.</li>\n<li>Make every secret request show the command, destination, and requested scope.</li>\n<li>Verify masking and credential lifetime before allowing unattended agent runs.</li>\n<li>Keep CI secret injection for jobs that cannot handle interactive approval.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://toolsift.ai/new/\" target=\"_blank\" rel=\"noopener\">New AI &amp; agent releases \u2014 ToolSift.ai</a> \u2014 toolsift.ai</li>\n<li><a href=\"https://trendintech.com/github-copilot-drops-3-ai-models-november-2026/\" target=\"_blank\" rel=\"noopener\">GitHub Copilot Models: 3 Cut by Nov. 16 [2026] \u2014 TrendinTech</a> \u2014 trendintech.com</li>\n</ul>"
+  },
+  {
     "id": 102,
     "title": "Gemini 4 Argon adds a shared 1,048,576-token context window",
     "excerpt": "Google released Gemini 4 Argon for developers on October 13, 2026. Its main engineering change is a shared 1,048,576-token context window for input, internal reasoning, and output, with a reported 77.9% score on DeepSWE v1.1.",
