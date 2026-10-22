@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-22T17:06:53Z",
-  "itemCount": 19,
+  "generatedAt": "2026-10-22T19:19:18Z",
+  "itemCount": 20,
   "items": [
     {
       "anchor": "Para-athletics and inclusion of persons with disabilities; GS2.6",
@@ -1905,6 +1905,186 @@
           "\"The official text identifies the event as the Women’s 400m T11 event\" is false when checked against the official PM/PIB release, which identifies the Women’s 1500m T11 event.[4][5][9]",
           "The proposed static anchor \"GS2.6 Welfare schemes, vulnerable sections, social sector: health, education, HRD\" is not a precise official UPSC syllabus label for this sports-recognition item; it requires reframing under vulnerable sections/d",
           "The proposed code \"GS1.5\" is unsupported and appears mismatched: a para-athlete congratulation has no clear direct fit with the GS1 code as presented."
+        ],
+        "verificationVersion": 2
+      }
+    },
+    {
+      "anchor": "GS3.1 Indian economy: resource mobilisation, growth, development, employment",
+      "checkedAt": "2026-10-22T19:19:18Z",
+      "codes": [
+        "GS3.1",
+        "GS3.2"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_d18095f79895946fe79d8b71674de949d409560b07e8ea7abba91bf904404fd1` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.97\n- **checked at:** 2026-10-22T19:19:18Z\n\nFlagged claims:\n- The proposed code “GS3.2” is a wrong or unsupported syllabus tag unless the note’s internal taxonomy explicitly defines it; no such definition is supplied, while the relevant official syllabus linkage is the broader GS3 Indian Economy area.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_d18095f79895946fe79d8b71674de949d409560b07e8ea7abba91bf904404fd1",
+        "title": "Needs review: src_d18095f79895946fe79d8b71674de949d409560b07e8ea7abba91bf904404fd1 verification disagreed"
+      },
+      "note": {
+        "anchor": "GS3.1 Indian economy: resource mobilisation, growth, development, employment",
+        "argumentsAgainst": [
+          "A VRR auction is a short-term liquidity operation, not evidence by itself of a durable change in monetary-policy stance.",
+          "The source does not identify the cause, magnitude, or sectoral distribution of the liquidity conditions."
+        ],
+        "argumentsFor": [
+          "It can provide temporary funds to the banking system when the Reserve Bank assesses near-term liquidity conditions as requiring action.",
+          "The three-day tenor and specified reversal date indicate a time-bound liquidity operation rather than permanent liquidity creation."
+        ],
+        "background": [
+          "The Reserve Bank of India uses liquidity operations under the Liquidity Adjustment Facility (LAF) to manage short-term liquidity conditions.",
+          "In a variable-rate repo auction, eligible participants bid for funds and the applicable rate is discovered through the auction process; the supplied record does not provide further operational details beyond referring to earlier guidelines."
+        ],
+        "codes": [
+          "GS3.1",
+          "GS3.2"
+        ],
+        "editorialStatus": "draft",
+        "id": "note_d18095f79895946fe79d8b71674de949d409560b07e8ea7abba91bf904404fd1",
+        "indiaImplications": [
+          "Banks may receive temporary short-term liquidity, potentially supporting the smooth functioning of money markets.",
+          "The operation may help align short-term liquidity conditions with the Reserve Bank's monetary-management objectives, but the source does not establish effects on inflation, lending, bond yields, or growth.",
+          "The scheduled reversal limits the duration of the facility and signals that the operation is not presented as permanent liquidity support."
+        ],
+        "mainsPractice": [],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63848",
+            "text": "The notified amount for the Variable Rate Repo auction is ₹50,000 crore.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63848",
+            "text": "The tenor of the Variable Rate Repo auction is 3 days.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63848",
+            "text": "The auction window is 9:30 AM to 10:00 AM on October 23, 2026.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63848",
+            "text": "The date of reversal is October 26, 2026 (Monday).",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63848",
+            "text": "The Reserve Bank of India decided to conduct a Variable Rate Repo auction on Friday, October 23, 2026, after reviewing current and evolving liquidity conditions in the near term.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63848",
+            "text": "The operational guidelines for the auction will be the same as those given in the Reserve Bank's Press Release 2021-2022/1572 dated January 20, 2022.",
+            "verification": "needs-review"
+          }
+        ],
+        "papers": [
+          "GS3"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Hypothetical illustration",
+            "text": "If a bank faces a temporary shortage of funds, a time-bound VRR operation could provide access to short-term funds through the auction, with repayment scheduled on the stated reversal date. This illustration does not describe an actual participant or outcome."
+          },
+          "excerpt": "The RBI scheduled a ₹50,000-crore, three-day VRR auction for October 23, 2026, with reversal on October 26, after reviewing near-term liquidity conditions.",
+          "question": {
+            "answer": "A VRR auction is a short-term liquidity operation under the LAF in which funds are offered for a specified tenor through an auction. Its practical effect is temporary support to banking-system liquidity, while the stated reversal date limits its duration. It should not automatically be read as a change in the policy rate or as proof of a permanent monetary-policy shift.",
+            "prompt": "How should the announced VRR operation be interpreted as a monetary-management instrument, and what should not be inferred from it?"
+          },
+          "sections": [
+            {
+              "heading": "What the RBI announced",
+              "paragraphs": [
+                "The Reserve Bank of India decided to conduct a Variable Rate Repo auction on October 23, 2026, after reviewing current and evolving near-term liquidity conditions. The notified amount is ₹50,000 crore, with a three-day tenor and an auction window from 9:30 AM to 10:00 AM."
+              ]
+            },
+            {
+              "heading": "Mechanism and practical meaning",
+              "paragraphs": [
+                "The operation is conducted under the Liquidity Adjustment Facility and is scheduled for reversal on October 26, 2026. This makes it a temporary liquidity-management measure. A common misconception is that every repo operation signals a change in the policy rate; this record does not announce such a change or establish any impact on inflation, lending, or growth."
+              ]
+            }
+          ],
+          "title": "RBI schedules a three-day VRR auction to manage near-term liquidity"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The official summary specifies a ₹50,000 crore notified amount.",
+            "statement": "The notified amount is ₹50,000 crore."
+          },
+          {
+            "correct": true,
+            "explanation": "The official summary specifies a three-day tenor.",
+            "statement": "The auction has a three-day tenor."
+          },
+          {
+            "correct": true,
+            "explanation": "The auction window is stated as 9:30 AM to 10:00 AM on October 23, 2026.",
+            "statement": "The auction window is 9:30 AM to 10:00 AM."
+          },
+          {
+            "correct": true,
+            "explanation": "The official summary gives October 26, 2026 (Monday) as the date of reversal.",
+            "statement": "The scheduled date of reversal is October 26, 2026."
+          }
+        ],
+        "priority": 71,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 86,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 15
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-10-22T19:10:00Z",
+        "publisherId": "rbi",
+        "publisherName": "Reserve Bank of India",
+        "recallCard": "RBI announced a ₹50,000-crore VRR auction under LAF for October 23, 2026: three-day tenor, 9:30–10:00 AM window, and reversal on October 26. It follows a review of near-term liquidity conditions; the record does not announce a policy-rate change.",
+        "reusableAnchors": [],
+        "sourceContentHash": "691d730429aeb4fe61e73c1ff797c013394bb08ac124cbf9100f3eab132bacac",
+        "sourceId": "src_d18095f79895946fe79d8b71674de949d409560b07e8ea7abba91bf904404fd1",
+        "sourceTitle": "RBI to conduct 3-day Variable Rate Repo (VRR) auction under LAF on October 23, 2026",
+        "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63848",
+        "staticDefinition": "A Variable Rate Repo auction is a short-term repo operation in which the borrowing rate is determined through bidding rather than being fixed in advance; under the Liquidity Adjustment Facility, it is used to manage banking-system liquidity. The supplied record confirms the VRR auction and its LAF context but does not ",
+        "use": "Use the announced amount, tenor, auction window, and reversal date as evidence when explaining calibrated short-term liquidity management; use the scheduled reversal to distinguish temporary liquidity support from permanent monetary expansion.",
+        "wayForward": [
+          "Continue using transparent, time-bound and calibrated liquidity operations when near-term conditions warrant intervention.",
+          "Communicate clearly that liquidity operations and policy-rate decisions are distinct instruments unless both are explicitly announced.",
+          "Monitor money-market conditions and the effects of operations on monetary-policy transmission, while avoiding inferences about outcomes not stated in the official record."
+        ],
+        "whyInNews": "The Reserve Bank of India announced on October 22, 2026 that it would conduct a three-day Variable Rate Repo auction under the Liquidity Adjustment Facility on October 23, 2026. The notified amount is ₹50,000 crore, the auction window is 9:30 AM–10:00 AM, and reversal is scheduled for October 26, 2026. The stated basis"
+      },
+      "sourceId": "src_d18095f79895946fe79d8b71674de949d409560b07e8ea7abba91bf904404fd1",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The definition of VRR as rate discovery through bidding is supported by the cited January 2022 operational guidelines, but it is background rather than a fact stated in the October 2026 release.",
+          "The phrase “temporary support to banking-system liquidity” is a reasonable mechanism-based interpretation, but actual allotment, beneficiaries, and market effects are not established by the release.",
+          "“Scheduled reversal limits the duration” is sound; avoid treating it alone as proof that the operation cannot affect broader monetary conditions.",
+          "The implication that reversal distinguishes temporary liquidity support from “permanent monetary expansion” is useful, but permanent monetary expansion is not a precise technical category and could be phrased more carefully.",
+          "The statement that the operation may align liquidity with monetary-management objectives is analytical; the release only cites current and evolving near-term liquidity conditions.",
+          "The proposed GS3.1 anchor is relevant because the GS3 syllabus covers mobilisation of resources, growth, development and employment, with monetary and financial-sector issues commonly taught under it.",
+          "GS3.2 is not identifiable from the supplied coding scheme; if it denotes a standard internal subtopic, its exact label should be specified, since the official UPSC syllabus does not use these decimal codes.",
+          "The headline, deck, pocket-read sections, recall card, traps, and hypothetical example correctly preserve the ₹50,000 crore amount, three-day tenor, auction window, October 23 auction date, and October 26 reversal date from the release [P1]"
+        ],
+        "agrees": false,
+        "confidence": 0.97,
+        "flagged_claims": [
+          "The proposed code “GS3.2” is a wrong or unsupported syllabus tag unless the note’s internal taxonomy explicitly defines it; no such definition is supplied, while the relevant official syllabus linkage is the broader GS3 Indian Economy area."
         ],
         "verificationVersion": 2
       }

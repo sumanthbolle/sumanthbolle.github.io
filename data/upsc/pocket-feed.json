@@ -1,6 +1,74 @@
 {
   "articles": [
     {
+      "anchor": "Sovereign Gold Bond (SGB) Scheme: maturity-linked redemption and gold-price-based repayment",
+      "codes": [
+        "GS3.1",
+        "GS3.2"
+      ],
+      "example": {
+        "heading": "Hypothetical illustration",
+        "text": "If a future SGB tranche had a redemption date on a particular day, its final redemption price would be determined using the prescribed simple average of IBJA-published closing prices for 999-purity gold over the preceding three business days, rather than a single day’s price."
+      },
+      "excerpt": "The RBI announced final redemption of SGB 2018-19 Series-II on October 23, 2026, at ₹14,425 per unit, calculated from the preceding three business days’ 999-purity gold prices.",
+      "id": "news-src_52bcb93fc6b7578644b84b44cf0024711c86c893468e87aa3aa14b9fc110b735",
+      "kind": "News brief",
+      "paper": "GS3",
+      "publicationDateKind": "published",
+      "publishedAt": "2026-10-22T18:30:00Z",
+      "publishedOn": "2026-10-22",
+      "question": "Why does the prescribed three-business-day averaging formula matter for final SGB redemption?",
+      "recallAnswer": "The formula reduces dependence on a single day’s gold price by using a simple average of the preceding three business days’ closing prices for 999-purity gold published by IBJA.",
+      "sections": [
+        {
+          "heading": "Maturity and price",
+          "paragraphs": [
+            "The RBI stated that SGB 2018-19 Series-II, issued on October 23, 2018, becomes repayable after eight years, with final redemption on October 23, 2026. The notified price is ₹14,425 per unit."
+          ],
+          "sourceRefs": [
+            0
+          ]
+        },
+        {
+          "heading": "Benchmark-based calculation",
+          "paragraphs": [
+            "The price is based on the simple average of IBJA-published closing prices for 999-purity gold on October 19, October 21 and October 22, 2026. The mechanism provides a defined valuation rule, but the release does not state any investor’s overall return."
+          ]
+        }
+      ],
+      "sourceContentHash": "7b1f7f3f570f8ffa190b94d4209f3758394723e91787c626348cb2e74ae0716b",
+      "sourceId": "src_52bcb93fc6b7578644b84b44cf0024711c86c893468e87aa3aa14b9fc110b735",
+      "sources": [
+        {
+          "label": "Reserve Bank of India",
+          "note": "Final redemption under Sovereign Gold Bond (SGB) Scheme - Redemption Price for final redemption of SGB 2018-19 Series-II due on October 23, 2026. Published 2026-10-22.",
+          "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63847"
+        }
+      ],
+      "subject": "Economy & environment",
+      "takeaway": "SGB 2018-19 Series-II, issued on October 23, 2018, reaches final redemption on October 23, 2026 after eight years. RBI notified ₹14,425 per unit, calculated as the simple average of IBJA-published 999-purity gold closing prices for October 19, 21 and 22, 2026.",
+      "title": "RBI sets final redemption price for SGB 2018-19 Series-II",
+      "verification": {
+        "advisory_notes": [
+          "“Financialisation of savings” and reduced physical-gold imports are analytical implications, not findings established by this release.",
+          "“Sovereign-backed” and “dematerialised” are broadly relevant descriptions, but the supplied release does not itself establish every instrument feature or delivery mode.",
+          "The note should distinguish the release’s three-business-day formula from the broader scheme rule that permits premature redemption after the fifth year on interest-payment dates.[1][3]",
+          "The headline, deck and pocketRead accurately identify the tranche, maturity date and notified price as supported by the supplied RBI extract [P1].",
+          "The hypothetical example is appropriately labelled and does not assert a real future event.",
+          "The applied-question answer is analytically sound, but “investor predictability” should not imply predictable returns; the formula provides procedural transparency, while gold prices remain variable.",
+          "GS3.1 and GS3.2 are internal taxonomy codes rather than official UPSC labels; the substantive GS3 economy connection is defensible through resource mobilisation and financial-sector themes.",
+          "The ₹14,425 figure is a notified redemption price, not by itself a measure of total return; the note correctly flags the missing entry-price and holding-specific information."
+        ],
+        "agrees": true,
+        "checkedAt": "2026-10-22T19:19:18Z",
+        "confidence": 0.96,
+        "flagged_claims": [],
+        "noteContentHash": "8bbb1c7d0cf58cd3adad0ccac6f55e93373e18cf8faf83f430f5bb45d27137ef",
+        "sourceContentHash": "7b1f7f3f570f8ffa190b94d4209f3758394723e91787c626348cb2e74ae0716b",
+        "verificationVersion": 2
+      }
+    },
+    {
       "anchor": "Para-sport recognition and inclusion",
       "codes": [
         "GS1.5",
@@ -6096,7 +6164,7 @@
       }
     }
   ],
-  "generatedAt": "2026-10-22T17:08:13Z",
-  "revision": "7830644909bcd4b9b3018e7628e79645c281e88ec86608e7c9f5ea3fc907abec",
+  "generatedAt": "2026-10-22T19:20:22Z",
+  "revision": "fe9307d66c69e8f7fba35fedf2986770723a2baef175e1aec34f54ddda1d1037",
   "version": 1
 }

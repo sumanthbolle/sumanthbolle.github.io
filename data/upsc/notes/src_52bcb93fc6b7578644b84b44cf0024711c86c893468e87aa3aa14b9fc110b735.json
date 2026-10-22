@@ -1,0 +1,180 @@
+{
+  "anchor": "Sovereign Gold Bond (SGB) Scheme: maturity-linked redemption and gold-price-based repayment",
+  "argumentsAgainst": [
+    "The source record does not establish whether the notified redemption price is financially attractive relative to an individual investor’s purchase price, because the issue price and holding-specific returns are not provided.",
+    "Gold-price-linked repayment exposes the investor’s rupee return to movements in gold prices; this is an analytical implication, not a fact stated in the press release."
+  ],
+  "argumentsFor": [
+    "The mechanism links final repayment to an objectively published benchmark: the simple average of closing prices for 999-purity gold over the previous three business days.",
+    "An eight-year maturity can support longer-term investment in a sovereign-backed gold-linked instrument, while reducing the need for physical gold holdings; the latter is contextual analysis rather than a fact in this release."
+  ],
+  "background": [
+    "The RBI press release concerns the final redemption of SGB 2018-19 Series-II, whose issue date was October 23, 2018. It states that repayment occurs on expiry of eight years from issue.",
+    "The redemption price is calculated in Indian rupees using the simple average of closing prices of 999-purity gold for the previous three business days, as published by the India Bullion and Jewellers Association Ltd (IBJA)."
+  ],
+  "codes": [
+    "GS3.1",
+    "GS3.2"
+  ],
+  "editorialStatus": "source-backed",
+  "id": "note_52bcb93fc6b7578644b84b44cf0024711c86c893468e87aa3aa14b9fc110b735",
+  "indiaImplications": [
+    "The case illustrates how a government-linked financial instrument can mobilise household savings through a transparent, market-referenced redemption formula.",
+    "For investors, the practical consequence is the need to distinguish final maturity from any separate premature-redemption facility and to understand that the price is determined by the prescribed gold benchmark rather than an investor’s pur",
+    "For public finance and monetary policy, gold-linked instruments can be discussed in relation to financialisation of savings and reduced dependence on physical gold imports, but those broader outcomes are not measured in the supplied record."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Explain the maturity rule and the gold-price-linked redemption formula.",
+        "Assess benefits of benchmark-based pricing for transparency and investor predictability.",
+        "Discuss limitations: gold-price volatility, absence of investor-specific return information, and the distinction between final and premature redemption.",
+        "Suggest investor communication focused on dates, benchmark methodology and risk disclosure."
+      ],
+      "conclusionPrompt": "Conclude by linking transparent redemption rules with informed participation in formal financial markets.",
+      "counterPosition": "A benchmark-based formula improves objectivity but does not guarantee positive or uniform investor returns because outcomes depend on the investor’s entry price and gold-price movement.",
+      "diagramSuggestion": "Issue date → eight-year maturity → preceding three business days’ IBJA gold-price average → rupee redemption price.",
+      "directive": "examine",
+      "introChoices": [
+        "The final redemption of an SGB tranche demonstrates how sovereign financial instruments convert a commodity-linked asset into a rule-based, dematerialised investment claim.",
+        "A transparent maturity formula is central to investor confidence in gold-linked public borrowing instruments."
+      ],
+      "marks": 10,
+      "skeleton": [
+        "The final redemption of an SGB tranche demonstrates how sovereign financial instruments convert a commodity-linked asset into a rule-based, dematerialised investment claim.",
+        "A transparent maturity formula is central to investor confidence in gold-linked public borrowing instruments.",
+        "Explain the maturity rule and the gold-price-linked redemption formula.",
+        "Assess benefits of benchmark-based pricing for transparency and investor predictability.",
+        "Discuss limitations: gold-price volatility, absence of investor-specific return information, and the distinction between final and premature redemption.",
+        "Suggest investor communication focused on dates, benchmark methodology and risk disclosure.",
+        "A benchmark-based formula improves objectivity but does not guarantee positive or uniform investor returns because outcomes depend on the investor’s entry price and gold-price movement.",
+        "Conclude by linking transparent redemption rules with informed participation in formal financial markets."
+      ],
+      "stem": "Examine how the redemption mechanism for the SGB 2018-19 Series-II balances predictability for investors with exposure to gold-price movements.",
+      "timeMinutes": 7,
+      "wordBudget": 150
+    }
+  ],
+  "officialFacts": [
+    {
+      "cloze": {
+        "answer": "October 23, 2026",
+        "prompt": "The final redemption date of the above tranche shall be ____."
+      },
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63847",
+      "text": "In terms of GOI notification F.No.4(22)-B(W&M)/2018 dated October 08, 2018 (SGB 2018-19 Series-II-Issue date October 23, 2018) on Sovereign Gold Bond Scheme, the Gold Bond shall be repayable on the expiration of eight years from the date of issue of the Gold Bonds. Accordingly, the final redemption date of the above tranche shall be October 23, 2026.",
+      "verification": "source-backed"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63847",
+      "text": "Accordingly, the redemption price for final redemption due on October 23, 2026, shall be ₹14,425/- (Rupees Fourteen Thousand Four Hundred and Twenty-Five only) per unit of SGB based on the simple average of closing price of gold for the three business days i.e., October 19, October 21, and October 22, 2026.",
+      "verification": "source-backed"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63847",
+      "text": "The redemption price of SGB shall be based on simple average of closing price of gold of 999 purity of previous three business days from the date of redemption, as published by the India Bullion and Jewellers Association Ltd (IBJA).",
+      "verification": "source-backed"
+    }
+  ],
+  "papers": [
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Hypothetical illustration",
+      "text": "If a future SGB tranche had a redemption date on a particular day, its final redemption price would be determined using the prescribed simple average of IBJA-published closing prices for 999-purity gold over the preceding three business days, rather than a single day’s price."
+    },
+    "excerpt": "The RBI announced final redemption of SGB 2018-19 Series-II on October 23, 2026, at ₹14,425 per unit, calculated from the preceding three business days’ 999-purity gold prices.",
+    "question": {
+      "answer": "The formula reduces dependence on a single day’s gold price by using a simple average of the preceding three business days’ closing prices for 999-purity gold published by IBJA.",
+      "prompt": "Why does the prescribed three-business-day averaging formula matter for final SGB redemption?"
+    },
+    "sections": [
+      {
+        "heading": "Maturity and price",
+        "paragraphs": [
+          "The RBI stated that SGB 2018-19 Series-II, issued on October 23, 2018, becomes repayable after eight years, with final redemption on October 23, 2026. The notified price is ₹14,425 per unit."
+        ]
+      },
+      {
+        "heading": "Benchmark-based calculation",
+        "paragraphs": [
+          "The price is based on the simple average of IBJA-published closing prices for 999-purity gold on October 19, October 21 and October 22, 2026. The mechanism provides a defined valuation rule, but the release does not state any investor’s overall return."
+        ]
+      }
+    ],
+    "title": "RBI sets final redemption price for SGB 2018-19 Series-II"
+  },
+  "prelimsTraps": [
+    {
+      "correct": true,
+      "explanation": "The source states that the bond is repayable on expiration of eight years from the date of issue.",
+      "statement": "SGB 2018-19 Series-II was issued on October 23, 2018 and its final redemption date is October 23, 2026."
+    },
+    {
+      "correct": true,
+      "explanation": "The source specifies 999-purity gold, the previous three business days, a simple average and IBJA publication.",
+      "statement": "The final SGB redemption price uses the simple average of IBJA-published closing prices of 999-purity gold for the previous three business days."
+    },
+    {
+      "correct": true,
+      "explanation": "The official release gives ₹14,425 per unit for the final redemption due on October 23, 2026.",
+      "statement": "The notified final redemption price for the tranche is ₹14,425 per SGB unit."
+    },
+    {
+      "correct": false,
+      "explanation": "The source specifies a simple average, not a weighted average.",
+      "statement": "The final redemption price is calculated using a weighted average of gold prices."
+    }
+  ],
+  "priority": 64,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 45,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 50
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-10-22T18:30:00Z",
+  "publisherId": "rbi",
+  "publisherName": "Reserve Bank of India",
+  "recallCard": "SGB 2018-19 Series-II, issued on October 23, 2018, reaches final redemption on October 23, 2026 after eight years. RBI notified ₹14,425 per unit, calculated as the simple average of IBJA-published 999-purity gold closing prices for October 19, 21 and 22, 2026.",
+  "reusableAnchors": [],
+  "sourceContentHash": "7b1f7f3f570f8ffa190b94d4209f3758394723e91787c626348cb2e74ae0716b",
+  "sourceId": "src_52bcb93fc6b7578644b84b44cf0024711c86c893468e87aa3aa14b9fc110b735",
+  "sourceTitle": "Final redemption under Sovereign Gold Bond (SGB) Scheme - Redemption Price for final redemption of SGB 2018-19 Series-II due on October 23, 2026",
+  "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63847",
+  "staticDefinition": "A Sovereign Gold Bond is a government-linked financial instrument whose redemption value, for the tranche covered here, is determined at final maturity through the prescribed gold-price benchmark rather than physical delivery of gold; the supplied record specifically establishes the eight-year repayment rule and benchm",
+  "use": "Use this case to illustrate rule-based valuation, benchmark transparency, financialisation of savings, and the distinction between final maturity and premature redemption in GS3 economy answers.",
+  "verification": {
+    "advisory_notes": [
+      "“Financialisation of savings” and reduced physical-gold imports are analytical implications, not findings established by this release.",
+      "“Sovereign-backed” and “dematerialised” are broadly relevant descriptions, but the supplied release does not itself establish every instrument feature or delivery mode.",
+      "The note should distinguish the release’s three-business-day formula from the broader scheme rule that permits premature redemption after the fifth year on interest-payment dates.[1][3]",
+      "The headline, deck and pocketRead accurately identify the tranche, maturity date and notified price as supported by the supplied RBI extract [P1].",
+      "The hypothetical example is appropriately labelled and does not assert a real future event.",
+      "The applied-question answer is analytically sound, but “investor predictability” should not imply predictable returns; the formula provides procedural transparency, while gold prices remain variable.",
+      "GS3.1 and GS3.2 are internal taxonomy codes rather than official UPSC labels; the substantive GS3 economy connection is defensible through resource mobilisation and financial-sector themes.",
+      "The ₹14,425 figure is a notified redemption price, not by itself a measure of total return; the note correctly flags the missing entry-price and holding-specific information."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-10-22T19:19:18Z",
+    "confidence": 0.96,
+    "flagged_claims": [],
+    "noteContentHash": "8bbb1c7d0cf58cd3adad0ccac6f55e93373e18cf8faf83f430f5bb45d27137ef",
+    "sourceContentHash": "7b1f7f3f570f8ffa190b94d4209f3758394723e91787c626348cb2e74ae0716b",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Publish redemption dates and benchmark methodology prominently through issuing and servicing channels.",
+    "Explain clearly that a notified final redemption price is not, by itself, an investor’s total return; entry price and other applicable terms also matter.",
+    "Maintain consistent disclosure of the purity standard, reference institution, averaging window and applicable redemption date.",
+    "Strengthen investor education so holders distinguish final redemption from any separate premature-redemption route."
+  ],
+  "whyInNews": "The Reserve Bank of India announced on October 22, 2026 that SGB 2018-19 Series-II, issued on October 23, 2018, would undergo final redemption on October 23, 2026 after eight years. It notified ₹14,425 per unit, calculated from the simple average of IBJA-published closing prices of 999-purity gold for the preceding thr"
+}
