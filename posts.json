@@ -1,5 +1,67 @@
 [
   {
+    "id": 106,
+    "title": "Recursive Flint brings a 39.8B local coding model to Ollama",
+    "excerpt": "Recursive\u2019s Flint became available through Ollama on October 21, 2026. It is a local Apache-2.0 coding model with 39.8 billion total parameters, about 2.5 billion active per token, and a 262K-token context window.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Advanced",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-recursive-flint-brings-a-39-8b-local-coding-model-to-ollama-1792655611540",
+    "date": "Oct 22, 2026",
+    "dateISO": "2026-10-22T07:53:31Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Recursive's Flint Lands in Ollama: An Apache-2.0, 40B MoE Coding Model Built for Agent Work",
+        "url": "https://automater.ai/news/recursive-flint-ollama-coding-agent-model/"
+      },
+      {
+        "title": "New AI & agent releases (GitHub feed)",
+        "url": "https://toolsift.ai/new/"
+      },
+      {
+        "title": "AI Agent Releases: Live Feed of New Versions, Page 15",
+        "url": "https://agentgid.com/news/releases/page/15/"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Ollama published the v0.40.8-rc0 pre-release on October 21, 2026. The release added Flint, Recursive\u2019s first publicly available coding model. The model targets repository work: understanding unfamiliar code, tracing bugs, implementing features, and adding tests.</p>\n<p>Flint uses a mixture-of-experts architecture. It has 39.8 billion total parameters, but about 2.5 billion are active for each token. The model is Apache-2.0 licensed and is distributed as a roughly 23 GB Ollama build.</p>\n<h2>How it works</h2>\n<p>The sparse architecture keeps the model\u2019s total capacity high while limiting the computation used for each token. Its 262K-token context window is large enough to include substantial parts of a repository, long test output, and an agent\u2019s accumulated tool history.</p>\n<p>Ollama lists Flint with tool-use and thinking support. The release also provides launch paths for Claude Code, OpenCode, Hermes Agent, and OpenClaw. This makes Flint useful as a local model behind an existing coding-agent loop rather than only as an interactive chat model.</p>\n<pre><code class=\"language-bash\">ollama run flint</code></pre>\n<h2>Where it breaks</h2>\n<p>The available release is v0.40.8-rc0, not a final Ollama release. The reported packaging supports macOS GPU use in this release candidate; other GPU support was described as arriving in later release candidates. Hardware compatibility therefore needs verification before deployment.</p>\n<p>A large context window does not guarantee that the model will use every file correctly. Long repository prompts can increase latency and may distract the model from the active bug. The search results provide model size and packaging details, but no independent benchmark results, so they do not establish that Flint outperforms hosted coding models.</p>\n<ul>\n<li>Use a workstation with enough memory for the approximately 23 GB model and runtime overhead.</li>\n<li>Start with a small repository or a bounded task. Ask the agent to inspect files, propose a plan, make one change, and run targeted tests.</li>\n<li>Keep secrets outside the model context. Local inference does not make untrusted tool calls safe.</li>\n<li>Measure completion rate, test pass rate, latency, and memory use on your own repositories.</li>\n</ul>\n<h2>How to try it</h2>\n<p>Install the Ollama release candidate, pull Flint with <code>ollama run flint</code>, then connect the model to a supported coding agent. Start with read-only repository analysis and explicit test commands before allowing edits.</p>\n<p>A practical evaluation is a fixed task set containing bug traces, feature changes, and test additions. Record whether the agent edits the right files, whether tests pass, total runtime, and peak memory. Compare those results with the hosted model currently used by the team.</p>\n<pre><code class=\"language-bash\">ollama launch claude --model flint\nollama launch opencode --model flint</code></pre>\n<h2>Takeaways</h2>\n<ul>\n<li>Try Flint locally through Ollama v0.40.8-rc0 with a small, repeatable coding task.</li>\n<li>Treat its 262K context as capacity, not proof of reliable whole-repository reasoning.</li>\n<li>Benchmark task success, test pass rate, latency, and memory before adopting it.</li>\n<li>Keep agent permissions and secrets constrained, even when inference runs locally.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://automater.ai/news/recursive-flint-ollama-coding-agent-model/\" target=\"_blank\" rel=\"noopener\">Recursive's Flint Lands in Ollama: An Apache-2.0, 40B MoE Coding Model Built for Agent Work</a> \u2014 automater.ai</li>\n<li><a href=\"https://toolsift.ai/new/\" target=\"_blank\" rel=\"noopener\">New AI &amp; agent releases (GitHub feed)</a> \u2014 toolsift.ai</li>\n<li><a href=\"https://agentgid.com/news/releases/page/15/\" target=\"_blank\" rel=\"noopener\">AI Agent Releases: Live Feed of New Versions, Page 15</a> \u2014 agentgid.com</li>\n</ul>"
+  },
+  {
+    "id": 107,
+    "title": "vLLM 0.32.0 fixed silent MoE corruption under expert parallelism",
+    "excerpt": "On 18 October 2026, vLLM 0.32.0 fixed silent output corruption in CUTLASS NVFP4/MXFP4 mixture-of-experts kernels used with expert parallelism. The server returned incorrect results without raising an error, which makes ordinary availability checks insufficient.",
+    "readTime": "2 min read",
+    "category": "career",
+    "learningPath": "career",
+    "difficulty": "Advanced",
+    "forPersona": [
+      "Developers",
+      "Engineering managers",
+      "Students"
+    ],
+    "uniqueId": "daily-career-vllm-0-32-0-fixed-silent-moe-corruption-under-expert-paralle-1792655649510",
+    "date": "Oct 22, 2026",
+    "dateISO": "2026-10-22T07:54:09Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "AI Brief, 19 October 2026: a search API at 75 cents per thousand, and two silent-corruption fixes",
+        "url": "https://muhammad-ahmed.com/blog/ai-brief-a-search-api-at-75-cents-per-thousand/"
+      },
+      {
+        "title": "Dev News Digest: 22 Oct 2026, 06:00",
+        "url": "https://dev.to/magnus_ferm/dev-news-digest-22-oct-2026-0600-5g6i"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>vLLM 0.32.0 shipped on 18 October 2026 with a fix named \u201csilent CUTLASS NVFP4/MXFP4 MoE corruption under EP.\u201d The affected path combines quantised mixture-of-experts models, CUTLASS kernels, and expert parallelism.</p>\n<p>The failure mode was incorrect model output without an exception. The available release information does not identify affected GPU models or quantify the accuracy loss, so an operator cannot determine exposure from the version number alone.</p>\n<h2>How the technical path works</h2>\n<p>A mixture-of-experts model routes each token to selected expert networks instead of running every expert. Expert parallelism distributes those experts across devices. NVFP4 and MXFP4 reduce numerical precision and memory use, while CUTLASS supplies GPU kernels for the computation.</p>\n<p>That combination creates several interfaces where a defect can preserve valid tensor shapes and valid GPU execution while changing values. The important distinction is that this was not a crash or an obvious timeout. The inference service could remain healthy while producing wrong answers.</p>\n<h2>The catch</h2>\n<p>A normal service monitor would likely miss this class of bug. HTTP success, latency, GPU utilisation, and token counts can all remain within expected ranges while the generated text changes.</p>\n<p>The release note also leaves key forensic questions open: which GPU generations were affected, which model architectures triggered the corruption, and how frequently the wrong values appeared. That uncertainty makes configuration inventories and regression tests more useful than relying on a simple patch-status report.</p>\n<ul>\n<li>Treat model correctness as a production signal, not only a process-health signal.</li>\n<li>Keep a fixed evaluation set for every production model, quantisation format, GPU configuration, and parallelism mode.</li>\n<li>Compare outputs or task metrics before and after inference-server upgrades, especially when enabling new low-precision kernels.</li>\n</ul>\n<h2>What engineers should change</h2>\n<p>Pin the exact vLLM version and record whether NVFP4 or MXFP4, CUTLASS, mixture-of-experts models, and expert parallelism are enabled. Reproduce representative prompts on the old and new stacks before changing traffic levels.</p>\n<p>Add semantic canaries. For a fixed prompt set, check structured output validity, expected classifications, numerical tolerances, or downstream task scores. Store the input, model revision, quantisation settings, GPU type, and server version with each result.</p>\n<p>The broader lesson is practical: optimisations that change arithmetic or distribute model components need correctness tests at the application boundary. An engineer who can trace a bad answer through routing, quantisation, kernel selection, and distributed execution has a more valuable debugging skill than one who only checks whether the service is up.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Upgrade vLLM to 0.32.0 or later after testing affected quantised MoE configurations.</li>\n<li>Inventory production use of NVFP4, MXFP4, CUTLASS, and expert parallelism.</li>\n<li>Run semantic canaries instead of relying only on uptime and latency checks.</li>\n<li>Record GPU, model, quantisation, parallelism, and server-version metadata for every evaluation.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://muhammad-ahmed.com/blog/ai-brief-a-search-api-at-75-cents-per-thousand/\" target=\"_blank\" rel=\"noopener\">AI Brief, 19 October 2026: a search API at 75 cents per thousand, and two silent-corruption fixes</a> \u2014 muhammad-ahmed.com</li>\n<li><a href=\"https://dev.to/magnus_ferm/dev-news-digest-22-oct-2026-0600-5g6i\" target=\"_blank\" rel=\"noopener\">Dev News Digest: 22 Oct 2026, 06:00</a> \u2014 dev.to</li>\n</ul>"
+  },
+  {
     "id": 104,
     "title": "ServiceNow documents a controlled fix path for failed SAM GoTo jobs",
     "excerpt": "ServiceNow\u2019s October 19, 2026 troubleshooting guide documents a practical recovery path for failed Software Asset Management GoTo integrations. It combines profile-level validation, Flow Designer execution records, datastream logs, and temporary debug settings; Zurich instances receive the fix in Week 43.",
