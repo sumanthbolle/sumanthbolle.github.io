@@ -1,10 +1,57 @@
 {
-  "generated": "2026-10-20T06:18:17.611Z",
+  "generated": "2026-10-22T06:22:12.760Z",
   "provisional": true,
   "note": "The current trigger layer for anchors in data/upsc-patterns.json, refreshed one anchor per day. Every item carries the source it came from; items not from a primary document must be confirmed against one before they enter permanent notes.",
   "patternsVersion": "1.0.0",
-  "anchorsHeld": 1,
+  "anchorsHeld": 2,
   "anchors": {
+    "geophysical-phenomena": {
+      "refreshedAt": "2026-10-22T06:22:12.739Z",
+      "anchor": "Geophysical phenomena and hazards",
+      "codes": [
+        "GS1.8",
+        "GS3.7"
+      ],
+      "papers": [
+        "GS1",
+        "GS3"
+      ],
+      "confidence": "high",
+      "primarySources": 2,
+      "omitted": "Recent major volcanic, tsunami and other geophysical developments were omitted because the available primary-source results did not establish a sufficiently direct India-focused syllabus connection.",
+      "items": [
+        {
+          "title": "India completes landslide susceptibility mapping",
+          "date": "2025-08-20",
+          "why": "Hazard governance shifts from post-disaster response toward spatial susceptibility mapping, rainfall thresholds and district-level early warning.",
+          "use": "GSI mapped about 4.3 lakh sq km across 19 states and UTs and issued experimental or operational forecasts for 21 districts in eight states.",
+          "verb": "discuss",
+          "url": "https://pib.gov.in/PressReleseDetailm.aspx?PRID=2158420",
+          "source": "Press Information Bureau",
+          "primary": true
+        },
+        {
+          "title": "Kangra-Chamba seismic activity monitored",
+          "date": "2026-07-22",
+          "why": "Repeated moderate seismicity shows that Himalayan risk assessment must combine active tectonics, monitoring capacity and preparedness rather than rely on event prediction.",
+          "use": "NCS recorded 16 earthquakes in June 2026; the Kangra-Chamba-Dharamshala region is in Seismic Zone V and has seven monitoring stations.",
+          "verb": "examine",
+          "url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2287612&reg=3&lang=1",
+          "source": "Press Information Bureau",
+          "primary": true
+        },
+        {
+          "title": "Magnitude 5.1 earthquake strikes Uttarakhand",
+          "date": "2026-10-06",
+          "why": "A contemporary Himalayan earthquake provides a grounded case for linking plate convergence, shallow shaking, ground failure and uneven vulnerability.",
+          "use": "A reviewed magnitude 5.1 earthquake occurred 31 km northwest of Bageshwar at 16.5 km depth, illustrating continuing seismic exposure in the Himalaya.",
+          "verb": "explain",
+          "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000u0hz",
+          "source": "United States Geological Survey",
+          "primary": false
+        }
+      ]
+    },
     "multilateral-groupings-and-reform": {
       "refreshedAt": "2026-10-20T06:18:17.611Z",
       "anchor": "Multilateral groupings and institutional reform",
