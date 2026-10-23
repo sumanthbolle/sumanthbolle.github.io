@@ -121,11 +121,13 @@
     .badge-difficulty{background:linear-gradient(135deg,rgba(255,149,0,0.15),rgba(255,149,0,0.08));color:#ff9500;border:1px solid rgba(255,149,0,0.2)}
     .badge-difficulty.expert{background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(239,68,68,0.08));color:#ef4444;border:1px solid rgba(239,68,68,0.2)}
     .badge-category{background:linear-gradient(135deg,rgba(52,199,89,0.15),rgba(52,199,89,0.08));color:#22c55e;border:1px solid rgba(52,199,89,0.2)}
+    .badge-deep{background:linear-gradient(135deg,rgba(255,159,10,0.16),rgba(255,159,10,0.08));color:#c76a00;border:1px solid rgba(255,159,10,0.25)}
     .badge-scenario{background:linear-gradient(135deg,rgba(175,82,222,0.15),rgba(175,82,222,0.08));color:#af52de;border:1px solid rgba(175,82,222,0.2)}
     .iv-cat-group{font-size:10px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:0.8px;padding:12px 12px 4px;opacity:0.8}
     .badge-difficulty.foundation{background:linear-gradient(135deg,rgba(0,102,204,0.15),rgba(0,102,204,0.08));color:var(--blue);border:1px solid rgba(0,102,204,0.2)}
     
     .interview-question{font-size:18px;font-weight:600;line-height:1.5;color:var(--text)}
+    .interview-question code,.interview-answer-inner code{overflow-wrap:anywhere}
     .interview-toggle{width:40px;height:40px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.3s}
     .interview-toggle svg{width:20px;height:20px;stroke:var(--gray);fill:none;stroke-width:2;transition:transform 0.3s}
     .interview-card.open .interview-toggle{background:var(--blue)}
@@ -303,7 +305,7 @@
   <header class="page-header">
     <p class="breadcrumb"><a href="index.html">Home</a> / Interview Prep</p>
     <h1>Technical Interview Questions</h1>
-    <p>ServiceNow interview questions built on real customer scenarios across ITSM, CMDB, ITOM, HR, CSM, SecOps, GRC, integrations and AI, with model answers. Work through them by level, from Beginner to Expert.</p>
+    <p>ServiceNow interview questions built on real customer scenarios across ITSM, CMDB, ITOM, HR, CSM, SecOps, GRC, integrations and AI, plus API deep dives grounded in the official API reference. Work through them by level, from Beginner to Expert.</p>
     <div class="header-stats">
       <div class="header-stat"><div class="header-stat-num" id="totalQuestions">0</div><div class="header-stat-label">Questions</div></div>
       <div class="header-stat"><div class="header-stat-num" id="totalScenarios">0</div><div class="header-stat-label">Scenarios</div></div>
@@ -572,6 +574,7 @@
       'HR Service Delivery':'#ff6482','Customer Service':'#30d158','Security Operations':'#ff453a',
       'Risk & Compliance':'#a2845e','Strategic Portfolio':'#66d4cf'
     };
+    var DEEP_FILTER = 'deep-dives';
     var catGroups = [
       ['Platform fundamentals', ['Core Concepts','Scripting','Architecture','App Engine & Flow']],
       ['Products & modules', ['ITSM','Service Catalog & Portal','CMDB & CSDM','ITOM','HR Service Delivery','Customer Service','Security Operations','Risk & Compliance','Strategic Portfolio']],
@@ -589,6 +592,10 @@
       });
 
       var catHtml = '<button class="iv-cat-item active" data-cat="all" onclick="sidebarFilter(\'all\')"><div class="iv-cat-dot" style="background:#86868b"></div><span class="iv-cat-name">All Questions</span><span class="iv-cat-count">' + INTERVIEWS.length + '</span></button>';
+      var deepCount = INTERVIEWS.filter(function(q) { return q.deepDive; }).length;
+      if (deepCount) {
+        catHtml += '<button class="iv-cat-item" data-cat="' + DEEP_FILTER + '" onclick="sidebarFilter(\'' + DEEP_FILTER + '\')"><div class="iv-cat-dot" style="background:#ff9f0a"></div><span class="iv-cat-name">API &amp; deep dives</span><span class="iv-cat-count">' + deepCount + '</span></button>';
+      }
       var grouped = {};
       var groups = catGroups.map(function(g) { return [g[0], g[1].slice()]; });
       groups.forEach(function(g) { g[1].forEach(function(c) { grouped[c] = true; }); });
@@ -619,7 +626,7 @@
       currentDifficulty = null;
       document.querySelectorAll('.iv-cat-item').forEach(function(el) { el.classList.toggle('active', el.dataset.cat === category); });
       document.querySelectorAll('.iv-diff-item').forEach(function(el) { el.classList.remove('active'); });
-      document.getElementById('ivActiveLabel').textContent = category === 'all' ? 'All Questions' : category;
+      document.getElementById('ivActiveLabel').textContent = category === 'all' ? 'All Questions' : category === DEEP_FILTER ? 'API & deep dives' : category;
       renderInterviews(category);
       closeMobileSidebar();
     }
@@ -736,7 +743,9 @@
     }
 
     function renderInterviews(filter) {
-      var filtered = filter === 'all' ? INTERVIEWS.slice() : INTERVIEWS.filter(function(q) { return q.category === filter; });
+      var filtered = filter === 'all' ? INTERVIEWS.slice()
+        : filter === DEEP_FILTER ? INTERVIEWS.filter(function(q) { return q.deepDive; })
+        : INTERVIEWS.filter(function(q) { return q.category === filter; });
       if (currentDifficulty) {
         filtered = filtered.filter(function(q) { return q.difficulty === currentDifficulty; });
       }
@@ -767,7 +776,7 @@
                   <span class="interview-badge badge-company">${q.company}</span>
                   <span class="interview-badge badge-difficulty ${diffClass}">${q.difficulty}</span>
                   <span class="interview-badge badge-category">${q.category}</span>
-                  ${q.scenario ? '<span class="interview-badge badge-scenario">Scenario</span>' : ''}
+                  ${q.deepDive ? '<span class="interview-badge badge-deep">Deep dive</span>' : q.scenario ? '<span class="interview-badge badge-scenario">Scenario</span>' : ''}
                 </div>
                 <p class="interview-question">${q.question}</p>
               </div>
