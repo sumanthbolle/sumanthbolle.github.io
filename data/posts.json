@@ -1,5 +1,75 @@
 [
   {
+    "id": 108,
+    "title": "ServiceNow SAM profiles add guided integration troubleshooting",
+    "excerpt": "ServiceNow\u2019s October 2026 guidance adds a Troubleshoot action to Software Asset Management direct-integration profiles. It runs a debug-level validation, returns an error summary and suggested resolutions in about 15\u201320 seconds, and leaves configuration changes to the administrator.",
+    "readTime": "2 min read",
+    "category": "servicenow",
+    "learningPath": "servicenow",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Admins",
+      "Architects"
+    ],
+    "uniqueId": "daily-servicenow-servicenow-sam-profiles-add-guided-integration-troubleshooti-1792741928088",
+    "date": "Oct 23, 2026",
+    "dateISO": "2026-10-23T07:52:08Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Complete Troubleshooting Guide for subscriptions, activity ...",
+        "url": "https://support.servicenow.com/kb?id=kb_article_view&sysparm_article=KB3227184"
+      },
+      {
+        "title": "Troubleshooting ServiceNow Software Asset Management Salesforce ...",
+        "url": "https://support.servicenow.com/kb?id=kb_article_view&sysparm_article=KB3227197"
+      },
+      {
+        "title": "Complete Troubleshooting GUIDE for profile will not ...",
+        "url": "https://support.servicenow.com/kb?id=kb_article_view&sysparm_article=KB3227199"
+      },
+      {
+        "title": "Measure It, Price It, Fix It: Tech Debt and ServiceNow Impact",
+        "url": "https://www.servicenow.com/community/servicenow-impact-blog/sizing-tech-debt-with-platform-health-analytics-and-servicenow/ba-p/3612256"
+      }
+    ],
+    "content": "<h2>What changed</h2>\n<p>The new workflow appears on a direct-integration profile after a scheduled job fails or connection validation fails. Open Workspaces &gt; Software Asset Workspace &gt; License operations &gt; User subscription &gt; Direct integration profiles, then open the affected profile.</p>\n<p>The profile displays an error banner with a Troubleshoot action. ServiceNow says the action runs validation with debug-level logging and returns an Error Summary plus Suggested Resolutions. The response normally takes about 15\u201320 seconds.</p>\n<h2>How the workflow works</h2>\n<p>Troubleshoot does not modify the connection or integration configuration. The administrator must map each suggested resolution to the underlying cause, apply the change in the external system or ServiceNow, and validate again.</p>\n<p>For Salesforce CRM integrations, the documented checks include the scheduled-job result, the Flow Designer execution, and System Logs &gt; Outbound HTTP Requests. A scheduled job can show Failed even when the flow execution looks successful, so the outbound response remains an authoritative check.</p>\n<ul>\n<li>Use Troubleshoot after a failed scheduled job or failed Validate Connection.</li>\n<li>Treat the result as diagnostic guidance, not an automated repair.</li>\n<li>Run Validate Connection again after applying a fix.</li>\n</ul>\n<h2>The useful diagnostic detail</h2>\n<p>For difficult failures, temporarily enable outbound HTTP logging and Flow Designer reporting. This exposes non-2xx responses, response bodies, and subflow details. The guidance says to rerun the job once with these settings enabled, then restore the properties to their previous values.</p>\n<p>Do not leave the logging overrides enabled in production. They can increase log volume and expose integration payload details to administrators who can read system logs.</p>\n<pre><code class=\"language-properties\">glide.outbound_http_log.override = true\nglide.outbound_http_log.override.level = all\ncom.snc.process_flow.reporting.level = All</code></pre>\n<h2>The catch</h2>\n<p>Troubleshoot is a guided diagnostic path, not a repair engine. A suggested resolution can point to an application version, spoke version, OAuth credential, external permission, endpoint, or API response. The operator still owns the change and the verification step.</p>\n<p>The diagnostic output is also only as good as the execution and outbound logs available for the failed run. Capture the job time in UTC, the profile, application versions, spoke versions, and the corresponding Flow Designer execution before changing anything.</p>\n<ul>\n<li>Update the relevant application and spoke together when the error indicates a missing action, missing function, or API-shape mismatch.</li>\n<li>For OAuth failures, inspect the callback URL, token count, refresh-token policy, and authorization state before changing the flow.</li>\n<li>After validation succeeds, publish a new profile or run the existing job once and compare the result with the prior failure.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Open Troubleshoot from the failed-profile banner before manually rebuilding a connection or flow.</li>\n<li>Capture the scheduled-job result, Flow Designer execution, and outbound HTTP response for the same UTC time window.</li>\n<li>Enable detailed logging for one controlled rerun only, then restore the logging properties.</li>\n<li>Validate again after each fix and publish or rerun only after validation succeeds.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://support.servicenow.com/kb?id=kb_article_view&amp;sysparm_article=KB3227184\" target=\"_blank\" rel=\"noopener\">Complete Troubleshooting Guide for subscriptions, activity ...</a> \u2014 support.servicenow.com</li>\n<li><a href=\"https://support.servicenow.com/kb?id=kb_article_view&amp;sysparm_article=KB3227197\" target=\"_blank\" rel=\"noopener\">Troubleshooting ServiceNow Software Asset Management Salesforce ...</a> \u2014 support.servicenow.com</li>\n<li><a href=\"https://support.servicenow.com/kb?id=kb_article_view&amp;sysparm_article=KB3227199\" target=\"_blank\" rel=\"noopener\">Complete Troubleshooting GUIDE for profile will not ...</a> \u2014 support.servicenow.com</li>\n<li><a href=\"https://www.servicenow.com/community/servicenow-impact-blog/sizing-tech-debt-with-platform-health-analytics-and-servicenow/ba-p/3612256\" target=\"_blank\" rel=\"noopener\">Measure It, Price It, Fix It: Tech Debt and ServiceNow Impact</a> \u2014 servicenow.com</li>\n</ul>"
+  },
+  {
+    "id": 109,
+    "title": "GitHub uses per-reference serialization to scale Git writes",
+    "excerpt": "GitHub moved 99.99999% of its repositories to Azure, but the busiest repositories exposed a 25 ms cross-region round trip as a write bottleneck. Per-reference serialization removed unnecessary contention and produced 3\u20134x higher throughput for writes targeting different references.",
+    "readTime": "2 min read",
+    "category": "architecture",
+    "learningPath": "architecture",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Engineering managers"
+    ],
+    "uniqueId": "daily-architecture-github-uses-per-reference-serialization-to-scale-git-writes-1792741958153",
+    "date": "Oct 23, 2026",
+    "dateISO": "2026-10-23T07:52:38Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "The bridge to agent-scale Git infrastructure",
+        "url": "https://github.blog/engineering/architecture-optimization/the-bridge-to-agent-scale-git-infrastructure/"
+      },
+      {
+        "title": "Azure Database for PostgreSQL flexible server: October 21, 2026 release",
+        "url": "https://learn.microsoft.com/en-us/azure/postgresql/release-notes-maintenance/2026-october-21"
+      },
+      {
+        "title": "Linux Foundation Newsletter: October 2026",
+        "url": "https://www.linuxfoundation.org/blog/linux-foundation-newsletter-october-2026"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>On October 21, 2026, GitHub described the next step in moving its Git infrastructure to Azure. Over the previous year, 99.99999% of GitHub repositories had begun living in both GitHub data centers and Azure. The remaining repositories were among the busiest on the platform.</p>\n<p>The blocker was a 25 ms round trip between regions. A repository-level write path made independent updates wait behind one another. That limit mattered most for repositories receiving concurrent pushes to separate branches or other references.</p>\n<h2>The design change</h2>\n<p>GitHub changed serialization from the repository level to the reference level. A reference is a named pointer such as a branch or tag. Writes that contend on the same reference still wait, but writes targeting different references can proceed concurrently.</p>\n<p>This preserves ordering where it matters without forcing unrelated work through one shared queue. Each write still pays the cross-region latency, but independent writes can be in flight at the same time. The design also works with object storage, which lets repository reads scale independently from the write path.</p>\n<h2>The measured result</h2>\n<p>In internal testing with realistic traffic, GitHub saw 3\u20134x higher throughput and lower latency when concurrent writes targeted different references. The write-throughput ceiling now rises roughly with the number of references being written concurrently.</p>\n<p>The result is not a claim that every Git write became 3\u20134x faster. Same-reference writes still serialize, and every cross-region write still includes the 25 ms round trip. The gain applies when the workload contains independent reference updates.</p>\n<h2>What other teams can copy</h2>\n<p>First, identify the smallest unit that truly needs ordering. If a lock, queue, transaction, or consensus group covers an entire tenant, repository, shard, or account, measure how often operations actually conflict. A coarse boundary can turn network latency into global queueing.</p>\n<p>Second, separate metadata coordination from payload storage. GitHub\u2019s approach keeps reference updates coordinated while allowing object reads to scale independently through object storage. This pattern fits systems with a small, mutable index and large, mostly immutable data.</p>\n<p>Third, test with realistic contention. A benchmark using only one hot reference will not show the benefit. Include multiple references, cross-region latency, bursty pushes, and same-reference conflicts. Report throughput and tail latency separately so parallel work does not hide a hot-key problem.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Move serialization to the smallest key that requires ordering.</li>\n<li>Measure same-key and different-key contention separately.</li>\n<li>Keep mutable coordination data separate from large payload storage.</li>\n<li>Benchmark with production-like cross-region latency and burst patterns.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://github.blog/engineering/architecture-optimization/the-bridge-to-agent-scale-git-infrastructure/\" target=\"_blank\" rel=\"noopener\">The bridge to agent-scale Git infrastructure</a> \u2014 github.blog</li>\n<li><a href=\"https://learn.microsoft.com/en-us/azure/postgresql/release-notes-maintenance/2026-october-21\" target=\"_blank\" rel=\"noopener\">Azure Database for PostgreSQL flexible server: October 21, 2026 release</a> \u2014 learn.microsoft.com</li>\n<li><a href=\"https://www.linuxfoundation.org/blog/linux-foundation-newsletter-october-2026\" target=\"_blank\" rel=\"noopener\">Linux Foundation Newsletter: October 2026</a> \u2014 linuxfoundation.org</li>\n</ul>"
+  },
+  {
     "id": 106,
     "title": "Recursive Flint brings a 39.8B local coding model to Ollama",
     "excerpt": "Recursive\u2019s Flint became available through Ollama on October 21, 2026. It is a local Apache-2.0 coding model with 39.8 billion total parameters, about 2.5 billion active per token, and a 262K-token context window.",
