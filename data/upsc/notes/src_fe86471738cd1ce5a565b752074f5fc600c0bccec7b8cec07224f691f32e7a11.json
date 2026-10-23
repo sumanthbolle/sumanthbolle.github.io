@@ -1,0 +1,182 @@
+{
+  "anchor": "Monetary-policy transmission, NBFC resilience and alternative-data-based economic nowcasting",
+  "argumentsAgainst": [
+    "Aggregate WALR can change because of shifts in credit composition, so it may not purely reflect repricing of existing loans.",
+    "Alternative-data nowcasts supplement official statistics but do not replace the annual GSVA system; the Bulletin describes the methodology as a supplement.",
+    "The Bulletin states that article views are those of the authors and do not represent the RBI’s views."
+  ],
+  "argumentsFor": [
+    "Decomposing WALR into interest-rate and composition effects can improve assessment of monetary-policy transmission.",
+    "Improved transmission can support more effective pass-through of policy changes to borrowers.",
+    "Night-time lights and Google Trends can provide more timely signals where official GSVA data are released annually with a considerable lag.",
+    "NBFC credit growth, improving asset quality and AI adoption are relevant to financial-sector monitoring."
+  ],
+  "background": [
+    "The Reserve Bank’s October 2026 Bulletin includes articles on the state of the economy, transmission to lending rates of scheduled commercial banks, NBFC performance, and nowcasting state-level economic activity.",
+    "The transmission study uses an index-number-based framework involving bank- and sector-level lending rates and loan weights.",
+    "The nowcasting study combines satellite-based night-time lights with digital search behaviour to estimate state-level economic activity more frequently."
+  ],
+  "codes": [
+    "GS3.1",
+    "GS3.6",
+    "GS3.4"
+  ],
+  "editorialStatus": "draft",
+  "id": "note_fe86471738cd1ce5a565b752074f5fc600c0bccec7b8cec07224f691f32e7a11",
+  "indiaImplications": [
+    "Better measurement of transmission can help policymakers distinguish genuine repricing from changes in the types of loans being issued.",
+    "Near-real-time state-level signals can support earlier detection of regional turning points and shocks, subject to validation against official statistics.",
+    "NBFC funding concentration and credit growth require continued attention because funding structure can affect financial stability.",
+    "AI adoption by NBFCs creates opportunities for customer service, governance, digital infrastructure and data analytics, while also requiring attention to data quality and responsible use."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Define monetary-policy transmission and WALR.",
+        "Explain the distinction between interest-rate and composition effects.",
+        "Assess how the framework can improve policy diagnosis.",
+        "Discuss limitations and safeguards in using alternative data and AI."
+      ],
+      "conclusionPrompt": "Conclude by linking better measurement with stronger monetary transmission and financial stability.",
+      "counterPosition": "Faster indicators and analytical decomposition improve diagnosis, but they cannot substitute for official statistics, regulatory oversight and distribution-sensitive assessment.",
+      "diagramSuggestion": "Policy repo-rate change → bank repricing and credit-composition shifts → fresh-loan WALR → borrower transmission; parallel track: night-time lights + Google Trends → state-level no",
+      "directive": "assess",
+      "introChoices": [
+        "Monetary policy is effective only when a change in the policy stance reaches borrowing and spending decisions.",
+        "Timely economic governance requires both sound official statistics and carefully validated supplementary indicators."
+      ],
+      "marks": 15,
+      "skeleton": [
+        "Monetary policy is effective only when a change in the policy stance reaches borrowing and spending decisions.",
+        "Timely economic governance requires both sound official statistics and carefully validated supplementary indicators.",
+        "Define monetary-policy transmission and WALR.",
+        "Explain the distinction between interest-rate and composition effects.",
+        "Assess how the framework can improve policy diagnosis.",
+        "Discuss limitations and safeguards in using alternative data and AI.",
+        "Faster indicators and analytical decomposition improve diagnosis, but they cannot substitute for official statistics, regulatory oversight and distribution-sensitive assessment.",
+        "Conclude by linking better measurement with stronger monetary transmission and financial stability."
+      ],
+      "stem": "Assess how decomposing WALR into interest-rate and composition effects, alongside alternative-data nowcasting, can improve economic policymaking in India.",
+      "timeMinutes": 11,
+      "wordBudget": 250
+    }
+  ],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63859",
+      "text": "In response to a cumulative reduction of 125 basis points in the policy repo rate, the WALR on fresh lending declined by 93 basis points, with an interest-rate effect of 80 basis points and a composition effect of 13 basis points during February 2025 to March 2026.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63859",
+      "text": "The Bulletin states that the combined use of night-time lights and Google Trends improves nowcast accuracy of quarterly GSVA growth relative to a univariate approach.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63859",
+      "text": "The Bulletin states that the NBFC sector continued to register double-digit year-on-year credit growth at end-December 2025.",
+      "verification": "needs-review"
+    }
+  ],
+  "papers": [
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Hypothetical illustration",
+      "text": "If banks issue a larger share of loans from a segment with a different lending rate, aggregate WALR may change even when individual loan rates do not change proportionately. Separately, a state-level analyst could combine night-time-light changes with search behaviour to generate an early signal and then validate it against official GSVA data."
+    },
+    "excerpt": "The RBI Bulletin links better economic diagnosis to decomposing bank lending-rate changes and combining night-time lights with Google Trends for state-level nowcasts.",
+    "question": {
+      "answer": "The two approaches improve diagnosis: WALR decomposition separates repricing from credit-composition shifts, while combined alternative data can provide timelier state-level signals. Both require validation, because aggregate lending rates and digital indicators can mislead when composition, coverage or behaviour changes.",
+      "prompt": "How can the Bulletin’s two analytical approaches improve policymaking while avoiding over-reliance on any single indicator?"
+    },
+    "sections": [
+      {
+        "heading": "Separating transmission effects",
+        "paragraphs": [
+          "The RBI study examines whether changes in aggregate fresh-loan WALR arise from changes in lending rates, changes in loan weights, or both. This helps policymakers interpret monetary transmission more precisely rather than treating every WALR movement as pure repricing."
+        ]
+      },
+      {
+        "heading": "Faster regional signals",
+        "paragraphs": [
+          "The nowcasting study combines satellite-based night-time lights and Google Trends to estimate quarterly state-level economic activity. It addresses the lag in annual GSVA releases and can support earlier identification of turning points, while remaining a supplement to official statistics."
+        ]
+      }
+    ],
+    "title": "RBI links lending-rate decomposition with faster state-level economic signals"
+  },
+  "prelimsTraps": [
+    {
+      "correct": true,
+      "explanation": "The official summary says the study combines satellite-based night-time lights and Google Trends and applies the framework to Maharashtra, Karnataka and Gujarat.",
+      "statement": "The nowcasting study uses both satellite-based night-time lights and Google Trends."
+    },
+    {
+      "correct": false,
+      "explanation": "The Bulletin says the WALR decline comprised an 80-basis-point interest-rate effect and a 13-basis-point composition effect.",
+      "statement": "The entire 93-basis-point decline in fresh-lending WALR was attributed to the interest-rate effect."
+    },
+    {
+      "correct": false,
+      "explanation": "The Bulletin says the article views are those of the authors and do not represent the RBI’s views.",
+      "statement": "Every conclusion in the Bulletin’s articles is officially adopted as the RBI’s institutional view."
+    },
+    {
+      "correct": true,
+      "explanation": "The official summary says the NBFC sector’s NPA ratios have consistently declined in recent years.",
+      "statement": "The Bulletin reports continued improvement in NBFC asset quality as reflected in declining NPA ratios."
+    }
+  ],
+  "priority": 69,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 76,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 25
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-10-23T17:50:00Z",
+  "publisherId": "rbi",
+  "publisherName": "Reserve Bank of India",
+  "recallCard": "The RBI Bulletin’s transmission study separates fresh-lending WALR changes into repricing and credit-composition effects. Its nowcasting study combines night-time lights and Google Trends to improve timely state-level economic assessment, while NBFC analysis highlights credit growth, funding concentration, improving asset quality and growing AI orientation.",
+  "reusableAnchors": [],
+  "sourceContentHash": "5953b79234ccdacfb63da82a3b7439765724da695d7f1ab05c434c8033a4990d",
+  "sourceId": "src_fe86471738cd1ce5a565b752074f5fc600c0bccec7b8cec07224f691f32e7a11",
+  "sourceTitle": "RBI Bulletin – October 2026",
+  "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63859",
+  "staticDefinition": "Monetary-policy transmission is the process through which a central bank’s policy-rate change influences market rates, bank lending rates, borrowing conditions and economic activity. WALR is a weighted average lending rate; its aggregate movement can reflect both changes in individual lending rates and changes in the c",
+  "use": "Use this note in economy answers on monetary-policy transmission, banking and NBFC stability, financial-sector regulation, official statistics, alternative data, and technology-enabled economic governance.",
+  "verification": {
+    "advisory_notes": [
+      "The proposed static definition of monetary-policy transmission is sound but extends beyond the supplied Bulletin summary and should be treated as background explanation.",
+      "The claim that GSVA data are released annually with a considerable lag is supported by the supplied summary, but the exact release pattern is not independently established here.",
+      "The statement that improved transmission supports more effective pass-through is analytical reasoning, not a finding established by the Bulletin.",
+      "The claim that funding structure can affect financial stability is sound analytical context but is not specifically demonstrated in the supplied extract.",
+      "The discussion of responsible AI use, data quality and governance is relevant policy analysis rather than a reported RBI conclusion.",
+      "The pocketRead headline and deck are framing devices and should not be read as the Bulletin’s official wording.",
+      "The hypothetical illustration is clearly labelled and its mechanism is sound; it should remain distinct from the RBI’s observed findings.",
+      "The proposed GS3.1, GS3.6 and GS3.4 tagging is broadly relevant to monetary policy, banking, financial regulation, statistics and technology, though the note could also relate to broader GS3 economic-development themes."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-10-23T21:21:31Z",
+    "confidence": 0.96,
+    "flagged_claims": [],
+    "noteContentHash": "4bf0082c0b94ea6e1c4302a14b1763b9ba97e1a5571d3ff6cd71ce8ff7d982a3",
+    "sourceContentHash": "5953b79234ccdacfb63da82a3b7439765724da695d7f1ab05c434c8033a4990d",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Use decomposed lending-rate indicators alongside aggregate WALR for policy assessment.",
+    "Validate alternative-data nowcasts against official GSVA and revise models when coverage or behaviour changes.",
+    "Monitor NBFC funding concentration, asset quality and credit growth through risk-sensitive supervision.",
+    "Adopt transparent governance, data-quality controls and responsible-use safeguards as NBFCs expand AI applications."
+  ],
+  "whyInNews": "On October 23, 2026, the Reserve Bank released its October 2026 Bulletin. It includes a study of scheduled commercial-bank fresh-lending WALR, an NBFC-sector review, and a nowcasting study using night-time lights and Google Trends. The issue is relevant because it connects monetary-policy transmission with faster measu"
+}
