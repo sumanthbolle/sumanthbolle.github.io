@@ -121,6 +121,8 @@
     .badge-difficulty{background:linear-gradient(135deg,rgba(255,149,0,0.15),rgba(255,149,0,0.08));color:#ff9500;border:1px solid rgba(255,149,0,0.2)}
     .badge-difficulty.expert{background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(239,68,68,0.08));color:#ef4444;border:1px solid rgba(239,68,68,0.2)}
     .badge-category{background:linear-gradient(135deg,rgba(52,199,89,0.15),rgba(52,199,89,0.08));color:#22c55e;border:1px solid rgba(52,199,89,0.2)}
+    .badge-scenario{background:linear-gradient(135deg,rgba(175,82,222,0.15),rgba(175,82,222,0.08));color:#af52de;border:1px solid rgba(175,82,222,0.2)}
+    .iv-cat-group{font-size:10px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:0.8px;padding:12px 12px 4px;opacity:0.8}
     .badge-difficulty.foundation{background:linear-gradient(135deg,rgba(0,102,204,0.15),rgba(0,102,204,0.08));color:var(--blue);border:1px solid rgba(0,102,204,0.2)}
     
     .interview-question{font-size:18px;font-weight:600;line-height:1.5;color:var(--text)}
@@ -137,6 +139,8 @@
     .interview-answer-inner ul,.interview-answer-inner ol{margin:14px 0 14px 24px;font-size:15px;color:#444}
     .interview-answer-inner li{margin-bottom:10px;line-height:1.65}
     .interview-answer-inner pre{background:linear-gradient(135deg,#1d1d1f,#2d2d2f);color:#e5e5e5;padding:20px 24px;border-radius:12px;overflow-x:auto;font-size:13px;line-height:1.6;margin:18px 0;font-family:'SF Mono',Monaco,monospace;border:1px solid rgba(255,255,255,0.1)}
+    .interview-answer-inner a{color:var(--blue);text-decoration:none;border-bottom:1px solid rgba(0,102,204,0.3)}
+    .interview-answer-inner a:hover{border-bottom-color:var(--blue)}
     .interview-answer-inner code{background:rgba(0,0,0,0.06);padding:2px 8px;border-radius:6px;font-size:14px;font-family:'SF Mono',Monaco,monospace}
     .interview-answer-inner pre code{background:none;padding:0}
     .interview-footer{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,0,0,0.06);flex-wrap:wrap;gap:12px}
@@ -299,10 +303,10 @@
   <header class="page-header">
     <p class="breadcrumb"><a href="index.html">Home</a> / Interview Prep</p>
     <h1>Technical Interview Questions</h1>
-    <p>Real ServiceNow interview questions with model answers, scenario walkthroughs and .NET-to-ServiceNow analogies — from fundamentals to senior architecture. Detailed answers.</p>
+    <p>ServiceNow interview questions built on real customer scenarios across ITSM, CMDB, ITOM, HR, CSM, SecOps, GRC, integrations and AI, with model answers. Work through them by level, from Beginner to Expert.</p>
     <div class="header-stats">
       <div class="header-stat"><div class="header-stat-num" id="totalQuestions">0</div><div class="header-stat-label">Questions</div></div>
-      <div class="header-stat"><div class="header-stat-num" id="totalCompanies">3</div><div class="header-stat-label">Companies</div></div>
+      <div class="header-stat"><div class="header-stat-num" id="totalScenarios">0</div><div class="header-stat-label">Scenarios</div></div>
       <div class="header-stat"><div class="header-stat-num" id="totalCategories">4</div><div class="header-stat-label">Categories</div></div>
     </div>
   </header>
@@ -310,12 +314,12 @@
   <div class="interview-layout">
     <aside class="iv-sidebar" id="ivSidebar">
       <div class="iv-sidebar-section">
-        <div class="iv-sidebar-label">Categories</div>
-        <div id="ivCatList"></div>
+        <div class="iv-sidebar-label">Level: zero to hero</div>
+        <div id="ivDiffList"></div>
       </div>
       <div class="iv-sidebar-section">
-        <div class="iv-sidebar-label">Difficulty</div>
-        <div id="ivDiffList"></div>
+        <div class="iv-sidebar-label">Categories</div>
+        <div id="ivCatList"></div>
       </div>
     </aside>
     <main class="iv-main">
@@ -562,8 +566,17 @@
     var currentDifficulty = null;
     var catColors = {
       'Core Concepts':'#5856d6','Scripting':'#34c759','Performance':'#ff375f',
-      'Architecture':'#007aff','Security':'#ff9500','Integration':'#30b0c7','AI Implementation':'#af52de'
+      'Architecture':'#007aff','Security':'#ff9500','Integration':'#30b0c7','AI Implementation':'#af52de',
+      'App Engine & Flow':'#64d2ff','Platform Governance':'#8e8e93',
+      'ITSM':'#0a84ff','Service Catalog & Portal':'#5ac8fa','CMDB & CSDM':'#bf5af2','ITOM':'#ff9f0a',
+      'HR Service Delivery':'#ff6482','Customer Service':'#30d158','Security Operations':'#ff453a',
+      'Risk & Compliance':'#a2845e','Strategic Portfolio':'#66d4cf'
     };
+    var catGroups = [
+      ['Platform fundamentals', ['Core Concepts','Scripting','Architecture','App Engine & Flow']],
+      ['Products & modules', ['ITSM','Service Catalog & Portal','CMDB & CSDM','ITOM','HR Service Delivery','Customer Service','Security Operations','Risk & Compliance','Strategic Portfolio']],
+      ['Cross-cutting', ['Security','Integration','Performance','Platform Governance','AI Implementation']]
+    ];
     var diffColors = {'Beginner':'#34c759','Foundation':'#5856d6','Senior':'#ff375f','Expert':'#ef4444'};
     var diffOrder = {'Beginner':0,'Foundation':1,'Senior':2,'Expert':3};
 
@@ -576,12 +589,22 @@
       });
 
       var catHtml = '<button class="iv-cat-item active" data-cat="all" onclick="sidebarFilter(\'all\')"><div class="iv-cat-dot" style="background:#86868b"></div><span class="iv-cat-name">All Questions</span><span class="iv-cat-count">' + INTERVIEWS.length + '</span></button>';
-      var catOrder = ['Core Concepts','Scripting','Performance','Architecture','Security','Integration','AI Implementation'];
-      catOrder.forEach(function(c) {
-        if (!cats[c]) return;
-        catHtml += '<button class="iv-cat-item" data-cat="' + c + '" onclick="sidebarFilter(\'' + c + '\')"><div class="iv-cat-dot" style="background:' + (catColors[c]||'#86868b') + '"></div><span class="iv-cat-name">' + c + '</span><span class="iv-cat-count">' + cats[c] + '</span></button>';
+      var grouped = {};
+      var groups = catGroups.map(function(g) { return [g[0], g[1].slice()]; });
+      groups.forEach(function(g) { g[1].forEach(function(c) { grouped[c] = true; }); });
+      var other = Object.keys(cats).filter(function(c) { return !grouped[c]; }).sort();
+      if (other.length) groups.push(['Other', other]);
+      groups.forEach(function(g) {
+        var present = g[1].filter(function(c) { return cats[c]; });
+        if (!present.length) return;
+        catHtml += '<div class="iv-cat-group">' + g[0] + '</div>';
+        present.forEach(function(c) { catHtml += catItemHtml(c, cats[c]); });
       });
       document.getElementById('ivCatList').innerHTML = catHtml;
+
+      function catItemHtml(c, n) {
+        return '<button class="iv-cat-item" data-cat="' + c + '" onclick="sidebarFilter(\'' + c + '\')"><div class="iv-cat-dot" style="background:' + (catColors[c]||'#86868b') + '"></div><span class="iv-cat-name">' + c + '</span><span class="iv-cat-count">' + n + '</span></button>';
+      }
 
       var diffHtml = '';
       ['Beginner','Foundation','Senior','Expert'].forEach(function(d) {
@@ -643,7 +666,6 @@
 
     function initInterviewSearch(){
       if(!window.SBSearch||!INTERVIEWS.length)return;
-      var catColors={'Core Concepts':'#5856d6','Performance':'#ff375f','Architecture':'#007aff','Security':'#ff9500','Scripting':'#34c759','Integration':'#30b0c7','AI Implementation':'#af52de'};
       SBSearch.init({
         items:INTERVIEWS,
         fields:[
@@ -708,9 +730,8 @@
 
     function updateStats() {
       document.getElementById('totalQuestions').textContent = INTERVIEWS.length;
-      var companies = [...new Set(INTERVIEWS.map(function(q) { return q.company; }))];
       var categories = [...new Set(INTERVIEWS.map(function(q) { return q.category; }))];
-      document.getElementById('totalCompanies').textContent = companies.length;
+      document.getElementById('totalScenarios').textContent = INTERVIEWS.filter(function(q) { return q.scenario; }).length;
       document.getElementById('totalCategories').textContent = categories.length;
     }
 
@@ -746,6 +767,7 @@
                   <span class="interview-badge badge-company">${q.company}</span>
                   <span class="interview-badge badge-difficulty ${diffClass}">${q.difficulty}</span>
                   <span class="interview-badge badge-category">${q.category}</span>
+                  ${q.scenario ? '<span class="interview-badge badge-scenario">Scenario</span>' : ''}
                 </div>
                 <p class="interview-question">${q.question}</p>
               </div>
