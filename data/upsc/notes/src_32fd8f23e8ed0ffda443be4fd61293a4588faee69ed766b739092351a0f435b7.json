@@ -1,18 +1,20 @@
 {
-  "anchor": "State Government Securities (SGS), commonly called State Development Loans, are debt instruments iss",
+  "anchor": "State Development Loans (SDLs) are market-borrowed securities issued by State Governments; the RBI c",
   "argumentsAgainst": [
-    "Repeated or large market borrowing can increase States’ debt-servicing burden and may crowd out private borrowers, though the supplied record does not establish such an outcome for this auction.",
-    "Auction yields reflect market conditions and perceived State risk; the record reports the auction design but does not provide accepted yields, investor demand, or fiscal sustainability assessments."
+    "Repeated or costly market borrowing can increase States’ debt-servicing burden and constrain fiscal space.",
+    "Large borrowing requirements may expose differences in States’ market-perceived credit risk and financing conditions.",
+    "A retail-access facility does not by itself resolve fiscal sustainability or improve the productive use of borrowed funds."
   ],
   "argumentsFor": [
-    "Market-based issuance can help States mobilise resources for public expenditure without relying solely on administrative transfers.",
-    "Re-issuance can improve liquidity and create fungible securities with an established coupon and maturity.",
-    "The non-competitive bidding facility broadens access by reserving a portion of each notified issue for eligible individuals and institutions."
+    "Auction-based borrowing gives States a formal market mechanism to mobilise resources for public expenditure.",
+    "Transparent bidding can help discover the yield or price at which securities are accepted.",
+    "Non-competitive bidding and Retail Direct access can broaden participation beyond large institutional bidders.",
+    "Re-issuance of existing stocks can support liquidity and create familiar benchmark securities."
   ],
   "background": [
-    "A State Government borrows by issuing securities with specified maturities and interest terms. In a yield-based auction, bidders indicate the yield they require; in a price-based auction, bidders quote the price at which they will buy an id",
-    "The supplied record lists both fresh yield-based offerings and price-based re-issues. It also states that the stocks are governed by the Government Securities Act, 2006 and the Government Securities Regulations, 2007.",
-    "The record does not provide the post-auction cut-off yields, prices, subscription levels, or the States’ intended expenditure."
+    "State Governments issue securities to raise borrowed funds from the market. In an auction, competitive bidders indicate the yield or price they are willing to accept; the RBI determines the maximum accepted yield or minimum accepted price.",
+    "Yield-based auction and price-based re-issue are distinct mechanisms. New stocks may carry interest determined at auction, while re-issued stocks retain the interest rate fixed on their original issue date.",
+    "The RBI’s Government Securities Market material states that SDL auctions are generally conducted through E-Kuber and that a share is reserved for retail investors under non-competitive bidding.[9]"
   ],
   "codes": [
     "GS2.2",
@@ -22,11 +24,43 @@
   "editorialStatus": "draft",
   "id": "note_32fd8f23e8ed0ffda443be4fd61293a4588faee69ed766b739092351a0f435b7",
   "indiaImplications": [
-    "The auction illustrates cooperative financial intermediation: States raise debt while the RBI provides the auction infrastructure and operational framework.",
-    "Retail participation through the non-competitive route can diversify the investor base, but investor access does not remove the need to assess interest-rate and maturity risks.",
-    "A sound assessment of State borrowing requires examining debt sustainability, quality of expenditure, repayment capacity, and transparency; these cannot be inferred from the notified amount alone."
+    "States can use SDLs to finance expenditure, but borrowing must remain consistent with fiscal responsibility and debt sustainability.",
+    "The auction design links State financing costs to market conditions, investor demand and the characteristics of each security.",
+    "Retail participation can improve financial inclusion and diversify the investor base, provided investors understand interest-rate and holding-period risks.",
+    "Coordination between State Governments, the RBI and market participants is relevant to orderly public-debt management."
   ],
-  "mainsPractice": [],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Define SDLs and distinguish yield-based auctions from price-based re-issues.",
+        "Explain the role of the RBI, E-Kuber and non-competitive bidding.",
+        "Assess benefits for State resource mobilisation, market transparency and retail participation.",
+        "Discuss risks: debt sustainability, rollover pressure, borrowing costs and fiscal discipline."
+      ],
+      "conclusionPrompt": "Conclude by linking efficient market borrowing with responsible State-level fiscal governance.",
+      "counterPosition": "State borrowing is constitutionally and economically necessary for public services and infrastructure; the issue is not borrowing per se but its cost, purpose and sustainability.",
+      "diagramSuggestion": "Flow: State financing need → SDL notification → competitive/non-competitive bids → RBI acceptance of yield/price → issue and interest payments.",
+      "directive": "discuss",
+      "introChoices": [
+        "The RBI’s scheduled SDL auction illustrates how Indian federalism operates through shared responsibility for public finance.",
+        "State Development Loans convert State borrowing needs into tradable government securities through an RBI-managed auction process."
+      ],
+      "marks": 15,
+      "skeleton": [
+        "The RBI’s scheduled SDL auction illustrates how Indian federalism operates through shared responsibility for public finance.",
+        "State Development Loans convert State borrowing needs into tradable government securities through an RBI-managed auction process.",
+        "Define SDLs and distinguish yield-based auctions from price-based re-issues.",
+        "Explain the role of the RBI, E-Kuber and non-competitive bidding.",
+        "Assess benefits for State resource mobilisation, market transparency and retail participation.",
+        "Discuss risks: debt sustainability, rollover pressure, borrowing costs and fiscal discipline.",
+        "State borrowing is constitutionally and economically necessary for public services and infrastructure; the issue is not borrowing per se but its cost, purpose and sustainability.",
+        "Conclude by linking efficient market borrowing with responsible State-level fiscal governance."
+      ],
+      "stem": "Discuss how auctions of State Government securities balance State resource mobilisation, market discipline and investor access.",
+      "timeMinutes": 11,
+      "wordBudget": 250
+    }
+  ],
   "officialFacts": [
     {
       "evidenceLocator": "officialSummary",
@@ -55,7 +89,13 @@
     {
       "evidenceLocator": "officialSummary",
       "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63860",
-      "text": "The Stocks will be governed by the provisions of the Government Securities Act, 2006 and the Government Securities Regulations, 2007.",
+      "text": "Stock will be issued for a minimum nominal amount of ₹10,000.00 and in multiples of ₹10,000.00 thereafter.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63860",
+      "text": "The new State Government Stocks will bear interest at the rates determined by RBI at the auctions.",
       "verification": "needs-review"
     }
   ],
@@ -65,59 +105,52 @@
   ],
   "pocketRead": {
     "example": {
-      "heading": "Hypothetical illustration: yield-based versus price-based bidding",
-      "text": "Suppose a State offers a new security through a yield-based auction and investors quote the annual return they require. If the State re-issues an already existing security, investors instead quote the price for that identified stock. The illustration explains the mechanism only; it does not describe an actual bid or auction result."
+      "heading": "Hypothetical illustration",
+      "text": "Suppose a State notifies a new stock through a yield-based auction and also offers an existing stock through a price-based re-issue. Competitive bidders would indicate acceptable yields or prices, while eligible non-competitive bidders would receive allocation under the notified facility. This is only an illustration of the mechanisms described in the release."
     },
-    "excerpt": "The RBI will conduct a ₹23,300-crore State Government Securities auction on E-Kuber on 27 October 2026, combining new yield-based issues with price-based re-issues and non-competitive access.",
+    "excerpt": "The RBI’s announced SDL auction shows how States raise market funds through yield-based issues and price-based re-issues, with limited non-competitive access for individuals and institutions.",
     "question": {
-      "answer": "A State can use a yield-based issue to discover the borrowing cost for a new stock, while a price-based re-issue enables trading in an existing stock. The RBI’s E-Kuber platform standardises submission and auction operations, and the non-competitive facility widens access. However, the notified amount alone cannot show whether borrowing is sustainable: that requires accepted yields, debt-service data, and the quality of expenditure. Thus, the auction improves market access but does not by itself establish fiscal prudence.",
-      "prompt": "How should a policymaker assess whether this auction strengthens State financing rather than merely expanding debt?"
+      "answer": "A yield-based auction discovers the acceptable borrowing yield for a new stock, while a price-based re-issue uses bids on an existing security whose coupon was fixed at its original issue. The distinction matters because coupon, price and market yield are not interchangeable.",
+      "prompt": "Why should an answer distinguish a yield-based auction from a price-based re-issue?"
     },
     "sections": [
       {
-        "heading": "RBI schedules a multi-State borrowing operation",
+        "heading": "RBI schedules State borrowing",
         "paragraphs": [
-          "The Reserve Bank of India notified that State Governments offered to sell stock by auction for an aggregate face value of ₹23,300 crore. The auction is scheduled on E-Kuber for 27 October 2026, with both competitive and non-competitive electronic bids.",
-          "The practical consequence is an organised channel through which States can seek market financing. A limitation is that the notification gives proposed amounts and terms, not the final bids, accepted prices, or borrowing cost."
+          "The Reserve Bank of India announced that State Governments offered stocks aggregating ₹23,300 crore face value, with the auction scheduled on October 27, 2026 through E-Kuber. The notification includes both yield-based auctions and price-based re-issues.",
+          "The practical consequence is a structured route for States to mobilise market resources. The release does not, however, establish whether the borrowing will improve fiscal outcomes or identify the end-use of each State’s funds."
         ]
       },
       {
-        "heading": "New issues, re-issues and investor access",
+        "heading": "Access and limits in the auction",
         "paragraphs": [
-          "The list combines yield-based offerings, including Assam, Bihar, Keralam and Nagaland, with price-based re-issues of previously issued State Government Stocks. This distinction matters because new securities discover a yield, whereas re-issues refer to an identified existing stock and its price.",
-          "The notification provides that up to 10% of the notified amount of each stock may be allotted to eligible individuals and institutions under the non-competitive facility, subject to a 1% single-bid limit per stock. Individual investors may use the Retail Direct portal. This access should not be mistaken for a guarantee of returns or an assessment of State creditworthiness."
-        ]
-      },
-      {
-        "heading": "Operational rules and legal framework",
-        "paragraphs": [
-          "Competitive bids are to be submitted from 10:30 a.m. to 11:30 a.m., while non-competitive bids are to be submitted from 10:30 a.m. to 11:00 a.m. The RBI will determine the maximum yield or minimum price at which bids are accepted.",
-          "The securities are governed by the Government Securities Act, 2006 and the Government Securities Regulations, 2007. The record also states that the new stocks will bear interest at rates determined at auction, with half-yearly interest payments on 28 April and 28 October until maturity; re-issued stocks retain the rate determined on original issue."
+          "The release provides for allocation of Government Stock up to 10% of each notified amount to eligible individuals and institutions under the non-competitive bidding facility, subject to a one-per-cent single-bid limit per stock. Individuals may use the Retail Direct portal.",
+          "This facility broadens access but should not be confused with risk-free returns or a solution to State debt sustainability. The release specifies auction procedure and securities terms, not a complete assessment of fiscal health."
         ]
       }
     ],
-    "title": "RBI schedules ₹23,300-crore State Government Securities auction"
+    "title": "RBI announces ₹23,300 crore State securities auction"
   },
   "prelimsTraps": [
     {
-      "correct": true,
-      "explanation": "The official summary states that the auction will be conducted on 27 October 2026 through the RBI Core Banking Solution, E-Kuber.",
-      "statement": "The auction is scheduled through the RBI Core Banking Solution (E-Kuber) on 27 October 2026."
+      "correct": false,
+      "explanation": "The release states that the auction will be conducted on October 27, 2026, not October 28. October 28 is the payment date for successful bidders.",
+      "statement": "The auction is scheduled for October 28, 2026."
     },
     {
       "correct": true,
-      "explanation": "The facility allows up to 10% of each stock’s notified amount for eligible individuals and institutions, with a 1% maximum for a single bid per stock.",
-      "statement": "Non-competitive allotment may extend up to 10% of each stock’s notified amount, subject to a 1% single-bid cap per stock."
+      "explanation": "The release provides up to 10% of the notified amount for eligible individuals and institutions under the non-competitive facility, with a maximum one-per-cent single bid per stock.",
+      "statement": "The non-competitive facility can cover up to 10% of each stock’s notified amount, subject to the stated single-bid limit."
     },
     {
       "correct": false,
-      "explanation": "The official summary states that the new State Government Stocks will bear interest at rates determined by RBI at the auctions; it does not state that all stocks have a fixed rate before auction.",
-      "statement": "Every new State Government Stock in this auction has a coupon fixed before bidding."
+      "explanation": "The release distinguishes yield-based auctions from price-based re-issues; it does not say every stock is sold through a yield-based auction.",
+      "statement": "All securities in the announcement are sold through yield-based auctions."
     },
     {
-      "correct": false,
-      "explanation": "The summary distinguishes yield-based auctions for some offerings from price-based re-issues of identified securities.",
-      "statement": "All securities in the notified auction are issued through price-based auctions."
+      "correct": true,
+      "explanation": "The release states that individual investors can place bids under the non-competitive scheme through the Retail Direct portal.",
+      "statement": "Individuals may participate through the Retail Direct portal under the non-competitive scheme."
     }
   ],
   "priority": 64,
@@ -133,38 +166,38 @@
   "publishedAt": "2026-10-23T18:40:00Z",
   "publisherId": "rbi",
   "publisherName": "Reserve Bank of India",
-  "recallCard": "RBI’s 23 October 2026 notification schedules a ₹23,300-crore multi-State Government Securities auction on E-Kuber for 27 October. It combines yield-based offerings and price-based re-issues; up to 10% per stock may be allotted non-competitively, capped at 1% per single bid. The notice states the legal framework and payment terms but not final auction outcomes.",
+  "recallCard": "RBI’s October 27, 2026 E-Kuber auction covers State securities aggregating ₹23,300 crore face value. It combines yield-based auctions with price-based re-issues; up to 10% may be allotted through non-competitive bidding, with retail access via Retail Direct.",
   "reusableAnchors": [],
   "sourceContentHash": "8cfc37d6a0859337cbab13f43b7f188c64e111b0070895b13c3f1a6abf606f94",
   "sourceId": "src_32fd8f23e8ed0ffda443be4fd61293a4588faee69ed766b739092351a0f435b7",
   "sourceTitle": "Auction of State Government Securities",
   "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63860",
-  "staticDefinition": "State Government Securities are debt instruments issued by State Governments, carrying specified maturity and interest terms; in the notified operation, the RBI facilitates their auction through E-Kuber. A yield-based auction discovers the accepted borrowing yield, while a price-based re-issue concerns an identified pr",
-  "use": "Use this case to connect fiscal federalism, State market borrowing, RBI-led government-securities infrastructure, investor access, and the distinction between borrowing authorisation and demonstrated fiscal sustainability.",
+  "staticDefinition": "A State Development Loan is a marketable security issued by a State Government to borrow from the market. The source record establishes the RBI-managed auction mechanism and the Government Securities Act, 2006 as the governing framework mentioned in the release; broader legal features are not established by the supplie",
+  "use": "Use this note for questions on State borrowing, SDL auctions, RBI public-debt management, cooperative federalism, fiscal responsibility and retail participation in government securities.",
   "verification": {
     "advisory_notes": [
-      "The anchor’s description of SGS as debt instruments and the SDL synonym is supported generally, but the supplied RBI notice itself does not define the term.",
-      "The explanation that State borrowing finances public expenditure is sound background, but the notice does not establish the purpose of this particular auction.",
-      "The claim that re-issuance improves liquidity is a reasonable analytical inference, not a demonstrated outcome of this auction.",
-      "The statement that auction yields reflect perceived State risk is analytical and should not be presented as an outcome without accepted yields or market evidence.",
-      "The phrase ‘cooperative financial intermediation’ is interpretive; the notice establishes RBI operational facilitation, not a broader institutional conclusion.",
-      "The way-forward recommendations on borrowing calendars, expenditure quality, and debt frameworks are useful UPSC analysis but are not findings from the notice.",
-      "The headline and deck accurately state the ₹23,300-crore proposed aggregate and 27 October 2026 auction date; ‘schedules’ appropriately avoids implying completed borrowing.",
-      "The hypothetical example is clearly labelled and correctly distinguishes yield quotations for a new issue from price quotations for an identified re-issue."
+      "“RBI-managed auction” is reasonable, but the release specifically establishes RBI’s auction platform and procedure rather than the full scope of public-debt management.",
+      "The claims on debt sustainability, fiscal space, credit risk, rollover pressure and productive expenditure are analytical implications, not facts established by this auction notice.",
+      "“Cooperative federalism” is a defensible interpretive linkage, but the release itself does not discuss federal relations or coordination.",
+      "The static SDL definition is accurate in substance; the supplied release calls them State Government Stocks rather than expressly defining the acronym SDL.",
+      "The statement that new stocks’ coupon is determined at auction and re-issued stocks retain their original coupon is supported by the release and consistent with RBI’s auction explanation [1].",
+      "The arguments that transparent bidding discovers borrowing cost and that re-issuance may support liquidity are reasonable analysis, but should remain clearly framed as potential effects.",
+      "The syllabus mapping is relevant: GS2 public finance/federal relations and GS3 government budgeting, public debt and fiscal sustainability are defensible; the precise sub-code labels depend on the syllabus taxonomy used.",
+      "The pocketRead headline and deck accurately summarize the supplied release, while “limited non-competitive access” is a useful characterization rather than the release’s wording."
     ],
     "agrees": true,
-    "checkedAt": "2026-10-23T19:13:16Z",
-    "confidence": 0.97,
+    "checkedAt": "2026-10-24T04:30:27Z",
+    "confidence": 0.96,
     "flagged_claims": [],
-    "noteContentHash": "b064250dc463706314797ea8122af45745775c24e338dc60cd7ed41e0da18385",
+    "noteContentHash": "ec2b929555dc03d62407139cddc3ba9964a3d21254d653bf2ffdc6fffe8e03da",
     "sourceContentHash": "8cfc37d6a0859337cbab13f43b7f188c64e111b0070895b13c3f1a6abf606f94",
     "verificationVersion": 2
   },
   "wayForward": [
-    "Publish accessible borrowing calendars, issue terms, accepted yields, and post-auction outcomes to improve transparency.",
-    "Link additional borrowing decisions to credible medium-term fiscal and debt-management frameworks.",
-    "Prioritise productive expenditure and disclose the intended use and expected returns of borrowed funds.",
-    "Strengthen investor communication on duration, interest-rate, liquidity, and repayment risks."
+    "Align State borrowing with transparent medium-term debt and fiscal strategies.",
+    "Use borrowed funds for productive and publicly accountable expenditure rather than recurrent stress financing.",
+    "Improve disclosure of debt, contingent liabilities, maturity profiles and interest burdens.",
+    "Maintain predictable auction calendars and deepen secondary-market liquidity without weakening fiscal discipline."
   ],
-  "whyInNews": "On 23 October 2026, the Reserve Bank of India notified a multi-State auction of State Government Securities with an aggregate face value of ₹23,300 crore. The auction is scheduled through RBI’s E-Kuber system on 27 October 2026 and combines yield-based offerings with price-based re-issues. The notice also provides for "
+  "whyInNews": "On October 23, 2026, the Reserve Bank of India announced that State Governments had offered securities aggregating ₹23,300 crore face value for auction. The auction was scheduled through RBI’s E-Kuber system for October 27, 2026, combining new yield-based issues with price-based re-issues. The announcement matters for "
 }
