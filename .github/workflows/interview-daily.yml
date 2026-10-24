@@ -1,0 +1,132 @@
+name: Interview daily questions and checks
+
+# Every day: add new ServiceNow interview questions researched with Perplexity
+# (two categories in rotation, see scripts/fetch-interview-questions.js), then
+# validate every interview question the site serves. 03:00 UTC is 08:30 IST.
+#
+# The generator exits 2 when no question clears its validation gate. That is a
+# skip, not a failure: publishing nothing beats publishing a weak question.
+# Validation errors stop the commit. The day's findings are kept in one open
+# issue labelled "content-check", which is closed when everything passes.
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      category:
+        description: 'Category to generate for (blank = today''s rotation)'
+        required: false
+        default: ''
+        type: string
+      count:
+        description: 'Questions to generate'
+        required: false
+        default: '2'
+        type: string
+      dry_run:
+        description: 'Generate and validate without committing'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: interview-data
+  cancel-in-progress: false
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Test the generator and validator
+        run: node scripts/test-interview-automation.js
+
+      - name: Research and write today's questions
+        id: generate
+        env:
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+          CATEGORY: ${{ github.event.inputs.category }}
+          COUNT: ${{ github.event.inputs.count || '2' }}
+        run: |
+          set +e
+          if [ -n "$CATEGORY" ]; then
+            node scripts/fetch-interview-questions.js --category "$CATEGORY" --count "$COUNT"
+          else
+            node scripts/fetch-interview-questions.js --count "$COUNT"
+          fi
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo "added=true" >> "$GITHUB_OUTPUT"
+          elif [ "$code" -eq 2 ]; then
+            echo "added=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No question cleared the validation gate today. Nothing was written."
+          else
+            exit "$code"
+          fi
+
+      - name: Validate all interview content
+        id: validate
+        run: |
+          set +e
+          node scripts/validate-interviews.js --report content-report.md
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+          set -e
+          cat content-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Show the new questions
+        if: steps.generate.outputs.added == 'true'
+        run: |
+          node -e "
+            const items = require('./data/interviews.json');
+            const today = new Date().toISOString().slice(0, 10);
+            for (const q of items.filter(q => q.daily && q.dateISO.slice(0, 10) === today)) {
+              console.log('## #' + q.id + ' · ' + q.category + ' · ' + q.difficulty + ' · ' + q.topic);
+              q.sources.forEach(s => console.log('  - ' + s.url));
+            }
+          " | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit the new questions
+        if: steps.generate.outputs.added == 'true' && steps.validate.outputs.code == '0' && github.event.inputs.dry_run != 'true'
+        run: |
+          node scripts/generate-sitemap.js
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          bash scripts/upsc/push-with-retry.sh -m "Interviews: daily questions $(date -u +%Y-%m-%d)" \
+            -r "node scripts/generate-sitemap.js" \
+            -- data/interviews.json interviews.json sitemap.xml
+
+      - name: Record findings in the content-check issue
+        if: always() && steps.validate.outcome == 'success' && github.event.inputs.dry_run != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create content-check --color FBCA04 --description "Daily interview content validation" 2>/dev/null || true
+          issue=$(gh issue list --label content-check --state open --json number --jq '.[0].number')
+          if grep -q "All checks passed." content-report.md; then
+            if [ -n "$issue" ]; then
+              gh issue close "$issue" --comment "All interview content checks passed on $(date -u +%Y-%m-%d)."
+            fi
+          elif [ -n "$issue" ]; then
+            gh issue edit "$issue" --body-file content-report.md
+          else
+            gh issue create --title "Interview content check" --label content-check --body-file content-report.md
+          fi
+
+      - name: Fail on validation errors
+        if: steps.validate.outputs.code != '0'
+        run: |
+          echo "::error::Interview content has validation errors. See the job summary or the content-check issue."
+          exit 1

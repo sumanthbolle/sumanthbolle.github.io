@@ -1,0 +1,68 @@
+name: Weekly site review
+
+# Every Monday: a deeper interview content check (including external links)
+# and a UX audit of every page in headless Chrome at phone, tablet and desktop
+# widths (horizontal overflow, scrolling, clipped text, console errors, broken
+# images, interview deep links and filters). Both reports go into a new issue
+# labelled "weekly-review", which the weekly fix routine works from. Screenshots
+# of failing views are kept as a run artifact. 04:30 UTC is 10:00 IST.
+
+on:
+  schedule:
+    - cron: '30 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Content check with links
+        run: |
+          set +e
+          node scripts/validate-interviews.js --links --report content-report.md
+          set -e
+
+      - name: UX audit
+        run: |
+          set +e
+          CHROME_PATH=$(command -v google-chrome || command -v chromium || true) \
+            node scripts/audit-site-ux.mjs --out ux-audit
+          set -e
+
+      - name: Keep screenshots and reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-review-${{ github.run_id }}
+          path: |
+            ux-audit
+            content-report.md
+          retention-days: 30
+
+      - name: Open the weekly review issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create weekly-review --color 0E8A16 --description "Weekly content and UX review" 2>/dev/null || true
+          {
+            echo "Automated weekly review. Screenshots: $RUN_URL"
+            echo
+            [ -f ux-audit/report.md ] && cat ux-audit/report.md || echo "UX audit produced no report."
+            echo
+            cat content-report.md
+          } > review.md
+          # Issue bodies are capped at 65,536 characters.
+          head -c 60000 review.md > body.md
+          gh issue create --title "Weekly site review $(date -u +%Y-%m-%d)" --label weekly-review --body-file body.md
+          cat body.md >> "$GITHUB_STEP_SUMMARY"
