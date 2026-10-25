@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-25T01:32:52Z",
+  "generatedAt": "2026-10-25T04:35:18Z",
   "itemCount": 19,
   "items": [
     {
@@ -1714,7 +1714,7 @@
     },
     {
       "anchor": "GS3.6 Science and technology: developments, applications, indigenisation, IPR; GS3.8 Internal securi",
-      "checkedAt": "2026-10-25T01:32:52Z",
+      "checkedAt": "2026-10-25T04:35:18Z",
       "codes": [
         "GS3.6",
         "GS3.8",
@@ -1722,7 +1722,7 @@
       ],
       "error": "",
       "issue": {
-        "body": "Primary enrichment for `src_df8e8313b2ec2f2187fdb67fefb87420390e082fa74a78b403813aef8d2ec453` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.97\n- **checked at:** 2026-10-25T01:32:52Z\n\nFlagged claims:\n- “Proposed codes: GS3.6, GS3.8, GS3.9” contains an unverified/likely incorrect GS3.9 code; the available syllabus extract supports science-and-technology indigenization and maritime security under internal security, but not this numbering.[6\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "body": "Primary enrichment for `src_df8e8313b2ec2f2187fdb67fefb87420390e082fa74a78b403813aef8d2ec453` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.93\n- **checked at:** 2026-10-25T04:35:18Z\n\nFlagged claims:\n- The proposed anchor includes “GS3.8 Internal security,” but the note does not substantively address the syllabus’s internal-security themes such as extremism, cyber security, border management, organised crime, or security agencies.\n- The proposed code “GS3.9” is unsupported and cannot be treated as a valid syllabus tag without an identified coding framework.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
         "labels": [
           "upsc-needs-review"
         ],
@@ -1732,60 +1732,60 @@
       "note": {
         "anchor": "GS3.6 Science and technology: developments, applications, indigenisation, IPR; GS3.8 Internal securi",
         "argumentsAgainst": [
-          "A seminar or exhibition alone cannot ensure indigenous defence production; the decisive factors are testing, procurement, quality assurance, financing and timely induction.",
-          "Technology-focused defence indigenisation can face capability, cost and interoperability constraints if operational requirements are not translated into clear standards and acquisition pathways."
+          "A seminar or exhibition alone cannot ensure operational deployment; sustained testing, procurement, funding and user feedback are required.",
+          "Advanced technologies can create integration, interoperability, cybersecurity and ethical challenges, especially when multiple innovators and defence platforms are involved."
         ],
         "argumentsFor": [
-          "Connecting the Navy’s operational requirements with Indian industry, start-ups, MSMEs and academia can shorten the path from innovation to deployable capability.",
-          "Indigenous development can support defence self-reliance, resilient domestic supply chains and maritime preparedness.",
-          "Investor engagement and attention to scaling and commercialisation can help promising defence enterprises move beyond prototypes."
+          "Linking operational requirements with Indian industry and academia can make defence innovation more user-oriented.",
+          "Participation by start-ups, MSMEs, investors and academia can widen the defence innovation base and improve pathways for scaling and commercialisation.",
+          "Indigenous capabilities can potentially strengthen maritime preparedness and reduce dependence on external technology and supply chains."
         ],
         "background": [
-          "Swavlamban is the Indian Navy’s Naval Innovation and Indigenisation Seminar. The 2026 edition is its fifth and is scheduled for 26–27 October 2026 at the Manekshaw Centre, New Delhi, under the theme “Strength & Power through Innovation and ",
-          "The initiative began in 2022 and has developed into a platform connecting the Indian Navy’s operational requirements with Indian industry and academia. Its stated mechanism is to accelerate the movement from indigenous innovation to deploya",
-          "The 2026 programme covers maritime surveillance, Counter-UAS, artificial intelligence, quantum technologies, NBCD and safety, efficiency enhancers, autonomous systems and hypersonic technologies. These areas illustrate the growing role of a"
+          "Swavlamban is the Indian Navy’s Naval Innovation and Indigenisation Seminar. The official record states that it began in 2022 and has developed into a platform connecting the Navy’s operational requirements with Indian industry and academia",
+          "The fifth edition is scheduled at the Manekshaw Centre, New Delhi, on 26–27 October 2026, under the theme “Strength & Power through Innovation and Indigenisation”.",
+          "The event is being organised by the Indian Navy in collaboration with the Defence Innovation Organisation and the Society of Indian Defence Manufacturers."
         ],
         "codes": [
           "GS3.6",
           "GS3.8",
           "GS3.9"
         ],
-        "editorialStatus": "source-backed",
+        "editorialStatus": "draft",
         "id": "note_df8e8313b2ec2f2187fdb67fefb87420390e082fa74a78b403813aef8d2ec453",
         "indiaImplications": [
-          "A stronger interface between military users and domestic innovators can improve mission-specific technology development for maritime security.",
-          "Domestic supply-chain development may reduce dependence on external sources for selected defence technologies and components, subject to successful validation and procurement.",
-          "Start-up and academic participation can widen the defence innovation base, while investor engagement may improve access to scaling and commercialisation finance.",
-          "The focus on emerging technologies raises the need for rigorous testing, cybersecurity, safety, interoperability, lifecycle support and responsible use."
+          "Defence innovation can support maritime preparedness when indigenous ideas progress from demonstration to deployable operational capability.",
+          "A wider domestic ecosystem involving start-ups, MSMEs, academia and investors may improve technology development, supply-chain resilience and commercialisation prospects.",
+          "The focus on maritime surveillance, counter-UAS, artificial intelligence, quantum technologies, autonomous systems and hypersonic technologies highlights the need for defence institutions to absorb emerging technologies responsibly.",
+          "The approach also requires attention to standards, lifecycle support, cybersecurity, testing, procurement and interoperability; these are analytical requirements rather than facts established by the source record."
         ],
         "mainsPractice": [
           {
             "bodyDimensions": [
-              "Explain the user–industry–academia linkage and its role in translating prototypes into operational systems.",
-              "Discuss benefits for maritime preparedness, supply-chain resilience and defence self-reliance.",
-              "Assess constraints: testing, procurement timelines, quality assurance, funding, interoperability and lifecycle maintenance.",
-              "Suggest institutional measures for milestone-based trials, assured procurement pathways, standards, cybersecurity and sustained funding."
+              "Explain how a demand-driven defence innovation platform can connect military operational requirements with domestic technological capabilities.",
+              "Assess the potential contribution of start-ups, MSMEs, academia and investors to defence self-reliance.",
+              "Discuss why moving from innovation to deployable capability requires testing, procurement, interoperability and lifecycle support.",
+              "Balance strategic autonomy with the need for collaboration, investment and access to global knowledge."
             ],
-            "conclusionPrompt": "Conclude by linking technological self-reliance with credible operational capability rather than mere prototype creation.",
-            "counterPosition": "Indigenisation may raise costs or delay induction in the short term; therefore, capability requirements and operational readiness must remain the governing tests.",
-            "diagramSuggestion": "Draw a cycle: operational requirement → innovation challenge → prototype → user trials → certification → procurement → deployment → feedback.",
-            "directive": "examine",
+            "conclusionPrompt": "Conclude by linking Aatmanirbharta with credible operational capability, resilient supply chains and responsible adoption of emerging technologies.",
+            "counterPosition": "A critic may argue that indigenisation can become a slogan unless innovations meet stringent operational, cost, reliability and maintainability requirements.",
+            "diagramSuggestion": "Flow diagram: Navy operational requirement → Indian innovators and academia → prototype/testing → investor and industrial scaling → procurement → deployable maritime capability.",
+            "directive": "discuss",
             "introChoices": [
-              "Swavlamban 2026 represents an attempt to connect naval operational needs with India’s wider innovation ecosystem.",
-              "Defence indigenisation becomes meaningful only when domestic innovation is converted into reliable, deployable and maintainable capability."
+              "Swavlamban 2026 reflects a shift from viewing defence indigenisation merely as domestic production to building an innovation-to-deployment ecosystem.",
+              "For maritime security, technological self-reliance is meaningful only when indigenous innovation responds to operational requirements and reaches reliable field capability."
             ],
             "marks": 15,
             "skeleton": [
-              "Swavlamban 2026 represents an attempt to connect naval operational needs with India’s wider innovation ecosystem.",
-              "Defence indigenisation becomes meaningful only when domestic innovation is converted into reliable, deployable and maintainable capability.",
-              "Explain the user–industry–academia linkage and its role in translating prototypes into operational systems.",
-              "Discuss benefits for maritime preparedness, supply-chain resilience and defence self-reliance.",
-              "Assess constraints: testing, procurement timelines, quality assurance, funding, interoperability and lifecycle maintenance.",
-              "Suggest institutional measures for milestone-based trials, assured procurement pathways, standards, cybersecurity and sustained funding.",
-              "Indigenisation may raise costs or delay induction in the short term; therefore, capability requirements and operational readiness must remain the governing tests.",
-              "Conclude by linking technological self-reliance with credible operational capability rather than mere prototype creation."
+              "Swavlamban 2026 reflects a shift from viewing defence indigenisation merely as domestic production to building an innovation-to-deployment ecosystem.",
+              "For maritime security, technological self-reliance is meaningful only when indigenous innovation responds to operational requirements and reaches reliable field capability.",
+              "Explain how a demand-driven defence innovation platform can connect military operational requirements with domestic technological capabilities.",
+              "Assess the potential contribution of start-ups, MSMEs, academia and investors to defence self-reliance.",
+              "Discuss why moving from innovation to deployable capability requires testing, procurement, interoperability and lifecycle support.",
+              "Balance strategic autonomy with the need for collaboration, investment and access to global knowledge.",
+              "A critic may argue that indigenisation can become a slogan unless innovations meet stringent operational, cost, reliability and maintainability requirements.",
+              "Conclude by linking Aatmanirbharta with credible operational capability, resilient supply chains and responsible adoption of emerging technologies."
             ],
-            "stem": "Swavlamban 2026 focuses on emerging technologies and indigenous defence capabilities. Examine how such a platform can strengthen India’s maritime preparedness and defence self-reliance. Identify the institutional safeguards needed to convert innovation into operational capability.",
+            "stem": "Discuss how an innovation-and-indigenisation platform can strengthen India’s maritime preparedness and defence self-reliance. Identify the institutional and implementation conditions needed to convert promising technologies into deployable capability.",
             "timeMinutes": 11,
             "wordBudget": 250
           }
@@ -1794,8 +1794,8 @@
           {
             "evidenceLocator": "officialSummary",
             "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2328089",
-            "text": "INDIAN NAVY’S FLAGSHIP EVENT SWAVLAMBAN 2026 TO FOCUS ON EMERGING TECHNOLOGIES AND INDIGENOUS DEFENCE CAPABILITIES",
-            "verification": "source-backed"
+            "text": "The fifth edition of the Indian Navy’s flagship Naval Innovation and Indigenisation Seminar, Swavlamban 2026, will be held at the Manekshaw Centre, New Delhi, on 26–27 Oct 2026 under the theme ‘Strength & Power through Innovation and Indigenisation’.",
+            "verification": "needs-review"
           }
         ],
         "papers": [
@@ -1803,27 +1803,27 @@
         ],
         "pocketRead": {
           "example": {
-            "heading": "Hypothetical illustration",
-            "text": "If the Navy identifies a surveillance requirement, a domestic start-up develops a prototype, academia supports testing, and investors help scale production, a platform like Swavlamban could connect these stages. This illustration does not claim that such a specific project occurred."
+            "heading": "Hypothetical illustration: from requirement to deployment",
+            "text": "If the Indian Navy identifies a recurring maritime-surveillance requirement, a domestic start-up could develop a prototype with academic support, undergo user testing, receive investment for scaling, and eventually enter a procurement pathway. This illustration shows the mechanism; it is not a reported event."
           },
-          "excerpt": "Swavlamban 2026 links emerging-technology discussions with India’s objective of developing indigenous defence capabilities for maritime preparedness.",
+          "excerpt": "Swavlamban 2026 connects naval operational requirements with Indian industry, academia, start-ups, MSMEs and investors to advance defence innovation and indigenisation.",
           "question": {
-            "answer": "Such a platform can help by linking operational requirements with domestic innovators and by creating space for technology, funding and scaling discussions. Its impact would depend on user trials, certification, procurement and sustained lifecycle support.",
-            "prompt": "How can a naval innovation platform contribute to defence self-reliance, and what determines whether its innovations become operational capabilities?"
+            "answer": "A demand-driven platform can improve relevance by beginning with an operational problem rather than an abstract technology. Its success would depend on transparent requirements, user-led testing, predictable procurement, investment for scaling, interoperability standards and lifecycle support. Thus, the platform can strengthen self-reliance only when innovation is converted into reliable operational capability.",
+            "prompt": "How can a naval innovation platform convert indigenous ideas into credible maritime capability, rather than stopping at exhibitions and prototypes?"
           },
           "sections": [
             {
-              "heading": "From requirement to capability",
+              "heading": "A Navy-led innovation bridge",
               "paragraphs": [
-                "The Indian Navy’s innovation platform is designed around the connection between operational needs and domestic technological capabilities. The practical consequence is a clearer route for discussing solutions with industry, start-ups, MSMEs and academia.",
-                "The limitation is that discussion and exhibition do not themselves establish operational readiness. Testing, certification, procurement and integration remain necessary steps."
+                "The Indian Navy’s Swavlamban 2026 is scheduled for 26–27 October 2026 at the Manekshaw Centre, New Delhi. Its stated theme is “Strength & Power through Innovation and Indigenisation”. The event brings together the Armed Forces, industry, start-ups, MSMEs, academia and investors.",
+                "The mechanism is a bridge between operational requirements and domestic technological capabilities. The source identifies maritime surveillance, counter-UAS, artificial intelligence, quantum technologies, NBCD and safety, and efficiency enhancers as exhibition areas."
               ]
             },
             {
-              "heading": "Emerging technologies and the ecosystem",
+              "heading": "From indigenous idea to operational use",
               "paragraphs": [
-                "The 2026 focus includes maritime surveillance, Counter-UAS, artificial intelligence, quantum technologies, autonomous systems and hypersonic technologies. The programme also includes engagement with investors on funding, scaling and commercialisation.",
-                "A misconception would be to treat every displayed innovation as an inducted system. The source identifies thematic areas and intended engagement, but does not establish the deployment status of each technology."
+                "The seminar also addresses autonomous systems, hypersonic technologies, resilient domestic supply chains, academic entrepreneurship and scaling of start-ups. Engagement with investors and venture capitalists is intended to support funding, scaling and commercialisation pathways.",
+                "A limitation is that discussion and exhibition do not by themselves establish operational success. The source describes a platform for engagement; it does not provide evidence of a particular technology’s deployment, performance or procurement outcome."
               ]
             }
           ],
@@ -1832,23 +1832,23 @@
         "prelimsTraps": [
           {
             "correct": true,
-            "explanation": "The source title explicitly describes Swavlamban 2026 as the Indian Navy’s flagship event focused on emerging technologies and indigenous defence capabilities.",
-            "statement": "Swavlamban 2026 is presented as an Indian Navy flagship event focused on emerging technologies and indigenous defence capabilities."
+            "explanation": "The official record describes Swavlamban 2026 as the fifth edition of the Indian Navy’s Naval Innovation and Indigenisation Seminar.",
+            "statement": "Swavlamban 2026 is the fifth edition of the Indian Navy’s Naval Innovation and Indigenisation Seminar."
           },
           {
             "correct": true,
-            "explanation": "The official release states that the fifth edition is scheduled at the Manekshaw Centre, New Delhi, on 26–27 October 2026.",
-            "statement": "The fifth edition of Swavlamban 2026 is scheduled for 26–27 October 2026 at the Manekshaw Centre, New Delhi."
+            "explanation": "The event is scheduled at the Manekshaw Centre, New Delhi, on 26–27 October 2026.",
+            "statement": "Swavlamban 2026 is scheduled to be held in New Delhi on 26–27 October 2026."
           },
           {
             "correct": false,
-            "explanation": "The source does not state that all technologies displayed at the event have been inducted into operational service.",
-            "statement": "Every indigenous technology displayed at Swavlamban 2026 has already been inducted into the Indian Navy."
+            "explanation": "The source says the event is organised by the Indian Navy in collaboration with DIO and SIDM; it does not identify DIO as the sole organiser.",
+            "statement": "The Defence Innovation Organisation is the sole organiser of Swavlamban 2026."
           },
           {
             "correct": false,
-            "explanation": "The source title identifies the Indian Navy’s flagship event; it does not describe Swavlamban 2026 as a DRDO-only event.",
-            "statement": "Swavlamban 2026 is exclusively a DRDO event with no role for industry, start-ups, MSMEs, academia or investors."
+            "explanation": "The source lists these as areas of focus or deliberation, but does not state that all are already operationally deployed by the Navy.",
+            "statement": "Swavlamban 2026 establishes that quantum, hypersonic and autonomous systems are already fully deployed across the Indian Navy."
           }
         ],
         "priority": 69,
@@ -1864,39 +1864,40 @@
         "publishedAt": "2026-10-24T15:52:32Z",
         "publisherId": "pib",
         "publisherName": "Press Information Bureau",
-        "recallCard": "Swavlamban 2026 is the Indian Navy’s fifth Naval Innovation and Indigenisation Seminar, scheduled for 26–27 October 2026 in New Delhi. It focuses on emerging technologies and indigenous defence capabilities. Remember: innovation becomes self-reliance only after testing, certification, procurement and deployment.",
+        "recallCard": "Swavlamban 2026, the Indian Navy’s fifth Naval Innovation and Indigenisation Seminar, is scheduled for 26–27 October in New Delhi. It connects operational requirements with Indian industry and academia, while focusing on emerging technologies, start-ups, resilient supply chains and defence self-reliance.",
         "reusableAnchors": [],
         "sourceContentHash": "08cd6d67f0ef47ae885f669844b008bdf6432511aec83715bb399218a7bf18c4",
         "sourceId": "src_df8e8313b2ec2f2187fdb67fefb87420390e082fa74a78b403813aef8d2ec453",
         "sourceTitle": "INDIAN NAVY’S FLAGSHIP EVENT SWAVLAMBAN 2026 TO FOCUS ON EMERGING TECHNOLOGIES AND INDIGENOUS DEFENCE CAPABILITIES",
         "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2328089",
-        "staticDefinition": "Defence indigenisation is the process of developing, validating, producing and sustaining defence equipment and technologies through domestic capabilities, while ensuring that the resulting systems meet operational, quality, safety and lifecycle requirements.",
-        "use": "Use Swavlamban as an example of a user-driven defence innovation platform in answers on defence indigenisation, maritime security, emerging technologies, Aatmanirbharta and civil–industry–academia collaboration.",
+        "staticDefinition": "Defence indigenisation is the development, production and sustained support of defence capabilities through domestic technological, industrial and institutional capacity. In this issue, the Indian Navy’s platform links its operational requirements with Indian industry and academia so that indigenous innovation can pote",
+        "use": "Use Swavlamban as a contemporary illustration in answers on defence indigenisation, Aatmanirbharta, maritime security, defence innovation, start-up ecosystems, resilient supply chains and emerging technologies. Treat deployment, performance and procurement outcomes as questions requiring separate evidence.",
         "wayForward": [
-          "Translate operational requirements into clearly defined, outcome-based technology challenges and standards.",
-          "Use milestone-based trials, independent evaluation and time-bound certification before procurement decisions.",
-          "Create predictable pathways for scaling successful start-up and MSME prototypes, including testing access, finance and assured but performance-linked procurement.",
-          "Build cybersecurity, interoperability, safety, maintainability and lifecycle support into the design stage."
+          "Translate operational problems into clearly specified, technology-neutral requirements and provide regular user feedback to innovators.",
+          "Create predictable pathways for prototype testing, certification, procurement, scaling and lifecycle maintenance.",
+          "Strengthen interoperability, cybersecurity, safety and common standards before integrating emerging technologies into naval systems.",
+          "Use patient public and private capital, alongside mentorship and market access, to help promising start-ups and MSMEs scale."
         ],
-        "whyInNews": "The Press Information Bureau release dated 24 October 2026 announced that the Indian Navy’s flagship Swavlamban 2026 will focus on emerging technologies and indigenous defence capabilities. The event is the fifth Naval Innovation and Indigenisation Seminar and is scheduled for 26–27 October 2026 in New Delhi."
+        "whyInNews": "The Indian Navy’s fifth Naval Innovation and Indigenisation Seminar, Swavlamban 2026, is scheduled for 26–27 October 2026 at the Manekshaw Centre, New Delhi. Its theme is “Strength & Power through Innovation and Indigenisation”, with participation planned from the Armed Forces, industry, start-ups, MSMEs, academia and "
       },
       "sourceId": "src_df8e8313b2ec2f2187fdb67fefb87420390e082fa74a78b403813aef8d2ec453",
       "status": "disagreed",
       "verification": {
         "advisory_notes": [
-          "The anchor should use the exact GS3 syllabus wording: “indigenization of technology and developing new technology”; “maritime security” belongs under the internal-security portion, not a separate official subcode.[6]",
-          "GS3.9 is not substantiated by the supplied or retrieved syllabus extract; verify the coding scheme before retaining it.",
-          "The claim that Swavlamban began in 2022 is supported by the earlier PIB/PM sources, but cite the 18–19 July 2022 inaugural seminar if retaining this background.[5][7]",
-          "“User-driven” is a reasonable analytical characterization, but the official material more directly says the seminar connects operational requirements with innovators and industry.[1][4]",
-          "“Civil–industry–academia collaboration” is broad framing: the sources support industry, start-ups, MSMEs, academia, investors and armed forces, not necessarily a formal civil-sector partnership.[1][4]",
-          "The suggested implications on supply-chain resilience, cybersecurity, interoperability, lifecycle support and procurement are sound analysis, but should remain clearly presented as implications or safeguards rather than event-established fa",
-          "The pocketRead headline and deck are accurate summaries; the paragraph correctly distinguishes the event’s intended pathway from actual induction status.[1][4]",
-          "The hypothetical surveillance example is appropriately labelled and does not assert that the specific project occurred; the applied-question answer is analytically sound."
+          "The source establishes a scheduled event, so the recall card and pocketRead should retain “scheduled” rather than imply completion.",
+          "“National platform” and “flagship” are official characterisations, but broader claims about strengthening supply-chain resilience and reducing dependence are analytical implications, not demonstrated outcomes.",
+          "The proposed GS3.8 Internal Security tag is weak: the note concerns defence innovation and maritime preparedness, while the cited internal-security syllabus themes are not directly addressed.",
+          "GS3.9 cannot be validated because the supplied material does not define the internal coding scheme; remove or explain this code if it is not an established taxonomy.",
+          "“Shift from viewing defence indigenisation merely as domestic production” is an interpretive framing and should not be presented as an established policy shift.",
+          "“Patient public and private capital” and “technology-neutral requirements” are reasonable recommendations, but they are not sourced facts and should remain clearly normative.",
+          "The hypothetical surveillance example is appropriately labelled, but “eventually enter a procurement pathway” should remain explicitly conditional.",
+          "The applied-question answer is substantively relevant, though “transparent requirements” and “global knowledge” are recommendations rather than source-established features."
         ],
         "agrees": false,
-        "confidence": 0.97,
+        "confidence": 0.93,
         "flagged_claims": [
-          "“Proposed codes: GS3.6, GS3.8, GS3.9” contains an unverified/likely incorrect GS3.9 code; the available syllabus extract supports science-and-technology indigenization and maritime security under internal security, but not this numbering.[6"
+          "The proposed anchor includes “GS3.8 Internal security,” but the note does not substantively address the syllabus’s internal-security themes such as extremism, cyber security, border management, organised crime, or security agencies.",
+          "The proposed code “GS3.9” is unsupported and cannot be treated as a valid syllabus tag without an identified coding framework."
         ],
         "verificationVersion": 2
       }
