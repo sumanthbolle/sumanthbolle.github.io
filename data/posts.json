@@ -1,5 +1,34 @@
 [
   {
+    "id": 111,
+    "title": "OneUptime backfilled postmortem status in batches of 5,000",
+    "excerpt": "OneUptime added incident postmortem statuses with a live-safe schema migration and a batched backfill. The change shows how to add workflow state to an existing PostgreSQL application without rewriting tables or guessing at historical data.",
+    "readTime": "3 min read",
+    "category": "architecture",
+    "learningPath": "architecture",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Engineering managers"
+    ],
+    "uniqueId": "daily-architecture-oneuptime-backfilled-postmortem-status-in-batches-of-5-000-1793001816979",
+    "date": "Oct 26, 2026",
+    "dateISO": "2026-10-26T08:03:36Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "OneUptime pull request #5171: Postmortems across every incident",
+        "url": "https://github.com/OneUptime/oneuptime/pull/5171"
+      },
+      {
+        "title": "ChatCLI release history, October 24, 2026",
+        "url": "https://encom.mintlify.app/releases"
+      }
+    ],
+    "content": "<h2>What changed</h2>\n<p>On October 22, 2026, OneUptime merged a change that adds postmortem status to every incident. The new <code>IncidentPostmortemStatus</code> model exposes API, OpenAPI, MCP, CLI, Terraform, workflow, and audit-log interfaces.</p>\n<p>Each project receives four default statuses: <code>Not Started</code>, <code>Draft</code>, <code>Completed</code>, and <code>Not Needed</code>. <code>Not Started</code> and <code>Draft</code> represent unfinished work. <code>Completed</code> and <code>Not Needed</code> do not.</p>\n<p>The change also adds <code>Incident.postmortemStatusId</code>. This makes postmortem progress queryable without inferring state from several unrelated fields.</p>\n<h2>How the migration works</h2>\n<p>The migration creates the status table and adds the incident foreign-key column without rewriting the incident table. Indexes and the key are built online. The migration can run again safely, and the database prevents deletion of a status that incidents still use.</p>\n<p>A separate data migration creates the four defaults for existing projects. It then processes existing incidents in batches of 5,000. An incident becomes <code>Completed</code> when its postmortem is published and has a non-blank note. It becomes <code>Draft</code> when it has a note but is not published. Otherwise, it becomes <code>Not Started</code>. Existing incidents are never assigned <code>Not Needed</code>; teams must make that decision explicitly.</p>\n<p>The migration leaves deleted projects and projects without usable status records alone. The project-level default creation is idempotent, so retries do not create duplicate statuses.</p>\n<h2>The engineering catch</h2>\n<p>The pull request included 24 migration tests. They checked TypeORM column, index, and key names, verified that the table would not be rewritten, and covered online indexes, repeatability, and rollback.</p>\n<p>The change initially broke unrelated migration tests because the new data migration was inserted between two migrations whose tests asserted their relative order. The team moved it to a location without an ordering dependency and added a test that pins its placement. This is a useful reminder that migration systems can have hidden sequencing contracts even when the database itself has no dependency.</p>\n<p>The implementation also preserves an important boundary: automated inference handles <code>Completed</code>, <code>Draft</code>, and <code>Not Started</code>, while <code>Not Needed</code> remains a human decision. That avoids silently classifying incidents that were intentionally exempt.</p>\n<h2>What other teams can copy</h2>\n<p>The design separates schema change, default-data creation, and historical backfill. That makes each operation testable and easier to retry. It also keeps the new workflow visible across every integration surface instead of making the status a UI-only field.</p>\n<p>For an existing production system, the same pattern reduces deployment risk: add nullable structure first, create defaults, backfill in bounded transactions, then enforce the relationships needed by new writes. Add explicit tests for the migration runner itself, not only for the final schema.</p>\n<ul>\n<li>Use a separate table for workflow states when projects need configurable labels or lifecycle rules.</li>\n<li>Make backfills idempotent and process large tables in bounded batches such as 5,000 rows.</li>\n<li>Define deterministic rules for historical data, then leave ambiguous cases for explicit human review.</li>\n<li>Test migration order, repeatability, rollback, online index creation, and whether the database table is rewritten.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Separate schema changes, default creation, and historical backfills.</li>\n<li>Backfill existing rows in bounded, retryable batches.</li>\n<li>Keep ambiguous historical classifications explicit instead of inferring them silently.</li>\n<li>Test migration ordering and online database behavior, not just the resulting schema.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://github.com/OneUptime/oneuptime/pull/5171\" target=\"_blank\" rel=\"noopener\">OneUptime pull request #5171: Postmortems across every incident</a> \u2014 github.com</li>\n<li><a href=\"https://encom.mintlify.app/releases\" target=\"_blank\" rel=\"noopener\">ChatCLI release history, October 24, 2026</a> \u2014 encom.mintlify.app</li>\n</ul>"
+  },
+  {
     "id": 110,
     "title": "ServiceNow flags gs.setProperty() in scripts as a high-impact performance risk",
     "excerpt": "A ServiceNow Impact blog post documents a concrete performance risk: calling gs.setProperty() from scripts flushes the cache across the cluster. The flush can take one to ten minutes, so repeated calls can slow an instance or cause an outage.",
