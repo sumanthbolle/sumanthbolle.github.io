@@ -547,6 +547,8 @@
       // Open and highlight the target card
       card.classList.add('open');
       card.classList.add('highlighted');
+      // An open answer can be so tall that under 10% of it is on screen, which never trips the reveal observer.
+      card.classList.add('animate');
       
       // Scroll to the card
       setTimeout(() => {
