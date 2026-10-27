@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-26T22:37:05Z",
+  "checkedAt": "2026-10-27T04:57:39Z",
   "healthy": true,
-  "healthyCount": 6,
+  "healthyCount": 5,
   "sourceCount": 7,
   "sources": {
     "pib": {
@@ -9,8 +9,8 @@
       "status": "ok",
       "finalHost": "www.pib.gov.in",
       "contentType": "text/xml",
-      "checkedAt": "2026-10-26T22:37:05Z",
-      "latestPublishedAt": "2026-10-26T22:37:05Z",
+      "checkedAt": "2026-10-27T04:57:39Z",
+      "latestPublishedAt": "2026-10-27T04:57:39Z",
       "ageHours": 0.0,
       "freshness": "fetch-time",
       "datePolicy": "fetched-at",
@@ -21,9 +21,9 @@
       "status": "ok",
       "finalHost": "rbi.org.in",
       "contentType": "text/xml",
-      "checkedAt": "2026-10-26T22:37:05Z",
-      "latestPublishedAt": "2026-10-26T18:20:00Z",
-      "ageHours": 4.3,
+      "checkedAt": "2026-10-27T04:57:39Z",
+      "latestPublishedAt": "2026-10-27T09:00:00Z",
+      "ageHours": 0.0,
       "freshness": "fresh",
       "datePolicy": "source",
       "error": ""
@@ -33,9 +33,9 @@
       "status": "ok",
       "finalHost": "www.sebi.gov.in",
       "contentType": "text/xml",
-      "checkedAt": "2026-10-26T22:37:05Z",
+      "checkedAt": "2026-10-27T04:57:39Z",
       "latestPublishedAt": "2026-10-25T18:30:00Z",
-      "ageHours": 28.1,
+      "ageHours": 34.5,
       "freshness": "fresh",
       "datePolicy": "source",
       "error": ""
@@ -45,7 +45,7 @@
       "status": "error",
       "finalHost": "",
       "contentType": "",
-      "checkedAt": "2026-10-26T22:37:05Z",
+      "checkedAt": "2026-10-27T04:57:39Z",
       "latestPublishedAt": "",
       "ageHours": null,
       "freshness": "unknown",
@@ -57,9 +57,9 @@
       "status": "ok",
       "finalHost": "news.un.org",
       "contentType": "application/rss+xml",
-      "checkedAt": "2026-10-26T22:37:05Z",
+      "checkedAt": "2026-10-27T04:57:39Z",
       "latestPublishedAt": "2026-10-26T12:00:00Z",
-      "ageHours": 10.6,
+      "ageHours": 17.0,
       "freshness": "fresh",
       "datePolicy": "source",
       "error": ""
@@ -69,24 +69,24 @@
       "status": "ok",
       "finalHost": "www.who.int",
       "contentType": "application/rss+xml",
-      "checkedAt": "2026-10-26T22:37:05Z",
+      "checkedAt": "2026-10-27T04:57:39Z",
       "latestPublishedAt": "2026-10-10T07:49:45Z",
-      "ageHours": 398.8,
+      "ageHours": 405.1,
       "freshness": "stale",
       "datePolicy": "source",
       "error": ""
     },
     "eu-council": {
       "sourceId": "eu-council",
-      "status": "ok",
-      "finalHost": "www.consilium.europa.eu",
-      "contentType": "text/xml",
-      "checkedAt": "2026-10-26T22:37:05Z",
-      "latestPublishedAt": "2026-10-26T20:58:00Z",
-      "ageHours": 1.7,
-      "freshness": "fresh",
+      "status": "error",
+      "finalHost": "",
+      "contentType": "",
+      "checkedAt": "2026-10-27T04:57:39Z",
+      "latestPublishedAt": "",
+      "ageHours": null,
+      "freshness": "unknown",
       "datePolicy": "source",
-      "error": ""
+      "error": "The read operation timed out"
     }
   }
 }
