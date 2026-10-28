@@ -1,5 +1,96 @@
 [
   {
+    "id": 112,
+    "title": "Langflow adds bounded ServiceNow actions and polling triggers",
+    "excerpt": "A recent Langflow pull request adds a preview ServiceNow integration with bounded record actions and polling triggers. The useful engineering detail is its strict boundary model: approved tables and fields, validated instance origins, OAuth-scoped access, cursor-based polling, and a hard 10,000-record limit.",
+    "readTime": "3 min read",
+    "category": "servicenow",
+    "learningPath": "servicenow",
+    "difficulty": "Advanced",
+    "forPersona": [
+      "Developers",
+      "Admins",
+      "Architects"
+    ],
+    "uniqueId": "daily-servicenow-langflow-adds-bounded-servicenow-actions-and-polling-trigger-1793177723622",
+    "date": "Oct 28, 2026",
+    "dateISO": "2026-10-28T08:55:23Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Langflow pull request 15951: feat(servicenow): add ticket actions and observed change triggers",
+        "url": "https://github.com/langflow-ai/langflow/pull/15951"
+      },
+      {
+        "title": "ServiceNow Developer Forum archive, page 1943",
+        "url": "https://www.servicenow.com/community/developer-forum/bd-p/developer-forum/redirect_from_archived_page/true/page/1943"
+      },
+      {
+        "title": "ServiceNow Certified System Administrator exam questions and current product names",
+        "url": "https://codingnconcepts.com/servicenow/servicenow-certified-system-administrator-csa-exam-questions/"
+      }
+    ],
+    "content": "<h2>What changed</h2>\n<p>On October 22, 2026, Langflow contributor erichare opened pull request 15951 for a ServiceNow integration. The change adds search, read, create, and update actions for approved ServiceNow tables. It also adds triggers for new tickets and observed status changes.</p>\n<p>The integration is preview code and had not been deployed when the pull request was indexed. It targets Langflow release 1.14.0. The implementation includes ServiceNow-specific OAuth adapters, polling support, setup documentation, and automated tests.</p>\n<h2>How the boundary works</h2>\n<p>The ServiceNow bundle validates the configured origin, table names, record identifiers, filters, fields, credentials, and returned records before making or accepting requests. The pull request describes approved-table search, read, create, and update actions rather than unrestricted Table API access.</p>\n<p>OAuth uses a confidential authorization-code flow. The connection is tied to the configured instance, and the setup documentation calls for explicit ServiceNow scopes and ACL boundaries. That design limits the damage from a connection configured with broader platform access than the integration needs.</p>\n<ul>\n<li>Use only tables allowed by the integration bundle.</li>\n<li>Restrict writable fields through the configured approval policy.</li>\n<li>Bind OAuth credentials to the configured ServiceNow instance.</li>\n<li>Treat polling as state observation, not a complete event stream.</li>\n</ul>\n<h2>Polling and cursor behavior</h2>\n<p>The trigger provider polls ServiceNow table pages and stores cursor state. It can report newly created tickets and observed status changes. Pagination is bounded, and the implementation accepts the documented maximum of 10,000 records.</p>\n<p>A polling trigger compares the latest observed state. It can miss an intermediate status transition or a deletion between polls. The pull request also documents a 10,000-record boundary: an empty exhaustion probe is accepted, but a nonempty extra page is rejected without advancing the cursor. That prevents a cursor from moving past data the provider cannot safely process.</p>\n<p>The example illustrates the type of bounded Table API request the provider issues. It is not a drop-in Langflow configuration. In production, use the provider's generated query and cursor handling rather than manually copying the request.</p>\n<pre><code class=\"language-http\">GET /api/now/table/incident?sysparm_query=sys_updated_on&gt;javascript:gs.dateGenerate('2026-10-22','00:00:00')&amp;sysparm_limit=1000&amp;sysparm_offset=0</code></pre>\n<h2>The operational catch</h2>\n<p>The pull request adds cursor recovery, rollback redelivery, deduplication, pause handling, policy denial, consent denial, and ownership checks to the trigger runtime. Those controls matter because the source is polled and delivery can fail after records have been read.</p>\n<p>The integration is not a replacement for a webhook-based audit feed. Its own description says status polling can miss intermediate transitions or deletions. For workflows that require an exact history, persist ServiceNow audit data separately or use a source that provides durable event delivery.</p>\n<ul>\n<li>Grant only the ServiceNow scopes required by the selected actions.</li>\n<li>Set ACLs for the approved tables and writable fields before creating the connection.</li>\n<li>Do not use polling when every intermediate state transition must be preserved.</li>\n<li>Test behavior at the 10,000-record limit and after a failed delivery.</li>\n</ul>\n<h2>What to apply in a ServiceNow estate</h2>\n<p>The practical lesson is to make the integration contract explicit before enabling automation. Start with one read-only table and a narrow OAuth scope. Add create or update actions only after reviewing the target table's ACLs and the fields exposed to the external workflow.</p>\n<p>If the workflow polls incidents, choose a stable ordering and retain the provider cursor. Monitor rejected pages, delivery retries, and cursor advancement. A successful HTTP response is not enough; the record must pass the provider's table, field, identity, and response validation.</p>\n<p>This is a useful pattern for custom ServiceNow integrations too: constrain the origin, allowlist tables and fields, bound pagination, make cursor advancement atomic, and test retry behavior.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Allowlist ServiceNow tables and writable fields before connecting an external workflow.</li>\n<li>Use narrow OAuth scopes and instance-bound credentials.</li>\n<li>Treat polling as a latest-state signal; do not rely on it for every transition or deletion.</li>\n<li>Test cursor rollback and the 10,000-record boundary before production use.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://github.com/langflow-ai/langflow/pull/15951\" target=\"_blank\" rel=\"noopener\">Langflow pull request 15951: feat(servicenow): add ticket actions and observed change triggers</a> \u2014 github.com</li>\n<li><a href=\"https://www.servicenow.com/community/developer-forum/bd-p/developer-forum/redirect_from_archived_page/true/page/1943\" target=\"_blank\" rel=\"noopener\">ServiceNow Developer Forum archive, page 1943</a> \u2014 servicenow.com</li>\n<li><a href=\"https://codingnconcepts.com/servicenow/servicenow-certified-system-administrator-csa-exam-questions/\" target=\"_blank\" rel=\"noopener\">ServiceNow Certified System Administrator exam questions and current product names</a> \u2014 codingnconcepts.com</li>\n</ul>"
+  },
+  {
+    "id": 113,
+    "title": "Nanbeige4.3-33B reports 80.9 on Terminal-Bench 2.1",
+    "excerpt": "Nanbeige4.3-33B is an open-weight model released on October 24, 2026 for coding agents and office-style tool use. Its reported Terminal-Bench 2.1 score is 80.9, compared with 73.0 for Qwen3.8-27B, while its 512K context and Apache-2.0 license make self-hosted agent experiments practical.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-nanbeige4-3-33b-reports-80-9-on-terminal-bench-2-1-1793177733002",
+    "date": "Oct 28, 2026",
+    "dateISO": "2026-10-28T08:55:33Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "AI/TLDR Daily Digest \u2014 October 26, 2026",
+        "url": "https://buttondown.com/ai-tldr/archive/aitldr-daily-digest-october-26-2026/"
+      },
+      {
+        "title": "AI News Week 44, 2026 (Oct 19\u2013Oct 25, 2026)",
+        "url": "https://www.quantaailabs.com/ai-news/2026-week-44"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Nanbeige LLM Lab released Nanbeige4.3-33B on October 24, 2026. It is a 33B open-weight model aimed at two workloads: agentic coding and professional office tasks.</p>\n<p>The model is reported to score 80.9 on Terminal-Bench 2.1. The comparison listed for Qwen3.8-27B is 73.0. The model has a 512K context window and uses the Apache-2.0 license. It is intended to run on a single multi-GPU server.</p>\n<h2>How it works</h2>\n<p>Thinking mode is enabled by default. The release notes describe a <code>preserve_thinking</code> option that carries reasoning across turns. That behavior is useful for agents because a tool result can be incorporated without restarting the reasoning process.</p>\n<p>The recommended agent settings are temperature 1.0, XML-formatted tool calls, and <code>preserve_thinking</code> enabled. For ordinary reasoning without agent tool use, the reported recommendation is temperature 0.6. The model can therefore be used as a local OpenAI-compatible backend if the serving layer exposes its tool-call format and option.</p>\n<pre><code class=\"language-python\">from openai import OpenAI\n\nclient = OpenAI(base_url=&quot;http://localhost:8000/v1&quot;, api_key=&quot;local&quot;)\n\nresponse = client.chat.completions.create(\n    model=&quot;Nanbeige4.3-33B&quot;,\n    messages=[\n        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;Use XML tool calls. Preserve reasoning across tool turns.&quot;},\n        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Inspect the repository, run the tests, and fix the failing parser test.&quot;}\n    ],\n    temperature=1.0,\n    extra_body={&quot;preserve_thinking&quot;: True}\n)\n\nprint(response.choices[0].message.content)</code></pre>\n<h2>Where it breaks</h2>\n<p>The headline benchmark result is the model team's own reported number. It does not establish performance across other coding benchmarks, languages, repositories, or hardware configurations.</p>\n<p>A 33B model also needs substantially more memory and serving capacity than a small coding model. The available report says it fits on a single multi-GPU server, but it does not provide a precise GPU count, quantization level, throughput figure, or latency figure.</p>\n<p>The model targets agentic coding and office workflows, but the available details do not show whether tool-call reliability, recovery from failed commands, or long-horizon success was measured separately. Those are the failure modes to test before deployment.</p>\n<ul>\n<li>Use the 512K context for repository maps, test output, and relevant source files, rather than sending the entire repository on every turn.</li>\n<li>Keep tool schemas strict. The release guidance recommends XML tool calls, so adapters expecting native JSON tool calls may need a translation layer.</li>\n<li>Start with a task replay set. A single Terminal-Bench score does not predict performance on a team's codebase.</li>\n</ul>\n<h2>A practical evaluation</h2>\n<p>Run the model against 20 to 50 internal tasks that include compilation, test execution, file edits, and rollback. Record task success, invalid tool calls, command retries, tokens, and wall-clock time.</p>\n<p>Compare two configurations: default thinking with <code>preserve_thinking</code> enabled, and a shorter-context baseline. Include tests that require several tool turns. The main question is not whether the model has a large context window; it is whether preserving reasoning reduces repeated inspection and repair work.</p>\n<p>For sensitive repositories, the Apache-2.0 license and self-hosting option can simplify data handling. Confirm the model's exact weights, serving requirements, and license terms before adding it to a production agent.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Test Nanbeige4.3-33B on a small internal coding-agent task set before comparing it with hosted models.</li>\n<li>Enable <code>preserve_thinking</code> and use XML tool calls for multi-step agent runs.</li>\n<li>Measure invalid tool calls, retries, latency, and task success; do not rely on Terminal-Bench alone.</li>\n<li>Check GPU, quantization, and serving requirements before planning a single-server deployment.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://buttondown.com/ai-tldr/archive/aitldr-daily-digest-october-26-2026/\" target=\"_blank\" rel=\"noopener\">AI/TLDR Daily Digest \u2014 October 26, 2026</a> \u2014 buttondown.com</li>\n<li><a href=\"https://www.quantaailabs.com/ai-news/2026-week-44\" target=\"_blank\" rel=\"noopener\">AI News Week 44, 2026 (Oct 19\u2013Oct 25, 2026)</a> \u2014 quantaailabs.com</li>\n</ul>"
+  },
+  {
+    "id": 114,
+    "title": "GitHub Restored 12,285 Managed User Records After a Deletion Bug",
+    "excerpt": "GitHub restored about 12,285 Enterprise Managed User records after a deprovisioning path deleted them instead of suspending and obfuscating them. The incident shows how an identity-type check can protect audit history, not just access control.",
+    "readTime": "2 min read",
+    "category": "career",
+    "learningPath": "career",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Engineering managers",
+      "Students"
+    ],
+    "uniqueId": "daily-career-github-restored-12-285-managed-user-records-after-a-deletion-1793177758405",
+    "date": "Oct 28, 2026",
+    "dateISO": "2026-10-28T08:55:58Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "EMU deletions fix",
+        "url": "https://github.blog/changelog/2026-10-23-emu-deletions-fix/"
+      },
+      {
+        "title": "PrivacyLib: Privacy Controls at the Data Access Boundary",
+        "url": "https://engineering.fb.com/2026/10/27/security/privacylib/"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>GitHub reported on October 23, 2026 that some Enterprise Managed User accounts were deleted between June 1 and June 13 instead of being suspended and obfuscated. The affected accounts appeared as ghost users in issues, pull requests, and audit logs.</p>\n<p>Approximately 12,285 accounts across multiple enterprises were affected. Most had already been suspended and hard-deprovisioned. A smaller group of 76 accounts was active when the deletion occurred.</p>\n<p>GitHub said it restored the affected records in October 2026. The restoration returned them to the expected suspended and obfuscated state and preserved traceability and audit history. No customer action was required.</p>\n<h2>The technical failure</h2>\n<p>On June 1, GitHub enabled a change that routed deprovisioning requests through a new path. That path did not correctly check whether an account was an Enterprise Managed User account.</p>\n<p>That missing type check changed the operation from \u201csuspend and obfuscate\u201d to \u201cdelete.\u201d The request still looked like a valid deprovisioning action, so ordinary success handling did not necessarily expose the mistake immediately.</p>\n<p>This is a familiar failure mode in identity systems: two account classes share a lifecycle operation, but their data-retention rules differ. A generic delete path can satisfy the caller while violating the stronger contract required by managed identities.</p>\n<h2>Why the record mattered</h2>\n<p>The problem was not only that users disappeared. Enterprise Managed User records are expected to remain suspended and obfuscated so references in issues, pull requests, and audit logs retain their history.</p>\n<p>Deletion also created an operational distinction between hard deprovisioning and accidental removal. GitHub stated that hard-deprovisioned managed accounts cannot be reprovisioned by design, while the affected records needed restoration to their expected state.</p>\n<p>The incident therefore crossed three boundaries: authorization, lifecycle state, and auditability. A test that checked only whether access was removed would have missed the data-integrity failure.</p>\n<h2>Engineering lessons</h2>\n<p>Treat account lifecycle operations as typed state transitions. \u201cDelete user\u201d and \u201csuspend and obfuscate user\u201d should not be interchangeable implementations behind a loosely defined deprovisioning interface.</p>\n<p>Test the negative paths explicitly: managed versus unmanaged accounts, active versus already suspended accounts, and hard deprovisioning versus reversible suspension. Verify both access behavior and the resulting audit records.</p>\n<p>Monitor destructive operations by account class. GitHub\u2019s remediation guidance told enterprise owners to inspect audit logs for <code>user.delete</code> events during June 1\u201313. That kind of event-based check can detect a bad rollout even when the request pipeline reports success.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Model identity lifecycle actions as explicit, typed state transitions.</li>\n<li>Test retention and audit-history guarantees, not only access removal.</li>\n<li>Alert on destructive events for protected account classes.</li>\n<li>Keep a rollback or restoration path for lifecycle changes.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://github.blog/changelog/2026-10-23-emu-deletions-fix/\" target=\"_blank\" rel=\"noopener\">EMU deletions fix</a> \u2014 github.blog</li>\n<li><a href=\"https://engineering.fb.com/2026/10/27/security/privacylib/\" target=\"_blank\" rel=\"noopener\">PrivacyLib: Privacy Controls at the Data Access Boundary</a> \u2014 engineering.fb.com</li>\n</ul>"
+  },
+  {
     "id": 111,
     "title": "OneUptime backfilled postmortem status in batches of 5,000",
     "excerpt": "OneUptime added incident postmortem statuses with a live-safe schema migration and a batched backfill. The change shows how to add workflow state to an existing PostgreSQL application without rewriting tables or guessing at historical data.",
