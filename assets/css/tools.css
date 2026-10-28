@@ -936,6 +936,7 @@ body {
 /* ---------- SkyFare ---------- */
 .sf-search {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
 }
 
@@ -1000,6 +1001,7 @@ body {
 
 .sf-field input {
   width: 100%;
+  min-width: 0;
   padding: 12px 14px;
 }
 

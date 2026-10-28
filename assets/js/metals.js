@@ -321,10 +321,12 @@
   }).join('');
   currencySelect.value = defaultCurrency();
 
+  // Fill purity before showing cached prices: show() runs the calculator, which reads the selected purity.
+  fillPurity();
+
   var cached = readJson(CACHE_KEY);
   if (isValid(cached) && cached.currency === currencySelect.value) show(cached, true);
 
-  fillPurity();
   currencySelect.addEventListener('change', function () {
     try { localStorage.setItem(CURRENCY_KEY, currencySelect.value); } catch (e) { /* ignore */ }
     load();
