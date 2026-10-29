@@ -1,10 +1,55 @@
 {
-  "generated": "2026-10-22T06:22:12.760Z",
+  "generated": "2026-10-29T07:27:21.060Z",
   "provisional": true,
   "note": "The current trigger layer for anchors in data/upsc-patterns.json, refreshed one anchor per day. Every item carries the source it came from; items not from a primary document must be confirmed against one before they enter permanent notes.",
   "patternsVersion": "1.0.0",
-  "anchorsHeld": 2,
+  "anchorsHeld": 3,
   "anchors": {
+    "post-independence-consolidation": {
+      "refreshedAt": "2026-10-29T07:27:21.042Z",
+      "anchor": "Post-independence consolidation",
+      "codes": [
+        "GS1.3"
+      ],
+      "papers": [
+        "GS1"
+      ],
+      "confidence": "medium",
+      "primarySources": 3,
+      "omitted": "Recent Supreme Court land judgments were omitted because the available results did not establish a sufficiently clear structural link to post-independence consolidation.",
+      "items": [
+        {
+          "title": "Cabinet approves Kerala name alteration",
+          "date": "2026-02-24",
+          "why": "The proposal shows post-independence consolidation still accommodates subnational linguistic identity through Article 3 procedures and institutional negotiation.",
+          "use": "Use Kerala’s proposed change to Keralam to show linguistic identity remains negotiated through constitutional procedures, not only through territorial reorganisation.",
+          "verb": "examine",
+          "url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2232093&reg=3%20&lang=1",
+          "source": "Press Information Bureau",
+          "primary": true
+        },
+        {
+          "title": "Andhra Pradesh Reorganisation Amendment Act 2026",
+          "date": "2026-04-06",
+          "why": "Reorganisation remains an iterative process because successor-state arrangements require continuing constitutional and administrative settlement.",
+          "use": "Use the amendment as evidence that state reorganisation produces continuing questions of institutional design, assets, liabilities and Centre–State adjustment.",
+          "verb": "discuss",
+          "url": "https://www.mha.gov.in/centre-state-division",
+          "source": "Ministry of Home Affairs",
+          "primary": true
+        },
+        {
+          "title": "Special Gram Sabhas launch planning campaign",
+          "date": "2026-10-01",
+          "why": "Land reform’s contemporary legacy is shifting from redistribution alone toward enforceable records, access to credit and administrative capacity.",
+          "use": "Use DILRMP’s stated aim of digitised, accessible land records to connect contemporary land governance with secure property rights and rural state capacity.",
+          "verb": "evaluate",
+          "url": "https://www.pib.gov.in/PressReleseDetail.aspx?PRID=2317559&reg=48&lang=2",
+          "source": "Press Information Bureau",
+          "primary": true
+        }
+      ]
+    },
     "geophysical-phenomena": {
       "refreshedAt": "2026-10-22T06:22:12.739Z",
       "anchor": "Geophysical phenomena and hazards",
