@@ -1,5 +1,38 @@
 [
   {
+    "id": 115,
+    "title": "A PostgreSQL Column Drop Caused a 24-Minute Kubernetes Outage",
+    "excerpt": "A Kubernetes rolling deployment caused a 24-minute outage after it dropped a PostgreSQL column still used by older application pods. The incident shows why schema changes must support two application versions at once and why migrations should run outside application startup.",
+    "readTime": "2 min read",
+    "category": "architecture",
+    "learningPath": "architecture",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Engineering managers"
+    ],
+    "uniqueId": "daily-architecture-a-postgresql-column-drop-caused-a-24-minute-kubernetes-outag-1793263813836",
+    "date": "Oct 29, 2026",
+    "dateISO": "2026-10-29T08:50:13Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Kubernetes Database Migration: 502 Outage Postmortem",
+        "url": "https://blog.naveedkumbhar.com/database-migration-rolling-update-outage/"
+      },
+      {
+        "title": "Database Migration Testing: How to Validate Schema, Data Integrity, Queries, and Performance After Migration",
+        "url": "https://www.geopits.com/blog/database-migration-testing"
+      },
+      {
+        "title": "How US & UK Engineering Teams Execute Zero-Downtime Database Migrations at Scale",
+        "url": "https://aidevtoolkit.blogspot.com/2026/10/how-us-uk-engineering-teams-execute.html"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>At 02:15 UTC, a CI/CD pipeline started a routine Kubernetes rolling update. The release included <code>ALTER TABLE orders DROP COLUMN billing_address;</code>. Twelve minutes later, the production API reached a SEV-1 state: p95 latency rose from 65 ms to 850 ms, and ingress returned repeated 502 errors.</p>\n<p>The deployment lasted 24 minutes. PostgreSQL accumulated lock waits, application connection pools filled, and health probes stopped distinguishing a database failure from an unhealthy pod. Engineers restored the nullable <code>billing_address</code> column at 02:32 UTC. Database errors stopped and the queues drained.</p>\n<h2>The root cause</h2>\n<p>Kubernetes rolling updates keep old and new pods serving traffic at the same time. The migration removed a column that the old <code>v1.4.0</code> pods still selected through their ORM model. Those pods failed when they queried the database.</p>\n<p>The migration also waited on PostgreSQL locks. Blocked reads accumulated behind the DDL statement, consuming the connection pool. This created two failures at once: an incompatible schema for old pods and a database queue that delayed otherwise valid requests. Kubernetes availability did not provide database compatibility.</p>\n<h2>The design that avoids it</h2>\n<p>The postmortem recommends Expand and Contract, split across independent releases. First add the new nullable column or table. Then deploy code that can read the old and new structures and, where needed, writes both. Backfill existing rows with a throttled worker. Switch reads to the new structure only after validation. Remove the old structure in a later release, after telemetry shows no remaining dependency.</p>\n<p>Run migrations as a standalone Kubernetes Job rather than as application-container startup logic. GitOps sync waves or Helm hooks can order the job separately from the pod rollout. Set a lock timeout below three seconds so a migration aborts instead of holding production traffic behind a long DDL wait.</p>\n<h2>What other teams can copy</h2>\n<p>Make schema compatibility part of the deployment contract. Before removing a column, search application versions, ORM models, background jobs, reports, and ad hoc consumers. Require the removal to occur in a release after the final reader has been retired.</p>\n<p>Add deployment checks for lock waits, connection-pool saturation, p95 latency, and database error rates. The incident shows that a migration can fail before pods become visibly unhealthy. A rollback plan must include restoring schema objects, not only reverting the application image.</p>\n<ul>\n<li>Treat rolling deployments as dual-version execution, not as a guarantee of schema safety.</li>\n<li>Use Expand and Contract for destructive schema changes.</li>\n<li>Run DDL in an isolated job with a short lock timeout.</li>\n<li>Test rollback while both old and new application versions are live.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Design every schema change for concurrent old and new application versions.</li>\n<li>Separate database migration jobs from application pod startup and rollout.</li>\n<li>Use short lock timeouts and monitor queue depth, pool usage, latency, and database errors.</li>\n<li>Do not drop a schema object until telemetry proves that no deployed consumer uses it.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://blog.naveedkumbhar.com/database-migration-rolling-update-outage/\" target=\"_blank\" rel=\"noopener\">Kubernetes Database Migration: 502 Outage Postmortem</a> \u2014 blog.naveedkumbhar.com</li>\n<li><a href=\"https://www.geopits.com/blog/database-migration-testing\" target=\"_blank\" rel=\"noopener\">Database Migration Testing: How to Validate Schema, Data Integrity, Queries, and Performance After Migration</a> \u2014 geopits.com</li>\n<li><a href=\"https://aidevtoolkit.blogspot.com/2026/10/how-us-uk-engineering-teams-execute.html\" target=\"_blank\" rel=\"noopener\">How US &amp; UK Engineering Teams Execute Zero-Downtime Database Migrations at Scale</a> \u2014 aidevtoolkit.blogspot.com</li>\n</ul>"
+  },
+  {
     "id": 112,
     "title": "Langflow adds bounded ServiceNow actions and polling triggers",
     "excerpt": "A recent Langflow pull request adds a preview ServiceNow integration with bounded record actions and polling triggers. The useful engineering detail is its strict boundary model: approved tables and fields, validated instance origins, OAuth-scoped access, cursor-based polling, and a hard 10,000-record limit.",
