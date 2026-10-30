@@ -1,0 +1,171 @@
+{
+  "anchor": "Floating Rate Bonds (FRBs) and Government securities",
+  "argumentsAgainst": [
+    "The floating coupon improves alignment with prevailing short-term government borrowing yields, but it also makes future interest payments less predictable for investors.",
+    "The source establishes the reset formula and current rate, but does not establish FRB 2034’s maturity structure, investor base, market liquidity or fiscal-cost implications."
+  ],
+  "argumentsFor": [
+    "A formula linked to recent 182-day T-Bill yields creates a transparent and pre-announced basis for periodic coupon resetting.",
+    "The fixed spread of 0.98 percentage point provides an additional return over the specified base rate."
+  ],
+  "background": [
+    "The Reserve Bank of India’s FAQ describes Floating Rate Bonds as securities whose coupon is variable and reset at pre-announced intervals; it describes Treasury bills as short-term Government of India debt instruments issued at a discount a",
+    "The RBI FAQ identifies 182-day Treasury bills as one of the Government of India’s T-Bill tenors and states that RBI conducts T-Bill auctions.[8]"
+  ],
+  "codes": [
+    "GS3.1",
+    "GS3.2"
+  ],
+  "editorialStatus": "source-backed",
+  "id": "note_b9d58034f89ed515791023843dc59e12ce1390395e041d12237d37fca9b86aea",
+  "indiaImplications": [
+    "For public debt management, linking the coupon to recent 182-day T-Bill yields can make the instrument responsive to short-term market conditions; the source does not quantify its effect on borrowing costs.",
+    "For investors, the reset mechanism may reduce the risk of being locked into an unchanged coupon when the linked short-term yield changes, while introducing variability in future income.",
+    "For monetary and financial-market analysis, the instrument illustrates how sovereign borrowing instruments can transmit movements in short-term government-security yields into periodic interest payments."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Explain the distinction between a fixed-rate government bond, a floating-rate government bond and a Treasury bill.",
+        "Apply the FRB 2034 formula: recent 182-day T-Bill yields form the base, while the 0.98 percentage-point spread is added.",
+        "Assess benefits for transparency, investor protection and debt management, along with the limitation of uncertain future coupon payments.",
+        "Conclude with the need for clear pre-announced resets and prudent debt-cost monitoring."
+      ],
+      "conclusionPrompt": "Conclude by balancing investor flexibility with the Government’s need for predictable debt servicing.",
+      "counterPosition": "A fixed-rate bond may offer greater certainty to both borrower and investor, whereas a floating-rate bond shifts part of interest-rate risk through periodic resetting.",
+      "diagramSuggestion": "Flow: last three 182-day T-Bill auction WAYs → average base rate → add 0.98% spread → half-yearly FRB coupon.",
+      "directive": "discuss",
+      "introChoices": [
+        "A floating-rate sovereign bond links periodic interest payments to a reference market yield rather than fixing the coupon permanently.",
+        "FRB 2034 shows how short-term government-security yields can be incorporated into the pricing of a longer-dated sovereign instrument."
+      ],
+      "marks": 15,
+      "skeleton": [
+        "A floating-rate sovereign bond links periodic interest payments to a reference market yield rather than fixing the coupon permanently.",
+        "FRB 2034 shows how short-term government-security yields can be incorporated into the pricing of a longer-dated sovereign instrument.",
+        "Explain the distinction between a fixed-rate government bond, a floating-rate government bond and a Treasury bill.",
+        "Apply the FRB 2034 formula: recent 182-day T-Bill yields form the base, while the 0.98 percentage-point spread is added.",
+        "Assess benefits for transparency, investor protection and debt management, along with the limitation of uncertain future coupon payments.",
+        "Conclude with the need for clear pre-announced resets and prudent debt-cost monitoring.",
+        "A fixed-rate bond may offer greater certainty to both borrower and investor, whereas a floating-rate bond shifts part of interest-rate risk through periodic resetting.",
+        "Conclude by balancing investor flexibility with the Government’s need for predictable debt servicing."
+      ],
+      "stem": "Discuss how the coupon-setting mechanism of Government of India Floating Rate Bond 2034 reflects the trade-off between transparency, flexibility and interest-rate certainty.",
+      "timeMinutes": 11,
+      "wordBudget": 250
+    }
+  ],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63883",
+      "text": "The rate of interest on Government of India Floating Rate Bond 2034 (FRB 2034) applicable for the half year October 30, 2026 to April 29, 2027 shall be 7.26 per cent per annum.",
+      "verification": "source-backed"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63883",
+      "text": "FRB 2034 carries a coupon, which has a base rate equivalent to the average of the Weighted Average Yield (WAY) of last three auctions (from the rate fixing day i.e., October 30, 2026) of 182 Day T-Bills, plus a fixed spread (0.98 per cent).",
+      "verification": "source-backed"
+    }
+  ],
+  "papers": [
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Hypothetical illustration",
+      "text": "If the average WAY of the relevant last three 182-day T-Bill auctions were X per cent, the FRB 2034 coupon under the stated formula would be X per cent plus the fixed 0.98 per cent spread. This is only an illustration; the source does not provide X."
+    },
+    "excerpt": "RBI set FRB 2034’s half-year rate at 7.26%; its coupon uses the average WAY of the last three 182-day T-Bill auctions plus a fixed 0.98% spread.",
+    "question": {
+      "answer": "The coupon is reset using the average WAY of the relevant last three 182-day T-Bill auctions, with 0.98 percentage point added as a fixed spread; the announced half-year rate is 7.26%.",
+      "prompt": "How would you explain FRB 2034’s coupon mechanism and its practical significance to a public-debt analyst?"
+    },
+    "sections": [
+      {
+        "heading": "RBI announcement and mechanism",
+        "paragraphs": [
+          "On October 29, 2026, the Reserve Bank of India announced that the interest rate on Government of India Floating Rate Bond 2034 would be 7.26% per annum for October 30, 2026 to April 29, 2027. The coupon’s base is the average Weighted Average Yield of the last three 182-day T-Bill auctions counted from the rate-fixing day, October 30, 2026; a fixed 0.98% spread is then added.",
+          "The mechanism therefore connects the bond’s periodic coupon to recent short-term government borrowing yields. Its practical consequence is that the coupon can respond at reset dates to the linked market rate, rather than remaining permanently fixed. A limitation is that the source does not state how the rate will change in future reset periods."
+        ]
+      },
+      {
+        "heading": "Why the distinction matters",
+        "paragraphs": [
+          "The arrangement should not be confused with a permanently fixed-coupon bond: the source expressly describes a floating coupon formula. Nor does the announcement say that the bond’s rate equals a single 182-day T-Bill yield; it specifies an average of the last three relevant auction WAYs plus the spread.",
+          "For public-debt analysis, the formula offers an identifiable reference and a known margin, supporting transparency in coupon determination. For investors, the same reset feature can mean changing future income. The RBI’s FAQ separately describes T-bills as short-term, zero-coupon instruments issued at a discount and redeemed at face value, while describing FRBs as securities whose coupons reset at pre-announced intervals.[8]"
+        ]
+      }
+    ],
+    "title": "RBI announces the next half-year coupon for Floating Rate Bond 2034"
+  },
+  "prelimsTraps": [
+    {
+      "correct": true,
+      "explanation": "The RBI announcement states that 7.26% per annum applies from October 30, 2026 to April 29, 2027.",
+      "statement": "The announced FRB 2034 rate of 7.26% per annum applies for the half year October 30, 2026 to April 29, 2027."
+    },
+    {
+      "correct": true,
+      "explanation": "The official summary specifies the average WAY of the last three auctions of 182-day T-Bills, plus a fixed 0.98% spread.",
+      "statement": "FRB 2034’s coupon base is linked to the average WAY of the last three relevant 182-day T-Bill auctions, with a 0.98% fixed spread added."
+    },
+    {
+      "correct": false,
+      "explanation": "The formula uses an average of the last three auctions, not one auction alone.",
+      "statement": "FRB 2034’s coupon is based on the WAY of only the latest 182-day T-Bill auction."
+    },
+    {
+      "correct": false,
+      "explanation": "The RBI FAQ describes T-bills as zero-coupon instruments issued at a discount and redeemed at face value.[8]",
+      "statement": "Treasury bills pay periodic coupon interest like conventional fixed-rate bonds."
+    }
+  ],
+  "priority": 64,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 45,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 50
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-10-29T17:20:00Z",
+  "publisherId": "rbi",
+  "publisherName": "Reserve Bank of India",
+  "recallCard": "RBI announced 7.26% p.a. for FRB 2034 for October 30, 2026–April 29, 2027. Its coupon equals the average WAY of the last three 182-day T-Bill auctions from the fixing date plus a fixed 0.98% spread.",
+  "reusableAnchors": [],
+  "sourceContentHash": "a559fc0bfc42abe8bddfbb1f0a186cc6758ad4724eac072b4562711b398c8dc8",
+  "sourceId": "src_b9d58034f89ed515791023843dc59e12ce1390395e041d12237d37fca9b86aea",
+  "sourceTitle": "Rate of Interest on Government of India Floating Rate Bond 2034",
+  "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63883",
+  "staticDefinition": "A Floating Rate Bond is a security whose coupon is variable and reset at pre-announced intervals; the RBI’s FAQ distinguishes it from a fixed-coupon bond and describes Treasury bills as short-term, zero-coupon Government of India debt instruments issued at a discount and redeemed at face value.[8]",
+  "use": "Use the announcement to illustrate sovereign debt instruments, interest-rate transmission, public-debt management and the distinction between floating-rate bonds and Treasury bills.",
+  "verification": {
+    "advisory_notes": [
+      "The proposed codes GS3.1 and GS3.2 are not an official UPSC syllabus numbering system; map the topic to GS-III economic development, public finance and government budgeting more explicitly.",
+      "The phrase “longer-dated sovereign instrument” is analytical framing and is not established by the supplied announcement, which does not state FRB 2034’s maturity.",
+      "“Interest-rate transmission” is a reasonable analytical use, but the announcement itself establishes only the coupon formula and rate, not a transmission effect.",
+      "“Investor protection” may overstate the implication; the pre-announced formula improves transparency, but protection outcomes are not demonstrated by the source.",
+      "“Government borrowing yields” should be narrowed to the specified 182-day T-bill auction yields; the source does not establish broader borrowing-yield effects.",
+      "“Periodic interest payments” and “future income” are reasonable implications of a coupon-bearing FRB, but the supplied extract does not independently provide the full payment structure.",
+      "The hypothetical using X is correctly labelled as an illustration and does not assert an unsupported numerical value.",
+      "The applied-question answer accurately reproduces the stated formula and announced rate, but calling it a “half-year rate” is less precise than “rate applicable for the half-year.”"
+    ],
+    "agrees": true,
+    "checkedAt": "2026-10-30T00:19:07Z",
+    "confidence": 0.98,
+    "flagged_claims": [],
+    "noteContentHash": "cc187cf628cbba85e653d24a01ba5cbb6c1f2fdf357c24091eaed9e16feb7d80",
+    "sourceContentHash": "a559fc0bfc42abe8bddfbb1f0a186cc6758ad4724eac072b4562711b398c8dc8",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Maintain clear, pre-announced reference rates and reset dates so investors can independently understand coupon determination.",
+    "Monitor the effect of floating-rate borrowing on future debt-servicing uncertainty as linked short-term yields change.",
+    "Present the fixed spread separately from the reference yield to preserve transparency in public-debt communication."
+  ],
+  "whyInNews": "On October 29, 2026, the Reserve Bank of India announced that the interest rate on Government of India Floating Rate Bond 2034 would be 7.26 per cent per annum for the half year October 30, 2026 to April 29, 2027. The announcement also restated the coupon formula: the average Weighted Average Yield of the last three 18"
+}

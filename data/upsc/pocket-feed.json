@@ -280,6 +280,76 @@
       }
     },
     {
+      "anchor": "Floating Rate Bonds (FRBs) and Government securities",
+      "codes": [
+        "GS3.1",
+        "GS3.2"
+      ],
+      "example": {
+        "heading": "Hypothetical illustration",
+        "text": "If the average WAY of the relevant last three 182-day T-Bill auctions were X per cent, the FRB 2034 coupon under the stated formula would be X per cent plus the fixed 0.98 per cent spread. This is only an illustration; the source does not provide X."
+      },
+      "excerpt": "RBI set FRB 2034’s half-year rate at 7.26%; its coupon uses the average WAY of the last three 182-day T-Bill auctions plus a fixed 0.98% spread.",
+      "id": "news-src_b9d58034f89ed515791023843dc59e12ce1390395e041d12237d37fca9b86aea",
+      "kind": "News brief",
+      "paper": "GS3",
+      "publicationDateKind": "published",
+      "publishedAt": "2026-10-29T17:20:00Z",
+      "publishedOn": "2026-10-29",
+      "question": "How would you explain FRB 2034’s coupon mechanism and its practical significance to a public-debt analyst?",
+      "recallAnswer": "The coupon is reset using the average WAY of the relevant last three 182-day T-Bill auctions, with 0.98 percentage point added as a fixed spread; the announced half-year rate is 7.26%.",
+      "sections": [
+        {
+          "heading": "RBI announcement and mechanism",
+          "paragraphs": [
+            "On October 29, 2026, the Reserve Bank of India announced that the interest rate on Government of India Floating Rate Bond 2034 would be 7.26% per annum for October 30, 2026 to April 29, 2027. The coupon’s base is the average Weighted Average Yield of the last three 182-day T-Bill auctions counted from the rate-fixing day, October 30, 2026; a fixed 0.98% spread is then added.",
+            "The mechanism therefore connects the bond’s periodic coupon to recent short-term government borrowing yields. Its practical consequence is that the coupon can respond at reset dates to the linked market rate, rather than remaining permanently fixed. A limitation is that the source does not state how the rate will change in future reset periods."
+          ],
+          "sourceRefs": [
+            0
+          ]
+        },
+        {
+          "heading": "Why the distinction matters",
+          "paragraphs": [
+            "The arrangement should not be confused with a permanently fixed-coupon bond: the source expressly describes a floating coupon formula. Nor does the announcement say that the bond’s rate equals a single 182-day T-Bill yield; it specifies an average of the last three relevant auction WAYs plus the spread.",
+            "For public-debt analysis, the formula offers an identifiable reference and a known margin, supporting transparency in coupon determination. For investors, the same reset feature can mean changing future income. The RBI’s FAQ separately describes T-bills as short-term, zero-coupon instruments issued at a discount and redeemed at face value, while describing FRBs as securities whose coupons reset at pre-announced intervals.[8]"
+          ]
+        }
+      ],
+      "sourceContentHash": "a559fc0bfc42abe8bddfbb1f0a186cc6758ad4724eac072b4562711b398c8dc8",
+      "sourceId": "src_b9d58034f89ed515791023843dc59e12ce1390395e041d12237d37fca9b86aea",
+      "sources": [
+        {
+          "label": "Reserve Bank of India",
+          "note": "Rate of Interest on Government of India Floating Rate Bond 2034. Published 2026-10-29.",
+          "url": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63883"
+        }
+      ],
+      "subject": "Economy & environment",
+      "takeaway": "RBI announced 7.26% p.a. for FRB 2034 for October 30, 2026–April 29, 2027. Its coupon equals the average WAY of the last three 182-day T-Bill auctions from the fixing date plus a fixed 0.98% spread.",
+      "title": "RBI announces the next half-year coupon for Floating Rate Bond 2034",
+      "verification": {
+        "advisory_notes": [
+          "The proposed codes GS3.1 and GS3.2 are not an official UPSC syllabus numbering system; map the topic to GS-III economic development, public finance and government budgeting more explicitly.",
+          "The phrase “longer-dated sovereign instrument” is analytical framing and is not established by the supplied announcement, which does not state FRB 2034’s maturity.",
+          "“Interest-rate transmission” is a reasonable analytical use, but the announcement itself establishes only the coupon formula and rate, not a transmission effect.",
+          "“Investor protection” may overstate the implication; the pre-announced formula improves transparency, but protection outcomes are not demonstrated by the source.",
+          "“Government borrowing yields” should be narrowed to the specified 182-day T-bill auction yields; the source does not establish broader borrowing-yield effects.",
+          "“Periodic interest payments” and “future income” are reasonable implications of a coupon-bearing FRB, but the supplied extract does not independently provide the full payment structure.",
+          "The hypothetical using X is correctly labelled as an illustration and does not assert an unsupported numerical value.",
+          "The applied-question answer accurately reproduces the stated formula and announced rate, but calling it a “half-year rate” is less precise than “rate applicable for the half-year.”"
+        ],
+        "agrees": true,
+        "checkedAt": "2026-10-30T00:19:07Z",
+        "confidence": 0.98,
+        "flagged_claims": [],
+        "noteContentHash": "cc187cf628cbba85e653d24a01ba5cbb6c1f2fdf357c24091eaed9e16feb7d80",
+        "sourceContentHash": "a559fc0bfc42abe8bddfbb1f0a186cc6758ad4724eac072b4562711b398c8dc8",
+        "verificationVersion": 2
+      }
+    },
+    {
       "anchor": "Industrial transformation through quality, scale, market access and inclusivity",
       "codes": [
         "GS3.1",
@@ -7092,78 +7162,9 @@
         "sourceContentHash": "d7bcda38eb8a2a0c89dd08688b3c5f5b247debf7a38e1d9c506c62dfdd67d43f",
         "verificationVersion": 2
       }
-    },
-    {
-      "anchor": "Para-sport recognition and inclusion",
-      "codes": [
-        "GS1.5",
-        "GS2.6",
-        "GS4.1"
-      ],
-      "example": {
-        "heading": "Illustration",
-        "text": "Illustration: If a government publicly recognises a para-athlete while also ensuring accessible training facilities and coaching, the recognition can reinforce both dignity and participation; the source itself does not establish that such additional support was provided."
-      },
-      "excerpt": "The Prime Minister’s congratulation for Pranav Soorma’s Asian Para Games gold illustrates how sporting recognition can advance visibility and dignity, but the record does not establish wider policy outcomes.",
-      "id": "news-src_b1877aa75f8c84687fa16991e5d08cb5aed21ad60e23bb4e9676f9978616f0fe",
-      "kind": "News brief",
-      "paper": "GS1, GS2, GS4",
-      "publicationDateKind": "detected",
-      "publishedAt": "2026-10-20T16:58:18Z",
-      "publishedOn": "2026-10-20",
-      "question": "How should a civil servant distinguish the symbolic value of recognising a para-athlete from evidence of substantive inclusion?",
-      "recallAnswer": "Recognition can strengthen visibility and challenge exclusion, but substantive equality requires accessible facilities, coaching, equipment, finance, and fair participation systems; the supplied record confirms only the congratulatory event, not these additional measures.",
-      "sections": [
-        {
-          "heading": "Recognition and representation",
-          "paragraphs": [
-            "The Prime Minister’s recorded congratulation gives public visibility to a para-athlete’s achievement. Such visibility can help challenge assumptions that disability limits excellence and can reinforce dignity in public life."
-          ],
-          "sourceRefs": [
-            0
-          ]
-        },
-        {
-          "heading": "From appreciation to opportunity",
-          "paragraphs": [
-            "Recognition becomes a stronger inclusion measure only when persons with disabilities can access facilities, coaching, equipment, finance, and competitions. The supplied official summary does not establish whether these conditions were present."
-          ]
-        }
-      ],
-      "sourceContentHash": "5770b96496bc8646b7d3b066149a5d34df6d7fbba7e1dd0612bacc93d7698eb4",
-      "sourceId": "src_b1877aa75f8c84687fa16991e5d08cb5aed21ad60e23bb4e9676f9978616f0fe",
-      "sources": [
-        {
-          "label": "Press Information Bureau",
-          "note": "Prime Minister congratulates Pranav Soorma on winning Gold at the Asian Para Games. Listed 2026-10-20.",
-          "url": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2325602"
-        }
-      ],
-      "subject": "Society",
-      "takeaway": "The source records the Prime Minister’s congratulation for Pranav Soorma’s Asian Para Games gold. Use it to discuss visibility, dignity, and inclusion of persons with disabilities, while noting that recognition alone does not prove accessible infrastructure or wider policy impact.",
-      "title": "Recognition of para-athletic achievement and the limits of symbolic inclusion",
-      "verification": {
-        "advisory_notes": [
-          "The headline and official summary are supported by the PIB release, including the 20 October 2026 date and gold-medal congratulation.[1]",
-          "The note omits source-supported specifics that could strengthen recall, including discus throw, combined F51/52/53 event, and Asian record.[1]",
-          "The proposed GS1.5, GS2.6, and GS4.1 tags are plausible applications, but the achievement is not itself evidence of broader disability inclusion or equality.",
-          "Claims that recognition challenges stereotypes, improves visibility, or encourages participation are analytical implications, not outcomes established by this release.",
-          "The phrases “rights-based inclusion,” “substantive equality,” and “livelihood opportunities” are useful framing but should be presented as analytical extensions rather than source-derived facts.",
-          "The statement that recognition can reinforce dignity is a normative interpretation; it should not be treated as a demonstrated effect of this particular congratulation.",
-          "The pocketRead headline and deck are accurate as analytical summaries, but “limits of symbolic inclusion” is a framing device rather than a fact established by the PIB record.",
-          "The applied-question answer correctly distinguishes recognition from substantive equality; its references to facilities, coaching, equipment, finance, and participation systems are policy analysis, not evidence about this athlete’s case."
-        ],
-        "agrees": true,
-        "checkedAt": "2026-10-21T05:15:45Z",
-        "confidence": 0.99,
-        "flagged_claims": [],
-        "noteContentHash": "b80e4603974a50ebb87e82d6661a11b3613bf1883e760be1190136bc726991d6",
-        "sourceContentHash": "5770b96496bc8646b7d3b066149a5d34df6d7fbba7e1dd0612bacc93d7698eb4",
-        "verificationVersion": 2
-      }
     }
   ],
-  "generatedAt": "2026-10-29T22:43:44Z",
-  "revision": "305cbeee7f176ce0440994d51a7a330596b61bfa928291d940d5d916bbef003f",
+  "generatedAt": "2026-10-30T00:20:07Z",
+  "revision": "0ab6e179c64fb6a9ea51ae5ca6b817a4f0d5bb96cac69d3ef7ab370bacefcd8e",
   "version": 1
 }
