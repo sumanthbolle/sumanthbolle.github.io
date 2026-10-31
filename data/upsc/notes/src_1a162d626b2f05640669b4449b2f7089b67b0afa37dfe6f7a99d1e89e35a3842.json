@@ -1,0 +1,192 @@
+{
+  "anchor": "GS3.1 Indian economy: resource mobilisation, growth, development, employment; financial instruments",
+  "argumentsAgainst": [
+    "Premature redemption may reduce the intended long-term holding period of the instrument.",
+    "Redemption value is linked to gold prices and can fluctuate; the notified amount should not be treated as a guaranteed return.",
+    "The source record does not establish the tax treatment, liquidity conditions in the secondary market, or the investor’s net return."
+  ],
+  "argumentsFor": [
+    "The mechanism gives eligible holders a defined exit window after the fifth year on an interest-payment date.",
+    "Using a standardised IBJA-based formula makes the redemption-price determination rule-based and transparent.",
+    "The instrument provides exposure to gold without requiring physical storage; this broader feature is established in the verified scheme material, though not in the supplied official summary."
+  ],
+  "background": [
+    "The RBI announcement concerns SGB 2021-22 Series VII, issued on November 2, 2021, under a Government of India notification dated October 21, 2021.",
+    "The verified scheme material states that SGBs have an eight-year tenor and an exit option after the fifth year on an interest-payment date.[3]",
+    "The redemption mechanism uses the simple average of closing prices for 999-purity gold over the relevant previous three working days, published by IBJA.[3]"
+  ],
+  "codes": [
+    "GS3.1",
+    "GS3.2"
+  ],
+  "editorialStatus": "draft",
+  "id": "note_1a162d626b2f05640669b4449b2f7089b67b0afa37dfe6f7a99d1e89e35a3842",
+  "indiaImplications": [
+    "A rule-based exit mechanism can improve predictability for investors holding government-linked gold instruments.",
+    "Because the redemption price follows gold-market prices, household outcomes depend on the movement of gold prices rather than only on the bond’s contractual features.",
+    "For public policy, the episode illustrates how financial instruments can convert a physical-asset preference into a market-linked investment claim, while leaving some investor risks intact."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Explain the policy rationale of a government-linked, gold-price-linked financial instrument.",
+        "Describe the fifth-year exit mechanism and the role of the interest-payment date.",
+        "Assess advantages such as standardised valuation and disadvantages such as market-linked price volatility.",
+        "Distinguish facts established by the notification from wider assumptions about tax, liquidity and returns."
+      ],
+      "conclusionPrompt": "Conclude with a balanced view on investor protection and predictable exit design.",
+      "counterPosition": "Gold-linked instruments may improve convenience and formalisation, but they do not eliminate market risk or guarantee positive real returns.",
+      "diagramSuggestion": "Flow: Issue date → fifth-year threshold → interest-payment date → three-day IBJA average → redemption price.",
+      "directive": "examine",
+      "introChoices": [
+        "The RBI’s announcement shows how a financial instrument can combine a sovereign redemption framework with exposure to gold-price movements.",
+        "The case raises a larger question of whether predictable exit rules can make market-linked savings instruments more accessible without removing investment risk."
+      ],
+      "marks": 15,
+      "skeleton": [
+        "The RBI’s announcement shows how a financial instrument can combine a sovereign redemption framework with exposure to gold-price movements.",
+        "The case raises a larger question of whether predictable exit rules can make market-linked savings instruments more accessible without removing investment risk.",
+        "Explain the policy rationale of a government-linked, gold-price-linked financial instrument.",
+        "Describe the fifth-year exit mechanism and the role of the interest-payment date.",
+        "Assess advantages such as standardised valuation and disadvantages such as market-linked price volatility.",
+        "Distinguish facts established by the notification from wider assumptions about tax, liquidity and returns.",
+        "Gold-linked instruments may improve convenience and formalisation, but they do not eliminate market risk or guarantee positive real returns.",
+        "Conclude with a balanced view on investor protection and predictable exit design."
+      ],
+      "stem": "Examine how the premature-redemption design of Sovereign Gold Bonds balances investor exit, valuation transparency and market risk.",
+      "timeMinutes": 11,
+      "wordBudget": 250
+    }
+  ],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63897",
+      "text": "The due date of premature redemption of the above tranche shall be on November 02, 2026.",
+      "verification": "source-backed"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63897",
+      "text": "Premature redemption of Gold Bond may be permitted after fifth year from the date of issue of such Gold Bond on the date on which interest is payable.",
+      "verification": "source-backed"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63897",
+      "text": "The redemption price of SGB shall be based on simple average of closing price of gold of 999 purity of previous three business days from the date of redemption, as published by the India Bullion and Jewellers Association Ltd (IBJA).",
+      "verification": "source-backed"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63897",
+      "text": "The redemption price for premature redemption due on November 02, 2026, shall be ₹14,167/- (Rupees Fourteen Thousand One Hundred and Sixty-Seven Only) per unit of SGB.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63897",
+      "text": "The relevant tranche is SGB 2021-22 Series VII, with an issue date of November 02, 2021.",
+      "verification": "needs-review"
+    }
+  ],
+  "papers": [
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Illustration: applying the valuation rule",
+      "text": "Suppose a tranche becomes eligible for premature redemption after its fifth year and the relevant interest-payment date arrives. The redemption amount would be determined by averaging the closing prices of 999-purity gold for the previous three business days, using the IBJA-published prices. This illustration explains the mechanism only; it does not predict any future price."
+    },
+    "excerpt": "The RBI fixed the fifth-year exit date and applied an IBJA-based three-business-day gold-price average to determine the SGB redemption value.",
+    "question": {
+      "answer": "The exit is not available immediately after five calendar years on any date; it is tied to the relevant interest-payment date. The redemption value is also market-linked because it uses the preceding three business days’ average closing price for 999-purity gold published by IBJA.",
+      "prompt": "Why does the SGB premature-redemption rule provide both a predictable exit window and exposure to market risk?"
+    },
+    "sections": [
+      {
+        "heading": "The RBI notification in context",
+        "paragraphs": [
+          "The RBI announced the premature-redemption date for SGB 2021-22 Series VII on October 30, 2026. The tranche was issued on November 2, 2021, and becomes eligible after the fifth year on the relevant interest-payment date.",
+          "The practical consequence is a defined exit opportunity rather than an unrestricted redemption date. A common misconception is that crossing the fifth anniversary alone permits redemption on any day; the source ties it to the date on which interest is payable."
+        ]
+      },
+      {
+        "heading": "How the price is determined",
+        "paragraphs": [
+          "The redemption price is calculated from the simple average of 999-purity gold’s closing prices for the previous three business days, with prices published by IBJA. For this tranche, the RBI announced ₹14,167 per unit for redemption due on November 2, 2026.",
+          "This rule improves valuation predictability, but it does not make the value independent of gold-price movements. The source does not establish tax consequences, secondary-market liquidity, or the investor’s overall return."
+        ]
+      }
+    ],
+    "title": "RBI sets SGB Series VII premature-redemption value"
+  },
+  "prelimsTraps": [
+    {
+      "correct": true,
+      "explanation": "The source states that premature redemption may be permitted after the fifth year on the date on which interest is payable.",
+      "statement": "SGB premature redemption can be exercised after the fifth year on an interest-payment date."
+    },
+    {
+      "correct": true,
+      "explanation": "The source specifies 999-purity gold and the simple average of closing prices for the previous three business days, as published by IBJA.",
+      "statement": "The SGB premature-redemption price uses the previous three business days’ average closing price of 999-purity gold published by IBJA."
+    },
+    {
+      "correct": false,
+      "explanation": "The notified price is ₹14,167 per unit, not ₹14,167 per gram or a guaranteed return percentage.",
+      "statement": "The RBI notified ₹14,167 per gram as the guaranteed return on the tranche."
+    },
+    {
+      "correct": false,
+      "explanation": "The source states that the relevant date is November 2, 2026, not October 30, 2026; October 28–30 are the three valuation dates.",
+      "statement": "The premature redemption of the tranche was due on October 30, 2026."
+    }
+  ],
+  "priority": 71,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 86,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 15
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-10-30T18:40:00Z",
+  "publisherId": "rbi",
+  "publisherName": "Reserve Bank of India",
+  "recallCard": "RBI announced premature redemption for SGB 2021-22 Series VII on November 2, 2026. After the fifth year, exit is tied to an interest-payment date. The price is the simple average of 999-purity gold’s previous three business-day closing prices published by IBJA: ₹14,167 per unit for this tranche.",
+  "reusableAnchors": [],
+  "sourceContentHash": "51f6de05f8534956fb4516504f808664342d59751430a22b61fcb7b565d12f95",
+  "sourceId": "src_1a162d626b2f05640669b4449b2f7089b67b0afa37dfe6f7a99d1e89e35a3842",
+  "sourceTitle": "Premature redemption under Sovereign Gold Bond (SGB) Scheme - Redemption Price for premature redemption of SGB 2021-22 Series VII due on November 02, 2026",
+  "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63897",
+  "staticDefinition": "A Sovereign Gold Bond is a government-linked financial instrument whose redemption value is linked to gold prices; for the examined tranche, premature exit is permitted after the fifth year on an interest-payment date and valuation follows the specified IBJA-based formula.[3]",
+  "use": "Use this case to explain rule-based valuation, market-linked investment risk, and the design of a predictable exit window in an economy answer.",
+  "verification": {
+    "advisory_notes": [
+      "The ₹14,167 figure is supported by the supplied RBI extract, but its underlying IBJA price inputs are not independently shown here.",
+      "The eight-year tenor and physical-storage comparison are valid background claims, but they are not established by the supplied release itself.",
+      "The phrase “predictable exit window” is reasonable analysis, though the exit also requires procedural compliance and is not an unrestricted redemption facility.",
+      "“Improve valuation predictability” is an analytical inference rather than a directly demonstrated investor outcome.",
+      "The India-implications language about formalisation and converting physical-asset preference into financial claims is plausible framing, not a finding established by this release.",
+      "The phrase “government-linked” is broadly understandable, but the note should distinguish sovereign issuance from any guarantee of a positive investment return.",
+      "The proposed codes GS3.1 and GS3.2 are internal taxonomy labels; the GS3 economy anchor is relevant, while the supplied syllabus extract directly supports resource mobilisation but not the exact code names.",
+      "The pocket-read title and all applied-question material correctly present the date, eligibility condition, valuation basis and market-risk logic; the hypothetical example is clearly labelled and contains no arithmetic error."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-10-31T01:36:56Z",
+    "confidence": 0.96,
+    "flagged_claims": [],
+    "noteContentHash": "007db747e248b5dfc99ae27b27502c3f6478f69a6278a80730660c6d6c4ea65b",
+    "sourceContentHash": "51f6de05f8534956fb4516504f808664342d59751430a22b61fcb7b565d12f95",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Publish redemption calendars and valuation methodology clearly to reduce investor confusion.",
+    "Explain separately the eligibility, interest-payment timing, valuation formula, tax treatment and liquidity conditions; the supplied record establishes only the first two timing elements and the valuation announcement.",
+    "Maintain transparent reliance on independently published reference prices while communicating that a gold-linked redemption value is not a guaranteed investment return."
+  ],
+  "whyInNews": "The Reserve Bank of India announced on October 30, 2026 that premature redemption of SGB 2021-22 Series VII would be due on November 2, 2026. The tranche crossed the fifth-year threshold from its November 2, 2021 issue date, and the RBI fixed redemption at ₹14,167 per unit using the prescribed IBJA-based formula."
+}
