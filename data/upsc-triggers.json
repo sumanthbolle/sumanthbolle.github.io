@@ -1,10 +1,56 @@
 {
-  "generated": "2026-10-29T07:27:21.060Z",
+  "generated": "2026-10-31T07:17:27.831Z",
   "provisional": true,
   "note": "The current trigger layer for anchors in data/upsc-patterns.json, refreshed one anchor per day. Every item carries the source it came from; items not from a primary document must be confirmed against one before they enter permanent notes.",
   "patternsVersion": "1.0.0",
-  "anchorsHeld": 3,
+  "anchorsHeld": 4,
   "anchors": {
+    "judicial-review-and-activism": {
+      "refreshedAt": "2026-10-31T07:17:27.819Z",
+      "anchor": "Judicial review and judicial activism",
+      "codes": [
+        "GS2.3",
+        "GS2.1"
+      ],
+      "papers": [
+        "GS2"
+      ],
+      "confidence": "medium",
+      "primarySources": 3,
+      "omitted": "No additional development was included because the available results did not reliably establish a directly relevant, primary-source development within the period.",
+      "items": [
+        {
+          "title": "Supreme Court invalidates retrospective environmental clearance",
+          "date": "2025-05-16",
+          "why": "The decision applies legality review to executive environmental permissions and tests whether post facto approval can cure statutory environmental violations.",
+          "use": "In Vanashakti, the Court held retrospective environmental clearance illegal, illustrating judicial review of executive environmental relaxation.",
+          "verb": "critically examine",
+          "url": "https://api.sci.gov.in/supremecourt/2023/50009/50009_2023_3_1502_61809_Judgement_16-May-2025.pdf",
+          "source": "Supreme Court of India",
+          "primary": true
+        },
+        {
+          "title": "Supreme Court permits exceptional retrospective environmental clearance",
+          "date": "2025-11-18",
+          "why": "The review shows judicial review as a continuing institutional process balancing statutory compliance against exceptional administrative consequences.",
+          "use": "The review decision recognised exceptional circumstances permitting retrospective clearance, demonstrating judicial correction and qualification of an earlier rule.",
+          "verb": "critically examine",
+          "url": "https://api.sci.gov.in/supremecourt/2025/41929/41929_2025_1_1501_66095_Judgement_18-Nov-2025.pdf",
+          "source": "Supreme Court of India",
+          "primary": true
+        },
+        {
+          "title": "Supreme Court considers limits of judicial lawmaking",
+          "date": "2025-04-04",
+          "why": "The reference foregrounds the boundary between constitutional interpretation and judicial legislation, making institutional limits central to judicial activism analysis.",
+          "use": "Suraz India Trust raises whether collegium judgments effectively altered constitutional provisions, supporting debate on interpretation, activism and separation of powers.",
+          "verb": "discuss",
+          "url": "https://prsindia.org/theprsblog/parliaments-scrutiny-over-government-finances?page=287&per-page=1",
+          "source": "PRS Legislative Research",
+          "primary": true
+        }
+      ]
+    },
     "post-independence-consolidation": {
       "refreshedAt": "2026-10-29T07:27:21.042Z",
       "anchor": "Post-independence consolidation",
