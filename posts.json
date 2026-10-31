@@ -1,5 +1,67 @@
 [
   {
+    "id": 116,
+    "title": "Microsoft Scope turns coding-agent changes into repeatable repository tests",
+    "excerpt": "Microsoft open-sourced Scope on October 26, 2026. It treats coding agents as software users and evaluates them against representative repository tasks, giving teams a repeatable way to test agent changes before deployment.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Advanced",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-microsoft-scope-turns-coding-agent-changes-into-repeatable-r-1793436295253",
+    "date": "Oct 31, 2026",
+    "dateISO": "2026-10-31T08:44:55Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Developer Tools Watch: GitHub Copilot Adds Assisted Permissions, Microsoft Opens Scope, & Cursor's Agent SDK",
+        "url": "https://www.thecodew.com/2026/10/developer-tools-watch-october-28.html"
+      },
+      {
+        "title": "ChatGPT's expanding world of work",
+        "url": "https://openai.com/index/chatgpt-expanding-world-of-work/"
+      },
+      {
+        "title": "An updated Model Spec for more capable and beneficial AI",
+        "url": "https://openai.com/index/updated-model-spec/"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Microsoft released Scope as an open-source platform for evaluating AI coding agents. The release date was October 26, 2026.</p>\n<p>Scope targets a gap in agent development: a coding agent can appear strong in isolated prompts but fail on the repository, tools, permissions, and workflows used by a real team. Scope evaluates agents against representative coding tasks instead of relying only on model benchmarks.</p>\n<h2>How it works</h2>\n<p>The platform treats an AI coding agent as a new user of the software system. An evaluation task represents work that agent must perform in a realistic repository environment. The task can then be run against an agent implementation and compared with other versions.</p>\n<p>This makes the agent itself the test subject. The model, prompt, tool policy, context construction, and runtime can change while the task set stays fixed. That supports regression testing for agent updates, similar to how an application test suite protects a codebase.</p>\n<h2>Where it breaks</h2>\n<p>Scope does not remove the hard parts of agent evaluation. A representative task set can become stale as the repository changes. A task may also reward a narrow fix that passes tests but violates architectural or operational requirements.</p>\n<p>The available search result reports no measured adoption for the open-source release and provides no independent benchmark number. Teams therefore need to define their own success criteria, task sampling method, and review process rather than treating Scope as a universal score.</p>\n<ul>\n<li>Keep a task set drawn from real pull requests, bug reports, and maintenance work.</li>\n<li>Run the same tasks after changing the model, system prompt, tools, or permission policy.</li>\n<li>Record both task success and the patch produced; a passing test suite does not prove that the patch is safe or maintainable.</li>\n<li>Separate environment failures from agent failures so infrastructure problems do not distort model comparisons.</li>\n</ul>\n<h2>How to use it</h2>\n<p>Start with a small, versioned task set. Include one task for each failure mode that matters: incorrect code, missing tests, unsafe shell commands, incomplete migrations, and inability to recover from tool errors.</p>\n<p>Run the set in a clean, reproducible environment. Compare agent revisions on task completion, test results, diff size, review findings, and time or token cost. Promote an agent change only when it improves the target metrics without regressing safety or repository correctness.</p>\n<pre><code class=\"language-bash\">scope eval run --task-set ./tasks --agent ./agent.yaml</code></pre>\n<h2>Takeaways</h2>\n<ul>\n<li>Build a fixed task set from real repository work.</li>\n<li>Run it after every model, prompt, tool, or permission change.</li>\n<li>Measure patch quality and safety, not only test pass rates.</li>\n<li>Do not use the reported Scope release as proof of benchmarked production performance.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://www.thecodew.com/2026/10/developer-tools-watch-october-28.html\" target=\"_blank\" rel=\"noopener\">Developer Tools Watch: GitHub Copilot Adds Assisted Permissions, Microsoft Opens Scope, &amp; Cursor's Agent SDK</a> \u2014 thecodew.com</li>\n<li><a href=\"https://openai.com/index/chatgpt-expanding-world-of-work/\" target=\"_blank\" rel=\"noopener\">ChatGPT's expanding world of work</a> \u2014 openai.com</li>\n<li><a href=\"https://openai.com/index/updated-model-spec/\" target=\"_blank\" rel=\"noopener\">An updated Model Spec for more capable and beneficial AI</a> \u2014 openai.com</li>\n</ul>"
+  },
+  {
+    "id": 117,
+    "title": "PIX 2610.28 parallelizes analysis of gigabyte-scale GPU captures",
+    "excerpt": "PIX 2610.28 changes how large GPU captures are analyzed. Instead of decompressing captures linearly, it sends the work to a thread pool, which improves analysis speed for gigabyte-scale captures. The design is a useful example of removing a serial staging step from a developer tool.",
+    "readTime": "2 min read",
+    "category": "architecture",
+    "learningPath": "architecture",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Engineering managers"
+    ],
+    "uniqueId": "daily-architecture-pix-2610-28-parallelizes-analysis-of-gigabyte-scale-gpu-capt-1793436309914",
+    "date": "Oct 31, 2026",
+    "dateISO": "2026-10-31T08:45:09Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "PIX 2610.28 \u2013 the biggest release of 2026",
+        "url": "https://devblogs.microsoft.com/pix/pix-2610-28/?ref=refetch.io"
+      },
+      {
+        "title": "Microsoft Edge WebView2 Runtime 156.0.4314.42 release notes",
+        "url": "https://learn.microsoft.com/pl-pl/microsoft-edge/webview2/release-notes/runtime/156"
+      }
+    ],
+    "content": "<h2>What changed</h2>\n<p>Microsoft released PIX 2610.28 on October 28, 2026. It is the first PIX build that supports both retail and preview DirectX Agility SDKs in one build. The release also includes the largest set of bug fixes in a single PIX version, according to Microsoft.</p>\n<p>The relevant engineering change is in GPU capture analysis. PIX now uses a new capture format that lets Start Analysis avoid linear decompression. The release notes say the work can be distributed to a thread pool, which improves analysis for captures measured in gigabytes.</p>\n<h2>The design choice</h2>\n<p>A linear decompression pipeline forces analysis to wait for earlier capture data, even when later work is independent. That creates a serial bottleneck before the rest of the analysis can use multiple cores.</p>\n<p>PIX 2610.28 changes the capture format so analysis can schedule decompression work concurrently. The thread pool is the implementation detail, but the larger design choice is to make the stored representation independently processable. Parallel execution becomes possible only after the format removes the ordering dependency.</p>\n<h2>The catch</h2>\n<p>The release does not publish a universal percentage improvement. Microsoft says the speed-up depends on the workload and describes the result as especially noticeable for gigabyte-scale captures and timing-data collection.</p>\n<p>That qualification matters. Thread pools do not automatically improve every input. Small captures may be dominated by setup costs. Workloads with dependencies between chunks still require synchronization, and parallel decompression can move the bottleneck to memory bandwidth, storage, or later analysis stages.</p>\n<ul>\n<li>Measure the serial fraction before adding worker threads. A parallel analysis stage cannot improve time spent waiting for one ordered decompression stream.</li>\n<li>Design persisted data in independently readable chunks when large files are common.</li>\n<li>Keep a fallback path for old capture formats during migration.</li>\n<li>Benchmark full workflows, not only the worker stage. Scheduling overhead and downstream synchronization can hide the benefit.</li>\n</ul>\n<h2>What teams can copy</h2>\n<p>Start with the file format. If a large artifact must be decoded from beginning to end, worker-count tuning will not remove the fundamental bottleneck. Add boundaries that let independent regions be decoded and validated separately.</p>\n<p>Then make the scheduler explicit. Use bounded concurrency, collect per-stage timings, and compare wall-clock time for representative artifact sizes. Include cold-cache and warm-cache runs. Record CPU utilization, peak memory, storage throughput, and queue wait time.</p>\n<p>PIX also added live shader instruction profiling and heterogeneous-CPU timeline details in the same release. Those features reinforce the same practice: developer tools should expose where execution time goes instead of reporting only a single total duration.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Make large persisted artifacts independently readable before parallelizing their processing.</li>\n<li>Use bounded thread pools and measure queueing, memory, storage, and downstream analysis time.</li>\n<li>Publish workload-dependent results instead of claiming a fixed speed-up.</li>\n<li>Keep compatibility and migration paths for older artifact formats.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://devblogs.microsoft.com/pix/pix-2610-28/?ref=refetch.io\" target=\"_blank\" rel=\"noopener\">PIX 2610.28 \u2013 the biggest release of 2026</a> \u2014 devblogs.microsoft.com</li>\n<li><a href=\"https://learn.microsoft.com/pl-pl/microsoft-edge/webview2/release-notes/runtime/156\" target=\"_blank\" rel=\"noopener\">Microsoft Edge WebView2 Runtime 156.0.4314.42 release notes</a> \u2014 learn.microsoft.com</li>\n</ul>"
+  },
+  {
     "id": 115,
     "title": "A PostgreSQL Column Drop Caused a 24-Minute Kubernetes Outage",
     "excerpt": "A Kubernetes rolling deployment caused a 24-minute outage after it dropped a PostgreSQL column still used by older application pods. The incident shows why schema changes must support two application versions at once and why migrations should run outside application startup.",
