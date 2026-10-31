@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-31T12:18:14Z",
-  "itemCount": 19,
+  "generatedAt": "2026-10-31T13:47:14Z",
+  "itemCount": 20,
   "items": [
     {
       "anchor": "Para-athletics and inclusion of persons with disabilities; GS2.6",
@@ -1178,6 +1178,199 @@
         "flagged_claims": [
           "Verification was unavailable; retry before publishing"
         ]
+      }
+    },
+    {
+      "anchor": "GS2.6 — Welfare schemes, vulnerable sections, social sector: health, education, HRD",
+      "checkedAt": "2026-10-31T13:47:14Z",
+      "codes": [
+        "GS2.6",
+        "GS2.5",
+        "GS3.2"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_99f43701ea522b4d670f058a6e1b3f5c90a62f3c7bbfeef0e16e26bce7bd56e2` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.99\n- **checked at:** 2026-10-31T13:47:14Z\n\nFlagged claims:\n- The note states that NMMSS provides ₹12,000 per annum, but the Ministry’s scheme page reports ₹6,000 per annum, making this a material amount conflict.[1]\n- The proposed GS2.5 and GS3.2 codes are unsupported or mismatched; the scheme fits GS2 welfare schemes and social-sector education, while GS3 is not clearly applicable.\n- The note presents parental income eligibility as ₹3.50 lakh, whereas the Ministry’s scheme page reports an income ceiling of ₹1.50 lakh, creating a material eligibility conflict.[1]\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_99f43701ea522b4d670f058a6e1b3f5c90a62f3c7bbfeef0e16e26bce7bd56e2",
+        "title": "Needs review: src_99f43701ea522b4d670f058a6e1b3f5c90a62f3c7bbfeef0e16e26bce7bd56e2 verification disagreed"
+      },
+      "note": {
+        "anchor": "GS2.6 — Welfare schemes, vulnerable sections, social sector: health, education, HRD",
+        "argumentsAgainst": [
+          "A deadline extension addresses access to the application window but does not by itself resolve documentation, digital-connectivity or verification barriers.",
+          "The scheme remains targeted: eligibility depends on school category, income, prior academic performance and a State/UT selection examination."
+        ],
+        "argumentsFor": [
+          "The extension gives eligible students additional time to apply and enables the prescribed verification process to proceed.",
+          "A scholarship continuing from Classes IX to XII can support retention beyond Class VIII, subject to renewal requirements.",
+          "Direct transfer to beneficiaries' bank accounts can reduce intermediary leakage, subject to accurate verification and banking access."
+        ],
+        "background": [
+          "The National Means-cum-Merit Scholarship Scheme supports meritorious students from economically weaker sections and seeks to encourage continuation of education beyond Class VIII up to Class XII.",
+          "The mechanism combines a State/UT selection examination, eligibility conditions, annual financial support and renewal subject to prescribed academic requirements. Applications are made through the National Scholarship Portal after One-Time "
+        ],
+        "codes": [
+          "GS2.6",
+          "GS2.5",
+          "GS3.2"
+        ],
+        "editorialStatus": "draft",
+        "id": "note_99f43701ea522b4d670f058a6e1b3f5c90a62f3c7bbfeef0e16e26bce7bd56e2",
+        "indiaImplications": [
+          "The issue highlights the importance of last-mile delivery in education welfare: portal access, OTR completion, school-level assistance and time-bound institutional and district verification.",
+          "State and local implementation capacity matters because the selection examination is conducted by respective State/UT Governments and applications pass through Institute Nodal Officer and District Nodal Officer verification.",
+          "DBT links educational support with banking and digital governance, making data accuracy, authentication and grievance redressal relevant to inclusion."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Explain NMMSS as a targeted human-capital and school-retention intervention.",
+              "Discuss the application-to-verification chain and the role of digital public infrastructure.",
+              "Assess inclusion risks: digital divide, documentation, banking access and verification delays.",
+              "Suggest assisted application, proactive school outreach, monitoring dashboards and accessible grievance redressal."
+            ],
+            "conclusionPrompt": "Conclude by linking timely scholarship delivery with equitable secondary-school continuation and accountable cooperative implementation.",
+            "counterPosition": "A targeted scholarship cannot alone address all causes of dropout, such as learning gaps, household work, transport constraints or school quality.",
+            "diagramSuggestion": "Flow: OTR → NSP application → Institute Nodal Officer verification → District Nodal Officer verification → DBT → renewal.",
+            "directive": "evaluate",
+            "introChoices": [
+              "A scholarship deadline is also a test of welfare-state delivery: eligibility must translate into verified and timely support.",
+              "NMMSS combines merit, economic targeting and digital administration to reduce the risk of discontinuation after Class VIII."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "A scholarship deadline is also a test of welfare-state delivery: eligibility must translate into verified and timely support.",
+              "NMMSS combines merit, economic targeting and digital administration to reduce the risk of discontinuation after Class VIII.",
+              "Explain NMMSS as a targeted human-capital and school-retention intervention.",
+              "Discuss the application-to-verification chain and the role of digital public infrastructure.",
+              "Assess inclusion risks: digital divide, documentation, banking access and verification delays.",
+              "Suggest assisted application, proactive school outreach, monitoring dashboards and accessible grievance redressal.",
+              "A targeted scholarship cannot alone address all causes of dropout, such as learning gaps, household work, transport constraints or school quality.",
+              "Conclude by linking timely scholarship delivery with equitable secondary-school continuation and accountable cooperative implementation."
+            ],
+            "stem": "Evaluate how the National Means-cum-Merit Scholarship Scheme can promote equitable continuation of schooling, and identify implementation measures needed to make its digital delivery inclusive.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2330936",
+            "text": "The last date for submission of applications under the National Means-cum-Merit Scholarship Scheme for academic year 2026-27 was extended till November 15, 2026.",
+            "verification": "needs-review"
+          }
+        ],
+        "papers": [
+          "GS2",
+          "GS3"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Illustration: assisted application",
+            "text": "If an eligible student cannot complete OTR or upload an application independently, a school-level help desk could assist with the process before the notified deadline; this is a hypothetical illustration, not a reported event."
+          },
+          "excerpt": "The Ministry of Education extended NMMSS 2026-27 applications to November 15, 2026, keeping the scholarship pipeline open for eligible students.",
+          "question": {
+            "answer": "A deadline extension improves opportunity only when students can complete OTR, submit applications and receive timely institutional and district verification; therefore, assisted access and monitoring are necessary complements.",
+            "prompt": "Why is extending a scholarship deadline useful, yet insufficient by itself, for inclusive education delivery?"
+          },
+          "sections": [
+            {
+              "heading": "A wider application window",
+              "paragraphs": [
+                "The Ministry of Education extended the NMMSS 2026-27 application deadline to November 15, 2026. The practical effect is to give eligible applicants more time to complete portal-based formalities."
+              ]
+            },
+            {
+              "heading": "From application to support",
+              "paragraphs": [
+                "The scheme's delivery chain depends on One-Time Registration, application submission and verification by designated authorities before scholarship support can reach eligible students. A longer window is therefore useful only if schools and authorities complete their linked tasks on time."
+              ]
+            },
+            {
+              "heading": "The implementation limitation",
+              "paragraphs": [
+                "The extension does not remove eligibility filters or guarantee access for students facing digital, documentation or banking barriers. Inclusion requires assisted application and responsive verification, while preserving merit and income-based targeting."
+              ]
+            }
+          ],
+          "title": "NMMSS application window extended for 2026-27"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The official record states that the extended application deadline is November 15, 2026.",
+            "statement": "The NMMSS 2026-27 application deadline was extended till November 15, 2026."
+          },
+          {
+            "correct": false,
+            "explanation": "The record states that the scheme targets eligible students in specified school categories and is linked to a State/UT selection examination; it is not described as universal.",
+            "statement": "NMMSS is an automatic, universal scholarship for every student continuing after Class VIII."
+          },
+          {
+            "correct": false,
+            "explanation": "The official record states that scholarship continuation from Classes X to XII is through renewal, subject to prescribed academic requirements.",
+            "statement": "Once selected in Class IX, scholarship continuation through Class XII is unconditional."
+          },
+          {
+            "correct": false,
+            "explanation": "The record identifies the National Scholarship Portal and requires One-Time Registration before applying; it does not state that applications are submitted only offline.",
+            "statement": "NMMSS applications are submitted exclusively through offline school forms."
+          }
+        ],
+        "priority": 70,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 82,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 20
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-10-31T13:47:14Z",
+        "publisherId": "pib",
+        "publisherName": "Press Information Bureau",
+        "recallCard": "NMMSS 2026-27: the Ministry of Education extended applications to 15 November 2026. Remember the delivery chain—OTR, NSP application, institutional and district verification—and that a deadline extension improves access but does not remove eligibility or last-mile barriers.",
+        "reusableAnchors": [],
+        "sourceContentHash": "a604a179efd1044b36044635d4db96af0dadeb5baa79bae8f0b0377072c5ff99",
+        "sourceId": "src_99f43701ea522b4d670f058a6e1b3f5c90a62f3c7bbfeef0e16e26bce7bd56e2",
+        "sourceTitle": "Last date for submission of applications under the National Means-cum-Merit Scholarship Scheme for academic year 2026-27 extended till November 15, 2026",
+        "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2330936",
+        "staticDefinition": "NMMSS is a targeted school-education scholarship mechanism that combines economic and merit eligibility with a selection examination, portal-based application, verification and renewal-linked continuation. The supplied official summary supports its objective and broad mechanism; detailed statutory or administrative cla",
+        "use": "Use NMMSS to illustrate how education welfare schemes combine targeted support, DBT-oriented delivery, digital governance and cooperative implementation between Union, State/UT, institutional and district authorities.",
+        "wayForward": [
+          "Provide school-based assisted application and OTR support, especially for students with limited digital access.",
+          "Track pending applications and verification stages through time-bound dashboards with escalation for bottlenecks.",
+          "Strengthen communication on eligibility, renewal requirements and deadlines in accessible formats.",
+          "Maintain grievance redressal and inclusion checks without diluting merit and economic targeting."
+        ],
+        "whyInNews": "On October 31, 2026, the Ministry of Education extended the deadline for NMMSS applications for academic year 2026-27 to November 15, 2026. The extension keeps the National Scholarship Portal application window open longer, allowing eligible students additional time to complete applications and authorities to undertake"
+      },
+      "sourceId": "src_99f43701ea522b4d670f058a6e1b3f5c90a62f3c7bbfeef0e16e26bce7bd56e2",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The note’s interpretation of NMMSS as supporting retention and human-capital development is analytical framing, not a directly reported official fact.",
+          "The DBT claim is supported by the supplied PIB extract, but reduced intermediary leakage is a conditional implication, not an established outcome.",
+          "The digital-governance, last-mile, grievance-redressal and cooperative-implementation analysis is reasonable but should be presented as analytical application.",
+          "The hypothetical school help-desk example is clearly labelled as an illustration and should remain so.",
+          "The proposed flow is broadly consistent with the supplied release, but DBT follows successful eligibility and verification rather than merely the displayed sequence.",
+          "The recall-card phrase “scholarship pipeline” is a useful metaphor, not an official administrative designation.",
+          "The broad conclusion that a deadline extension is insufficient without assisted access and monitoring is sound analysis, not a source-stated result."
+        ],
+        "agrees": false,
+        "confidence": 0.99,
+        "flagged_claims": [
+          "The note states that NMMSS provides ₹12,000 per annum, but the Ministry’s scheme page reports ₹6,000 per annum, making this a material amount conflict.[1]",
+          "The proposed GS2.5 and GS3.2 codes are unsupported or mismatched; the scheme fits GS2 welfare schemes and social-sector education, while GS3 is not clearly applicable.",
+          "The note presents parental income eligibility as ₹3.50 lakh, whereas the Ministry’s scheme page reports an income ceiling of ₹1.50 lakh, creating a material eligibility conflict.[1]"
+        ],
+        "verificationVersion": 2
       }
     },
     {
