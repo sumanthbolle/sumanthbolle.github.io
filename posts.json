@@ -1,5 +1,38 @@
 [
   {
+    "id": 118,
+    "title": "GPT-6.1 Terra targets cheaper, faster computer-use workflows",
+    "excerpt": "OpenAI released GPT-6.1 Terra on October 26, 2026, with computer-use and visual-reasoning support. OpenAI\u2019s published comparison says Terra matched GPT-6 Astra at one-tenth the token price and completed tasks more than three times faster on average than Astra and GPT-6.1 Sol.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-gpt-6-1-terra-targets-cheaper-faster-computer-use-workflows-1793525774421",
+    "date": "Nov 1, 2026",
+    "dateISO": "2026-11-01T09:36:14Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "GPT-6.1 Terra: delivering fast and capable computer use at a lower price",
+        "url": "https://community.openai.com/t/gpt-6-1-terra-delivering-fast-and-capable-computer-use-at-a-lower-price/1409900"
+      },
+      {
+        "title": "Model Release Notes",
+        "url": "https://help.openai.com/en/articles/9624314-model-pricing"
+      },
+      {
+        "title": "Addendum to GPT-6 Astra System Card: GPT-6.1 Terra",
+        "url": "https://deploymentsafety.openai.com/gpt-6-1-terra/ai-self-improvement-capabilities"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>GPT-6.1 Terra became available in the OpenAI API as <code>gpt-6.1-terra</code> on October 26, 2026. It also rolled out to ChatGPT Work and Codex.</p>\n<p>The model targets software workflows that require reading a screen, taking actions across applications, writing text, and handling multiple steps. OpenAI says Terra substantially outperformed GPT-5.6 Terra on Agents\u2019 Last Exam, an evaluation of software-use tasks.</p>\n<h2>The useful engineering result</h2>\n<p>The concrete result is a speed and cost tradeoff. In OpenAI\u2019s published comparison, Terra matched GPT-6 Astra at one-tenth the price per token and finished tasks more than three times faster on average than both GPT-6 Astra and GPT-6.1 Sol.</p>\n<p>The comparison also shows task-level variation. On DIGBENCH P-1 at high effort, GPT-6.1 Terra won in 16 minutes 44 seconds while consuming 47.3 million tokens, with an estimated API equivalent of about $2.97. On DIGBENCH P-2, it lost in 6 minutes 27 seconds after using 1.9 million tokens, estimated at about $0.26. A single average therefore does not predict every workflow.</p>\n<h2>How to use it</h2>\n<p>Use Terra for workflows where the model must inspect a changing interface or operate software rather than only generate text. A practical first test is a bounded task: open an issue, inspect the repository, run tests, and prepare a patch without granting unrestricted production access.</p>\n<p>Keep the task observable. Record screenshots, tool calls, elapsed time, token use, and whether the final state matches the expected state. Compare Terra with the model already used by the workflow on the same task set.</p>\n<p>The API model identifier is:</p>\n<h2>A bounded evaluation harness</h2>\n<p>The important control is not the prompt alone. Limit filesystem, browser, and application permissions, then require an explicit review before applying changes. The published results concern benchmark and product workflows; they do not establish reliability for an arbitrary internal application.</p>\n<pre><code class=\"language-python\">model = &quot;gpt-6.1-terra&quot;\n\nrequest = {\n    &quot;model&quot;: model,\n    &quot;input&quot;: &quot;Inspect the failing test, explain the cause, and propose a patch. Do not modify production systems.&quot;,\n}</code></pre>\n<h2>Where it breaks</h2>\n<p>The published DIGBENCH results include both wins and losses. Terra won one listed P-1 task and lost one listed P-2 task, so lower cost and shorter runtime do not remove task-specific failures.</p>\n<p>Computer-use agents also depend on the target application. UI changes, ambiguous state, authentication prompts, hidden permissions, and irreversible actions can turn a plausible plan into a failed or unsafe run. The safest deployment pattern is a narrow tool surface, deterministic checks, and human approval for side effects.</p>\n<ul>\n<li>Treat the three-times-faster claim as an average, not a latency guarantee for each task.</li>\n<li>Benchmark the exact computer-use workflow with fixed tasks, permissions, and success checks.</li>\n<li>Use a separate approval step before the agent changes production data or sends external messages.</li>\n<li>Track token cost and failure recovery, because Terra\u2019s published task results vary substantially.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Test <code>gpt-6.1-terra</code> on bounded computer-use tasks before broader rollout.</li>\n<li>Measure success, elapsed time, token use, and recovery separately.</li>\n<li>Require approval before applying changes or performing irreversible actions. </li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://community.openai.com/t/gpt-6-1-terra-delivering-fast-and-capable-computer-use-at-a-lower-price/1409900\" target=\"_blank\" rel=\"noopener\">GPT-6.1 Terra: delivering fast and capable computer use at a lower price</a> \u2014 community.openai.com</li>\n<li><a href=\"https://help.openai.com/en/articles/9624314-model-pricing\" target=\"_blank\" rel=\"noopener\">Model Release Notes</a> \u2014 help.openai.com</li>\n<li><a href=\"https://deploymentsafety.openai.com/gpt-6-1-terra/ai-self-improvement-capabilities\" target=\"_blank\" rel=\"noopener\">Addendum to GPT-6 Astra System Card: GPT-6.1 Terra</a> \u2014 deploymentsafety.openai.com</li>\n</ul>"
+  },
+  {
     "id": 116,
     "title": "Microsoft Scope turns coding-agent changes into repeatable repository tests",
     "excerpt": "Microsoft open-sourced Scope on October 26, 2026. It treats coding agents as software users and evaluates them against representative repository tasks, giving teams a repeatable way to test agent changes before deployment.",
