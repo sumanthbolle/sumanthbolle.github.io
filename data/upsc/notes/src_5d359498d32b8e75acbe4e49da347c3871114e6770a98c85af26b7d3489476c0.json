@@ -1,0 +1,172 @@
+{
+  "anchor": "GS2.5 Governance: transparency, accountability, e-governance, citizen charters; GS3.6 Science and te",
+  "argumentsAgainst": [
+    "International trials are limited to eligible Indian e-passport holders, selected flights and enabled airport infrastructure, so access is not universal.",
+    "Digital facilitation does not replace airline document checks, immigration procedures or other mandatory travel formalities.",
+    "Greater dependence on digital identity and biometric authentication requires strong safeguards against exclusion, misuse and system failure; these are analytical concerns, not stated findings of the source."
+  ],
+  "argumentsFor": [
+    "A verified digital credential may reduce repetitive identity checks at enabled airport touchpoints.",
+    "A phased trial can generate passenger feedback before wider rollout.",
+    "Interoperability between e-passports, mobile credentials and airport systems can support technology-enabled aviation governance."
+  ],
+  "background": [
+    "Digi Yatra is a digital airport-facilitation platform. In the reported trial, an eligible passenger creates an e-passport-based Verifiable Credential through the mobile application.",
+    "The mechanism described involves scanning the passport Machine Readable Zone, reading the embedded chip through Near Field Communication, capturing a selfie and verifying details; the credential is stored in the passenger’s Digi Yatra walle",
+    "The facility is designed to complement existing travel processes rather than replace possession of travel documents, airline checks or immigration procedures."
+  ],
+  "codes": [
+    "GS2.5",
+    "GS3.6",
+    "GS3.9"
+  ],
+  "editorialStatus": "source-backed",
+  "id": "note_5d359498d32b8e75acbe4e49da347c3871114e6770a98c85af26b7d3489476c0",
+  "indiaImplications": [
+    "India is testing how digital identity infrastructure can be extended from domestic airport processing to selected international departures.",
+    "The phased approach can help authorities identify operational, interoperability and passenger-experience issues before wider adoption.",
+    "Implementation should preserve access for passengers unable or unwilling to use the digital pathway and maintain clear separation between facilitation and statutory immigration functions.",
+    "The source does not establish specific privacy, cybersecurity or exclusion outcomes; these should therefore be treated as policy questions for evaluation, not official findings."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Explain the e-governance mechanism: e-passport data, NFC reading, selfie-based verification and wallet-stored Verifiable Credential.",
+        "Assess benefits for airport facilitation, including reduced repetitive checks and evidence-based scaling through trials.",
+        "Discuss limitations: restricted eligibility, infrastructure dependence, continuing statutory procedures, privacy, cybersecurity, consent, exclusion and fallback arrangements.",
+        "Suggest safeguards: privacy-by-design, purpose limitation, auditability, grievance redress, offline alternatives, interoperability testing and independent evaluation."
+      ],
+      "conclusionPrompt": "Conclude by linking digital convenience with rights-preserving, inclusive and resilient public service delivery.",
+      "counterPosition": "Digital identity can improve convenience, but treating it as a substitute for documents or statutory checks would create operational and governance risks.",
+      "diagramSuggestion": "Flow: e-passport MRZ and chip scan → NFC verification → selfie and detail verification → wallet credential → enabled airport touchpoints → airline and immigration formalities remai",
+      "directive": "examine",
+      "introChoices": [
+        "The international Digi Yatra trial illustrates how e-governance can move from domestic convenience to cross-border airport facilitation without displacing statutory travel controls",
+        "A phased digital-identity trial is a governance experiment: it tests whether verified credentials can simplify passenger processing while retaining documentary and immigration safe"
+      ],
+      "marks": 15,
+      "skeleton": [
+        "The international Digi Yatra trial illustrates how e-governance can move from domestic convenience to cross-border airport facilitation without displacing statutory travel controls",
+        "A phased digital-identity trial is a governance experiment: it tests whether verified credentials can simplify passenger processing while retaining documentary and immigration safe",
+        "Explain the e-governance mechanism: e-passport data, NFC reading, selfie-based verification and wallet-stored Verifiable Credential.",
+        "Assess benefits for airport facilitation, including reduced repetitive checks and evidence-based scaling through trials.",
+        "Discuss limitations: restricted eligibility, infrastructure dependence, continuing statutory procedures, privacy, cybersecurity, consent, exclusion and fallback arrangements.",
+        "Suggest safeguards: privacy-by-design, purpose limitation, auditability, grievance redress, offline alternatives, interoperability testing and independent evaluation.",
+        "Digital identity can improve convenience, but treating it as a substitute for documents or statutory checks would create operational and governance risks.",
+        "Conclude by linking digital convenience with rights-preserving, inclusive and resilient public service delivery."
+      ],
+      "stem": "Examine how the international Digi Yatra trial illustrates both the potential and limits of technology-enabled governance in aviation.",
+      "timeMinutes": 11,
+      "wordBudget": 250
+    }
+  ],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2331200",
+      "text": "Digi Yatra Begins International Passenger Trials at Seven Airports",
+      "verification": "source-backed"
+    }
+  ],
+  "papers": [
+    "GS2",
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Illustration",
+      "text": "Illustration: If an eligible Indian e-passport holder creates the required Verifiable Credential, the credential may be used at enabled terminal-entry, security-hold-area or boarding-gate touchpoints during the trial; the passenger must still carry travel documents and complete airline and immigration formalities."
+    },
+    "excerpt": "Digi Yatra’s international trial tests e-passport-based digital credentials at selected airport touchpoints while retaining mandatory travel documents, airline checks and immigration procedures.",
+    "question": {
+      "answer": "The trial is a phased e-governance intervention: it uses e-passport data, NFC and selfie verification to create a digital credential for enabled airport touchpoints, while limiting scope by eligibility, participating flights and infrastructure. Its success should be judged by convenience, reliability, inclusion, privacy and preservation of statutory controls.",
+      "prompt": "How should the international Digi Yatra trial be evaluated as an e-governance intervention?"
+    },
+    "sections": [
+      {
+        "heading": "What is being tested",
+        "paragraphs": [
+          "The Ministry of Civil Aviation has begun international passenger trials at seven airports. Eligible Indian nationals with e-passports may use the facility on selected international flights operated by Air India and IndiGo, wherever trial infrastructure is available.",
+          "The passenger creates an e-passport-based Verifiable Credential through the Digi Yatra application by scanning the MRZ, reading the embedded chip through NFC, capturing a selfie and verifying details."
+        ]
+      },
+      {
+        "heading": "Why the trial is limited",
+        "paragraphs": [
+          "The credential can be used at designated terminal-entry points, Security Hold Areas and boarding gates, subject to infrastructure availability. Passenger feedback is intended to inform a wider rollout in 2027.",
+          "Digi Yatra complements rather than replaces existing travel processes. Passengers must carry travel documents and complete airline document checks, immigration procedures and other applicable formalities."
+        ]
+      }
+    ],
+    "title": "Digi Yatra tests e-passport-based facilitation for international departures"
+  },
+  "prelimsTraps": [
+    {
+      "correct": true,
+      "explanation": "The official record states that trials are being conducted at Delhi, Bengaluru, Hyderabad, Cochin, Mumbai, Chennai and Amritsar.",
+      "statement": "The international Digi Yatra trial covers seven airports."
+    },
+    {
+      "correct": true,
+      "explanation": "The record states that eligible Indian nationals holding e-passports may use the facility on select international flights operated by Air India and IndiGo.",
+      "statement": "The trial is restricted to eligible Indian e-passport holders travelling on selected Air India and IndiGo international flights."
+    },
+    {
+      "correct": false,
+      "explanation": "The facility is intended to complement, not replace, travel documents, airline checks, immigration and other mandatory formalities.",
+      "statement": "Using Digi Yatra eliminates the need to carry travel documents and complete immigration procedures."
+    },
+    {
+      "correct": true,
+      "explanation": "The stated process includes scanning the MRZ, reading the embedded chip through NFC, capturing a selfie and verifying details.",
+      "statement": "Creation of the Verifiable Credential involves MRZ scanning, NFC chip reading and selfie-based verification."
+    }
+  ],
+  "priority": 71,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 80,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 25
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-11-01T11:26:04Z",
+  "publisherId": "pib",
+  "publisherName": "Press Information Bureau",
+  "recallCard": "Digi Yatra’s international trials test e-passport-based Verifiable Credentials for eligible Indian passengers at seven airports on selected Air India and IndiGo flights. MRZ/NFC verification and a selfie create the credential, but travel documents, airline checks and immigration remain mandatory.",
+  "reusableAnchors": [],
+  "sourceContentHash": "2f17b33a759695511ba6585577036cce324cf1f11bc3b776b0b29c71fe41a12d",
+  "sourceId": "src_5d359498d32b8e75acbe4e49da347c3871114e6770a98c85af26b7d3489476c0",
+  "sourceTitle": "Digi Yatra Begins International Passenger Trials at Seven Airports",
+  "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2331200",
+  "staticDefinition": "Digital governance is the use of digital systems to deliver or facilitate public services. Here, an e-passport-based Verifiable Credential is created through MRZ and chip reading, selfie capture and detail verification, then used at enabled airport touchpoints while statutory travel procedures continue.",
+  "use": "Use as an example of phased e-governance, digital identity, technology-enabled public service delivery, and the need to balance convenience with inclusion, privacy, cybersecurity and accountability.",
+  "verification": {
+    "advisory_notes": [
+      "The proposed anchor is truncated as “GS3.6 Science and te”; complete the syllabus wording before publication.",
+      "GS2.5 is broadly relevant through e-governance and service delivery, while transparency, citizen charters and accountability are not directly evidenced by this release.",
+      "GS3.6 and GS3.9 are plausible technology and cyber-security linkages, but privacy, cybersecurity and accountability are analytical extensions, not source findings.",
+      "“Cross-border airport facilitation” may overstate the scope: the trial concerns international departures from Indian airports, not cross-border immigration integration.",
+      "The statement that a verified credential may reduce repetitive identity checks is a reasonable analytical inference, not an officially reported outcome.",
+      "The claim that Digi Yatra is a “digital airport-facilitation platform” is framing/background rather than a definition established by the release.",
+      "The pocketRead headline’s “paperless” implication should be avoided because passengers must still carry documents and complete mandatory checks.",
+      "The “three-month programme” wording conflicts with the supplied PIB text, which specifies November–December 2026; use the official two-month period."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-11-01T11:26:04Z",
+    "confidence": 0.97,
+    "flagged_claims": [],
+    "noteContentHash": "541b8c57447470b9c30ac7b7b363f120c8995f66a71e9a55557a2c18a72cf0ab",
+    "sourceContentHash": "2f17b33a759695511ba6585577036cce324cf1f11bc3b776b0b29c71fe41a12d",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Evaluate the trial through measurable indicators such as processing reliability, accessibility, user consent, grievance resolution and continuity during technical failure.",
+    "Retain non-digital alternatives and ensure that digital facilitation never becomes a barrier to lawful travel.",
+    "Apply purpose limitation, data minimisation, secure authentication, audit trails and clear responsibility for errors or misuse.",
+    "Test interoperability among airport systems, airlines and relevant statutory processes before wider expansion."
+  ],
+  "whyInNews": "On 1 November 2026, the Ministry of Civil Aviation began Digi Yatra international passenger trials at seven Indian airports. The trial allows eligible Indian nationals with e-passports to create a Verifiable Credential in the Digi Yatra application and use it at enabled airport touchpoints on selected international fli"
+}
