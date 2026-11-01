@@ -1,7 +1,189 @@
 {
-  "generatedAt": "2026-10-31T23:57:48Z",
-  "itemCount": 20,
+  "generatedAt": "2026-11-01T04:28:38Z",
+  "itemCount": 21,
   "items": [
+    {
+      "anchor": "GS3.8 Internal security: external state and non-state actors; GS3.7 Disaster and disaster management",
+      "checkedAt": "2026-11-01T04:28:38Z",
+      "codes": [
+        "GS3.8",
+        "GS3.7",
+        "GS3.6"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_051bd8c5d18f16f2899572e511f2a0cca139209882349418dd69218ca9b98488` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.99\n- **checked at:** 2026-11-01T04:28:38Z\n\nFlagged claims:\n- The note says the official record establishes only the incident title, but the PIB text also states 31 October 2026, no reported deaths or injuries, pumping operations underway, and that a formal inquiry will be initiated.\n- The prelims trap says the official summary does not state whether anyone was injured or whether pumping operations began, but the supplied PIB text expressly reports no injuries and pumping underway.\n- The prelims trap says the summary does not record an inquiry, but the supplied PIB text says a formal inquiry will be initiated.\n- The note assigns GS3.8 external-state and non-state actors as an anchor despite no supported or analytical link to any external or non-state security challenge; this is a wrong syllabus tagging for the reported facts.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_051bd8c5d18f16f2899572e511f2a0cca139209882349418dd69218ca9b98488",
+        "title": "Needs review: src_051bd8c5d18f16f2899572e511f2a0cca139209882349418dd69218ca9b98488 verification disagreed"
+      },
+      "note": {
+        "anchor": "GS3.8 Internal security: external state and non-state actors; GS3.7 Disaster and disaster management",
+        "argumentsAgainst": [
+          "The exact cause, extent of damage and operational implications remain unknown until the formal inquiry is completed.",
+          "Public discussion before verified findings could encourage speculation about maintenance, design or security failures."
+        ],
+        "argumentsFor": [
+          "Prompt dewatering and compartment management can limit progressive flooding and protect personnel and equipment.",
+          "A formal inquiry can identify causal and procedural weaknesses and support corrective action.",
+          "Transparent communication of verified facts supports accountability without compromising sensitive naval information."
+        ],
+        "background": [
+          "Water ingress means the unintended entry of water into a vessel’s internal compartments. In a naval ship, unchecked flooding can affect buoyancy, stability, electrical systems and machinery.",
+          "Shipboard damage control generally involves isolating affected compartments, pumping out water, monitoring stability and protecting personnel; the precise measures in this incident are not stated in the official record."
+        ],
+        "codes": [
+          "GS3.8",
+          "GS3.7",
+          "GS3.6"
+        ],
+        "editorialStatus": "source-backed",
+        "id": "note_051bd8c5d18f16f2899572e511f2a0cca139209882349418dd69218ca9b98488",
+        "indiaImplications": [
+          "The incident highlights the importance of naval safety, preventive maintenance and trained damage-control capacity.",
+          "A dockyard incident can affect vessel availability even when personnel remain safe; the operational effect cannot be assessed from the available official record.",
+          "The proposed inquiry can strengthen institutional learning, maintenance protocols and safety oversight, subject to its findings."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Immediate response: personnel safety, compartment isolation, dewatering and monitoring.",
+              "Institutional response: independent and technically competent inquiry, evidence preservation and time-bound corrective action.",
+              "Strategic perspective: naval readiness, maintenance assurance and safety culture without premature attribution."
+            ],
+            "conclusionPrompt": "Conclude with a balanced link between operational readiness, crew safety and accountable institutional learning.",
+            "counterPosition": "Emphasise that the cause and damage are unverified; therefore, accountability should follow evidence rather than speculation.",
+            "diagramSuggestion": "Flow chart: water ingress → damage control and dewatering → inquiry → corrective measures → readiness assurance.",
+            "directive": "discuss",
+            "introChoices": [
+              "Begin with the distinction between an incident report and a concluded finding.",
+              "Use water ingress as a case for explaining shipboard damage control and institutional safety learning."
+            ],
+            "marks": 10,
+            "skeleton": [
+              "Begin with the distinction between an incident report and a concluded finding.",
+              "Use water ingress as a case for explaining shipboard damage control and institutional safety learning.",
+              "Immediate response: personnel safety, compartment isolation, dewatering and monitoring.",
+              "Institutional response: independent and technically competent inquiry, evidence preservation and time-bound corrective action.",
+              "Strategic perspective: naval readiness, maintenance assurance and safety culture without premature attribution.",
+              "Emphasise that the cause and damage are unverified; therefore, accountability should follow evidence rather than speculation.",
+              "Conclude with a balanced link between operational readiness, crew safety and accountable institutional learning."
+            ],
+            "stem": "Discuss how a naval water-ingress incident should be managed as both a safety emergency and a governance challenge. Apply the principles to the reported INS Kesari incident.",
+            "timeMinutes": 7,
+            "wordBudget": 150
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2331061",
+            "text": "INCIDENT OF WATER INGRESS ONBOARD INS KESARI AT VISAKHAPATNAM",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS3"
+        ],
+        "pocketRead": {
+          "excerpt": "The Press Information Bureau’s source title reports an incident of water ingress onboard INS Kesari at Visakhapatnam; its official summary provides no further verified details.",
+          "question": {
+            "answer": "Treat the event as an incident requiring verified fact-finding: distinguish the reported occurrence from assumptions about cause, damage or negligence, and assess response only after authoritative findings are available.",
+            "prompt": "How should an aspirant use this brief official record in an answer without overclaiming?"
+          },
+          "sections": [
+            {
+              "heading": "What the record establishes",
+              "paragraphs": [
+                "The official summary establishes only the reported incident title: water ingress onboard INS Kesari at Visakhapatnam. It does not establish timing, casualties, response measures, cause, damage or inquiry findings."
+              ]
+            },
+            {
+              "heading": "How to analyse it",
+              "paragraphs": [
+                "Water ingress can be examined through ship safety, damage control, naval readiness and accountability. These are analytical lenses, not facts established by the official summary. A useful answer should separate immediate safety management from later evidence-based institutional reform."
+              ]
+            }
+          ],
+          "title": "Official record reports water ingress onboard INS Kesari at Visakhapatnam"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The official summary states only that the incident concerned water ingress onboard INS Kesari at Visakhapatnam.",
+            "statement": "The source title reports water ingress onboard INS Kesari at Visakhapatnam."
+          },
+          {
+            "correct": false,
+            "explanation": "The official summary does not provide a commissioning date, ship class or mission history.",
+            "statement": "The official summary establishes that INS Kesari is a Shardul-class tank landing ship commissioned in 2008."
+          },
+          {
+            "correct": false,
+            "explanation": "The official summary does not state whether anyone was injured or whether pumping operations began.",
+            "statement": "The official summary confirms that there were no casualties and that dewatering operations were underway."
+          },
+          {
+            "correct": false,
+            "explanation": "The summary does not identify the cause or record an inquiry.",
+            "statement": "The official summary establishes that a formal inquiry was initiated into the exact cause."
+          }
+        ],
+        "priority": 69,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 76,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 25
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-11-01T04:28:38Z",
+        "publisherId": "pib",
+        "publisherName": "Press Information Bureau",
+        "recallCard": "Official record: water ingress was reported onboard INS Kesari at Visakhapatnam. Do not infer cause, casualties, damage, response or inquiry findings from the summary. Analyse through naval safety, damage control, readiness and evidence-based accountability.",
+        "reusableAnchors": [],
+        "sourceContentHash": "0042dbff5ebb6f04159f125ef7cfd27a67c2df1c10f8c951e40a3d0940b62e57",
+        "sourceId": "src_051bd8c5d18f16f2899572e511f2a0cca139209882349418dd69218ca9b98488",
+        "sourceTitle": "INCIDENT OF WATER INGRESS ONBOARD INS KESARI AT VISAKHAPATNAM",
+        "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2331061",
+        "staticDefinition": "Water ingress is the unintended entry of water into a vessel’s internal spaces; if uncontrolled, it can compromise stability, buoyancy, machinery and electrical systems. These are general analytical concepts, not incident-specific findings.",
+        "use": "Use this as a GS3 case study on naval safety, damage control, institutional accountability and operational resilience. Clearly distinguish the single supported fact from analytical implications.",
+        "wayForward": [
+          "Preserve evidence and establish the cause through a technically competent, time-bound inquiry.",
+          "Review preventive maintenance, compartment integrity, alarms, pumping arrangements and emergency drills in light of verified findings.",
+          "Publish non-sensitive lessons and corrective actions while protecting operationally sensitive information.",
+          "Track implementation through responsible authorities and readiness audits."
+        ],
+        "whyInNews": "The Press Information Bureau’s official summary reports an incident of water ingress onboard INS Kesari at Visakhapatnam. It does not provide further incident details; therefore, the news relevance is limited to the reported occurrence and its potential naval-safety implications."
+      },
+      "sourceId": "src_051bd8c5d18f16f2899572e511f2a0cca139209882349418dd69218ca9b98488",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The PIB text supports additional facts—31 October 2026, no reported deaths or injuries, pumping underway, and a planned formal inquiry—that the note’s recall card and pocketRead omit; this is conservative rather than erroneous.",
+          "The analysis appropriately labels shipboard damage-control measures and broader implications as analytical, but individual answer use should preserve that distinction.",
+          "The proposed GS3.7 Disaster and disaster management anchor is defensible as an illustrative emergency-management lens, though a shipboard incident is not necessarily a disaster under any statutory definition.",
+          "GS3.8 is a weak fit: the source reports no external-state or non-state-actor dimension; GS3.6 is not identified in the supplied material as a relevant official syllabus item.",
+          "The use line’s phrases ‘naval safety,’ ‘damage control,’ ‘institutional accountability’ and ‘operational resilience’ are valid analytical applications, not incident-specific findings.",
+          "The ‘official summary’ wording is imprecise because the supplied PIB extract contains a dated press-release body with operational details, not merely a title.",
+          "The note’s claim that the official record provides no timing, casualties, response measures or inquiry findings is contradicted by the supplied PIB text, although the corresponding prelims trap correctly limits the summary as defined there.",
+          "The suggested maintenance, alarms, pumping arrangements and drills are sensible hypothetical review areas, but should remain explicitly conditional on inquiry findings."
+        ],
+        "agrees": false,
+        "confidence": 0.99,
+        "flagged_claims": [
+          "The note says the official record establishes only the incident title, but the PIB text also states 31 October 2026, no reported deaths or injuries, pumping operations underway, and that a formal inquiry will be initiated.",
+          "The prelims trap says the official summary does not state whether anyone was injured or whether pumping operations began, but the supplied PIB text expressly reports no injuries and pumping underway.",
+          "The prelims trap says the summary does not record an inquiry, but the supplied PIB text says a formal inquiry will be initiated.",
+          "The note assigns GS3.8 external-state and non-state actors as an anchor despite no supported or analytical link to any external or non-state security challenge; this is a wrong syllabus tagging for the reported facts."
+        ],
+        "verificationVersion": 2
+      }
+    },
     {
       "anchor": "Para-athletics and inclusion of persons with disabilities; GS2.6",
       "checkedAt": "2026-10-21T00:36:36Z",
