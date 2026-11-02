@@ -1,5 +1,38 @@
 [
   {
+    "id": 119,
+    "title": "Meta\u2019s generated tests caught 74 privacy bugs before code landed",
+    "excerpt": "Meta moved LLM-generated, executable test cases into its production development workflow. In the first half of 2026, the system caught 74 serious privacy bugs before landing and reduced privacy-severity incidents by 20 percent during that period.",
+    "readTime": "2 min read",
+    "category": "career",
+    "learningPath": "career",
+    "difficulty": "Advanced",
+    "forPersona": [
+      "Developers",
+      "Engineering managers",
+      "Students"
+    ],
+    "uniqueId": "daily-career-meta-s-generated-tests-caught-74-privacy-bugs-before-code-la-1793613160923",
+    "date": "Nov 2, 2026",
+    "dateISO": "2026-11-02T09:52:40Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Catching Bugs Before They Land: JiTTesting\u2019s Human-on-the-Loop Approach at Full Scale",
+        "url": "https://engineering.fb.com/2026/10/29/security/catching-bugs-before-they-land-jittestings-human-on-the-loop-approach-at-full-scale/"
+      },
+      {
+        "title": "The Big Bug Backlog: How AI is digging up decades of overlooked security flaws",
+        "url": "https://contabo.com/blog/the-big-bug-backlog-how-ai-is-digging-up-decades-of-overlooked-security-flaws/"
+      },
+      {
+        "title": "Cloudflare Blog",
+        "url": "https://blog.cloudflare.com/?utm_referrer=blog"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>On October 29, 2026, Meta described the production deployment of Catching Just-in-Time Tests, or JiTTests. The system generates tests for individual code changes and runs them before the changes land.</p>\n<p>Meta reported that 589 engineers had engaged with the system. Sixty percent of reported findings were judged true positives. During the first half of 2026, JiTTests helped catch 74 serious privacy bugs at the diff stage. Meta said privacy SEVs fell by 20 percent in that period.</p>\n<h2>The technical idea</h2>\n<p>JiTTests do not ask a model to review a diff and write a comment. They ask it to produce an executable test that demonstrates a behavioral difference introduced by the change. The test is meant to fail when the change creates a concrete problem.</p>\n<p>Meta uses two workflows. The intent-aware workflow infers what a change is trying to do and targets likely failure points. The dodgy-diff workflow assumes every change may be wrong. It treats the diff like a mutation and generates tests that distinguish the changed code from its parent.</p>\n<p>That second workflow matters because it does not depend on the model correctly understanding the developer's intent. It searches for observable behavior that changed, then asks whether the difference violates an expected property.</p>\n<h2>The catch</h2>\n<p>Generated tests produce weak catches as well as real bugs. A failing test can expose a defect, or it can reflect an invalid assumption, an unstable environment, or an irrelevant behavioral difference.</p>\n<p>Meta filters these results with rules and an ensemble called LLM-as-Judge. The ensemble examines the generated test, the failure code, the execution trace, and the diff. It ranks findings before deciding whether to involve a human engineer.</p>\n<p>This is a human-on-the-loop design. Engineers set thresholds and review aggregate outcomes instead of inspecting every generated test. The reported 60 percent true-positive rate still means the system creates substantial review work, but it concentrates that work on higher-ranked findings.</p>\n<h2>What engineers can use</h2>\n<p>The useful boundary is narrow: generate tests at the diff stage, execute them against the parent and child versions, and report only behavioral differences that can be tied to the change. This is closer to mutation testing than to ordinary AI code review.</p>\n<p>For a local prototype, start with a small subsystem and require every model output to compile and run in CI. Store the generated test, both execution results, the trace, and the human disposition. Measure true positives and review time, not the number of generated tests.</p>\n<p>The main career implication is practical. Engineers who can define invariants, build reliable test harnesses, and triage automated findings will get more value from coding models than engineers who treat generated prose as a review result.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Treat generated tests as executable evidence, not review prose.</li>\n<li>Compare parent and child behavior when evaluating a diff.</li>\n<li>Track true-positive rate, review cost, and escaped defects.</li>\n<li>Learn to define invariants that automated test generation can check.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://engineering.fb.com/2026/10/29/security/catching-bugs-before-they-land-jittestings-human-on-the-loop-approach-at-full-scale/\" target=\"_blank\" rel=\"noopener\">Catching Bugs Before They Land: JiTTesting\u2019s Human-on-the-Loop Approach at Full Scale</a> \u2014 engineering.fb.com</li>\n<li><a href=\"https://contabo.com/blog/the-big-bug-backlog-how-ai-is-digging-up-decades-of-overlooked-security-flaws/\" target=\"_blank\" rel=\"noopener\">The Big Bug Backlog: How AI is digging up decades of overlooked security flaws</a> \u2014 contabo.com</li>\n<li><a href=\"https://blog.cloudflare.com/?utm_referrer=blog\" target=\"_blank\" rel=\"noopener\">Cloudflare Blog</a> \u2014 blog.cloudflare.com</li>\n</ul>"
+  },
+  {
     "id": 118,
     "title": "GPT-6.1 Terra targets cheaper, faster computer-use workflows",
     "excerpt": "OpenAI released GPT-6.1 Terra on October 26, 2026, with computer-use and visual-reasoning support. OpenAI\u2019s published comparison says Terra matched GPT-6 Astra at one-tenth the token price and completed tasks more than three times faster on average than Astra and GPT-6.1 Sol.",
