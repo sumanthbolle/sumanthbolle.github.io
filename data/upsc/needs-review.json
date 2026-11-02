@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-02T00:40:54Z",
-  "itemCount": 21,
+  "generatedAt": "2026-11-02T05:55:51Z",
+  "itemCount": 22,
   "items": [
     {
       "anchor": "GS3.8 Internal security: external state and non-state actors; GS3.7 Disaster and disaster management",
@@ -3986,6 +3986,163 @@
         "flagged_claims": [
           "Verification was unavailable; retry before publishing"
         ]
+      }
+    },
+    {
+      "anchor": "Agricultural policy implementation and farmer-centred mobilisation",
+      "checkedAt": "2026-11-02T05:55:51Z",
+      "codes": [
+        "GS3.3",
+        "GS2.6"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_fe9a079218806bbd4c4309cbfb1c310cf263bb4a6d89843e2ddcfd206967b379` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.99\n- **checked at:** 2026-11-02T05:55:51Z\n\nFlagged claims:\n- \"The supplied official summary contains only the campaign title\" is contradicted by the official PIB release, which states objectives, activities, duration, agencies and targets.[1][2]\n- \"No supporting text is available in officialSummary to establish the implementing institution\" is wrong: the Ministry of Agriculture and Farmers Welfare is identified as organising the campaign.[1][2]\n- \"The record identifies the item only as ‘Khet Bachaao Abhiyaan - Rabi 2026’\" is false as a description of the official record; PIB provides substantial programme details beyond the title.[1][2]\n- \"Its objectives, instruments, coverage and outcomes cannot be verified from the supplied record\" overstates the limitation: objectives, instruments and nationwide coverage are verified, although outcomes are not.[1][2]\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_fe9a079218806bbd4c4309cbfb1c310cf263bb4a6d89843e2ddcfd206967b379",
+        "title": "Needs review: src_fe9a079218806bbd4c4309cbfb1c310cf263bb4a6d89843e2ddcfd206967b379 verification disagreed"
+      },
+      "note": {
+        "anchor": "Agricultural policy implementation and farmer-centred mobilisation",
+        "argumentsAgainst": [
+          "The supplied officialSummary contains only the campaign title, so its objectives, instruments, coverage and outcomes cannot be verified.",
+          "A campaign title alone does not establish whether the initiative is a scheme, awareness drive, subsidy programme or field intervention."
+        ],
+        "argumentsFor": [
+          "A farmer-focused campaign can potentially draw attention to crop protection and agricultural resilience.",
+          "The seasonal reference to Rabi may indicate relevance to the winter-cropping cycle, but the source does not provide operational details."
+        ],
+        "background": [
+          "The Press Information Bureau record identifies the item only as “Khet Bachaao Abhiyaan - Rabi 2026.”",
+          "No supporting text is available in officialSummary to establish the implementing institution beyond the publisher or to explain the campaign’s mechanism."
+        ],
+        "codes": [
+          "GS3.3",
+          "GS2.6"
+        ],
+        "editorialStatus": "source-backed",
+        "id": "note_fe9a079218806bbd4c4309cbfb1c310cf263bb4a6d89843e2ddcfd206967b379",
+        "indiaImplications": [
+          "Any implications for food security, farm incomes, crop protection, irrigation, procurement or state implementation remain unverified from the supplied record.",
+          "A complete assessment would require the campaign’s official objectives, implementing agencies, target beneficiaries, geographic coverage, funding pattern and monitoring indicators."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Distinguish an announcement title from an evidenced policy design.",
+              "Assess agricultural interventions through objectives, delivery mechanism, beneficiary targeting, centre–state coordination and measurable outcomes.",
+              "Address the limits of evidence before drawing conclusions about food security or farmer welfare."
+            ],
+            "conclusionPrompt": "Conclude with a proportionate, evidence-based reform agenda rather than assuming that a campaign title proves implementation success.",
+            "counterPosition": "A campaign may be useful for seasonal mobilisation, but without verified design and outcome data its effectiveness cannot be established.",
+            "diagramSuggestion": "Illustration: policy intent → implementing agency → farm-level delivery → crop protection/income outcome → monitoring feedback.",
+            "directive": "discuss",
+            "introChoices": [
+              "The title “Khet Bachaao Abhiyaan - Rabi 2026” raises an agricultural-policy issue, but the available official summary does not disclose the programme’s design.",
+              "Seasonal agricultural campaigns matter only when institutional responsibility, delivery instruments and outcome indicators convert mobilisation into farm-level results."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "The title “Khet Bachaao Abhiyaan - Rabi 2026” raises an agricultural-policy issue, but the available official summary does not disclose the programme’s design.",
+              "Seasonal agricultural campaigns matter only when institutional responsibility, delivery instruments and outcome indicators convert mobilisation into farm-level results.",
+              "Distinguish an announcement title from an evidenced policy design.",
+              "Assess agricultural interventions through objectives, delivery mechanism, beneficiary targeting, centre–state coordination and measurable outcomes.",
+              "Address the limits of evidence before drawing conclusions about food security or farmer welfare.",
+              "A campaign may be useful for seasonal mobilisation, but without verified design and outcome data its effectiveness cannot be established.",
+              "Conclude with a proportionate, evidence-based reform agenda rather than assuming that a campaign title proves implementation success."
+            ],
+            "stem": "Discuss how a seasonal farmer-oriented campaign should be evaluated before it is presented as an effective agricultural intervention.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2331385",
+            "text": "Khet Bachaao Abhiyaan - Rabi 2026",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS3",
+          "GS2"
+        ],
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The supplied officialSummary records only the title “Khet Bachaao Abhiyaan - Rabi 2026.”",
+            "statement": "The official summary identifies the item as “Khet Bachaao Abhiyaan - Rabi 2026.”"
+          },
+          {
+            "correct": false,
+            "explanation": "The supplied record does not state that the campaign is a subsidy, insurance programme, procurement intervention or crop-protection operation.",
+            "statement": "The record establishes that Khet Bachaao Abhiyaan is a government subsidy scheme."
+          },
+          {
+            "correct": false,
+            "explanation": "No implementing ministry, department or agency is named in officialSummary.",
+            "statement": "The record identifies the implementing ministry for Khet Bachaao Abhiyaan."
+          },
+          {
+            "correct": false,
+            "explanation": "The source provides no verified details on geography, beneficiaries, budget, crops or outcomes.",
+            "statement": "The record provides the campaign’s coverage, budget and measurable outcomes."
+          }
+        ],
+        "priority": 64,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 45,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 50
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-11-02T05:55:45Z",
+        "publisherId": "pib",
+        "publisherName": "Press Information Bureau",
+        "recallCard": "The record supplies only the title “Khet Bachaao Abhiyaan - Rabi 2026.” Treat it as an agricultural-policy issue, not as evidence of a scheme’s design, implementation or success. Evaluate any such campaign through agency, instruments, beneficiaries, delivery and outcomes.",
+        "reusableAnchors": [],
+        "sourceContentHash": "ff665ca9dbd8240ba66cea2871cac10fbd30834e187adf26dc885e9c9b61ab11",
+        "sourceId": "src_fe9a079218806bbd4c4309cbfb1c310cf263bb4a6d89843e2ddcfd206967b379",
+        "sourceTitle": "Khet Bachaao Abhiyaan - Rabi 2026",
+        "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2331385",
+        "staticDefinition": "A seasonal agricultural campaign is, in general, a time-bound public initiative associated with a crop cycle; however, the supplied record does not define this campaign’s legal status, implementing institution or operational mechanism.",
+        "use": "Use the item to frame questions on evidence-based agricultural governance, seasonal farm support and the need to distinguish policy announcements from verified implementation.",
+        "wayForward": [
+          "Obtain the full official release or scheme guidelines before asserting objectives, agencies, funding or coverage.",
+          "Assess the intervention against clearly stated farm-level indicators such as access, adoption, crop protection, income stability and grievance resolution.",
+          "Publish implementation responsibilities, beneficiary criteria, monitoring data and independent outcome evaluations.",
+          "Coordinate agricultural extension, local administration and farmer organisations if the campaign involves field mobilisation."
+        ],
+        "whyInNews": "The Press Information Bureau record dated 2 November 2026 carries the title “Khet Bachaao Abhiyaan - Rabi 2026.” The supplied official summary contains no further description, so the campaign’s purpose, mechanism and practical consequences cannot be established without additional official text."
+      },
+      "sourceId": "src_fe9a079218806bbd4c4309cbfb1c310cf263bb4a6d89843e2ddcfd206967b379",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The note treats the supplied extract as title-only, but the official PIB material describes objectives, agencies, activities, dates and indicative targets.[1][2]",
+          "The campaign is more specifically tied to balanced fertilizer use, soil health, crop diversification and sustainable farming than the generic anchor suggests.[1]",
+          "The source supports identifying the Agriculture Ministry as the organising ministry and ATMA, ICAR and KVKs as implementation channels.[1][2]",
+          "The campaign period is 22 October–30 November 2026, not merely an unspecified seasonal initiative.[1][2]",
+          "The note's caution about distinguishing announcements from outcomes remains valid, but implementation activities are documented even if outcome success is not established.",
+          "GS3.3 is a reasonable fit through agriculture, cropping patterns, inputs and sustainable farming; GS2.6 is defensible only if framed through governance and implementation, not as the primary subject.",
+          "The diagram is explicitly labelled an illustration and is analytically sound, but its crop-protection/income-outcome pathway should not imply that those outcomes have been demonstrated.",
+          "The proposed use line is sound, though it should incorporate the campaign's stated instruments and implementation architecture."
+        ],
+        "agrees": false,
+        "confidence": 0.99,
+        "flagged_claims": [
+          "\"The supplied official summary contains only the campaign title\" is contradicted by the official PIB release, which states objectives, activities, duration, agencies and targets.[1][2]",
+          "\"No supporting text is available in officialSummary to establish the implementing institution\" is wrong: the Ministry of Agriculture and Farmers Welfare is identified as organising the campaign.[1][2]",
+          "\"The record identifies the item only as ‘Khet Bachaao Abhiyaan - Rabi 2026’\" is false as a description of the official record; PIB provides substantial programme details beyond the title.[1][2]",
+          "\"Its objectives, instruments, coverage and outcomes cannot be verified from the supplied record\" overstates the limitation: objectives, instruments and nationwide coverage are verified, although outcomes are not.[1][2]"
+        ],
+        "verificationVersion": 2
       }
     }
   ]
