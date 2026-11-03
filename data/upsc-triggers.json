@@ -1,10 +1,55 @@
 {
-  "generated": "2026-10-31T07:17:27.831Z",
+  "generated": "2026-11-03T08:17:01.763Z",
   "provisional": true,
   "note": "The current trigger layer for anchors in data/upsc-patterns.json, refreshed one anchor per day. Every item carries the source it came from; items not from a primary document must be confirmed against one before they enter permanent notes.",
   "patternsVersion": "1.0.0",
-  "anchorsHeld": 4,
+  "anchorsHeld": 5,
   "anchors": {
+    "parliamentary-functioning": {
+      "refreshedAt": "2026-11-03T08:17:01.746Z",
+      "anchor": "Parliamentary functioning and accountability",
+      "codes": [
+        "GS2.4"
+      ],
+      "papers": [
+        "GS2"
+      ],
+      "confidence": "medium",
+      "primarySources": 3,
+      "omitted": "Recent developments on anti-defection, committee referral rates, and parliamentary disruptions were omitted because the available sources did not adequately support them with specific primary documents.",
+      "items": [
+        {
+          "title": "Parliament functioned for 26 days in Budget Session",
+          "date": "2025-04-04",
+          "why": "The latest functioning data enables evaluation of accountability through actual sitting time and Question Hour performance, not formal parliamentary design alone.",
+          "use": "Use the 2025 Budget Session: both Houses functioned for 26 days; Lok Sabha Question Hour operated at 78% of scheduled time.",
+          "verb": "evaluate",
+          "url": "https://prsindia.org/parliamenttrack/vital-stats/parliament-functioning-in-budget-session-2025?ref=static.internetfreedom.in",
+          "source": "PRS Legislative Research",
+          "primary": true
+        },
+        {
+          "title": "Conference of Public Accounts Committees announced",
+          "date": "2026-11-01",
+          "why": "The institutional focus on PACs broadens parliamentary accountability from floor scrutiny toward systematic examination of public expenditure and audit findings.",
+          "use": "Use the 2026 PAC conference theme, “Audit, Accountability and Good Governance,” to argue for strengthening post-expenditure legislative scrutiny.",
+          "verb": "discuss",
+          "url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2331150&reg=3&lang=1",
+          "source": "Press Information Bureau",
+          "primary": true
+        },
+        {
+          "title": "Private Members’ business remained limited",
+          "date": "2025-04-04",
+          "why": "Limited Private Members’ business indicates that agenda control and executive legislative dominance constrain non-government representatives’ deliberative and agenda-setting roles.",
+          "use": "Use the 2025 Budget Session example: Lok Sabha discussed no Private Members’ Bill and only two resolutions; Rajya Sabha discussed one Bill and one resolution.",
+          "verb": "critically examine",
+          "url": "https://prsindia.org/parliamenttrack/vital-stats/parliament-functioning-in-budget-session-2025?ref=static.internetfreedom.in",
+          "source": "PRS Legislative Research",
+          "primary": true
+        }
+      ]
+    },
     "judicial-review-and-activism": {
       "refreshedAt": "2026-10-31T07:17:27.819Z",
       "anchor": "Judicial review and judicial activism",
