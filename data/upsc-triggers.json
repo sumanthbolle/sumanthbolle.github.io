@@ -1,10 +1,57 @@
 {
-  "generated": "2026-11-03T08:17:01.763Z",
+  "generated": "2026-11-04T07:45:56.027Z",
   "provisional": true,
   "note": "The current trigger layer for anchors in data/upsc-patterns.json, refreshed one anchor per day. Every item carries the source it came from; items not from a primary document must be confirmed against one before they enter permanent notes.",
   "patternsVersion": "1.0.0",
-  "anchorsHeld": 5,
+  "anchorsHeld": 6,
   "anchors": {
+    "population-and-demography": {
+      "refreshedAt": "2026-11-04T07:45:56.013Z",
+      "anchor": "Population and demographic transition",
+      "codes": [
+        "GS1.5",
+        "GS3.1"
+      ],
+      "papers": [
+        "GS1",
+        "GS3"
+      ],
+      "confidence": "medium",
+      "primarySources": 2,
+      "omitted": "Ageing-specific developments and state-level fertility or migration changes were omitted because the available results did not provide sufficiently specific, primary-source support within the period.",
+      "items": [
+        {
+          "title": "Census 2027 notification issued",
+          "date": "2025-06-16",
+          "why": "The delayed census makes demographic governance data-deficient and makes the forthcoming enumeration central to recalibrating population-linked policy and representation debates.",
+          "use": "Use Census 2027 to argue that updated population data is necessary for targeting welfare, planning services and evaluating demographic-transition differences after the delayed 2021 Census.",
+          "verb": "discuss",
+          "url": "https://pib.gov.in/PressNoteDetails.aspx?ModuleId=3&NoteId=154867&lang=2&reg=3",
+          "source": "Press Information Bureau",
+          "primary": true
+        },
+        {
+          "title": "UNFPA reports unmet fertility intentions",
+          "date": "2025-07-02",
+          "why": "It reframes low fertility from individual preference alone toward a structural mismatch between fertility intentions and economic, social and institutional conditions.",
+          "use": "Use the report’s finding that many people want children, or more children, than they can have to connect fertility decline with costs, care and gender constraints.",
+          "verb": "examine",
+          "url": "https://asiapacific.unfpa.org/en/publications/highlights-state-world-population-report-2025?page=1",
+          "source": "UNFPA Asia and the Pacific",
+          "primary": false
+        },
+        {
+          "title": "PLFS reports June 2025 labour indicators",
+          "date": "2025-06-01",
+          "why": "Current labour-market participation shows that demographic potential depends on converting working-age population into employment, especially by raising women’s participation.",
+          "use": "Use June 2025 CWS data: overall labour-force participation was 41.0%, with female participation at 24.5%, linking demographic dividend to gendered employment conversion.",
+          "verb": "critically examine",
+          "url": "https://www.pib.gov.in/PressReleaseDetail.aspx?PRID=2144849",
+          "source": "Press Information Bureau",
+          "primary": true
+        }
+      ]
+    },
     "parliamentary-functioning": {
       "refreshedAt": "2026-11-03T08:17:01.746Z",
       "anchor": "Parliamentary functioning and accountability",
