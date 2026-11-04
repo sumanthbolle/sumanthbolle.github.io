@@ -1,0 +1,180 @@
+{
+  "anchor": "GS2.5 Governance: transparency, accountability, e-governance, citizen charters; GS2.7 Statutory, reg",
+  "argumentsAgainst": [
+    "User-generated tests may have uneven geographic and demographic coverage, limiting representativeness.",
+    "Observed performance data may differ from standardised quality-of-service assessments and should not alone determine regulatory conclusions.",
+    "Privacy, data quality and possible misuse of location-linked information require safeguards."
+  ],
+  "argumentsFor": [
+    "Makes location-specific network experience more visible to consumers.",
+    "Can help telecom service providers identify areas requiring network optimisation.",
+    "Supports evidence-based monitoring by TRAI and strengthens consumer participation in governance.",
+    "Web-based DND access can make commercial-communication preferences and complaint tracking more convenient."
+  ],
+  "background": [
+    "TRAI’s Network Anubhav Platform combines user test data from its MySpeed and MyCall apps with TRAI independent drive-test data.",
+    "The platform uses geospatial visualisation, filters, supporting tables and downloadable reports to display cellular and fixed-broadband observations by service provider and technology.",
+    "The source-supported static context is that TRAI’s regulatory mandate includes consumer protection and quality-of-service oversight; its statutory basis and detailed functions are established in the TRAI materials returned in search results"
+  ],
+  "codes": [
+    "GS2.5",
+    "GS2.7",
+    "GS3.6"
+  ],
+  "editorialStatus": "source-backed",
+  "id": "note_d7fc453d41290a79dd8dcdbd6fa15d8c7bee0ea6441513767d5f2b0c6884168c",
+  "indiaImplications": [
+    "Improves information symmetry between consumers, telecom service providers and the regulator.",
+    "May support more targeted network investment and localised quality-of-service interventions.",
+    "Creates an avenue for citizen-generated evidence in regulatory monitoring.",
+    "DND web access may improve consumer control over commercial communication and complaint follow-up."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Consumer empowerment and transparency",
+        "Regulatory capacity and evidence-based governance",
+        "Digital inclusion, privacy and data quality",
+        "Role of telecom providers in service improvement"
+      ],
+      "conclusionPrompt": "Conclude with safeguards and institutional cooperation needed to convert transparency into reliable network-quality improvement.",
+      "counterPosition": "A dashboard can expose observed experience but cannot by itself provide a comprehensive or standardised assessment of network quality.",
+      "diagramSuggestion": "Flow: MySpeed/MyCall and independent drive tests → geospatial dashboard → consumer choice, provider optimisation and TRAI monitoring.",
+      "directive": "examine",
+      "introChoices": [
+        "TRAI’s Network Anubhav Platform illustrates how regulatory technology can convert dispersed user experience into publicly usable evidence.",
+        "The platform links citizen-generated telecom observations with regulatory monitoring, while retaining the limitation that user tests are not a comprehensive standardised quality as"
+      ],
+      "marks": 10,
+      "skeleton": [
+        "TRAI’s Network Anubhav Platform illustrates how regulatory technology can convert dispersed user experience into publicly usable evidence.",
+        "The platform links citizen-generated telecom observations with regulatory monitoring, while retaining the limitation that user tests are not a comprehensive standardised quality as",
+        "Consumer empowerment and transparency",
+        "Regulatory capacity and evidence-based governance",
+        "Digital inclusion, privacy and data quality",
+        "Role of telecom providers in service improvement",
+        "A dashboard can expose observed experience but cannot by itself provide a comprehensive or standardised assessment of network quality.",
+        "Conclude with safeguards and institutional cooperation needed to convert transparency into reliable network-quality improvement."
+      ],
+      "stem": "Examine how the Network Anubhav Platform can improve telecom governance while addressing the limitations of user-generated network data.",
+      "timeMinutes": 7,
+      "wordBudget": 150
+    }
+  ],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2332534",
+      "text": "The Telecom Regulatory Authority of India (TRAI) Launches Network Anubhav Platform",
+      "verification": "source-backed"
+    }
+  ],
+  "papers": [
+    "GS2",
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Illustration: using a local observation",
+      "text": "Suppose users in a locality repeatedly contribute speed or call-quality observations through TRAI applications. The platform could make those observations visible by location and service provider, while TRAI and providers interpret them alongside independent drive-test data. This is a hypothetical illustration, not a reported event."
+    },
+    "excerpt": "TRAI’s Network Anubhav Platform brings user and independent drive-test observations into a geospatial dashboard, with web access to DND facilities.",
+    "question": {
+      "answer": "It can improve transparency and help consumers, providers and TRAI act on location-specific evidence; however, user-test coverage and methodology limitations mean that dashboard observations should complement, not replace, standardised assessments.",
+      "prompt": "How should a regulator use a geospatial telecom dashboard without treating user-generated observations as a complete quality assessment?"
+    },
+    "sections": [
+      {
+        "heading": "A regulatory dashboard for network experience",
+        "paragraphs": [
+          "On 4 November 2026, TRAI launched the Network Anubhav Platform. It combines test results from TRAI’s MySpeed and MyCall apps with TRAI independent drive-test data and displays network observations through geospatial maps.",
+          "Users can examine cellular and fixed-broadband results by service provider and technology, including download and upload-speed parameters. The platform also provides filters, supporting tables and downloadable reports."
+        ]
+      },
+      {
+        "heading": "Transparency with a defined limitation",
+        "paragraphs": [
+          "The platform shows percentile values from user tests, including P50, P80 for mobile broadband and P90 for fixed broadband, as described in the official release. The release cautions that user-test values do not constitute a comprehensive assessment based on standard methodology.",
+          "The dashboard can nevertheless provide useful information about other users’ experience at particular locations. Telecom providers can use location, time and technical-parameter data for network analysis, while TRAI can use aggregated insights for monitoring and network-performance improvement."
+        ]
+      },
+      {
+        "heading": "Consumer control beyond network maps",
+        "paragraphs": [
+          "The platform provides web access to DND facilities. Consumers can set preferences for commercial communication, submit complaints about unsolicited commercial communication, track complaint status and view consolidated and service-provider-wise complaint information.",
+          "The MySpeed SDK also permits eligible third-party applications to integrate connectivity-measurement capabilities. Wider participation may expand the volume and coverage of real-world measurements, but interpretation should continue to account for representativeness and methodological limits."
+        ]
+      }
+    ],
+    "title": "TRAI launches a geospatial dashboard for telecom network experience"
+  },
+  "prelimsTraps": [
+    {
+      "correct": true,
+      "explanation": "The official release says the platform uses test results from TRAI’s MySpeed and MyCall apps.",
+      "statement": "The platform uses data from TRAI’s MySpeed and MyCall apps."
+    },
+    {
+      "correct": true,
+      "explanation": "The platform includes TRAI independent drive-test data as well as user test data.",
+      "statement": "The platform incorporates TRAI independent drive-test data."
+    },
+    {
+      "correct": false,
+      "explanation": "The release expressly states that user-test values do not represent a comprehensive assessment based on standard methodology.",
+      "statement": "User-generated percentile values alone provide a comprehensive standardised assessment of network quality."
+    },
+    {
+      "correct": true,
+      "explanation": "The source describes P50 as the median speed, with half of tests at or above that value.",
+      "statement": "P50 means that half of the recorded tests were at or above the reported speed."
+    }
+  ],
+  "priority": 71,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 80,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 25
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-11-04T11:02:34Z",
+  "publisherId": "pib",
+  "publisherName": "Press Information Bureau",
+  "recallCard": "TRAI’s Network Anubhav Platform combines MySpeed/MyCall user tests with independent drive-test data in geospatial maps. It supports consumer transparency, provider optimisation, TRAI monitoring and web-based DND services, but user-test results are not comprehensive standardised network assessments.",
+  "reusableAnchors": [],
+  "sourceContentHash": "9231add6858872a1ff42bcf9c3730d9a25631314ff0216185e00f93fcd4e3e10",
+  "sourceId": "src_d7fc453d41290a79dd8dcdbd6fa15d8c7bee0ea6441513767d5f2b0c6884168c",
+  "sourceTitle": "The Telecom Regulatory Authority of India (TRAI) Launches Network Anubhav Platform",
+  "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2332534",
+  "staticDefinition": "A geospatial regulatory dashboard links observations to location so that users, service providers and regulators can examine spatial patterns. In this case, TRAI’s platform presents telecom test data and independent drive-test information, while its user-test percentiles describe observed tests rather than a complete s",
+  "use": "Use as an example of e-governance, regulatory technology, consumer empowerment, data-driven oversight and the limits of citizen-generated data in telecom quality-of-service regulation.",
+  "verification": {
+    "advisory_notes": [
+      "The source extract is dated 4 November 2026, while the supplied retrievedAt value is only a download time; the note correctly uses the document’s stated date.",
+      "“MySpeed SDK enables eligible third-party apps” is supported by the supplied release, but the proposed participation and coverage benefits are analytical implications rather than reported outcomes.",
+      "Claims about privacy, demographic representativeness, digital inclusion, and targeted investment are reasonable UPSC analysis but are not established facts in the release.",
+      "“Strengthens consumer participation in governance” is evaluative framing; the source supports consumer contribution and access, not a measured governance outcome.",
+      "The statutory mandate and detailed TRAI functions are asserted in the note but are not demonstrated by the supplied extract; retain only after separate primary-source verification.",
+      "The proposed anchors are broadly relevant: e-governance, transparency, consumer protection, statutory regulation, and technology-driven governance fit GS2; GS3.6 is weaker and should be retained only if explicitly tied to technology applica",
+      "The pocketRead statement that the platform can help providers and TRAI act on location-specific evidence is an inference, though the release supports provider analysis and TRAI monitoring uses.",
+      "The hypothetical locality example is clearly labelled as an illustration and does not present a real event; its mechanism is consistent with the platform description."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-11-04T11:02:34Z",
+    "confidence": 0.94,
+    "flagged_claims": [],
+    "noteContentHash": "a7eafdd54094ed393204a0e129fdfb3dc8a55f4c97f07c4ee0b906169b36b663",
+    "sourceContentHash": "9231add6858872a1ff42bcf9c3730d9a25631314ff0216185e00f93fcd4e3e10",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Publish clear methodology, coverage limitations and interpretation guidance for dashboard indicators.",
+    "Use user-generated observations alongside independent drive tests and standardised quality-of-service assessments.",
+    "Expand participation through accessible interfaces and eligible third-party integrations while protecting privacy and preventing misuse of location-linked data.",
+    "Enable telecom providers and TRAI to convert recurring localised observations into transparent, time-bound network-improvement actions."
+  ],
+  "whyInNews": "On 4 November 2026, TRAI launched the Network Anubhav Platform, a geospatial and analytical dashboard combining user-test data from its MySpeed and MyCall apps with TRAI independent drive-test data. It also provides web access to DND facilities, linking network transparency with consumer control over commercial communi"
+}
