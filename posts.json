@@ -1,5 +1,34 @@
 [
   {
+    "id": 122,
+    "title": "Cloudflare saw forged certificates from eMudhra keys as small as 4",
+    "excerpt": "Cloudflare found that eight eMudhra intermediate certificate keys were generated from tiny integers, including 4, 56, and 66. Anyone could recover the private keys from public certificates and forge certificates for affected domains until clients rejected them.",
+    "readTime": "3 min read",
+    "category": "career",
+    "learningPath": "career",
+    "difficulty": "Advanced",
+    "forPersona": [
+      "Developers",
+      "Engineering managers",
+      "Students"
+    ],
+    "uniqueId": "daily-career-cloudflare-saw-forged-certificates-from-emudhra-keys-as-smal-1793872016200",
+    "date": "Nov 5, 2026",
+    "dateISO": "2026-11-05T09:46:56Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Cloudflare: 4 real? Tracking exploitation and patching of eMudhra\u2019s weak keys",
+        "url": "https://blog.cloudflare.com/emudhra-patching/"
+      },
+      {
+        "title": "This Week in Source Control: 4 November 2026",
+        "url": "https://github.com/andrew/nesbitt.io/blob/master/_posts/2026/2026-11-04-this-week-in-source-control.md"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>On October 19, 2026, Cloudflare learned that eMudhra had issued eight intermediate certificates with extremely weak private keys. The values included 4, 56, 66, 115, 155, 156, 230, and 237. These values should have been unpredictable 115-digit numbers, not small integers.</p>\n<p>Cloudflare patched its high-impact systems within hours. One week later, it had observed about 22,000 attempted TLS handshakes using the weak eMudhra keys. About two-thirds targeted test sites. Most remaining attempts targeted origins that appeared to have created certificates with the weak intermediate keys.</p>\n<h2>Why the cryptography failed</h2>\n<p>An intermediate certificate signs other certificates. Its private key must remain secret because possession of that key lets an attacker issue certificates that appear to chain to a trusted root.</p>\n<p>The eMudhra failure was not a difficult factorization problem. The affected private keys could be recovered almost instantly from the public certificates because the underlying secret values were tiny and predictable. An attacker could then create a certificate for any domain that did not enforce Certificate Transparency or otherwise reject the compromised intermediates.</p>\n<p>Cloudflare reported that one forged certificate was dated October 20 at 18:19 UTC, less than an hour after Mozilla\u2019s bug report became public. The timing shows that public disclosure was followed by practical exploitation.</p>\n<h2>The operational catch</h2>\n<p>Updating the certificate authority software was not enough. Cloudflare found that customers and services also needed to reject the vulnerable eMudhra keys. Its origin-facing Pingora proxies were patched in hours to refuse them, and all high-priority Cloudflare systems were patched by the time of the October 30 report.</p>\n<p>Cloudflare also used two probe connections on a fraction of challenge pages. One probe used a certificate signed by the weak eMudhra intermediate. The other used a normally signed certificate as a control. This let Cloudflare detect clients that accepted the compromised chain instead of relying only on server-side logs.</p>\n<p>Cloudflare said it had no evidence that the weak keys had been used to intercept its connections. It did find evidence that the keys had been used to forge certificates.</p>\n<h2>What engineers should do</h2>\n<p>The practical lesson is that cryptographic security includes key generation, certificate issuance, client validation, and rollout monitoring. A mathematically strong algorithm cannot compensate for a secret that is literally the number 4.</p>\n<p>Engineers who operate TLS clients should verify that their trust and revocation behavior matches the intended policy. Engineers who operate certificate authorities should add entropy and key-quality checks that reject obviously small or repeated private values before issuance.</p>\n<ul>\n<li>Inventory every intermediate certificate and record its issuer, key algorithm, public key, validity period, and revocation status.</li>\n<li>Test clients, proxies, service meshes, and libraries against a revoked or explicitly distrusted intermediate certificate.</li>\n<li>Treat certificate validation as a deployment dependency. A CA-side fix does not guarantee that every client rejects a compromised chain.</li>\n<li>For high-risk changes, add a control path that uses a known-good certificate and compare the results.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Audit intermediate certificates, not only leaf certificates.</li>\n<li>Test certificate rejection across every TLS client and proxy you operate.</li>\n<li>Add automated key-quality checks to certificate issuance pipelines.</li>\n<li>Monitor certificate validation with a known-good control path.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://blog.cloudflare.com/emudhra-patching/\" target=\"_blank\" rel=\"noopener\">Cloudflare: 4 real? Tracking exploitation and patching of eMudhra\u2019s weak keys</a> \u2014 blog.cloudflare.com</li>\n<li><a href=\"https://github.com/andrew/nesbitt.io/blob/master/_posts/2026/2026-11-04-this-week-in-source-control.md\" target=\"_blank\" rel=\"noopener\">This Week in Source Control: 4 November 2026</a> \u2014 github.com</li>\n</ul>"
+  },
+  {
     "id": 121,
     "title": "OpenTelemetry OBI 1.0 Makes Configuration Migration a Release Contract",
     "excerpt": "OpenTelemetry eBPF Instrumentation reached version 1.0.0 on October 30, 2026. The release shows how a production observability project can make compatibility, configuration migration, telemetry schemas, and artifact verification part of the product contract rather than treating them as release cleanup.",
