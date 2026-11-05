@@ -6,16 +6,28 @@ import { spawnSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
 export async function pocketNamespace(account, token, opener = fetch) {
-  const base = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(account)}/storage/kv/namespaces`;
+  const accountBase = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(account)}`;
+  const base = accountBase + '/storage/kv/namespaces';
   const title = 'wandering-haze-b394-UPSC_POCKET_FEED';
   async function call(url, method = 'GET', body) {
     const response = await opener(url, { method, signal: AbortSignal.timeout(20000),
       headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
       ...(body ? { body: JSON.stringify(body) } : {}) });
-    if (!response.ok) throw new Error(`Cloudflare namespace request failed (HTTP ${response.status})`);
+    if (!response.ok) {
+      if (response.status === 404 && url.endsWith('/settings')) return null;
+      throw new Error(`Cloudflare namespace request failed (HTTP ${response.status})`);
+    }
     const data = await response.json();
     if (data.success !== true) throw new Error('Cloudflare rejected the namespace request');
     return data;
+  }
+  // Native Cloudflare builds can provision the declared binding. Reuse its
+  // actual namespace rather than attaching a second, empty namespace later.
+  const settings = await call(accountBase + '/workers/scripts/wandering-haze-b394/settings');
+  const bound = settings?.result?.bindings?.find(row => row.type === 'kv_namespace' && row.name === 'UPSC_POCKET_FEED');
+  if (bound) {
+    if (!/^[a-f0-9]{32}$/.test(bound.namespace_id)) throw new Error('The existing Pocket binding has an invalid namespace ID');
+    return bound.namespace_id;
   }
   for (let page = 1; ; page++) {
     const data = await call(base + `?per_page=1000&page=${page}`);

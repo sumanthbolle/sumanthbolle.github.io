@@ -75,15 +75,23 @@ let namespaceCalls = [];
 const id = 'd'.repeat(32);
 assert.equal(await pocketNamespace('account', 'fixture-token', async (url, options) => {
   namespaceCalls.push(options.method);
+  assert.match(url, /\/workers\/scripts\/wandering-haze-b394\/settings$/);
+  return Response.json({ success: true, result: { bindings: [{ type: 'kv_namespace', name: 'UPSC_POCKET_FEED', namespace_id: id }] } });
+}), id);
+assert.deepEqual(namespaceCalls, ['GET'], 'reuse the deployed namespace without creating or swapping storage');
+namespaceCalls = [];
+assert.equal(await pocketNamespace('account', 'fixture-token', async (url, options) => {
+  namespaceCalls.push(options.method);
   return Response.json({ success: true, result: [{ title: 'wandering-haze-b394-UPSC_POCKET_FEED', id }] });
 }), id);
-assert.deepEqual(namespaceCalls, ['GET']);
+assert.deepEqual(namespaceCalls, ['GET', 'GET']);
 namespaceCalls = [];
 assert.equal(await pocketNamespace('account', 'fixture-token', async (url, options) => {
   namespaceCalls.push(options.method);
   return Response.json({ success: true, result: options.method === 'GET' ? [] : { id } });
 }), id);
-assert.deepEqual(namespaceCalls, ['GET', 'POST']);
+assert.deepEqual(namespaceCalls, ['GET', 'GET', 'POST']);
+await assert.rejects(pocketNamespace('account', 'fixture-token', async () => new Response('', { status: 403 })), /HTTP 403/);
 const config = deploymentConfig({ main: 'api/worker.js', vars: { EXISTING: 'preserved' },
   kv_namespaces: [{ binding: 'OTHER', id }] }, '/repo', 'account', id);
 assert.equal(config.main, '/repo/api/worker.js');
