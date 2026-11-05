@@ -1,50 +1,50 @@
 {
-  "generatedAt": "2026-11-05T03:55:38Z",
-  "newRecords": 8,
+  "generatedAt": "2026-11-05T06:38:13Z",
+  "newRecords": 0,
   "sources": {
     "eu-council": {
       "error": "",
-      "fetchedAt": "2026-11-05T03:55:38Z",
+      "fetchedAt": "2026-11-05T06:38:13Z",
       "recordCount": 20,
       "status": "ok"
     },
     "mea": {
-      "error": "",
-      "fetchedAt": "2026-11-05T03:55:38Z",
-      "recordCount": 20,
-      "status": "ok"
+      "error": "HTTP Error 403: Forbidden",
+      "fetchedAt": "2026-11-05T06:38:13Z",
+      "recordCount": 0,
+      "status": "error"
     },
     "pib": {
-      "error": "",
-      "fetchedAt": "2026-11-05T03:55:38Z",
-      "recordCount": 20,
-      "status": "ok"
+      "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'pib.gov.in'. (_ssl.c:1016)>",
+      "fetchedAt": "2026-11-05T06:38:13Z",
+      "recordCount": 0,
+      "status": "error"
     },
     "rbi": {
       "error": "",
-      "fetchedAt": "2026-11-05T03:55:38Z",
+      "fetchedAt": "2026-11-05T06:38:13Z",
       "recordCount": 10,
       "status": "ok"
     },
     "sebi": {
       "error": "",
-      "fetchedAt": "2026-11-05T03:55:38Z",
+      "fetchedAt": "2026-11-05T06:38:13Z",
       "recordCount": 30,
       "status": "ok"
     },
     "un-news": {
       "error": "",
-      "fetchedAt": "2026-11-05T03:55:38Z",
+      "fetchedAt": "2026-11-05T06:38:13Z",
       "recordCount": 30,
       "status": "ok"
     },
     "who": {
       "error": "",
-      "fetchedAt": "2026-11-05T03:55:38Z",
+      "fetchedAt": "2026-11-05T06:38:13Z",
       "recordCount": 83,
       "status": "ok"
     }
   },
-  "totalRecords": 5099,
+  "totalRecords": 5102,
   "updatedRecords": 2
 }
