@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-05T06:38:13Z",
-  "itemCount": 22,
+  "generatedAt": "2026-11-05T11:45:02Z",
+  "itemCount": 23,
   "items": [
     {
       "anchor": "GS3.8 Internal security: external state and non-state actors; GS3.7 Disaster and disaster management",
@@ -3815,6 +3815,196 @@
         "flagged_claims": [
           "Verification was unavailable; retry before publishing"
         ]
+      }
+    },
+    {
+      "anchor": "GS3.6 Science and technology: developments, applications, indigenisation, IPR; GS3.9 Security: commu",
+      "checkedAt": "2026-11-05T11:45:02Z",
+      "codes": [
+        "GS3.6",
+        "GS3.9",
+        "GS2.7"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_f7b8d6a932fcd1dfe6d30eb517cd11a6294c09ba2f342a35c07e196375119e2f` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.97\n- **checked at:** 2026-11-05T11:45:02Z\n\nFlagged claims:\n- “On 05 November 2026, TRAI released recommendations” is contradicted by the supplied PIB extract, whose displayed date is 05 November 2026 but whose requested PRID and search evidence point to a different or unresolved release record; the e\n- “The issue follows the Department of Telecommunications’ 03 July 2025 communication” conflicts with the official PIB/TRAI results, which identify DoT’s relevant request as dated 17 October 2024.\n- “The proposed framework is connected with assignment of spectrum for feeder links and user links” is supported, but presenting this as the recommendations’ settled content overstates the record, which clearly establishes the DoT request rat\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_f7b8d6a932fcd1dfe6d30eb517cd11a6294c09ba2f342a35c07e196375119e2f",
+        "title": "Needs review: src_f7b8d6a932fcd1dfe6d30eb517cd11a6294c09ba2f342a35c07e196375119e2f verification disagreed"
+      },
+      "note": {
+        "anchor": "GS3.6 Science and technology: developments, applications, indigenisation, IPR; GS3.9 Security: commu",
+        "argumentsAgainst": [
+          "The supplied officialSummary does not provide substantive grounds against the recommendations, so none can be stated as source-verified.",
+          "Spectrum assignment and authorisation design can involve competing policy objectives, but the record does not specify the competing objections."
+        ],
+        "argumentsFor": [
+          "A dedicated framework can provide greater regulatory clarity for satellite communication network providers.",
+          "Considering both feeder-link and user-link spectrum within the authorisation framework can help align network permission with spectrum assignment.",
+          "TRAI’s recommendations create a formal basis for policy consideration by the Government."
+        ],
+        "background": [
+          "The source record states that the Department of Telecommunications conveyed on 03 July 2025 that the Government proposed a Satellite Communication Network authorisation under Section 3(1)(b) of the Telecommunications Act, 2023.",
+          "The Department of Telecommunications requested terms and conditions for Satellite Communication Network authorisation, including assignment of spectrum for both feeder links and user links.",
+          "TRAI issued a consultation paper on the framework on 08 April 2026 before releasing its recommendations on 05 November 2026."
+        ],
+        "codes": [
+          "GS3.6",
+          "GS3.9",
+          "GS2.7"
+        ],
+        "editorialStatus": "source-backed",
+        "id": "note_f7b8d6a932fcd1dfe6d30eb517cd11a6294c09ba2f342a35c07e196375119e2f",
+        "indiaImplications": [
+          "A clear authorisation framework could reduce uncertainty for entities seeking to provide satellite communication networks in India.",
+          "Spectrum assignment rules covering feeder and user links may affect the technical and commercial viability of satellite networks.",
+          "The recommendations may influence connectivity in areas where terrestrial communication infrastructure is difficult to deploy, but the source does not establish any quantified impact.",
+          "Implementation would require coordination between TRAI and the Department of Telecommunications under the Telecommunications Act, 2023."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Explain the regulatory problem addressed by a Satellite Communication Network authorisation.",
+              "Distinguish feeder links from user links and relate both to spectrum assignment.",
+              "Discuss the role of TRAI as a sector regulator and the Department of Telecommunications as the concerned government department.",
+              "Assess potential benefits for connectivity, competition and regulatory certainty, while noting that the supplied record does not detail safeguards or implementation conditions."
+            ],
+            "conclusionPrompt": "Conclude with the need for a predictable, technology-neutral and public-interest-oriented framework, subject to transparent implementation.",
+            "counterPosition": "A separate authorisation framework may add regulatory complexity unless its scope is clearly harmonised with existing telecom authorisations and spectrum rules.",
+            "diagramSuggestion": "Illustrate: Satellite network provider authorisation → feeder-link spectrum + user-link spectrum → satellite communication services → users.",
+            "directive": "examine",
+            "introChoices": [
+              "TRAI’s recommendations place satellite communication within the broader challenge of regulating convergent telecom networks and scarce spectrum.",
+              "The issue links institutional design under the Telecommunications Act, 2023 with the technical architecture of satellite communication networks."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "TRAI’s recommendations place satellite communication within the broader challenge of regulating convergent telecom networks and scarce spectrum.",
+              "The issue links institutional design under the Telecommunications Act, 2023 with the technical architecture of satellite communication networks.",
+              "Explain the regulatory problem addressed by a Satellite Communication Network authorisation.",
+              "Distinguish feeder links from user links and relate both to spectrum assignment.",
+              "Discuss the role of TRAI as a sector regulator and the Department of Telecommunications as the concerned government department.",
+              "Assess potential benefits for connectivity, competition and regulatory certainty, while noting that the supplied record does not detail safeguards or implementation conditions.",
+              "A separate authorisation framework may add regulatory complexity unless its scope is clearly harmonised with existing telecom authorisations and spectrum rules.",
+              "Conclude with the need for a predictable, technology-neutral and public-interest-oriented framework, subject to transparent implementation."
+            ],
+            "stem": "Examine the significance of TRAI’s recommendations on Satellite Communication Network Provider authorisation and assignment of spectrum for feeder and user links. Discuss the regulatory and developmental implications for India.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2333145",
+            "text": "TRAI releases Recommendations on ‘The Framework for Satellite Communication Network Provider Authorisation, and Assignment of Spectrum to Satellite Communication Network Providers'",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS3",
+          "GS2"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Illustration",
+            "text": "Illustration: If a future provider seeks to operate a satellite communication network, a framework addressing authorisation and spectrum for both feeder and user links could clarify which regulatory permissions and frequency-use arrangements it must satisfy. This is a hypothetical example, not a reported event."
+          },
+          "excerpt": "TRAI has released recommendations on authorisation and spectrum assignment for satellite communication network providers, covering the framework identified in the official record.",
+          "question": {
+            "answer": "The recommendations matter because they address both permission to operate a satellite communication network and spectrum assignment for its feeder and user links. This can improve regulatory clarity, but their ultimate effect depends on government decisions and implementation details not supplied in the record.",
+            "prompt": "How can a framework combining network authorisation with feeder- and user-link spectrum assignment affect satellite communication governance in India?"
+          },
+          "sections": [
+            {
+              "heading": "TRAI’s regulatory intervention",
+              "paragraphs": [
+                "On 05 November 2026, TRAI released recommendations on the framework for Satellite Communication Network Provider authorisation and spectrum assignment. The action followed a Department of Telecommunications request linked to the proposed authorisation under Section 3(1)(b) of the Telecommunications Act, 2023."
+              ]
+            },
+            {
+              "heading": "Why the architecture matters",
+              "paragraphs": [
+                "Satellite communication involves links between network components and end users. The record specifically identifies feeder-link and user-link spectrum as matters to be covered. Bringing these within the framework can make regulatory expectations more predictable, although the supplied summary does not specify the recommended conditions, safeguards or final government decision."
+              ]
+            }
+          ],
+          "title": "TRAI recommends a framework for satellite communication network providers"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The source record states that the proposed Satellite Communication Network authorisation was linked to Section 3(1)(b) of the Telecommunications Act, 2023.",
+            "statement": "The official record links the proposed Satellite Communication Network authorisation to Section 3(1)(b) of the Telecommunications Act, 2023."
+          },
+          {
+            "correct": true,
+            "explanation": "The Department of Telecommunications request, as reproduced in the source document, referred to spectrum assignment for both feeder links and user links.",
+            "statement": "The framework concerns spectrum assignment for both feeder links and user links."
+          },
+          {
+            "correct": false,
+            "explanation": "The source record says TRAI issued a consultation paper on 08 April 2026 and released recommendations on 05 November 2026; it does not say that Parliament enacted a new satellite communication law.",
+            "statement": "The record establishes that Parliament enacted a new standalone satellite communication law in 2026."
+          },
+          {
+            "correct": false,
+            "explanation": "The record identifies the Department of Telecommunications as conveying the Government’s proposal and requesting terms and conditions; it does not state that TRAI itself introduced the authorisation through legislation.",
+            "statement": "TRAI itself enacted the Satellite Communication Network authorisation under the Telecommunications Act, 2023."
+          }
+        ],
+        "priority": 69,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 74,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 25
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-11-05T11:45:02Z",
+        "publisherId": "pib",
+        "publisherName": "Press Information Bureau",
+        "recallCard": "On 05 November 2026, TRAI released recommendations for Satellite Communication Network Provider authorisation and spectrum assignment. The framework followed a Department of Telecommunications proposal under Section 3(1)(b) of the Telecommunications Act, 2023 and covers feeder- and user-link spectrum.",
+        "reusableAnchors": [],
+        "sourceContentHash": "11d3d172df979c76f2f66f1cf401c225de494b6837e026ca1b216bbb9a7876c7",
+        "sourceId": "src_f7b8d6a932fcd1dfe6d30eb517cd11a6294c09ba2f342a35c07e196375119e2f",
+        "sourceTitle": "TRAI releases Recommendations on ‘The Framework for Satellite Communication Network Provider Authorisation, and Assignment of Spectrum to Satellite Communication Network Providers'",
+        "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2333145",
+        "staticDefinition": "Satellite communication network provider authorisation is a regulatory permission framework for entities providing satellite communication networks. In this issue, the proposed framework is connected with assignment of spectrum for feeder links and user links. The source does not provide a fuller technical or legal def",
+        "use": "Use this issue to connect telecom regulation, spectrum governance, institutional roles and digital connectivity in answers on science and technology, internal security and regulatory bodies.",
+        "wayForward": [
+          "Define the scope of the authorisation clearly and avoid overlap with existing telecom permissions.",
+          "Maintain transparent and predictable procedures for spectrum assignment for feeder and user links.",
+          "Align regulatory requirements with the technical characteristics of satellite communication networks.",
+          "Provide adequate safeguards for public interest, security and fair competition; the specific safeguards are not detailed in the supplied record."
+        ],
+        "whyInNews": "On 05 November 2026, the Telecom Regulatory Authority of India released recommendations on a framework for Satellite Communication Network Provider authorisation and assignment of spectrum to satellite communication network providers. The issue follows the Department of Telecommunications’ 03 July 2025 communication pr"
+      },
+      "sourceId": "src_f7b8d6a932fcd1dfe6d30eb517cd11a6294c09ba2f342a35c07e196375119e2f",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The source extract is dated 05 November 2026, while the proposed summary also says 05 November 2026; retain this date only if the underlying PIB page's publication date is confirmed.",
+          "The DoT communication date is inconsistent across the supplied material and search results: the extract says 03 July 2025, while PIB/TRAI results identify 17 October 2024; verify before retaining 03 July 2025.",
+          "The consultation-paper date of 08 April 2026 is supported by the search results, but the supplied extract alone does not establish the paper's substantive recommendations.",
+          "The note should distinguish TRAI recommendations from a final Government authorisation framework or spectrum-assignment decision.",
+          "“Internal security” is a weak secondary connection here; GS3 science and technology and telecom/regulatory governance are stronger anchors.",
+          "“Indigenisation” and IPR in GS3.6 are not substantively developed by the note, so the anchor should be narrowed or those dimensions added.",
+          "“TRAI as sector regulator” and DoT as the concerned department are reasonable institutional framing, but the note should avoid implying that TRAI itself grants the authorisation.",
+          "The pocket-read explanation and applied-question answer appropriately present implementation effects as contingent, but connectivity, competition and viability benefits remain analytical implications rather than established outcomes."
+        ],
+        "agrees": false,
+        "confidence": 0.97,
+        "flagged_claims": [
+          "“On 05 November 2026, TRAI released recommendations” is contradicted by the supplied PIB extract, whose displayed date is 05 November 2026 but whose requested PRID and search evidence point to a different or unresolved release record; the e",
+          "“The issue follows the Department of Telecommunications’ 03 July 2025 communication” conflicts with the official PIB/TRAI results, which identify DoT’s relevant request as dated 17 October 2024.",
+          "“The proposed framework is connected with assignment of spectrum for feeder links and user links” is supported, but presenting this as the recommendations’ settled content overstates the record, which clearly establishes the DoT request rat"
+        ],
+        "verificationVersion": 2
       }
     },
     {
