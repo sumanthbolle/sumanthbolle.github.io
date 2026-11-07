@@ -1,19 +1,18 @@
 {
-  "anchor": "Treasury Bills (T-Bills) are short-term Government of India securities auctioned by the Reserve Bank",
+  "anchor": "GS3.1 Indian economy: resource mobilisation, growth, development, employment",
   "argumentsAgainst": [
-    "Short-term government borrowing can add to rollover requirements if used persistently.",
-    "Competitive bidding may make investor participation sensitive to prevailing interest-rate expectations.",
-    "Retail access remains subject to the notified allocation ceiling."
+    "The notified amount is an auction announcement, not proof of successful subscription, investor demand, or the final borrowing cost.",
+    "Non-competitive access broadens participation but does not permit retail investors to choose their own price in the primary auction through Retail Direct."
   ],
   "argumentsFor": [
-    "A transparent auction helps mobilise short-term funds for the government.",
-    "Different maturities—91, 182 and 364 days—help manage varied cash-flow requirements.",
-    "Non-competitive participation enables specified institutions and retail investors to participate without quoting a price."
+    "Treasury Bills provide short-term government borrowing and can help manage temporary cash-flow requirements.",
+    "Multiple-maturity issuance allows investors and public debt managers to match different short-term liquidity horizons.",
+    "The non-competitive window and Retail Direct route can improve retail access to government securities."
   ],
   "background": [
-    "RBI announced an auction of Government of India Treasury Bills on November 6, 2026, for auction on November 11 and settlement on November 12, 2026.",
-    "The notified issue comprises 91-day, 182-day and 364-day T-Bills. The source does not state their discount rate, yield, or whether the auction proceeds finance a particular expenditure.",
-    "The auction is price-based and uses a multiple-price method. Competitive bids are submitted through RBI’s E-Kuber system, while non-competitive bids have a shorter submission window."
+    "Treasury Bills are short-term Government of India securities issued through auctions at a discount and redeemed at face value; the return is reflected in the difference between purchase price and redemption value.",
+    "In a price-based multiple-price auction, competitive bidders submit prices and successful bidders generally receive securities at the prices they bid; non-competitive bidders do not specify a price.",
+    "RBI conducts the auction operationally through the E-Kuber system, under terms specified by the Government of India notification cited in the release."
   ],
   "codes": [
     "GS3.1",
@@ -23,48 +22,83 @@
   "editorialStatus": "draft",
   "id": "note_ab109eed8e1ee60e9474826181b6d880f0ce47868d2cd03eb797dd011685f823",
   "indiaImplications": [
-    "The auction supports orderly short-term government borrowing and provides instruments across three maturities.",
-    "Non-competitive access widens participation beyond competitive institutional bidders, including eligible state governments, Union Territories with legislature, provident funds, designated foreign central banks and retail investors.",
-    "Retail investors may use the Retail Direct portal, but their allocation is capped at 5 percent of the notified amount.",
-    "The notice illustrates RBI’s operational role in managing government securities auctions; it does not by itself establish the broader stance of monetary or fiscal policy."
+    "The announced ₹23,000 crore issuance indicates planned short-term government borrowing, but its fiscal significance cannot be assessed without the wider borrowing calendar and redemption profile.",
+    "Different maturities can support cash-management flexibility, while auction yields may transmit information about short-term funding conditions.",
+    "Retail participation is institutionally enabled, but the five-percent cap for individuals limits the amount available through the retail allocation.",
+    "The distinction between competitive and non-competitive bidding matters for financial literacy, investor protection, and efficient public-debt access."
   ],
-  "mainsPractice": [],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Treasury Bills as instruments of short-term sovereign borrowing",
+        "Auction design: competitive versus non-competitive participation",
+        "Role of RBI’s operational infrastructure and Retail Direct access",
+        "Fiscal management, market development, and limits of interpreting one auction"
+      ],
+      "conclusionPrompt": "Conclude by linking transparent auction design with prudent debt management and wider but informed investor participation.",
+      "counterPosition": "Retail access alone may not ensure meaningful inclusion if investors lack awareness of pricing, maturity, liquidity, and reinvestment risks.",
+      "diagramSuggestion": "Flow: Government borrowing requirement → RBI auction → competitive/non-competitive bids → allotment → settlement → redemption.",
+      "directive": "examine",
+      "introChoices": [
+        "A Treasury Bill auction converts a short-term government financing requirement into a market-based allocation of sovereign securities.",
+        "The RBI’s announcement illustrates how public borrowing, auction design, and retail investor access intersect in government-securities markets."
+      ],
+      "marks": 10,
+      "skeleton": [
+        "A Treasury Bill auction converts a short-term government financing requirement into a market-based allocation of sovereign securities.",
+        "The RBI’s announcement illustrates how public borrowing, auction design, and retail investor access intersect in government-securities markets.",
+        "Treasury Bills as instruments of short-term sovereign borrowing",
+        "Auction design: competitive versus non-competitive participation",
+        "Role of RBI’s operational infrastructure and Retail Direct access",
+        "Fiscal management, market development, and limits of interpreting one auction",
+        "Retail access alone may not ensure meaningful inclusion if investors lack awareness of pricing, maturity, liquidity, and reinvestment risks.",
+        "Conclude by linking transparent auction design with prudent debt management and wider but informed investor participation."
+      ],
+      "stem": "Examine how Treasury Bill auctions support short-term public-debt management and assess the significance of allowing non-competitive participation.",
+      "timeMinutes": 7,
+      "wordBudget": 150
+    }
+  ],
   "officialFacts": [
     {
       "evidenceLocator": "officialSummary",
       "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63942",
-      "text": "The notified amounts are ₹8,000 crore for 91-day Treasury Bills, ₹8,000 crore for 182-day Treasury Bills and ₹7,000 crore for 364-day Treasury Bills, totalling ₹23,000 crore.",
+      "text": "The notified amount is ₹23,000 crore in total: ₹8,000 crore each for 91-Day and 182-Day Treasury Bills and ₹7,000 crore for 364-Day Treasury Bills.",
       "verification": "needs-review"
     },
     {
       "evidenceLocator": "officialSummary",
       "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63942",
-      "text": "The auction date for the Treasury Bills is November 11, 2026, and the settlement date is November 12, 2026.",
+      "text": "The auction is scheduled for November 11, 2026, with settlement scheduled for November 12, 2026.",
       "verification": "needs-review"
     },
     {
       "evidenceLocator": "officialSummary",
       "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63942",
-      "text": "The auction will be Price based using multiple price method.",
+      "text": "The sale will be subject to the terms and conditions specified in the General Notification F.No.4(2)-B(W&M)/2018 dated March 26, 2025, issued by the Government of India, as amended from time to time.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63942",
+      "text": "The auction will be price based using multiple price method.",
       "verification": "source-backed"
     },
     {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63942",
+      "text": "State Governments, Union Territories with legislature, eligible Provident Funds in India, designated Foreign Central Banks and any person or institution specified by the Bank in this regard can participate on non-competitive basis, the allocation for which will be outside the notified amount.",
+      "verification": "source-backed"
+    },
+    {
+      "cloze": {
+        "answer": "5 percent of the notified amount",
+        "prompt": "For retail investors, the allocation will be restricted to a maximum of ____."
+      },
       "evidenceLocator": "officialSummary",
       "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63942",
       "text": "For retail investors, the allocation will be restricted to a maximum of 5 percent of the notified amount.",
       "verification": "source-backed"
-    },
-    {
-      "evidenceLocator": "officialSummary",
-      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63942",
-      "text": "Individual investors can also place bids as per the non-competitive scheme through the Retail Direct portal.",
-      "verification": "needs-review"
-    },
-    {
-      "evidenceLocator": "officialSummary",
-      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63942",
-      "text": "Competitive bids are to be submitted from 10:30 am to 11:30 am, while non-competitive bids are to be submitted from 10:30 am to 11:00 am on November 11, 2026.",
-      "verification": "needs-review"
     }
   ],
   "papers": [
@@ -73,99 +107,103 @@
   ],
   "pocketRead": {
     "example": {
-      "heading": "Illustration: choosing between bid routes",
-      "text": "Suppose an eligible investor wants exposure to the announced Treasury Bill auction but does not wish to quote a competitive price. The investor could use the non-competitive route, subject to the applicable allocation rules; an individual could use the Retail Direct portal. This is a hypothetical illustration, not a reported transaction."
+      "heading": "Illustration: matching maturity to a cash need",
+      "text": "Suppose an investor wants a short-term sovereign investment but does not wish to choose an auction price. The non-competitive route may provide access under the notified scheme; the illustration does not establish allotment, return, or demand in any actual auction."
     },
-    "excerpt": "RBI’s November 6 notice schedules a ₹23,000-crore T-Bill auction for November 11, with settlement on November 12, using multiple-price bidding and capped retail allocation.",
+    "excerpt": "The RBI announced a ₹23,000-crore auction of 91-day, 182-day and 364-day Treasury Bills for November 11, 2026, with settlement on November 12.",
     "question": {
-      "answer": "Competitive bidding supports price discovery because bidders quote prices, while non-competitive participation allows eligible participants to seek allotment without quoting a price, subject to applicable allocation rules. The notice also limits retail allocation to 5 percent of the notified amount.",
-      "prompt": "Why does the auction notice provide both competitive and non-competitive participation?"
+      "answer": "The auction raises short-term government funds through market-based price discovery, while non-competitive participation lets eligible investors—including retail investors within the stated cap—participate without selecting a price. It does not by itself reveal demand or borrowing cost.",
+      "prompt": "How does the announced auction combine public borrowing with investor access, and what cannot be inferred from the announcement?"
     },
     "sections": [
       {
-        "heading": "RBI schedules three maturities",
+        "heading": "What the RBI announced",
         "paragraphs": [
-          "The Reserve Bank of India announced on November 6, 2026, that it would auction 91-day, 182-day and 364-day Government of India Treasury Bills on November 11, with settlement on November 12. The notified amount is ₹23,000 crore.",
-          "The auction is price-based and uses a multiple-price method. Competitive and non-competitive bids have separate submission windows through the E-Kuber system."
+          "The Reserve Bank of India announced a November 11, 2026 auction of Government of India Treasury Bills: ₹8,000 crore each of 91-day and 182-day bills and ₹7,000 crore of 364-day bills. Settlement is scheduled for November 12, 2026."
         ]
       },
       {
-        "heading": "Participation and the practical limit",
+        "heading": "How participation works",
         "paragraphs": [
-          "The notice permits specified institutions and individuals to participate on a non-competitive basis. Individuals may use the Retail Direct portal, while retail allocation is capped at 5 percent of the notified amount.",
-          "A common misconception is that retail access means unlimited allotment or guaranteed allocation. The notice supports neither proposition; it specifies a ceiling and applicable auction conditions."
+          "The auction is price based and uses a multiple-price method. Specified institutions may participate non-competitively outside the notified amount; individuals may also use the non-competitive scheme, with retail allocation capped at 5 percent of the notified amount. Individuals can place such bids through Retail Direct."
+        ]
+      },
+      {
+        "heading": "Reading the announcement carefully",
+        "paragraphs": [
+          "The release establishes the planned issuance, auction method, eligibility and timings. It does not establish the auction’s final cut-off prices, yields, subscription demand or allotment outcomes."
         ]
       }
     ],
-    "title": "RBI schedules ₹23,000-crore Treasury Bill auction"
+    "title": "RBI announces ₹23,000 crore Treasury Bill auction"
   },
   "prelimsTraps": [
     {
       "correct": true,
-      "explanation": "The notice specifies 91-day, 182-day and 364-day Treasury Bills.",
-      "statement": "The announced auction includes 91-day, 182-day and 364-day Treasury Bills."
+      "explanation": "The release specifies ₹8,000 crore each for 91-day and 182-day bills and ₹7,000 crore for 364-day bills, totalling ₹23,000 crore.",
+      "statement": "The notified amount is ₹23,000 crore."
     },
     {
       "correct": true,
-      "explanation": "The official summary states that the auction is price based using a multiple-price method.",
-      "statement": "The auction uses a multiple-price method."
+      "explanation": "The auction date is November 11, 2026 and settlement is scheduled for November 12, 2026.",
+      "statement": "Settlement is scheduled one day after the auction."
     },
     {
       "correct": false,
-      "explanation": "The settlement date is November 12, 2026, while the auction date is November 11, 2026.",
-      "statement": "The auction and settlement occur on the same date."
+      "explanation": "The release states that the auction is price based using the multiple-price method.",
+      "statement": "The auction is conducted using a uniform-price method."
     },
     {
-      "correct": false,
-      "explanation": "The summary states that retail allocation is restricted to a maximum of 5 percent of the notified amount.",
-      "statement": "Retail investors can receive an unrestricted share of the notified amount."
+      "correct": true,
+      "explanation": "Individuals can participate under the non-competitive scheme through the Retail Direct portal, subject to the stated retail allocation restriction.",
+      "statement": "Retail investors can use Retail Direct for non-competitive bidding."
     }
   ],
-  "priority": 64,
+  "priority": 71,
   "priorityBand": "strong",
   "priorityParts": {
-    "anchorFrequency": 45,
+    "anchorFrequency": 86,
     "debateStrength": 75,
     "officialWeight": 95,
-    "recencyGap": 50
+    "recencyGap": 15
   },
   "priorityProvisional": true,
   "priorityTreatment": "Full note, all five revisions.",
   "publishedAt": "2026-11-06T17:55:00Z",
   "publisherId": "rbi",
   "publisherName": "Reserve Bank of India",
-  "recallCard": "RBI’s November 6, 2026 notice schedules ₹23,000 crore of 91-, 182- and 364-day T-Bills for auction on November 11 and settlement on November 12. The auction uses a multiple-price method; eligible institutions and individuals may participate non-competitively, with retail allocation capped at 5 percent.",
+  "recallCard": "On November 6, 2026, RBI announced a November 11 auction of ₹23,000 crore in 91-day, 182-day and 364-day Government of India Treasury Bills. It uses a price-based multiple-price method; eligible institutions and retail investors may participate non-competitively, with retail allocation capped at 5 percent.",
   "reusableAnchors": [],
   "sourceContentHash": "109604896d0e224ebbf266a35a48077876d25c36c87b951de1e0e3c44e647da3",
   "sourceId": "src_ab109eed8e1ee60e9474826181b6d880f0ce47868d2cd03eb797dd011685f823",
   "sourceTitle": "Auction of 91-Day, 182-Day and 364-Day Treasury Bills",
   "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63942",
-  "staticDefinition": "A Treasury Bill is a short-term Government of India security issued through an auction process; in this notice, RBI conducts a price-based auction using the multiple-price method for 91-day, 182-day and 364-day instruments. The source does not provide a fuller legal or economic definition.",
-  "use": "Use the notice to connect public-debt management with auction design, market participation, price discovery and retail access. Avoid claiming a specific yield, discount structure, monetary-policy stance or expenditure purpose because the supplied record does not establish those facts.",
+  "staticDefinition": "Treasury Bills are short-term Government of India securities used for short-term borrowing; in the announced RBI auction, price-based multiple-price bidding determines allotment for competitive bids, while non-competitive participation allows eligible investors to bid without specifying a price.",
+  "use": "Use the announced auction to illustrate short-term public-debt management, market-based price discovery, differentiated maturities, and the widening of access through non-competitive bidding.",
   "verification": {
     "advisory_notes": [
-      "The anchor is accurate; RBI describes T-Bills as short-term Government of India debt instruments issued in 91-, 182- and 364-day tenors.[1]",
-      "The statement that the auction helps mobilise short-term government funds is a reasonable analytical inference, but it is not expressly stated in the notice.",
-      "The claim that different maturities manage varied cash-flow requirements is analytical framing rather than a fact established by this auction notice.",
-      "The phrase 'supports price discovery' is a sound explanation of competitive bidding, but should be presented as mechanism-based analysis rather than a notice fact.",
-      "The arguments against, way forward, and broader India implications are analytical and should not be read as conclusions demonstrated by this single notice.",
-      "The proposed GS3.1 and GS3.2 tagging is relevant to government borrowing, financial markets, and monetary instruments; GS2.7 is defensible only if that code covers institutional or regulatory roles in the intended syllabus taxonomy.",
-      "The pocketRead headline, deck, dates, amounts, maturities, auction method, and retail cap are consistent with the supplied notice; the ₹23,000 crore total arithmetically equals ₹8,000 crore + ₹8,000 crore + ₹7,000 crore.",
-      "The hypothetical investor scenario is clearly labelled as an illustration and does not fabricate a reported transaction; the applied answer correctly distinguishes competitive price quotation from non-competitive participation."
+      "The background claim that Treasury Bills are issued at a discount and redeemed at face value is standard, but it is not established by the supplied release; retain only with an appropriate primary-source citation.",
+      "“Temporary cash-flow requirements” is a reasonable analytical application, but the release establishes planned borrowing rather than the Government’s specific cash-management purpose.",
+      "“Multiple-maturity issuance allows investors and debt managers to match liquidity horizons” is analysis, not a fact demonstrated by this single announcement.",
+      "“Auction yields may transmit information about short-term funding conditions” is sound analysis, but no yield exists in the announcement because auction results are pending.",
+      "The 5% retail cap is more precisely a maximum of the aggregate nominal amount within the notified amount, subject to applicable RBI rules; the note’s wording is acceptable but could be tightened.",
+      "“Widening of access” is a defensible implication, but non-competitive participation does not itself establish meaningful retail inclusion or improved financial literacy.",
+      "The Retail Direct explanation is correct for primary-auction participation: individuals submit amount-only non-competitive bids and do not choose the price; allotment and return remain auction-dependent.",
+      "The syllabus tagging is broadly defensible for GS3 through public borrowing, debt management and financial-market functioning; GS2.7 is less clearly supported and should be retained only if that code specifically covers government schemes o"
     ],
     "agrees": true,
-    "checkedAt": "2026-11-06T20:29:40Z",
+    "checkedAt": "2026-11-07T05:59:04Z",
     "confidence": 0.97,
     "flagged_claims": [],
-    "noteContentHash": "be1664210091210c04110afb0e384e16a9b73807ef584a0a96420e43cdac892c",
+    "noteContentHash": "6f7652a9bcd42a71c305fab65e9359f4797b16b59cf196daae9378dd07f0650a",
     "sourceContentHash": "109604896d0e224ebbf266a35a48077876d25c36c87b951de1e0e3c44e647da3",
     "verificationVersion": 2
   },
   "wayForward": [
-    "Maintain predictable auction calendars and transparent bidding rules.",
-    "Monitor the maturity mix so that short-term borrowing does not create avoidable refinancing concentration.",
-    "Improve investor awareness and digital access while preserving clear allocation limits and settlement safeguards.",
-    "Evaluate the interaction between short-term borrowing costs, liquidity conditions and the government’s broader debt strategy."
+    "Publish auction outcomes and accessible explanations of cut-off prices, yields, allotment and demand to strengthen transparency.",
+    "Expand investor education on maturity, discount-based returns, reinvestment and liquidity before encouraging wider retail participation.",
+    "Maintain clear separation between competitive price discovery and non-competitive access so that inclusion does not weaken auction efficiency.",
+    "Assess Treasury Bill issuance within the broader borrowing calendar, cash balances, redemption schedule and fiscal strategy rather than interpreting one announcement in isolation."
   ],
-  "whyInNews": "On November 6, 2026, the Reserve Bank of India announced a Government of India Treasury Bill auction of ₹23,000 crore across 91-day, 182-day and 364-day maturities, scheduled for November 11 with settlement on November 12. The notice sets separate competitive and non-competitive bidding windows and permits retail parti"
+  "whyInNews": "On November 6, 2026, the Reserve Bank of India announced a November 11 auction of Government of India Treasury Bills totalling ₹23,000 crore, with settlement on November 12, 2026. The issue covers 91-day, 182-day and 364-day maturities and uses a price-based multiple-price method. Individuals may participate non-compet"
 }
