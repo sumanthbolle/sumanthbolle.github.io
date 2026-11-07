@@ -1,5 +1,71 @@
 [
   {
+    "id": 124,
+    "title": "Google releases Agent Substrate 1.0 for isolated AI-agent sandboxes",
+    "excerpt": "Google released Agent Substrate 1.0 and donated it, with gVisor, to the CNCF on November 5, 2026. It targets isolated, low-latency sandboxes for large fleets of untrusted AI agents, giving engineers a runtime boundary stronger than ordinary process-level agent execution.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Advanced",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-google-releases-agent-substrate-1-0-for-isolated-ai-agent-sa-1794042487213",
+    "date": "Nov 7, 2026",
+    "dateISO": "2026-11-07T09:08:07Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Sandboxing Untrusted AI Agents at Scale: Google Donates Agent Substrate and gVisor to the CNCF",
+        "url": "https://opensource.googleblog.com/2026/11/"
+      },
+      {
+        "title": "Introducing Physical-Engineering\u2019s Last Exam for agents",
+        "url": "https://cloud.google.com/blog/products/ai-machine-learning/introducing-physical-engineerings-last-exam-for-agents"
+      },
+      {
+        "title": "Accelerating engineering for the physical world",
+        "url": "https://openai.com/index/accelerating-engineering-for-the-physical-world/"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Google announced Agent Substrate 1.0 on November 5, 2026, and donated the project and gVisor to the Cloud Native Computing Foundation. The project is open source and intended for testing.</p>\n<p>Agent Substrate is an orchestrator for agent applications. Its stated target is multi-million-agent scale. The system combines an agent-focused control plane with isolated sandboxed compute and storage.</p>\n<h2>How it works</h2>\n<p>The design separates orchestration from the execution environment. An agent receives a sandbox rather than direct access to the host. The sandbox contains its compute and storage, while the platform manages lifecycle and scheduling.</p>\n<p>The project uses gVisor as part of its isolation model. gVisor provides a user-space kernel boundary for workloads that should not run directly against the host kernel. Agent Substrate adds an agent-oriented control and data plane around that execution model.</p>\n<p>For an engineering team, the useful pattern is to treat every agent run as disposable infrastructure: create an isolated workspace, grant only the tools and data required for the task, capture outputs, then destroy the workspace.</p>\n<h2>A practical integration pattern</h2>\n<p>The exact public API depends on the project\u2019s released interfaces, so this snippet is a design pattern rather than a verified Agent Substrate client. The important controls are explicit image selection, ephemeral storage, network allowlisting, resource limits, and cleanup.</p>\n<p>Put tool calls behind a broker instead of handing an agent unrestricted credentials. Return short-lived capabilities to the sandbox. Log command, input, output, identity, and approval state outside the sandbox so an agent cannot erase its own audit trail.</p>\n<pre><code class=\"language-python\">agent = substrate.create_run(\n    image=&quot;my-agent:2026-11-05&quot;,\n    storage={&quot;repo&quot;: &quot;worktree&quot;, &quot;mode&quot;: &quot;ephemeral&quot;},\n    network={&quot;allow&quot;: [&quot;api.example.com&quot;], &quot;deny&quot;: [&quot;*&quot;]},\n    limits={&quot;cpu&quot;: 2, &quot;memory&quot;: &quot;4Gi&quot;},\n)\n\nresult = agent.run(task)\nagent.destroy()</code></pre>\n<h2>Where it breaks</h2>\n<p>The main failure mode is a false sense of security. An agent can still misuse every capability granted to it. If the sandbox can reach a production database or a broad cloud role, isolation does not prevent valid-but-dangerous actions.</p>\n<p>The announcement also does not provide latency numbers, cost data, or a comparison with Kubernetes plus gVisor. Teams should measure startup time, sandbox density, network overhead, storage behavior, and failure recovery on their own workload.</p>\n<ul>\n<li>Isolation is not authorization. A sandbox can contain a compromised agent, but it does not make an overbroad API token safe.</li>\n<li>The announcement describes the architecture and scale target, not an independent production benchmark proving multi-million-agent throughput.</li>\n<li>The project is new. Expect changing APIs, incomplete integrations, and operational gaps before adopting it for critical workloads.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Prototype agent runs as disposable sandboxes with ephemeral storage and explicit network allowlists.</li>\n<li>Keep credentials outside the sandbox and issue short-lived, least-privilege capabilities through a broker.</li>\n<li>Benchmark startup time, density, storage, network overhead, and recovery before replacing an existing container platform.</li>\n<li>Treat Agent Substrate 1.0 as an early platform release, not as proof of production-scale performance.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://opensource.googleblog.com/2026/11/\" target=\"_blank\" rel=\"noopener\">Sandboxing Untrusted AI Agents at Scale: Google Donates Agent Substrate and gVisor to the CNCF</a> \u2014 opensource.googleblog.com</li>\n<li><a href=\"https://cloud.google.com/blog/products/ai-machine-learning/introducing-physical-engineerings-last-exam-for-agents\" target=\"_blank\" rel=\"noopener\">Introducing Physical-Engineering\u2019s Last Exam for agents</a> \u2014 cloud.google.com</li>\n<li><a href=\"https://openai.com/index/accelerating-engineering-for-the-physical-world/\" target=\"_blank\" rel=\"noopener\">Accelerating engineering for the physical world</a> \u2014 openai.com</li>\n</ul>"
+  },
+  {
+    "id": 125,
+    "title": "A Linux TCP bug reached active scanning within one week",
+    "excerpt": "On November 3, 2026, reports said attackers were scanning for a Linux kernel TCP use-after-free published only seven days earlier. An unreleased Anthropic model reportedly generated a working remote-root exploit from one prompt, turning a kernel bug into a short lesson in patch latency, exposure measurement, and exploit automation.",
+    "readTime": "2 min read",
+    "category": "career",
+    "learningPath": "career",
+    "difficulty": "Advanced",
+    "forPersona": [
+      "Developers",
+      "Engineering managers",
+      "Students"
+    ],
+    "uniqueId": "daily-career-a-linux-tcp-bug-reached-active-scanning-within-one-week-1794042510397",
+    "date": "Nov 7, 2026",
+    "dateISO": "2026-11-07T09:08:30Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Utility AI Weekly \u2014 November 6, 2026",
+        "url": "https://utility.community/blog/2026/11/06/utility-ai-weekly-2026-11-06/"
+      },
+      {
+        "title": "Daily Cybersecurity News \u2014 November 5, 2026",
+        "url": "https://cyberrecaps.com/news/cybersecurity-news-november-05-2026"
+      },
+      {
+        "title": "NewsBites Volume XXVIII \u2014 Issue 83, November 6, 2026",
+        "url": "https://www.sans.org/newsletters/newsbites/xxviii-83"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>A Linux kernel vulnerability, CVE-2026-98432, was published on October 27 with a reported CVSS score of 9.8. The flaw was described as an IPv4 TCP use-after-free. By November 3, researchers reported scanning activity in the wild.</p>\n<p>The timeline was unusually compressed: publication on October 27, exposure scanning reported on October 30, fixed RHEL kernels on November 1, and Ubuntu fixes on November 3. The scan count was about 2,102,043 MPTCP-reachable hosts on port 443. That number measured exposed hosts, not confirmed vulnerable hosts.</p>\n<h2>The technical bit</h2>\n<p>A use-after-free occurs when code accesses an object after its memory has been released. In kernel networking code, that can turn malformed network traffic into memory corruption in a privileged process. The reported bug involved IPv4 TCP and could lead to remote root access.</p>\n<p>The striking detail was the reported source of the exploit. An unreleased Anthropic model allegedly produced a working remote-root exploit from a single prompt. The result does not mean every Linux host was exploitable. Kernel configuration, distribution patches, reachable services, and the exact vulnerable code path still determine risk.</p>\n<h2>Why the dates matter</h2>\n<p>Security teams often measure patching in days or weeks. This incident compressed the useful window to roughly one week. Public disclosure came first, scanning followed within days, and distribution fixes arrived while exposure was still being measured.</p>\n<p>The scan figure also shows why asset inventory matters. A reachable TCP endpoint is not the same as a vulnerable kernel, but it is a practical starting point for triage. Engineers need to know which machines expose the relevant protocol, which kernels they run, and when each distribution released a fix.</p>\n<h2>What to change in practice</h2>\n<p>Treat high-severity kernel advisories as production incidents when the vulnerable path is remotely reachable. Do not wait for a public exploit to appear before checking fleet exposure.</p>\n<p>Automate the boring parts: collect kernel versions, map hosts to distributions, compare them with vendor fixed versions, and record reboot status. A package update without a reboot may leave the old kernel running.</p>\n<p>For exploit-development claims, separate the facts. The reported model output is evidence that automated exploit assistance is improving, not proof that every generated exploit works against every target. Reproduce only in isolated environments and keep production testing limited to defensive verification.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Inventory kernel versions and reboot state across every internet-reachable host.</li>\n<li>Treat remote kernel disclosures as incidents when the affected network path is exposed.</li>\n<li>Measure exposure separately from confirmed vulnerability; do not equate open ports with vulnerable machines.</li>\n<li>Keep exploit reproduction isolated and use it to validate defensive controls, not production systems.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://utility.community/blog/2026/11/06/utility-ai-weekly-2026-11-06/\" target=\"_blank\" rel=\"noopener\">Utility AI Weekly \u2014 November 6, 2026</a> \u2014 utility.community</li>\n<li><a href=\"https://cyberrecaps.com/news/cybersecurity-news-november-05-2026\" target=\"_blank\" rel=\"noopener\">Daily Cybersecurity News \u2014 November 5, 2026</a> \u2014 cyberrecaps.com</li>\n<li><a href=\"https://www.sans.org/newsletters/newsbites/xxviii-83\" target=\"_blank\" rel=\"noopener\">NewsBites Volume XXVIII \u2014 Issue 83, November 6, 2026</a> \u2014 sans.org</li>\n</ul>"
+  },
+  {
     "id": 123,
     "title": "Google\u2019s PLE benchmark puts engineering agents below 50%",
     "excerpt": "Google released Physical-Engineering\u2019s Last Exam (PLE) on November 3, 2026. It tests agents on 85 long-horizon mechanical, electrical, civil, and structural engineering tasks; every tested frontier model scored below 50% on the private set.",
