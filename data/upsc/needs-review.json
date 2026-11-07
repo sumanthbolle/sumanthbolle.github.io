@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-06T20:29:40Z",
-  "itemCount": 24,
+  "generatedAt": "2026-11-07T00:13:59Z",
+  "itemCount": 25,
   "items": [
     {
       "anchor": "GS3.8 Internal security: external state and non-state actors; GS3.7 Disaster and disaster management",
@@ -2270,6 +2270,226 @@
         "flagged_claims": [
           "The official title and note state that 591 kg of cannabis was “smuggled from Nepal,” but the release only says the truck was suspected of transporting contraband from Nepal.",
           "The title’s wording “DRI foils” is not itself a blocking error, but presenting Nepalese origin as established makes the specific factual claim materially overstated."
+        ],
+        "verificationVersion": 2
+      }
+    },
+    {
+      "anchor": "GS3.1 Indian economy: resource mobilisation, growth, development, employment; GS3.4 Land reforms, li",
+      "checkedAt": "2026-11-07T00:13:59Z",
+      "codes": [
+        "GS3.1",
+        "GS3.4",
+        "GS2.7"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_bb428b16109729def7e9932f96722a74f8df3b3e76abcbcdd69d5157a2caad9f` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.96\n- **checked at:** 2026-11-07T00:13:59Z\n\nFlagged claims:\n- “GS3.4 Land reforms” is a wrong syllabus anchor for a note on the RBI’s FLA census, foreign investment and external-sector statistics.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_bb428b16109729def7e9932f96722a74f8df3b3e76abcbcdd69d5157a2caad9f",
+        "title": "Needs review: src_bb428b16109729def7e9932f96722a74f8df3b3e76abcbcdd69d5157a2caad9f verification disagreed"
+      },
+      "note": {
+        "anchor": "GS3.1 Indian economy: resource mobilisation, growth, development, employment; GS3.4 Land reforms, li",
+        "argumentsAgainst": [
+          "A census-based stock position should not be read as a measure of annual investment flows because valuation and exchange-rate changes affect outstanding assets and liabilities.",
+          "The provisional release covers reporting entities with inward and/or outward direct investment; it does not represent every Indian enterprise or all foreign capital activity."
+        ],
+        "argumentsFor": [
+          "The FLA census improves the Reserve Bank of India’s information base on cross-border direct, portfolio and other investments.",
+          "The data can support Balance of Payments, International Investment Position and related external-sector statistics.",
+          "Separately identifying direct investment, portfolio investment, trade credit, loans, currency and deposits, and receivables/payables helps assess the composition of external exposure."
+        ],
+        "background": [
+          "The Reserve Bank of India’s annual Foreign Liabilities and Assets census collects information from Indian direct-investment entities. The census covers companies, limited liability partnerships, alternative investment funds and partnership ",
+          "The census records both financial positions and business parameters such as activity sector, sales, purchases, exports and imports. The Reserve Bank uses FLA information as an input for external-sector statistical compilation, including Bal",
+          "A stock is the level of an asset or liability at a point in time, whereas a flow records transactions during a period. A change in the stock can therefore differ from the recorded flow when prices or exchange rates change."
+        ],
+        "codes": [
+          "GS3.1",
+          "GS3.4",
+          "GS2.7"
+        ],
+        "editorialStatus": "draft",
+        "id": "note_bb428b16109729def7e9932f96722a74f8df3b3e76abcbcdd69d5157a2caad9f",
+        "indiaImplications": [
+          "The reported moderation in the inward-FDI-to-ODI ratio to 4.2 times from 5.5 times a year earlier may indicate a changing balance between foreign investment entering India and Indian investment abroad; the release alone does not establish t",
+          "The dominance of unlisted entities in reported FDI and/or ODI positions highlights the importance of data quality, valuation and regulatory oversight beyond listed-company disclosures.",
+          "Growth in other investment liabilities and assets points to the need to monitor external trade credit, loans, deposits and related receivable/payable exposures alongside equity investment.",
+          "Sectoral and country-wise information can help policymakers assess concentration risks and align investment facilitation with external-sector resilience."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Meaning and coverage of the FLA census",
+              "Stock-versus-flow distinction and valuation effects",
+              "What the reported composition suggests about India’s external-sector exposure",
+              "Data, valuation and regulatory limitations"
+            ],
+            "conclusionPrompt": "Conclude by linking reliable cross-border liability and asset data with calibrated openness and external-sector resilience.",
+            "counterPosition": "The census is valuable for statistical and policy purposes, but its provisional, entity-based stock data should not by itself be used to infer investment quality, causation or economy-wide flows.",
+            "diagramSuggestion": "Draw a flow: Indian entity → FDI/ODI, portfolio and other investments → stock data → valuation and exchange-rate adjustments → BoP/IIP analysis.",
+            "directive": "explain",
+            "introChoices": [
+              "The Reserve Bank of India’s FLA census maps the external balance sheet of Indian direct-investment entities, not merely annual capital flows.",
+              "In an increasingly integrated economy, the policy question is not only how much capital crosses borders, but also the liabilities and assets that remain on residents’ balance sheet"
+            ],
+            "marks": 15,
+            "skeleton": [
+              "The Reserve Bank of India’s FLA census maps the external balance sheet of Indian direct-investment entities, not merely annual capital flows.",
+              "In an increasingly integrated economy, the policy question is not only how much capital crosses borders, but also the liabilities and assets that remain on residents’ balance sheet",
+              "Meaning and coverage of the FLA census",
+              "Stock-versus-flow distinction and valuation effects",
+              "What the reported composition suggests about India’s external-sector exposure",
+              "Data, valuation and regulatory limitations",
+              "The census is valuable for statistical and policy purposes, but its provisional, entity-based stock data should not by itself be used to infer investment quality, causation or economy-wide flows.",
+              "Conclude by linking reliable cross-border liability and asset data with calibrated openness and external-sector resilience."
+            ],
+            "stem": "Explain the significance and limitations of the Reserve Bank of India’s Foreign Liabilities and Assets census for understanding India’s external-sector position.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63941",
+            "text": "The FLA census covers cross-border liabilities and assets of Indian entities, namely companies, limited liability partnerships (LLPs), alternative investment funds (AIFs) and partnership firms, with inward/outward direct investment.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63941",
+            "text": "The FLA census captures detailed information on foreign liabilities and assets in terms of direct investment, portfolio investment and other investments comprising of trade credit, loans, currency & deposits and other payables and receivables accounts, activity sector, sales, purchase, exports, and imports.",
+            "verification": "source-backed"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63941",
+            "text": "Around 97 per cent of the total number of Indian entities reporting foreign direct investment (FDI) and/or overseas direct investment (ODI) were unlisted as at end-March 2026.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63941",
+            "text": "Non-financial companies accounted for more than 90 per cent of the FDI equity at face value.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63941",
+            "text": "In terms of market value, listed and unlisted companies had almost equal shares in total FDI equity capital as at end-March 2026, while 96.6 per cent of FDI debt was held by unlisted companies.",
+            "verification": "needs-review"
+          },
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63941",
+            "text": "In rupee terms, the ratio of inward FDI to ODI moderated to 4.2 times as at end-March 2026 from 5.5 times a year earlier.",
+            "verification": "needs-review"
+          }
+        ],
+        "papers": [
+          "GS3",
+          "GS2"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Illustration: why a stock need not equal a flow",
+            "text": "Suppose an Indian entity’s foreign asset remains unchanged in quantity but appreciates because of a currency movement. Its end-year asset stock can rise even without a matching new investment flow. This is a hypothetical illustration of the stock-flow distinction, not a reported event."
+          },
+          "excerpt": "RBI’s provisional FLA census maps foreign assets and liabilities of Indian direct-investment entities and shows why stock changes need not equal annual investment flows.",
+          "question": {
+            "answer": "The FLA census is useful because it records the external balance-sheet position and composition of reporting entities, while also capturing business and sectoral information. However, its stock changes include valuation and exchange-rate effects, so they cannot be equated with Balance of Payments flows. Its entity coverage and provisional status also limit economy-wide inference.",
+            "prompt": "Why should the FLA census be used alongside, rather than as a substitute for, Balance of Payments flow data?"
+          },
+          "sections": [
+            {
+              "heading": "What the Reserve Bank measures",
+              "paragraphs": [
+                "On 6 November 2026, the Reserve Bank released provisional results of the 2025-26 annual FLA census. It covers Indian companies, LLPs, AIFs and partnership firms with inward or outward direct investment, recording direct, portfolio and other investments along with selected business parameters.",
+                "The practical value lies in combining a cross-border position with information on sectors, sales, purchases, exports and imports. This supports external-sector statistical work and policy analysis."
+              ]
+            },
+            {
+              "heading": "Reading the figures carefully",
+              "paragraphs": [
+                "The release reports that around 97 per cent of reporting entities with FDI and/or ODI were unlisted at end-March 2026; it also reports a moderation in the inward-FDI-to-ODI ratio to 4.2 times from 5.5 times a year earlier.",
+                "A common misconception is to treat every change in outstanding assets or liabilities as a transaction flow. The Reserve Bank states that stock changes also reflect price and exchange-rate valuation changes, so FLA and BoP figures answer related but different questions."
+              ]
+            }
+          ],
+          "title": "RBI’s FLA census maps India’s cross-border investment position"
+        },
+        "prelimsTraps": [
+          {
+            "correct": false,
+            "explanation": "The census covers specified Indian entities with inward and/or outward direct investment; it is not stated to cover every Indian enterprise.",
+            "statement": "The FLA census covers all Indian enterprises irrespective of their foreign-investment status."
+          },
+          {
+            "correct": true,
+            "explanation": "The official summary expressly includes direct investment, portfolio investment and other investments such as trade credit, loans, currency and deposits, and payables and receivables.",
+            "statement": "The FLA census includes categories beyond direct investment."
+          },
+          {
+            "correct": false,
+            "explanation": "The official summary says stock variations can include valuation changes caused by price and exchange-rate movements.",
+            "statement": "A rise in outstanding foreign assets necessarily equals a new investment flow recorded in the Balance of Payments."
+          },
+          {
+            "correct": true,
+            "explanation": "The release reports around 97 per cent of reporting entities with FDI and/or ODI were unlisted at end-March 2026.",
+            "statement": "Around 97 per cent of reporting entities with FDI and/or ODI were unlisted at end-March 2026."
+          }
+        ],
+        "priority": 72,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 68,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 50
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-11-06T17:30:00Z",
+        "publisherId": "rbi",
+        "publisherName": "Reserve Bank of India",
+        "recallCard": "RBI’s provisional 2025-26 FLA census covers Indian entities with inward/outward direct investment and records direct, portfolio and other foreign assets/liabilities. Around 97% of reporting entities were unlisted. Stock changes differ from BoP flows because valuation and exchange-rate movements also matter.",
+        "reusableAnchors": [],
+        "sourceContentHash": "5df5dca57393ed28e4594e5f2d9e59d882358842c06126e9ade6da29726268a5",
+        "sourceId": "src_bb428b16109729def7e9932f96722a74f8df3b3e76abcbcdd69d5157a2caad9f",
+        "sourceTitle": "Census on Foreign Liabilities and Assets of Indian Direct Investment Entities for 2025-26",
+        "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63941",
+        "staticDefinition": "The Foreign Liabilities and Assets census is the Reserve Bank of India’s annual collection of cross-border financial position and related business information from specified Indian entities with inward and/or outward direct investment. It distinguishes foreign direct, portfolio and other investments; the resulting stoc",
+        "use": "Use this note in answers on foreign investment, external-sector statistics, liberalisation, Balance of Payments, International Investment Position, and the distinction between stock and flow.",
+        "wayForward": [
+          "Improve timely, complete and granular reporting by covered entities, with validation across regulatory and corporate data systems.",
+          "Interpret FLA positions together with Balance of Payments flows, International Investment Position data and valuation effects rather than using one indicator in isolation.",
+          "Monitor concentration by investor country, destination, sector, instrument and entity type, especially where unlisted firms account for substantial exposure.",
+          "Use the census for evidence-based investment facilitation while maintaining safeguards for external vulnerability, data confidentiality and financial stability."
+        ],
+        "whyInNews": "On 6 November 2026, the Reserve Bank of India released provisional results of the 2025-26 annual Foreign Liabilities and Assets census. The exercise covers Indian companies, LLPs, AIFs and partnership firms with inward or outward direct investment, and records their foreign assets and liabilities across direct, portfol"
+      },
+      "sourceId": "src_bb428b16109729def7e9932f96722a74f8df3b3e76abcbcdd69d5157a2caad9f",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The official extract supports the FLA coverage and stock-flow distinction, but does not itself establish the broader claim that the data are used for International Investment Position compilation.",
+          "“Around 97 per cent” is supported by the extract, although the underlying table gives 41,814 unlisted entities out of 43,123 total, approximately 96.96 per cent.",
+          "The statement that unlisted-entity dominance highlights data-quality, valuation and regulatory-oversight needs is analytical inference, not a reported RBI finding.",
+          "The claim that other-investment growth requires monitoring alongside equity investment is reasonable policy analysis but should not be presented as an RBI conclusion.",
+          "The use of “maps the external balance sheet” is a useful shorthand, but coverage is limited to reporting entities with inward and/or outward direct investment and is not economy-wide.",
+          "The hypothetical currency-appreciation example is correctly labelled as an illustration and its stock-flow reasoning is sound.",
+          "GS3.1 is a defensible syllabus linkage through Indian economy, resource mobilisation and external-sector issues; GS3.4 on land reforms is unrelated and should be removed.",
+          "GS2.7 is not clearly relevant unless the intended code specifically covers government policies or institutions; the note’s strongest placement is GS3, especially external-sector and investment topics."
+        ],
+        "agrees": false,
+        "confidence": 0.96,
+        "flagged_claims": [
+          "“GS3.4 Land reforms” is a wrong syllabus anchor for a note on the RBI’s FLA census, foreign investment and external-sector statistics."
         ],
         "verificationVersion": 2
       }
