@@ -1,10 +1,55 @@
 {
-  "generated": "2026-11-04T07:45:56.027Z",
+  "generated": "2026-11-09T08:23:11.790Z",
   "provisional": true,
   "note": "The current trigger layer for anchors in data/upsc-patterns.json, refreshed one anchor per day. Every item carries the source it came from; items not from a primary document must be confirmed against one before they enter permanent notes.",
   "patternsVersion": "1.0.0",
-  "anchorsHeld": 6,
+  "anchorsHeld": 7,
   "anchors": {
+    "world-history-and-decolonisation": {
+      "refreshedAt": "2026-11-09T08:23:11.778Z",
+      "anchor": "World history and decolonisation",
+      "codes": [
+        "GS1.4"
+      ],
+      "papers": [
+        "GS1"
+      ],
+      "confidence": "medium",
+      "primarySources": 3,
+      "omitted": "The search surfaced broader scholarship on Ukraine, epistemic decolonisation and African agency, but these were omitted because they were not sufficiently anchored in a primary document or specific current development.",
+      "items": [
+        {
+          "title": "UN Fourth Committee advances colonialism and Western Sahara texts",
+          "date": "2026-10-15",
+          "why": "It reframes decolonisation as an ongoing UN process involving self-determination, contemporary colonialism and unresolved territorial questions.",
+          "use": "Use the UN’s continuing Fourth Committee agenda to show decolonisation remains an unfinished international process, not only a post-1945 historical phase.",
+          "verb": "discuss",
+          "url": "https://media.un.org/avlibrary/en/asset/d365/d3655895",
+          "source": "United Nations Multimedia",
+          "primary": true
+        },
+        {
+          "title": "UN Fourth Committee hears reparations and territorial priorities",
+          "date": "2026-10-12",
+          "why": "It expands the anchor from transfer of sovereignty to postcolonial justice, reparations and continuing control over non-self-governing territories.",
+          "use": "Use reparations and territory-led priorities to argue that political independence did not settle colonialism’s economic, institutional and representational consequences.",
+          "verb": "critically examine",
+          "url": "https://media.un.org/avlibrary/en/asset/d365/d3651540",
+          "source": "United Nations Multimedia",
+          "primary": true
+        },
+        {
+          "title": "UN Fourth Committee cites 2025 Chagos advisory opinions",
+          "date": "2026-10-13",
+          "why": "It demonstrates how colonial boundary-making remains legally consequential and how international law continues to mediate decolonisation disputes.",
+          "use": "Use Chagos as a precedent linking decolonisation, territorial separation, self-determination and the General Assembly’s role in determining an authentic choice.",
+          "verb": "examine",
+          "url": "https://transcripts.un.org/en/ga/c4/81/9",
+          "source": "United Nations Official Document System transcript",
+          "primary": true
+        }
+      ]
+    },
     "population-and-demography": {
       "refreshedAt": "2026-11-04T07:45:56.013Z",
       "anchor": "Population and demographic transition",
