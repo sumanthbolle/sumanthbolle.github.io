@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-10T07:10:50Z",
-  "itemCount": 24,
+  "generatedAt": "2026-11-10T09:37:08Z",
+  "itemCount": 25,
   "items": [
     {
       "anchor": "GS3.8 Internal security: external state and non-state actors; GS3.7 Disaster and disaster management",
@@ -2819,6 +2819,193 @@
         "flagged_claims": [
           "Verification was unavailable; retry before publishing"
         ]
+      }
+    },
+    {
+      "anchor": "GS1.1 Indian art, culture, architecture, literature — ancient to modern; GS2.6 Welfare schemes, vuln",
+      "checkedAt": "2026-11-10T09:37:08Z",
+      "codes": [
+        "GS1.1",
+        "GS2.6",
+        "ESSAY.B"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_eabcf98ebf8a41dfba626af72f6e6b72f42ccfbc6dd58aeaca0ec06d81f88521` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.97\n- **checked at:** 2026-11-10T09:37:08Z\n\nFlagged claims:\n- The proposed static topic and code GS1.1 are wrong or materially mismatched: the official GS1 syllabus wording concerns art, culture, architecture and literature, not sports or chess.\n- The proposed GS2.6 tag is not a valid, sufficiently specified UPSC syllabus anchor for this note; the supplied label is truncated and does not establish relevance to the milestone.\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_eabcf98ebf8a41dfba626af72f6e6b72f42ccfbc6dd58aeaca0ec06d81f88521",
+        "title": "Needs review: src_eabcf98ebf8a41dfba626af72f6e6b72f42ccfbc6dd58aeaca0ec06d81f88521 verification disagreed"
+      },
+      "note": {
+        "anchor": "GS1.1 Indian art, culture, architecture, literature — ancient to modern; GS2.6 Welfare schemes, vuln",
+        "argumentsAgainst": [
+          "A single milestone does not by itself establish broad-based access to chess, gender parity, regional balance or sustained sporting infrastructure.",
+          "The source records recognition and optimism, but provides no evidence on the institutional causes, distribution of talent or policy outcomes."
+        ],
+        "argumentsFor": [
+          "The milestone can strengthen public visibility of chess and encourage young people to pursue the sport.",
+          "Recognition of player achievement may contribute to a culture of dedication, excellence and participation."
+        ],
+        "background": [
+          "The Press Information Bureau release states that the Prime Minister congratulated Anuj Shrivatri after he became India’s 100th Chess Grandmaster.",
+          "The release links the milestone to players’ talent, dedication and hard work, and to the growing popularity of chess among youth.",
+          "The source does not provide the qualification pathway for the Grandmaster title, details of training systems, or evidence on participation patterns."
+        ],
+        "codes": [
+          "GS1.1",
+          "GS2.6",
+          "ESSAY.B"
+        ],
+        "editorialStatus": "source-backed",
+        "id": "note_eabcf98ebf8a41dfba626af72f6e6b72f42ccfbc6dd58aeaca0ec06d81f88521",
+        "indiaImplications": [
+          "Public recognition can support chess as part of India’s youth-development and sporting culture.",
+          "The milestone may be used to discuss how talent identification, coaching, competitive opportunities and affordable access can convert interest into excellence; these mechanisms are analytical implications, not claims established by the sour",
+          "Policy evaluation should distinguish symbolic visibility from measurable outcomes such as participation, inclusion and performance."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Explain the relationship between public recognition, sporting aspiration and youth participation.",
+              "Assess the institutional ecosystem required to convert popularity into sustained excellence: access, coaching, competition and inclusion.",
+              "Differentiate an individual achievement from evidence of broad-based sports development.",
+              "Suggest an outcome-based approach to sports policy without treating the milestone as proof of policy success."
+            ],
+            "conclusionPrompt": "Conclude by linking sporting excellence with inclusive opportunity and sustained institutional support.",
+            "counterPosition": "A national milestone may inspire participation, but inspiration alone cannot establish equitable access or a durable talent pipeline.",
+            "diagramSuggestion": "Flowchart: visibility and recognition -> participation -> talent identification -> coaching and competition -> excellence; add inclusion as a cross-cutting condition.",
+            "directive": "discuss",
+            "introChoices": [
+              "India’s 100th chess Grandmaster is both a sporting milestone and an entry point to examine how a society builds pathways from youth interest to excellence.",
+              "The recognition of Anuj Shrivatri’s achievement invites a distinction between celebrating excellence and measuring the inclusiveness of the system that produces it."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "India’s 100th chess Grandmaster is both a sporting milestone and an entry point to examine how a society builds pathways from youth interest to excellence.",
+              "The recognition of Anuj Shrivatri’s achievement invites a distinction between celebrating excellence and measuring the inclusiveness of the system that produces it.",
+              "Explain the relationship between public recognition, sporting aspiration and youth participation.",
+              "Assess the institutional ecosystem required to convert popularity into sustained excellence: access, coaching, competition and inclusion.",
+              "Differentiate an individual achievement from evidence of broad-based sports development.",
+              "Suggest an outcome-based approach to sports policy without treating the milestone as proof of policy success.",
+              "A national milestone may inspire participation, but inspiration alone cannot establish equitable access or a durable talent pipeline.",
+              "Conclude by linking sporting excellence with inclusive opportunity and sustained institutional support."
+            ],
+            "stem": "Discuss how the recognition of a national sporting milestone can contribute to youth development while highlighting the limits of symbolic achievement as evidence of inclusive sports policy.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2334594",
+            "text": "Prime Minister congratulates Anuj Shrivatri on becoming India’s 100th Chess Grandmaster",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS1",
+          "GS2",
+          "ESSAY"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Illustration",
+            "text": "Illustration: If a school uses the milestone to introduce chess clubs, the immediate consequence could be greater student exposure; whether this produces wider participation or elite players would require separate evidence."
+          },
+          "excerpt": "The Prime Minister’s recognition of Anuj Shrivatri’s achievement presents India’s 100th chess Grandmaster as a youth-inspiration milestone, while the source does not establish wider access or policy outcomes.",
+          "question": {
+            "answer": "It can raise visibility and aspiration, but a reasoned assessment must also examine whether coaching, competition and affordable opportunities reach diverse groups; the source itself does not provide that evidence.",
+            "prompt": "How should a policymaker use this milestone without confusing symbolic recognition with inclusive sports development?"
+          },
+          "sections": [
+            {
+              "heading": "Recognition and aspiration",
+              "paragraphs": [
+                "On 10 November 2026, the Prime Minister congratulated Anuj Shrivatri on becoming India’s 100th Chess Grandmaster. The release presents the achievement as reflecting players’ talent, dedication and hard work, while noting the popularity of chess among youth."
+              ]
+            },
+            {
+              "heading": "What the milestone can—and cannot—show",
+              "paragraphs": [
+                "Recognition may encourage young people to take up chess and pursue excellence. However, the release does not establish the distribution of facilities, coaching access, gender or regional inclusion, or the effectiveness of sports programmes. A milestone should therefore be treated as an opportunity for policy attention, not as standalone proof of broad-based development."
+              ]
+            }
+          ],
+          "title": "India’s 100th chess Grandmaster: recognition and the limits of symbolism"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The official release says the Prime Minister congratulated Anuj Shrivatri on becoming India’s 100th Chess Grandmaster.",
+            "statement": "The source records Anuj Shrivatri as India’s 100th Chess Grandmaster."
+          },
+          {
+            "correct": true,
+            "explanation": "The release says the Prime Minister linked the milestone to talent, dedication, hard work and growing popularity of chess among youth.",
+            "statement": "The source associates the milestone with players’ dedication and the growing popularity of chess among youth."
+          },
+          {
+            "correct": false,
+            "explanation": "The source does not provide the Grandmaster title’s qualification requirements or claim that the title is awarded by the Prime Minister.",
+            "statement": "The source explains the formal qualification requirements for the Grandmaster title and says the Prime Minister awarded it."
+          },
+          {
+            "correct": false,
+            "explanation": "The release records a milestone and an expectation that it may inspire youngsters; it supplies no current participation statistics or proof of nationwide access.",
+            "statement": "The source proves that India’s chess infrastructure is uniformly accessible across regions and social groups."
+          }
+        ],
+        "priority": 64,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 45,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 50
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-11-10T09:37:08Z",
+        "publisherId": "pib",
+        "publisherName": "Press Information Bureau",
+        "recallCard": "On 10 November 2026, the Prime Minister congratulated Anuj Shrivatri on becoming India’s 100th Chess Grandmaster. For UPSC, use it to connect sporting recognition with youth aspiration, while noting that a symbolic milestone alone does not prove inclusive access or policy success.",
+        "reusableAnchors": [],
+        "sourceContentHash": "1da049226b4cc7a9f1728af021f6ae105f055fdcd77c601fd31e86a48d8bf8a5",
+        "sourceId": "src_eabcf98ebf8a41dfba626af72f6e6b72f42ccfbc6dd58aeaca0ec06d81f88521",
+        "sourceTitle": "Prime Minister congratulates Anuj Shrivatri on becoming India’s 100th Chess Grandmaster",
+        "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2334594",
+        "staticDefinition": "A Grandmaster is a prestigious chess title referred to in the official release; the source does not define the title, prescribe its qualification requirements or identify the awarding authority.",
+        "use": "Use the milestone as a contemporary illustration in answers on youth development, sports culture, human-resource development, talent promotion and the difference between symbolic recognition and inclusive outcomes.",
+        "wayForward": [
+          "Use the milestone to promote chess participation while separately measuring access, retention and competitive progression.",
+          "Strengthen the analytical focus on affordable coaching, school-level opportunities, facilities and competitions; these are policy directions, not measures reported in the source.",
+          "Evaluate sports interventions through disaggregated outcomes rather than headline achievements alone."
+        ],
+        "whyInNews": "On 10 November 2026, the Prime Minister congratulated Anuj Shrivatri on becoming India’s 100th Chess Grandmaster. The release presents India reaching 100 Grandmasters as a milestone reflecting players’ talent, dedication and hard work, and the growing popularity of chess among youth."
+      },
+      "sourceId": "src_eabcf98ebf8a41dfba626af72f6e6b72f42ccfbc6dd58aeaca0ec06d81f88521",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "The proposed GS1.1 anchor on art, culture, architecture and literature is weak; chess and sports culture are not clearly covered by that syllabus wording.",
+          "GS2.6 is truncated and appears to concern welfare schemes and vulnerable sections, making it an imprecise tag for this sports milestone.",
+          "ESSAY.B is acceptable only as an internal essay category, not as an official UPSC syllabus code.",
+          "The claim that recognition may encourage participation is analytical and appropriately presented as a possibility, not established evidence.",
+          "The proposed mechanisms—coaching, competition, affordability and school opportunities—are useful analysis but are not reported in the PIB release.",
+          "The pocketRead headline and deck are interpretive and should not be treated as official descriptions of the event.",
+          "The hypothetical school-club example is clearly labelled as an illustration and does not assert a real event.",
+          "The official source supports the 10 November 2026 congratulatory release and the 100th-Grandmaster claim; external reporting places the achievement itself on 8 November 2026.[1][5]"
+        ],
+        "agrees": false,
+        "confidence": 0.97,
+        "flagged_claims": [
+          "The proposed static topic and code GS1.1 are wrong or materially mismatched: the official GS1 syllabus wording concerns art, culture, architecture and literature, not sports or chess.",
+          "The proposed GS2.6 tag is not a valid, sufficiently specified UPSC syllabus anchor for this note; the supplied label is truncated and does not establish relevance to the milestone."
+        ],
+        "verificationVersion": 2
       }
     },
     {
