@@ -1,5 +1,67 @@
 [
   {
+    "id": 129,
+    "title": "Meta Muse Ember targets low-cost agent control loops",
+    "excerpt": "Meta released Muse Ember on November 9, 2026, a small model aimed at repeated agent tasks such as tool calls, routing, extraction, and long-document parsing. Its listed price is $0.10 per million input tokens and $0.50 per million output tokens, with a 1-million-token context window.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-meta-muse-ember-targets-low-cost-agent-control-loops-1794305839836",
+    "date": "Nov 10, 2026",
+    "dateISO": "2026-11-10T10:17:19Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "The AI Gazette \u2014 Morning edition, Tuesday 10 November 2026",
+        "url": "https://luongnv.com/news/reports/2026-11-10-morning.html"
+      },
+      {
+        "title": "New AI Models \u2014 November 2026",
+        "url": "https://blog.jiufeng.ai/releases/2026-11"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Meta released Muse Ember as <code>muse-ember-1.0</code> on November 9, 2026. The model is designed for work that agents perform repeatedly: tool calls, coding subtasks, routing, extraction, and long-document parsing.</p>\n<p>The reported limits are a 1-million-token context window and up to 512,000 output tokens. The listed prices are $0.10 per million input tokens and $0.50 per million output tokens. That makes it a candidate for high-volume control-plane work where a larger model would be wasteful.</p>\n<h2>How the pattern works</h2>\n<p>Use Muse Ember as a fast, low-cost worker around a stronger model. It can classify a request, select a tool, extract structured fields, summarize retrieved documents, or handle a small coding subtask. Escalate only the cases that need deeper reasoning or stronger coding performance.</p>\n<p>A simple routing loop keeps the expensive model out of routine paths:</p>\n<h2>A practical deployment shape</h2>\n<p>For retrieval, the large context window allows a worker to inspect a long document set without aggressive early truncation. The model can extract citations, identify relevant sections, and pass a compact evidence bundle to a larger reasoning model.</p>\n<p>For agents, keep tool schemas narrow and validate every argument in application code. Treat the model as a planner and parser, not as an authority. The application should enforce permissions, retries, timeouts, and stopping conditions.</p>\n<pre><code class=\"language-text\">request -&gt; Muse Ember: classify and choose tool\n        -&gt; tool execution\n        -&gt; Muse Ember: extract result and decide next step\n        -&gt; larger model only when confidence or task risk is low</code></pre>\n<h2>Where it breaks</h2>\n<p>Muse Ember looks better suited to repetitive automation than to difficult software engineering. Its reported coding score trails Haiku 5.5, so it should not replace a stronger model for repository-wide changes, ambiguous debugging, or safety-critical edits.</p>\n<p>The benchmark results also come from a secondary report rather than a primary Meta release in the available results. Treat the prices, limits, and scores as launch claims that need verification before production budgeting.</p>\n<ul>\n<li>The low price does not imply strong performance on every task.</li>\n<li>On the reported AutomationBench-AA result, Muse Ember scored 37.8%, compared with 13.9% for Haiku 5.5.</li>\n<li>On FrontierCode 2.0, it scored 27.2%, below Haiku 5.5 at 34.9%.</li>\n<li>The available report describes company and roundup claims, not an independent evaluation of latency, reliability, or tool-call correctness.</li>\n</ul>\n<h2>How to use it</h2>\n<p>A useful first test is a shadow deployment. Send the same requests to Muse Ember and the current worker, but let only the current worker act. Compare structured-output validity, correct tool selection, completed-task cost, and escalation frequency. Promote Muse Ember to the active path only after it meets thresholds on your workload.</p>\n<ul>\n<li>Use it first for routing, extraction, document parsing, and tool selection.</li>\n<li>Add schema validation and explicit escalation rules before allowing autonomous actions.</li>\n<li>Benchmark your own tool-call success rate, latency, retry rate, and cost per completed task.</li>\n<li>Keep a stronger model for complex coding and low-confidence cases.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Trial Muse Ember for high-volume routing, extraction, and tool-call control loops.</li>\n<li>Keep a stronger coding model for repository-scale or ambiguous changes.</li>\n<li>Measure completed-task cost and tool-call accuracy, not token price alone.</li>\n<li>Require application-side validation, permissions, and escalation limits.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://luongnv.com/news/reports/2026-11-10-morning.html\" target=\"_blank\" rel=\"noopener\">The AI Gazette \u2014 Morning edition, Tuesday 10 November 2026</a> \u2014 luongnv.com</li>\n<li><a href=\"https://blog.jiufeng.ai/releases/2026-11\" target=\"_blank\" rel=\"noopener\">New AI Models \u2014 November 2026</a> \u2014 blog.jiufeng.ai</li>\n</ul>"
+  },
+  {
+    "id": 130,
+    "title": "Trigger.dev\u2019s 0.66% API-key incident shows the cost of root tokens",
+    "excerpt": "Trigger.dev disclosed a November 1, 2026 security incident that affected 0.66% of customers. The attacker obtained some customer root API keys, which exposed environment variables and operational metadata; the engineering lesson is to reduce blast radius with scoped credentials and fast rotation.",
+    "readTime": "3 min read",
+    "category": "architecture",
+    "learningPath": "architecture",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Engineering managers"
+    ],
+    "uniqueId": "daily-architecture-trigger-dev-s-0-66-api-key-incident-shows-the-cost-of-root-t-1794305854482",
+    "date": "Nov 10, 2026",
+    "dateISO": "2026-11-10T10:17:34Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Trigger.dev: Security incident report: Sunday November 1st",
+        "url": "https://trigger.dev/blog/security-incident-report-nov-2026"
+      },
+      {
+        "title": "Flavio Copes: Security incidents, November 2026",
+        "url": "https://flaviocopes.com/security/"
+      },
+      {
+        "title": "SRE Weekly Issue #542",
+        "url": "https://sreweekly.com/?source=post_page---------------------------"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Trigger.dev published an incident report on November 6, 2026. The incident began on November 1, when infrastructure alerts detected anomalous activity. Trigger.dev said the attacker was blocked and the attack path was mitigated.</p>\n<p>The incident affected 0.66% of customers. In some affected environments, the attacker obtained customer root API keys. Trigger.dev found evidence that the attacker listed recent runs, deployments, and schedules. Those responses could include run IDs, deployment IDs, schedule IDs, task names, idempotency keys, statuses, tags, metadata, deployment errors, and external schedule IDs.</p>\n<p>Trigger.dev reported no evidence that the attacker accessed other customer data, production databases, or customer dashboard accounts. It notified affected customers, engaged incident-response specialists, and notified law enforcement.</p>\n<h2>The design choice that increased impact</h2>\n<p>The key fact is the privilege boundary. Trigger.dev described a customer root API key as having full access to an environment's settings, including environment variables. Once such a key was obtained, the attacker did not need a second authorization step to reach those settings.</p>\n<p>Environment variables commonly contain database passwords, third-party API keys, and access tokens. Trigger.dev therefore instructed affected customers to rotate credentials in the impacted environments and revoke the old credentials with their providers.</p>\n<p>The incident shows why a single high-privilege token is a poor default for automation. A token used only to inspect runs should not also read secrets or change environment settings.</p>\n<pre><code class=\"language-text\">root API key -&gt; full environment access -&gt; environment variables\n                -&gt; run, deployment, and schedule metadata\n\nscoped API key -&gt; limited operation and narrower blast radius</code></pre>\n<h2>What teams can copy</h2>\n<p>Start with a permission matrix. Define the smallest API operation each job needs, then issue separate credentials for those operations. Do not use a root token for dashboards, CI jobs, support tooling, or scheduled automation when a narrower token can work.</p>\n<p>Make rotation a tested operation. Store token ownership and downstream dependencies so a compromised credential can be revoked without guessing which systems will fail. Exercise the procedure in staging, including database passwords, cloud keys, and third-party access tokens.</p>\n<p>Alert on unusual token behavior. Trigger.dev said its initial alerts came from anomalous activity. Useful signals include a token listing resources it never previously accessed, activity from a new network location, unusual request volume, and access outside the normal deployment window.</p>\n<ul>\n<li>Inventory every token by customer, environment, operation, and expiry.</li>\n<li>Separate read-only run inspection from deployment, schedule, and settings operations.</li>\n<li>Treat environment variables as credentials, not ordinary configuration.</li>\n<li>Revoke old credentials at the upstream provider after rotation.</li>\n</ul>\n<h2>The follow-up change</h2>\n<p>Trigger.dev said it released IP whitelisting for scoped API keys. That adds a network constraint to the identity constraint: even a stolen scoped key can be rejected when used outside approved source addresses.</p>\n<p>IP restrictions do not replace least privilege. They can fail during emergency access, proxy changes, or misconfiguration. Use them as a second control, and keep the key's permissions narrow enough that compromise remains containable.</p>\n<p>The practical review question is simple: if this token appears in an attacker-controlled log today, which exact operations become possible, and how many credentials must be rotated? If the answer includes all environment secrets, the token is too powerful.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Replace root API keys in automation with operation-specific scoped keys.</li>\n<li>Rotate and revoke every credential reachable from an exposed environment.</li>\n<li>Add source-IP restrictions to scoped keys where operationally practical.</li>\n<li>Alert on unusual token access and rehearse the revocation procedure.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://trigger.dev/blog/security-incident-report-nov-2026\" target=\"_blank\" rel=\"noopener\">Trigger.dev: Security incident report: Sunday November 1st</a> \u2014 trigger.dev</li>\n<li><a href=\"https://flaviocopes.com/security/\" target=\"_blank\" rel=\"noopener\">Flavio Copes: Security incidents, November 2026</a> \u2014 flaviocopes.com</li>\n<li><a href=\"https://sreweekly.com/?source=post_page---------------------------\" target=\"_blank\" rel=\"noopener\">SRE Weekly Issue #542</a> \u2014 sreweekly.com</li>\n</ul>"
+  },
+  {
     "id": 126,
     "title": "Kakao\u2019s Kanana-2-v-decide targets sub-40 ms multimodal routing",
     "excerpt": "Kakao released Kanana-2-v-decide-3b-2611 on November 6, 2026. It is a small multimodal decision model that returns choices, probabilities, or ordinal scores instead of long text, with reported response times below 40 ms on one H200.",
