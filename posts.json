@@ -1,5 +1,34 @@
 [
   {
+    "id": 131,
+    "title": "MKA tests agents on visual files and finished artifacts",
+    "excerpt": "Google and Artificial Analysis released the Multimodal Knowledge Agent benchmark on November 10, 2026. It tests agents that inspect dense visual files and produce usable business artifacts, exposing failures that text-only coding and question-answer benchmarks miss.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-mka-tests-agents-on-visual-files-and-finished-artifacts-1794390411014",
+    "date": "Nov 11, 2026",
+    "dateISO": "2026-11-11T09:46:51Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Introducing the Multimodal Knowledge Agent benchmark",
+        "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/multimodal-knowledge-agent-benchmark/?ref=refetch.io"
+      },
+      {
+        "title": "Multimodal Knowledge Agent benchmark: testing knowledge work across complex visual files",
+        "url": "https://artificialanalysis.ai/articles/google-deepmind-multimodal-knowledge-agent"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>The Multimodal Knowledge Agent benchmark, or MKA, contains 200 private, real-world tasks across 10 industry verticals. Inputs include architectural drawings, engineering schematics, clinical scans, charts, tables, and other visually complex files. The required outputs include slide decks, spreadsheets, reports, PDFs, Word documents, and marked-up images.</p>\n<p>Every task runs in Stirrup, an open-source agent harness. The harness gives the agent code execution, web search, web fetch, and image-viewing tools, with a limit of up to 250 turns. An agentic judge evaluates the submitted deliverable rather than only checking a short answer.</p>\n<h2>How the evaluation works</h2>\n<p>MKA measures an end-to-end workflow: inspect source files, find supporting information, reason across modalities, use tools, and create a final artifact. This matters for engineering systems because a model can describe a diagram correctly yet still fail to produce a complete spreadsheet, report, or marked-up image.</p>\n<p>The first results show that no single model leads across all 10 verticals. Claude Fable 5.2 leads Software &amp; Data, Engineering, Logistics &amp; Mapping, and Finance alongside Claude Sonnet 5.5. Claude Opus 5.5 leads Education and Construction. Gemini 4 Argon leads Science, Gemini 4 Carbon leads Healthcare, and Claude Sonnet 5.5 narrowly leads Law &amp; Government.</p>\n<h2>The engineering lesson</h2>\n<p>Treat multimodal knowledge work as a tool-and-artifact problem, not a vision question. A production agent needs explicit file inspection, computation, source retrieval, and validation steps. The benchmark\u2019s 250-turn budget also suggests that long workflows should be measured for recovery and verification, not only first-pass accuracy.</p>\n<p>A useful local harness can follow this shape:</p>\n<h2>A practical agent loop</h2>\n<p>Keep the source files, extracted facts, evidence, requirements, and validation report as separate objects. Validate the generated artifact with deterministic checks where possible: required worksheet names, totals, page counts, file readability, image annotations, and links back to source regions. Use a model judge only for the parts that cannot be checked mechanically.</p>\n<pre><code class=\"language-python\">for file in project_files:\n    pages = inspect_images_and_tables(file)\n    facts = extract_structured_facts(pages)\n    evidence = retrieve_supporting_docs(facts)\n    draft = create_artifact(facts, evidence, requirements)\n    validate_artifact(draft, requirements)\n    if validation_failed(draft):\n        draft = repair(draft, validation_report)\nreturn draft</code></pre>\n<h2>Where it breaks</h2>\n<p>MKA uses private real-world tasks, so the public headline scores do not provide a simple reproducible dataset for engineers to run locally. The benchmark also mixes model quality with harness quality, tool choice, turn limits, and artifact-generation reliability.</p>\n<p>The lack of one leader across all verticals is another warning against routing by a single aggregate score. A system that performs well on software and data tasks may be weaker on medical images or construction documents. Route by file type and required artifact, then measure the complete workflow on representative internal tasks.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Add image, PDF, spreadsheet, and artifact validation to agent evaluations instead of testing text answers alone.</li>\n<li>Separate deterministic artifact checks from model-based quality judgments.</li>\n<li>Route multimodal tasks by domain and output type, not by one aggregate model score.</li>\n<li>Track tool turns, recovery steps, and final deliverable quality as separate metrics.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://blog.google/innovation-and-ai/models-and-research/gemini-models/multimodal-knowledge-agent-benchmark/?ref=refetch.io\" target=\"_blank\" rel=\"noopener\">Introducing the Multimodal Knowledge Agent benchmark</a> \u2014 blog.google</li>\n<li><a href=\"https://artificialanalysis.ai/articles/google-deepmind-multimodal-knowledge-agent\" target=\"_blank\" rel=\"noopener\">Multimodal Knowledge Agent benchmark: testing knowledge work across complex visual files</a> \u2014 artificialanalysis.ai</li>\n</ul>"
+  },
+  {
     "id": 129,
     "title": "Meta Muse Ember targets low-cost agent control loops",
     "excerpt": "Meta released Muse Ember on November 9, 2026, a small model aimed at repeated agent tasks such as tool calls, routing, extraction, and long-document parsing. Its listed price is $0.10 per million input tokens and $0.50 per million output tokens, with a 1-million-token context window.",
