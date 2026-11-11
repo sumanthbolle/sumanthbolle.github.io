@@ -4,6 +4,26 @@
       "band": "must",
       "discovery": [
         {
+          "feedId": "hindu-business",
+          "publishedAt": "2026-11-10T13:59:22Z",
+          "publisher": "The Hindu",
+          "section": "business",
+          "title": "Industry seeks LTCG, STT cuts in Budget 2027; MSME relief also on wish list",
+          "url": "https://www.thehindu.com/business/Economy/industry-seeks-ltcg-stt-cuts-in-budget-2027-msme-relief-also-on-wish-list/article71685951.ece"
+        }
+      ],
+      "firstSeen": "2026-11-11T07:06:30Z",
+      "id": "264594661b276c5a",
+      "recordIds": [
+        "src_6f6c11d912e095d5a7ffffc98294b3d8105a4da7d94cab26dd68dfaff008d71c"
+      ],
+      "score": 55,
+      "title": "Industry demands LTCG and STT cuts in Budget 2027 amid EU Economic and Financial Affairs Council meeting"
+    },
+    {
+      "band": "must",
+      "discovery": [
+        {
           "feedId": "hindu-international",
           "publishedAt": "2026-11-10T07:37:08Z",
           "publisher": "The Hindu",
@@ -80,28 +100,10 @@
       "id": "b01b5d926ed29c6b",
       "recordIds": [],
       "score": 49,
-      "title": "Nvidia CEO spying allegations and China’s AI ambitions"
-    },
-    {
-      "band": "useful",
-      "discovery": [
-        {
-          "feedId": "hindu-international",
-          "publishedAt": "2026-11-10T13:16:14Z",
-          "publisher": "The Hindu",
-          "section": "international",
-          "title": "Zelensky holds air defence, energy security talks with Nordic leaders",
-          "url": "https://www.thehindu.com/news/international/zelensky-holds-air-defence-energy-security-talks-with-nordic-leaders/article71685723.ece"
-        }
-      ],
-      "firstSeen": "2026-11-11T06:19:05Z",
-      "id": "1cb9c2f2088284fa",
-      "recordIds": [],
-      "score": 48,
-      "title": "Zelensky holds air defence and energy security talks with Nordic leaders"
+      "title": "Allegations of Chinese espionage involving Nvidia CEO and AI technology"
     }
   ],
-  "closedAt": "2026-11-11T06:19:05Z",
+  "closedAt": "2026-11-11T07:06:30Z",
   "date": "2026-11-11",
   "editor": "llm",
   "editorReason": "",
@@ -135,15 +137,38 @@
       "code": "GS2.4",
       "line": "The deletion of over 74 lakh voters from Tamil Nadu’s electoral rolls during the SIR has sparked demands for inquiry and electoral reforms.",
       "noteId": "2026-11-11-am-b30994bc22"
+    },
+    {
+      "code": "GS2.2",
+      "line": "Ladakh postponed its panchayat and municipal elections due to protests over alleged electoral fraud and demands for better election scheduling.",
+      "noteId": "2026-11-11-am-acd58b840c"
+    },
+    {
+      "code": "GS3.9",
+      "line": "DRI's seizures of illicit foreign currency and banned e-cigarettes demonstrate its enforcement against economic offences and public health risks.",
+      "noteId": "2026-11-11-am-39c301e624"
+    },
+    {
+      "code": "GS2.9",
+      "line": "Sheikh Hasina's attempt to return to Bangladesh is complicated by legal charges and extradition demands, affecting bilateral ties with India.",
+      "noteId": "2026-11-11-am-31ceb1b81c"
     }
   ],
   "held": [
     {
+      "fingerprint": "264594661b276c5a",
+      "reasons": [
+        "evidence-unavailable",
+        "http-403"
+      ],
+      "topic": "Industry demands LTCG and STT cuts in Budget 2027 amid EU Economic and Financial Affairs Council meeting"
+    },
+    {
       "fingerprint": "b01b5d926ed29c6b",
       "reasons": [
-        "banned:landscape"
+        "banned:underscores"
       ],
-      "topic": "Nvidia CEO spying allegations and China’s AI ambitions"
+      "topic": "Allegations of Chinese espionage involving Nvidia CEO and AI technology"
     }
   ],
   "id": "2026-11-11-am",
@@ -153,9 +178,382 @@
     "2026-11-11-am-7f1149a972",
     "2026-11-11-am-b491cf15be",
     "2026-11-11-am-4c0435b87e",
-    "2026-11-11-am-b30994bc22"
+    "2026-11-11-am-b30994bc22",
+    "2026-11-11-am-acd58b840c",
+    "2026-11-11-am-31ceb1b81c"
   ],
   "notes": {
+    "2026-11-11-am-31ceb1b81c": {
+      "anchor": "India and its neighbourhood",
+      "back2basics": {
+        "concept": "Extradition and International Crimes Tribunal",
+        "patternId": "",
+        "text": "Extradition is a formal process where one country surrenders a suspected or convicted criminal to another country. The International Crimes Tribunal is a domestic court in Bangladesh that tries individuals for crimes against humanity and war crimes, issuing sentences such as death penalties. Understanding these concepts helps in grasping the legal and diplomatic challenges in cross-border political cases."
+      },
+      "band": "must",
+      "codes": [
+        "GS2.9"
+      ],
+      "deck": "Sheikh Hasina seeks travel documents to return to Bangladesh amid a death sentence by the International Crimes Tribunal for a police crackdown. This situation impacts India-Bangladesh relations and regional political stability.",
+      "editor": {
+        "mainsAngle": "Relevant to India-Bangladesh relations and regional security dynamics.",
+        "prelimsAngle": "Sheikh Hasina's travel document issue and execution threat if she returns.",
+        "why": "Important for India’s neighbourhood relations and regional political stability."
+      },
+      "fingerprint": "31ceb1b81c1c1a00",
+      "id": "2026-11-11-am-31ceb1b81c",
+      "keyNumbers": [
+        {
+          "figure": "July-August 2024",
+          "meaning": "Period of the police crackdown for which Sheikh Hasina was sentenced",
+          "source": 1
+        },
+        {
+          "figure": "August 5, 2024",
+          "meaning": "Date Sheikh Hasina came to India after the uprising toppled her government",
+          "source": 1
+        },
+        {
+          "figure": "November 9, 2026",
+          "meaning": "Date Sheikh Hasina applied for new passport and national identity card",
+          "source": 1
+        }
+      ],
+      "kind": "secondary",
+      "oneLine": "Sheikh Hasina's attempt to return to Bangladesh is complicated by legal charges and extradition demands, affecting bilateral ties with India.",
+      "papers": [
+        "GS2"
+      ],
+      "practice": {
+        "faq": [
+          {
+            "a": "For ordering the police crackdown during July-August 2024.",
+            "q": "Why has Sheikh Hasina been sentenced to death by Bangladesh's International Crimes Tribunal?"
+          },
+          {
+            "a": "Bangladesh has sought her extradition under an acceptable prisoner transfer process.",
+            "q": "What legal process has Bangladesh initiated regarding Sheikh Hasina's return?"
+          },
+          {
+            "a": "Since August 5, 2024.",
+            "q": "Since when has Sheikh Hasina been in India following the political upheaval in Bangladesh?"
+          }
+        ],
+        "mains": {
+          "demand": "Analyze the complexities of legal charges, extradition demands, and diplomatic considerations affecting bilateral ties.",
+          "directive": "Examine",
+          "marks": 15,
+          "question": "Examine the legal and diplomatic challenges in Sheikh Hasina's attempt to return to Bangladesh and its implications for India-Bangladesh relations.",
+          "structure": {
+            "body": [
+              "Detail the death sentence by the International Crimes Tribunal and its basis on the 2024 police crackdown.",
+              "Explain Bangladesh's extradition request and the prisoner transfer process.",
+              "Discuss India's role in the travel document issue and the impact on bilateral relations.",
+              "Analyze the broader implications for regional political stability and security."
+            ],
+            "conclusion": "The case exemplifies the intersection of legal accountability and diplomatic relations in South Asia.",
+            "intro": "Sheikh Hasina's return to Bangladesh is hindered by legal sentences and political challenges, involving India diplomatically."
+          }
+        },
+        "mcq": {
+          "answer": 2,
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "stem": "Consider the following statements about Sheikh Hasina's return to Bangladesh:\n1. Sheikh Hasina has been sentenced to death by the International Crimes Tribunal for a police crackdown in 2024.\n2. Bangladesh has requested her extradition through an acceptable prisoner transfer process after she applied for travel documents.\nWhich of the statements given above is/are correct?",
+          "trap": "A trap could be confusing the role of the International Crimes Tribunal with other courts or misunderstanding the extradition process as automatic rather than through a prisoner transfer process."
+        }
+      },
+      "priority": 39,
+      "publishedAt": "2026-11-11T07:06:30Z",
+      "readTime": 2,
+      "recordIds": [],
+      "sections": [
+        {
+          "body": [
+            {
+              "label": "Death sentence by ICT",
+              "text": "Sheikh Hasina has been sentenced to death by the International Crimes Tribunal in Dhaka for ordering the police crackdown during July-August 2024."
+            },
+            {
+              "label": "Extradition demand",
+              "text": "The Bangladesh government has sought her extradition through an acceptable prisoner transfer process after she applied for travel documents."
+            }
+          ],
+          "heading": "What legal challenges does Sheikh Hasina face for returning to Bangladesh?",
+          "sources": [
+            1
+          ]
+        },
+        {
+          "body": [
+            {
+              "label": "Political leadership",
+              "text": "Sheikh Hasina aims to return as a political leader to reclaim control over her party, the Awami League."
+            },
+            {
+              "label": "Facing justice dilemma",
+              "text": "She faces the challenge of returning to face legal charges while maintaining her political position."
+            }
+          ],
+          "heading": "Why does Sheikh Hasina want to return to Bangladesh?",
+          "sources": [
+            1
+          ]
+        },
+        {
+          "body": [
+            {
+              "label": "India's role in travel documents",
+              "text": "Sheikh Hasina has been in India since August 5, 2024, and her efforts to obtain travel documents involve diplomatic considerations between India and Bangladesh."
+            },
+            {
+              "label": "Regional political stability",
+              "text": "The legal and political complexities surrounding her return have implications for bilateral ties and regional security dynamics."
+            }
+          ],
+          "heading": "How does this issue affect India-Bangladesh relations?",
+          "sources": [
+            1
+          ]
+        }
+      ],
+      "slug": "2026-11-11-sheikh-hasina-s-return-to-bangladesh-faces-legal-and-political-hurdles-31ceb1",
+      "sources": [
+        {
+          "date": "2026-11-10",
+          "kind": "discovery",
+          "n": 1,
+          "publisher": "The Hindu",
+          "title": "Sheikh Hasina’s return to Bangladesh: the hurdles, the risks and the politics | Explained",
+          "url": "https://www.thehindu.com/news/international/sheikh-hasinas-return-to-bangladesh-the-hurdles-the-risks-and-the-politics-explained/article71685349.ece"
+        }
+      ],
+      "subject": "GS2.9",
+      "title": "Sheikh Hasina's Return to Bangladesh Faces Legal and Political Hurdles",
+      "topicTitle": "Sheikh Hasina's return to Bangladesh faces legal and political hurdles with India involved in travel document issue",
+      "updates": [],
+      "wayForward": [],
+      "whyInNews": {
+        "sources": [
+          1
+        ],
+        "text": "On November 9, 2026, Sheikh Hasina applied for a new passport and national identity card from Bangladesh, prompting the government to seek her extradition under a prisoner transfer process."
+      }
+    },
+    "2026-11-11-am-39c301e624": {
+      "anchor": "Internal security and economic offences",
+      "back2basics": {
+        "concept": "Role of Directorate of Revenue Intelligence (DRI)",
+        "patternId": "",
+        "text": "The DRI is India's premier anti-smuggling agency responsible for enforcing customs laws and preventing illicit trade. It conducts intelligence-led operations to intercept smuggling of goods and currency, protecting the country's economic interests and internal security."
+      },
+      "band": "must",
+      "codes": [
+        "GS3.9",
+        "GS3.1",
+        "GS3.4"
+      ],
+      "deck": "The Directorate of Revenue Intelligence (DRI) intercepted attempts to smuggle foreign currency worth Rs. 3.5 crore at Kolkata Airport and seized 13,000 e-cigarettes valued over Rs. 4 crore at JNPT Port. These actions highlight DRI's role in protecting India's economic stability and public health by enforcing customs laws and prohibitions.",
+      "editor": {
+        "mainsAngle": "Feeds into internal security and economic governance themes.",
+        "prelimsAngle": "DRI seizures of Rs. 3.5 crore foreign currency and e-cigarettes worth Rs. 4 crore.",
+        "why": "Highlights internal security and economic offences impacting India's financial integrity."
+      },
+      "fingerprint": "39c301e6249bbe0b",
+      "id": "2026-11-11-am-39c301e624",
+      "keyNumbers": [
+        {
+          "figure": "Rs. 3.5 crore",
+          "meaning": "Value of foreign currency seized at Kolkata Airport",
+          "source": 1
+        },
+        {
+          "figure": "13,000",
+          "meaning": "Number of e-cigarettes seized at JNPT Port",
+          "source": 2
+        },
+        {
+          "figure": "Rs. 4 crore",
+          "meaning": "Value of e-cigarettes seized at JNPT Port",
+          "source": 2
+        },
+        {
+          "figure": "3,55,000",
+          "meaning": "Total e-cigarettes seized by DRI in FY 2026-27",
+          "source": 2
+        },
+        {
+          "figure": "Rs. 135 crore",
+          "meaning": "Value of e-cigarettes seized by DRI in FY 2026-27",
+          "source": 2
+        }
+      ],
+      "kind": "news",
+      "oneLine": "DRI's seizures of illicit foreign currency and banned e-cigarettes demonstrate its enforcement against economic offences and public health risks.",
+      "papers": [
+        "GS3"
+      ],
+      "practice": {
+        "faq": [
+          {
+            "a": "Rs. 3.5 crore worth of foreign currency was seized.",
+            "q": "What was the value of foreign currency seized by DRI at Kolkata Airport?"
+          },
+          {
+            "a": "Around 13,000 e-cigarettes were seized.",
+            "q": "How many e-cigarettes did DRI seize at JNPT Port recently?"
+          },
+          {
+            "a": "They are banned under the Prohibition of Electronic Cigarettes Act, 2019 to protect public health.",
+            "q": "Why are e-cigarettes prohibited in India?"
+          }
+        ],
+        "mains": {
+          "demand": "Explain how DRI's enforcement actions against smuggling impact economic stability and public health.",
+          "directive": "Examine",
+          "marks": 15,
+          "question": "Examine the role of the Directorate of Revenue Intelligence (DRI) in combating smuggling and protecting India's economic and public health interests.",
+          "structure": {
+            "body": [
+              "DRI intercepts illicit foreign currency outflows that threaten economic and fiscal stability.",
+              "It enforces prohibitions on banned goods such as e-cigarettes to protect public health.",
+              "DRI's intelligence-led operations dismantle organized smuggling networks, enhancing internal security.",
+              "Seizures at major ports and airports demonstrate DRI's commitment to safeguarding India's economic frontiers."
+            ],
+            "conclusion": "DRI's anti-smuggling efforts are vital for maintaining India's economic integrity and public health safety.",
+            "intro": "The Directorate of Revenue Intelligence (DRI) is a key agency combating smuggling in India."
+          }
+        },
+        "mcq": {
+          "answer": 0,
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "stem": "Consider the following statements about recent DRI seizures:\n1. DRI seized foreign currency worth Rs. 3.5 crore at Kolkata Airport involving seven arrested syndicate members.\n2. DRI seized 13,000 e-cigarettes at JNPT Port, which are legal under Indian law.\nWhich of the statements given above is/are correct?",
+          "trap": "Statement 2 is incorrect because e-cigarettes are prohibited in India under the Prohibition of Electronic Cigarettes Act, 2019."
+        }
+      },
+      "priority": 35,
+      "publishedAt": "2026-11-11T07:06:30Z",
+      "readTime": 3,
+      "recordIds": [
+        "src_affb05b4070a06a93fca496e52e686af4847c79fc0250f2d3ec1c5a9d5ca1d2a",
+        "src_05bc9e963c4663fcafbef93a66eebb2c2288e7c328849f3ff3c0501328562f20"
+      ],
+      "sections": [
+        {
+          "body": [
+            {
+              "label": "Foreign currency seizure",
+              "text": "DRI intercepted seven passengers attempting to smuggle foreign currency equivalent to Rs. 3.12 crore concealed ingeniously in baggage and clothing at Netaji Subhas Chandra Bose International Airport, Kolkata."
+            },
+            {
+              "label": "Modus operandi",
+              "text": "The currency was hidden inside notebooks, two-layered compartments in trolleys, shoes, and pockets of clothes in both hand and checked-in baggage."
+            },
+            {
+              "label": "Legal action",
+              "text": "Seven syndicate members were arrested and charged under the Customs Act and FEMA regulations for smuggling foreign currency out of India."
+            },
+            {
+              "label": "Additional seizures",
+              "text": "Other passengers were also found carrying foreign currency worth Rs. 0.39 crore and were handed over to Customs for further action."
+            }
+          ],
+          "heading": "What did the DRI seize at Kolkata Airport and why?",
+          "sources": [
+            1
+          ]
+        },
+        {
+          "body": [
+            {
+              "label": "E-cigarette seizure",
+              "text": "DRI seized around 13,000 e-cigarettes worth over Rs. 4 crore concealed in a container misdeclared as carrying 'Mop Rod' handles at JNPT Port."
+            },
+            {
+              "label": "Prohibition context",
+              "text": "Electronic cigarettes and all Electronic Nicotine Delivery Systems (ENDS) are banned in India under the Prohibition of Electronic Cigarettes Act, 2019, to protect public health."
+            },
+            {
+              "label": "Scale of enforcement",
+              "text": "In the financial year 2026-27, DRI has seized approximately 3,55,000 e-cigarettes valued at more than Rs. 135 crore across various ports and airports."
+            },
+            {
+              "label": "Public health and economic impact",
+              "text": "The seizures prevent illicit trade that threatens public health and undermine India's economic interests."
+            }
+          ],
+          "heading": "What was seized at JNPT Port and why does it matter?",
+          "sources": [
+            2
+          ]
+        },
+        {
+          "body": [
+            {
+              "label": "Economic stability",
+              "text": "Illicit outflow of foreign currency harms India's economic and fiscal stability by bypassing regulatory controls."
+            },
+            {
+              "label": "Customs enforcement",
+              "text": "DRI's intelligence-led enforcement dismantles organized smuggling networks, safeguarding India's economic frontiers."
+            },
+            {
+              "label": "Public health protection",
+              "text": "Banning e-cigarettes and seizing illicit imports protects citizens from health risks associated with nicotine delivery systems."
+            },
+            {
+              "label": "Internal security",
+              "text": "Controlling smuggling contributes to internal security by preventing illegal economic activities and associated criminal networks."
+            }
+          ],
+          "heading": "Why do these seizures matter for India’s economy and security?",
+          "sources": [
+            1,
+            2
+          ]
+        }
+      ],
+      "slug": "2026-11-11-dri-seizes-foreign-currency-and-e-cigarettes-in-major-anti-smuggling-o-39c301",
+      "sources": [
+        {
+          "date": "2026-11-10",
+          "kind": "official",
+          "n": 1,
+          "publisher": "Press Information Bureau",
+          "title": "DRI foils attempt to smuggle foreign currency out of India at Kolkata Airport; Foreign currency equivalent to Rs. 3.5 crore seized and seven arrested",
+          "url": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2334617"
+        },
+        {
+          "date": "2026-11-10",
+          "kind": "official",
+          "n": 2,
+          "publisher": "Press Information Bureau",
+          "title": "DRI seizes around 13,000 e-cigarettes worth more than Rs. 4 crore at JNPT Port in its sustained crackdown on illicit trade",
+          "url": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2334613"
+        }
+      ],
+      "subject": "Economy",
+      "title": "DRI Seizes Foreign Currency and E-Cigarettes in Major Anti-Smuggling Operations",
+      "topicTitle": "DRI seizes foreign currency and e-cigarettes in major anti-smuggling operations",
+      "updates": [],
+      "wayForward": [],
+      "whyInNews": {
+        "sources": [
+          1,
+          2
+        ],
+        "text": "On 10 November 2026, the Ministry of Finance reported DRI's interception of foreign currency smuggling at Kolkata Airport and seizure of banned e-cigarettes at JNPT Port."
+      }
+    },
     "2026-11-11-am-4c0435b87e": {
       "anchor": "India and its neighbourhood",
       "back2basics": {
@@ -481,6 +879,160 @@
           1
         ],
         "text": "On November 10, 2026, the Madras High Court admitted civil appeals filed by DMK MP Jagathrakshakan and family members against the ED's property seizure order under FEMA."
+      }
+    },
+    "2026-11-11-am-acd58b840c": {
+      "anchor": "Elections and electoral reform",
+      "back2basics": {
+        "concept": "Local Self-Government and Elections",
+        "patternId": "",
+        "text": "Local self-government in India includes Panchayats and Municipalities, which are elected bodies responsible for governance at the village and urban levels respectively. Elections to these bodies are crucial for grassroots democracy and are usually conducted by State or Union Territory election commissions. Proper delimitation of constituencies and accurate voter lists are essential to ensure free and fair elections."
+      },
+      "band": "must",
+      "codes": [
+        "GS2.2",
+        "GS2.1",
+        "GS2.4"
+      ],
+      "deck": "Ladakh's local elections scheduled for November 2026 were postponed following protests by civil society groups alleging electoral irregularities. This development highlights challenges in local governance and federal relations in the Union Territory, relevant for understanding electoral processes and regional political dynamics.",
+      "editor": {
+        "mainsAngle": "Feeds into themes of union-state relations and local governance challenges.",
+        "prelimsAngle": "Ladakh hill council and local elections postponement.",
+        "why": "Involves governance, federalism, and local self-government issues in a sensitive Union Territory."
+      },
+      "fingerprint": "acd58b840c52c2a3",
+      "id": "2026-11-11-am-acd58b840c",
+      "keyNumbers": [
+        {
+          "figure": "13 crore",
+          "meaning": "Number of voters dropped from voter lists across India, cited as a concern for Ladakh elections",
+          "source": 1
+        },
+        {
+          "figure": "November 21",
+          "meaning": "Original scheduled date for Ladakh panchayat and municipal elections",
+          "source": 1
+        },
+        {
+          "figure": "April-May next year",
+          "meaning": "Proposed new timeline for conducting the postponed elections",
+          "source": 1
+        }
+      ],
+      "kind": "secondary",
+      "oneLine": "Ladakh postponed its panchayat and municipal elections due to protests over alleged electoral fraud and demands for better election scheduling.",
+      "papers": [
+        "GS2"
+      ],
+      "practice": {
+        "faq": [
+          {
+            "a": "They were postponed due to protests alleging electoral fraud and demands for better election preparation.",
+            "q": "Why were Ladakh's panchayat and municipal elections postponed?"
+          },
+          {
+            "a": "They were originally scheduled for November 21, 2026.",
+            "q": "When were the Ladakh local elections originally scheduled?"
+          },
+          {
+            "a": "The elections were proposed to be held in April-May next year.",
+            "q": "What new timeline was proposed for the elections?"
+          }
+        ],
+        "mains": {
+          "demand": "Analyse the factors leading to election postponement in Ladakh and discuss their impact on governance and Centre-UT relations.",
+          "directive": "Examine",
+          "marks": 15,
+          "question": "Examine the challenges faced in conducting local elections in sensitive regions like Ladakh and their implications for federal relations and local governance.",
+          "structure": {
+            "body": [
+              "Discuss the reasons for postponement including allegations of electoral fraud and inadequate election preparation.",
+              "Explain the political implications such as protests, shutdowns, and strained Centre-Ladakh relations.",
+              "Analyse how election timing and constituency delimitation affect voter participation and democratic legitimacy."
+            ],
+            "conclusion": "Ensuring transparent and well-planned elections is essential for strengthening local governance and federal trust in sensitive regions.",
+            "intro": "Local elections are vital for grassroots democracy but face challenges in sensitive regions like Ladakh."
+          }
+        },
+        "mcq": {
+          "answer": 0,
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "stem": "Consider the following statements about the postponement of Ladakh's local elections:\n1. The elections were postponed due to allegations of electoral fraud and demands for better constituency delimitation.\n2. The Centre agreed to hold a meeting with Ladakh civil society groups before scheduling the elections.\nWhich of the statements given above is/are correct?",
+          "trap": "Statement 2 is incorrect because the Centre declined the proposed meeting with Ladakh civil society groups, which contributed to tensions."
+        }
+      },
+      "priority": 41,
+      "publishedAt": "2026-11-11T07:06:30Z",
+      "readTime": 2,
+      "recordIds": [],
+      "sections": [
+        {
+          "body": [
+            {
+              "label": "Civil society protests",
+              "text": "Groups including the Ladakh Buddhist Association alleged that the elections were rushed and suspected electoral fraud, demanding postponement to April-May next year."
+            },
+            {
+              "label": "Concerns over voter list and delimitation",
+              "text": "Protesters pointed to large-scale voter list deletions in India and argued that Ladakh's small population makes electoral fraud easier."
+            },
+            {
+              "label": "Election timing and participation",
+              "text": "The elections were scheduled for November 21, but critics said the timing during winter and hurried process would reduce voter turnout."
+            }
+          ],
+          "heading": "Why were Ladakh's local elections postponed?",
+          "sources": [
+            1
+          ]
+        },
+        {
+          "body": [
+            {
+              "label": "Demand for better election management",
+              "text": "The protesters called for proper framing of constituencies and adequate time for election preparations to ensure fair participation."
+            },
+            {
+              "label": "Impact on local democracy",
+              "text": "Shutdowns and marches were planned to 'Save Democracy,' reflecting local discontent with the administration's handling of elections."
+            },
+            {
+              "label": "Centre-Ladakh relations",
+              "text": "Tensions rose after the Centre declined a proposed meeting with Ladakh civil society groups, indicating strained federal-local dialogue."
+            }
+          ],
+          "heading": "What are the political and governance implications?",
+          "sources": [
+            1
+          ]
+        }
+      ],
+      "slug": "2026-11-11-ladakh-postpones-panchayat-and-municipal-elections-amid-civil-society-acd58b",
+      "sources": [
+        {
+          "date": "2026-11-09",
+          "kind": "discovery",
+          "n": 1,
+          "publisher": "The Hindu",
+          "title": "Postpone panchayat, municipal elections to April-May next year: Ladakh group",
+          "url": "https://www.thehindu.com/news/national/ladakh/postpone-panchayat-municipal-elections-to-april-may-next-year-ladakh-group/article71683915.ece"
+        }
+      ],
+      "subject": "Polity",
+      "title": "Ladakh Postpones Panchayat and Municipal Elections Amid Protests",
+      "topicTitle": "Ladakh postpones panchayat and municipal elections amid civil society protests",
+      "updates": [],
+      "wayForward": [],
+      "whyInNews": {
+        "sources": [
+          1
+        ],
+        "text": "On November 9, 2026, several groups in Ladakh demanded postponement of local elections citing fears of electoral fraud and inadequate preparation."
       }
     },
     "2026-11-11-am-b30994bc22": {
@@ -1232,7 +1784,9 @@
       }
     }
   },
-  "prelims": [],
+  "prelims": [
+    "2026-11-11-am-39c301e624"
+  ],
   "quickFacts": [
     {
       "code": "GS3.4",
@@ -1243,6 +1797,17 @@
         "publisher": "The Hindu",
         "title": "Zelensky holds air defence, energy security talks with Nordic leaders",
         "url": "https://www.thehindu.com/news/international/zelensky-holds-air-defence-energy-security-talks-with-nordic-leaders/article71685723.ece"
+      }
+    },
+    {
+      "code": "GS3.4",
+      "fact": "Media advisory - Economic and Financial Affairs Council (Budget) of 10 November 2026",
+      "id": "qf-src_6f6c11d912e095d5a7ffffc98294b3d8105a4da7d94cab26dd68dfaff008d71c",
+      "source": {
+        "kind": "official",
+        "publisher": "Council of the European Union",
+        "title": "Media advisory - Economic and Financial Affairs Council (Budget) of 10 November 2026",
+        "url": "https://www.consilium.europa.eu/en/press/press-releases/2026/11/09/media-advisory-economic-and-financial-affairs-council-budget-of-10-november-2026/"
       }
     }
   ],
