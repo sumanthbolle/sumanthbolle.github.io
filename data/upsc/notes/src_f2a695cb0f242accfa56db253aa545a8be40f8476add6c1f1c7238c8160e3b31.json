@@ -1,0 +1,165 @@
+{
+  "anchor": "Government Securities (G-Secs): conversion/switch transactions and public-debt maturity management",
+  "argumentsAgainst": [
+    "Switch transactions may involve valuation and market-demand risks because destination-security prices determine auction cut-offs.",
+    "The notification permits the Government to accept less than the notified amount or accept, reject, or partially accept offers, reducing certainty for participants."
+  ],
+  "argumentsFor": [
+    "A switch replaces near-term-maturing source securities with longer-maturity destination securities, potentially smoothing the Government’s redemption profile.",
+    "The auction format allows eligible market participants to quote destination-security prices, enabling market-based allocation."
+  ],
+  "background": [
+    "In a switch transaction, participants agree to sell specified source securities to the Government and simultaneously buy destination securities from the Government at quoted prices.",
+    "The source record specifies bidding through RBI’s e-Kuber platform, with source and destination prices expressed in Indian rupees up to two decimal places.",
+    "The announced operation covers source securities maturing between 2027 and 2029 and destination securities maturing between 2034 and 2062, as listed in the official summary."
+  ],
+  "codes": [
+    "GS3.1",
+    "GS3.2"
+  ],
+  "editorialStatus": "draft",
+  "id": "note_f2a695cb0f242accfa56db253aa545a8be40f8476add6c1f1c7238c8160e3b31",
+  "indiaImplications": [
+    "The operation can help manage the timing of Government debt redemptions by exchanging some nearer-maturity securities for longer-maturity securities.",
+    "Market participants must assess relative prices, maturity, and liquidity before bidding; successful bids are accepted at their respective quoted prices under the multiple-price format.",
+    "The operation illustrates the interaction between public-debt management, Government borrowing costs, and secondary-market pricing."
+  ],
+  "mainsPractice": [],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63958",
+      "text": "Government of India announces the conversion/switch of its securities through auction for an aggregate amount of ₹25,000 crore (face value).",
+      "verification": "source-backed"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63958",
+      "text": "The auction is scheduled for November 16, 2026 (Monday).",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63958",
+      "text": "Bids for the auction should be submitted in electronic format on the e-Kuber platform on November 16, 2026 (Monday) between 10:30 AM and 11:30 AM.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63958",
+      "text": "The result of the auction will be announced on the same day and settlement will take place on November 17, 2026 (Tuesday).",
+      "verification": "source-backed"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63958",
+      "text": "The auction will be a multiple-price based auction, i.e., successful bids will get accepted at their respective quoted prices for the source and destination securities.",
+      "verification": "source-backed"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63958",
+      "text": "The market participants are required to place their bids in Reserve Bank of India Core Banking Solution (e-Kuber) giving the amount of the source security and the price of the source and destination security expressed in Indian Rupees up to two decimal places.",
+      "verification": "source-backed"
+    }
+  ],
+  "papers": [
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Illustration: maturity exchange",
+      "text": "Suppose a participant holds a notified source security maturing sooner and bids to exchange it for a notified destination security maturing later. If the bid meets the auction cut-off, the participant sells the source security to the Government and buys the destination security at the quoted prices; this illustration does not describe an actual participant or outcome."
+    },
+    "excerpt": "The RBI-notified operation lets the Government exchange specified securities for longer-maturity instruments through an e-Kuber, multiple-price auction.",
+    "question": {
+      "answer": "It changes the maturity composition of outstanding debt: nearer-term source securities are exchanged for specified destination securities with later maturities, subject to auction pricing and acceptance.",
+      "prompt": "How can a G-Sec switch affect the Government’s redemption profile?"
+    },
+    "sections": [
+      {
+        "heading": "What the RBI notification does",
+        "paragraphs": [
+          "The Reserve Bank of India records the Government of India’s announcement of a ₹25,000 crore face-value conversion/switch auction scheduled for November 16, 2026, with settlement on November 17, 2026.",
+          "Participants submit source-security amounts and source and destination prices through RBI’s e-Kuber platform. The auction is multiple-price based, so successful bids receive acceptance at their respective quoted prices."
+        ]
+      },
+      {
+        "heading": "How to interpret the operation",
+        "paragraphs": [
+          "A switch exchanges specified outstanding securities rather than simply describing a generic borrowing programme. Its practical effect is to alter the maturity profile of the securities included in the operation.",
+          "The notification does not establish that the operation will lower borrowing costs, reduce total public debt, or guarantee acceptance of every offer. The Government may accept less than the notified amount and may accept, reject, or partially accept offers."
+        ]
+      }
+    ],
+    "title": "RBI-notified Government securities switch auction"
+  },
+  "prelimsTraps": [
+    {
+      "correct": true,
+      "explanation": "The official summary states that the aggregate announced amount is ₹25,000 crore in face value.",
+      "statement": "The announced conversion/switch has an aggregate face value of ₹25,000 crore."
+    },
+    {
+      "correct": true,
+      "explanation": "The source summary expressly identifies the auction as multiple-price based and says successful bids are accepted at their respective quoted prices.",
+      "statement": "Successful bids in the notified auction are accepted at their respective quoted prices."
+    },
+    {
+      "correct": false,
+      "explanation": "The source summary says bids are submitted through RBI’s e-Kuber platform, not through a platform identified as the Government’s general budget portal.",
+      "statement": "The notified switch bids are submitted through the Union Government’s general budget portal."
+    },
+    {
+      "correct": true,
+      "explanation": "The official summary schedules bidding on November 16, 2026 between 10:30 AM and 11:30 AM, with settlement on November 17, 2026.",
+      "statement": "The auction result is to be announced on the auction day and settlement is to take place the next day."
+    }
+  ],
+  "priority": 64,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 45,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 50
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-11-11T18:10:00Z",
+  "publisherId": "rbi",
+  "publisherName": "Reserve Bank of India",
+  "recallCard": "RBI recorded a Government of India switch auction for ₹25,000 crore face value. Bids go through e-Kuber on November 16, 2026, using a multiple-price format; results are announced the same day and settlement occurs on November 17. The operation changes the maturity mix, not necessarily total debt.",
+  "reusableAnchors": [],
+  "sourceContentHash": "4f6fe663c147d5c5535059ccf4ad6f876241baa5de73f706a7e68587bbd297b2",
+  "sourceId": "src_f2a695cb0f242accfa56db253aa545a8be40f8476add6c1f1c7238c8160e3b31",
+  "sourceTitle": "Conversion/Switch of Government of India Securities",
+  "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=63958",
+  "staticDefinition": "A Government securities conversion or switch is an auction-based exchange in which holders sell specified source Government securities to the Government and simultaneously buy specified destination Government securities, changing the maturity composition of outstanding debt.",
+  "use": "Use as a GS3 answer example for explaining public-debt maturity management, auction-based pricing, and the distinction between changing debt maturity and reducing total debt.",
+  "verification": {
+    "advisory_notes": [
+      "\"Government’s redemption profile\" is sound analytical framing, but the source only specifies the exchange; actual smoothing depends on execution and broader debt-management choices.",
+      "\"Market-based allocation\" is a reasonable inference from competitive quoted prices, but should be labelled as analysis rather than a source-stated outcome.",
+      "\"Interaction between public-debt management, borrowing costs, and secondary-market pricing\" is useful analysis, though the release does not establish any borrowing-cost reduction or secondary-market effect.",
+      "\"The operation changes the maturity mix, not necessarily total debt\" is correct analytical framing; the notification does not itself quantify the post-switch debt stock.",
+      "\"Maturity-extension operations\" is a general characterization because all listed destination securities mature later than their corresponding source securities, but effects remain conditional on accepted bids.",
+      "The broad GS3.1 and GS3.2 labels cannot be independently mapped to an official UPSC sub-code; retain them only if they are the note system’s internal tags.",
+      "The pocketRead headline, deck, paragraphs, applied answer, and recall card accurately summarize the supplied release, subject to the analytical qualifications above.",
+      "The hypothetical participant example is clearly labelled as an illustration and its described transaction mechanism matches the annex."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-11-11T23:24:56Z",
+    "confidence": 0.93,
+    "flagged_claims": [],
+    "noteContentHash": "fa103c5d85e9b9486ee92c216d132fbfdd020de1e08f3a92272c721d308cf411",
+    "sourceContentHash": "4f6fe663c147d5c5535059ccf4ad6f876241baa5de73f706a7e68587bbd297b2",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Maintain clear operational rules and timely disclosure of source securities, destination securities, bidding windows and settlement arrangements.",
+    "Monitor rollover, interest-rate and liquidity risks after maturity-extension operations rather than judging the operation only by the amount switched.",
+    "Preserve competitive, electronic and transparent bidding while retaining safeguards for orderly public-debt management."
+  ],
+  "whyInNews": "The Reserve Bank of India recorded the Government of India’s November 11, 2026 announcement of a ₹25,000 crore face-value conversion/switch auction. Bidding is scheduled through RBI’s e-Kuber platform on November 16, 2026, with settlement on November 17, 2026. The operation exchanges specified source securities for des"
+}
