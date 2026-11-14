@@ -1,5 +1,38 @@
 [
   {
+    "id": 134,
+    "title": "Resend\u2019s Go migration cut API memory use from 1.3 GB to 180 MB",
+    "excerpt": "Resend moved its email API from Node.js to Go over seven weeks and about 140 pull requests. At a 50% rollout, Go reduced median POST latency from 58 ms to 31 ms, used about 62% less CPU per request, and reduced memory per task from about 1.3 GB to 180 MB.",
+    "readTime": "3 min read",
+    "category": "architecture",
+    "learningPath": "architecture",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Engineering managers"
+    ],
+    "uniqueId": "daily-architecture-resend-s-go-migration-cut-api-memory-use-from-1-3-gb-to-180--1794647898219",
+    "date": "Nov 14, 2026",
+    "dateISO": "2026-11-14T09:18:18Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Migrating our Email API to Go",
+        "url": "https://resend.com/blog/migrating-our-email-api-to-go"
+      },
+      {
+        "title": "Post-mortem: Errors for Users with Requests on their Watchlist",
+        "url": "https://openbuildservice.org/2026/11/13/post-mortem/"
+      },
+      {
+        "title": "The Hidden Complexity Behind GitOps Push-to-Deploy",
+        "url": "https://techblog.geekyants.com/the-hidden-complexity-behind-gitops-push-to-deploy"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Resend migrated its critical email API from Node.js to Go. The team started with an empty Go project and reached production traffic in seven weeks, using roughly 140 pull requests. By October 2026, Go handled all email API traffic.</p>\n<p>The migration was not only a rewrite. The team had to preserve existing error responses, idempotency behavior, rate limits, stored data, and email contents. They treated the existing API behavior as a compatibility contract rather than assuming that equivalent endpoint names would be enough.</p>\n<h2>Why Node.js became a constraint</h2>\n<p>Large request bodies caused the main failure mode. Node.js parsed and serialized those bodies synchronously, so the work blocked the event loop. Some requests were already going to be rejected by the rate limiter, but the service still spent CPU parsing and serializing them before rejection.</p>\n<p>During bursts, one task could become unresponsive while handling this work. Resend also saw S3 timeouts reach customers as 408 and 524 responses. These findings set the replacement requirements: predictable behavior under load, lower resource use, and explicit limits on operation duration.</p>\n<h2>How the rollout was measured</h2>\n<p>Resend ran Node.js and Go at the same time, sending half of the traffic to each implementation. A comparison harness sent identical requests to both services and compared responses, errors, database rows, S3 objects, idempotency behavior, and rate limits.</p>\n<p>At the 50% rollout, median latency for POST requests to <code>/emails</code> fell from 58 ms with Node.js to 31 ms with Go. P95 fell from 149 ms to 107 ms. P99 fell from 498 ms to 420 ms. Batch median latency fell from 149 ms to 74 ms, while batch P99 fell from 1,721 ms to 1,363 ms.</p>\n<p>The resource difference was larger than the latency difference. Memory per task fell from about 1.3 GB to about 180 MB. Normalized CPU per request fell from 1.00x to about 0.38x. Peak task count fell from 34 to 10. The Go service therefore used about 62% less CPU per request and roughly one-seventh as much memory per task.</p>\n<h2>The catch: a rewrite did not remove operational work</h2>\n<p>Lower per-request resource use did not immediately eliminate capacity work. Resend doubled task sizes twice during the rollout. The team added capacity before a recurring top-of-hour traffic spike, introduced per-request timeouts for S3 uploads, and tuned Redis connection pools as traffic increased.</p>\n<p>The result also shows why median latency alone is insufficient. Median POST latency improved by about 47%, but P99 improved by about 16%. Tail behavior remained a separate problem, tied to external calls, batching, and capacity decisions.</p>\n<h2>What other teams can copy</h2>\n<p>The strongest reusable design choice was the differential test harness. It made backward compatibility testable before the new service received all traffic. The harness compared externally visible behavior and important side effects, not just HTTP status codes.</p>\n<p>The rollout also separated application performance from operational readiness. Go reduced CPU and memory usage, but the team still had to provision for traffic spikes and configure S3 and Redis deliberately. A migration plan should include both benchmark targets and production controls.</p>\n<ul>\n<li>Treat the old implementation as an executable compatibility specification. Compare responses, errors, persistence, object storage, idempotency, and rate limits.</li>\n<li>Reject oversized or rate-limited work before expensive parsing and serialization when the protocol allows it.</li>\n<li>Measure median, P95, P99, CPU, memory, and peak instance count during a split rollout.</li>\n<li>Add explicit timeouts around external storage and tune connection pools under production-shaped traffic.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Build a differential harness before shifting traffic in a service rewrite.</li>\n<li>Reject work before parsing large bodies when rejected requests do not need full deserialization.</li>\n<li>Track tail latency and resource use, not only median latency.</li>\n<li>Plan external-service timeouts, connection pools, and traffic-spike capacity as part of the migration.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://resend.com/blog/migrating-our-email-api-to-go\" target=\"_blank\" rel=\"noopener\">Migrating our Email API to Go</a> \u2014 resend.com</li>\n<li><a href=\"https://openbuildservice.org/2026/11/13/post-mortem/\" target=\"_blank\" rel=\"noopener\">Post-mortem: Errors for Users with Requests on their Watchlist</a> \u2014 openbuildservice.org</li>\n<li><a href=\"https://techblog.geekyants.com/the-hidden-complexity-behind-gitops-push-to-deploy\" target=\"_blank\" rel=\"noopener\">The Hidden Complexity Behind GitOps Push-to-Deploy</a> \u2014 techblog.geekyants.com</li>\n</ul>"
+  },
+  {
     "id": 133,
     "title": "Valid GitHub Tokens Put Credential Stealers in 1,800 CI Pipelines",
     "excerpt": "A campaign tested stolen access against 61,764 GitHub repositories and placed credential-stealing code in more than 1,800 of them. The surprising part was the mechanism: it did not exploit GitHub Actions; it used valid developer and bot tokens to alter workflows, scripts, and package-install hooks.",
