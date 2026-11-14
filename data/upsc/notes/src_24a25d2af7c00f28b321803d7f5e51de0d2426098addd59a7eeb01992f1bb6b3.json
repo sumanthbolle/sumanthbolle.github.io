@@ -1,0 +1,178 @@
+{
+  "anchor": "Consent Manager under the Digital Personal Data Protection framework: a registered intermediary enab",
+  "argumentsAgainst": [
+    "Intermediation can create privacy, cybersecurity and accountability risks if the Consent Manager’s platform or governance is weak.",
+    "A registration threshold alone may not ensure meaningful consent, accessibility or effective grievance redressal.",
+    "The source record announces the framework and portal but does not establish how the system will perform in practice."
+  ],
+  "argumentsFor": [
+    "A single, interoperable interface can make consent choices easier to exercise and revise.[2]",
+    "Accountability to Data Principals can strengthen trust in digital data processing.[2]",
+    "Registration and public listing can create an identifiable institutional layer between Data Principals and Data Fiduciaries."
+  ],
+  "background": [
+    "The DPDP Act, 2023 permits a Data Principal to give, manage, review or withdraw consent through a Consent Manager and requires the Consent Manager to be registered with the Board.[2]",
+    "The PIB release states that the registration framework came into effect on 13 November 2026 and that MeitY launched an online application portal for eligible companies.",
+    "The framework is part of phased implementation; the source states that other provisions concerning Data Principal rights, Data Fiduciary obligations, and Board inquiry and penalty processes are scheduled for 13 May 2027."
+  ],
+  "codes": [
+    "GS2.5",
+    "GS2.7",
+    "GS3.6"
+  ],
+  "editorialStatus": "draft",
+  "id": "note_24a25d2af7c00f28b321803d7f5e51de0d2426098addd59a7eeb01992f1bb6b3",
+  "indiaImplications": [
+    "Improves the institutional architecture for operationalising individual control over personal data.",
+    "May encourage Indian firms to develop interoperable consent-management services, subject to registration and compliance requirements.",
+    "Implementation quality will depend on accessibility, security, transparency, effective oversight and clarity regarding relationships among Data Principals, Consent Managers and Data Fiduciaries.",
+    "The source does not provide evidence on user adoption, compliance costs, enforcement outcomes or the number of registered entities."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Define the Consent Manager and distinguish it from the Data Fiduciary.",
+        "Explain the consent lifecycle: giving, managing, reviewing and withdrawing consent.",
+        "Assess benefits for user control, trust and interoperability.",
+        "Discuss risks involving privacy, cybersecurity, accessibility and accountability."
+      ],
+      "conclusionPrompt": "Conclude by linking consent management with substantive—not merely formal—data autonomy.",
+      "counterPosition": "Consent management may become an additional intermediary layer unless platforms remain genuinely user-centric, interoperable and accountable.",
+      "diagramSuggestion": "Data Principal → Consent Manager → Data Fiduciary; show consent given/reviewed/withdrawn in both directions and Board oversight above.",
+      "directive": "discuss",
+      "introChoices": [
+        "The Consent Manager model seeks to convert data-protection rights into usable, repeatable digital controls.",
+        "The DPDP framework places an accountable, registered intermediary between individual consent choices and data-processing relationships."
+      ],
+      "marks": 15,
+      "skeleton": [
+        "The Consent Manager model seeks to convert data-protection rights into usable, repeatable digital controls.",
+        "The DPDP framework places an accountable, registered intermediary between individual consent choices and data-processing relationships.",
+        "Define the Consent Manager and distinguish it from the Data Fiduciary.",
+        "Explain the consent lifecycle: giving, managing, reviewing and withdrawing consent.",
+        "Assess benefits for user control, trust and interoperability.",
+        "Discuss risks involving privacy, cybersecurity, accessibility and accountability.",
+        "Consent management may become an additional intermediary layer unless platforms remain genuinely user-centric, interoperable and accountable.",
+        "Conclude by linking consent management with substantive—not merely formal—data autonomy."
+      ],
+      "stem": "Discuss how the Consent Manager model can strengthen data autonomy while creating new governance risks under India’s digital personal data framework.",
+      "timeMinutes": 11,
+      "wordBudget": 250
+    }
+  ],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2336151",
+      "text": "The Consent Manager Registration Framework Comes into Effect; MeitY Secretary Launches Online Registration Portal",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2336151",
+      "text": "MeitY Secretary Launches Online Registration Portal",
+      "verification": "source-backed"
+    }
+  ],
+  "papers": [
+    "GS2",
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Hypothetical illustration",
+      "text": "Illustration: A person uses a registered Consent Manager to review the permissions previously given to different services and withdraw one permission through the same interoperable platform. This demonstrates the mechanism described in the framework; it is not a reported event."
+    },
+    "excerpt": "The framework operationalises a registered intermediary through which Data Principals can manage consent, while the wider DPDP implementation remains phased.",
+    "question": {
+      "answer": "A Consent Manager can strengthen autonomy by making consent review and withdrawal accessible through one accountable, interoperable interface; however, safeguards are needed against platform misuse, weak security and mere formal consent.",
+      "prompt": "How can a Consent Manager improve data autonomy, and what limitation should policymakers anticipate?"
+    },
+    "sections": [
+      {
+        "heading": "Institutional action and mechanism",
+        "paragraphs": [
+          "The Ministry of Electronics and Information Technology’s Secretary launched an online registration portal as the Consent Manager Registration Framework came into effect on 13 November 2026. Eligible companies can apply for registration, after which the Board may assess and register qualifying applicants.",
+          "A registered Consent Manager enables Data Principals to give, manage, review and withdraw consent through an accessible, transparent and interoperable platform. The Act makes the Consent Manager accountable to the Data Principal.[2]"
+        ]
+      },
+      {
+        "heading": "Practical consequence and limitation",
+        "paragraphs": [
+          "The mechanism can turn consent from a one-time interface choice into a process that users can revisit. The source states that Indian companies with adequate technical, operational and financial capacity, including net worth of at least ₹2 crore, may seek registration.",
+          "Registration does not by itself prove that users will understand choices or that platforms will be secure and inclusive. The PIB release also shows that implementation is phased: provisions on Data Principal rights, Data Fiduciary obligations and Board inquiry and penalties are scheduled for 13 May 2027."
+        ]
+      }
+    ],
+    "title": "India operationalises registration of Consent Managers"
+  },
+  "prelimsTraps": [
+    {
+      "correct": true,
+      "explanation": "The PIB release states that the framework came into effect on 13 November 2026.",
+      "statement": "The Consent Manager Registration Framework came into effect on 13 November 2026."
+    },
+    {
+      "correct": true,
+      "explanation": "The source states that eligible companies incorporated in India may seek registration and that the minimum net worth is ₹2 crore.",
+      "statement": "An eligible Indian company with a net worth of at least ₹2 crore may apply for registration as a Consent Manager."
+    },
+    {
+      "correct": false,
+      "explanation": "The source says other key provisions are scheduled for 13 May 2027; it does not say that the complete DPDP framework became operational on 13 November 2026.",
+      "statement": "All rights, obligations, inquiry processes and penalty provisions under the DPDP framework became effective on 13 November 2026."
+    },
+    {
+      "correct": true,
+      "explanation": "The source states that the list of registered Consent Managers will be made publicly available on the Board’s website.",
+      "statement": "The list of registered Consent Managers will be published on the Board’s website."
+    }
+  ],
+  "priority": 72,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 72,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 45
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-11-14T07:59:43Z",
+  "publisherId": "pib",
+  "publisherName": "Press Information Bureau",
+  "recallCard": "On 13 November 2026, MeitY’s Consent Manager registration framework became effective. Eligible Indian companies with adequate capacity and at least ₹2 crore net worth may apply through the portal. Registered Consent Managers help Data Principals give, review, manage and withdraw consent through accessible, transparent and interoperable platforms; wider DPDP provisions remain phased.",
+  "reusableAnchors": [],
+  "sourceContentHash": "6e59790906fda02e6d07d74fdb449992b8ee44f40a06a5e4a6980d336b442e27",
+  "sourceId": "src_24a25d2af7c00f28b321803d7f5e51de0d2426098addd59a7eeb01992f1bb6b3",
+  "sourceTitle": "Consent Manager Registration Framework Comes into Effect; MeitY Secretary Launches Online Registration Portal",
+  "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2336151",
+  "staticDefinition": "A Consent Manager is a person registered with the Data Protection Board who acts as a single point of contact enabling a Data Principal to give, manage, review and withdraw consent through an accessible, transparent and interoperable platform.[2]",
+  "use": "Use this issue to connect digital governance with privacy, consent architecture, accountability, interoperability and phased regulatory implementation.",
+  "verification": {
+    "advisory_notes": [
+      "The title and headline are supported by the supplied PIB extract, but the release date should not be inferred from retrievedAt.",
+      "The phrase “single point of contact” is statutory wording, while “registered intermediary” is explanatory shorthand; retain the statutory definition for precision.",
+      "“Data autonomy” and “substantive—not merely formal—data autonomy” are analytical framing, not established outcomes.",
+      "The claim that consent becomes a “one-time interface choice” is a broad contrast and should be presented as an illustration, not a universal fact.",
+      "“Institutional layer between Data Principals and Data Fiduciaries” is a reasonable implication, but the source does not expressly describe that relationship as intermediation.",
+      "The statement that registration and public listing “can create” accountability is analytical; listing alone does not establish effective accountability.",
+      "The proposed GS2.5, GS2.7 and GS3.6 codes are not official UPSC syllabus numbering, though the themes fit GS2 governance/privacy and GS3 technology.",
+      "The diagram’s arrow from Consent Manager to Data Fiduciary may oversimplify the legal relationship; the Act says the Data Principal gives, manages, reviews or withdraws consent to the Data Fiduciary through the Consent Manager."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-11-14T07:59:43Z",
+    "confidence": 0.91,
+    "flagged_claims": [],
+    "noteContentHash": "00af48c7d7dd2d8c3577c5cf55cf3220e0b0d1cfa0b7e8dc5aaadafc321bb346",
+    "sourceContentHash": "6e59790906fda02e6d07d74fdb449992b8ee44f40a06a5e4a6980d336b442e27",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Make consent interfaces clear, accessible and usable across languages and abilities.",
+    "Require strong security, auditability and transparent records of consent actions.",
+    "Maintain functional interoperability so users are not locked into one platform.",
+    "Publish registration and compliance information to support public accountability."
+  ],
+  "whyInNews": "The Ministry of Electronics and Information Technology announced that the Consent Manager Registration Framework under the Digital Personal Data Protection Act, 2023, came into effect on 13 November 2026. The MeitY Secretary also launched an online portal through which eligible Indian companies can apply for registrati"
+}
