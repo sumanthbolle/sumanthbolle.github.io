@@ -1,0 +1,172 @@
+{
+  "anchor": "National Health Accounts (NHA) track the sources and uses of health financing, including government",
+  "argumentsAgainst": [
+    "A lower OOPE share does not by itself establish that every household faces affordable, accessible or quality care.",
+    "Aggregate expenditure growth may conceal differences across States, income groups, diseases and rural-urban locations.",
+    "Greater public spending requires attention to efficiency, staffing, medicine availability and service quality, not only higher allocations."
+  ],
+  "argumentsFor": [
+    "Rising government expenditure can expand publicly financed services and reduce households’ direct payment burden.",
+    "Greater public financing can strengthen primary healthcare and improve financial protection against medical impoverishment.",
+    "A declining OOPE share indicates a shift toward a larger public role in healthcare financing."
+  ],
+  "background": [
+    "The Union Ministry of Health and Family Welfare released the NHA Estimates for India 2023–24 on 15 November 2026.",
+    "The source describes healthcare financing changes between 2013–14 and 2023–24, including government expenditure, OOPE and primary healthcare spending.",
+    "The mechanism is that publicly financed treatment, medicines, diagnostics and hospital services can reduce the need for direct household payments; the reported aggregate trend should not be treated as proof that all access barriers have dis"
+  ],
+  "codes": [
+    "GS2.6",
+    "GS3.2",
+    "ESSAY.B"
+  ],
+  "editorialStatus": "draft",
+  "id": "note_f4bd33a2e8afc2e98230368b4c9bf98b75bb9acc4fa9845e450e229819084e53",
+  "indiaImplications": [
+    "Sustained public financing can support universal health coverage and reduce the risk that illness pushes households into financial distress.",
+    "Primary healthcare investment can improve prevention, early diagnosis and referral, potentially reducing reliance on costlier hospital care.",
+    "Policy evaluation should combine expenditure data with service availability, quality, equity and household-level financial-protection outcomes.",
+    "The Centre and States need coordinated implementation because public health delivery depends substantially on subnational systems and local capacity."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Define OOPE and financial protection.",
+        "Explain how increased public financing can reduce direct household payments.",
+        "Assess the significance of primary healthcare investment.",
+        "Discuss limitations of using aggregate expenditure trends as the sole measure of universal health coverage."
+      ],
+      "conclusionPrompt": "Conclude by linking adequate, efficient and equitable public financing with health as a component of inclusive development.",
+      "counterPosition": "Higher public spending is necessary but not sufficient: weak delivery capacity, unequal access or poor quality can leave households financially vulnerable despite higher aggregate expenditure.",
+      "diagramSuggestion": "Flow chart: public financing → primary care, medicines, diagnostics and hospital support → reduced direct payments → improved financial protection; add a side box for delivery-qual",
+      "directive": "examine",
+      "introChoices": [
+        "Use the NHA as evidence of a reported shift in the composition of healthcare financing.",
+        "Begin with the distinction between health expenditure and financial protection: spending more publicly can reduce, but does not automatically eliminate, household burden."
+      ],
+      "marks": 15,
+      "skeleton": [
+        "Use the NHA as evidence of a reported shift in the composition of healthcare financing.",
+        "Begin with the distinction between health expenditure and financial protection: spending more publicly can reduce, but does not automatically eliminate, household burden.",
+        "Define OOPE and financial protection.",
+        "Explain how increased public financing can reduce direct household payments.",
+        "Assess the significance of primary healthcare investment.",
+        "Discuss limitations of using aggregate expenditure trends as the sole measure of universal health coverage.",
+        "Higher public spending is necessary but not sufficient: weak delivery capacity, unequal access or poor quality can leave households financially vulnerable despite higher aggregate expenditure.",
+        "Conclude by linking adequate, efficient and equitable public financing with health as a component of inclusive development."
+      ],
+      "stem": "The National Health Accounts indicate a larger public role in healthcare financing and a lower household out-of-pocket share. Examine whether this is sufficient evidence of progress toward universal health coverage in India.",
+      "timeMinutes": 11,
+      "wordBudget": 250
+    }
+  ],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2336478",
+      "text": "Government Health Expenditure increased from approximately ₹1.30 lakh crore to ₹4.14 lakh crore between 2013–14 and 2023–24.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2336478",
+      "text": "Out-of-Pocket Expenditure as a share of Total Health Expenditure declined from 64.2% to 42.7% between 2013–14 and 2023–24.",
+      "verification": "needs-review"
+    }
+  ],
+  "papers": [
+    "GS2",
+    "GS3",
+    "ESSAY"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Illustration: interpreting an expenditure trend",
+      "text": "Suppose a State expands publicly financed primary care, free diagnostics and hospital support. If households consequently pay a smaller share of total health expenditure, the trend would suggest improved financial protection. It would still be necessary to check whether services are available, timely and equitable across districts."
+    },
+    "excerpt": "The NHA reports a larger public role in healthcare financing and a lower household out-of-pocket share, while aggregate figures do not by themselves prove universal access or quality.",
+    "question": {
+      "answer": "The reported trends support, but do not conclusively establish, progress toward universal health coverage. Greater public expenditure can reduce direct household payments and strengthen primary healthcare. However, universal coverage also requires effective service delivery, geographic and social equity, quality care, medicine availability and protection for households facing severe illness. Therefore, NHA expenditure indicators should be read alongside access and outcome measures.",
+      "prompt": "How should the NHA trends be used to assess progress toward universal health coverage rather than treated as conclusive proof?"
+    },
+    "sections": [
+      {
+        "heading": "What the NHA reports",
+        "paragraphs": [
+          "The Union Ministry of Health and Family Welfare released the NHA Estimates for India 2023–24 on 15 November 2026. They report that government health expenditure rose from approximately ₹1.30 lakh crore in 2013–14 to ₹4.14 lakh crore in 2023–24, while OOPE’s share of total health expenditure fell from 64.2% to 42.7%."
+        ]
+      },
+      {
+        "heading": "Why the shift matters—and its limit",
+        "paragraphs": [
+          "Public financing can pay for services, medicines, diagnostics and hospital care, reducing the amount households must pay directly. Yet a lower aggregate OOPE share cannot alone show that care is affordable, available or high-quality for every group; implementation and equity remain essential tests."
+        ]
+      }
+    ],
+    "title": "Public financing and household health payments"
+  },
+  "prelimsTraps": [
+    {
+      "correct": false,
+      "explanation": "The reported change is from 64.2% to 42.7%, not an increase.",
+      "statement": "OOPE as a share of Total Health Expenditure increased between 2013–14 and 2023–24."
+    },
+    {
+      "correct": true,
+      "explanation": "The official summary reports an increase from approximately ₹1.30 lakh crore to ₹4.14 lakh crore.",
+      "statement": "Government Health Expenditure rose between 2013–14 and 2023–24."
+    },
+    {
+      "correct": false,
+      "explanation": "The source identifies the Union Ministry of Health and Family Welfare as releasing the NHA Estimates; it does not state that NITI Aayog released them.",
+      "statement": "The NHA Estimates for India 2023–24 were released by NITI Aayog."
+    }
+  ],
+  "priority": 70,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 78,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 25
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-11-15T09:57:07Z",
+  "publisherId": "pib",
+  "publisherName": "Press Information Bureau",
+  "recallCard": "NHA 2023–24 reports a larger public role in healthcare financing: government health expenditure rose from about ₹1.30 lakh crore to ₹4.14 lakh crore between 2013–14 and 2023–24, while OOPE’s share fell from 64.2% to 42.7%. Interpret this as improved financial protection, not automatic proof of universal access or quality.",
+  "reusableAnchors": [],
+  "sourceContentHash": "e3d80ecd0f8fd2146dad42c7fd091af3a5cdb710a14ce4314b206ac2b9bff554",
+  "sourceId": "src_f4bd33a2e8afc2e98230368b4c9bf98b75bb9acc4fa9845e450e229819084e53",
+  "sourceTitle": "Government Health Spending Triples, Households' Out-of-Pocket Expenditure Share Falls Sharply: National Health Accounts 2023–24",
+  "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2336478",
+  "staticDefinition": "Out-of-pocket expenditure is the part of healthcare spending paid directly by households rather than financed through government support, insurance or other pooled mechanisms. In the NHA context, its share of total health expenditure is an indicator of the household financing burden.",
+  "use": "Use the NHA figures to frame answers on financial protection, universal health coverage, welfare delivery, primary healthcare and inclusive growth. Pair the expenditure trend with a limitation: higher public spending must translate into accessible, quality and equitable services.",
+  "verification": {
+    "advisory_notes": [
+      "The supplied PIB extract is dated 15 November 2026, which is future-dated relative to the available official Ministry listings; recheck the release date before publication.",
+      "The search results verify official NHA releases only through 2021–22, so the 2023–24 figures should be treated as source-dependent pending a primary document.",
+      "“NHA track the sources and uses of health financing” is a sound anchor, but the supplied extract directly supports only selected expenditure findings, not the full conceptual definition.",
+      "“Social security expenditure on health nearly doubles” and “primary healthcare spending reaches ₹1.53 lakh crore” appear in the extract but are not developed or independently checked in the note.",
+      "The statement that public financing reduces direct payments is a plausible mechanism, not a guaranteed causal result; retain the note’s qualification about access and quality.",
+      "The claim that public health delivery depends substantially on subnational systems is relevant analysis, but should be framed as background rather than as a finding of this NHA release.",
+      "GS2 is clearly relevant through welfare delivery, public health and UHC; GS3.2 and ESSAY.B are defensible but broad, so use them as secondary tags.",
+      "The hypothetical State example is correctly labelled as an illustration and does not present a real event; its causal sequence should remain conditional."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-11-15T09:57:07Z",
+    "confidence": 0.74,
+    "flagged_claims": [],
+    "noteContentHash": "707f3b73abb80eae67e0446fc7ca8aa8bf86aae8012d9f02181eaf5f074e6338",
+    "sourceContentHash": "e3d80ecd0f8fd2146dad42c7fd091af3a5cdb710a14ce4314b206ac2b9bff554",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Protect sustained public financing while improving expenditure efficiency and accountability.",
+    "Prioritise accessible primary healthcare, essential medicines and diagnostics so that financial protection begins before costly hospitalisation.",
+    "Track outcomes by State, district, income, gender and rural-urban location rather than relying only on national aggregates.",
+    "Assess whether lower OOPE reflects genuine public coverage, improved service availability and reduced unmet need."
+  ],
+  "whyInNews": "The Union Ministry of Health and Family Welfare released the National Health Accounts Estimates for India 2023–24 on 15 November 2026. The release reports that government health expenditure rose from approximately ₹1.30 lakh crore in 2013–14 to ₹4.14 lakh crore in 2023–24, while households’ out-of-pocket share of total"
+}
