@@ -1,0 +1,166 @@
+{
+  "anchor": "Wholesale Price Index (WPI), Output Producer Price Index (Output PPI) and Trial Input Producer Price",
+  "argumentsAgainst": [
+    "The source summary only announces the indices and their reference months; it does not provide values, sectoral movements, methodology, base year, or policy interpretation.",
+    "WPI, Output PPI and Input PPI are distinct measures; movement in one should not automatically be treated as evidence of consumer-price inflation or economy-wide welfare change."
+  ],
+  "argumentsFor": [
+    "Producer-price indices can help distinguish changes in selling prices from changes in input costs.",
+    "A provisional October 2026 release followed by a final August 2026 index shows that index data may be revised before becoming final."
+  ],
+  "background": [
+    "WPI broadly tracks wholesale price movements, while an output producer-price index tracks prices received for produced goods and an input producer-price index tracks prices paid for production inputs.",
+    "The source record identifies a provisional release for October 2026 and a final index for August 2026, but supplies no numerical observations or methodological details."
+  ],
+  "codes": [
+    "GS3.1",
+    "GS3.2"
+  ],
+  "editorialStatus": "source-backed",
+  "id": "note_42900abaa6421bdf4e69e0d4ba30ca02988b6a9a66fde47fb643cd99cfb50f2d",
+  "indiaImplications": [
+    "Reliable producer-price information can support inflation monitoring, business-cost assessment and macroeconomic policy analysis.",
+    "Separate output and input measures may help identify whether price pressure arises from selling prices, production costs, or both.",
+    "The absence of values and methodology in the supplied record prevents a source-bound assessment of the direction or magnitude of India’s price pressures."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Define WPI, output PPI and input PPI as distinct producer-stage price measures.",
+        "Explain how input-cost changes can affect output prices and eventually influence broader inflation conditions.",
+        "Discuss the value of provisional data and the need to account for revisions.",
+        "Limit the conclusion to what the available evidence supports."
+      ],
+      "conclusionPrompt": "Conclude by linking transparent, timely and methodologically clear price data with sound macroeconomic decision-making.",
+      "counterPosition": "A rise in a producer-price index need not immediately imply a comparable rise in consumer prices because transmission, margins, taxes and distribution conditions can differ.",
+      "diagramSuggestion": "Input prices → production costs → output prices → possible transmission to wholesale and consumer prices; mark revision risk around provisional data.",
+      "directive": "examine",
+      "introChoices": [
+        "Producer-price data illuminate inflation before or alongside its transmission through the wider economy.",
+        "The October 2026 release places three complementary price-measurement concepts—WPI, output PPI and trial input PPI—in focus."
+      ],
+      "marks": 15,
+      "skeleton": [
+        "Producer-price data illuminate inflation before or alongside its transmission through the wider economy.",
+        "The October 2026 release places three complementary price-measurement concepts—WPI, output PPI and trial input PPI—in focus.",
+        "Define WPI, output PPI and input PPI as distinct producer-stage price measures.",
+        "Explain how input-cost changes can affect output prices and eventually influence broader inflation conditions.",
+        "Discuss the value of provisional data and the need to account for revisions.",
+        "Limit the conclusion to what the available evidence supports.",
+        "A rise in a producer-price index need not immediately imply a comparable rise in consumer prices because transmission, margins, taxes and distribution conditions can differ.",
+        "Conclude by linking transparent, timely and methodologically clear price data with sound macroeconomic decision-making."
+      ],
+      "stem": "Examine the significance and limitations of separately tracking wholesale, output-producer and input-producer prices for economic policymaking.",
+      "timeMinutes": 11,
+      "wordBudget": 250
+    }
+  ],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2336762",
+      "text": "PROVISIONAL WHOLESALE PRICE INDEX, OUTPUT PRODUCER PRICE INDEX, AND TRIAL INPUT PRODUCER PRICE INDEX FOR THE MONTH OF OCTOBER 2026, AND FINAL INDEX FOR THE MONTH OF AUGUST 2026",
+      "verification": "source-backed"
+    }
+  ],
+  "papers": [
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Hypothetical illustration",
+      "text": "Suppose input costs rise while producers cannot immediately raise selling prices. An input-price measure could show pressure before an output-price measure changes; this is only an illustration of the measurement distinction, not a reported event."
+    },
+    "excerpt": "The October release covers provisional WPI, output PPI and trial input PPI, while the August index is final; the supplied record gives no values or methodology.",
+    "question": {
+      "answer": "Track the measures separately: input prices indicate cost pressure, output prices indicate producer selling-price movement, and WPI reflects wholesale-price movement. Compare them cautiously because the source provides no values, methodology or transmission evidence.",
+      "prompt": "How should an analyst use the three measures without overstating what the release establishes?"
+    },
+    "sections": [
+      {
+        "heading": "What the release covers",
+        "paragraphs": [
+          "The Press Information Bureau announced provisional WPI, output PPI and trial input PPI for October 2026, along with a final index for August 2026. The supplied official summary gives no numerical index values.",
+          "The measures should not be conflated: input PPI concerns production inputs, output PPI concerns prices received for output, and WPI concerns wholesale prices."
+        ]
+      },
+      {
+        "heading": "Why provisional status matters",
+        "paragraphs": [
+          "A provisional observation can be revised before finalisation. Therefore, analysts should distinguish the reference month, the data status and the eventual final index.",
+          "The release title alone cannot establish whether prices rose or fell, which sectors drove movement, or how producer prices affected consumers."
+        ]
+      }
+    ],
+    "title": "October 2026 producer-price release distinguishes input, output and wholesale measures"
+  },
+  "prelimsTraps": [
+    {
+      "correct": false,
+      "explanation": "The source summary explicitly identifies the October 2026 indices as provisional and the August 2026 index as final.",
+      "statement": "All indices covered by the release are final."
+    },
+    {
+      "correct": true,
+      "explanation": "The official summary names a trial input producer price index for October 2026.",
+      "statement": "The release includes a trial input producer price index for October 2026."
+    },
+    {
+      "correct": false,
+      "explanation": "The source does not state that WPI, output PPI and input PPI are identical measures.",
+      "statement": "WPI, output PPI and input PPI are interchangeable labels for the same index."
+    },
+    {
+      "correct": false,
+      "explanation": "The supplied official summary gives no numerical movement or direction.",
+      "statement": "The source establishes that producer prices increased in October 2026."
+    }
+  ],
+  "priority": 64,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 45,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 50
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-11-16T07:15:45Z",
+  "publisherId": "pib",
+  "publisherName": "Press Information Bureau",
+  "recallCard": "PIB’s 16 November 2026 summary covers provisional October 2026 WPI, output PPI and trial input PPI, plus a final August 2026 index. Use the measures distinctly and do not infer price direction without the underlying values.",
+  "reusableAnchors": [],
+  "sourceContentHash": "b017b13e2590b29bdab09cc62467a18d19b3a3e2e782b64ca81e30ef96c5eb33",
+  "sourceId": "src_42900abaa6421bdf4e69e0d4ba30ca02988b6a9a66fde47fb643cd99cfb50f2d",
+  "sourceTitle": "PROVISIONAL WHOLESALE PRICE INDEX, OUTPUT PRODUCER PRICE INDEX, AND TRIAL INPUT PRODUCER PRICE INDEX FOR THE MONTH OF OCTOBER 2026, AND FINAL INDEX FOR THE MONTH OF AUGUST 2026",
+  "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2336762",
+  "staticDefinition": "WPI, output PPI and input PPI are distinct producer-stage price measures: WPI tracks wholesale prices, output PPI tracks prices received for output, and input PPI tracks prices paid for production inputs. The supplied record does not provide their formal methodology or base year.",
+  "use": "Use the release to frame questions on inflation measurement, macroeconomic monitoring, data revision and the distinction between input-cost pressure and output-price movement.",
+  "verification": {
+    "advisory_notes": [
+      "The title and official summary support the October 2026 provisional and August 2026 final-status distinction, but the supplied extract does not display the release body or establish the publication date independently.",
+      "“WPI tracks wholesale prices” is broadly correct, but the note should clarify that India’s WPI covers goods rather than services and is not synonymous with a comprehensive producer-price measure.[1]",
+      "The claim that output PPI tracks prices received and input PPI prices paid is useful background, but it is not established by the supplied PIB extract and should be presented as general methodology rather than source fact.",
+      "“A provisional observation can be revised before finalisation” is sound analytical framing, though the release title alone does not establish the specific revision procedure or timetable.",
+      "The proposed GS3.1 and GS3.2 tagging is substantively relevant to inflation measurement, growth and economic management; the note could also flag prelims relevance for index coverage, base year and institutional compilation.",
+      "The use line appropriately distinguishes input-cost pressure from output-price movement, but “macroeconomic monitoring” should not imply that this release reports a measured inflation direction when no values are supplied.",
+      "The pocketRead headline and deck accurately reflect the supplied title, but they should avoid implying that all three October series are equally established beyond the title’s wording, especially because the extract is incomplete.",
+      "The hypothetical input-cost example is clearly labelled and logically sound; it should remain explicitly hypothetical because it is not a reported October 2026 development."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-11-16T07:55:57Z",
+    "confidence": 0.89,
+    "flagged_claims": [],
+    "noteContentHash": "7da515d9d154437827cc8c27896f8617cf6ba31e7827fab9abd52c45f14da643",
+    "sourceContentHash": "b017b13e2590b29bdab09cc62467a18d19b3a3e2e782b64ca81e30ef96c5eb33",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Publish the underlying index values, methodology, coverage and revision policy alongside provisional releases.",
+    "Present WPI, output PPI and input PPI together to clarify the stage at which price pressure is observed.",
+    "Use finalised data for firm conclusions and clearly label provisional observations.",
+    "Avoid inferring consumer inflation, sectoral causes or welfare effects when the underlying series are not supplied."
+  ],
+  "whyInNews": "The Press Information Bureau’s 16 November 2026 release announces provisional WPI, output PPI and trial input PPI for October 2026, alongside a final index for August 2026. The supplied official summary establishes the coverage and provisional/final distinction but gives no index values or price direction."
+}
