@@ -1,5 +1,71 @@
 [
   {
+    "id": 137,
+    "title": "MKA measures multimodal agents by finished engineering artifacts",
+    "excerpt": "Google and Artificial Analysis released the Multimodal Knowledge Agent benchmark on November 10, 2026. It evaluates complete agent workflows over visually complex files, using the same tools, sandbox, and turn budget for every model.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-mka-measures-multimodal-agents-by-finished-engineering-artif-1794823523624",
+    "date": "Nov 16, 2026",
+    "dateISO": "2026-11-16T10:05:23Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Introducing the Multimodal Knowledge Agent benchmark \u2014 Google",
+        "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/multimodal-knowledge-agent-benchmark/"
+      },
+      {
+        "title": "Gemini 4 Carbon is now available \u2014 Google",
+        "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/"
+      },
+      {
+        "title": "AI Technology Observations, November 11, 2026 \u2014 Geoffrey Chen",
+        "url": "https://geoffreychen.com/ai-technology-observation-2026-11-11-07/"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>The Multimodal Knowledge Agent (MKA) benchmark targets work that ordinary text benchmarks miss: reading charts, images, blueprints, schematics, spreadsheets, and office documents, then producing a usable report, slide deck, or spreadsheet.</p>\n<p>The evaluation contains 200 tasks across real industry workflows. Specialists including architects, biologists, underwriters, and data scientists created the task set. Google developed MKA with Artificial Analysis and published it on November 10, 2026.</p>\n<h2>How it works</h2>\n<p>MKA evaluates an agent, not only a model. Every model runs in Stirrup, the same open-source agent harness, with the same tools, sandbox, and turn budget. This controls for differences in file access, execution, and orchestration.</p>\n<p>The agent must inspect visually dense inputs, reason across multiple files, use tools, and create a finished artifact. The benchmark therefore measures whether the workflow produces a useful deliverable, not just whether the model gives a correct text answer. The published operating conditions use up to 250 turns per task, and the full 200-task set remains private; 10 example tasks are available on Hugging Face.</p>\n<h2>The result and the catch</h2>\n<p>Google reported that Gemini 4 Carbon ranked second on MKA while costing more than six times less per average task than the top-performing model. That result is useful because it combines quality with the cost of a complete multimodal agent run, rather than comparing token prices alone.</p>\n<p>The benchmark still has limits. The complete task set is private, so outside teams cannot reproduce the entire score. A model can also score differently with another harness, tool set, sandbox, or turn limit. MKA reduces those variables, but it does not remove them from production systems.</p>\n<h2>How to use the pattern</h2>\n<p>For an internal evaluation, copy the structure rather than the exact task set. Freeze the model, harness, tools, sandbox, maximum turns, input files, output format, and scoring rubric. Score both factual correctness and artifact quality.</p>\n<p>A practical test should include one task where the agent must extract values from a chart, one where it must cross-reference several files, and one where it must create and verify a spreadsheet or report. Record wall-clock time, tool calls, input and output tokens, failed actions, and the cost per completed artifact.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Fix the harness and turn budget before comparing models.</li>\n<li>Measure completed artifact quality and cost per task, not token price alone.</li>\n<li>Keep a private holdout set so agents cannot optimize for public examples.</li>\n<li>Test the same workflow with your production file tools and sandbox.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://blog.google/innovation-and-ai/models-and-research/gemini-models/multimodal-knowledge-agent-benchmark/\" target=\"_blank\" rel=\"noopener\">Introducing the Multimodal Knowledge Agent benchmark \u2014 Google</a> \u2014 blog.google</li>\n<li><a href=\"https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/\" target=\"_blank\" rel=\"noopener\">Gemini 4 Carbon is now available \u2014 Google</a> \u2014 blog.google</li>\n<li><a href=\"https://geoffreychen.com/ai-technology-observation-2026-11-11-07/\" target=\"_blank\" rel=\"noopener\">AI Technology Observations, November 11, 2026 \u2014 Geoffrey Chen</a> \u2014 geoffreychen.com</li>\n</ul>"
+  },
+  {
+    "id": 138,
+    "title": "Git 2.56.1 fixed six bugs in hostile repository parsing",
+    "excerpt": "Git 2.56.1 fixed six security vulnerabilities, including a recursive-clone path that could execute attacker-controlled hooks and a merge bug that could overwrite memory. The release is a reminder that ordinary developer tools parse hostile repositories and must be patched like production services.",
+    "readTime": "3 min read",
+    "category": "career",
+    "learningPath": "career",
+    "difficulty": "Advanced",
+    "forPersona": [
+      "Developers",
+      "Engineering managers",
+      "Students"
+    ],
+    "uniqueId": "daily-career-git-2-56-1-fixed-six-bugs-in-hostile-repository-parsing-1794823554213",
+    "date": "Nov 16, 2026",
+    "dateISO": "2026-11-16T10:05:54Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "This Week in Source Control: 11 November 2026",
+        "url": "https://nesbitt.io/2026/11/11/this-week-in-source-control.html"
+      },
+      {
+        "title": "Dev News Digest: 11 Nov 2026, 06:00",
+        "url": "https://dev.to/magnus_ferm/dev-news-digest-11-nov-2026-0600-2ag7"
+      },
+      {
+        "title": "4,837 hijacked accounts, one CI stealer",
+        "url": "https://www.qable.io/qable-weekly/2026-11-13"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Git released version 2.56.1 on November 11, 2026, with six security fixes. The fixes also appeared in maintenance releases from 2.50.2 through 2.55.1. GitHub said it deployed the fixes on github.com and released patched GitHub Enterprise Server versions 3.19.15, 3.20.11, 3.21.9, and 3.22.4.</p>\n<p>The surprising part is the attack surface. A malicious repository could abuse submodule handling during a recursive clone. Another issue affected servers that merge tags for users. Several bugs were reachable through repository data rather than through a running application exposed as a traditional service.</p>\n<h2>How the bugs worked</h2>\n<p>The common pattern is a parser trusting repository-controlled structure. Git has to interpret paths, submodules, protocol messages, signatures, binary patches, merge conflicts, and fast-import streams. Each parser boundary creates a security decision: which names are valid, how large output may become, and which filesystem locations may be changed.</p>\n<p>The remaining fixes covered integer overflow in merge-result sizing and unsafe <code>git fast-import</code> features. Git now requires <code>--allow-unsafe-features</code> before accepting options that can read arbitrary files or create or append to files.</p>\n<ul>\n<li>CVE-2026-111760: an integer truncation in index handling could validate one path but write another shorter path. A malicious submodule could replace a <code>.git</code> file with a symlink to attacker-controlled configuration or hooks.</li>\n<li>CVE-2026-113408: an empty repository using protocol version 2 could advertise a <code>HEAD</code> target containing path traversal. A later branch update could write outside the references directory.</li>\n<li>CVE-2026-114467: removing GPG signatures used a fixed-size stack array sized for two signatures. A tag with more than two could trigger an out-of-bounds write during a merge.</li>\n<li>CVE-2026-114469: Git enforced a 1 GiB patch limit on input size, but a small binary patch could expand beyond that limit and cause an out-of-bounds read.</li>\n</ul>\n<h2>The catch for engineering teams</h2>\n<p>The fixes affect more than a developer\u2019s local binary. GitHub Enterprise Server received updates, Git for Windows 2.56.1 included the fixes, and Git clients embedded in other tools may lag behind. A team can patch its CI runner while leaving a vulnerable Git binary inside an image, desktop tool, or internal service.</p>\n<p>The recursive-clone issue also shows why branch protection is not enough. A repository can be syntactically valid at the Git hosting layer while causing dangerous behavior in a consumer that interprets submodules, hooks, or paths differently.</p>\n<ul>\n<li>Update Git clients and server installations to 2.56.1 or the patched maintenance release used by the distribution.</li>\n<li>Patch bundled copies of Git in build images, IDEs, desktop clients, hosted runners, and repository-management services.</li>\n<li>Treat recursive clones of untrusted repositories as code execution boundaries. Disable unnecessary hooks and review submodule configuration before automation processes external repositories.</li>\n<li>Test repository operations with hostile paths, oversized expansions, malformed signatures, and unusual protocol responses.</li>\n</ul>\n<h2>What to change now</h2>\n<p>For most engineers, the immediate action is simple: patch Git and the products that bundle it. For platform teams, the larger task is to map where repository content becomes executable behavior. That includes hooks, post-checkout actions, submodule paths, generated patches, merge services, and import pipelines.</p>\n<p>The career lesson is practical. Security work on developer infrastructure is not limited to authentication and network controls. File formats and version-control internals need the same threat modeling, fuzzing, patch discipline, and inventory work as any internet-facing service.</p>\n<ul>\n<li>Inventory every Git binary with <code>git --version</code>, including container images and self-hosted runners.</li>\n<li>Pin patched base images instead of relying on a host\u2019s Git installation.</li>\n<li>Run untrusted repository operations in isolated workspaces with minimal credentials and no production cloud identity.</li>\n<li>Add malformed repository fixtures to CI for tools that clone, merge, archive, or import Git data.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Patch Git 2.56.1 or the supported maintenance release across clients, runners, images, and servers.</li>\n<li>Audit tools that recursively clone, merge, archive, or import untrusted repositories.</li>\n<li>Run repository automation without production credentials and isolate its filesystem.</li>\n<li>Add hostile-path and malformed-object tests to developer-infrastructure code.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://nesbitt.io/2026/11/11/this-week-in-source-control.html\" target=\"_blank\" rel=\"noopener\">This Week in Source Control: 11 November 2026</a> \u2014 nesbitt.io</li>\n<li><a href=\"https://dev.to/magnus_ferm/dev-news-digest-11-nov-2026-0600-2ag7\" target=\"_blank\" rel=\"noopener\">Dev News Digest: 11 Nov 2026, 06:00</a> \u2014 dev.to</li>\n<li><a href=\"https://www.qable.io/qable-weekly/2026-11-13\" target=\"_blank\" rel=\"noopener\">4,837 hijacked accounts, one CI stealer</a> \u2014 qable.io</li>\n</ul>"
+  },
+  {
     "id": 135,
     "title": "Pomerado converts browser workflows into deterministic MCP tools",
     "excerpt": "Pomerado turns a browser recording into a deterministic MCP server. The model performs a task once; later calls use the generated HTTP or Playwright integration without a model in the loop, usually returning in 5 to 30 seconds.",
@@ -1085,39 +1151,6 @@
       }
     ],
     "content": "<h2>What happened</h2>\n<p>The MariaDB Foundation reported a regression tracked as MDEV-37992 on October 15, 2026. The regression appeared only under specific LRU and buffer-pool conditions, and required a memory-resident workload to expose.</p>\n<p>Jonathan Miller reproduced it with MariaDB\u2019s Test Automation Framework, or TAF, on MariaDB 11.8, 12.3, and 13.1. The workload contained 10 million rows, used 40 threads, and ran with a 90 GB buffer pool. The patched commits from MDEV-33966 restored throughput on every tested branch.</p>\n<h2>Why the test design mattered</h2>\n<p>The failure was not visible in a small or disk-bound test. Its trigger depended on the relationship between the LRU behavior, buffer-pool size, concurrency, and a workload that fit in memory. That made a generic benchmark insufficient: the test had to preserve the conditions that exposed the regression.</p>\n<p>TAF turns those conditions into a reusable test definition. MariaDB publishes the properties file and driver script in its repository, so another engineer can install the database, run the same workload, and compare branches. The framework also supports automated installs, structured workloads, and concurrency sweeps.</p>\n<h2>The broader database lesson</h2>\n<p>MariaDB described this work as part of a Performance MDEV Test Case Library. The first case, MDEV-32750, captured an Adaptive Hash Index behavior change discovered during a MariaDB 10.4 to 10.11 migration.</p>\n<p>This changes performance debugging from a one-off investigation into a regression test. A migration can expose a behavior change, but the useful artifact is the smallest repeatable workload that demonstrates it. Store that workload with the issue and run it against every supported branch before release.</p>\n<h2>What other teams can copy</h2>\n<p>A useful performance case should define the data size, concurrency, memory configuration, database version, and success metric. It should also state whether the workload is memory-resident or disk-bound. Those details determine whether another team can reproduce the result.</p>\n<p>The MariaDB example also shows why testing multiple branches matters. The same regression was reproduced on three versions, and the fix was checked on all three. That gives maintainers evidence about both the scope of the bug and the scope of the repair.</p>\n<ul>\n<li>Record the exact row count, thread count, cache or buffer-pool size, and storage assumptions.</li>\n<li>Keep the workload driver and configuration beside the issue, not only in an engineer\u2019s local environment.</li>\n<li>Run the case against both the suspected regression and the patched commit.</li>\n<li>Treat migration findings as permanent performance tests when they can be reproduced.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Publish runnable performance cases with their configuration and driver.</li>\n<li>Include memory size, concurrency, row count, and workload type in every benchmark.</li>\n<li>Run regression tests across all supported database branches.</li>\n<li>Convert reproducible migration findings into permanent tests.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://mariadb.org/mariadb-foundation-newsletter-15-october-2026/\" target=\"_blank\" rel=\"noopener\">MariaDB Foundation Newsletter \u2013 15 October 2026</a> \u2014 mariadb.org</li>\n<li><a href=\"https://clickhouse.com/blog/202610-newsletter\" target=\"_blank\" rel=\"noopener\">October 2026 newsletter</a> \u2014 clickhouse.com</li>\n<li><a href=\"https://learn.microsoft.com/en-us/azure/databricks/release-notes/product/2026/october\" target=\"_blank\" rel=\"noopener\">October 2026 \u2013 Azure Databricks</a> \u2014 learn.microsoft.com</li>\n</ul>"
-  },
-  {
-    "id": 99,
-    "title": "DeepSeek V4.1-Flash-1017 raises Terminal-Bench score by 11.1 points",
-    "excerpt": "DeepSeek released the V4.1-Flash-1017 checkpoint on October 17, 2026. Its reported Terminal-Bench 4.0 score rose from 31.2% to 42.3% at the same price, making checkpoint replacement a practical lever for coding agents without changing their API integration.",
-    "readTime": "3 min read",
-    "category": "ai",
-    "learningPath": "ai",
-    "difficulty": "Advanced",
-    "forPersona": [
-      "Developers",
-      "Architects",
-      "Tech leads"
-    ],
-    "uniqueId": "daily-ai-deepseek-v4-1-flash-1017-raises-terminal-bench-score-by-11-1-1792308216530",
-    "date": "Oct 18, 2026",
-    "dateISO": "2026-10-18T07:23:36Z",
-    "daily": true,
-    "sources": [
-      {
-        "title": "DeepSeek V4.1-Flash-1017: Benchmarks vs Opus 5, Pricing, Switch?",
-        "url": "https://www.developersdigest.tech/blog/deepseek-v4-1-flash-1017-release-guide-2026"
-      },
-      {
-        "title": "Weekly Update \u2013 October 12, 2026",
-        "url": "https://github.github.com/gh-aw/blog/2026-10-12-weekly-update/"
-      },
-      {
-        "title": "Confirmed AI Model Releases for October 2026",
-        "url": "https://af.net/realtime/confirmed-ai-model-releases-for-october-2026/"
-      }
-    ],
-    "content": "<h2>What happened</h2>\n<p>DeepSeek released <code>deepseek-flash</code> checkpoint V4.1-Flash-1017 on October 17, 2026. The release kept the same price as the previous V4.1-Flash version and used MIT-licensed weights.</p>\n<p>DeepSeek reported large gains on several agent and coding evaluations. Terminal-Bench 4.0 increased from 31.2% to 42.3%, an 11.1-point gain. ProgramBench increased from 20.3% to 29.1%, an 8.8-point gain. Automation-Bench v1.0.6 increased from 54.8% to 60.5%.</p>\n<h2>How to use it</h2>\n<p>The integration change is small because the update is a checkpoint for the existing <code>deepseek-flash</code> API model. Keep the model identifier configured in one place, then run the same agent harness against both checkpoints.</p>\n<p>For a useful comparison, replay a fixed set of repository tasks. Record successful patches, test-pass rate, tool-call count, total tokens, and wall-clock time. The benchmark gains do not prove that every repository task will improve.</p>\n<pre><code class=\"language-python\">from openai import OpenAI\n\nclient = OpenAI(\n    api_key=&quot;DEEPSEEK_API_KEY&quot;,\n    base_url=&quot;https://api.deepseek.com&quot;\n)\n\nresponse = client.chat.completions.create(\n    model=&quot;deepseek-flash&quot;,\n    messages=[\n        {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a coding agent. Inspect before editing.&quot;},\n        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Fix the failing tests in this repository.&quot;}\n    ],\n    temperature=0\n)\n\nprint(response.choices[0].message.content)</code></pre>\n<h2>Where the numbers help</h2>\n<p>The strongest reported changes are on tool-using and software-engineering evaluations. The model also scored 77.0% on DeepSWE v1.1, compared with 74.2% for the earlier checkpoint. The release source reported 77.0% versus 74.0% for Opus 5 on that benchmark.</p>\n<p>The pattern suggests a useful first test for coding-agent workloads: repository repair, terminal interaction, and business-task automation. It does not establish a general improvement across all reasoning tasks.</p>\n<ul>\n<li>HLE without tools: 42.6%, up from 36.8%.</li>\n<li>DeepSWE v1.1: 77.0%, up from 74.2%.</li>\n<li>NL2Repo-Bench: 68.2%, up from 65.4%.</li>\n<li>Apex Bench v1.1: 72.1%, up from 64.6%.</li>\n</ul>\n<h2>The catch</h2>\n<p>The figures come from DeepSeek's reported comparison, not an independently reproduced evaluation in the available sources. Benchmark scores can depend on prompts, tool wrappers, time limits, model sampling, and hidden test handling.</p>\n<p>The release does not show a latency reduction or a lower token count. A higher success rate can still cost more in production if the model takes longer, calls tools more often, or produces larger patches. Same price means the API rate did not change; it does not mean equal cost per completed task.</p>\n<p>The checkpoint also improved some evaluations by much less than Terminal-Bench. DeepSWE rose 2.8 points, while Chartography with tools rose 4.1 points and BabyVision with tools rose 2.9 points. Treat the result as workload-specific.</p>\n<h2>Recommended rollout</h2>\n<p>Start with shadow evaluation. Send identical tasks to the old and new checkpoints, but keep the old result authoritative. Compare patches with automated tests and human review for regressions.</p>\n<p>If the new checkpoint wins on your task set, route a small percentage of production jobs to it. Do not use the published benchmark delta as a substitute for repository-specific tests, especially for agents that edit files or run commands.</p>\n<ul>\n<li>Pin the checkpoint or version label in production instead of relying on an untracked default.</li>\n<li>Replay 20 to 50 representative repository tasks before switching traffic.</li>\n<li>Measure pass rate, tokens, tool calls, latency, and cost per passing task.</li>\n<li>Keep the previous checkpoint available for rollback.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Test DeepSeek V4.1-Flash-1017 on repository-repair tasks before changing your coding-agent model.</li>\n<li>Track cost per passing task, not only API price or benchmark score.</li>\n<li>Pin the checkpoint and retain the previous version for rollback.</li>\n<li>Treat the reported gains as vendor results until independently reproduced.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://www.developersdigest.tech/blog/deepseek-v4-1-flash-1017-release-guide-2026\" target=\"_blank\" rel=\"noopener\">DeepSeek V4.1-Flash-1017: Benchmarks vs Opus 5, Pricing, Switch?</a> \u2014 developersdigest.tech</li>\n<li><a href=\"https://github.github.com/gh-aw/blog/2026-10-12-weekly-update/\" target=\"_blank\" rel=\"noopener\">Weekly Update \u2013 October 12, 2026</a> \u2014 github.github.com</li>\n<li><a href=\"https://af.net/realtime/confirmed-ai-model-releases-for-october-2026/\" target=\"_blank\" rel=\"noopener\">Confirmed AI Model Releases for October 2026</a> \u2014 af.net</li>\n</ul>"
   },
   {
     "id": 100,
