@@ -1,5 +1,38 @@
 [
   {
+    "id": 139,
+    "title": "OWE-Bench measures agents on long engineering tasks",
+    "excerpt": "Mercor released OpenWorldEngineer, or OWE-Bench, on November 12, 2026. It measures whether agents can complete long engineering tasks over four to 18 hours, rather than whether they can pass isolated coding tests.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-owe-bench-measures-agents-on-long-engineering-tasks-1794998151305",
+    "date": "Nov 18, 2026",
+    "dateISO": "2026-11-18T10:35:51Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "OWE-Bench Exposes AI Agents' Long-Horizon Ceiling",
+        "url": "https://futurumgroup.com/insights/owe-bench-exposes-ai-agents-long-horizon-ceiling/"
+      },
+      {
+        "title": "AI Agent Releases, Week of Nov 16, 2026",
+        "url": "https://agentgid.com/releases/2026-11-16/"
+      },
+      {
+        "title": "Open Source Agent Tools: November 13, 2026",
+        "url": "https://www.my2cents.ai/news/2026-11-13-open-source-agents/"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>OWE-Bench contains 26 tasks across software engineering, physical engineering, machine learning, and scientific computing. The task mix includes eight software-engineering tasks, five physical-engineering tasks, seven machine-learning tasks, and six scientific-computing tasks.</p>\n<p>The benchmark uses continuous scores. An agent that reaches half of a task\u2019s measured target receives 50 percent, instead of only passing or failing. Agents get four to 18 hours per attempt on task-matched hardware, including NVIDIA H100 and B300 GPUs.</p>\n<h2>The result</h2>\n<p>Claude Fable 5.2 led the reported leaderboard at 54.6 percent. It used an average of 211 million tokens per task attempt. GPT-6 Astra scored 44.2 percent at a reported $234.63 per attempt. Claude Sonnet 5.5 scored 39.0 percent at $38.65 per attempt.</p>\n<p>The spread is useful because it measures completed engineering output under a long time limit. A high score still does not mean an agent can finish every task: the leading result remained below the benchmark ceiling.</p>\n<h2>How to use the pattern</h2>\n<p>Use OWE-Bench\u2019s basic design for internal evaluations. Give an agent a real repository or technical workspace, define a measurable target, and allow enough time for planning, implementation, testing, and recovery. Score the final artifact on a continuous scale.</p>\n<p>Record token use, wall-clock time, tool failures, retries, and human interventions. A single pass rate hides these costs. A continuous score paired with cost per attempt shows whether a stronger model produces enough additional output to justify its spend.</p>\n<h2>The catch</h2>\n<p>Long-horizon evaluations are expensive. The leading OWE-Bench result used 211 million tokens on average, so reproducing the result requires a substantial token and compute budget. Results also depend on the task harness, hardware, time limit, and rules for human help.</p>\n<p>The benchmark\u2019s broader task mix makes it more relevant to engineering organizations than a code-only score, but it also makes comparisons harder. A model can be strong at repository changes and weak at scientific computing. Teams should therefore use the benchmark as a template for building a workload-specific suite, not as a replacement for one.</p>\n<ul>\n<li>Select tasks that have objective outputs, such as passing tests, model quality, runtime, or numerical error.</li>\n<li>Set a fixed time budget and hardware profile for every model.</li>\n<li>Report score, tokens, elapsed time, and intervention count together.</li>\n<li>Keep benchmark tasks separate from prompt-tuning data to avoid measuring memorization.</li>\n</ul>\n<pre><code class=\"language-python\">result = evaluate_agent(\n    task=task,\n    time_limit_hours=8,\n    hardware=&quot;H100&quot;,\n)\n\nreport = {\n    &quot;score&quot;: result.continuous_score,\n    &quot;tokens&quot;: result.input_tokens + result.output_tokens,\n    &quot;wall_time_s&quot;: result.wall_time_s,\n    &quot;human_interventions&quot;: result.interventions,\n}</code></pre>\n<h2>Takeaways</h2>\n<ul>\n<li>Build evaluations around finished artifacts and continuous quality, not only pass or fail.</li>\n<li>Track tokens, elapsed time, retries, and human interventions beside the score.</li>\n<li>Use long-horizon results to choose models for specific workloads, not as a universal ranking.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://futurumgroup.com/insights/owe-bench-exposes-ai-agents-long-horizon-ceiling/\" target=\"_blank\" rel=\"noopener\">OWE-Bench Exposes AI Agents' Long-Horizon Ceiling</a> \u2014 futurumgroup.com</li>\n<li><a href=\"https://agentgid.com/releases/2026-11-16/\" target=\"_blank\" rel=\"noopener\">AI Agent Releases, Week of Nov 16, 2026</a> \u2014 agentgid.com</li>\n<li><a href=\"https://www.my2cents.ai/news/2026-11-13-open-source-agents/\" target=\"_blank\" rel=\"noopener\">Open Source Agent Tools: November 13, 2026</a> \u2014 my2cents.ai</li>\n</ul>"
+  },
+  {
     "id": 137,
     "title": "MKA measures multimodal agents by finished engineering artifacts",
     "excerpt": "Google and Artificial Analysis released the Multimodal Knowledge Agent benchmark on November 10, 2026. It evaluates complete agent workflows over visually complex files, using the same tools, sandbox, and turn budget for every model.",
@@ -1081,43 +1114,6 @@
       }
     ],
     "content": "<h2>What changed</h2>\n<p>OpenHands 1.28 lets the agent ask for secrets in the chat instead of requiring credentials to be placed in the environment before the task starts. The release was listed among notable AI and agent releases for the week ending October 20, 2026.</p>\n<p>The feature targets workflows where an agent reaches a step that needs a token, password, or other protected value. The user can provide the value through the chat interaction, rather than exposing it in the repository or a static shell environment.</p>\n<h2>How the pattern works</h2>\n<p>The agent runs without the secret by default. When a command or tool call needs protected access, it pauses and asks the user for the missing credential. The user decides whether to provide it, then the agent resumes the task.</p>\n<p>This separates ordinary coding work from privileged operations. An agent can inspect files, edit code, and run local tests without receiving deployment or registry credentials at startup. The release note does not specify the exact storage, masking, or lifetime rules, so those controls need verification before production use.</p>\n<h2>Where it breaks</h2>\n<p>Interactive approval can block unattended jobs. A CI runner cannot answer a chat request unless the surrounding system supplies an approval mechanism. This makes the feature useful for supervised development, but incomplete as a replacement for CI secret injection.</p>\n<p>The agent still decides when to request and use the credential. A prompt injection in repository content could try to make it request a secret for an unrelated command. Approval should therefore include the exact tool, command, host, and scope, not just a generic \u201callow secrets\u201d decision.</p>\n<ul>\n<li>Do not place long-lived credentials in repository files or task prompts.</li>\n<li>Use short-lived, least-privilege tokens for package, cloud, and deployment access.</li>\n<li>Log the approval event, destination, and command without logging the secret itself.</li>\n<li>Test whether the secret is masked in terminal output, tool results, traces, and agent transcripts.</li>\n</ul>\n<h2>How to use it safely</h2>\n<p>Start with a supervised repository task that needs a read-only package-registry token. Deny requests for unrelated hosts or destructive commands. Confirm that the token is unavailable to later tasks unless explicitly approved again.</p>\n<p>Before using the feature in deployment automation, inspect the OpenHands 1.28 implementation and deployment configuration for secret lifetime, transcript redaction, subprocess inheritance, and retry behavior. The release listing confirms the capability, but it does not provide those implementation details.</p>\n<pre><code class=\"language-python\"># Pseudocode for an approval gate\nresult = agent.run(task, secrets={})\n\nif result.needs_secret:\n    approval = review(\n        name=result.secret_name,\n        command=result.command,\n        destination=result.destination,\n    )\n    if approval.allowed:\n        result = agent.resume(secret=approval.short_lived_value)</code></pre>\n<h2>Takeaways</h2>\n<ul>\n<li>Try OpenHands 1.28 first with a read-only, short-lived credential.</li>\n<li>Make every secret request show the command, destination, and requested scope.</li>\n<li>Verify masking and credential lifetime before allowing unattended agent runs.</li>\n<li>Keep CI secret injection for jobs that cannot handle interactive approval.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://toolsift.ai/new/\" target=\"_blank\" rel=\"noopener\">New AI &amp; agent releases \u2014 ToolSift.ai</a> \u2014 toolsift.ai</li>\n<li><a href=\"https://trendintech.com/github-copilot-drops-3-ai-models-november-2026/\" target=\"_blank\" rel=\"noopener\">GitHub Copilot Models: 3 Cut by Nov. 16 [2026] \u2014 TrendinTech</a> \u2014 trendintech.com</li>\n</ul>"
-  },
-  {
-    "id": 102,
-    "title": "Gemini 4 Argon adds a shared 1,048,576-token context window",
-    "excerpt": "Google released Gemini 4 Argon for developers on October 13, 2026. Its main engineering change is a shared 1,048,576-token context window for input, internal reasoning, and output, with a reported 77.9% score on DeepSWE v1.1.",
-    "readTime": "2 min read",
-    "category": "ai",
-    "learningPath": "ai",
-    "difficulty": "Intermediate",
-    "forPersona": [
-      "Developers",
-      "Architects",
-      "Tech leads"
-    ],
-    "uniqueId": "daily-ai-gemini-4-argon-adds-a-shared-1-048-576-token-context-window-1792396982157",
-    "date": "Oct 19, 2026",
-    "dateISO": "2026-10-19T08:03:02Z",
-    "daily": true,
-    "sources": [
-      {
-        "title": "Gemini 4 Argon: Built to solve your hardest problems",
-        "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-argon/"
-      },
-      {
-        "title": "Gemini 4 Argon is now available for developers",
-        "url": "https://blog.google/innovation-and-ai/technology/developers-tools/build-with-gemini-4-argon/"
-      },
-      {
-        "title": "Developing Gemini 4 Argon responsibly and safely",
-        "url": "https://blog.google/innovation-and-ai/technology/safety-security/gemini-4-model-safety-security/"
-      },
-      {
-        "title": "Gemini 4 Argon Opens to Developers With 1M-Token Context and Leading Coding Benchmarks",
-        "url": "https://www.aiintelreport.com/frontier-models/gemini-4-argon-developer-api"
-      }
-    ],
-    "content": "<h2>What happened</h2>\n<p>Google made Gemini 4 Argon available through the paid Gemini API on October 13, 2026. Google positions it for long-horizon software engineering tasks such as code migration, large-codebase refactoring, and optimization.</p>\n<p>Google reports a 77.9% score on DeepSWE v1.1, a benchmark for real-world, long-horizon software engineering tasks. It also reports 87% on the Embodied Reasoning benchmark and a number-one position on the Vals Index. These are vendor-reported results, not independent replications.</p>\n<h2>How the context window changes agent design</h2>\n<p>The advertised context window is 1,048,576 tokens. It is shared across the input prompt, the model's internal thinking tokens, and the visible output. A request that sends a large repository therefore does not get one million input tokens plus another million tokens for reasoning and output.</p>\n<p>The practical pattern is to make one call carry the repository snapshot, task definition, constraints, and relevant test output. The model can return a long review or patch in the same request, subject to the API's output limit and the context consumed by reasoning. This can reduce retrieval and summarization steps for repositories that fit in the window.</p>\n<pre><code class=\"language-python\">from google import genai\n\nclient = genai.Client()\n\nresponse = client.models.generate_content(\n    model=&quot;gemini-4-argon&quot;,\n    contents=[\n        &quot;Review this repository. Find the three highest-risk concurrency bugs, &quot;\n        &quot;explain each one, and propose minimal patches with tests.&quot;,\n        repository_snapshot,\n    ],\n)\n\nprint(response.text)</code></pre>\n<h2>The catch</h2>\n<p>The context limit does not guarantee reliable use of every token. Large prompts can contain stale files, duplicate definitions, generated code, and irrelevant history. A single long call also creates a large failure domain: one mistaken assumption can affect the entire proposed patch.</p>\n<p>Pricing is scheduled to increase after November 30, 2026. The introductory price is $2 per million input tokens and $10 per million output tokens, with cached input tokens discounted by 95%. After that date, Google lists $4 per million input tokens and $20 per million output tokens.</p>\n<ul>\n<li>Use a repository snapshot only when its token count leaves room for reasoning and output.</li>\n<li>Treat the reported 77.9% DeepSWE result as a model-selection signal, not proof that an agent will solve production tasks.</li>\n<li>Measure end-to-end cost, latency, patch acceptance, and test-pass rate on your own repositories.</li>\n</ul>\n<h2>A safe first integration</h2>\n<p>For a coding agent, send a fixed repository snapshot instead of granting unrestricted write access. Ask for diagnosis first. Then run a separate patch-generation step using only the selected files and test results.</p>\n<p>Keep an audit record of the exact snapshot, prompt, model version, token counts, generated diff, and test output. Compare this workflow with a retrieval-based baseline. The useful result is not the headline context size; it is whether fewer retrieval and planning calls reduce total cost without reducing correctness.</p>\n<ul>\n<li>Start with a read-only review on one bounded repository or service.</li>\n<li>Include build commands, test commands, ownership rules, and excluded directories in the prompt.</li>\n<li>Require file-and-line references, a patch or diff, and tests for every proposed change.</li>\n<li>Run the generated patch in a sandbox and reject it unless existing tests and new regression tests pass.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Test Gemini 4 Argon on a complete, bounded repository before replacing retrieval or summarization stages.</li>\n<li>Budget for the scheduled price increase after November 30, 2026.</li>\n<li>Require sandboxed execution, diffs, tests, and recorded token usage for every coding-agent run.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-argon/\" target=\"_blank\" rel=\"noopener\">Gemini 4 Argon: Built to solve your hardest problems</a> \u2014 blog.google</li>\n<li><a href=\"https://blog.google/innovation-and-ai/technology/developers-tools/build-with-gemini-4-argon/\" target=\"_blank\" rel=\"noopener\">Gemini 4 Argon is now available for developers</a> \u2014 blog.google</li>\n<li><a href=\"https://blog.google/innovation-and-ai/technology/safety-security/gemini-4-model-safety-security/\" target=\"_blank\" rel=\"noopener\">Developing Gemini 4 Argon responsibly and safely</a> \u2014 blog.google</li>\n<li><a href=\"https://www.aiintelreport.com/frontier-models/gemini-4-argon-developer-api\" target=\"_blank\" rel=\"noopener\">Gemini 4 Argon Opens to Developers With 1M-Token Context and Leading Coding Benchmarks</a> \u2014 aiintelreport.com</li>\n</ul>"
   },
   {
     "id": 103,
