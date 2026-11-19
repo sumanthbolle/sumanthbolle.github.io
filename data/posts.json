@@ -1,5 +1,38 @@
 [
   {
+    "id": 140,
+    "title": "A July Microsoft 365 gateway bug met a 14% capacity loss",
+    "excerpt": "On November 12\u201314, 2026, a Microsoft 365 outage combined a July networking-gateway defect, a Teams traffic shift, and 14% unavailable capacity. The failure was not a single bad deploy; it was a latent bug exposed by changed traffic and reduced headroom.",
+    "readTime": "2 min read",
+    "category": "career",
+    "learningPath": "career",
+    "difficulty": "Advanced",
+    "forPersona": [
+      "Developers",
+      "Engineering managers",
+      "Students"
+    ],
+    "uniqueId": "daily-career-a-july-microsoft-365-gateway-bug-met-a-14-capacity-loss-1795084881138",
+    "date": "Nov 19, 2026",
+    "dateISO": "2026-11-19T10:41:21Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Every major outage of November 2026: timeline, times and causes",
+        "url": "https://applescoop.org/story/every-major-outage-november-2026-timeline-faa-microsoft-chase-united"
+      },
+      {
+        "title": "November 2026 technology outages",
+        "url": "https://en.wikipedia.org/wiki/November_2026_technology_outages"
+      },
+      {
+        "title": "Coffee Break: Tech Outages Everywhere and Nary a Hacker to Thank",
+        "url": "https://www.nakedcapitalism.com/2026/11/tech-outages-faa-msft-nsa-banks-united-apple-ai-hackers.html"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Microsoft 365 services including Outlook, Exchange Online, and parts of Teams experienced a broad outage beginning November 12, 2026. Recovery continued into November 13, and Microsoft reported full restoration on November 14.</p>\n<p>The incident had three stated factors: a defect introduced in a July update to Microsoft 365 networking gateway servers; extra traffic after Teams failed over onto the same gateway infrastructure about 15 hours earlier; and nearly 14% of gateway capacity already offline for an unrelated reason. The outage was not attributed to a cyberattack.</p>\n<h2>The technical failure</h2>\n<p>The useful engineering detail is the interaction between latent code defects and operating conditions. The July update left a defect in gateway software. Under normal traffic and capacity, that path did not cause a visible outage. Teams traffic then moved onto the gateway infrastructure, while a separate capacity problem reduced the available fleet. The defect surfaced when the remaining gateways handled the changed load.</p>\n<p>This is a capacity-margin failure, not simply a capacity failure. A service can appear healthy while spare capacity absorbs an input it was never tested against. Removing 14% of capacity changed the failure boundary. Moving Teams traffic changed it again. The old bug became operationally significant only after both conditions aligned.</p>\n<h2>Why this surprises engineers</h2>\n<p>The outage began with a change from months earlier, not with the event that users noticed. The July update supplied the defect. A Teams failover and an unrelated capacity reduction supplied the trigger conditions. This makes ordinary rollback thinking incomplete: reverting the most recent change would not necessarily remove the older defect or restore the lost headroom.</p>\n<p>The incident also shows why aggregate availability can hide dependency risk. Teams and other Microsoft 365 services shared gateway infrastructure. A failure in one service changed traffic for another. The dependency was not only an API call; it was shared network-serving capacity.</p>\n<h2>What to change in engineering practice</h2>\n<p>Test failover paths with production-shaped traffic, not only with healthy-service traffic. A failover that works during a controlled exercise may overload a shared gateway when several services move at once.</p>\n<p>Track capacity loss as an incident amplifier. Alerts should show the percentage of fleet capacity unavailable and the remaining margin under expected failover load. A separate, low-severity capacity issue can become the main incident when another component fails.</p>\n<p>Keep long-lived release candidates observable. The July defect remained dormant until November conditions exposed it. Canary success under current traffic does not prove that the code is safe under failover, degraded capacity, or altered service mix.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Exercise failover with realistic combined traffic, including traffic from dependent services.</li>\n<li>Alert on unavailable capacity and remaining failover headroom, not only request errors.</li>\n<li>Review dormant release defects when traffic shape or shared infrastructure changes.</li>\n<li>Map shared gateway and network dependencies across services, not just application-level calls.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://applescoop.org/story/every-major-outage-november-2026-timeline-faa-microsoft-chase-united\" target=\"_blank\" rel=\"noopener\">Every major outage of November 2026: timeline, times and causes</a> \u2014 applescoop.org</li>\n<li><a href=\"https://en.wikipedia.org/wiki/November_2026_technology_outages\" target=\"_blank\" rel=\"noopener\">November 2026 technology outages</a> \u2014 en.wikipedia.org</li>\n<li><a href=\"https://www.nakedcapitalism.com/2026/11/tech-outages-faa-msft-nsa-banks-united-apple-ai-hackers.html\" target=\"_blank\" rel=\"noopener\">Coffee Break: Tech Outages Everywhere and Nary a Hacker to Thank</a> \u2014 nakedcapitalism.com</li>\n</ul>"
+  },
+  {
     "id": 139,
     "title": "OWE-Bench measures agents on long engineering tasks",
     "excerpt": "Mercor released OpenWorldEngineer, or OWE-Bench, on November 12, 2026. It measures whether agents can complete long engineering tasks over four to 18 hours, rather than whether they can pass isolated coding tests.",
