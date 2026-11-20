@@ -1,0 +1,201 @@
+{
+  "anchor": "GS3.1 Indian economy: monetary policy, liquidity management and banking-system transmission",
+  "argumentsAgainst": [
+    "A VRR auction is a short-term liquidity operation, not a structural solution to persistent liquidity stress.",
+    "The source does not establish the underlying cause, scale or duration of the liquidity conditions, so broader policy conclusions should not be drawn from this announcement alone."
+  ],
+  "argumentsFor": [
+    "The auction can inject short-term funds into the banking system against eligible collateral, helping manage transient liquidity conditions.",
+    "Variable-rate bidding allows the RBI to discover the rate through auction participation rather than supplying funds at a uniformly fixed rate.",
+    "A defined reversal date limits the operation’s duration and supports liquidity calibration."
+  ],
+  "background": [
+    "The RBI’s Liquidity Adjustment Facility comprises operations to inject or absorb liquidity, including overnight and term repo and reverse-repo operations, along with the Standing Deposit Facility and Marginal Standing Facility.[2]",
+    "In a VRR auction, eligible participants bid rates for the notified liquidity amount; the auction mechanism determines successful bids and the applicable allocation framework under the RBI’s operational guidelines.[6]",
+    "The RBI describes variable-rate repo and reverse-repo auctions with tenors ranging from overnight up to 14 days as liquidity-management tools used at its discretion after assessing system liquidity requirements.[2]"
+  ],
+  "codes": [
+    "GS3.1",
+    "GS3.2"
+  ],
+  "editorialStatus": "draft",
+  "id": "note_14a33bea40902909f4887e0d31ebf150291c6c4ff77645992a14701cb21400b8",
+  "indiaImplications": [
+    "Banks receive a temporary source of funds, which may ease short-term mismatches between payments and receipts.",
+    "The operation can support orderly money-market functioning, but its effect depends on participation, collateral availability and subsequent repayment.",
+    "Because the funds are reversed, the measure should be read as liquidity management rather than permanent monetary accommodation."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Define VRR and place it within the LAF.",
+        "Explain the auction-based transmission mechanism from RBI liquidity injection to banking-system conditions.",
+        "Assess benefits, limitations and the importance of calibrated reversal.",
+        "Distinguish temporary liquidity management from a change in the policy stance."
+      ],
+      "conclusionPrompt": "Conclude by linking flexible liquidity operations with monetary-policy credibility and financial stability.",
+      "counterPosition": "A temporary repo operation may relieve frictional stress but cannot by itself resolve persistent or structural liquidity problems.",
+      "diagramSuggestion": "RBI VRR auction → bank bids against collateral → temporary liquidity injection → money-market conditions → reversal on due date",
+      "directive": "discuss",
+      "introChoices": [
+        "The RBI’s VRR auction is a fine-tuning instrument for short-term liquidity, not a standalone change in the policy rate.",
+        "Liquidity management under the LAF enables the RBI to respond to changing banking-system funding conditions through temporary repo operations."
+      ],
+      "marks": 15,
+      "skeleton": [
+        "The RBI’s VRR auction is a fine-tuning instrument for short-term liquidity, not a standalone change in the policy rate.",
+        "Liquidity management under the LAF enables the RBI to respond to changing banking-system funding conditions through temporary repo operations.",
+        "Define VRR and place it within the LAF.",
+        "Explain the auction-based transmission mechanism from RBI liquidity injection to banking-system conditions.",
+        "Assess benefits, limitations and the importance of calibrated reversal.",
+        "Distinguish temporary liquidity management from a change in the policy stance.",
+        "A temporary repo operation may relieve frictional stress but cannot by itself resolve persistent or structural liquidity problems.",
+        "Conclude by linking flexible liquidity operations with monetary-policy credibility and financial stability."
+      ],
+      "stem": "Discuss how a Variable Rate Repo auction under the Liquidity Adjustment Facility can manage short-term liquidity while preserving monetary-policy flexibility.",
+      "timeMinutes": 11,
+      "wordBudget": 250
+    }
+  ],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64016",
+      "text": "The Reserve Bank of India decided to conduct a Variable Rate Repo (VRR) auction on Monday, November 23, 2026.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64016",
+      "text": "The notified amount for the VRR auction is ₹50,000 crore.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64016",
+      "text": "The tenor of the VRR auction is 4 days.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64016",
+      "text": "The auction window is 9:30 AM to 10:00 AM.",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64016",
+      "text": "The date of reversal is November 27, 2026 (Friday).",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64016",
+      "text": "The operational guidelines for the auction will be the same as given in the Reserve Bank’s Press Release 2021-2022/1572 dated January 20, 2022.",
+      "verification": "needs-review"
+    }
+  ],
+  "papers": [
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Hypothetical illustration",
+      "text": "Illustration: If banks temporarily face heavier payment outflows than inflows, a VRR auction could provide funds for the notified period. The banks would return the funds on the reversal date, so the operation would not automatically represent permanent monetary expansion."
+    },
+    "excerpt": "The RBI will inject ₹50,000 crore through a four-day VRR auction on November 23, 2026, with funds scheduled for reversal on November 27.",
+    "question": {
+      "answer": "A VRR auction injects temporary liquidity through competitive bidding under the LAF. Banks obtain funds against eligible collateral and return them on the stated reversal date; therefore, it addresses short-term liquidity conditions without necessarily changing the policy rate or signalling permanent accommodation.",
+      "prompt": "How does a VRR auction manage liquidity without necessarily changing the monetary-policy stance?"
+    },
+    "sections": [
+      {
+        "heading": "What the RBI announced",
+        "paragraphs": [
+          "The RBI announced a ₹50,000 crore, four-day VRR auction for November 23, 2026. Bidding is scheduled from 9:30 AM to 10:00 AM, with reversal on November 27, 2026. The operational guidelines are linked to the RBI’s January 20, 2022 press release."
+        ]
+      },
+      {
+        "heading": "Mechanism and limitation",
+        "paragraphs": [
+          "Under the LAF, a repo operation supplies funds to eligible participants against collateral. In a variable-rate auction, participants bid rather than receiving liquidity at one predetermined auction rate. The temporary nature and scheduled reversal help the RBI fine-tune liquidity; the announcement itself does not reveal the precise cause or persistence of current conditions."
+        ]
+      },
+      {
+        "heading": "Why the distinction matters",
+        "paragraphs": [
+          "The auction can ease short-term funding pressure and support orderly money-market conditions. It should not automatically be interpreted as a reduction in the policy repo rate or as evidence of a permanent shift in monetary-policy stance."
+        ]
+      }
+    ],
+    "title": "RBI schedules a four-day VRR auction to manage near-term liquidity"
+  },
+  "prelimsTraps": [
+    {
+      "correct": true,
+      "explanation": "The source specifies a notified amount of ₹50,000 crore.",
+      "statement": "The notified amount is ₹50,000 crore."
+    },
+    {
+      "correct": true,
+      "explanation": "The source specifies a four-day tenor.",
+      "statement": "The VRR auction has a tenor of four days."
+    },
+    {
+      "correct": false,
+      "explanation": "The source states that the auction will be conducted on November 23, 2026, with reversal on November 27, 2026.",
+      "statement": "The auction will be reversed on November 23, 2026."
+    },
+    {
+      "correct": false,
+      "explanation": "The source records a 9:30 AM to 10:00 AM window, not an all-day operation.",
+      "statement": "The auction window remains open throughout November 23, 2026."
+    }
+  ],
+  "priority": 70,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 76,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 30
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-11-20T19:25:00Z",
+  "publisherId": "rbi",
+  "publisherName": "Reserve Bank of India",
+  "recallCard": "RBI announced a ₹50,000 crore, four-day VRR auction under the LAF for November 23, 2026. Bidding is scheduled from 9:30–10:00 AM, with reversal on November 27. It is temporary liquidity management, not necessarily a policy-rate change.",
+  "reusableAnchors": [],
+  "sourceContentHash": "707d0315f2302c021dfa31b8182b22b6216dc57da259a7903b53137f5008a5bb",
+  "sourceId": "src_14a33bea40902909f4887e0d31ebf150291c6c4ff77645992a14701cb21400b8",
+  "sourceTitle": "RBI to conduct 4-day Variable Rate Repo (VRR) auction under LAF on November 23, 2026",
+  "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64016",
+  "staticDefinition": "A Variable Rate Repo auction is an RBI liquidity operation under the Liquidity Adjustment Facility in which eligible participants bid for temporary funds against collateral; the auction uses variable-rate bidding rather than a single fixed auction rate.[2][6]",
+  "use": "Use this note to explain how central-bank liquidity operations influence short-term banking-system funding conditions, why auction-based pricing matters, and why a temporary VRR operation should not automatically be treated as a change in the policy stance.",
+  "verification": {
+    "advisory_notes": [
+      "The claim that VRR injects funds against eligible collateral is supported by the cited January 2022 guidelines, but that detail is not present in P1.",
+      "“Banks receive” is broad; the operation is available to eligible participants and actual funding depends on bids and allotment.",
+      "The statement that VRR supports orderly money-market functioning is reasonable analysis, not a direct finding of P1.",
+      "The claim that reversal limits the operation’s duration is sound, but “fine-tune liquidity” is interpretive framing rather than wording established by P1.",
+      "The proposed policy-stance distinction is appropriate analysis, but P1 alone does not expressly say the operation is not a policy-rate change.",
+      "The hypothetical payment-outflow example is clearly labelled and logically sound; it should not be read as describing the actual cause of the November operation.",
+      "“Permanent monetary expansion” is a broad macroeconomic characterization; retain it as an analytical implication rather than a source-stated fact.",
+      "GS3.1 is a strong fit; GS3.2 is defensible only if the note explicitly connects the operation to banking-system transmission, financial stability, or credit conditions."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-11-20T20:06:16Z",
+    "confidence": 0.98,
+    "flagged_claims": [],
+    "noteContentHash": "e6b8b5ca18b62817175c61bb65908134d8878ff9361c460069367323402f68b0",
+    "sourceContentHash": "707d0315f2302c021dfa31b8182b22b6216dc57da259a7903b53137f5008a5bb",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Use VRR and related LAF operations flexibly in response to assessed liquidity conditions.",
+    "Maintain transparent communication on auction size, tenor, bidding window and reversal to improve market predictability.",
+    "Distinguish transient liquidity management from durable changes in the policy stance and assess operations alongside inflation, growth and financial-stability conditions."
+  ],
+  "whyInNews": "The Reserve Bank of India announced on November 20, 2026 that it would conduct a four-day Variable Rate Repo auction under the Liquidity Adjustment Facility on November 23, 2026. The notified amount is ₹50,000 crore, with a 9:30 AM–10:00 AM auction window and reversal scheduled for November 27, 2026. The action is desi"
+}
