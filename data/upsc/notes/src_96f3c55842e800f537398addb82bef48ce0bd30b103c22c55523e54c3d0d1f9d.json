@@ -1,61 +1,60 @@
 {
-  "anchor": "State Government Securities (SGS/SDLs) and debt-management through conversion or switch auctions",
+  "anchor": "GS3.2 Government budgeting, inclusive growth, fiscal policy; GS2.2 Union and states: functions, issu",
   "argumentsAgainst": [
-    "A switch changes the maturity profile but does not, by itself, reduce the outstanding face-value liability.",
-    "Extending maturities can defer repayment pressure rather than resolve underlying fiscal stress.",
-    "The source record does not establish the pricing outcome, investor response, savings in interest cost, or post-auction fiscal impact."
+    "States may face higher future interest costs if near-term maturities are replaced with longer-dated securities, depending on accepted destination-security prices.",
+    "A switch postpones redemption pressure rather than eliminating the underlying debt obligation; fiscal sustainability still depends on revenues, expenditure control and debt management.",
+    "Concentration of state borrowing and refinancing decisions in market operations can expose states to interest-rate and liquidity risks."
   ],
   "argumentsFor": [
-    "Switching near-maturity securities into longer-maturity destination securities can smooth the State Government’s redemption profile.",
-    "An auction-based, multiple-price process allows participating holders to quote prices for the source and destination securities.",
-    "The transaction can support active management of the maturity structure without being treated as fresh borrowing on the face value stated in the announcement."
+    "The switch can smooth the maturity profile by replacing securities maturing in 2027–2029 with longer-dated securities, reducing immediate redemption concentration.",
+    "An auction-based exchange allows market participants to quote prices, helping discover terms for the source and destination securities.",
+    "A multiple-price auction may preserve differentiated pricing because successful bids are accepted at their respective quoted prices."
   ],
   "background": [
-    "The Reserve Bank of India facilitates the announced conversion or switch of State Government securities through an auction process. In the transaction described, holders offer source securities to the concerned State Government and simultan",
-    "The mechanism replaces an existing security exposure with another security exposure: the source security has an earlier maturity, while the destination security generally carries a later maturity in the listed transactions. This is debt-pro",
-    "The source record specifies bidding through RBI’s Core Banking Solution, e-Kuber, with prices for source and destination securities expressed in Indian rupees up to two decimal places. It does not establish the broader legal framework, the "
+    "State Government Securities, also called State Development Loans in the source document, are securities issued by state governments; the record uses the abbreviations SDL and SGS in its security descriptions.",
+    "In a conversion or switch, a participant agrees to sell the source security to the concerned state government and simultaneously buy a destination security from that state government. This mechanism changes the maturity and security held wi",
+    "The RBI announcement provides for bidding through its Core Banking Solution, e-Kuber. The source document states that bids specify the amount of source security and prices of both source and destination securities in rupees up to two decima"
   ],
   "codes": [
     "GS2.2",
-    "GS3.1",
     "GS3.2"
   ],
   "editorialStatus": "draft",
   "id": "note_96f3c55842e800f537398addb82bef48ce0bd30b103c22c55523e54c3d0d1f9d",
   "indiaImplications": [
-    "For State finances, the immediate analytical issue is redemption-risk management: replacing securities nearing maturity with longer-dated securities may spread repayment obligations over time.",
-    "For the debt market, the process provides a structured price-discovery mechanism because successful bids are accepted at their respective quoted prices under a multiple-price auction.",
-    "For fiscal federalism, RBI’s operational role and State-level borrowing instruments illustrate coordination between monetary-market infrastructure and subnational public finance.",
-    "Any assessment of sustainability must examine the stock of debt, interest burden, maturity concentration and fiscal consolidation; none of these broader outcomes is established by this announcement alone."
+    "For state public-finance management, the operation may help stagger redemption obligations and reduce bunching of maturities in the near term.",
+    "For investors and financial institutions, the exchange creates a choice between selling existing source securities and acquiring longer-maturity destination securities at quoted prices.",
+    "For cooperative fiscal governance, the RBI provides a common auction and settlement platform while the concerned state governments undertake the security conversion.",
+    "The operation does not by itself establish that state debt has declined, that borrowing costs have fallen, or that fiscal stress has been resolved."
   ],
   "mainsPractice": [
     {
       "bodyDimensions": [
-        "Define a conversion or switch transaction and distinguish it from fresh borrowing.",
-        "Explain the source-security and destination-security mechanism.",
-        "Discuss benefits: maturity smoothing, redemption-risk management and transparent auction-based price discovery.",
-        "Discuss limitations: liability is not extinguished; deferred maturities may increase future repayment concentration; success depends on investor participation and pricing."
+        "Define conversion or switch of government securities and distinguish it from debt write-off.",
+        "Explain the maturity-management rationale for replacing near-term securities with longer-dated securities.",
+        "Analyse benefits for state cash-flow management and investors.",
+        "Examine risks: rollover, interest-rate, pricing and deferred fiscal burden."
       ],
-      "conclusionPrompt": "Conclude that switches can improve debt-profile management only when combined with credible fiscal consolidation and transparent debt reporting.",
-      "counterPosition": "A switch may offer short-term liquidity and maturity relief, but excessive reliance can postpone rather than solve fiscal stress.",
-      "diagramSuggestion": "Draw: source SDL nearing maturity → holder sells source to State Government → holder buys destination SGS → maturity profile extends.",
+      "conclusionPrompt": "Conclude by relating securities switches to prudent debt management rather than treating them as a substitute for fiscal consolidation.",
+      "counterPosition": "A switch may reduce immediate refinancing pressure, but it can defer repayment and potentially increase future servicing costs.",
+      "diagramSuggestion": "Source SDLs maturing in 2027–2029 → e-Kuber price bids → destination SGS maturing in 2034–2044 → revised state maturity profile",
       "directive": "discuss",
       "introChoices": [
-        "A State Government security switch is a debt-management operation in which an existing security is exchanged for a longer-dated security through an auction.",
-        "The RBI’s announced State securities switch highlights the distinction between managing the timing of repayment and reducing the underlying public liability."
+        "A securities switch is a debt-management transaction that alters the timing of repayment without extinguishing the underlying obligation.",
+        "The RBI-announced auction illustrates how state governments can use market-based conversion to manage clustered maturities."
       ],
       "marks": 15,
       "skeleton": [
-        "A State Government security switch is a debt-management operation in which an existing security is exchanged for a longer-dated security through an auction.",
-        "The RBI’s announced State securities switch highlights the distinction between managing the timing of repayment and reducing the underlying public liability.",
-        "Define a conversion or switch transaction and distinguish it from fresh borrowing.",
-        "Explain the source-security and destination-security mechanism.",
-        "Discuss benefits: maturity smoothing, redemption-risk management and transparent auction-based price discovery.",
-        "Discuss limitations: liability is not extinguished; deferred maturities may increase future repayment concentration; success depends on investor participation and pricing.",
-        "A switch may offer short-term liquidity and maturity relief, but excessive reliance can postpone rather than solve fiscal stress.",
-        "Conclude that switches can improve debt-profile management only when combined with credible fiscal consolidation and transparent debt reporting."
+        "A securities switch is a debt-management transaction that alters the timing of repayment without extinguishing the underlying obligation.",
+        "The RBI-announced auction illustrates how state governments can use market-based conversion to manage clustered maturities.",
+        "Define conversion or switch of government securities and distinguish it from debt write-off.",
+        "Explain the maturity-management rationale for replacing near-term securities with longer-dated securities.",
+        "Analyse benefits for state cash-flow management and investors.",
+        "Examine risks: rollover, interest-rate, pricing and deferred fiscal burden.",
+        "A switch may reduce immediate refinancing pressure, but it can defer repayment and potentially increase future servicing costs.",
+        "Conclude by relating securities switches to prudent debt management rather than treating them as a substitute for fiscal consolidation."
       ],
-      "stem": "Discuss how conversion or switch auctions of State Government securities can manage redemption risk while creating fiscal and market-related limitations.",
+      "stem": "Discuss how conversion or switch auctions of State Government Securities can improve state debt management while creating deferred fiscal and market risks.",
       "timeMinutes": 11,
       "wordBudget": 250
     }
@@ -70,19 +69,25 @@
     {
       "evidenceLocator": "officialSummary",
       "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64017",
-      "text": "The auction is scheduled for November 26, 2026 (Thursday).",
-      "verification": "needs-review"
-    },
-    {
-      "evidenceLocator": "officialSummary",
-      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64017",
-      "text": "The market participants are required to place their bids in Reserve Bank of India Core Banking Solution (e-Kuber).",
+      "text": "Bids for the auction should be submitted in electronic format on the e-Kuber platform on November 26, 2026 (Thursday) between 10:30 AM and 11:30 AM.",
       "verification": "needs-review"
     },
     {
       "evidenceLocator": "officialSummary",
       "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64017",
       "text": "The auction will be a multiple-price based auction, i.e., successful bids will get accepted at their respective quoted prices for the source and destination securities.",
+      "verification": "source-backed"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64017",
+      "text": "The result of the auction will be announced on the same day and settlement will take place on November 27, 2026 (Friday).",
+      "verification": "needs-review"
+    },
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64017",
+      "text": "The following State Governments have announced the conversion/switch of their securities through auction for an aggregate amount of ₹10,800 crore (face value).",
       "verification": "source-backed"
     }
   ],
@@ -92,99 +97,99 @@
   ],
   "pocketRead": {
     "example": {
-      "heading": "Illustration: how a switch may work",
-      "text": "Suppose a holder owns a State security approaching maturity. In a switch auction, the holder may offer that source security to the concerned State Government and simultaneously bid to buy a later-maturing destination security. This illustration explains the mechanism only; it is not an event reported in the source."
+      "heading": "Hypothetical illustration",
+      "text": "If a state held a security maturing soon and offered a longer-dated destination security, an investor could quote the source-security amount and prices for both securities. If accepted, the investor would sell the source security and buy the destination security simultaneously. This would defer the maturity date but would not cancel the state’s debt."
     },
-    "excerpt": "The RBI announced an auction-based switch of State securities worth ₹10,800 crore face value, using e-Kuber and a multiple-price auction to exchange source securities for destination securities.",
+    "excerpt": "The RBI-announced auction lets five states exchange specified securities through e-Kuber, using multiple-price bidding and settlement on November 27, 2026.",
     "question": {
-      "answer": "A switch can smooth near-term redemptions by replacing an earlier-maturing source security with a later-maturing destination security. However, it does not erase the State’s liability; it changes its maturity profile. Its usefulness therefore depends on credible fiscal management, acceptable pricing and adequate investor participation.",
-      "prompt": "How can a State Government securities switch improve debt management, and why is it not a substitute for fiscal consolidation?"
+      "answer": "A switch can reduce near-term redemption concentration by replacing an approaching maturity with a longer-dated security, but it does not erase debt and may defer repayment or alter future servicing costs.",
+      "prompt": "How can a State Government Securities switch improve liquidity management, and what is its principal fiscal limitation?"
     },
     "sections": [
       {
-        "heading": "RBI-announced transaction",
+        "heading": "What the RBI announcement does",
         "paragraphs": [
-          "The Reserve Bank of India announced on November 20, 2026 that State Governments would conduct an auction-based conversion or switch of securities with an aggregate face value of ₹10,800 crore. The listed auction date is November 26, 2026.",
-          "The source securities are offered to the concerned State Government while participants simultaneously agree to buy destination securities. Bids are submitted through RBI’s e-Kuber platform, and the auction uses multiple-price acceptance."
+          "The RBI records that state governments announced conversion or switch auctions for an aggregate face value of ₹10,800 crore. The source securities include specified Madhya Pradesh, Punjab, Rajasthan, Tamil Nadu and Uttar Pradesh securities, with destination securities carrying later maturities.",
+          "The auction is to use e-Kuber. Participants submit the source-security amount and prices for the source and destination securities, while successful bids are accepted at their respective quoted prices. The result is announced on auction day and settlement follows on November 27, 2026."
         ]
       },
       {
-        "heading": "Debt-profile effect",
+        "heading": "Why the mechanism matters",
         "paragraphs": [
-          "The practical consequence is a possible reduction in concentrated near-term redemption pressure because source securities are exchanged for destination securities with later maturities in the listed transactions.",
-          "The limitation is conceptual as well as fiscal: the source record announces a transaction, not debt cancellation, interest savings, auction success or improved State solvency."
+          "Replacing a security nearing maturity with a later-maturing destination security can spread a state’s redemption obligations over time. It can therefore address maturity concentration and provide investors a market-priced exchange route.",
+          "The limitation is straightforward: the transaction changes the timing and form of the obligation, not its existence. Its fiscal value must therefore be assessed alongside future interest costs, market pricing and the state’s broader debt trajectory."
         ]
       }
     ],
-    "title": "RBI announces auction-based switch of State Government securities"
+    "title": "RBI announces ₹10,800 crore State Government Securities switch auction"
   },
   "prelimsTraps": [
     {
       "correct": true,
-      "explanation": "The official summary states that the aggregate amount is ₹10,800 crore in face value.",
-      "statement": "The announced aggregate face value of the State Government securities switch is ₹10,800 crore."
+      "explanation": "The source states that the aggregate announced amount is ₹10,800 crore at face value.",
+      "statement": "The announced conversion/switch covers an aggregate face value of ₹10,800 crore."
     },
     {
       "correct": true,
-      "explanation": "The source states that bids must be placed in RBI’s Core Banking Solution, e-Kuber.",
-      "statement": "The auction bids are to be submitted through e-Kuber."
+      "explanation": "The source specifies electronic bids through the RBI Core Banking Solution, e-Kuber.",
+      "statement": "Bids are to be submitted through RBI’s e-Kuber platform."
     },
     {
       "correct": true,
-      "explanation": "The source explicitly identifies the auction as multiple-price based and says successful bids are accepted at their respective quoted prices.",
-      "statement": "Successful bids in the announced auction are accepted at their respective quoted prices."
+      "explanation": "The source expressly describes a multiple-price based auction in which successful bids are accepted at their respective quoted prices.",
+      "statement": "The auction is a multiple-price auction rather than a uniform-price auction."
     },
     {
-      "correct": false,
-      "explanation": "The source announces conversion or switch of securities; it does not state that the State Governments are borrowing ₹10,800 crore as fresh debt.",
-      "statement": "The announcement proves that the States have raised ₹10,800 crore of fresh borrowing."
+      "correct": true,
+      "explanation": "The source states that the auction result is announced on the same day and settlement occurs on November 27, 2026.",
+      "statement": "The result is announced on auction day and settlement takes place on November 27, 2026."
     }
   ],
-  "priority": 64,
+  "priority": 72,
   "priorityBand": "strong",
   "priorityParts": {
-    "anchorFrequency": 45,
+    "anchorFrequency": 82,
     "debateStrength": 75,
     "officialWeight": 95,
-    "recencyGap": 50
+    "recencyGap": 30
   },
   "priorityProvisional": true,
   "priorityTreatment": "Full note, all five revisions.",
   "publishedAt": "2026-11-20T19:45:00Z",
   "publisherId": "rbi",
   "publisherName": "Reserve Bank of India",
-  "recallCard": "RBI announced an auction-based switch of State Government securities with an aggregate face value of ₹10,800 crore. Bids are submitted through e-Kuber, and successful bids receive their respective quoted prices in a multiple-price auction. The operation can alter maturity timing but does not itself cancel debt.",
+  "recallCard": "RBI announced a ₹10,800-crore face-value State Government Securities conversion/switch auction. Bids go through e-Kuber on November 26, 2026; it is multiple-price, with settlement on November 27. The switch can defer maturities but does not erase debt.",
   "reusableAnchors": [],
   "sourceContentHash": "c4d9ed2a00d84e84a9be8f140a6980b3dcd322616558fe2e1e5bf29d786cf37e",
   "sourceId": "src_96f3c55842e800f537398addb82bef48ce0bd30b103c22c55523e54c3d0d1f9d",
   "sourceTitle": "Conversion/Switch of State Government Securities",
   "sourceUrl": "https://www.rbi.org.in/scripts/BS_PressReleaseDisplay.aspx?prid=64017",
-  "staticDefinition": "A conversion or switch of a State Government security is an exchange in which a holder offers an existing source security to the concerned State Government and simultaneously purchases a specified destination security from that State Government. It changes the debt instrument and potentially its maturity profile; it is",
-  "use": "Use this issue to connect State borrowing, redemption-risk management, public-debt sustainability, auction design and cooperative federalism in GS2 and GS3 answers.",
+  "staticDefinition": "A State Government Securities conversion or switch is an auction-based transaction in which a market participant sells an existing source security to the concerned state government and simultaneously buys a destination security from that state government, thereby changing the security or maturity profile without establ",
+  "use": "Use this as an example of state debt maturity management, cooperative fiscal-market infrastructure and the distinction between refinancing relief and fiscal consolidation.",
   "verification": {
     "advisory_notes": [
-      "“First switch auction” is supported by secondary coverage, but the RBI extract itself does not establish that superlative; label it as reported if retained.",
-      "“Longer-maturity destination securities” is accurate for the listed transactions, but should not be generalized to every conversion or switch.",
-      "“Fiscal and market-related limitations” is sound analytical framing, not a source-established outcome; retain as analysis.",
-      "“Cooperative federalism” is a plausible syllabus linkage, but the announcement does not itself demonstrate cooperative-federalism outcomes.",
-      "The GS2.2 code is plausible for federalism and State finances, while GS3.1 and GS3.2 depend on the adopted syllabus taxonomy; verify against the exact taxonomy used by the notes.",
-      "The phrase “holders offer source securities to the State Government” accurately reflects the operational mechanism, but economic incidence and legal characterization should not be expanded beyond the extract.",
-      "“Interest-cost implications” are appropriately presented as issues to examine, not as demonstrated savings or increases.",
-      "The hypothetical source-security example is clearly labelled as an illustration and does not assert an actual additional event."
+      "The note correctly frames the switch as maturity management, but claims about reduced refinancing pressure and future interest costs are analytical possibilities, not outcomes established by the release.",
+      "“Cooperative fiscal governance” is a reasonable interpretation, but the release establishes RBI infrastructure and state participation, not a formal cooperative-federalism assessment.",
+      "The background statement equating SDL and SGS should be phrased carefully: the release uses both labels, but does not expressly define them as exact synonyms.",
+      "The headline’s “RBI announces” wording is slightly imprecise because the release says the state governments announced the switches and RBI published the information.",
+      "The pocketRead claim that five states participate is supported by the listed securities, but the supplied official summary does not explicitly state the number five.",
+      "The statement that the operation creates a choice for investors is a fair mechanism-based inference, but should remain labelled as analysis.",
+      "The hypothetical example is clearly labelled and its explanation of simultaneous sale and purchase is consistent with the stated mechanism.",
+      "The proposed GS3.2 and GS2.2 tagging is substantively relevant through state debt management, fiscal policy, and Centre-State financial relations."
     ],
     "agrees": true,
-    "checkedAt": "2026-11-20T20:06:16Z",
-    "confidence": 0.94,
+    "checkedAt": "2026-11-21T07:18:54Z",
+    "confidence": 0.96,
     "flagged_claims": [],
-    "noteContentHash": "73d35d5dd39ea17c85a863f83f313d593613167a6f4fdc4adfb32f3036f7a1f8",
+    "noteContentHash": "bf4819da744ca6cf926e7d79e203fd26768c479cad5b3960f0fd9c1be88e48a5",
     "sourceContentHash": "c4d9ed2a00d84e84a9be8f140a6980b3dcd322616558fe2e1e5bf29d786cf37e",
     "verificationVersion": 2
   },
   "wayForward": [
-    "Use switches selectively to smooth maturity concentrations, while publishing a transparent medium-term debt-management strategy.",
-    "Pair maturity management with expenditure prioritisation, revenue mobilisation and credible fiscal consolidation.",
-    "Disclose the maturity, interest-cost and refinancing implications of proposed switches.",
-    "Maintain transparent auction procedures and reliable market infrastructure for price discovery."
+    "Publish clear medium-term state debt and maturity profiles, including the effect of switches on future redemption concentrations.",
+    "Use switches selectively after comparing destination-security pricing, projected interest costs and refinancing risks.",
+    "Combine maturity management with credible fiscal consolidation, expenditure prioritisation and stronger own-revenue mobilisation.",
+    "Maintain transparent auction, settlement and disclosure practices so investors can assess the altered risk and maturity profile."
   ],
-  "whyInNews": "On November 20, 2026, the Reserve Bank of India reported that State Governments had announced an auction-based conversion or switch of securities for an aggregate face value of ₹10,800 crore. The auction is scheduled for November 26, 2026, with bids through RBI’s e-Kuber platform and acceptance under a multiple-price a"
+  "whyInNews": "On November 20, 2026, the Reserve Bank of India reported that state governments had announced a ₹10,800 crore face-value conversion or switch auction for specified State Government Securities. Bids are scheduled through RBI’s e-Kuber platform on November 26, with settlement on November 27. The mechanism allows an exist"
 }
