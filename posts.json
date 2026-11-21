@@ -1,5 +1,38 @@
 [
   {
+    "id": 141,
+    "title": "GitHub adds repeatable evaluations for Copilot agents",
+    "excerpt": "GitHub introduced Copilot Evals in public preview on November 17, 2026. It lets engineers run repeatable tests for custom agents, skills, and MCP tools, then compare failures after changing prompts, models, or agent configuration.",
+    "readTime": "2 min read",
+    "category": "ai",
+    "learningPath": "ai",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Tech leads"
+    ],
+    "uniqueId": "daily-ai-github-adds-repeatable-evaluations-for-copilot-agents-1795255584460",
+    "date": "Nov 21, 2026",
+    "dateISO": "2026-11-21T10:06:24Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Weekly Dose #27 - GPT-6.2, Gemini 4 Neon, and the New Economics of AI",
+        "url": "https://mlpills.substack.com/p/weekly-dose-27-gpt-62-gemini-4-neon"
+      },
+      {
+        "title": "Weekly AI Dev News Digest: November 14 - November 20, 2026",
+        "url": "https://www.everydev.ai/p/news-weekly-ai-dev-news-digest-november-14-november-20-2026"
+      },
+      {
+        "title": "AI Weekly: GPT-6.2, Gemini 4 Hydrogen, Nvidia Shake-Up",
+        "url": "https://dev.to/alexmercedcoder/ai-weekly-gpt-62-gemini-4-hydrogen-nvidia-shake-up-11h9"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>GitHub added Copilot Evals in public preview on November 17, 2026. The feature is designed for testing AI coding workflows inside GitHub rather than judging a model with a single benchmark score.</p>\n<p>An evaluation defines a task and the conditions for success. Engineers can run that evaluation across multiple attempts, inspect failed checks, and compare results after changing prompts, models, skills, or MCP tools. GitHub uses a local evaluation engine called Vally.</p>\n<h2>How it works</h2>\n<p>The useful pattern is task-level regression testing. A task describes work an agent should perform. Checks describe observable outcomes, such as a file change, a passing test, or a required command result. Repeated runs expose failures that a successful single run would hide.</p>\n<p>The <code>/eval</code> command supports creating and executing evaluations. It also supports inspecting failed checks and comparing results between runs. This makes prompt and tool changes measurable without relying only on human review.</p>\n<h2>How to use it</h2>\n<p>Start with a small set of high-value tasks: fixing a failing test, updating an API client, or changing a configuration file. Define checks that a CI system can verify. For example, require a specific test command to pass and require the agent to modify only approved paths.</p>\n<p>Run the baseline agent first. Then change one variable, such as the system prompt or an MCP tool description, and rerun the same evaluation. Compare pass rates and failure types. Treat the evaluation as a regression suite for the agent workflow, not as a replacement for code review.</p>\n<ul>\n<li>Test the same repository task after every change to an agent prompt or MCP server.</li>\n<li>Keep checks tied to repository state and command results, not subjective prose quality.</li>\n<li>Run enough repetitions to expose flaky behavior; one successful agent run is not evidence of reliability.</li>\n</ul>\n<pre><code class=\"language-text\"># Illustrative workflow\n/eval create\n/eval run\n/eval inspect\n/eval compare</code></pre>\n<h2>The catch</h2>\n<p>The search results do not provide a full public specification for Vally, the evaluation-file format, supported check types, or exact pass-rate statistics. The feature is also in public preview, so commands and behavior may change.</p>\n<p>An evaluation can prove only what its checks measure. A task may pass while producing poor error handling, unsafe changes, or a fragile implementation. Include scope checks, tests, formatting checks, and human review for changes that affect production behavior.</p>\n<h2>Takeaways</h2>\n<ul>\n<li>Add repeatable checks before tuning an agent prompt or tool.</li>\n<li>Use <code>/eval</code> to compare agent changes against the same repository task.</li>\n<li>Measure failures across repeated runs, not only the first successful run.</li>\n<li>Keep code review and production safeguards outside the evaluation.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://mlpills.substack.com/p/weekly-dose-27-gpt-62-gemini-4-neon\" target=\"_blank\" rel=\"noopener\">Weekly Dose #27 - GPT-6.2, Gemini 4 Neon, and the New Economics of AI</a> \u2014 mlpills.substack.com</li>\n<li><a href=\"https://www.everydev.ai/p/news-weekly-ai-dev-news-digest-november-14-november-20-2026\" target=\"_blank\" rel=\"noopener\">Weekly AI Dev News Digest: November 14 - November 20, 2026</a> \u2014 everydev.ai</li>\n<li><a href=\"https://dev.to/alexmercedcoder/ai-weekly-gpt-62-gemini-4-hydrogen-nvidia-shake-up-11h9\" target=\"_blank\" rel=\"noopener\">AI Weekly: GPT-6.2, Gemini 4 Hydrogen, Nvidia Shake-Up</a> \u2014 dev.to</li>\n</ul>"
+  },
+  {
     "id": 140,
     "title": "A July Microsoft 365 gateway bug met a 14% capacity loss",
     "excerpt": "On November 12\u201314, 2026, a Microsoft 365 outage combined a July networking-gateway defect, a Teams traffic shift, and 14% unavailable capacity. The failure was not a single bad deploy; it was a latent bug exposed by changed traffic and reduced headroom.",
@@ -1118,35 +1151,6 @@
       }
     ],
     "content": "<h2>What changed</h2>\n<p>A ServiceNow support article published on October 19, 2026 documents troubleshooting for SAM GoTo direct integrations. The guide covers failures in subscriptions, activity, reclaim, and scheduled jobs.</p>\n<p>The article states that no Week 43 hot fix is planned for Australia Patch 5a Week 42 or Australia Patch 6 Week 42 because those versions already contain the fixes. Zurich instances are scheduled to receive the fixes in Week 43.</p>\n<h2>Where the failure is visible</h2>\n<p>The form can show only a generic validation error. The useful detail is normally in the scheduled-job log, the Flow Designer execution, or the system log.</p>\n<p>The guide recommends matching records by the same UTC execution window. This prevents a failed retry or an unrelated run from being mistaken for the original failure.</p>\n<ul>\n<li>Record the job, profile, start time, and end time in UTC.</li>\n<li>Open the profile\u2019s Scheduled Job Results and inspect <code>sam_saas_job_log</code>.</li>\n<li>Open Flow Designer &gt; Operations &gt; Executions and locate the matching subflow run.</li>\n<li>Check System Logs &gt; All for <code>Datastream error:</code> entries in the same time window.</li>\n</ul>\n<h2>Temporary diagnostic settings</h2>\n<p>For deeper tracing, temporarily set <code>com.snc.process_flow.reporting.level</code> to <code>All</code>. If outbound HTTP details are required, also enable <code>glide.outbound_http_log.override</code> and set its level to <code>all</code>.</p>\n<p>Rerun the integration once, inspect the logs, and then restore the properties. Leaving outbound logging enabled increases log volume and can expose integration details to administrators who can read system logs.</p>\n<pre><code class=\"language-properties\">com.snc.process_flow.reporting.level = All\nglide.outbound_http_log.override = true\nglide.outbound_http_log.override.level = all</code></pre>\n<h2>A controlled recovery path</h2>\n<p>The guide separates diagnosis from repair. The Troubleshoot action runs validation with debug-level logging and proposes resolutions, but it does not change the connection or integration configuration.</p>\n<p>The documented causes include application or spoke versions, OAuth clients and scopes, expired tokens, the wrong GoTo organization, product exclusions, and user-resolution mappings. After a successful validation, the profile must still be published or the job rerun.</p>\n<ul>\n<li>Open Workspaces &gt; Software Asset Workspace &gt; License operations &gt; User subscription &gt; Direct integration profiles.</li>\n<li>Open the GoTo profile and select Validate Connection for a new or changed connection.</li>\n<li>Use Troubleshoot from the error banner, then read Error Summary and Suggested Resolutions.</li>\n<li>Fix the connection, OAuth scope, role, token, organization, coverage, or user-mapping issue identified by the logs.</li>\n<li>Validate again. Publish a new profile or rerun the existing scheduled job and confirm the result.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Match the failed job, Flow Designer execution, and logs using UTC timestamps.</li>\n<li>Enable detailed Flow Designer and outbound HTTP logging only for one diagnostic rerun.</li>\n<li>Use Validate Connection and Troubleshoot before changing OAuth, token, scope, or mapping configuration.</li>\n<li>Check the instance family and patch week before planning a hot-fix deployment.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://support.servicenow.com/kb?id=kb_article_view&amp;sysparm_article=KB3227183\" target=\"_blank\" rel=\"noopener\">Troubleshooting ServiceNow Software Asset Management GoTo integration: Complete Troubleshooting GUIDE subscriptions, activity or reclaim not working</a> \u2014 support.servicenow.com</li>\n<li><a href=\"https://www.servicenow.com/community/developer-articles/servicenow-ai-agent-advisor-a-quick-reference-guide-to-setup-and/ta-p/3609966\" target=\"_blank\" rel=\"noopener\">ServiceNow AI Agent Advisor: A Quick Reference Guide to Setup and Use</a> \u2014 servicenow.com</li>\n<li><a href=\"https://www.servicenow.com/community/si-control-tower-articles/ai-gateway-implementation-guide/ta-p/3587444\" target=\"_blank\" rel=\"noopener\">AI Gateway Implementation Guide - ServiceNow Community</a> \u2014 servicenow.com</li>\n</ul>"
-  },
-  {
-    "id": 105,
-    "title": "OpenHands 1.28 adds interactive secret requests for coding agents",
-    "excerpt": "OpenHands 1.28 adds a controlled way for a coding agent to request secrets during a chat session. The change matters for repositories that need credentials for tests, package registries, or deployment checks, but it also creates a new approval boundary that must be audited.",
-    "readTime": "2 min read",
-    "category": "ai",
-    "learningPath": "ai",
-    "difficulty": "Intermediate",
-    "forPersona": [
-      "Developers",
-      "Architects",
-      "Tech leads"
-    ],
-    "uniqueId": "daily-ai-openhands-1-28-adds-interactive-secret-requests-for-coding-a-1792569428346",
-    "date": "Oct 21, 2026",
-    "dateISO": "2026-10-21T07:57:08Z",
-    "daily": true,
-    "sources": [
-      {
-        "title": "New AI & agent releases \u2014 ToolSift.ai",
-        "url": "https://toolsift.ai/new/"
-      },
-      {
-        "title": "GitHub Copilot Models: 3 Cut by Nov. 16 [2026] \u2014 TrendinTech",
-        "url": "https://trendintech.com/github-copilot-drops-3-ai-models-november-2026/"
-      }
-    ],
-    "content": "<h2>What changed</h2>\n<p>OpenHands 1.28 lets the agent ask for secrets in the chat instead of requiring credentials to be placed in the environment before the task starts. The release was listed among notable AI and agent releases for the week ending October 20, 2026.</p>\n<p>The feature targets workflows where an agent reaches a step that needs a token, password, or other protected value. The user can provide the value through the chat interaction, rather than exposing it in the repository or a static shell environment.</p>\n<h2>How the pattern works</h2>\n<p>The agent runs without the secret by default. When a command or tool call needs protected access, it pauses and asks the user for the missing credential. The user decides whether to provide it, then the agent resumes the task.</p>\n<p>This separates ordinary coding work from privileged operations. An agent can inspect files, edit code, and run local tests without receiving deployment or registry credentials at startup. The release note does not specify the exact storage, masking, or lifetime rules, so those controls need verification before production use.</p>\n<h2>Where it breaks</h2>\n<p>Interactive approval can block unattended jobs. A CI runner cannot answer a chat request unless the surrounding system supplies an approval mechanism. This makes the feature useful for supervised development, but incomplete as a replacement for CI secret injection.</p>\n<p>The agent still decides when to request and use the credential. A prompt injection in repository content could try to make it request a secret for an unrelated command. Approval should therefore include the exact tool, command, host, and scope, not just a generic \u201callow secrets\u201d decision.</p>\n<ul>\n<li>Do not place long-lived credentials in repository files or task prompts.</li>\n<li>Use short-lived, least-privilege tokens for package, cloud, and deployment access.</li>\n<li>Log the approval event, destination, and command without logging the secret itself.</li>\n<li>Test whether the secret is masked in terminal output, tool results, traces, and agent transcripts.</li>\n</ul>\n<h2>How to use it safely</h2>\n<p>Start with a supervised repository task that needs a read-only package-registry token. Deny requests for unrelated hosts or destructive commands. Confirm that the token is unavailable to later tasks unless explicitly approved again.</p>\n<p>Before using the feature in deployment automation, inspect the OpenHands 1.28 implementation and deployment configuration for secret lifetime, transcript redaction, subprocess inheritance, and retry behavior. The release listing confirms the capability, but it does not provide those implementation details.</p>\n<pre><code class=\"language-python\"># Pseudocode for an approval gate\nresult = agent.run(task, secrets={})\n\nif result.needs_secret:\n    approval = review(\n        name=result.secret_name,\n        command=result.command,\n        destination=result.destination,\n    )\n    if approval.allowed:\n        result = agent.resume(secret=approval.short_lived_value)</code></pre>\n<h2>Takeaways</h2>\n<ul>\n<li>Try OpenHands 1.28 first with a read-only, short-lived credential.</li>\n<li>Make every secret request show the command, destination, and requested scope.</li>\n<li>Verify masking and credential lifetime before allowing unattended agent runs.</li>\n<li>Keep CI secret injection for jobs that cannot handle interactive approval.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://toolsift.ai/new/\" target=\"_blank\" rel=\"noopener\">New AI &amp; agent releases \u2014 ToolSift.ai</a> \u2014 toolsift.ai</li>\n<li><a href=\"https://trendintech.com/github-copilot-drops-3-ai-models-november-2026/\" target=\"_blank\" rel=\"noopener\">GitHub Copilot Models: 3 Cut by Nov. 16 [2026] \u2014 TrendinTech</a> \u2014 trendintech.com</li>\n</ul>"
   },
   {
     "id": 103,
