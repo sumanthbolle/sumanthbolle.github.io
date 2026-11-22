@@ -1,5 +1,42 @@
 [
   {
+    "id": 142,
+    "title": "A July Gateway Fix Caused Microsoft 365\u2019s November Outage",
+    "excerpt": "On November 12, 2026, Microsoft 365 suffered a global outage after a July networking-gateway fix met two unrelated conditions: a 14% capacity reduction and a traffic-routing change. The defect caused lock contention that exhausted CPU and memory on newer, higher-core servers, showing why production topology and correlated failure tests matter.",
+    "readTime": "2 min read",
+    "category": "career",
+    "learningPath": "career",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Engineering managers",
+      "Students"
+    ],
+    "uniqueId": "daily-career-a-july-gateway-fix-caused-microsoft-365-s-november-outage-1795342207260",
+    "date": "Nov 22, 2026",
+    "dateISO": "2026-11-22T10:10:07Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Inside the Microsoft 365 Outage and the Bug That Waited Since July",
+        "url": "https://felipeferreira.net/2026/11/17/microsoft-365-outage-november-2026-latent-bug-lessons/"
+      },
+      {
+        "title": "Microsoft 365 Outage: Hidden Bug Hit Businesses for 24 Hours",
+        "url": "https://codeandcore.com/blog/microsoft-365-outage-hidden-software-bug/"
+      },
+      {
+        "title": "Microsoft\u2019s outage started with a fix",
+        "url": "https://leaddev.com/technical-direction/microsofts-outage-started-with-a-fix"
+      },
+      {
+        "title": "Microsoft finally reveals what caused the worst global outage of 2026",
+        "url": "https://me.mashable.com/tech/78406/microsoft-finally-reveals-what-caused-the-worst-global-outage-of-2026-and-its-embarrassing"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Microsoft 365 services including Outlook, Teams, and Copilot failed worldwide on November 12, 2026. The incident was a technical failure, not a cyberattack. More than 80% of networking-gateway servers became unresponsive at the worst point.</p>\n<p>The triggering code was not a fresh deployment. Microsoft had introduced the defect in a fix rolled out in July. It ran for more than three months without visible symptoms, so ordinary rollback could not remove the cause.</p>\n<h2>The three conditions</h2>\n<p>The outage required several conditions to line up. An unrelated issue removed about 14% of gateway capacity. A traffic change then moved Teams traffic to the primary gateway roughly 15 hours earlier. The remaining servers received enough additional connection work to expose the dormant defect.</p>\n<p>The failure cascaded through automatic recovery. Health checks and recovery actions did not cleanly separate dead servers from servers that were only responding slowly, so the system lost still more usable capacity while under load.</p>\n<h2>The technical failure</h2>\n<p>The July gateway fix introduced lock contention inside an internal Windows process used during connection setup. Under the affected load, competing processes waited on one another until CPU and memory were exhausted. The servers stopped responding instead of failing with a simple, isolated error.</p>\n<p>Microsoft's test environment used less powerful hardware. The defect was more likely to appear on newer machines with more processor cores, so the lab did not reproduce production behavior. This is a concurrency and topology problem, not just a capacity problem: adding cores changed the timing and contention pattern.</p>\n<h2>The engineering lesson</h2>\n<p>A gradual rollout did not catch the bug because the July change was safe under the traffic and hardware combinations used during deployment. The incident needed a capacity reduction, a routing shift, and a specific concurrency pattern. Testing each event separately was not enough.</p>\n<p>Engineers should test changes on production-shaped hardware and exercise combinations of failover, traffic movement, reduced capacity, and slow responses. Load tests should measure lock waits, CPU saturation, memory pressure, queue growth, and recovery behavior, not only request success rates.</p>\n<h2>What to change in your work</h2>\n<p>For an engineer, the practical change is to test system behavior under combinations rather than isolated faults. A change can remain harmless for months and still be the first link in a later cascade. Design observability around contention and recovery, not just availability.</p>\n<ul>\n<li>Match staging hardware, core counts, kernel and runtime settings to production.</li>\n<li>Inject simultaneous failures: reduced capacity, traffic shifts, slow nodes, and failover.</li>\n<li>Review health checks for false positives during overload.</li>\n<li>Treat changes that affect connection setup or concurrency as long-lived operational risk, even after a quiet rollout.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Run concurrency tests on hardware with the same core counts as production.</li>\n<li>Combine capacity loss, traffic rerouting, and failover in resilience tests.</li>\n<li>Instrument lock contention, CPU, memory, queues, and health-check decisions.</li>\n<li>Assume a quiet rollout can still contain a latent production failure.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://felipeferreira.net/2026/11/17/microsoft-365-outage-november-2026-latent-bug-lessons/\" target=\"_blank\" rel=\"noopener\">Inside the Microsoft 365 Outage and the Bug That Waited Since July</a> \u2014 felipeferreira.net</li>\n<li><a href=\"https://codeandcore.com/blog/microsoft-365-outage-hidden-software-bug/\" target=\"_blank\" rel=\"noopener\">Microsoft 365 Outage: Hidden Bug Hit Businesses for 24 Hours</a> \u2014 codeandcore.com</li>\n<li><a href=\"https://leaddev.com/technical-direction/microsofts-outage-started-with-a-fix\" target=\"_blank\" rel=\"noopener\">Microsoft\u2019s outage started with a fix</a> \u2014 leaddev.com</li>\n<li><a href=\"https://me.mashable.com/tech/78406/microsoft-finally-reveals-what-caused-the-worst-global-outage-of-2026-and-its-embarrassing\" target=\"_blank\" rel=\"noopener\">Microsoft finally reveals what caused the worst global outage of 2026</a> \u2014 me.mashable.com</li>\n</ul>"
+  },
+  {
     "id": 141,
     "title": "GitHub adds repeatable evaluations for Copilot agents",
     "excerpt": "GitHub introduced Copilot Evals in public preview on November 17, 2026. It lets engineers run repeatable tests for custom agents, skills, and MCP tools, then compare failures after changing prompts, models, or agent configuration.",
