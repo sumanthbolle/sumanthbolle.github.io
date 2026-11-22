@@ -4,50 +4,66 @@
       "band": "useful",
       "discovery": [
         {
-          "feedId": "hindu-business",
-          "publishedAt": "2026-11-22T03:45:08Z",
+          "feedId": "hindu-international",
+          "publishedAt": "2026-11-22T07:13:03Z",
           "publisher": "The Hindu",
-          "section": "business",
-          "title": "Healthcare AI: hospitals lack capacity to measure real-world patient outcomes, warns French expert",
-          "url": "https://www.thehindu.com/business/Industry/healthcare-ai-hospitals-lack-capacity-to-measure-real-world-patient-outcomes-warns-french-expert/article71723894.ece"
+          "section": "international",
+          "title": "South Korea Education Minister resigns amid AI cheating scandal",
+          "url": "https://www.thehindu.com/news/international/south-korea-education-minister-resigns-amid-ai-cheating-scandal/article71730601.ece"
         }
       ],
-      "firstSeen": "2026-11-22T19:39:27Z",
-      "id": "fe7e60f0fad5f1f6",
-      "recordIds": [
-        "src_683b120161048334a919352b534caa355df5ba19ebaf65e5592e11dc8605fcff"
+      "firstSeen": "2026-11-22T19:59:05Z",
+      "id": "089f999a313baace",
+      "recordIds": [],
+      "score": 48,
+      "title": "South Korea Education Minister resigns amid AI cheating scandal"
+    },
+    {
+      "band": "must",
+      "discovery": [
+        {
+          "feedId": "hindu-national",
+          "publishedAt": "2026-11-22T06:28:18Z",
+          "publisher": "The Hindu",
+          "section": "national",
+          "title": "Hemant Soren writes to CJI to urgently appoint Jharkhand HC Chief Justice successor",
+          "url": "https://www.thehindu.com/news/national/jharkhand/hemant-soren-writes-to-cji-to-urgently-appoint-jharkhand-hc-chief-justice-successor/article71730713.ece"
+        }
       ],
-      "score": 58,
-      "title": "Healthcare AI faces challenges in measuring real-world patient outcomes, warns expert"
+      "firstSeen": "2026-11-22T19:59:05Z",
+      "id": "345ba783d138d694",
+      "recordIds": [],
+      "score": 33,
+      "title": "Hemant Soren writes to CJI to urgently appoint Jharkhand HC Chief Justice successor"
     },
     {
       "band": "useful",
       "discovery": [
         {
-          "feedId": "hindu-national",
-          "publishedAt": "2026-11-21T16:01:20Z",
+          "feedId": "hindu-international",
+          "publishedAt": "2026-11-21T03:21:27Z",
           "publisher": "The Hindu",
-          "section": "national",
-          "title": "14-year-old used AI chatbot to hack Agniveer test website to earn money: Sources",
-          "url": "https://www.thehindu.com/news/national/haryana/14-year-old-used-ai-chatbot-to-hack-agniveer-test-website-to-earn-money-sources/article71728795.ece"
+          "section": "international",
+          "title": "Saudi-led coalition says downed 3 Houthi missiles headed for Riyadh",
+          "url": "https://www.thehindu.com/news/international/saudi-led-coalition-says-downed-3-houthi-missiles-headed-for-riyadh/article71727179.ece"
         },
         {
-          "feedId": "hindu-national",
-          "publishedAt": "2026-11-22T03:30:26Z",
+          "feedId": "hindu-international",
+          "publishedAt": "2026-11-22T09:44:20Z",
           "publisher": "The Hindu",
-          "section": "national",
-          "title": "14-year-old used AI chatbot to hack Agniveer ‘test’ website, wanted to earn money by selling it on dark web: Delhi police sources",
-          "url": "https://www.thehindu.com/news/cities/Delhi/14-year-old-hacker-held-for-trying-to-sell-private-data-of-4000-agniveers-on-dark-web-delhi-police/article71727963.ece"
+          "section": "international",
+          "title": "Saudi-led coalition says it intercepted Houthi missile in western region",
+          "url": "https://www.thehindu.com/news/international/saudi-led-coalition-says-it-intercepted-houthi-missile-in-western-region/article71731039.ece"
         }
       ],
-      "firstSeen": "2026-11-22T19:39:27Z",
-      "id": "7c7429d02f1aa9c4",
+      "firstSeen": "2026-11-22T19:59:05Z",
+      "id": "e8b149dadb6ad216",
       "recordIds": [],
-      "score": 38,
-      "title": "14-year-old used AI chatbot to hack Agniveer test website to earn money"
+      "score": 33,
+      "title": "Saudi-led coalition intercepts Houthi missiles headed for Riyadh"
     }
   ],
-  "closedAt": "2026-11-22T19:39:27Z",
+  "closedAt": "2026-11-22T19:59:05Z",
   "date": "2026-11-22",
   "editor": "llm",
   "editorReason": "",
@@ -76,16 +92,36 @@
       "code": "GS3.5",
       "line": "COP31 failed to reach a climate pact mainly because of fossil fuel disagreements, highlighting the urgent need for accelerated climate action.",
       "noteId": "2026-11-22-pm-63110cfc44"
+    },
+    {
+      "code": "GS3.6",
+      "line": "Hospitals struggle to measure real-world patient outcomes from AI, questioning the actual benefits of healthcare AI technologies.",
+      "noteId": "2026-11-22-pm-fe7e60f0fa"
+    },
+    {
+      "code": "GS3.6",
+      "line": "A 14-year-old exploited AI tools to breach the Agniveer test portal, exposing personal data of around 4,000 personnel.",
+      "noteId": "2026-11-22-pm-7c7429d02f"
     }
   ],
-  "held": [],
+  "held": [
+    {
+      "fingerprint": "345ba783d138d694",
+      "reasons": [
+        "unsupported-number:2022"
+      ],
+      "topic": "Hemant Soren writes to CJI to urgently appoint Jharkhand HC Chief Justice successor"
+    }
+  ],
   "id": "2026-11-22-pm",
   "mains": [
     "2026-11-22-pm-a7538492db",
     "2026-11-22-pm-74e07bf035",
     "2026-11-22-pm-cd6045c2d2",
     "2026-11-22-pm-c069e78f98",
-    "2026-11-22-pm-63110cfc44"
+    "2026-11-22-pm-63110cfc44",
+    "2026-11-22-pm-fe7e60f0fa",
+    "2026-11-22-pm-7c7429d02f"
   ],
   "notes": {
     "2026-11-22-pm-63110cfc44": {
@@ -452,6 +488,168 @@
           1
         ],
         "text": "Prime Minister Narendra Modi attended the Quad, ASEAN-India, and East Asia Summits on the sidelines of the ASEAN summits in Manila in November 2026, signaling a renewed focus on multilateral engagement in the Indo-Pacific region."
+      }
+    },
+    "2026-11-22-pm-7c7429d02f": {
+      "anchor": "Digital public infrastructure and AI governance",
+      "back2basics": {
+        "concept": "Cybersecurity and AI governance",
+        "text": "Cybersecurity involves protecting digital systems and data from unauthorized access or attacks. AI governance refers to the policies and controls that regulate the use of artificial intelligence to prevent misuse, especially in sensitive areas like national security and public digital infrastructure. Understanding these concepts helps in analyzing how AI tools can be exploited and how to safeguard against such threats."
+      },
+      "band": "must",
+      "codes": [
+        "GS3.6",
+        "GS2.5"
+      ],
+      "deck": "A teenager from Haryana used an AI chatbot to hack a test website for former Agniveers and tried to sell personal data on the dark web. This case highlights cybersecurity and AI misuse concerns relevant to defence recruitment and national security.",
+      "editor": {
+        "mainsAngle": "Cybersecurity challenges and governance of AI in national security contexts.",
+        "prelimsAngle": "AI chatbot misuse in cybercrime and defence recruitment tests.",
+        "why": "Raises internal security and cybercrime issues linked to AI misuse in defence recruitment."
+      },
+      "fingerprint": "7c7429d02f1aa9c4",
+      "id": "2026-11-22-pm-7c7429d02f",
+      "keyNumbers": [
+        {
+          "figure": "14-year-old",
+          "meaning": "Age of the hacker",
+          "source": 1
+        },
+        {
+          "figure": "4,000",
+          "meaning": "Number of Agniveer personnel whose data was accessed",
+          "source": 1
+        },
+        {
+          "figure": "$500",
+          "meaning": "Amount sought by the hacker to sell the data on the dark web",
+          "source": 1
+        }
+      ],
+      "kind": "secondary",
+      "oneLine": "A 14-year-old exploited AI tools to breach the Agniveer test portal, exposing personal data of around 4,000 personnel.",
+      "papers": [
+        "GS3",
+        "GS2"
+      ],
+      "practice": {
+        "faq": [
+          {
+            "a": "He accessed only the names and addresses of around 4,000 Agniveer personnel.",
+            "q": "What data did the 14-year-old hacker access from the Agniveer test website?"
+          },
+          {
+            "a": "He used an AI chatbot to identify valuable data and find a way to hack into the test portal.",
+            "q": "How did the hacker use AI in the Agniveer test website breach?"
+          },
+          {
+            "a": "The police recovered data from his devices and involved the Juvenile Justice Board for further action.",
+            "q": "What action did the police take after apprehending the juvenile hacker?"
+          }
+        ],
+        "mains": {
+          "demand": "Analyze the cybersecurity challenges arising from AI misuse and suggest governance measures.",
+          "directive": "Examine",
+          "marks": 15,
+          "question": "Examine the challenges posed by AI misuse in cybersecurity with reference to the recent Agniveer test website hack.",
+          "structure": {
+            "body": [
+              "Explain how AI tools can be exploited to identify and breach digital systems.",
+              "Discuss the implications of such breaches on national security and public trust.",
+              "Highlight the roles of government bodies in securing digital infrastructure.",
+              "Suggest measures for AI governance and strengthening cybersecurity frameworks."
+            ],
+            "conclusion": "Effective AI governance and robust cybersecurity are essential to protect sensitive digital infrastructure from misuse.",
+            "intro": "AI misuse in cybercrime is a growing threat to digital security, as seen in the Agniveer test website hack."
+          }
+        },
+        "mcq": {
+          "answer": 0,
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "stem": "Consider the following statements about the Agniveer test website hack:\n1. The hacker used an AI chatbot to identify and exploit vulnerabilities in the test portal.\n2. The breach compromised marks, ranks, and sensitive personnel records of Agniveer personnel.\nWhich of the statements given above is/are correct?",
+          "trap": "Statement 2 is incorrect because only names and addresses were accessed, not marks, ranks, or other sensitive records."
+        }
+      },
+      "priority": 38,
+      "publishedAt": "2026-11-22T19:59:05Z",
+      "readTime": 3,
+      "recordIds": [],
+      "sections": [
+        {
+          "body": [
+            {
+              "label": "AI chatbot used for hacking",
+              "text": "The teenager used an AI chatbot to identify valuable data and to find a way to hack into the Agniveer test portal."
+            },
+            {
+              "label": "Data accessed",
+              "text": "Preliminary investigations show the hacker accessed only names and addresses of around 4,000 Agniveer personnel, with no evidence of marks, ranks, or sensitive records being compromised."
+            },
+            {
+              "label": "Motive and method",
+              "text": "The boy was motivated by financial gain and attempted to sell the data for $500 on the dark web."
+            },
+            {
+              "label": "Investigation status",
+              "text": "Delhi Police’s Intelligence Fusion and Strategic Operations unit recovered data from the juvenile’s devices and is verifying the breach's extent and authenticity."
+            }
+          ],
+          "heading": "What happened in the Agniveer test website hack?",
+          "sources": [
+            1
+          ]
+        },
+        {
+          "body": [
+            {
+              "label": "AI misuse in cybercrime",
+              "text": "This case illustrates how AI tools can be misused to breach digital infrastructure, raising concerns about AI governance and cybersecurity in sensitive sectors."
+            },
+            {
+              "label": "Impact on defence recruitment",
+              "text": "The breach targeted a portal used by former Agniveers for employment opportunities, exposing vulnerabilities in defence-related digital systems."
+            },
+            {
+              "label": "Role of government bodies",
+              "text": "The National Informatics Centre hosts the portal, but the Armed Forces and ministries own the personnel data, highlighting the need for coordinated security measures."
+            },
+            {
+              "label": "Juvenile justice considerations",
+              "text": "Since the accused is a minor, the police have involved the Juvenile Justice Board for further action."
+            }
+          ],
+          "heading": "Why does this matter for cybersecurity and governance?",
+          "sources": [
+            1
+          ]
+        }
+      ],
+      "slug": "2026-11-22-14-year-old-used-ai-chatbot-to-hack-agniveer-test-website-to-earn-mone-7c7429",
+      "sources": [
+        {
+          "date": "2026-11-21",
+          "kind": "discovery",
+          "n": 1,
+          "publisher": "The Hindu",
+          "title": "14-year-old used AI chatbot to hack Agniveer test website to earn money: Sources",
+          "url": "https://www.thehindu.com/news/national/haryana/14-year-old-used-ai-chatbot-to-hack-agniveer-test-website-to-earn-money-sources/article71728795.ece"
+        }
+      ],
+      "subject": "GS3.6",
+      "title": "14-Year-Old Used AI Chatbot to Hack Agniveer Test Website",
+      "topicTitle": "14-year-old used AI chatbot to hack Agniveer test website to earn money",
+      "updates": [],
+      "wayForward": [],
+      "whyInNews": {
+        "sources": [
+          1
+        ],
+        "text": "On November 21, 2026, Delhi Police revealed that a 14-year-old used AI chatbots to hack the Agniveer test website and attempted to sell sensitive personnel data on the dark web."
       }
     },
     "2026-11-22-pm-a7538492db": {
@@ -961,6 +1159,174 @@
         ],
         "text": "On November 19, 2026, the US Federal Communications Commission approved a ban on Chinese telecom firms' remote access to US phone numbers to combat illegal robocalling campaigns."
       }
+    },
+    "2026-11-22-pm-fe7e60f0fa": {
+      "anchor": "Digital public infrastructure and AI governance",
+      "back2basics": {
+        "concept": "Healthcare AI and patient outcome measurement",
+        "patternId": "Digital public infrastructure and AI governance",
+        "text": "Healthcare AI refers to artificial intelligence technologies applied to medical diagnosis, treatment, and patient management. Measuring patient outcomes means tracking real-world effects of treatments or technologies on recovery, mortality, and quality of life after hospital discharge. Accurate outcome measurement requires integrating diverse patient data over time, which is essential to assess the true clinical value of AI tools beyond laboratory accuracy."
+      },
+      "band": "must",
+      "codes": [
+        "GS3.6",
+        "GS2.6",
+        "GS2.5"
+      ],
+      "deck": "A French expert highlighted that most hospitals worldwide lack the capacity to evaluate whether AI systems improve patient outcomes, raising concerns about the clinical and economic value of healthcare AI. This issue is critical for understanding the governance and policy challenges in integrating AI into healthcare.",
+      "editor": {
+        "mainsAngle": "Policy challenges and governance in integrating AI into healthcare systems.",
+        "prelimsAngle": "AI applications in healthcare and patient outcome measurement challenges.",
+        "why": "AI in healthcare impacts health policy, patient outcomes, and governance of emerging technologies."
+      },
+      "fingerprint": "fe7e60f0fad5f1f6",
+      "id": "2026-11-22-pm-fe7e60f0fa",
+      "keyNumbers": [
+        {
+          "figure": "six or seven hospitals",
+          "meaning": "Number of hospitals worldwide capable of evaluating medical devices including AI",
+          "source": 1
+        },
+        {
+          "figure": "95% accuracy",
+          "meaning": "Accuracy of an AI system compared to a doctor's 90% in laboratory settings",
+          "source": 1
+        },
+        {
+          "figure": "70%",
+          "meaning": "Proportion of global healthcare AI training data from male, white, Western populations",
+          "source": 1
+        }
+      ],
+      "kind": "secondary",
+      "oneLine": "Hospitals struggle to measure real-world patient outcomes from AI, questioning the actual benefits of healthcare AI technologies.",
+      "papers": [
+        "GS3",
+        "GS2"
+      ],
+      "practice": {
+        "faq": [
+          {
+            "a": "About six or seven hospitals worldwide have this capacity.",
+            "q": "How many hospitals worldwide can evaluate AI medical devices effectively?"
+          },
+          {
+            "a": "No, higher accuracy in labs does not necessarily translate to better real-world clinical performance.",
+            "q": "Does a higher laboratory accuracy score of AI guarantee better clinical outcomes?"
+          },
+          {
+            "a": "Approximately 70% of global healthcare AI training data comes from male, white, Western populations.",
+            "q": "What proportion of healthcare AI training data is from Western populations?"
+          }
+        ],
+        "mains": {
+          "demand": "Examine the difficulties hospitals face in measuring AI's real-world impact on patients and the implications of biased training data.",
+          "directive": "Critically analyse",
+          "marks": 15,
+          "question": "Critically analyse the challenges in integrating artificial intelligence into healthcare systems with respect to patient outcome measurement and data biases.",
+          "structure": {
+            "body": [
+              "Discuss hospitals' limited capacity to track patient outcomes post-discharge and integrate data for AI evaluation.",
+              "Explain risks such as unintended consequences and misleading accuracy scores when AI is deployed without proper clinical integration.",
+              "Analyse the problem of Western bias in AI training data and the need for locally adapted models.",
+              "Highlight the importance of governance and policy frameworks to ensure safe and effective AI use in healthcare."
+            ],
+            "conclusion": "Addressing evaluation challenges and data biases is essential for realizing the benefits of healthcare AI while safeguarding patient safety.",
+            "intro": "Artificial intelligence in healthcare promises improved diagnostics and treatment but faces significant challenges in real-world evaluation and data representativeness."
+          }
+        },
+        "mcq": {
+          "answer": 0,
+          "options": [
+            "1 only",
+            "2 only",
+            "Both 1 and 2",
+            "Neither 1 nor 2"
+          ],
+          "stem": "Consider the following statements about healthcare AI and its evaluation:\n1. Only a handful of hospitals worldwide can effectively evaluate the real-world impact of AI medical devices.\n2. Laboratory accuracy scores of AI systems always reflect their clinical performance in hospitals.\nWhich of the statements given above is/are correct?",
+          "trap": "Statement 2 is incorrect because laboratory accuracy scores do not necessarily translate into better clinical outcomes, as highlighted by the expert."
+        }
+      },
+      "priority": 48,
+      "publishedAt": "2026-11-22T19:59:05Z",
+      "readTime": 3,
+      "recordIds": [],
+      "sections": [
+        {
+          "body": [
+            {
+              "label": "Data integration challenges",
+              "text": "Hospitals find it difficult to access and integrate patient information after discharge, such as recovery rates and mortality, which hampers tracking the real-world impact of AI-based medical technologies."
+            },
+            {
+              "label": "Limited evaluation capacity",
+              "text": "Only about six or seven hospitals worldwide currently have the ability to evaluate medical devices deployed in their systems, including AI technologies."
+            }
+          ],
+          "heading": "Why do hospitals struggle to measure AI's impact on patient outcomes?",
+          "sources": [
+            1
+          ]
+        },
+        {
+          "body": [
+            {
+              "label": "Unintended consequences",
+              "text": "An AI alert system for severe kidney failure doubled deaths in some US hospitals, possibly due to lack of tested response protocols among staff, showing that AI can have harmful effects if not properly integrated."
+            },
+            {
+              "label": "Misleading accuracy scores",
+              "text": "Laboratory accuracy scores of AI systems may not translate into better clinical performance; a system with 95% accuracy might not outperform a doctor with 90% accuracy in real-life settings."
+            },
+            {
+              "label": "Black-box problem",
+              "text": "AI can detect patterns unknown even to its developers, such as predicting ethnicity or sex from medical images, which may introduce bias and affect medical decisions without clinician understanding."
+            }
+          ],
+          "heading": "What risks arise from inadequate evaluation of healthcare AI?",
+          "sources": [
+            1
+          ]
+        },
+        {
+          "body": [
+            {
+              "label": "Skewed training data",
+              "text": "Approximately 70% of global healthcare AI training data comes from male, white, Western populations, leading to an 'Occidental AI' that may not perform well in other demographic contexts."
+            },
+            {
+              "label": "Need for local adaptation",
+              "text": "Smaller, locally tailored AI models trained on representative population data are advocated to avoid disastrous consequences in developing countries."
+            }
+          ],
+          "heading": "Why is Western bias in healthcare AI data a concern?",
+          "sources": [
+            1
+          ]
+        }
+      ],
+      "slug": "2026-11-22-concerns-over-healthcare-ai-s-capacity-to-measure-real-world-patient-o-fe7e60",
+      "sources": [
+        {
+          "date": "2026-11-22",
+          "kind": "discovery",
+          "n": 1,
+          "publisher": "The Hindu",
+          "title": "Healthcare AI: hospitals lack capacity to measure real-world patient outcomes, warns French expert",
+          "url": "https://www.thehindu.com/business/Industry/healthcare-ai-hospitals-lack-capacity-to-measure-real-world-patient-outcomes-warns-french-expert/article71723894.ece"
+        }
+      ],
+      "subject": "Science and technology",
+      "title": "Challenges in Measuring Real-World Outcomes of Healthcare AI",
+      "topicTitle": "Concerns over Healthcare AI's capacity to measure real-world patient outcomes",
+      "updates": [],
+      "wayForward": [],
+      "whyInNews": {
+        "sources": [
+          1
+        ],
+        "text": "On November 22, 2026, Emmanuel Bacry, Scientific Director of France’s Health Data Hub, warned at the Bengaluru Tech Summit that hospitals worldwide are ill-equipped to assess the real-world impact of AI systems on patient outcomes."
+      }
     }
   },
   "prelims": [],
@@ -985,6 +1351,28 @@
         "publisher": "The Hindu",
         "title": "14-year-old used AI chatbot to hack Agniveer test website to earn money: Sources",
         "url": "https://www.thehindu.com/news/national/haryana/14-year-old-used-ai-chatbot-to-hack-agniveer-test-website-to-earn-money-sources/article71728795.ece"
+      }
+    },
+    {
+      "code": "GS2.6",
+      "fact": "South Korea Education Minister resigns amid AI cheating scandal",
+      "id": "qf-d-bed0fac00d2b",
+      "source": {
+        "kind": "discovery",
+        "publisher": "The Hindu",
+        "title": "South Korea Education Minister resigns amid AI cheating scandal",
+        "url": "https://www.thehindu.com/news/international/south-korea-education-minister-resigns-amid-ai-cheating-scandal/article71730601.ece"
+      }
+    },
+    {
+      "code": "GS3.4",
+      "fact": "Saudi-led coalition says downed 3 Houthi missiles headed for Riyadh",
+      "id": "qf-d-4bdf044a40fa",
+      "source": {
+        "kind": "discovery",
+        "publisher": "The Hindu",
+        "title": "Saudi-led coalition says downed 3 Houthi missiles headed for Riyadh",
+        "url": "https://www.thehindu.com/news/international/saudi-led-coalition-says-downed-3-houthi-missiles-headed-for-riyadh/article71727179.ece"
       }
     }
   ],
