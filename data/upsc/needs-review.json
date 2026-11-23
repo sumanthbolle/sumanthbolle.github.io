@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-23T01:47:23Z",
-  "itemCount": 25,
+  "generatedAt": "2026-11-23T07:28:03Z",
+  "itemCount": 26,
   "items": [
     {
       "anchor": "GS3.8 Internal security: external state and non-state actors; GS3.7 Disaster and disaster management",
@@ -374,6 +374,225 @@
         "flagged_claims": [
           "\"Rakesh won a silver medal in the men’s discus throw F43/F44/F62/F64 event\" is contradicted by the available 2026 New Delhi results, which list Rakesh first with 49.26m in F44 and Pardeep Kumar second in F64; the combined event/date appears",
           "\"On 20 October 2026, the Press Information Bureau reported\" is not independently reliable as a current factual anchor because the supplied PIB extract is dated 20 October 2026, while the available competition results identify a different 20"
+        ],
+        "verificationVersion": 2
+      }
+    },
+    {
+      "anchor": "Ayush systems and public health outreach",
+      "checkedAt": "2026-11-23T07:28:03Z",
+      "codes": [
+        "GS2.6",
+        "GS3.6",
+        "GS1.1"
+      ],
+      "error": "",
+      "issue": {
+        "body": "Primary enrichment for `src_200d8045cb189ca69fa9dbdf561803ab375fe56ba1abaae030cf09aea7dbdd41` was held out of the publish path.\n\n- **agrees:** False\n- **confidence:** 0.98\n- **checked at:** 2026-11-23T07:28:03Z\n\nFlagged claims:\n- \"the Ministry of Ayush reported that its pavilion at the 45th India International Trade Fair, held from 13 to 27 November\" contains an incorrect fair start date; official listings give 14–27 November 2026.[1][2]\n\nInspect `data/upsc/needs-review.json`. The official source record stays visible.",
+        "labels": [
+          "upsc-needs-review"
+        ],
+        "sourceId": "src_200d8045cb189ca69fa9dbdf561803ab375fe56ba1abaae030cf09aea7dbdd41",
+        "title": "Needs review: src_200d8045cb189ca69fa9dbdf561803ab375fe56ba1abaae030cf09aea7dbdd41 verification disagreed"
+      },
+      "note": {
+        "anchor": "Ayush systems and public health outreach",
+        "argumentsAgainst": [
+          "Demonstrations and consultations can improve awareness but do not by themselves establish clinical efficacy or universal suitability of every traditional remedy.",
+          "Public-facing wellness promotion may encourage self-medication unless dosage, individual conditions and professional guidance are clearly communicated."
+        ],
+        "argumentsFor": [
+          "The pavilion links traditional knowledge with preventive healthcare, healthy living, dietary practices and lifestyle modification.",
+          "Interactive consultations, yoga sessions, medicinal-plant displays and educational material can make health information more accessible to the public."
+        ],
+        "background": [
+          "The Ministry of Ayush coordinates and showcases traditional healthcare systems and associated research institutions through public outreach platforms.",
+          "Ayush includes systems such as Ayurveda, Yoga and Naturopathy, Unani, Siddha and Sowa-Rigpa; the source record describes their outreach activities but does not provide a broader policy or legal framework."
+        ],
+        "codes": [
+          "GS2.6",
+          "GS3.6",
+          "GS1.1"
+        ],
+        "editorialStatus": "source-backed",
+        "id": "note_200d8045cb189ca69fa9dbdf561803ab375fe56ba1abaae030cf09aea7dbdd41",
+        "indiaImplications": [
+          "Public engagement can strengthen preventive-health awareness and culturally familiar health practices.",
+          "The event creates space to communicate responsible use of medicinal herbs, nutrition, yoga and lifestyle modification.",
+          "Research institutions and educational programmes displayed at the event may support awareness of training and career pathways in traditional systems.",
+          "Effective integration with public health requires evidence-sensitive communication, qualified practitioners, safety guidance and appropriate referral to biomedical services where necessary."
+        ],
+        "mainsPractice": [
+          {
+            "bodyDimensions": [
+              "Preventive healthcare and health literacy",
+              "Cultural knowledge and public outreach",
+              "Patient safety, evidence and professional regulation",
+              "Integration with wider public-health services"
+            ],
+            "conclusionPrompt": "Conclude by balancing recognition of traditional knowledge with safety, evidence and accountable healthcare delivery.",
+            "counterPosition": "Traditional systems should not be treated as automatically safe or clinically interchangeable with allopathic care merely because they are culturally familiar.",
+            "diagramSuggestion": "Flow: traditional knowledge → public outreach → informed use → preventive behaviour, with safety guidance and referral as safeguards.",
+            "directive": "assess",
+            "introChoices": [
+              "The Ayush Pavilion illustrates how public institutions can use cultural familiarity and interactive communication to promote preventive-health messages.",
+              "A balanced approach to Ayush outreach must connect traditional knowledge with informed choice, professional guidance and public-health safeguards."
+            ],
+            "marks": 10,
+            "skeleton": [
+              "The Ayush Pavilion illustrates how public institutions can use cultural familiarity and interactive communication to promote preventive-health messages.",
+              "A balanced approach to Ayush outreach must connect traditional knowledge with informed choice, professional guidance and public-health safeguards.",
+              "Preventive healthcare and health literacy",
+              "Cultural knowledge and public outreach",
+              "Patient safety, evidence and professional regulation",
+              "Integration with wider public-health services",
+              "Traditional systems should not be treated as automatically safe or clinically interchangeable with allopathic care merely because they are culturally familiar.",
+              "Conclude by balancing recognition of traditional knowledge with safety, evidence and accountable healthcare delivery."
+            ],
+            "stem": "Assess how a public outreach platform for Ayush systems can contribute to preventive healthcare while addressing the risks of unsupported self-medication.",
+            "timeMinutes": 7,
+            "wordBudget": 150
+          },
+          {
+            "bodyDimensions": [
+              "Role of institutions and research councils",
+              "Health promotion through diet, yoga and lifestyle",
+              "Standards of evidence and patient protection",
+              "Equitable and accountable integration"
+            ],
+            "conclusionPrompt": "Suggest a calibrated model in which Ayush contributes to wellness and prevention without weakening scientific scrutiny or patient safety.",
+            "counterPosition": "Promotion alone cannot substitute for clinical evidence, regulated practice, accessible primary care or referral mechanisms.",
+            "diagramSuggestion": "Triangle: cultural acceptability, preventive value and scientific accountability, with patient safety at the centre.",
+            "directive": "evaluate",
+            "introChoices": [
+              "Ayush outreach has policy value when it converts cultural and institutional resources into informed, safe health behaviour.",
+              "The public-health potential of traditional systems depends less on visibility alone than on the quality of evidence, counselling and institutional accountability."
+            ],
+            "marks": 15,
+            "skeleton": [
+              "Ayush outreach has policy value when it converts cultural and institutional resources into informed, safe health behaviour.",
+              "The public-health potential of traditional systems depends less on visibility alone than on the quality of evidence, counselling and institutional accountability.",
+              "Role of institutions and research councils",
+              "Health promotion through diet, yoga and lifestyle",
+              "Standards of evidence and patient protection",
+              "Equitable and accountable integration",
+              "Promotion alone cannot substitute for clinical evidence, regulated practice, accessible primary care or referral mechanisms.",
+              "Suggest a calibrated model in which Ayush contributes to wellness and prevention without weakening scientific scrutiny or patient safety."
+            ],
+            "stem": "Evaluate the potential and limitations of showcasing traditional healthcare systems through large public events such as trade fairs.",
+            "timeMinutes": 11,
+            "wordBudget": 250
+          }
+        ],
+        "officialFacts": [
+          {
+            "evidenceLocator": "officialSummary",
+            "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2340242",
+            "text": "Ayush Pavilion Emerges as a Major Attraction at India International Trade Fair 2026",
+            "verification": "source-backed"
+          }
+        ],
+        "papers": [
+          "GS2",
+          "GS3",
+          "GS1"
+        ],
+        "pocketRead": {
+          "example": {
+            "heading": "Illustration",
+            "text": "Suppose a visitor receives advice about a medicinal herb at a public stall. A responsible interaction would pair the information with dosage caution, consideration of the visitor’s health condition and advice to consult a qualified professional."
+          },
+          "excerpt": "The Ayush Pavilion used consultations, yoga, dietary displays and interactive activities to connect traditional health knowledge with preventive-care awareness.",
+          "question": {
+            "answer": "It can improve health literacy and preventive behaviour through accessible education and consultations, but must retain dosage safeguards, professional guidance and evidence-sensitive communication.",
+            "prompt": "How can such a pavilion support preventive healthcare without encouraging unsafe self-medication?"
+          },
+          "sections": [
+            {
+              "heading": "Public outreach and preventive care",
+              "paragraphs": [
+                "On 23 November 2026, the Ministry of Ayush reported that its pavilion at the 45th India International Trade Fair, held from 13 to 27 November at Bharat Mandapam, New Delhi, was presenting traditional healthcare systems through consultations, yoga, dietary preparations, medicinal-plant displays and educational activities.",
+                "The mechanism is direct engagement: visitors encounter information and services in an accessible setting, while institutions connect traditional practices with healthy living, lifestyle modification and preventive care. The practical consequence can be greater awareness, but a trade-fair display is not itself proof that every remedy is effective or suitable for every person."
+              ]
+            },
+            {
+              "heading": "Institutional breadth and safety",
+              "paragraphs": [
+                "The reported activities involved Ministry of Ayush institutions and research councils. They included Ayurveda consultations and Prakriti Pariksha, yoga demonstrations and personalised sessions, Unani dietary practices and Mizaj assessment, Siddha awareness, Yoga and Naturopathy consultations, and Sowa-Rigpa guidance.",
+                "The release also states that visitors were sensitised to appropriate dosage, individual health conditions and professional guidance before using medicinal herbs. This safeguard matters because public enthusiasm must not become unsupervised self-medication; responsible outreach should complement, not replace, qualified care and referral."
+              ]
+            }
+          ],
+          "title": "Ayush Pavilion links traditional health outreach with preventive-care awareness"
+        },
+        "prelimsTraps": [
+          {
+            "correct": true,
+            "explanation": "The official summary states that the pavilion emerged as a major attraction at the India International Trade Fair 2026.",
+            "statement": "The official summary identifies the Ayush Pavilion as a major attraction at IITF 2026."
+          },
+          {
+            "correct": false,
+            "explanation": "The source record contains only the official title in officialSummary and does not support this figure.",
+            "statement": "The source record establishes a specific number of total visitors to the Ayush Pavilion."
+          },
+          {
+            "correct": false,
+            "explanation": "The source record does not state that the pavilion was organised by the Ministry of Health and Family Welfare.",
+            "statement": "The pavilion was organised by the Ministry of Health and Family Welfare."
+          },
+          {
+            "correct": false,
+            "explanation": "The source record does not establish that all Ayush therapies are clinically proven or universally suitable.",
+            "statement": "The pavilion’s presence proves that every showcased traditional remedy is effective for all users."
+          }
+        ],
+        "priority": 70,
+        "priorityBand": "strong",
+        "priorityParts": {
+          "anchorFrequency": 78,
+          "debateStrength": 75,
+          "officialWeight": 95,
+          "recencyGap": 25
+        },
+        "priorityProvisional": true,
+        "priorityTreatment": "Full note, all five revisions.",
+        "publishedAt": "2026-11-23T07:27:57Z",
+        "publisherId": "pib",
+        "publisherName": "Press Information Bureau",
+        "recallCard": "The Ayush Pavilion at IITF 2026 used consultations, yoga, dietary displays, medicinal-plant information and interactive activities to promote preventive-health awareness. Its public-health value depends on informed use, dosage caution, professional guidance, evidence-sensitive communication and referral safeguards.",
+        "reusableAnchors": [],
+        "sourceContentHash": "6f27b2cf7f035740cca4e00d10e8ef739f0c0ea3533bad8891dfca265c4e4df2",
+        "sourceId": "src_200d8045cb189ca69fa9dbdf561803ab375fe56ba1abaae030cf09aea7dbdd41",
+        "sourceTitle": "Ayush Pavilion Emerges as a Major Attraction at India International Trade Fair 2026",
+        "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2340242",
+        "staticDefinition": "Ayush refers here to the traditional healthcare systems and wellness practices presented by the Ministry of Ayush, including Ayurveda, Yoga and Naturopathy, Unani, Siddha and Sowa-Rigpa. The source record supports their presentation and outreach, but does not by itself establish their comparative clinical efficacy or l",
+        "use": "Use the issue to discuss preventive healthcare, health literacy, cultural knowledge, patient safety, evidence-based policy and responsible integration of traditional systems.",
+        "wayForward": [
+          "Pair public outreach with clear safety messages on dosage, contraindications, individual health conditions and professional guidance.",
+          "Strengthen evidence-sensitive communication so that cultural recognition is not confused with universal clinical validation.",
+          "Create clear referral pathways between Ayush practitioners and other healthcare providers where cases require additional diagnosis or treatment.",
+          "Use research institutions and educational displays to improve health literacy rather than encouraging unsupervised self-medication."
+        ],
+        "whyInNews": "On 23 November 2026, the Ministry of Ayush highlighted its pavilion at the 45th India International Trade Fair 2026 in Bharat Mandapam, New Delhi. The pavilion used consultations, yoga sessions, dietary displays, medicinal-plant information and interactive activities to connect traditional healthcare knowledge with pre"
+      },
+      "sourceId": "src_200d8045cb189ca69fa9dbdf561803ab375fe56ba1abaae030cf09aea7dbdd41",
+      "status": "disagreed",
+      "verification": {
+        "advisory_notes": [
+          "\"from 13 to 27 November\" conflicts with official IITF listings stating the fair ran 14–27 November; retain 13 November only as the inauguration date if intended.[1][2]",
+          "\"On 23 November 2026\" is supported by the supplied PIB extract’s entry date, but the release does not establish that this was the pavilion’s opening or activity date.",
+          "The claim that Ministry of Ayush coordinates the listed systems is plausible background, but the extract specifically supports showcasing and institutional participation rather than a complete coordination mandate.",
+          "The GS1.1 tag is weak: the note has little direct relevance to Indian culture, art forms or literature; GS2.6 is the strongest fit, while GS3.6 is relevant only through health technology, research or innovation framing.",
+          "\"Major attraction\" is an official headline characterization, not an independently measured visitor-impact finding; avoid treating it as proof of popularity or effectiveness.",
+          "The analysis appropriately distinguishes outreach from clinical efficacy, but claims about referral pathways, regulation and evidence-sensitive integration should be presented as recommendations rather than source facts.",
+          "The pocketRead says the pavilion was held from 13 to 27 November; correct this date range to 14–27 November, with 13 November described separately as the inauguration date if needed.",
+          "The labelled hypothetical herb-consultation example is sound as an illustration, but it should not imply that this precise interaction occurred at the pavilion."
+        ],
+        "agrees": false,
+        "confidence": 0.98,
+        "flagged_claims": [
+          "\"the Ministry of Ayush reported that its pavilion at the 45th India International Trade Fair, held from 13 to 27 November\" contains an incorrect fair start date; official listings give 14–27 November 2026.[1][2]"
         ],
         "verificationVersion": 2
       }
