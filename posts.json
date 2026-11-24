@@ -1,5 +1,38 @@
 [
   {
+    "id": 144,
+    "title": "Cloudera rebuilt Go services after backend certificate-trust exposure",
+    "excerpt": "Cloudera\u2019s November 20, 2026 release notes document a certificate-trust incident that required rebuilding Go services, updating Python trust bundles, and upgrading NSS. The engineering lesson is that browser revocation does not automatically protect backend runtimes with static trust stores.",
+    "readTime": "2 min read",
+    "category": "architecture",
+    "learningPath": "architecture",
+    "difficulty": "Intermediate",
+    "forPersona": [
+      "Developers",
+      "Architects",
+      "Engineering managers"
+    ],
+    "uniqueId": "daily-architecture-cloudera-rebuilt-go-services-after-backend-certificate-trust-1795524729151",
+    "date": "Nov 24, 2026",
+    "dateISO": "2026-11-24T12:52:09Z",
+    "daily": true,
+    "sources": [
+      {
+        "title": "Cloudera Data Engineering on cloud 1.26.2 release notes",
+        "url": "https://docs.cloudera.com/data-engineering/cloud/release-notes/topics/cde-whats-new-1.26.2.html"
+      },
+      {
+        "title": "Google Cloud Buildpacks release notes \u2014 November 20, 2026",
+        "url": "https://docs.cloud.google.com/feeds/cloudbuildpacks-release-notes.xml"
+      },
+      {
+        "title": "Azul Zulu builds of OpenJDK November 2026 Monthly Update",
+        "url": "https://docs.azul.com/core/pdfs/november-2026/azul-zulu-ca-release-notes-november-2026-rev1.0.pdf"
+      }
+    ],
+    "content": "<h2>What happened</h2>\n<p>Cloudera reported that major browsers had revoked trust for eMudhra certificates through centralized mechanisms such as OneCRL and CRLSets. Its backend runtimes did not receive the same protection automatically because Go, Python, and Java/NSS environments relied on static trust bundles or hardcoded verifiers.</p>\n<p>The affected trust state created backend man-in-the-middle exposure. Internal tools, Cloudera components, and data-science workloads using unpatched Go or Python runtimes could trust forged eMudhra certificates. The release note describes the issue as requiring immediate manual updates.</p>\n<h2>The technical root cause</h2>\n<p>Certificate revocation is not uniform across clients. Browsers can consume centrally distributed revocation data, while application runtimes often validate against a locally installed CA bundle, an NSS database, or runtime-specific verification code. Those copies remain unchanged until an image, package, or binary is rebuilt and deployed.</p>\n<p>That design makes runtime patching part of certificate-response work. Removing a certificate from browser trust does not remove it from every container image or statically linked service. A service can therefore continue accepting a certificate that browser users already reject.</p>\n<h2>The remediation</h2>\n<p>Cloudera says it recompiled and redeployed all internal and customer-facing Go applications with Go <code>1.26.10</code>. It updated the Python <code>certifi</code> package to <code>2026.10.19</code> across data-science, PySpark, and scripting environments. Java and Scala workloads using NSS were updated to NSS <code>3.131.1</code>.</p>\n<p>The remediation covered several runtime classes instead of treating the incident as a single application dependency update. That matters because certificate validation behavior depends on the language runtime, the trust-store implementation, and the way each workload is packaged.</p>\n<h2>What other teams can copy</h2>\n<p>Start with an asset inventory that maps each service to its runtime version and trust source. Record whether validation uses the operating system, a language package such as <code>certifi</code>, NSS, a custom bundle, or certificate pinning. This makes a certificate incident a bounded deployment problem rather than a search through unknown images.</p>\n<p>Add a test certificate and a negative integration test to the service platform. The test should prove that a known-revoked or removed certificate fails in every supported runtime. Run it against production-like images, because host-level trust updates may not affect an application\u2019s embedded bundle.</p>\n<p>Finally, make trust-store updates observable. Record runtime versions, bundle versions, and image digests in deployment metadata. Alert when a production workload runs a version below the organization\u2019s emergency certificate baseline.</p>\n<ul>\n<li>Inventory every certificate-validation path: OS bundles, language packages, NSS databases, custom CA files, and pinned certificates.</li>\n<li>Rebuild and redeploy images after trust-store changes; updating a package repository is not enough for already-running containers.</li>\n<li>Test revoked-certificate behavior in Go, Python, Java, and other supported runtimes instead of using browser behavior as the only check.</li>\n<li>Keep an emergency process for changing trust data independently of the normal application release cycle.</li>\n</ul>\n<h2>Takeaways</h2>\n<ul>\n<li>Map every service to its actual certificate trust source and runtime version.</li>\n<li>Rebuild and redeploy application images when trust data changes.</li>\n<li>Test certificate rejection in each supported runtime, not only in browsers.</li>\n<li>Track trust-store versions and image digests as production metadata.</li>\n</ul>\n<h2>Sources</h2>\n<ul>\n<li><a href=\"https://docs.cloudera.com/data-engineering/cloud/release-notes/topics/cde-whats-new-1.26.2.html\" target=\"_blank\" rel=\"noopener\">Cloudera Data Engineering on cloud 1.26.2 release notes</a> \u2014 docs.cloudera.com</li>\n<li><a href=\"https://docs.cloud.google.com/feeds/cloudbuildpacks-release-notes.xml\" target=\"_blank\" rel=\"noopener\">Google Cloud Buildpacks release notes \u2014 November 20, 2026</a> \u2014 docs.cloud.google.com</li>\n<li><a href=\"https://docs.azul.com/core/pdfs/november-2026/azul-zulu-ca-release-notes-november-2026-rev1.0.pdf\" target=\"_blank\" rel=\"noopener\">Azul Zulu builds of OpenJDK November 2026 Monthly Update</a> \u2014 docs.azul.com</li>\n</ul>"
+  },
+  {
     "id": 143,
     "title": "Microsoft splits Copilot coding tasks between MAI Code 2 models",
     "excerpt": "Microsoft released MAI Code 2 and MAI Code 2 Flash for GitHub Copilot on November 17, 2026. The split is practical: one model targets multi-file and repository-wide work, while the other targets fast, routine edits.",
