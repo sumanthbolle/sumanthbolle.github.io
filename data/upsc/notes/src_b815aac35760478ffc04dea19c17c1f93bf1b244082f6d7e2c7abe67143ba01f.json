@@ -1,0 +1,170 @@
+{
+  "anchor": "Official statistics, subnational data and digital dissemination",
+  "argumentsAgainst": [
+    "A dashboard can improve access but cannot by itself resolve data-quality, comparability, timeliness or coverage limitations.",
+    "Greater availability of indicators does not automatically ensure effective use by States, districts or local administrations."
+  ],
+  "argumentsFor": [
+    "Theme-based State profiles can make dispersed official statistics easier to find, interpret and reuse.",
+    "Machine-readable downloads, APIs, metadata and visualisations can support analysis and evidence-informed planning.",
+    "Subnational and district-level statistical capacity can help align policy with local conditions."
+  ],
+  "background": [
+    "MoSPI describes eSankhyiki as a one-stop window for official statistics, with searchable datasets, interactive visualisations, metadata, machine-readable downloads and APIs.",
+    "The VISTAR initiative emphasises strengthening subnational statistics and digital tools across statistical processes, including dissemination.",
+    "Its Support for Statistical Strengthening component seeks to improve the capacity of States and Union Territories to produce more granular statistics, including at district level, and use them in local planning and policymaking."
+  ],
+  "codes": [
+    "GS2.5",
+    "GS3.1",
+    "GS3.6"
+  ],
+  "editorialStatus": "source-backed",
+  "id": "note_b815aac35760478ffc04dea19c17c1f93bf1b244082f6d7e2c7abe67143ba01f",
+  "indiaImplications": [
+    "State-level data can strengthen cooperative and evidence-based policymaking by making comparable indicators more accessible across jurisdictions.",
+    "Improved access may support targeted interventions in areas such as agriculture, education, work and wages, and gender and inclusion.",
+    "Effective impact will depend on data quality, metadata literacy, interoperability, institutional capacity and responsible interpretation."
+  ],
+  "mainsPractice": [
+    {
+      "bodyDimensions": [
+        "Explain e-governance as an access-and-reuse mechanism, not merely digitisation.",
+        "Discuss the value of subnational statistics for differentiated policy design and local planning.",
+        "Assess limitations involving quality, comparability, capacity, privacy and data interpretation.",
+        "Suggest institutional measures: standardised metadata, regular updates, capacity building, audits and feedback from users."
+      ],
+      "conclusionPrompt": "Conclude by linking accessible official statistics with accountable, locally responsive and evidence-informed governance.",
+      "counterPosition": "Digital dissemination alone cannot substitute for reliable data production, statistical capacity and sound policy judgement.",
+      "diagramSuggestion": "Flowchart: data production → metadata and standardisation → dashboard/API access → analysis → local planning → feedback and improvement.",
+      "directive": "discuss",
+      "introChoices": [
+        "A statistical system becomes more useful when reliable data can be found, understood and reused by decision-makers.",
+        "Digital public infrastructure can convert dispersed official statistics into a more accessible basis for subnational planning."
+      ],
+      "marks": 15,
+      "skeleton": [
+        "A statistical system becomes more useful when reliable data can be found, understood and reused by decision-makers.",
+        "Digital public infrastructure can convert dispersed official statistics into a more accessible basis for subnational planning.",
+        "Explain e-governance as an access-and-reuse mechanism, not merely digitisation.",
+        "Discuss the value of subnational statistics for differentiated policy design and local planning.",
+        "Assess limitations involving quality, comparability, capacity, privacy and data interpretation.",
+        "Suggest institutional measures: standardised metadata, regular updates, capacity building, audits and feedback from users.",
+        "Digital dissemination alone cannot substitute for reliable data production, statistical capacity and sound policy judgement.",
+        "Conclude by linking accessible official statistics with accountable, locally responsive and evidence-informed governance."
+      ],
+      "stem": "Discuss how digital dissemination of subnational official statistics can improve evidence-based governance while recognising the conditions required for meaningful use.",
+      "timeMinutes": 11,
+      "wordBudget": 250
+    }
+  ],
+  "officialFacts": [
+    {
+      "evidenceLocator": "officialSummary",
+      "evidenceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2341737",
+      "text": "MoSPI launches State Dashboard on eSankhyiki to improve access to State-level statistics",
+      "verification": "source-backed"
+    }
+  ],
+  "papers": [
+    "GS2",
+    "GS3"
+  ],
+  "pocketRead": {
+    "example": {
+      "heading": "Illustration",
+      "text": "Suppose a State administrator wants to compare an education indicator across States and inspect its metadata before using it in planning. The dashboard’s State and theme selection, visualisations and downloadable data could support that workflow; this is a hypothetical illustration of the stated features, not a reported event."
+    },
+    "excerpt": "MoSPI’s State Dashboard on eSankhyiki brings selected State-level indicators together so users can explore, interpret and reuse official statistics for planning and analysis.",
+    "question": {
+      "answer": "By consolidating selected State-level indicators with visualisations, metadata and downloadable data, it can reduce search costs and support more informed comparison and planning; its usefulness still depends on data quality and user capacity.",
+      "prompt": "How can a State-level statistical dashboard improve governance, and what limits its impact?"
+    },
+    "sections": [
+      {
+        "heading": "From scattered data to usable profiles",
+        "paragraphs": [
+          "On 26 November 2026, MoSPI launched the State Dashboard on eSankhyiki. It brings together State-level indicators already available across statistical products and organises them by State and broad themes.",
+          "Users can explore indicators through interactive charts and filters, consult metadata and statistical notes, and download underlying data and metadata or share visualisations."
+        ]
+      },
+      {
+        "heading": "Why the mechanism matters",
+        "paragraphs": [
+          "The dashboard can reduce the effort required to locate and interpret official statistics. That can help analysts and policymakers compare States or examine a theme across jurisdictions before using evidence in planning.",
+          "The initiative should not be mistaken for a guarantee that every displayed figure is equally current, comparable or sufficient for a policy decision; interpretation remains dependent on the accompanying statistical context and institutional capacity."
+        ]
+      }
+    ],
+    "title": "MoSPI’s State Dashboard makes selected State-level statistics easier to explore and reuse"
+  },
+  "prelimsTraps": [
+    {
+      "correct": true,
+      "explanation": "The source states that MoSPI launched the State Dashboard on the eSankhyiki portal.",
+      "statement": "The State Dashboard was launched on the eSankhyiki portal."
+    },
+    {
+      "correct": false,
+      "explanation": "The source says the dashboard was developed in collaboration with the Institute for Competitiveness, not that it was launched by that institution.",
+      "statement": "The Institute for Competitiveness launched the State Dashboard."
+    },
+    {
+      "correct": true,
+      "explanation": "The source states that users can consult metadata and statistical notes and download underlying data and metadata.",
+      "statement": "The dashboard provides contextual metadata and downloadable underlying data."
+    },
+    {
+      "correct": false,
+      "explanation": "The source says the dashboard presents selected indicators from 21 statistical products across 10 broad themes; it does not establish that it covers all official statistics.",
+      "statement": "The dashboard covers all official statistics for every State and Union Territory."
+    }
+  ],
+  "priority": 64,
+  "priorityBand": "strong",
+  "priorityParts": {
+    "anchorFrequency": 45,
+    "debateStrength": 75,
+    "officialWeight": 95,
+    "recencyGap": 50
+  },
+  "priorityProvisional": true,
+  "priorityTreatment": "Full note, all five revisions.",
+  "publishedAt": "2026-11-26T08:08:19Z",
+  "publisherId": "pib",
+  "publisherName": "Press Information Bureau",
+  "recallCard": "MoSPI’s State Dashboard on eSankhyiki consolidates selected State-level indicators into theme-based profiles with charts, filters, metadata and downloads. It supports access and reuse of official statistics, while meaningful policymaking still requires reliable data, context and user capacity.",
+  "reusableAnchors": [],
+  "sourceContentHash": "0f5f99832fa8b40aaedb78ab71f354bad469249b12d7e19e20fcbe3d514ded14",
+  "sourceId": "src_b815aac35760478ffc04dea19c17c1f93bf1b244082f6d7e2c7abe67143ba01f",
+  "sourceTitle": "MoSPI launches State Dashboard on eSankhyiki to improve access to State-level statistics",
+  "sourceUrl": "https://pib.gov.in/PressReleaseIframePage.aspx?PRID=2341737",
+  "staticDefinition": "Official statistics are systematically produced data disseminated by public statistical institutions for understanding social, economic and administrative conditions. A statistical dashboard is a digital interface that organises selected indicators for search, visualisation, contextual interpretation and reuse.",
+  "use": "Use as an example of e-governance, evidence-based policymaking, subnational statistical capacity and the shift from data availability to data utilisation.",
+  "verification": {
+    "advisory_notes": [
+      "The claim that eSankhyiki hosts 43 products, 1,109 datasets and over 139 million records is supported by P1 but was not independently corroborated in the available search results.",
+      "The VISTAR scheme name and its Support for Statistical Strengthening component are stated in P1; treat their policy implications as explanatory rather than independently established facts.",
+      "The proposed GS2.5, GS3.1 and GS3.6 tags are broadly defensible for e-governance, governance capacity and official statistics, though GS3.1 is a stronger fit than the other tags.",
+      "The statement that the dashboard can strengthen cooperative policymaking is analytical and should not be presented as an observed outcome of the launch.",
+      "Claims about improved policy targeting in agriculture, education, work and wages, and gender are plausible applications, not demonstrated impacts.",
+      "The recommendation to protect confidentiality and privacy is sound analytical advice, but the release does not report a privacy framework or specific safeguards.",
+      "The pocketRead headline and deck accurately describe the dashboard as consolidating selected State-level indicators and supporting exploration and reuse.",
+      "The hypothetical administrator example is correctly labelled as an illustration and does not fabricate a reported event."
+    ],
+    "agrees": true,
+    "checkedAt": "2026-11-26T08:08:25Z",
+    "confidence": 0.96,
+    "flagged_claims": [],
+    "noteContentHash": "00cc08251d4aaf306603fc8467f24cb892607e051f86aa405d0cd50458bcc933",
+    "sourceContentHash": "0f5f99832fa8b40aaedb78ab71f354bad469249b12d7e19e20fcbe3d514ded14",
+    "verificationVersion": 2
+  },
+  "wayForward": [
+    "Strengthen State and district statistical capacity, especially for granular and timely data production.",
+    "Maintain clear metadata, statistical notes, definitions and revision information for responsible comparison.",
+    "Promote interoperable machine-readable systems and APIs while protecting confidentiality and privacy.",
+    "Build data-literacy and analytical capacity among officials and local institutions."
+  ],
+  "whyInNews": "On 26 November 2026, MoSPI launched the State Dashboard on the eSankhyiki portal. It brings selected State-level indicators from multiple statistical products into theme-based profiles, allowing users to explore charts, consult metadata and download data for analysis and planning."
+}
